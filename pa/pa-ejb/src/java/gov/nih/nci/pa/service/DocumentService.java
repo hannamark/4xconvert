@@ -100,5 +100,15 @@ public interface DocumentService extends StudyPaService <DocumentDTO> {
      */
     List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
+    /**
+     * Returns all documents of the given protocol including TSRs of all previous amendments and
+     * original submission (if any). If this protocol has never been amended, the invocation
+     * of this method is equivalent to that of {@link #getDocumentsByStudyProtocol(Ii)}.
+     * @param studyProtocolIi study ID
+     * @return List<DocumentDTO>
+     * @throws PAException PAException
+     */
+    List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
 
 }

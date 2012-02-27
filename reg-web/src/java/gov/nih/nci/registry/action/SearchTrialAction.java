@@ -394,7 +394,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
             throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
         // query the trial documents
-        List<DocumentDTO> documentISOList = documentService.getDocumentsByStudyProtocol(studyProtocolIi);
+        List<DocumentDTO> documentISOList = documentService.getDocumentsAndAllTSRByStudyProtocol(studyProtocolIi);
         if (!maskFields && !documentISOList.isEmpty()) {
             ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
         }

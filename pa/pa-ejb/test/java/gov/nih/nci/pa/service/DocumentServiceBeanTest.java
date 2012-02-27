@@ -96,16 +96,21 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
 public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
-    private final DocumentServiceLocal remoteEjb = new DocumentBeanLocal();
+    private final DocumentBeanLocal remoteEjb = new DocumentBeanLocal();
     private Ii pid;
 
     @Before
@@ -113,6 +118,7 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         CSMUserService.setInstance(new MockCSMUserService());
+        remoteEjb.setStudyProtocolService(new StudyProtocolBeanLocal());
     }
 
     @Test
@@ -178,6 +184,50 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
         docDTO = remoteEjb.get(docDTO.getIdentifier());
         assertNotNull(docDTO);
         assertFalse(ISOUtil.isEdNull(docDTO.getText()));
+    }
+    
+    @Test
+    public void testGetDocumentsAndAllTSRByStudyProtocol() throws PAException, ParseException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery("delete Document");
+        query.executeUpdate();
+        session.flush();
+        
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(TestSchema.studyProtocolIds.get(0));
+        
+        StudyProtocol origSp = new StudyProtocol();
+        origSp.setId(TestSchema.inactiveProtocolId);
+        
+        Document doc1 = new Document();
+        doc1.setStudyProtocol(origSp);
+        doc1.setTypeCode(DocumentTypeCode.TSR);
+        doc1.setActiveIndicator(true);
+        doc1.setFileName("TSR1.doc");
+        doc1.setDateLastUpdated(DateUtils.parseDate("01/01/2012", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc1);
+        
+        Document doc2 = new Document();
+        doc2.setStudyProtocol(origSp);
+        doc2.setTypeCode(DocumentTypeCode.TSR);
+        doc2.setActiveIndicator(true);
+        doc2.setFileName("TSR2.doc");
+        doc2.setDateLastUpdated(DateUtils.parseDate("12/31/2011", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc2);
+        
+        Document doc3 = new Document();
+        doc3.setStudyProtocol(sp);
+        doc3.setTypeCode(DocumentTypeCode.TSR);
+        doc3.setActiveIndicator(true);
+        doc3.setFileName("TSR3.doc");
+        doc3.setDateLastUpdated(DateUtils.parseDate("02/01/2012", new String[] {"MM/dd/yyyy"}));
+        TestSchema.addUpdObject(doc3);      
+        
+        List<DocumentDTO> list = remoteEjb.getDocumentsAndAllTSRByStudyProtocol(pid);
+        assertEquals(3, list.size());     
+        assertEquals("TSR3.doc", list.get(0).getFileName().getValue());
+        assertEquals("TSR1.doc", list.get(1).getFileName().getValue());
+        assertEquals("TSR2.doc", list.get(2).getFileName().getValue());
     }
 
     @Test

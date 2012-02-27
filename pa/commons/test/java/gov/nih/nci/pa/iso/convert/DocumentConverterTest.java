@@ -79,6 +79,10 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+
+import java.text.ParseException;
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -86,13 +90,22 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 public class DocumentConverterTest extends AbstractConverterTest<DocumentConverter, DocumentDTO, Document> {
 
     private static final Long ID = 123L;
+    
+    private Date dateLastUpdated = null;
 
+    @Before
+    public void setUp() throws ParseException {
+        dateLastUpdated = DateUtils.parseDate("010704120856", new String[] {"yyMMddHHmmss"});
+    }
 
     @Test
     public void testDomainConvertUpdate() throws Exception {
@@ -104,6 +117,7 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
 
     /**
      * {@inheritDoc}
+     * @throws ParseException 
      */
     @Override
     public Document makeBo() {
@@ -114,6 +128,7 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         bo.setStudyProtocol(getStudyProtocol());
         bo.setActiveIndicator(Boolean.FALSE);
         bo.setInactiveCommentText("Inactive Comment");
+        bo.setDateLastUpdated(dateLastUpdated);        
         return bo;
     }
 
@@ -129,6 +144,7 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
         dto.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
         dto.setInactiveCommentText(StConverter.convertToSt("Inactive Comment"));
+        dto.setDateLastUpdated(TsConverter.convertToTs(dateLastUpdated));        
         return dto;
     }
 
@@ -157,5 +173,6 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         assertEquals("2.16.840.1.113883.3.26.4.3.8", dto.getIdentifier().getRoot());
         assertEquals(Boolean.FALSE, dto.getActiveIndicator().getValue());
         assertEquals("Inactive Comment", dto.getInactiveCommentText().getValue());
+        assertEquals(TsConverter.convertToTs(dateLastUpdated), dto.getDateLastUpdated());
     }
 }

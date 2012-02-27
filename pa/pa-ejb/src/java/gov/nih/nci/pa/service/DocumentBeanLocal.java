@@ -82,16 +82,23 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
@@ -105,10 +112,15 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -129,6 +141,10 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
         DocumentServiceLocal {
+    
+    
+    @EJB
+    private StudyProtocolServiceLocal studyProtocolService;
 
     /**
      * {@inheritDoc}
@@ -309,5 +325,85 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         } catch (IOException e) {
             throw new PAException("Error while attempting to save the file to " + docPath, e);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.DocumentService#getDocumentsAndAllTSRByStudyProtocol(gov.nih.nci.iso21090.Ii)
+     */
+    @Override
+    public List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        List<DocumentDTO> docs = getDocumentsByStudyProtocol(studyProtocolIi);
+
+        StudyProtocolDTO spDTO = studyProtocolService
+                .getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
+        toSearchspDTO.setSecondaryIdentifiers(DSetConverter
+                .convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        toSearchspDTO.setStatusCode(CdConverter
+                .convertToCd(ActStatusCode.INACTIVE));
+        List<StudyProtocolDTO> spList = null;
+        try {
+            spList = studyProtocolService.search(toSearchspDTO, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+
+        Set<DocumentDTO> previousTSRs = new TreeSet<DocumentDTO>(
+                documentComparator());
+        for (StudyProtocolDTO previousProtocolDTO : spList) {
+            List<DocumentDTO> previousDocs = getDocumentsByStudyProtocol(previousProtocolDTO
+                    .getIdentifier());
+            for (DocumentDTO doc : previousDocs) {
+                if (CdConverter.convertToCd(DocumentTypeCode.TSR).equals(
+                        doc.getTypeCode())) {
+                    previousTSRs.add(doc);
+                }
+            }
+        }
+        docs.addAll(previousTSRs);
+        return docs;
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private Comparator<DocumentDTO> documentComparator() {
+        return new Comparator<DocumentDTO>() {
+            @Override
+            public int compare(DocumentDTO o1, DocumentDTO o2) { // NOPMD
+                Timestamp date1 = TsConverter.convertToTimestamp(o1
+                        .getDateLastUpdated());
+                Timestamp date2 = TsConverter.convertToTimestamp(o2
+                        .getDateLastUpdated());
+                if (date1 == null && date2 == null) {
+                    return -1;
+                }
+                if (date1 == null && date2 != null) {
+                    return -1;
+                }
+                if (date1 != null && date2 == null) {
+                    return 1;
+                }
+                return -date1.compareTo(date2);
+            }
+        };
+    }
+
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(
+            StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 }

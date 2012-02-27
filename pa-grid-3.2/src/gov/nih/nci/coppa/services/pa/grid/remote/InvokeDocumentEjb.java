@@ -34,4 +34,21 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance()
+                    .getDocumentService()
+                    .getDocumentsAndAllTSRByStudyProtocol(studyProtocolIi);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+
+    }
+
 }

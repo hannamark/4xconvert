@@ -84,6 +84,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
@@ -123,6 +124,7 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         docDTO.setActiveIndicator(BlConverter.convertToBl(doc.getActiveIndicator()));
         docDTO.setInactiveCommentText(StConverter.convertToSt(doc.getInactiveCommentText()));
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
+        docDTO.setDateLastUpdated(TsConverter.convertToTs(doc.getDateLastUpdated()));
     }
 
     /**

@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 /**
  *
  * @author Kalpana Guthikonda
@@ -97,6 +98,8 @@ public class DocumentDTO extends StudyDTO {
     private St fileName;
     private St inactiveCommentText;
     private Ed text;
+    private Ts dateLastUpdated;
+    
     /**
      * @return typeCode
      */
@@ -169,7 +172,23 @@ public class DocumentDTO extends StudyDTO {
      */
     public void setText(Ed text) {
         this.text = text;
-    }    
+    }
+
+    /**
+     * @return the dateLastUpdated
+     */
+    public Ts getDateLastUpdated() {
+        return dateLastUpdated;
+    }
+
+    /**
+     * @param dateLastUpdated the dateLastUpdated to set
+     */
+    public void setDateLastUpdated(Ts dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
+    }
+
+    
     
     
 }

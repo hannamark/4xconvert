@@ -139,7 +139,7 @@ public class TrialDocumentAction extends ActionSupport implements ServletRespons
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
             List<DocumentDTO> isoList = PaRegistry.getDocumentService().
-            getDocumentsByStudyProtocol(studyProtocolIi);
+                    getDocumentsAndAllTSRByStudyProtocol(studyProtocolIi);
             if (isoList != null && !(isoList.isEmpty())) {
                 trialDocumentList = new ArrayList<TrialDocumentWebDTO>();
                 for (DocumentDTO dto : isoList) {

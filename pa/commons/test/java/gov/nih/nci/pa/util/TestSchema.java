@@ -224,6 +224,7 @@ public class TestSchema {
     public static List<Long> studyOnholdIds;
     public static List<Country> countries;
     private static User user;
+    public static Long inactiveProtocolId;
 
     /**
      * 
@@ -717,6 +718,42 @@ public class TestSchema {
         addUpdObject(onhold);
         studyOnholdIds.add(onhold.getId());
 
+        // Inactive study
+        sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("cancer for THOLA");
+        dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setStatusCode(ActStatusCode.INACTIVE);
+        sp.setPhaseCode(PhaseCode.I);
+        sp.setFdaRegulatedIndicator(Boolean.TRUE);
+        sp.setSection801Indicator(Boolean.TRUE);
+        sp.setDelayedpostingIndicator(Boolean.TRUE);
+
+        ru = getRegistryUser();
+        registryUserIds.add(ru.getId());
+        sp.setUserLastCreated(ru.getUserLastCreated());
+        sp.setUserLastUpdated(ru.getUserLastUpdated());
+
+        studySecondaryIdentifiers = new HashSet<Ii>();
+        spSecId = new Ii();
+        spSecId.setExtension("NCI-2009-00001");
+        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        studySecondaryIdentifiers.add(spSecId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(Integer.valueOf(0));
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        addUpdObject(sp);
+        sp.setId(sp.getId());
+        studyProtocolIds.add(sp.getId());
+        inactiveProtocolId = sp.getId();
+        addAbstractedWorkflowStatus(inactiveProtocolId);
+        
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
     }
