@@ -15,6 +15,8 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
+<!--            <transaction src="${basedir}/sql/outcome_measure.sql"/> -->
+            <transaction src="${basedir}/sql/subgroup.sql"/>
             <transaction src="${basedir}/sql/record_owner.sql"/>
             <transaction src="${basedir}/sql/collaborator.sql"/>
             <transaction src="${basedir}/sql/overall_status.sql"/>
@@ -41,6 +43,12 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+<!--
+        <echo message = "Running Outcome Measure"/>
+        <groovy src="groovy/outcome_measure.groovy"/>
+        -->
+        <echo message = "Running Subgroup"/>
+        <groovy src="groovy/subgroup.groovy"/>
         <echo message = "Running Record Owner"/>
         <groovy src="groovy/record_owner.groovy"/>
         <echo message = "Running Collaborator"/>
