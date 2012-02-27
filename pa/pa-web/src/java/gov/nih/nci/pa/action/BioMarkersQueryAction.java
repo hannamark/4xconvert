@@ -137,7 +137,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String execute() throws PAException {
         List<PlannedMarkerWebDTO> pmList = new ArrayList<PlannedMarkerWebDTO>();
         plannedMarkers = plannedMarkerService.getPlannedMarkers();
-        for (PlannedMarkerDTO dto:plannedMarkers) {
+        for (PlannedMarkerDTO dto : plannedMarkers) {
             pmList.add(populateWebDTO(dto));
         }    
         setPlannedMarkerList(pmList);
