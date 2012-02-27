@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentList;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,7 @@ public class AuditLogInterceptorTest {
     private String oldUser;
 
     @Before
+    @SuppressWarnings("deprecation")
     public void setUp() throws SQLException {
         oldUser = UsernameHolder.getUser();
         audit = new AuditLogInterceptor();
@@ -265,7 +268,6 @@ public class AuditLogInterceptorTest {
 
         class Foo implements Auditable {
             private static final long serialVersionUID = 1L;
-            @Override
             public Long getId() {
                 return Long.MAX_VALUE;
             }
@@ -276,16 +278,8 @@ public class AuditLogInterceptorTest {
             @Override
             public Iterator<Foo> iterator() {
                 return new Iterator<Foo>() {
-                    int iteration = 0;
-                    @Override
                     public boolean hasNext() { return true; }
-
-                    @Override
-                    public Foo next() {
-                        iteration++;
-                        return dummy;
-                    }
-                    @Override
+                    public Foo next() { return dummy; }
                     public void remove() { };
                 };
             }
@@ -367,7 +361,7 @@ public class AuditLogInterceptorTest {
         }
         fail("no entry for orderDate");
     }
-
+    
     @Test
     public void deleteAuditDetailCustomProcessor(){
         CustomProcessor cp = new CustomProcessor();
@@ -392,7 +386,7 @@ public class AuditLogInterceptorTest {
         assertEquals(2, l.size());
         boolean isInvoiceLogged = false;
         for (AuditLogRecord alr : l) {
-            if (alr.getType().equals(AuditType.DELETE)) {
+            if (alr.getType().equals(AuditType.DELETE)) {                
                 // 1 detail for orderDate and 1 for items
                 assertEquals(2, alr.getDetails().size());
                 isInvoiceLogged = true;
@@ -403,26 +397,26 @@ public class AuditLogInterceptorTest {
         List<AuditLogRecord> itemL = find(DummyLineItem.class, li.getId());
         for (AuditLogRecord alDumLine : itemL) {
             assertEquals(2, itemL.size());
-            if (alDumLine.getType().equals(AuditType.DELETE)) {
+            if (alDumLine.getType().equals(AuditType.DELETE)) {                
                 // 1 detail for name, 1 for quant, 1 for unit price.
                 assertEquals(3, alDumLine.getDetails().size());
                 isLineItemLogged = true;
             }
-        }
+        }  
         assertTrue("DummyLineItem and its fields have not been logged.", isLineItemLogged);
         boolean isLineItemLogged2 = false;
         List<AuditLogRecord> itemL2 = find(DummyLineItem.class, li2.getId());
         for (AuditLogRecord alDumLine2 : itemL2) {
             assertEquals(2, itemL2.size());
-            if (alDumLine2.getType().equals(AuditType.DELETE)) {
+            if (alDumLine2.getType().equals(AuditType.DELETE)) {                
                 // 1 detail for name, 1 for quant, 1 for unit price.
                 assertEquals(3, alDumLine2.getDetails().size());
                 isLineItemLogged2 = true;
             }
-        }
+        }  
         assertTrue("DummyLineItem2 and its fields have not been logged.", isLineItemLogged2);
-    }
-
+    } 
+    
     @Test
     public void deleteInvertedAuditDetailCustomProcessor(){
         CustomProcessor cp = new CustomProcessor();
@@ -432,21 +426,85 @@ public class AuditLogInterceptorTest {
         di.setOrderDate(new Date(t));
         helper.getCurrentSession().save(di);
         helper.getCurrentSession().flush();
-
+        
         DummyInvertedLineItem li = new DummyInvertedLineItem("Dummy Item", 1.0, 1.0);
         li.setInvoice(di);
         helper.getCurrentSession().save(li);
         helper.getCurrentSession().flush();
-
+    
         helper.getCurrentSession().delete(li);
         helper.getCurrentSession().flush();
         List<AuditLogRecord> itemL = find(DummyInvertedLineItem.class, li.getId());
         for (AuditLogRecord alDumLine : itemL) {
             assertEquals(2, itemL.size());
-            if (alDumLine.getType().equals(AuditType.DELETE)) {
+            if (alDumLine.getType().equals(AuditType.DELETE)) {                
                 // 1 detail for name, 1 for quant, 1 for unit price, 1 for invoice.
                 assertEquals(4, alDumLine.getDetails().size());
+               
             }
+        }  
+    }
+    
+    @Test
+    public void compositeUserTypeTest() {
+        DummyCompositeEntity dummyEntity = new DummyCompositeEntity();
+        DummyCompositeField dummyField = new DummyCompositeField();
+        dummyField.setField1("beginning");
+        dummyField.setField2(5);
+        dummyEntity.setCompositeField(dummyField);
+        helper.getCurrentSession().save(dummyEntity);
+        helper.getCurrentSession().flush();
+
+        assertDetail(find(DummyCompositeEntity.class, dummyEntity.getId()), AuditType.INSERT, "compositeField", null,
+                getAuditString(dummyField));
+
+        DummyCompositeField dummyField2 = new DummyCompositeField();
+        dummyField2.setField1("newbeginning");
+        dummyField2.setField2(6);
+        dummyEntity.setCompositeField(dummyField2);
+        helper.getCurrentSession().update(dummyEntity);
+        helper.getCurrentSession().flush();
+
+        assertDetail(find(DummyCompositeEntity.class, dummyEntity.getId()), AuditType.UPDATE, "compositeField",
+                getAuditString(dummyField), getAuditString(dummyField2));
+    }
+
+    @Test
+    public void compositeUserTypeCollectionTest() {
+        DummyCompositeEntity dummyEntity = new DummyCompositeEntity();
+        DummyCompositeField dummyField1 = new DummyCompositeField();
+        dummyField1.setField1("beginning1");
+        dummyField1.setField2(9);
+        dummyField1.setField3(false);
+        DummyCompositeField dummyField2 = new DummyCompositeField();
+        dummyField2.setField1("beginning2");
+        dummyField2.setField2(11);
+        dummyEntity.setCompositeFields(new HashSet<DummyCompositeField>());
+        dummyEntity.getCompositeFields().add(dummyField1);
+        dummyEntity.getCompositeFields().add(dummyField2);
+        helper.getCurrentSession().save(dummyEntity);
+        helper.getCurrentSession().flush();
+
+        assertDetail(find(DummyCompositeEntity.class, dummyEntity.getId()), AuditType.INSERT, "compositeFields", null,
+                getAuditString(dummyEntity.getCompositeFields()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getAuditString(DummyCompositeField dummyField) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("field1", dummyField.getField1());
+        jsonObject.put("field2", dummyField.getField2());
+        jsonObject.put("field3", dummyField.getField3());
+        return jsonObject.toString();
+    }
+
+    private String getAuditString(Collection<DummyCompositeField> dummyFields) {
+        StringBuffer sb = new StringBuffer();
+        for (DummyCompositeField field : dummyFields) {
+            // TODO When fixing NCIC-161 'field.toString()' should be replaced with 'getAuditString(field)'
+            // (i.e. a concatenation of JSON strings).
+            sb.append(field.toString()).append(',');
         }
+        return sb.substring(0, sb.length() - 1);
     }
 }
