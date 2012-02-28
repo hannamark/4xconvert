@@ -579,13 +579,41 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.sendTSREmail(proprietaryTrialIi);
     }
 
+    @Test
     public void testSendMarkerCDERequestEmail() throws PAException {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
         bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
     }
+    
+    @Test
+    public void testsendMarkerAcceptanceMailToCDE() throws PAException{
+        String nciIdentifier = "nciIdentifier";
+        String from = "from@example.com";
 
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+        
+        bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+    }
+
+    @Test
+    public void testsendMarkerQuestionToCTROMail() throws PAException{
+        String nciIdentifier = "nciIdentifier";
+        String to = "from@example.com";
+        String question = "This is a question";
+
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+                    
+        bean.sendMarkerQuestionToCTROMail(nciIdentifier, to, dto, question);
+    }
+    
     private StudyProtocol createProprietaryStudyProtocolObj() {
         StudyProtocol sp = new StudyProtocol();
         Timestamp now = new Timestamp(new Date().getTime());
