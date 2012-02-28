@@ -8,7 +8,7 @@
     <property name="services.coverage.line" value="87"/>
     <property name="services.coverage.branch" value="86"/>
     <property name="services.pmd.maxerrors" value="1"/>
-    
+
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -17,7 +17,7 @@
     <property name="checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
-    
+
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
     <property name="services.build.dir" value="${basedir}/target"/>
@@ -39,8 +39,8 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-services.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-    
-    <property name="pa.version" value="3.7-SNAPSHOT"/>
+
+    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->
@@ -53,14 +53,14 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <property name="maven.jar.dir" location="${lib.dir}/services/maven" />
     <path id="maven.classpath">
         <fileset dir="${maven.jar.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
-        
+
     <property name="test.jar.dir" location="${lib.dir}/services/test"/>
     <!-- order here is important so that the tests pull hibernate.cfg.xml from pa-commons-test.jar instead of just
          pa-commons.jar -->
@@ -164,7 +164,7 @@
                 <path refid="compile.classpath"/>
             </classpath>
         </javac>
-        
+
         <copy todir="${services.build.outputDir}">
             <filterset>
                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
@@ -397,7 +397,7 @@
     </target>
 
     <target name="jar-notest-noivy" depends="create-jar"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Maven Installation Targets                                             -->
     <!-- ====================================================================== -->
@@ -408,14 +408,14 @@
         <artifact:writepom pomRefId="accrual-pom-temp" file="target/pom.xml"/>
         <artifact:pom id="accrual-pom" file="target/pom.xml"/>
     </target>
-            
+
     <target name="maven:install" depends="jar-notest,maven:generate-pom">
         <echo message="Installing version ${accrual.version} to the local maven repo."/>
         <artifact:install file="${services.build.dir}/${services-client.jar}">
             <pom refid="accrual-pom"/>
         </artifact:install>
     </target>
-            
+
     <target name="maven:deploy" depends="jar-notest,maven:generate-pom">
         <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
             <authentication username="${maven.username}" password="${maven.password}"/>
@@ -426,7 +426,7 @@
             <pom refid="accrual-pom"/>
         </artifact:deploy>
     </target>
-    
+
 
     <!-- ====================================================================== -->
     <!-- Ivy targets                                                            -->
@@ -464,7 +464,7 @@
         <ivy:resolve refresh="true" conf="compile"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile"/>
     </target>
-    
+
     <target name="ivy-maven" depends="init:ivy" description="Resolves and retrieves the JARs needed to upload artifacts to maven.">
         <ivy:resolve refresh="true" conf="maven"/>
         <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="maven"/>
