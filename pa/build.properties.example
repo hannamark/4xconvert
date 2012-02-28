@@ -12,7 +12,6 @@ showErrorStackTraces=false
 
 ########################### INCLUDE/EXCLUDE VIEWER #########################
 #exclude.viewer=true
-
 ########################### GENERAL SETTINGS #########################
 jboss.deploy.directory=${application.base.path}/paear/jboss-4.0.5.GA-jems-ejb3/server/paear/deploy
 jboss.server.jndi.port=31499
