@@ -474,7 +474,7 @@
         <action name="disease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">execute</param>
+                <param name="includeMethods">execute,delete</param>
             </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/scientific/disease/diseaseedit.jsp</result>
             <result name="list">/WEB-INF/jsp/scientific/disease/disease.jsp</result>
