@@ -8,8 +8,6 @@
         <title>Update <fmt:message key="submit.proprietary.trial.page.title"/></title>
         <s:head/>
         <!-- po integration -->
-        <link href="${stylePath}/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="${stylePath}/subModal.css" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>

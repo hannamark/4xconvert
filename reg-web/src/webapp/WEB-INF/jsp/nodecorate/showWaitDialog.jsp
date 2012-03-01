@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<link href="${stylePath}/subModalstyle.css" media="all" rel="stylesheet" type="text/css"/>
 <table align="center">
 	<tr>
 		<td align="center"><img src="../images/loading.gif" />
