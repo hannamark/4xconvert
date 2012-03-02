@@ -15,9 +15,10 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/person_audit.sql"/>
 
-            <!--            <transaction src="${basedir}/sql/outcome_measure.sql"/> 
+            <transaction src="${basedir}/sql/outcome_measure.sql"/> 
+            <transaction src="${basedir}/sql/person_audit.sql"/>
+	<!--
             <transaction src="${basedir}/sql/org_audit.sql"/> 
             <transaction src="${basedir}/sql/person.sql"/> -->
             <transaction src="${basedir}/sql/study_audit.sql"/>
@@ -49,6 +50,10 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running milestones"/>
+        <groovy src="groovy/milestone.groovy"/>
+        <echo message = "Running Outcome Measure"/>
+        <groovy src="groovy/outcome_measure.groovy"/>
         <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
         <echo message = "Running Study Audit"/>
@@ -56,8 +61,6 @@
         <echo message = "Running Person Audit"/>
         <groovy src="groovy/person_audit.groovy"/>
         <!--
-        <echo message = "Running Outcome Measure"/>
-        <groovy src="groovy/outcome_measure.groovy"/>
         <echo message = "Running Org Audit"/>
         <groovy src="groovy/org_audit.groovy"/> 
         <echo message = "Running Person"/>
@@ -86,8 +89,6 @@
         <groovy src="groovy/org_families.groovy"/>
         <echo message = "Running generic_contact"/>
         <groovy src="groovy/generic_contact.groovy"/>
-        <echo message = "Running milestones"/>
-        <groovy src="groovy/milestone.groovy"/>
         <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
         <echo message = "Running biomarker"/>
