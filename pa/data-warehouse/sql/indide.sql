@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS DW_STUDY_IND_IDE;
 CREATE TABLE DW_STUDY_IND_IDE (
-    DATE_LAST_CREATED date,
-    DATE_LAST_UPDATED date,
+    DATE_LAST_CREATED timestamp,
+    DATE_LAST_UPDATED timestamp,
     EXPANDED_ACCESS_INDICATOR character varying(3),
     EXPANDED_ACCESS_STATUS_CODE character varying(200),
     GRANTOR_CODE character varying(200),

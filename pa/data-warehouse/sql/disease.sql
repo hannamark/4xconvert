@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS DW_STUDY_DISEASE;
 CREATE TABLE DW_STUDY_DISEASE ( 
     CT_GOV_XML_INDICATOR character varying(3),
-    DATE_LAST_CREATED date,
-    DATE_LAST_UPDATED date,
+    DATE_LAST_CREATED timestamp,
+    DATE_LAST_UPDATED timestamp,
     DISEASE_CODE character varying(200),
     DISEASE_PREFERRED_NAME character varying(200),
     DISEASE_MENU_DISPLAY_NAME character varying(200),

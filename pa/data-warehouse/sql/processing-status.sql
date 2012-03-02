@@ -2,9 +2,9 @@ DROP TABLE IF EXISTS DW_STUDY_PROCESSING_STATUS;
 
 CREATE TABLE DW_STUDY_PROCESSING_STATUS (
     COMMENTS character varying(200),
-    DATE date,
-    DATE_CREATED date,
-    DATE_LAST_UPDATED date,
+    DATE timestamp,
+    DATE_CREATED timestamp,
+    DATE_LAST_UPDATED timestamp,
     INTERNAL_SYSTEM_ID INTEGER not null,
     NCI_ID character varying(255),
     STATUS character varying(50),

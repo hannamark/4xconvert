@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS DW_STUDY_OVERALL_STATUS;
 CREATE TABLE DW_STUDY_OVERALL_STATUS ( 
     STATUS character varying(50),
-    STATUS_DATE date,
-    DATE_CREATED date,
-    DATE_LAST_UPDATED date,
+    STATUS_DATE timestamp,
+    DATE_CREATED timestamp,
+    DATE_LAST_UPDATED timestamp,
     SYSTEM_CREATED boolean,
     WHY_STUDY_STOPPED character varying(2000),
     INTERNAL_SYSTEM_ID INTEGER,
