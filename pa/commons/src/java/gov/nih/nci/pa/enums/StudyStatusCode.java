@@ -151,37 +151,46 @@ public enum StudyStatusCode implements CodedEnum<String> {
     static {
         Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
 
-        Set<StudyStatusCode> tmpSet = EnumSet.of(APPROVED, ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
+        Set<StudyStatusCode> tmpSet = EnumSet.of(APPROVED, ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN, IN_REVIEW);
         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN, APPROVED);
         tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
 
         Set<StudyStatusCode> emptySet = Collections.emptySet();
         tmp.put(WITHDRAWN, emptySet);
 
-        tmpSet =
-                EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                           ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE);
+        tmpSet = EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL,
+                TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
+                CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE, ACTIVE);
         tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL,
+                TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
+                CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE,
+                ENROLLING_BY_INVITATION);
         tmp.put(ENROLLING_BY_INVITATION, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet =
-                EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                           ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION,
+                TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
+                CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                TEMPORARILY_CLOSED_TO_ACCRUAL);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
         tmpSet =
                 EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
-                           CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+                           CLOSED_TO_ACCRUAL_AND_INTERVENTION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
         tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
 
-        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE);
+        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL);
         tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ADMINISTRATIVELY_COMPLETE, COMPLETE);
+        tmpSet = EnumSet.of(ADMINISTRATIVELY_COMPLETE, COMPLETE, CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
         tmp.put(COMPLETE, emptySet);
