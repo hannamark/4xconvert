@@ -254,8 +254,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             for (Object[] row : queryList) {
                 BigInteger studyId = (BigInteger) row[0];
                 BigInteger siteOwnerId = (BigInteger) row[1];
-                Boolean isOwner = (siteOwnerId != null && siteOwnerId
-                        .longValue() == userId.longValue())
+                Boolean isOwner = siteOwnerId == null
+                        || (siteOwnerId != null && siteOwnerId.longValue() == userId
+                                .longValue())
                         || Boolean.TRUE.equals(map.get(studyId.longValue()));
                 map.put(studyId.longValue(), isOwner);
             }
@@ -336,12 +337,12 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             default:
                 dto.setSearcherTrialOwner(false);
                 result.add(dto);
-            }
+            }            
             if (studyIDAndSiteOwnershipMap.containsKey(dto.getStudyProtocolId())) {
                 dto.setCurrentUserHasSite(true);
                 dto.setCurrentUserIsSiteOwner(studyIDAndSiteOwnershipMap
                         .get(dto.getStudyProtocolId()));
-            }
+            } 
         }
         return result;
     }
