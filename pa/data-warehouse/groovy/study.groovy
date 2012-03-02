@@ -32,6 +32,9 @@ def sql =
             CASE WHEN sp.fda_regulated_indicator THEN 'YES'
                  ELSE 'NO'
             END as fda_indicator,
+            CASE WHEN sp.proprietary_trial_indicator then 'Abbreviater'
+            	ELSE 'Complete'
+            END as category,
             sp.identifier as system_id, sp.design_configuration_code, irb.review_board_approval_number,
             irb.review_board_approval_status_code, irb_org.city, irb_org.country_name, irb_org.name as irb_name,
             irb.review_board_organizational_affiliation, irb_org.state, irb_org.postal_code, sp.keyword_text,
@@ -141,7 +144,8 @@ sourceConnection.eachRow(sql) { row ->
                     reporting_method_data_code: row.accr_rept_meth_code, review_board_approval_required_indicator: row.review_board_indicator,
                     section_801_indicator: row.section801_indicator, sponsor: row.sponsor, start_date: row.start_date, start_date_type_code: row.start_date_type_code,
                     submission_number: row.submission_number, submitter_name: row.submitter, submitter_organization: row.submitter_org,
-                    summary_4_funding_category: row.summary4_type_code, summary_4_funding_sponsor: row.summary4_sponsor, why_study_stopped: row.why_stopped)
+                    summary_4_funding_category: row.summary4_type_code, summary_4_funding_sponsor: row.summary4_sponsor, why_study_stopped: row.why_stopped,
+                    category: row.category)
         } catch (Exception e) {
             println "Error adding row : " + row
         }
@@ -391,5 +395,6 @@ destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Cross
 	where INTERVENTIONAL_MODEL='CROSSOVER'""")
 destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Factorial'    
 	where INTERVENTIONAL_MODEL='FACTORIAL'""")
+
 		
 		
