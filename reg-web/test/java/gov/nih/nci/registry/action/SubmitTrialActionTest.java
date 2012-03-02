@@ -18,6 +18,7 @@ import gov.nih.nci.registry.util.Constants;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
@@ -84,12 +85,12 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         action.setIrbApproval(f);
         action.setInformedConsentDocument(f);
         action.setParticipatingSites(f);
-        action.setOtherDocument(f);
+        action.setOtherDocument(new File[] {f});
         action.setProtocolDocFileName(FILE_NAME);
         action.setIrbApprovalFileName(FILE_NAME);
         action.setInformedConsentDocumentFileName(FILE_NAME);
         action.setParticipatingSitesFileName(FILE_NAME);
-        action.setOtherDocumentFileName(FILE_NAME);
+        action.setOtherDocumentFileName(new String[] {FILE_NAME});
         action.setPageFrom("submitTrial");
         assertEquals("review", action.review());
     }
@@ -291,8 +292,8 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     
     @Test
     public void testOtherDocProperty(){
-        assertNull(action.getOtherDocument());
-        action.setOtherDocument(new File(FILE_NAME));
+        assertTrue(action.getOtherDocument().length==0);
+        action.setOtherDocument(new File[] {new File(FILE_NAME)});
         assertNotNull(action.getOtherDocument());
     }
     
@@ -326,8 +327,8 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     
     @Test
     public void testOtherFileNameProperty(){
-        assertNull(action.getOtherDocumentFileName());
-        action.setOtherDocumentFileName("otherDocFileName");
+        assertTrue(action.getOtherDocumentFileName().length==0);
+        action.setOtherDocumentFileName(new String[] {"otherDocFileName"});
         assertNotNull(action.getOtherDocumentFileName());
     }
     

@@ -79,8 +79,8 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.DocumentDTO;
-import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 
@@ -88,14 +88,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.commons.collections.Factory;
+import org.apache.commons.collections.list.LazyList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -106,6 +111,7 @@ import com.opensymphony.xwork2.ActionSupport;
  *
  * @author Kalpana Guthikonda
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class ManageFileAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
@@ -120,23 +126,56 @@ public class ManageFileAction extends ActionSupport {
             "trialDTO.participatingSitesFileName");
     private final DocumentDTO informedConsentDocument = new DocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT,
             false, "trialDTO.informedConsentDocumentFileName");
-    private final DocumentDTO otherDocument = new DocumentDTO(DocumentTypeCode.OTHER, false,
-            "trialDTO.otherDocumentFileName");
     private final DocumentDTO protocolHighlightDocument = new DocumentDTO(
             DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT, Arrays.asList(AMEND_TRIAL_PAGE), true,
             "trialDTO.protocolHighlightDocumentFileName");
     private final DocumentDTO changeMemoDocument = new DocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT,
             Arrays.asList(AMEND_TRIAL_PAGE), true, "trialDTO.changeMemoDocFileName");
+    
+
+    /**
+     * List of "Other" document uploads.
+     */
+    @SuppressWarnings("unchecked") //NOPMD
+    private final List<DocumentDTO> otherDocument = LazyList.decorate(
+            new ArrayList<DocumentDTO>(), new Factory() {
+                @Override
+                public Object create() {
+                    return new DocumentDTO(DocumentTypeCode.OTHER, false,
+                            "trialDTO.otherDocumentFileName["
+                                    + otherDocument.size() + "]");
+                }
+            });
+    
     private String pageFrom;
     private String typeCode;
+    private String docIndex;
 
     /**
      * Remove document from session.
      *
      * @return the string
      */
+    @SuppressWarnings("unchecked")
     public String deleteDocument() {
-        getSession().removeAttribute(DocumentTypeCode.getByCode(typeCode).getShortName());
+        final HttpSession session = getSession();
+        final String code = DocumentTypeCode.getByCode(typeCode).getShortName();
+        final Object attrValue = session.getAttribute(code);
+        if (new IntegerConverter(-1).convert(Integer.class, docIndex).equals(
+                Integer.valueOf(-1))
+                || !(attrValue instanceof Collection)) {
+            session.removeAttribute(code);
+        } else {
+            final Collection<TrialDocumentWebDTO> docCollection = (Collection<TrialDocumentWebDTO>) attrValue;
+            List<TrialDocumentWebDTO> wrapperList = new ArrayList<TrialDocumentWebDTO>(
+                    docCollection);
+            int index = Integer.parseInt(docIndex);
+            if (index < wrapperList.size()) {
+                wrapperList.remove(index);
+                docCollection.clear();
+                docCollection.addAll(wrapperList);
+            }
+        }
         return SUCCESS;
     }
 
@@ -168,7 +207,10 @@ public class ManageFileAction extends ActionSupport {
                 participatingSitesDocument.isRequired(), ""));
         documentValidationErrors.putAll(validateDocument(informedConsentDocument, informedConsentDocument.isRequired(),
                 ""));
-        documentValidationErrors.putAll(validateDocument(otherDocument, otherDocument.isRequired(), ""));
+        for (DocumentDTO otherDoc : this.otherDocument) {
+            documentValidationErrors.putAll(validateDocument(otherDoc,
+                    otherDoc.isRequired(), ""));
+        }
         documentValidationErrors.putAll(validateDocument(protocolHighlightDocument,
                 isDocumentMissing(changeMemoDocument), "error.submit.changeMemoOrProtocolHighlight"));
         documentValidationErrors.putAll(validateDocument(changeMemoDocument,
@@ -210,8 +252,14 @@ public class ManageFileAction extends ActionSupport {
         return !isDocumentInSession(document)
                 && (document.getFromPages().isEmpty() || document.getFromPages().contains(pageFrom));
     }
+
+    @SuppressWarnings("rawtypes")
     private boolean isDocumentInSession(DocumentDTO document) {
-        return getSession().getAttribute(document.getSessionAttributeName()) != null;
+        final Object attr = getSession().getAttribute(
+                document.getSessionAttributeName());
+        return attr != null
+                && (!(attr instanceof Collection) || ((Collection) attr)
+                        .contains(document));
     }
 
     private void storeInSessionIfNecessary(DocumentDTO document) throws IOException {
@@ -227,20 +275,54 @@ public class ManageFileAction extends ActionSupport {
     private void addDocumentToSession(DocumentDTO document) throws IOException {
         TrialDocumentWebDTO webDto = new TrialUtil().convertToDocumentDTO(document.getDocumentCode(),
                 document.getFileName(), document.getFile());
-        getSession().setAttribute(document.getSessionAttributeName(), webDto);
+        addDocumentToSession(webDto);
     }
 
     /**
      * Sets the documents in session.
-     *
-     * @param trialDTO the new documents in session
-     */
-    public void setDocumentsInSession(TrialDTO trialDTO) {
-        if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
+     * 
+     * @param trialDTO
+     *            the new documents in session
+     */    
+    public void setDocumentsInSession(BaseTrialDTO trialDTO) {
+        if (trialDTO != null && trialDTO.getDocDtos() != null
+                && !trialDTO.getDocDtos().isEmpty()) {
             for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
-                getSession().setAttribute(DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(), webDto);
+                addDocumentToSession(webDto);
             }
         }
+    }
+
+    /**
+     * Adds {@link TrialDocumentWebDTO} document to session.
+     * 
+     * @param webDto TrialDocumentWebDTO
+     */
+    @SuppressWarnings("unchecked")
+    protected void addDocumentToSession(TrialDocumentWebDTO webDto) {
+        final HttpSession session = getSession();
+        final DocumentTypeCode docCode = DocumentTypeCode.getByCode(webDto
+                .getTypeCode());
+        if (isMultipleAllowed(docCode)) {
+            Set<TrialDocumentWebDTO> list = (Set<TrialDocumentWebDTO>) session
+                    .getAttribute(docCode.getShortName());
+            if (list == null) {
+                list = new LinkedHashSet<TrialDocumentWebDTO>();
+                session.setAttribute(docCode.getShortName(), list);
+            }
+            list.add(webDto);
+        } else {
+            session.setAttribute(docCode.getShortName(), webDto);
+        }
+    }
+    
+    /**
+     * Tells whether multiple uploads of the given doc type are allowed.
+     * @param code DocumentTypeCode
+     * @return boolean
+     */
+    protected boolean isMultipleAllowed(DocumentTypeCode code) {
+        return code == DocumentTypeCode.OTHER;
     }
 
     /**
@@ -253,7 +335,7 @@ public class ManageFileAction extends ActionSupport {
         documents.add(getDocumentFromSession(irbApprovalDocument));
         documents.add(getDocumentFromSession(informedConsentDocument));
         documents.add(getDocumentFromSession(participatingSitesDocument));
-        documents.add(getDocumentFromSession(otherDocument));
+        documents.addAll(getDocumentsFromSession(DocumentTypeCode.OTHER));
         documents.add(getDocumentFromSession(changeMemoDocument));
         documents.add(getDocumentFromSession(protocolHighlightDocument));
 
@@ -267,21 +349,33 @@ public class ManageFileAction extends ActionSupport {
     private TrialDocumentWebDTO getDocumentFromSession(DocumentDTO document) {
         return (TrialDocumentWebDTO) getSession().getAttribute(document.getSessionAttributeName());
     }
+    
+    @SuppressWarnings("unchecked")
+    private Collection<TrialDocumentWebDTO> getDocumentsFromSession(
+            DocumentTypeCode docTypeCode) {
+        final Object attr = getSession().getAttribute(
+                docTypeCode.getShortName());
+        return attr != null ? (Collection<TrialDocumentWebDTO>) attr
+                : new ArrayList<TrialDocumentWebDTO>();
+    }
 
     /**
      * Validate other document for updates.
      * @throws IOException on document conversion error
      */
     public void validateOtherDocUpdate() throws IOException {
-        Map<String, String> errMap = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(otherDocument.getFileName())
-                && !isDocumentInSession(otherDocument)) {
-            errMap = DocumentValidator.validateDocument(otherDocument.getFileName(), otherDocument.getFile(), false,
-                    "trialDTO.otherDocumentFileName", "");
-            addErrors(errMap);
-        }
-        if (errMap.isEmpty()) {
-            storeInSessionIfNecessary(otherDocument);
+        for (DocumentDTO doc : this.otherDocument) {
+            Map<String, String> errMap = new HashMap<String, String>();
+            if (StringUtils.isNotEmpty(doc.getFileName())
+                    && !isDocumentInSession(doc)) {
+                errMap = DocumentValidator.validateDocument(doc.getFileName(),
+                        doc.getFile(), false, "trialDTO.otherDocumentFileName["
+                                + this.otherDocument.indexOf(doc) + "]", "");
+                addErrors(errMap);
+            }
+            if (errMap.isEmpty()) {
+                storeInSessionIfNecessary(doc);
+            }
         }
     }
 
@@ -376,28 +470,52 @@ public class ManageFileAction extends ActionSupport {
     }
     /**
      * @return the otherDocument
-     */
-    public File getOtherDocument() {
-        return otherDocument.getFile();
+     */    
+    public File[] getOtherDocument() {
+        List<File> files = new ArrayList<File>();
+        for (DocumentDTO doc : otherDocument) {
+            files.add(doc.getFile());
+        }
+        return files.toArray(new File[0]); // NOPMD
     }
+
     /**
-     * @param otherDocument the otherDocument to set
+     * @param files
+     *            the otherDocument to set
      */
-    public void setOtherDocument(File otherDocument) {
-        this.otherDocument.setFile(otherDocument);
+    public void setOtherDocument(File[] files) {
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            this.otherDocument.get(i).setFile(file);
+        }
     }
+
     /**
      * @return the otherDocumentFileName
      */
-    public String getOtherDocumentFileName() {
-        return otherDocument.getFileName();
+    public String[] getOtherDocumentFileName() {
+        List<String> fileNames = new ArrayList<String>();
+        for (DocumentDTO doc : otherDocument) {
+            fileNames.add(doc.getFileName());
+        }
+        return fileNames.toArray(new String[0]); // NOPMD        
+
     }
+
     /**
-     * @param otherDocumentFileName the otherDocumentFileName to set
+     * @param list
+     *            the otherDocumentFileName to set
      */
-    public void setOtherDocumentFileName(String otherDocumentFileName) {
-        this.otherDocument.setFileName(otherDocumentFileName);
+    public void setOtherDocumentFileName(String[] list) {
+        for (int i = 0; i < list.length; i++) {
+            String string = list[i];
+            this.otherDocument.get(i)
+                .setFileName(string);
+            
+        }
+
     }
+
     /**
      * @return the participatingSites
      */
@@ -494,4 +612,27 @@ public class ManageFileAction extends ActionSupport {
     public void setPageFrom(String pageFrom) {
         this.pageFrom = pageFrom;
     }
+    
+    /**
+     * List of "Other" documents.
+     * @return List<DocumentDTO>
+     */
+    public List<DocumentDTO> getOtherDocumentList() {
+        return new ArrayList<DocumentDTO>(otherDocument);
+    }
+
+    /**
+     * @return the docIndex
+     */
+    public String getDocIndex() {
+        return docIndex;
+    }
+
+    /**
+     * @param docIndex the docIndex to set
+     */
+    public void setDocIndex(String docIndex) {
+        this.docIndex = docIndex;
+    }
+    
 }

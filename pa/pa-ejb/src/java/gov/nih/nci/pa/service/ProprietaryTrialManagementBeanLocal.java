@@ -98,6 +98,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -221,6 +222,17 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                 ssasDto.setIdentifier(null);
                 studySiteAccrualStatusService.createStudySiteAccrualStatus(ssasDto);
             }
+            List<DocumentDTO> existingDocs = documentService
+                    .getDocumentsByStudyProtocol(studyProtocolDTO
+                            .getIdentifier());
+            for (DocumentDTO doc : existingDocs) {
+                if (!isAmong(doc, documentDTOs)) {
+                    documentService.forceDelete(doc.getIdentifier());
+                    PaHibernateUtil.getCurrentSession().flush();
+                } else {
+                    removeFromCollectionByID(documentDTOs, doc.getIdentifier());
+                }
+            }
             paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null),
                     studyProtocolDTO.getIdentifier());
             studyInboxServiceLocal.create(documentDTOs, studyProtocolIi);
@@ -233,6 +245,32 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         }
     }
 
+
+    private void removeFromCollectionByID(List<DocumentDTO> documentDTOs,
+            Ii identifier) {
+        for (DocumentDTO doc : documentDTOs) {
+            if (!ISOUtil.isIiNull(doc.getIdentifier())
+                    && !ISOUtil.isIiNull(identifier)
+                    && doc.getIdentifier().getExtension()
+                            .equals(identifier.getExtension())) {
+
+                documentDTOs.remove(doc);
+                return;
+            }
+        }
+    }
+
+    private boolean isAmong(DocumentDTO doc, List<DocumentDTO> documentDTOs) {
+        for (DocumentDTO dto : documentDTOs) {
+            if (!ISOUtil.isIiNull(doc.getIdentifier())
+                    && !ISOUtil.isIiNull(dto.getIdentifier())
+                    && doc.getIdentifier().getExtension()
+                            .equals(dto.getIdentifier().getExtension())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void updateLeadOrganization(OrganizationDTO leadOrg, St leadOrganizationIdentifier, Ii studyProtocolIi)
             throws PAException {
@@ -300,6 +338,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      * @param documentDTOs
      * @param errorMsg
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private void validateDocuments(List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {
         for (DocumentDTO docDto : documentDTOs) {
             if (!ISOUtil.isIiNull(docDto.getIdentifier())
@@ -309,7 +348,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         }
         for (Iterator<DocumentDTO> iter = documentDTOs.listIterator(); iter.hasNext();) {
             DocumentDTO docDto = iter.next();
-            if (ISOUtil.isEdNull(docDto.getText())) {
+            if (ISOUtil.isEdNull(docDto.getText()) && ISOUtil.isIiNull(docDto.getIdentifier())) {
                 iter.remove();
             }
         }

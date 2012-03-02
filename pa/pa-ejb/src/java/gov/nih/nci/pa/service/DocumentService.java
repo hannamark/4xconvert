@@ -110,5 +110,12 @@ public interface DocumentService extends StudyPaService <DocumentDTO> {
      */
     List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(Ii studyProtocolIi) throws PAException;
     
+    /**
+     * Forces delete of the given document thereby bypassing validation checks.
+     * @param documentIi documentIi
+     * @throws PAException PAException
+     */
+    void forceDelete(Ii documentIi) throws PAException;
+    
 
 }

@@ -23,7 +23,6 @@ import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
-import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialSessionUtil;
@@ -53,7 +52,6 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author Vrushali
  *
  */
-@SuppressWarnings("unchecked")
 public class SubmitProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
     /**
@@ -140,6 +138,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         return "review";
     }
 
+    @SuppressWarnings("unchecked")
     private void enforceBusinessRules() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         ClassValidator<ProprietaryTrialDTO> validator =
@@ -173,17 +172,12 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         Map<String, String> errMap = new HashMap<String, String>();
         try {
             errMap = validateProtocolDoc();
+            addErrors(errMap);
+            validateOtherDocUpdate();
         } catch (IOException e) {
             addActionError("There was an unexpected problem uploading your documents.");
-        }
-        if (StringUtils.isNotEmpty(getOtherDocumentFileName())
-                && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
-            errMap = new HashMap<String, String>();
-            errMap =
-                    DocumentValidator.validateDocument(getOtherDocumentFileName(), getOtherDocument(), false,
-                                                       "trialDTO.otherDocumentFileName", "");
-            addErrors(errMap);
-        }
+        }        
+        
         PAServiceUtils paServiceUtils = new PAServiceUtils();
         StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
         StudySiteDTO studySiteDTO = getSubmittingStudySiteDTO();
@@ -329,13 +323,9 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
     }
 
     private void setDocumentsInSession() {
-        if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
-            for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
-                ServletActionContext.getRequest().getSession()
-                    .setAttribute(DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(), webDto);
-            }
-        }
+        setDocumentsInSession(trialDTO);
     }
+    
 
     private StudySiteAccrualStatusDTO convertToStudySiteAccrualStatusDTO(ProprietaryTrialDTO trialDto) {
         StudySiteAccrualStatusDTO isoDto = new StudySiteAccrualStatusDTO();

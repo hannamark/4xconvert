@@ -11,6 +11,7 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
@@ -55,15 +56,15 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
     }
     @Test
     public void testOtherDocProperty(){
-        assertNull(action.getOtherDocument());
-        action.setOtherDocument(new File(FILE_NAME));
-        assertNotNull(action.getOtherDocument());
+        assertTrue(action.getOtherDocument().length==0);
+        action.setOtherDocument(new File[] {new File(FILE_NAME)});
+        assertEquals(new File(FILE_NAME), action.getOtherDocument()[0]);
     }
     @Test
     public void testOtherFileNameProperty(){
-        assertNull(action.getOtherDocumentFileName());
-        action.setOtherDocumentFileName("otherDocFileName");
-        assertNotNull(action.getOtherDocumentFileName());
+        assertTrue(action.getOtherDocumentFileName().length==0);
+        action.setOtherDocumentFileName(new String[] {"otherDocFileName"});
+        assertEquals("otherDocFileName", action.getOtherDocumentFileName()[0]);
     }
     @Test
     public void testTrialActionProperty(){
@@ -118,9 +119,9 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
         action.setProtocolDoc(f);
-        action.setOtherDocument(f);
+        action.setOtherDocument(new File[] {f});
         action.setProtocolDocFileName(FILE_NAME);
-        action.setOtherDocumentFileName(FILE_NAME);
+        action.setOtherDocumentFileName(new String[] {FILE_NAME});
         assertEquals("review", action.review());
     }
     @Test
@@ -128,9 +129,9 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.setTrialDTO(getMockProprietaryTrialDTO());
         File f = new File(FILE_NAME);
         action.setProtocolDoc(f);
-        action.setOtherDocument(f);
+        action.setOtherDocument(new File[] {f});
         action.setProtocolDocFileName(FILE_NAME);
-        action.setOtherDocumentFileName(FILE_NAME);
+        action.setOtherDocumentFileName(new String[] {FILE_NAME});
         assertEquals("error", action.review());
     }
     @Test
@@ -173,8 +174,8 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setNctIdentifier(null);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
-        action.setOtherDocument(f);
-        action.setOtherDocumentFileName(FILE_NAME);
+        action.setOtherDocument(new File[] {(f)});
+        action.setOtherDocumentFileName(new String[] {FILE_NAME});
         assertEquals("error", action.review());
     }
     @Test
@@ -183,8 +184,8 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setLocalSiteIdentifier(null);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
         File f = new File(fileUrl.toURI());
-        action.setOtherDocument(f);
-        action.setOtherDocumentFileName("filename.zip");
+        action.setOtherDocument(new File[] {f});
+        action.setOtherDocumentFileName(new String[] {"filename.zip"});
         assertEquals("error", action.review());
         action.setTrialDTO(getMockProprietaryTrialDTO());
         action.getTrialDTO().setNctIdentifier(null);

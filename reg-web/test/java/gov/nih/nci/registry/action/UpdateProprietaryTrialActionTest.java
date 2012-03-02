@@ -15,6 +15,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -99,9 +100,9 @@ public class UpdateProprietaryTrialActionTest extends AbstractRegWebTest {
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource("ProtocolDoc.doc");
         File f = new File(fileUrl.toURI());
         action.setProtocolDoc(f);
-        action.setOtherDocument(f);
+        action.setOtherDocument(new File[] {f});
         action.setProtocolDocFileName("ProtocolDoc.doc");
-        action.setOtherDocumentFileName("ProtocolDoc.doc");
+        action.setOtherDocumentFileName(new String[] {"ProtocolDoc.doc"});
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("error", action.review());

@@ -235,6 +235,20 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
         super.update(docDTO);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
+    public void forceDelete(Ii documentIi) throws PAException {
+        if (ISOUtil.isIiNull(documentIi)) {
+            throw new PAException("Document Ii should not be null.");
+        }
+        DocumentDTO docDTO = get(documentIi);        
+        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        super.update(docDTO);
+    }
 
     /**
      * {@inheritDoc}

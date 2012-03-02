@@ -569,6 +569,7 @@
               <sequential>
                   <copy todir="@{toDir}">
                       <fileset dir="${basedir}/src/webapp">
+                            <include name="*.jsp"/>
                             <include name="WEB-INF/jsp/*.jsp"/>
                             <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                             <include name="WEB-INF/jsp/common/*.jsp"/>

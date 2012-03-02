@@ -244,8 +244,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
             List<StudySiteAccrualStatusDTO> siteAccrualStatusDTOList = getParticipatingSitesForUpdate(
                     trialDTO.getParticipatingSitesList());
             List<StudySiteDTO> siteDTOList = util.getStudySiteToUpdate(trialDTO.getParticipatingSitesList());
-            List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos(),
-                    studyProtocolDTO.getIdentifier());
+            List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
 
            PaRegistry.getProprietaryTrialService().update(studyProtocolDTO, leadOrganizationDTO,
                    summary4organizationDTO, leadOrganizationIdentifier,
@@ -284,8 +283,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         checkSummary4Funding();
         checkNctAndDoc(session);
         validateDocuments();
-        validateProtocolDocUpdate();
-        validateOtherDocUpdate();
+        validateProtocolDocUpdate();        
         checkSubmittingOrgRules();
     }
 
@@ -368,8 +366,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
                 TrialDocumentWebDTO webDto = null;
                 for (DocumentDTO docDTO : documentISOList) {
                      webDto = new TrialDocumentWebDTO(docDTO);
-                     ServletActionContext.getRequest().getSession().setAttribute(DocumentTypeCode.getByCode(
-                            webDto.getTypeCode()).getShortName(), webDto);
+                     addDocumentToSession(webDto);                     
                 }
             }
         } catch (PAException e) {

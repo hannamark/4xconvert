@@ -1,10 +1,11 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <script type="text/javascript" language="javascript">
-    function deleteDocument(typeCode) {
+    function deleteDocument(typeCode, docIndex) {
         var url = '/registry/protected/ajaxUploaddeleteDocument.action';
         var params = {
                 pageFrom: document.forms[0].pageFrom.value,
-                typeCode: typeCode
+                typeCode: typeCode,
+                docIndex: docIndex!=undefined?docIndex:''
                 };
         var div = document.getElementById('uploadDocDiv');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';

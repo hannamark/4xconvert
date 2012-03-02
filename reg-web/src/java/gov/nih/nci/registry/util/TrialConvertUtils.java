@@ -134,18 +134,17 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -652,32 +651,7 @@ public class TrialConvertUtils {
     * @throws IOException Signals that an I/O exception has occurred.
     */
    protected static byte[] readInputStream(InputStream inputStream) throws IOException {
-       int bufSize = MAXF * MAXF;
-       byte[] content;
-       List<byte[]> parts = new LinkedList<byte[]>();
-       InputStream in = new BufferedInputStream(inputStream);
-       byte[] readBuffer = new byte[bufSize];
-       byte[] part = null;
-       int bytesRead = 0;
-       // read everything into a list of byte arrays
-       while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
-           part = new byte[bytesRead];
-           System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-           parts.add(part);
-       }
-       // calculate the total size
-       int totalSize = 0;
-       for (byte[] partBuffer : parts) {
-           totalSize += partBuffer.length;
-       }
-       // allocate the array
-       content = new byte[totalSize];
-       int offset = 0;
-       for (byte[] partBuffer : parts) {
-           System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
-           offset += partBuffer.length;
-       }
-       return content;
+       return IOUtils.toByteArray(inputStream);
    }
 
    /**

@@ -51,4 +51,12 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
 
     }
 
+    /**
+     * @param documentIi documentIi
+     * @throws PAException PAException
+     */
+    public void forceDelete(Ii documentIi) throws PAException {    
+        throw new PAException("Unavailable from the grid services");
+    }
+
 }
