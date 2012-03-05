@@ -165,6 +165,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 /**
@@ -204,6 +205,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifier is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
+    
+    private static final Logger LOG = Logger.getLogger(TrialRegistrationBeanLocal.class);
 
     private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi)
             throws PAException {
@@ -653,7 +656,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         // assign ownership
         RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
                 .getUserLastCreated()));
-        registryUserServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
+        if (usr != null) {
+            registryUserServiceLocal.assignOwnership(usr.getId(),
+                    IiConverter.convertToLong(studyProtocolIi));
+        } else {
+            LOG.error("A user that does *not* have an account in Registry has just registered a trial: "
+                    + IiConverter.convertToLong(studyProtocolIi)
+                    + ". His/her trial ownership will not be recorded, because there is no Registry user to link to..");
+        }
         //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
         //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
         //the line.
