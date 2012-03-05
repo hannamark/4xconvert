@@ -18,8 +18,8 @@
 
             <transaction src="${basedir}/sql/outcome_measure.sql"/> 
             <transaction src="${basedir}/sql/person_audit.sql"/>
-	<!--
             <transaction src="${basedir}/sql/org_audit.sql"/> 
+        	<!--
             <transaction src="${basedir}/sql/person.sql"/> -->
             <transaction src="${basedir}/sql/study_audit.sql"/>
             <transaction src="${basedir}/sql/arm_intervention.sql"/>
@@ -50,6 +50,8 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Org Audit"/>
+        <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running generic_contact"/>
         <groovy src="groovy/generic_contact.groovy"/>
         <echo message = "Running study"/>
@@ -63,8 +65,6 @@
         <echo message = "Running Person Audit"/>
         <groovy src="groovy/person_audit.groovy"/>
         <!--
-        <echo message = "Running Org Audit"/>
-        <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running Person"/>
         <groovy src="groovy/person.groovy"/> -->        
         <echo message = "Running Arm / Interventions"/>
