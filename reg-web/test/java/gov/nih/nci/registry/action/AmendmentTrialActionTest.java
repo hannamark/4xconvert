@@ -577,7 +577,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("02/22/2009");
         trialAction.setTrialDTO(dto);
-        assertEquals("error", trialAction.review());
+        assertEquals("review", trialAction.review());
     }
     
     @Test
