@@ -155,6 +155,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -1105,12 +1106,36 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         return dto;
     }
 
-    private DSet<Ii> getUpdatedStudyOtherIdentifiers(StudyProtocolDTO spDTO, DSet<Ii> additionalOtherIdentifiers) {
+    private DSet<Ii> getUpdatedStudyOtherIdentifiers(StudyProtocolDTO spDTO,
+            DSet<Ii> additionalOtherIdentifiers) {
         DSet<Ii> updatedOtherIdentifiers = spDTO.getSecondaryIdentifiers();
         if (ISOUtil.isDSetNotEmpty(additionalOtherIdentifiers)) {
-            updatedOtherIdentifiers.getItem().addAll(additionalOtherIdentifiers.getItem());
+            // See https://tracker.nci.nih.gov/browse/PO-4736.
+            // The reason for replacing this single line:
+            // "updatedOtherIdentifiers.getItem().addAll(additionalOtherIdentifiers.getItem());"
+            // with a loop and an additional method is because there is a data issue that exists
+            // in some of the tiers: some of 'Other' identifiers in study_otheridentifiers had their identifier_name
+            // as null, which messed up things.
+            // "updatedOtherIdentifiers.getItem()" set is Hibernate's PersistentSet, which made working with it
+            // a bit tricky. 
+            for (Ii ii : additionalOtherIdentifiers.getItem()) {
+                if (!containsIi(updatedOtherIdentifiers.getItem(),
+                        ii.getExtension(), ii.getRoot())) {
+                    updatedOtherIdentifiers.getItem().add(ii);
+                }
+            }
         }
         return updatedOtherIdentifiers;
+    }
+
+    private boolean containsIi(Set<Ii> item, String extension, String root) {
+        for (Ii ii : item) {
+            if (StringUtils.equals(ii.getExtension(), extension)
+                    && StringUtils.equals(ii.getRoot(), root)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

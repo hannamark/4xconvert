@@ -189,6 +189,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         for (Element secIdElt : secIdList) {
             Ii ii = new Ii();
             ii.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+            ii.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
             ii.setExtension(secIdElt.getText());
             iis.add(ii);
         }

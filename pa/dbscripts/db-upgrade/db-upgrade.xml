@@ -838,4 +838,9 @@
         <comment>Added study_site_owner table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-2034.sql"/>
      </changeSet>     
+     <changeSet id="PO-4736" author="krylovd">
+        <comment>Some of 'Other' identifiers in study_otheridentifiers had their identifier_name as null. 
+                 Set to 'Study Protocol Other Identifier'</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4736.sql"/>
+     </changeSet>       
 </databaseChangeLog>
