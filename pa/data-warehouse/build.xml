@@ -50,19 +50,21 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running generic_contact"/>
+        <groovy src="groovy/generic_contact.groovy"/>
+        <echo message = "Running study"/>
+        <groovy src="groovy/study.groovy"/>
         <echo message = "Running milestones"/>
         <groovy src="groovy/milestone.groovy"/>
         <echo message = "Running Outcome Measure"/>
         <groovy src="groovy/outcome_measure.groovy"/>
-        <echo message = "Running study"/>
-        <groovy src="groovy/study.groovy"/>
         <echo message = "Running Study Audit"/>
         <groovy src="groovy/study_audit.groovy"/>        
         <echo message = "Running Person Audit"/>
         <groovy src="groovy/person_audit.groovy"/>
         <!--
         <echo message = "Running Org Audit"/>
-        <groovy src="groovy/org_audit.groovy"/> 
+        <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running Person"/>
         <groovy src="groovy/person.groovy"/> -->        
         <echo message = "Running Arm / Interventions"/>
@@ -87,8 +89,6 @@
         <groovy src="groovy/processing_status.groovy"/>
         <echo message = "Running Org_families"/>
         <groovy src="groovy/org_families.groovy"/>
-        <echo message = "Running generic_contact"/>
-        <groovy src="groovy/generic_contact.groovy"/>
         <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
         <echo message = "Running biomarker"/>
