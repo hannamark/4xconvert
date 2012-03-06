@@ -150,7 +150,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + ",lead_org_sp_identifier,current_dwf_status_code,current_dwf_status_date,current_study_overall_status"
             + ",current_admin_milestone,current_scientific_milestone,current_other_milestone,admin_checkout_identifier"
             + ",admin_checkout_user,scientific_checkout_identifier,scientific_checkout_user,study_pi_first_name"
-            + ",study_pi_last_name,user_last_created_login,user_last_created_first,user_last_created_last"
+            + ",study_pi_last_name,user_last_created_login,user_last_created_first,user_last_created_last, " 
+            + "dcp_id, ctep_id"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -193,6 +194,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int USER_LAST_CREATED_LOGIN_IDX = 25;
     private static final int USER_LAST_CREATED_FIRST_IDX = 26;
     private static final int USER_LAST_CREATED_LAST_IDX = 27;
+    private static final int DCP_ID_IDX = 28;
+    private static final int CTEP_ID_IDX = 29;
 
     private static final int ACCESS_NO = 0;
     private static final int ACCESS_ADMIN = 1;
@@ -400,6 +403,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setProprietaryTrial(BooleanUtils.toBoolean((Boolean) row[PROPRIETARY_TRIAL_INDICATOR_IDX]));
         dto.setRecordVerificationDate((Date) row[RECORD_VERIFICATION_DATE_IDX]);
         dto.setStudyProtocolId(((BigInteger) row[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue());
+        dto.setDcpId((String) row[DCP_ID_IDX]);
+        dto.setCtepId((String) row[CTEP_ID_IDX]);
     }
 
     private void loadSubmissionType(StudyProtocolQueryDTO dto, Object[] row) {

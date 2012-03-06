@@ -104,6 +104,8 @@ public class StudyProtocolOptions {
     private boolean searchOnHoldTrials;   
     private SubmissionTypeCode trialSubmissionType;
     private boolean lockedTrials;
+    private boolean searchCTEPTrials;
+    private boolean searchDCPTrials;    
     private Long userId;
     private String lockedUser;
     private boolean inboxProcessing;
@@ -422,22 +424,55 @@ public class StudyProtocolOptions {
             this.interventionTypes.add(InterventionTypeCode.getByCode(intvType));
         }
     }
-/**
- * gets ctgoc xml required value.
- * @return boolean
- */
-public Boolean getCtgovXmlRequiredIndicator() {
-return ctgovXmlRequiredIndicator;
-}
 
-/**
- * sets ctgov xml required value.
- * @param ctgovXmlRequiredIndicator xml indicator
- */
-public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
-this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-}
+    /**
+     * gets ctgoc xml required value.
+     * 
+     * @return boolean
+     */
+    public Boolean getCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
+    }
 
+    /**
+     * sets ctgov xml required value.
+     * 
+     * @param ctgovXmlRequiredIndicator
+     *            xml indicator
+     */
+    public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * @return the searchCTEPTrials
+     */
+    public boolean isSearchCTEPTrials() {
+        return searchCTEPTrials;
+    }
+
+    /**
+     * @param searchCTEPTrials
+     *            the searchCTEPTrials to set
+     */
+    public void setSearchCTEPTrials(boolean searchCTEPTrials) {
+        this.searchCTEPTrials = searchCTEPTrials;
+    }
+
+    /**
+     * @return the searchDCPTrials
+     */
+    public boolean isSearchDCPTrials() {
+        return searchDCPTrials;
+    }
+
+    /**
+     * @param searchDCPTrials
+     *            the searchDCPTrials to set
+     */
+    public void setSearchDCPTrials(boolean searchDCPTrials) {
+        this.searchDCPTrials = searchDCPTrials;
+    }
     
     
 }

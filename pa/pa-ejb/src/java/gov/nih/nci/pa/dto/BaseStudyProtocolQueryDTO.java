@@ -93,6 +93,7 @@ import java.util.Date;
  * @author mshestopalov
  *
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class BaseStudyProtocolQueryDTO {
 
     private Long studyProtocolId;
@@ -111,6 +112,9 @@ public class BaseStudyProtocolQueryDTO {
     private PhaseAdditionalQualifierCode phaseAdditionalQualifier;
     private String studyProtocolType;
     private String nctIdentifier;
+    private String ctepId;
+    private String dcpId;
+    
     
     /**
      * 
@@ -326,6 +330,34 @@ public class BaseStudyProtocolQueryDTO {
      */
     public void setNctIdentifier(String nctIdentifier) {
         this.nctIdentifier = nctIdentifier;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the dcpId
+     */
+    public String getDcpId() {
+        return dcpId;
+    }
+
+    /**
+     * @param dcpId the dcpId to set
+     */
+    public void setDcpId(String dcpId) {
+        this.dcpId = dcpId;
     }
     
 }

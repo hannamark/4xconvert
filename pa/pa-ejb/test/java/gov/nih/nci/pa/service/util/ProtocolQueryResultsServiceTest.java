@@ -72,13 +72,15 @@ public class ProtocolQueryResultsServiceTest {
     String userLastCreatedLogin = "userlogin";
     String userLastCreatedFirst = "Jane";
     String userLastCreatedLast = "Smith";
+    String dcpId = "DCPID";
+    String ctepId = "CTEPID";
     Object[] qryResult = { studyProtocolIdentifier, officialTitle, proprietaryTrialIndicator, recordVerificationDate
             , ctgovXmlRequiredIndicator, updating, dateLastCreated, submissionNumber, nciNumber, nctNumber, leadOrgPoid
             , leadOrgName, leadOrgSpIdentifier, currentDwfStatusCode, currentDwfStatusDate, currentStudyOverallStatus
             , currentAdminMilestone, currentScientificMilestone, currentOtherMilestone, adminCheckoutIdentifier
             , adminCheckoutUser, scientificCheckoutIdentifiER, scientificCheckoutUser, studyPiFirstName,
             studyPiLastName
-            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast };
+            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId };
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

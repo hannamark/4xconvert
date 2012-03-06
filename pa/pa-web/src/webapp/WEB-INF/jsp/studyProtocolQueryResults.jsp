@@ -9,6 +9,10 @@
             name="records" requestURI="studyProtocolquery.action" export="false">
             <display:column escapeXml="true" class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"
                 href="studyProtocolview.action" paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable"/>
+            <display:column escapeXml="true" titleKey="studyProtocol.ctepIdentifier" property="ctepId"
+                sortable="true" headerClass="sortable"/>
+            <display:column escapeXml="true" titleKey="studyProtocol.dcpIdentifier" property="dcpId"
+                sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
                 <c:out value="${row.milestones.studyMilestone.milestone.code}" />

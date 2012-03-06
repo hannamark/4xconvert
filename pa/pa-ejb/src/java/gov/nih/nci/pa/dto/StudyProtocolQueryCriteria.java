@@ -109,7 +109,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
  */
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class StudyProtocolQueryCriteria implements Serializable {
 
     private static final long serialVersionUID = 1047596217516203744L;
@@ -139,6 +139,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     // for Inbox Processing
     private Boolean inBoxProcessing;
     private boolean studyLockedBy;
+    private boolean searchCTEPTrials;
+    private boolean searchDCPTrials;
     private String trialCategory;
     private Long userId;
     
@@ -868,21 +870,53 @@ public class StudyProtocolQueryCriteria implements Serializable {
         return result;
     }
 
-/**
- *   gets the ctgov xml reuired field.
- *   @return string value
- */
-public String getCtgovXmlRequiredIndicator() {
-    return ctgovXmlRequiredIndicator;
-}
+    /**
+     * gets the ctgov xml reuired field.
+     * 
+     * @return string value
+     */
+    public String getCtgovXmlRequiredIndicator() {
+        return ctgovXmlRequiredIndicator;
+    }
 
-/**
- * Sets ctgov xml requireds value.
- * @param ctgovXmlRequiredIndicator xml indicator
- */
-public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) { 
-    this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-}
-    
+    /**
+     * Sets ctgov xml requireds value.
+     * 
+     * @param ctgovXmlRequiredIndicator
+     *            xml indicator
+     */
+    public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) {
+        this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+
+    /**
+     * @return the searchCTEPTrials
+     */
+    public boolean isSearchCTEPTrials() {
+        return searchCTEPTrials;
+    }
+
+    /**
+     * @param searchCTEPTrials
+     *            the searchCTEPTrials to set
+     */
+    public void setSearchCTEPTrials(boolean searchCTEPTrials) {
+        this.searchCTEPTrials = searchCTEPTrials;
+    }
+
+    /**
+     * @return the searchDCPTrials
+     */
+    public boolean isSearchDCPTrials() {
+        return searchDCPTrials;
+    }
+
+    /**
+     * @param searchDCPTrials
+     *            the searchDCPTrials to set
+     */
+    public void setSearchDCPTrials(boolean searchDCPTrials) {
+        this.searchDCPTrials = searchDCPTrials;
+    }    
     
 }

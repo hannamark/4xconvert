@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -158,6 +159,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STATES_PARAM = "states";        
         private static final String COUNTRY_NAME_PARAM = "countryName";      
         private static final String LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM = "leadOrganizationFunctionalCode";
+        private static final String ID_ASSIGNER_FUNCTIONAL_CODE_PARAM = "idAssignerFunctionalCode";
         private static final String PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM = "participatingSitefunctionalCode";
         private static final String SOS_PARAM = "studyOverallStatusParam";
         private static final String DWS_PARAM = "documentWorkflowStatusParam";
@@ -390,6 +392,41 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         + "userIdentifier = :%s ) > 0", operator, SearchableUtils.ROOT_OBJ_ALIAS, CHECKOUT_PARAM));
                 params.put(CHECKOUT_PARAM, spo.getLockedUser());
             }
+
+            final String dcpIdExistsClause = "exists (select ssdcp.id from StudySite ssdcp where "
+                    + "ssdcp.studyProtocol.id = "
+                    + SearchableUtils.ROOT_OBJ_ALIAS
+                    + ".id and ssdcp.localStudyProtocolIdentifier is not null "
+                    + "and ssdcp.functionalCode = :"
+                    + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
+                    + " and ssdcp.researchOrganization.organization.name='"
+                    + PAConstants.DCP_ORG_NAME + "') ";            
+            
+            if (spo.isSearchDCPTrials()) {
+                String operator = determineOperator(whereClause);
+                params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                whereClause.append(String.format(" %s " + dcpIdExistsClause,
+                        operator));
+            }
+            
+            if (spo.isSearchCTEPTrials()) {
+                String operator = determineOperator(whereClause);
+                params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                whereClause
+                        .append(String
+                                .format(" %s exists (select ssctep.id from StudySite ssctep where "
+                                        + "ssctep.studyProtocol.id = "
+                                        + SearchableUtils.ROOT_OBJ_ALIAS
+                                        + ".id and ssctep.localStudyProtocolIdentifier is not null "
+                                        + "and ssctep.functionalCode = :"
+                                        + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
+                                        + " and ssctep.researchOrganization.organization.name='"
+                                        + PAConstants.CTEP_ORG_NAME
+                                        + "') and not " + dcpIdExistsClause,
+                                        operator));
+            }       
 
             if (spo.isInboxProcessing()) {
                 String operator = determineOperator(whereClause);

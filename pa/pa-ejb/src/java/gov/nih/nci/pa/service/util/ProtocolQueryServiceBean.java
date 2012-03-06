@@ -418,6 +418,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setExcludeRejectedTrials(BooleanUtils.isTrue(criteria.isExcludeRejectProtocol()));
         options.setLockedTrials(criteria.isStudyLockedBy());
         options.setLockedUser(criteria.getUserLastCreated());
+        options.setSearchCTEPTrials(criteria.isSearchCTEPTrials());
+        options.setSearchDCPTrials(criteria.isSearchDCPTrials());
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
         options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
@@ -656,6 +658,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
+                && !criteria.isSearchCTEPTrials()
+                && !criteria.isSearchDCPTrials()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null

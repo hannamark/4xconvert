@@ -30,6 +30,8 @@
                 $("submissionType").value="";
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
+                $("searchCTEPTrials").checked=false;
+                $("searchDCPTrials").checked=false;
             }
 
             document.onkeypress = runEnterScript;
@@ -194,8 +196,29 @@
                            <s:select headerKey="" headerValue="All" id="ctgovXmlRequiredIndicator" 
                            name="criteria.ctgovXmlRequiredIndicator" list="#{'True':'Yes','False':'No'}"  
                            value="criteria.ctgovXmlRequiredIndicator" cssStyle="width:206px" />                         
-                        </td>                       
+                        </td>   
+                        <td scope="row" class="label">
+                            <label for="searchCTEPTrials"><fmt:message key="studyProtocol.searchCTEPTrials"/></label>
+                        </td>
+                        <td>
+                            <s:checkbox id="searchCTEPTrials"
+                                onclick="if (this.checked) {$('searchDCPTrials').checked=false;}" 
+                                onkeypress="if (this.checked) {$('searchDCPTrials').checked=false;}"
+                                name="criteria.searchCTEPTrials" />                            
+                        </td>                                            
                     </tr>
+                    <tr>
+                        <td scope="row" class="label" colspan="2"></td>   
+                        <td scope="row" class="label">
+                            <label for="searchDCPTrials"><fmt:message key="studyProtocol.searchDCPTrials"/></label>
+                        </td>
+                        <td>
+                            <s:checkbox id="searchDCPTrials"
+                                onclick="if (this.checked) {$('searchCTEPTrials').checked=false;}" 
+                                onkeypress="if (this.checked) {$('searchCTEPTrials').checked=false;}"                             
+                                name="criteria.searchDCPTrials"/>                            
+                        </td>                                            
+                    </tr>                    
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
