@@ -32,7 +32,7 @@ def sql =
             CASE WHEN sp.fda_regulated_indicator THEN 'YES'
                  ELSE 'NO'
             END as fda_indicator,
-            CASE WHEN sp.proprietary_trial_indicator then 'Abbreviater'
+            CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
             	ELSE 'Complete'
             END as category,
             sp.identifier as system_id, sp.design_configuration_code, irb.review_board_approval_number,
