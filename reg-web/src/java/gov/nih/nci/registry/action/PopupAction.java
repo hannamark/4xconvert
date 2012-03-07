@@ -124,6 +124,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -144,6 +146,8 @@ public class PopupAction extends ActionSupport implements Preparable {
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
     private static final int AUS_STATE_CODE_LEN = 3;
+    
+    private static final Logger LOG  = Logger.getLogger(PopupAction.class);
 
 
     //Person attributes
@@ -425,7 +429,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Zip is a required field");
         }
 
-        if (countryName != null && (countryName.equalsIgnoreCase("USA") || countryName.equalsIgnoreCase("CAN"))
+        final boolean usaOrCanada = countryName != null
+                && (countryName.equalsIgnoreCase("USA") || countryName
+                        .equalsIgnoreCase("CAN"));
+        if (usaOrCanada
                 && (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2)) {
             addActionError("2-letter State/Province Code required for USA/Canada");
         }
@@ -440,9 +447,32 @@ public class PopupAction extends ActionSupport implements Preparable {
         } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
+        
+        if (StringUtils.isNotBlank(url) && !PAUtil.isCompleteURL(url)) {
+            addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
+        }
+        
         String phoneNumer = getPhoneNumber();
         String faxNumber = getFax();
         String ttyNumber = getTty();
+        
+        String badPhoneMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
+                + "555-555-5555 or 555-555-5555x123";
+        if (StringUtils.isNotBlank(phoneNumer) && usaOrCanada
+                && !PAUtil.isUsOrCanadaPhoneNumber(phoneNumer)) {
+            addActionError(String.format(badPhoneMsg, "phone"));
+        }
+
+        if (StringUtils.isNotBlank(faxNumber) && usaOrCanada
+                && !PAUtil.isUsOrCanadaPhoneNumber(faxNumber)) {
+            addActionError(String.format(badPhoneMsg, "fax"));
+        }
+
+        if (StringUtils.isNotBlank(ttyNumber) && usaOrCanada
+                && !PAUtil.isUsOrCanadaPhoneNumber(ttyNumber)) {
+            addActionError(String.format(badPhoneMsg, "TTY"));
+        }        
+        
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -490,15 +520,20 @@ public class PopupAction extends ActionSupport implements Preparable {
             callConvert.add(PoRegistry.getOrganizationEntityService().getOrganization(id));
             convertPoOrganizationDTO(callConvert, null);
         } catch (NullifiedEntityException e) {
-            handleError(e.getMessage());
+            handleError(e);
         } catch (URISyntaxException e) {
-            handleError(e.getMessage());
+            handleError(e);
         } catch (EntityValidationException e) {
-            handleError(e.getMessage());
+            handleError(e);
         } catch (CurationException e) {
-            handleError(e.getMessage());
+            handleError(e);
         }
         return "create_org_response";
+    }
+    
+    private String handleError(Exception exception) {
+        LOG.error(ExceptionUtils.getFullStackTrace(exception));
+        return handleError(exception.getMessage());
     }
 
     private String handleError(String message) {

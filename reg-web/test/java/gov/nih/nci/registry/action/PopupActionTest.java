@@ -200,6 +200,49 @@ public class PopupActionTest extends AbstractRegWebTest {
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Organization is a required field"));
     }
+    
+    @Test
+    public void testCreateOrg_BadURL() throws PAException{
+        popUpAction = new PopupAction();
+        populateValidUSAOrg();
+        popUpAction.setUrl("www.google.com");
+        assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().contains("Please provide a full URL that includes protocol " +
+        		"and host, e.g. http://cancer.gov/"));
+    }
+    
+    @Test
+    public void testCreateOrg_BadPhones() throws PAException{
+        popUpAction = new PopupAction();
+        populateValidUSAOrg();
+        popUpAction.setPhoneNumber("5555555555");
+        popUpAction.setFax("555-5555555x");
+        popUpAction.setTty("+1-555-5555555");        
+        assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada phone numbers must match ###-###-####x#*, " +
+        		"e.g. 555-555-5555 or 555-555-5555x123"));
+        assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada fax numbers must match ###-###-####x#*, " +
+                "e.g. 555-555-5555 or 555-555-5555x123"));        
+        assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada TTY numbers must match ###-###-####x#*, " +
+                "e.g. 555-555-5555 or 555-555-5555x123"));        
+    }
+    
+    
+    /**
+     * 
+     */
+    private void populateValidUSAOrg() {
+        popUpAction.setOrgName("Some Name");
+        popUpAction.setCountryName("USA");
+        popUpAction.setCityName("rock");
+        popUpAction.setStateName("MD");
+        popUpAction.setZipCode("20663");
+        popUpAction.setEmail("org@org.com");
+        popUpAction.setPhoneNumber("phoneNumber");
+        popUpAction.setFax("fax");
+        popUpAction.setTty("tty");
+        popUpAction.setUrl("http://org@org.com");
+    }    
 
     @Test
     public void testCreateOrgWithEmptyStAddress() throws PAException{
@@ -241,16 +284,7 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testCreateOrg_USA() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("Some Name");
-        popUpAction.setCountryName("USA");
-        popUpAction.setCityName("rock");
-        popUpAction.setStateName("MD");
-        popUpAction.setZipCode("20663");
-        popUpAction.setEmail("org@org.com");
-        popUpAction.setPhoneNumber("phoneNumber");
-        popUpAction.setFax("fax");
-        popUpAction.setTty("tty");
-        popUpAction.setUrl("http://org@org.com");
+        populateValidUSAOrg();
         assertEquals("create_org_response", popUpAction.createOrganization());
     }
 
