@@ -124,6 +124,8 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -376,6 +378,20 @@ public class PAUtil {
         Matcher m = p.matcher(match);
         return  m.matches();
     }
+    
+    /**
+     * Check validity of US or Canada phone number.
+     * 
+     * @param phone
+     *            phone.
+     * @return boolean match
+     */
+    public static boolean isUsOrCanadaPhoneNumber(String phone) {
+        Pattern p = Pattern.compile("^\\d{3}-\\d{3}-\\d{4}(x\\d+)?$");
+        Matcher m = p.matcher(phone);
+        return m.matches();
+    }
+    
 
      /**
      * Util method to validate Selection Yes/No.
@@ -1253,4 +1269,26 @@ public class PAUtil {
             throw new PAException("User " + user.getLoginName() + " is not a trial owner for trial id " + trialId);
         }
     }
+    
+    /**
+     * Checks whether the given URL is valid and complete, i.e. explicitly
+     * specifies at least protocol name and host name. This method is often used
+     * for checking URLs before passing them into {@link Tel} instances.
+     * 
+     * @param urlString URL
+     * @return boolean true or false
+     */
+    public static boolean isCompleteURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            if (StringUtils.isBlank(url.getProtocol())
+                    || StringUtils.isBlank(url.getHost())) {
+                return false;
+            }
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        return true;
+    }
+    
 }

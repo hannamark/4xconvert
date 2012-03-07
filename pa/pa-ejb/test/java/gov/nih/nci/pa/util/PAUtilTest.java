@@ -657,4 +657,31 @@ public class PAUtilTest {
         assertNull(msDto.getAdminMilestone().getMilestone());
         assertNull(msDto.getScientificMilestone().getMilestone());
     }
+    
+    @Test
+    public void testIsCompleteURL() {
+        assertFalse(PAUtil.isCompleteURL(""));
+        assertFalse(PAUtil.isCompleteURL("www.google.com"));
+        assertFalse(PAUtil.isCompleteURL(" @@@ "));
+        assertFalse(PAUtil.isCompleteURL("http:/www.google.com"));
+        assertTrue(PAUtil.isCompleteURL("http://www.google.com"));
+        assertTrue(PAUtil.isCompleteURL("https://www.google.com"));
+        assertTrue(PAUtil.isCompleteURL("http://www.google.com/"));
+        assertTrue(PAUtil.isCompleteURL("http://www.google.com:9999/"));
+        assertTrue(PAUtil
+                .isCompleteURL("http://localhost:39480/registry/protected/submitProprietaryTrial.action?" +
+                		"sum4FundingCatCode=Industrial#"));
+    }
+    
+    @Test
+    public void testIsUsOrCanadaPhoneNumber() {
+        assertFalse(PAUtil.isUsOrCanadaPhoneNumber(""));
+        assertFalse(PAUtil.isUsOrCanadaPhoneNumber("123"));
+        assertFalse(PAUtil.isUsOrCanadaPhoneNumber("abc"));
+        assertFalse(PAUtil.isUsOrCanadaPhoneNumber("5555555555"));
+        assertFalse(PAUtil.isUsOrCanadaPhoneNumber("555-555-55a5"));
+        assertTrue(PAUtil.isUsOrCanadaPhoneNumber("555-555-5555"));
+        assertTrue(PAUtil.isUsOrCanadaPhoneNumber("555-555-5555x123"));
+    }
+    
 }
