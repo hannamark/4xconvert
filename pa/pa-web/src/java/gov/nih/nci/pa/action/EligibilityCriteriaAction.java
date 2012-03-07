@@ -116,6 +116,8 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -533,6 +535,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             }
             query();
+            reOrder();
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -583,6 +586,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 addFieldError("reOrder", orderStr.toString());
             } else {
                 for (ISDesignDetailsWebDTO dto : eligibilityList) {
+                    fixDisplayOrder();
                     PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto
                         .getId()));
                     PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
@@ -595,6 +599,33 @@ public class EligibilityCriteriaAction extends ActionSupport {
         }
         return ELIGIBILITY;
     }
+    
+        
+        /**
+         * Sets the correct numbering to display orders in eligibility criteria.
+         */
+        private void fixDisplayOrder() {
+            Collections.sort(eligibilityList, iSDesignDetailsWebDTOComparator);
+            int i = 1;
+            for (ISDesignDetailsWebDTO dto : eligibilityList) {
+                dto.setDisplayOrder(i + "");
+                i++;
+            }
+        }
+        
+        /**
+         * 
+         */
+        private static Comparator<ISDesignDetailsWebDTO> iSDesignDetailsWebDTOComparator 
+            = new Comparator<ISDesignDetailsWebDTO>() {
+        
+            public int compare(ISDesignDetailsWebDTO dto1, ISDesignDetailsWebDTO dto2) {       
+                Integer displayOrder1 = Integer.valueOf(dto1.getDisplayOrder());
+                Integer displayOrder2 = Integer.valueOf(dto2.getDisplayOrder());
+                return displayOrder1.compareTo(displayOrder2);
+            }    
+        };
+     
 
     /**
      * @throws PAException
@@ -674,6 +705,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(webDTO, null);
             PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
             query();
+            reOrder();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             return ELIGIBILITY;
         } catch (Exception e) {
@@ -727,6 +759,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         try {
             PaRegistry.getPlannedActivityService().deletePlannedEligibilityCriterion(IiConverter.convertToIi(id));
             query();
+            reOrder();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());

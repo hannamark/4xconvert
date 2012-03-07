@@ -16,6 +16,57 @@
     <s:head />
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.1.js"/>"></script>
+	<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.tablednd.js"/>"></script>
+    <script type="text/javascript">
+		$(document).ready(function() {
+		    jQuery('#table-1').tableDnD({
+		    	onDragClass: "myDragClass",
+		    	onDrop: function(table, row){
+		    		var rows = table.tBodies[0].rows;		    		
+		    		for (var i=1; i<rows.length; i++) {
+		    			var inputId = '#eligibilityList_' + rows[i].id + '_displayOrder';
+		                jQuery(inputId).val(i);
+		            }
+			    }
+	    	});
+		    jQuery('#table-1 tr:even').addClass('alt');
+		});
+	</script>
+	<style type="text/css">
+		div#page {
+			background-color: white;
+			padding: 1em;
+		}
+		
+		.category td {
+			background-color: #E4EBF3;
+		}
+		
+		.tDnD_whileDrag {
+			background-color: #eee;
+		}
+		
+		tr.alt td {
+			background-color: #ecf6fc;
+		}
+		
+		tr.myDragClass td {
+			color: yellow;
+			background-color: #A8B8CE;
+		}
+		
+		td.dragHandle {
+			
+		}
+		
+		td.showDragHandle {
+			background-image: url(images/updown2.gif);
+			background-repeat: no-repeat;
+			background-position: center center;
+			cursor: move;
+		}
+	</style>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
 
@@ -195,9 +246,9 @@ BubbleTips.activateTipOn("dfn");
       <s:hidden name="id" /> 
        <table class="data">
                 <tr><td>
-                 <table class="form">
+                 <table class="form" id="table-1">
                  <tbody> 
-                 <tr>
+                 <tr class="nodrag nodrop">
                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></label></th>
                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/></label></th>
                   <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label></th>
@@ -210,7 +261,7 @@ BubbleTips.activateTipOn("dfn");
                   </tr>
       
                       <s:iterator value="eligibilityList" id="eligibilityList" status="stat" >
-                      <tr>
+                      <tr id="<s:property value='#stat.index'/>">
                        <td class="tdBoxed">
                        <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
@@ -240,7 +291,7 @@ BubbleTips.activateTipOn("dfn");
                        <td class="tdBoxed">
                           <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
                           <s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
-                          <s:textfield  name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
+                          <s:textfield  id="eligibilityList_%{#stat.index}_displayOrder" name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
                          </td>
                          <td>
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
