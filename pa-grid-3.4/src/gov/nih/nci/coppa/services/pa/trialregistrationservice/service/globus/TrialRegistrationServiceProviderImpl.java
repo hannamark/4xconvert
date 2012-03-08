@@ -56,4 +56,10 @@ public class TrialRegistrationServiceProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolResponse updateAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolResponse boxedResult = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolResponse();
+    impl.updateAbbreviatedInterventionalStudyProtocol(params.getInterventionalStudyProtocol().getInterventionalStudyProtocol(),params.getLeadOrganization().getOrganization(),params.getLeadOrganizationIdentifier().getSt(),params.getNctIdentifier().getSt(),params.getSummary4TypeCode().getCd(),params.getSummary4Organization().getOrganization(),params.getParticipatingSites().getStudySite(),params.getParticipatingSiteAccrualStatuses().getStudySiteAccrualStatus(),params.getDocuments().getDocument());
+    return boxedResult;
+  }
+
 }

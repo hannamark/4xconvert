@@ -93,6 +93,13 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
 		 	  
 	}
+	   				
+	public void authorizeUpdateAbbreviatedInterventionalStudyProtocol(Subject peerSubject, MessageContext context, QName operation) throws AuthorizationException {
+		
+		// authorization using service authorization from the enforce_auth extension
+		((AuthorizationExtension)authorizationClassMap.get("enforce_auth")).authorizeService(peerSubject,context,operation);
+		 	  
+	}
 	   
 	
 	public boolean isPermitted(Subject peerSubject, MessageContext context, QName operation)
@@ -118,6 +125,9 @@ public class TrialRegistrationServiceAuthorization implements PDP {
 			return true;
 		} else if(operation.getLocalPart().equals("getCtGovXml")){
 			authorizeGetCtGovXml(peerSubject, context, operation);
+			return true;
+		} else if(operation.getLocalPart().equals("updateAbbreviatedInterventionalStudyProtocol")){
+			authorizeUpdateAbbreviatedInterventionalStudyProtocol(peerSubject, context, operation);
 			return true;
 		} 		
 		return false;

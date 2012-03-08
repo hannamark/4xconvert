@@ -533,6 +533,80 @@
           </sequence>
         </complexType>
       </element>
+      <element name="UpdateAbbreviatedInterventionalStudyProtocolRequest">
+        <complexType>
+          <sequence>
+            <element name="interventionalStudyProtocol">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:InterventionalStudyProtocol" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="leadOrganization">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Organization" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="leadOrganizationIdentifier">
+              <complexType>
+                <sequence>
+                  <element ref="ns11:St" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="nctIdentifier">
+              <complexType>
+                <sequence>
+                  <element ref="ns11:St" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="summary4TypeCode">
+              <complexType>
+                <sequence>
+                  <element ref="ns11:Cd" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="summary4Organization">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Organization" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="participatingSites">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:StudySite" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="participatingSiteAccrualStatuses">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:StudySiteAccrualStatus" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="documents">
+              <complexType>
+                <sequence>
+                  <element ref="ns5:Document" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateAbbreviatedInterventionalStudyProtocolResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="TrialRegistrationServiceResourceProperties">
         <complexType>
           <sequence />
@@ -571,6 +645,12 @@
   <message name="GetCtGovXmlResponse">
     <part name="parameters" element="tns:GetCtGovXmlResponse" />
   </message>
+  <message name="UpdateAbbreviatedInterventionalStudyProtocolRequest">
+    <part name="parameters" element="tns:UpdateAbbreviatedInterventionalStudyProtocolRequest" />
+  </message>
+  <message name="UpdateAbbreviatedInterventionalStudyProtocolResponse">
+    <part name="parameters" element="tns:UpdateAbbreviatedInterventionalStudyProtocolResponse" />
+  </message>
   <message name="PAFaultFaultMessage">
     <part name="fault" element="ns6:PAFault" />
   </message>
@@ -603,6 +683,11 @@
     <operation name="getCtGovXml">
       <input message="tns:GetCtGovXmlRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/GetCtGovXmlRequest" />
       <output message="tns:GetCtGovXmlResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/GetCtGovXmlResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="updateAbbreviatedInterventionalStudyProtocol">
+      <input message="tns:UpdateAbbreviatedInterventionalStudyProtocolRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateAbbreviatedInterventionalStudyProtocolRequest" />
+      <output message="tns:UpdateAbbreviatedInterventionalStudyProtocolResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/UpdateAbbreviatedInterventionalStudyProtocolResponse" />
       <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/PAFaultFaultMessage" />
     </operation>
     <operation name="getServiceSecurityMetadata">

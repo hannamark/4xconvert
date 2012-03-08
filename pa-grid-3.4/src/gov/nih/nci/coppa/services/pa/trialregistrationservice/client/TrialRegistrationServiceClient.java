@@ -782,4 +782,39 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
     }
   }
 
+  public void updateAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol interventionalStudyProtocol,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.iso21090.extensions.St leadOrganizationIdentifier,gov.nih.nci.iso21090.extensions.St nctIdentifier,gov.nih.nci.iso21090.extensions.Cd summary4TypeCode,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudySite[] participatingSites,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] participatingSiteAccrualStatuses,gov.nih.nci.coppa.services.pa.Document[] documents) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    synchronized(portTypeMutex){
+      configureStubSecurity((Stub)portType,"updateAbbreviatedInterventionalStudyProtocol");
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequest params = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequest();
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestInterventionalStudyProtocol interventionalStudyProtocolContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestInterventionalStudyProtocol();
+    interventionalStudyProtocolContainer.setInterventionalStudyProtocol(interventionalStudyProtocol);
+    params.setInterventionalStudyProtocol(interventionalStudyProtocolContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestLeadOrganization leadOrganizationContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestLeadOrganization();
+    leadOrganizationContainer.setOrganization(leadOrganization);
+    params.setLeadOrganization(leadOrganizationContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestLeadOrganizationIdentifier leadOrganizationIdentifierContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestLeadOrganizationIdentifier();
+    leadOrganizationIdentifierContainer.setSt(leadOrganizationIdentifier);
+    params.setLeadOrganizationIdentifier(leadOrganizationIdentifierContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestNctIdentifier nctIdentifierContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestNctIdentifier();
+    nctIdentifierContainer.setSt(nctIdentifier);
+    params.setNctIdentifier(nctIdentifierContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestSummary4TypeCode summary4TypeCodeContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestSummary4TypeCode();
+    summary4TypeCodeContainer.setCd(summary4TypeCode);
+    params.setSummary4TypeCode(summary4TypeCodeContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestSummary4Organization summary4OrganizationContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestSummary4Organization();
+    summary4OrganizationContainer.setOrganization(summary4Organization);
+    params.setSummary4Organization(summary4OrganizationContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestParticipatingSites participatingSitesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestParticipatingSites();
+    participatingSitesContainer.setStudySite(participatingSites);
+    params.setParticipatingSites(participatingSitesContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestParticipatingSiteAccrualStatuses participatingSiteAccrualStatusesContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestParticipatingSiteAccrualStatuses();
+    participatingSiteAccrualStatusesContainer.setStudySiteAccrualStatus(participatingSiteAccrualStatuses);
+    params.setParticipatingSiteAccrualStatuses(participatingSiteAccrualStatusesContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestDocuments documentsContainer = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolRequestDocuments();
+    documentsContainer.setDocument(documents);
+    params.setDocuments(documentsContainer);
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.UpdateAbbreviatedInterventionalStudyProtocolResponse boxedResult = portType.updateAbbreviatedInterventionalStudyProtocol(params);
+    }
+  }
+
 }

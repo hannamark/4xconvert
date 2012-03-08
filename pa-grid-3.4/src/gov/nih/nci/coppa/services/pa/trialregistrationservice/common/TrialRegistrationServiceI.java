@@ -94,5 +94,22 @@ public interface TrialRegistrationServiceI {
    */
   public gov.nih.nci.coppa.services.pa.Ed getCtGovXml(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
+  /**
+   * Updates abbreviated interventional study protocol.
+   *
+   * @param interventionalStudyProtocol
+   * @param leadOrganization
+   * @param leadOrganizationIdentifier
+   * @param nctIdentifier
+   * @param summary4TypeCode
+   * @param summary4Organization
+   * @param participatingSites
+   * @param participatingSiteAccrualStatuses
+   * @param documents
+   * @throws PAFault
+   *	
+   */
+  public void updateAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol interventionalStudyProtocol,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.iso21090.extensions.St leadOrganizationIdentifier,gov.nih.nci.iso21090.extensions.St nctIdentifier,gov.nih.nci.iso21090.extensions.Cd summary4TypeCode,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudySite[] participatingSites,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] participatingSiteAccrualStatuses,gov.nih.nci.coppa.services.pa.Document[] documents) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+
 }
 
