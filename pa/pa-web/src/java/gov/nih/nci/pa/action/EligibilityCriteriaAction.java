@@ -608,7 +608,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             Collections.sort(eligibilityList, iSDesignDetailsWebDTOComparator);
             int i = 1;
             for (ISDesignDetailsWebDTO dto : eligibilityList) {
-                dto.setDisplayOrder(i + "");
+                dto.setDisplayOrder(String.valueOf(i));
                 i++;
             }
         }
