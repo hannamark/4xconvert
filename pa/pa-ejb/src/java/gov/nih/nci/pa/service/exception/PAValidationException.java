@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.exception;
 
+import javax.ejb.ApplicationException;
+
 import gov.nih.nci.pa.service.PAException;
 
 
@@ -90,6 +92,7 @@ import gov.nih.nci.pa.service.PAException;
  * @author vrushali
  *
  */
+@ApplicationException(rollback = true)
 public class PAValidationException extends PAException {
 
     private static final long serialVersionUID = -7988557360388434243L;
