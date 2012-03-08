@@ -79,7 +79,11 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     	webDTO.setValueText("test");
     	webDTO.setLabTestNameValueText("test lab name");
     	webDTO.setUnit("test unit");
+    	webDTO.setId("1");
     	eligibilityCriteriaAction.setWebDTO(webDTO);
+    	List<ISDesignDetailsWebDTO> webDTOList = new ArrayList<ISDesignDetailsWebDTO>();
+    	webDTOList.add(webDTO);
+    	eligibilityCriteriaAction.setEligibilityList(webDTOList);    	
         String result = eligibilityCriteriaAction.create();
         assertEquals("eligibility", result);
     }
