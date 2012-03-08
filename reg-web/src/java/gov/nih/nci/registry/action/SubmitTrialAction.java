@@ -115,12 +115,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
@@ -132,7 +129,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  */
 @SuppressWarnings("unchecked")
-public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
+public class SubmitTrialAction extends AbstractBaseTrialAction implements Preparable {
     private static final long serialVersionUID = -7644860242308952142L;
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
@@ -145,10 +142,14 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     private Long cbValue;
     private String page;
     private Long id;
-    private HttpServletResponse servletResponse;
-    private String trialAction = "submit";
-    private TrialDTO trialDTO;
     private String sum4FundingCatCode;
+    
+    /**
+     * Default constructor.
+     */
+    public SubmitTrialAction() {
+        setTrialAction("submit");
+    }
     
     /**
      * {@inheritDoc}
@@ -158,9 +159,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
-        if (trialDTO != null) {
-            trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                    .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
+        if (getTrialDTO() != null) {
+            getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));
         }
     }
 
@@ -176,7 +177,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                                                            getText("error.register.summary4FundingSponsorType"));
             return REDIRECT_TO_SEARCH;
         }
-        trialDTO = new TrialDTO();
+        setTrialDTO(new TrialDTO());
+        final TrialDTO trialDTO = getTrialDTO();
         trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
         trialDTO.setTrialType("Interventional");
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
@@ -193,10 +195,11 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      *
      * @return String
      */
-    public String create() {
+    public String create() {        
         try {
-            trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                    .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+            setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+            final TrialDTO trialDTO = getTrialDTO();
             if (trialDTO == null) {
                return ERROR;
             }
@@ -246,6 +249,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
              deleteSavedDraft();
         } catch (Exception e) {
+            final TrialDTO trialDTO = getTrialDTO();
             TrialSessionUtil.addSessionAttributes(trialDTO);
             if (!RegistryUtil.setFailureMessage(e)) {
                 addActionError("Error occured, please try again");
@@ -259,8 +263,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     }
 
     private void deleteSavedDraft() throws PAException {
-        if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
-            studyProtocolStageService.delete(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+        if (StringUtils.isNotEmpty(getTrialDTO().getStudyProtocolId())) {
+            studyProtocolStageService.delete(IiConverter.convertToIi(getTrialDTO().getStudyProtocolId()));
         }
     }
 
@@ -277,6 +281,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     private Ii getResponsiblePartyContactIi() {
         Ii responsiblePartyContactIi = null;
+        final TrialDTO trialDTO = getTrialDTO();
         if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
             responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
         }
@@ -293,7 +298,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     private void validateForm() throws IOException {
         TrialValidator validator = new TrialValidator();
-        Map<String, String> err = validator.validateTrial(trialDTO);
+        Map<String, String> err = validator.validateTrial(getTrialDTO());
         addErrors(err);
         validateDocuments();
     }
@@ -303,6 +308,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      * @return s
      */
     public String review() {
+        final TrialDTO trialDTO = getTrialDTO();
         try {
             clearErrorsAndMessages();
             validateForm();
@@ -339,7 +345,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         List<Ii> otherIdsList = (List<Ii>) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
         if (otherIdsList != null) {
-            trialDTO.setSecondaryIdentifierList(otherIdsList);
+            getTrialDTO().setSecondaryIdentifierList(otherIdsList);
         }
     }
 
@@ -348,7 +354,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
             .getSession().getAttribute(Constants.GRANT_LIST);
         if (grantList != null) {
-            trialDTO.setFundingDtos(grantList);
+            getTrialDTO().setFundingDtos(grantList);
         }
     }
 
@@ -357,7 +363,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.INDIDE_LIST);
         if (indList != null) {
-            trialDTO.setIndIdeDtos(indList);
+            getTrialDTO().setIndIdeDtos(indList);
         }
     }
 
@@ -375,11 +381,11 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      * @return s
      */
     public String edit() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        TrialSessionUtil.addSessionAttributes(trialDTO);
-        trialUtil.populateRegulatoryList(trialDTO);
-        setDocumentsInSession(trialDTO);
+        setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+        TrialSessionUtil.addSessionAttributes(getTrialDTO());
+        trialUtil.populateRegulatoryList(getTrialDTO());
+        setDocumentsInSession(getTrialDTO());
         return "edit";
     }
 
@@ -391,18 +397,18 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     public String getTrialOversightAuthorityOrganizationNameList() {
         try {
             String countryId = ServletActionContext.getRequest().getParameter("countryid");
-            if (trialDTO == null) {
-                trialDTO = new TrialDTO();
+            if (getTrialDTO() == null) {
+                setTrialDTO(new TrialDTO());
             }
             if (countryId != null && !("".equals(countryId))) {
-                trialDTO.setRegIdAuthOrgList(regulatoryInformationService.getRegulatoryAuthorityNameId(Long
+                getTrialDTO().setRegIdAuthOrgList(regulatoryInformationService.getRegulatoryAuthorityNameId(Long
                     .valueOf(countryId)));
             } else {
                 RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
                 defaultVal.setName("-Select Country-");
                 List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
                 regIdAuthOrgList.add(defaultVal);
-                trialDTO.setRegIdAuthOrgList(regIdAuthOrgList);
+                getTrialDTO().setRegIdAuthOrgList(regIdAuthOrgList);
             }
 
         } catch (PAException e) {
@@ -419,8 +425,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         try {
             addSecondaryIdsToTrialDto();
             validateDocuments();
+            final TrialDTO trialDTO = getTrialDTO();
             trialDTO.setDocDtos(getTrialDocuments());
-            trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
+            setTrialDTO((TrialDTO) trialUtil.saveDraft(trialDTO));
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
@@ -448,9 +455,10 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             addActionError("study protocol id cannot null.");
             return ERROR;
         }
-        trialDTO = new TrialDTO();
+        setTrialDTO(new TrialDTO());
         try {
-            trialDTO =  (TrialDTO) trialUtil.getTrialDTOForPartiallySumbissionById(pId);
+            setTrialDTO((TrialDTO) trialUtil.getTrialDTOForPartiallySumbissionById(pId));
+            final TrialDTO trialDTO = getTrialDTO();
             ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,
@@ -484,21 +492,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         }
         setTrialAction("deletePartialSubmission");
         return REDIRECT_TO_SEARCH;
-    }
-
-    /**
-     * @param response servletResponse
-     */
-    @Override
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
-    }
-
-    /**
-     * @return servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
     }
 
     /**
@@ -543,35 +536,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         this.page = page;
     }
 
-    /**
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
-    }
-
-    /**
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * @return the trialDTO
-     */
-    public TrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(TrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
-
-
+    
     /**
      * @param sum4FundingCatCode the sum4FundingCatCode to set
      */

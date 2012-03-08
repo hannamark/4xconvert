@@ -113,13 +113,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -129,16 +127,12 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author Kalpana Guthikonda
  * @since May 18 2010
  */
-public class UpdateProprietaryTrialAction extends ManageFileAction implements ServletResponseAware {
+public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAction {
 
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
-    private HttpServletResponse servletResponse;
-    private ProprietaryTrialDTO trialDTO;
-    private final TrialUtil  util = new TrialUtil();
-    private String trialAction = null;
-    private final TrialUtil trialUtil = new TrialUtil();
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
+    private final TrialUtil  util = new TrialUtil();
 
     /**
      * View.
@@ -149,13 +143,16 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         try {
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(pId));
-            trialDTO = new ProprietaryTrialDTO();
-            util.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
-            setDocumentsInSession();
-
-            ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+            setTrialDTO(new ProprietaryTrialDTO());
+            util.getProprietaryTrialDTOFromDb(studyProtocolIi, getTrialDTO());
+            setCurrentTrialDocumentsInSession();
+            ServletActionContext
+                    .getRequest()
+                    .getSession()
+                    .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE,
+                            getTrialDTO());
             setPageFrom("updateProprietaryTrial");
-            LOG.debug("Trial retrieved: " + trialDTO.getOfficialTitle());
+            LOG.debug("Trial retrieved: " + getTrialDTO().getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
             return ERROR;
@@ -180,7 +177,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
             if (hasActionErrors()) {
                 return ERROR;
             }
-            trialDTO.setDocDtos(getTrialDocuments());
+            getTrialDTO().setDocDtos(getTrialDocuments());
         } catch (IOException e) {
             addActionError(e.getMessage());
             return ERROR;
@@ -188,7 +185,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         ServletActionContext.getRequest().getSession().removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
         ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, getTrialDTO());
         return "review";
     }
 
@@ -206,12 +203,12 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      * @return s
      */
     public String edit() {
-        trialDTO = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        setDocumentsInSession();
+        setTrialDTO((ProprietaryTrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+        setCurrentTrialDocumentsInSession();
         try {
-            trialUtil.copyParticipatingSites(IiConverter.convertToStudyProtocolIi(
-                    Long.parseLong(trialDTO.getIdentifier())), trialDTO);
+            util.copyParticipatingSites(IiConverter.convertToStudyProtocolIi(
+                    Long.parseLong(getTrialDTO().getIdentifier())), getTrialDTO());
         } catch (Exception e) {
             LOG.error("Exception occured while calling edit() " + e);
             return ERROR;
@@ -225,8 +222,9 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      * @return the string
      */
     public String update() {
-        trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
-            getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        setTrialDTO((ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
+            getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+        final ProprietaryTrialDTO trialDTO = getTrialDTO();
         if (trialDTO == null) {
             return ERROR;
         }
@@ -256,7 +254,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
                     protocolDTO.getIdentifier().getExtension());
         } catch (PAException e) {
             LOG.error(e);
-            setDocumentsInSession();
+            setCurrentTrialDocumentsInSession();
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
@@ -269,6 +267,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      */
     private void enforceBusinessRules() throws IOException {
         HttpSession session = ServletActionContext.getRequest().getSession();
+        final ProprietaryTrialDTO trialDTO = getTrialDTO();
         if (StringUtils.isEmpty(trialDTO.getOfficialTitle())) {
             addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitle"));
         } else if (trialDTO.getOfficialTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
@@ -287,29 +286,11 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         checkSubmittingOrgRules();
     }
 
-    private void checkSummary4Funding() {
-        if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
-                && StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
-            addFieldError("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
-        }
-        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
-                && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
-            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Trial Submission Category");
-        }
-    }
-
-    private void checkNctAndDoc(HttpSession session) {
-        if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
-                && StringUtils.isEmpty(getProtocolDocFileName())
-                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
-            addFieldError("trialDTO.nctIdentifier", "Provide either NCT Number or Protocol Trial Template.\n");
-            addFieldError("trialDTO.protocolDocFileName", "Provide either NCT Number or Protocol Trial Template.\n");
-        }
-    }
+    
 
     private void checkSubmittingOrgRules() {
         PAServiceUtils paServiceUtils = new PAServiceUtils();
-        for (SubmittedOrganizationDTO dto : trialDTO.getParticipatingSitesList()) {
+        for (SubmittedOrganizationDTO dto : getTrialDTO().getParticipatingSitesList()) {
             if (StringUtils.isEmpty(dto.getSiteLocalTrialIdentifier())) {
                 addActionError("For " + dto.getName() + " Organization cannot have a null Local Trial Identifier ");
             }
@@ -357,11 +338,11 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         return isoDto;
     }
 
-    private void setDocumentsInSession() {
+    private void setCurrentTrialDocumentsInSession() {
         List<DocumentDTO> documentISOList;
         try {
             documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(
-                  IiConverter.convertToIi(trialDTO.getIdentifier()));
+                  IiConverter.convertToIi(getTrialDTO().getIdentifier()));
             if (!(documentISOList.isEmpty())) {
                 TrialDocumentWebDTO webDto = null;
                 for (DocumentDTO docDTO : documentISOList) {
@@ -387,53 +368,6 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
             ssaDTO.add(ssas);
         }
         return ssaDTO;
-    }
-
-    /**
-     * Sets the servlet response.
-     * @param response servletResponse
-     */
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
-    }
-
-    /**
-     * Gets the servlet response.
-     * @return servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * Gets the trial dto.
-     * @return the trialDTO
-     */
-    public ProprietaryTrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * Sets the trial dto.
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(ProprietaryTrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
-
-    /**
-     * Gets the trial action.
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * Sets the trial action.
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
-    }
+    }    
+    
 }

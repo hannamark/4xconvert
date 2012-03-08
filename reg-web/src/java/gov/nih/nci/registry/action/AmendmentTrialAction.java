@@ -116,13 +116,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
@@ -131,21 +128,17 @@ import com.opensymphony.xwork2.Preparable;
  *
  * @author Vrushali
  */
-public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
+public class AmendmentTrialAction extends AbstractBaseTrialAction implements Preparable {
 
     private static final long serialVersionUID = 613144140270457242L;
     
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
     
-    private HttpServletResponse servletResponse;
-    
     private LookUpTableServiceRemote lookUpTableService;
     private StudyInboxServiceLocal studyInboxService;
     private StudyProtocolServiceLocal studyProtocolService;
     private TrialRegistrationServiceLocal trialRegistrationService;
-    
-    private TrialDTO trialDTO;
-    private String trialAction;
+   
     private Long studyProtocolId;
     private final TrialUtil trialUtil = new TrialUtil();
     
@@ -158,9 +151,9 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
-        if (trialDTO != null) {
-            trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
+        if (getTrialDTO() != null) {
+            getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));
         }
     }
 
@@ -182,12 +175,16 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 return "unamendable";
             }
             TrialUtil util = new TrialUtil();
-            trialDTO = new TrialDTO();
-            util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
-            TrialSessionUtil.addSessionAttributes(trialDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+            setTrialDTO(new TrialDTO());
+            util.getTrialDTOFromDb(studyProtocolIi, getTrialDTO());
+            TrialSessionUtil.addSessionAttributes(getTrialDTO());
+            ServletActionContext
+                    .getRequest()
+                    .getSession()
+                    .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE,
+                            getTrialDTO());
             setPageFrom("amendTrial");
-            LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
+            LOG.info("Trial retrieved: " + getTrialDTO().getOfficialTitle());
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
             return ERROR;
@@ -213,6 +210,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      */
     @SuppressWarnings("unchecked")
     public String review() {
+        final TrialDTO trialDTO = getTrialDTO();
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
@@ -255,7 +253,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.GRANT_LIST);
         if (grantList != null) {
-            trialDTO.setFundingDtos(grantList);
+            getTrialDTO().setFundingDtos(grantList);
         }
     }
 
@@ -265,11 +263,12 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession().getAttribute(
                         Constants.INDIDE_LIST);
         if (indList != null) {
-            trialDTO.setIndIdeDtos(indList);
+            getTrialDTO().setIndIdeDtos(indList);
         }
     }
 
     private String handleErrors() {
+        final TrialDTO trialDTO = getTrialDTO();
         if (hasFieldErrors()) {
             ServletActionContext.getRequest().setAttribute("failureMessage",
                     "The form has errors and could not be submitted, please check the fields highlighted below");
@@ -290,11 +289,11 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @return s
      */
     public String edit() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        trialUtil.populateRegulatoryList(trialDTO);
-        TrialSessionUtil.addSessionAttributes(trialDTO);
-        setDocumentsInSession(trialDTO);
+        setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+        trialUtil.populateRegulatoryList(getTrialDTO());
+        TrialSessionUtil.addSessionAttributes(getTrialDTO());
+        setDocumentsInSession(getTrialDTO());
         return "edit";
     }
 
@@ -303,8 +302,9 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @return s
      */
     public String amend() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
+        final TrialDTO trialDTO = getTrialDTO();
         if (trialDTO == null) {
             return ERROR;
         }
@@ -333,7 +333,8 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
             OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
+            StudyResourcingDTO summary4studyResourcingDTO = util
+                    .convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
             // updated only if the ctGovXmlRequired is true
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
@@ -399,6 +400,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @throws IOException
      */
     private void enforceBusinessRules() throws PAException, IOException {
+        final TrialDTO trialDTO = getTrialDTO();
         if (StringUtils.isBlank(trialDTO.getAmendmentDate())) {
             addFieldError("trialDTO.amendmentDate", getText("error.submit.amendmentDate"));
         }
@@ -426,14 +428,16 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     }
 
     private boolean doStatusDatesRequireBusinessRuleValidation() throws PAException {
-        return StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
+        final TrialDTO trialDTO = getTrialDTO();
+        return StringUtils.isNotBlank(trialDTO.getStatusCode())
+                && RegistryUtil.isValidDate(trialDTO.getStatusDate())
                 && RegistryUtil.isValidDate(trialDTO.getPrimaryCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())
                 && new TrialValidator().isTrialStatusOrDateChanged(trialDTO);
     }
 
     private void findStatusDateBusinessRulesErrors() throws PAException {
-        Collection<String> errDate = new TrialValidator().enforceBusinessRulesForDates(trialDTO);
+        Collection<String> errDate = new TrialValidator().enforceBusinessRulesForDates(getTrialDTO());
         if (!errDate.isEmpty()) {
             for (String msg : errDate) {
                 addActionError(msg);
@@ -444,39 +448,13 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     private void validateStatusCode() {
         // Only allow completing amendment submission of the pre-IRB approved study is the
         // current trial status 'In-Review' is replaced with 'Approved'.
-        if (StringUtils.isNotBlank(trialDTO.getStatusCode())
-                && trialDTO.getStatusCode().equalsIgnoreCase("In Review")) {
+        if (StringUtils.isNotBlank(getTrialDTO().getStatusCode())
+                && getTrialDTO().getStatusCode().equalsIgnoreCase("In Review")) {
             addActionError("To Amend Submission of pre-IRB approved study replace "
                     + " current trial status 'In-Review' with 'Approved'");
         }
     }
-    /**
-     * @return the trialDTO
-     */
-    public TrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(TrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
-    /**
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
-    }
-
+   
     /**
      * @return the studyProtocolId
      */
@@ -489,21 +467,6 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
-    }
-
-    /**
-     * @return servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * @param response servletResponse
-     */
-    @Override
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
     }
 
     /**
