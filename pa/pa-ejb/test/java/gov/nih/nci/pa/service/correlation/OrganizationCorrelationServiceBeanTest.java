@@ -25,7 +25,6 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -57,8 +56,8 @@ import org.junit.Test;
  * @author vrushali
  *
  */
-public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTestCase {
-    private final OrganizationCorrelationServiceBean bean = new OrganizationCorrelationServiceBean();
+public class OrganizationCorrelationServiceBeanTest {
+    private final OrganizationCorrelationServiceBean bean = new OrganizationCorrelationServiceBean();;
     private CorrelationUtils corrUtils;
     private final HealthCareFacility hcfBO = new HealthCareFacility();
     private HealthCareFacilityCorrelationServiceRemote poHcfSvc;
@@ -70,6 +69,7 @@ public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTes
     @Before
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        OrganizationCorrelationServiceBean.resetCache();
     }
 
     @Test
@@ -240,8 +240,7 @@ public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTes
     }
 
     @Test
-    public void testGetPOOrgIdentifierByIdentifierType() throws NullifiedEntityException, NullifiedRoleException,
-            PAException, TooManyResultsException {
+    public void testGetPOOrgIdentifierByIdentifierType() throws Exception {
         try {
             bean.getPOOrgIdentifierByIdentifierType("");
             fail("Org name is null");
@@ -254,24 +253,69 @@ public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTes
         } catch (PAException e) {
             assertEquals("No org found", e.getMessage());
         }
+        setupPoSvcLocMock();
+        when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(null);
+        try {
+            bean.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
+            fail("No org found");
+        } catch (PAException e) {
+            assertEquals("No org found", e.getMessage());
+        }
         List<OrganizationDTO> orgList = new ArrayList<OrganizationDTO>();
         OrganizationDTO orgDTO = new OrganizationDTO();
         Ii orgPoIdentifier = new Ii();
         orgPoIdentifier.setExtension("1");
         orgDTO.setIdentifier(orgPoIdentifier);
+        orgDTO.setName(EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME));
         orgList.add(orgDTO);
-        setupPoSvcLocMock();
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(orgList);
         assertNotNull(bean.getPOOrgIdentifierByIdentifierType(PAConstants.CTEP_IDENTIFIER_TYPE));
+        // second time through uses cache
+        assertNotNull(bean.getPOOrgIdentifierByIdentifierType(PAConstants.CTEP_IDENTIFIER_TYPE));
+    }
+
+    @Test
+    public void testGetPOOrgIdentifierByIdentifierTypeDuplicate() throws Exception {
+        List<OrganizationDTO> orgList = new ArrayList<OrganizationDTO>();
+        OrganizationDTO orgDTO = new OrganizationDTO();
+        Ii orgPoIdentifier = new Ii();
+        orgPoIdentifier.setExtension("1");
+        orgDTO.setIdentifier(orgPoIdentifier);
+        orgDTO.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
         orgList.add(orgDTO);
+        orgList.add(orgDTO);
+        setupPoSvcLocMock();
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(orgList);
         try {
             bean.getPOOrgIdentifierByIdentifierType(PAConstants.DCP_IDENTIFIER_TYPE);
             fail("more than 1 record");
         } catch (PAException e) {
-            assertEquals(" there cannot be more than 1 record for DCPIdentifier", e.getMessage());
+            assertEquals("There cannot be more than 1 record for " + PAConstants.DCP_ORG_NAME, e.getMessage());
         }
+    }
+
+    @Test
+    public void testGetPOOrgIdentifierByIdentifierTypeSimilar() throws Exception {
+        List<OrganizationDTO> orgList = new ArrayList<OrganizationDTO>();
+        OrganizationDTO orgDTO = new OrganizationDTO();
+        Ii orgPoIdentifier = new Ii();
+        orgPoIdentifier.setExtension("1");
+        orgDTO.setIdentifier(orgPoIdentifier);
+        orgDTO.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
+        orgList.add(orgDTO);
+        OrganizationDTO orgDtoBad = new OrganizationDTO();
+        orgDtoBad.setIdentifier(orgPoIdentifier);
+        orgDtoBad.setName(EnOnConverter.convertToEnOn("Oregon " + PAConstants.DCP_ORG_NAME));
+        orgList.add(orgDtoBad);
+        setupPoSvcLocMock();
+        when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(orgList);
+        assertNotNull(bean.getPOOrgIdentifierByIdentifierType(PAConstants.DCP_IDENTIFIER_TYPE));
+    }
+
+    @Test
+    public void testGetPOOrgIdentifierByIdentifierTypeTooManyResults() throws Exception {
         TooManyResultsException tmException = new TooManyResultsException(0);
+        setupPoSvcLocMock();
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenThrow(tmException);
         try {
             bean.getPOOrgIdentifierByIdentifierType(PAConstants.DCP_IDENTIFIER_TYPE);

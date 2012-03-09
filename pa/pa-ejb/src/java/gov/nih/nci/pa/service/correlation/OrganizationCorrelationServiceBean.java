@@ -82,7 +82,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -112,8 +111,11 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -121,6 +123,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -140,9 +143,19 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     private CorrelationUtils corrUtils = new CorrelationUtils();
 
+    private static Map<String, String> dcpCtepCtgovOrgIdCache = new ConcurrentHashMap<String, String>();
+    private static final long CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+    private static Date cacheTimeout = new Date();
+
+    static void resetCache() {
+        dcpCtepCtgovOrgIdCache = new ConcurrentHashMap<String, String>();
+        cacheTimeout.setTime(new Date().getTime() + CACHE_DURATION);
+    }
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public Long createHcfWithExistingPoHcf(Ii poHcfIdentifier)
         throws PAException {
         HealthCareFacilityDTO hcfDTO = null;
@@ -172,7 +185,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                 throw new PAException("Unable to find Organization for identifier: "
                         + hcfDTO.getPlayerIdentifier().getExtension());
             }
-
             Organization paOrg = getCorrUtils().createPAOrganization(poOrgDTO);
             hcf = new HealthCareFacility();
             hcf.setOrganization(paOrg);
@@ -207,6 +219,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return Long
      * @throws PAException pe
      */
+    @Override
     public Long createHealthCareFacilityCorrelations(String orgPoIdentifier) throws PAException {
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
@@ -227,7 +240,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         // Step 2 : check if PO has hcf correlation if not create one
         HealthCareFacilityDTO hcfDTO = getOrCreatePAHealthCareFacilityCorrelation(orgPoIdentifier);
 
-
         // Step 3 : check for pa org, if not create one
         Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
                 orgPoIdentifier));
@@ -246,17 +258,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             getCorrUtils().createPADomain(hcf);
         }
         return hcf.getId();
-
     }
 
     private HealthCareFacilityDTO getOrCreatePAHealthCareFacilityCorrelation(String orgPoIdentifier)
     throws PAException {
         HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
         hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-
         List<HealthCareFacilityDTO> hcfDTOs =
             PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
-
         if (CollectionUtils.isEmpty(hcfDTOs)) {
             try {
                 Ii ii = PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
@@ -274,16 +283,15 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             hcfDTO = hcfDTOs.get(0);
         }
-
         return hcfDTO;
     }
-
 
     /**
      * @param orgPoIdentifier org id
      * @return Long
      * @throws PAException pe
      */
+    @Override
     public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException {
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
@@ -312,7 +320,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             paOrg = getCorrUtils().createPAOrganization(poOrg);
         }
 
-
         // Step 4 : Check of PA has hcf , if not create one
         ResearchOrganization ro = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(roDTO.getIdentifier()));
         if (ro == null) {
@@ -324,13 +331,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             getCorrUtils().createPADomain(ro);
         }
         return ro.getId();
-
     }
+
     /**
      * @param orgPoIdentifier org id
      * @return Long
      * @throws PAException pe
      */
+    @Override
     public Long createOversightCommitteeCorrelations(String orgPoIdentifier) throws PAException {
         if (orgPoIdentifier == null) {
             throw new PAException("Organization PO Identifier is null");
@@ -401,9 +409,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             ocDTO = ocDTOs.get(0);
         }
-
         return ocDTO;
-
     }
 
     private ResearchOrganizationDTO getOrCreatePAResearchOrganizationCorrelation(String orgPoIdentifier)
@@ -412,7 +418,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         List<ResearchOrganizationDTO> roDTOs = null;
         roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         roDTOs = PoRegistry.getResearchOrganizationCorrelationService().search(roDTO);
-
         if (CollectionUtils.isEmpty(roDTOs)) {
             try {
                 Ii ii = PoRegistry.getResearchOrganizationCorrelationService().createCorrelation(roDTO);
@@ -430,7 +435,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
             roDTO = roDTOs.get(0);
         }
-
         return roDTO;
     }
 
@@ -446,17 +450,16 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         return returnVal;
     }
 
-    /***
-     *
+    /**
      * @param studyProtocolId sp id
      * @param functionalCode functional code
      * @return List org
      * @throws PAException e
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Organization> getOrganizationByStudySite(Long studyProtocolId, StudySiteFunctionalCode functionalCode)
             throws PAException {
-
         Session session  = PaHibernateUtil.getCurrentSession();
         StringBuffer sb = new StringBuffer();
         sb.append("select org from Organization as org ");
@@ -478,7 +481,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         query = session.createQuery(sb.toString());
         queryList = query.list();
         return queryList;
-
     }
 
     /**
@@ -487,6 +489,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return Organization o
      * @throws PAException pe
      */
+    @Override
     public Organization createPAOrganizationUsingPO(OrganizationDTO poOrg) throws PAException {
         return getCorrUtils().createPAOrganization(poOrg);
     }
@@ -498,6 +501,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return Organization
      * @throws PAException onError
      */
+    @Override
     public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
         Organization o = null;
         Ii roIi = getROByFunctionRole(studyProtocolIi, cd);
@@ -510,28 +514,27 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     /**
      * {@inheritDoc}
      */
+    @Override
     public Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException {
         Ii returnVal = null;
         StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(cd);
         List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
                         .getByStudyProtocol(studyProtocolIi, spart);
-
         if (spDtos != null && !spDtos.isEmpty()) {
             returnVal = spDtos.get(0).getResearchOrganizationIi();
         }
-
         return returnVal;
     }
 
-    private EnOn convertIdTypeToName(String identifierType) throws PAException {
-        EnOn name = null;
+    private String convertIdTypeToName(String identifierType) throws PAException {
+        String name = null;
         if (identifierType.equalsIgnoreCase(PAConstants.NCT_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME);
+            name = PAConstants.CTGOV_ORG_NAME;
         } else if (identifierType.equalsIgnoreCase(PAConstants.CTEP_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME);
+            name = PAConstants.CTEP_ORG_NAME;
         } else if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
-            name = EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME);
+            name = PAConstants.DCP_ORG_NAME;
         }
 
         if (name == null) {
@@ -546,36 +549,56 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return po identifier
      * @throws PAException on error
      */
+    @Override
     public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {
-        OrganizationDTO poOrgDto = new OrganizationDTO();
-
-        poOrgDto.setName(convertIdTypeToName(identifierType));
-
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-        List<OrganizationDTO> poOrgs = null;
-        try {
-            poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto,
-                    limit);
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
+        if (cacheTimeout.before(new Date())) {
+            resetCache();
         }
-
-        String identifier = null;
-        if (poOrgs == null || poOrgs.isEmpty()) {
-            throw new PAException("No org found");
-        } else if (poOrgs.size() > 1) {
-            throw new PAException(" there cannot be more than 1 record for " + identifierType);
-        } else {
-            identifier = poOrgs.get(0).getIdentifier().getExtension();
+        String orgName = convertIdTypeToName(identifierType);
+        String identifier = dcpCtepCtgovOrgIdCache.get(orgName);
+        if (identifier == null) {
+            identifier = updateCache(orgName);
+            if (identifier == null) {
+                throw new PAException("No org found");
+            }
         }
         return identifier;
     }
+
+    private String updateCache(String orgName) throws PAException {
+        String identifier = null;
+        OrganizationDTO poOrgDto = new OrganizationDTO();
+        poOrgDto.setName(EnOnConverter.convertToEnOn(orgName));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<OrganizationDTO> poOrgs = null;
+        try {
+            poOrgs = PoRegistry.getOrganizationEntityService().search(poOrgDto, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        if (poOrgs != null) {
+            int count = 0;
+            for (OrganizationDTO org : poOrgs) {
+                if (StringUtils.equals(orgName, EnOnConverter.convertEnOnToString(org.getName()).trim())) {
+                    count++;
+                    identifier = org.getIdentifier().getExtension();
+                    dcpCtepCtgovOrgIdCache.put(orgName, identifier);
+                }
+            }
+            if (count > 1) {
+                throw new PAException("There cannot be more than 1 record for " + orgName);
+            }
+        }
+        return identifier;
+    }
+
     /**
      *
      * @param orgPoIdentifier id
      * @return ROId of PO
      * @throws PAException on error
      */
+    @Override
     public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException {
         Ii poROIi = null;
         if (ISOUtil.isIiNull(orgPoIdentifier)) {
@@ -592,7 +615,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         return poROIi;
     }
 
-
     /**
      * @param corrUtils the corrUtils to set
      */
@@ -600,12 +622,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         this.corrUtils = corrUtils;
     }
 
-
     /**
      * @return the corrUtils
      */
     public CorrelationUtils getCorrUtils() {
         return corrUtils;
     }
-
 }
