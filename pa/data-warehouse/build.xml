@@ -15,7 +15,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
-
+            <transaction src="${basedir}/sql/person_role.sql"/> 
             <transaction src="${basedir}/sql/outcome_measure.sql"/> 
             <transaction src="${basedir}/sql/person_audit.sql"/>
             <transaction src="${basedir}/sql/org_audit.sql"/> 
@@ -51,6 +51,8 @@
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
         <echo message = "Running Person"/>
         <groovy src="groovy/person.groovy"/>        
+        <echo message = "Running Person Role"/>
+        <groovy src="groovy/person_role.groovy"/>        
         <echo message = "Running Org Audit"/>
         <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running generic_contact"/>
