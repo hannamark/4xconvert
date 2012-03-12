@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceRemote;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyCurrentPaService;
@@ -271,6 +272,14 @@ public interface ServiceLocator {
     * @throws NamingException if unable to lookup.
     */
    TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException;
+   
+   /**
+    * Gets the ProprietaryTrialManagementServiceRemote service.
+    * @return the remote ProprietaryTrialManagementServiceRemote service
+    * @throws NamingException if unable to lookup.
+    */
+   ProprietaryTrialManagementServiceRemote getProprietaryTrialManagementService() throws NamingException;
+   
 
    /**
     * Gets the PDQ Disease service.

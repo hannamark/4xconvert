@@ -115,6 +115,7 @@ import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceRemote;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
 import gov.nih.nci.pa.service.StudyCurrentPaService;
@@ -480,5 +481,14 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      */
     public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws NamingException {
         return (CTGovXmlGeneratorServiceRemote) lookup("/pa/CTGovXmlGeneratorServiceBean/remote");
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.coppa.services.pa.grid.remote.ServiceLocator#getProprietaryTrialManagementService()
+     */
+    @Override
+    public ProprietaryTrialManagementServiceRemote getProprietaryTrialManagementService()
+            throws NamingException {
+        return (ProprietaryTrialManagementServiceRemote) lookup("/pa/ProprietaryTrialManagementBean/remote");
     }
 }
