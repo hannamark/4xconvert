@@ -70,3 +70,5 @@ sourceConnection.eachRow(sql) { row ->
  	 	tty: row.tty
 	)
 }
+
+println "Done with Person"
