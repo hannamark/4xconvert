@@ -5,7 +5,7 @@ def poSourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url']
     properties['datawarehouse.po.db.password'], properties['datawarehouse.po.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'], 
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def paSourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
+def paSourceConnection =    Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])    
     
 def roles = destinationConnection.dataSet("DW_PERSON_ROLE")
@@ -17,10 +17,13 @@ poSourceConnection.eachRow(hcpSql) { row ->
         hcps << row.person_id;
 }
 
+println "add hcps"
 
 hcps.each {row ->
 	roles.add(paSourceConnection.firstRow("select * from DW_PERSON where po_id=?", [row]))
 }
+
+println "done"
 
 destinationConnection.execute("UPDATE DW_PERSON_ROLE set ROLE_NAME = 'Healthcare Provider' where Role_name is null")
 
