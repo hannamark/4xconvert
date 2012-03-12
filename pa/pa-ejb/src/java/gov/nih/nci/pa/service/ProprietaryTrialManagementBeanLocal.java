@@ -75,9 +75,11 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -152,6 +154,8 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     private StudyMilestoneServicelocal studyMilestoneService;
     @EJB
     private RegistryUserServiceLocal userServiceLocal;
+    
+    private CSMUserUtil csmUserService = new CSMUserService();
 
     /**
      * update a proprietary trial.
@@ -183,7 +187,13 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         }
         try {
             StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
-            studyProtocolDTO.setProprietaryTrialIndicator(spDto.getProprietaryTrialIndicator());
+            final Bl proprietaryTrialIndicator = spDto.getProprietaryTrialIndicator();
+            if (Boolean.FALSE.equals(proprietaryTrialIndicator.getValue())) {
+                throw new PAException(
+                        VALIDATION_EXCEPTION
+                                + "Only abbreviated trials can be updated by this operation");
+            }
+            studyProtocolDTO.setProprietaryTrialIndicator(proprietaryTrialIndicator);
             validate(studyProtocolDTO, leadOrganizationDTO, leadOrganizationIdentifier, nctIdentifier, documentDTOs,
                     studySiteDTOs, studySiteAccrualDTOs);
             StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
@@ -285,7 +295,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         }
         studySiteDTO.setResearchOrganizationIi(IiConverter.convertToIi(PaRegistry.getOrganizationCorrelationService()
                 .createResearchOrganizationCorrelations(leadOrg.getIdentifier().getExtension())));
-        studySiteDTO.setLocalStudyProtocolIdentifier(leadOrganizationIdentifier);
+        studySiteDTO.setLocalStudyProtocolIdentifier(leadOrganizationIdentifier);        
         studySiteService.update(studySiteDTO);
     }
 
@@ -326,11 +336,58 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
+        validateNctAndProtocolDoc(nctIdentifier, documentDTOs, errorMsg);
         validateStudySites(studySiteDTOs, studySiteAccrualDTOs, errorMsg);
         validateDocWrkStatus(studyProtocolDTO, errorMsg);
         validateDocuments(documentDTOs, errorMsg);
+        validateRecuritmentStatusDateRules(studySiteDTOs, studySiteAccrualDTOs,
+                errorMsg);
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+        }
+    }
+
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private void validateRecuritmentStatusDateRules(
+            List<StudySiteDTO> studySiteDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualDTOs,
+            StringBuffer errorMsg) {
+        for (StudySiteDTO site : studySiteDTOs) {
+            if (ISOUtil.isStNull((site.getLocalStudyProtocolIdentifier()))) {
+                errorMsg.append("Participating sites cannot have an empty Local Trial Identifier ");
+            }
+            if (ISOUtil.isIiNull((site.getIdentifier()))) {
+                errorMsg.append("Participating sites must specify an existing identifer, "
+                        + "because this is an update operation ");
+            }
+            // find corresponding accrual status
+            for (StudySiteAccrualStatusDTO accrualDTO : studySiteAccrualDTOs) {
+                if (!ISOUtil.isIiNull(accrualDTO.getStudySiteIi())
+                        && !ISOUtil.isIiNull(site.getIdentifier())
+                        && StringUtils.equals(accrualDTO.getStudySiteIi()
+                                .getExtension(), site.getIdentifier()
+                                .getExtension())) {
+                    errorMsg.append(paServiceUtils
+                            .validateRecuritmentStatusDateRule(accrualDTO, site));
+                }
+            }
+        }
+    }
+
+    private void validateNctAndProtocolDoc(St nctIdentifier,
+            List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {
+        if (ISOUtil.isStNull(nctIdentifier)) {
+            boolean hasProtocolDoc = false;
+            for (DocumentDTO doc : documentDTOs) {
+                if (doc.getTypeCode() != null
+                        && DocumentTypeCode.PROTOCOL_DOCUMENT.getCode().equals(
+                                doc.getTypeCode().getCode())) {
+                    hasProtocolDoc = true;
+                }
+            }
+            if (!hasProtocolDoc) {
+                errorMsg.append("Provide either NCT Number or Protocol Trial Template ");
+            }
         }
     }
 
@@ -339,7 +396,10 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      * @param errorMsg
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    private void validateDocuments(List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {
+    private void validateDocuments(List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {        
+        String docErrors = paServiceUtils
+                .checkDocumentListForValidFileTypes(documentDTOs);
+        errorMsg.append(docErrors);        
         for (DocumentDTO docDto : documentDTOs) {
             if (!ISOUtil.isIiNull(docDto.getIdentifier())
                     && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
@@ -449,9 +509,8 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     private void validateOwner(StudyProtocolDTO studyProtocolDTO, StringBuffer errorMsg) throws PAException {
         String loginName = "";
         if (!ISOUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
-            loginName = studyProtocolDTO.getUserLastCreated().getValue();
-            CSMUserService userService = new CSMUserService();
-            User user = userService.getCSMUser(loginName);
+            loginName = studyProtocolDTO.getUserLastCreated().getValue();            
+            User user = csmUserService.getCSMUser(loginName);
             if (user == null) {
                 errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
             }
@@ -463,5 +522,91 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                         Long.parseLong(studyProtocolDTO.getIdentifier().getExtension()))) {
             errorMsg.append("Update to Trial can be submitted by the Owner of the original Trial.\n");
         }
+    }
+
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(
+            StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(
+            StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+
+    /**
+     * @param mailManagerSerivceLocal the mailManagerSerivceLocal to set
+     */
+    public void setMailManagerSerivceLocal(
+            MailManagerServiceLocal mailManagerSerivceLocal) {
+        this.mailManagerSerivceLocal = mailManagerSerivceLocal;
+    }
+
+
+    /**
+     * @param docWrkFlowStatusService the docWrkFlowStatusService to set
+     */
+    public void setDocWrkFlowStatusService(
+            DocumentWorkflowStatusServiceLocal docWrkFlowStatusService) {
+        this.docWrkFlowStatusService = docWrkFlowStatusService;
+    }
+
+
+    /**
+     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
+     */
+    public void setStudyInboxServiceLocal(
+            StudyInboxServiceLocal studyInboxServiceLocal) {
+        this.studyInboxServiceLocal = studyInboxServiceLocal;
+    }
+
+
+    /**
+     * @param documentService the documentService to set
+     */
+    public void setDocumentService(DocumentServiceLocal documentService) {
+        this.documentService = documentService;
+    }
+
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(
+            StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+
+    /**
+     * @param userServiceLocal the userServiceLocal to set
+     */
+    public void setUserServiceLocal(RegistryUserServiceLocal userServiceLocal) {
+        this.userServiceLocal = userServiceLocal;
+    }
+
+
+    /**
+     * @param userService the userService to set
+     */
+    public void setCsmUserService(CSMUserUtil userService) {
+        this.csmUserService = userService;
     }
 }

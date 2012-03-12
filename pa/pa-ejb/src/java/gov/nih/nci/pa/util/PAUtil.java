@@ -80,6 +80,8 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -1289,6 +1291,26 @@ public class PAUtil {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Gets a country name from a postal address.
+     * 
+     * @param postalAddress
+     *            Ad
+     * @return String
+     */
+    public static String getCountryName(Ad postalAddress) {
+        int partSize = postalAddress.getPart().size();
+        String countryName = "";
+        AddressPartType type = null;
+        for (int k = 0; k < partSize; k++) {
+            type = postalAddress.getPart().get(k).getType();
+            if (type.name().equals("CNT")) {
+                countryName = postalAddress.getPart().get(k).getCode();
+            }
+        }
+        return countryName;
     }
     
 }

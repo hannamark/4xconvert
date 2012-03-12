@@ -81,8 +81,6 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -1348,19 +1346,21 @@ public class PAServiceUtils {
               if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
                   RecruitmentStatusCode recruitmentStatus =
                       RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode());
-                  String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
-                  if (recruitmentStatus.isNonRecruiting()) {
-                      if (dateOpenedForAccrual != null) {
-                          errorMsg.append("Date Opened for Accrual must be null for ").append(recStatus);
+                  if (recruitmentStatus != null) {
+                      String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
+                      if (recruitmentStatus.isNonRecruiting()) {
+                          if (dateOpenedForAccrual != null) {
+                              errorMsg.append("Date Opened for Accrual must be null for ").append(recStatus);
+                          }
+                      } else if (dateOpenedForAccrual == null) {
+                          errorMsg.append("Date Opened for Accrual must be a valid date for ").append(recStatus);
                       }
-                  } else if (dateOpenedForAccrual == null) {
-                      errorMsg.append("Date Opened for Accrual must be a valid date for ").append(recStatus);
-                  }
-                  if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equalsIgnoreCase(recStatus)
-                          || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
-                          && dateClosedForAccrual == null) {
-                         errorMsg.append("Date Closed for Accrual must be a valid date for ").append(recStatus);
-                  }
+                      if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equalsIgnoreCase(recStatus)
+                              || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
+                              && dateClosedForAccrual == null) {
+                             errorMsg.append("Date Closed for Accrual must be a valid date for ").append(recStatus);
+                      }
+                 }
               }
 
           }
@@ -1677,30 +1677,16 @@ public class PAServiceUtils {
         if (!ISOUtil.isIiNull(entityIi)) {
             if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
                 OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
-                countryName = getCountryName(orgDTO.getPostalAddress());
+                countryName = PAUtil.getCountryName(orgDTO.getPostalAddress());
             }
             if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
                 PersonDTO perDTO = getPoPersonEntity(entityIi);
-                countryName = getCountryName(perDTO.getPostalAddress());
+                countryName = PAUtil.getCountryName(perDTO.getPostalAddress());
             }
         }
         return countryName;
     }
-    /**
-     * @param orgDTO
-     */
-    private String getCountryName(Ad postalAddress) {
-        int partSize = postalAddress.getPart().size();
-        String countryName = "";
-        AddressPartType type = null;
-        for (int k = 0; k < partSize; k++) {
-            type = postalAddress.getPart().get(k).getType();
-            if (type.name().equals("CNT")) {
-                countryName = postalAddress.getPart().get(k).getCode();
-            }
-        }
-        return countryName;
-    }
+    
     /**
      * Validates and format the phonenumber for the given scoper and adresses.
      * @param scoperIi The scoper Ii

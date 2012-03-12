@@ -265,4 +265,12 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         }
         return comments;
     }
+
+    /**
+     * @param docWrkFlowStatusService the docWrkFlowStatusService to set
+     */
+    public void setDocWrkFlowStatusService(
+            DocumentWorkflowStatusServiceLocal docWrkFlowStatusService) {
+        this.docWrkFlowStatusService = docWrkFlowStatusService;
+    }
 }

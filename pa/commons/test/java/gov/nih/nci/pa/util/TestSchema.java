@@ -366,6 +366,7 @@ public class TestSchema {
         sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
         sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         sPart.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
+        sPart.setAccrualDateRangeLow(ISOUtil.dateStringToTimestamp("03/11/2012"));
         sPart.setStudyProtocol(sp);
         addUpdObject(sPart);
         studySiteIds.add(sPart.getId());
@@ -375,7 +376,7 @@ public class TestSchema {
         sPart2.setResearchOrganization(rOrg);
         sPart2.setLocalStudyProtocolIdentifier("Local SP ID 02");
         sPart2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        sPart2.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
+        sPart2.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));        
         sPart2.setStudyProtocol(sp);
         addUpdObject(sPart2);
         studySiteIds.add(sPart2.getId());
@@ -539,6 +540,12 @@ public class TestSchema {
         ssas.setStatusDate(TODAY);
         ssas.setStudySite(sPart);
         addUpdObject(ssas);
+        
+        StudySiteAccrualStatus ssas2 = new StudySiteAccrualStatus();
+        ssas2.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+        ssas2.setStatusDate(TODAY);
+        ssas2.setStudySite(sPart2);
+        addUpdObject(ssas2);        
 
         PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();
         pec.setCategoryCode(ActivityCategoryCode.ELIGIBILITY_CRITERION);
@@ -1111,6 +1118,18 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
+    
+    public static DocumentWorkflowStatus createRejectedDocumentWorkflowStatus(StudyProtocol sp) {
+        DocumentWorkflowStatus create = new DocumentWorkflowStatus();
+        create.setStudyProtocol(sp);
+        create.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        create.setStatusDateRangeLow(TODAY);
+        create.setCommentText("Common Text");
+        create.setUserLastUpdated(getUser());
+        create.setDateLastUpdated(TODAY);
+        return create;
+    }
+    
 
     public static HealthCareFacility createHealthCareFacilityObj(Organization o) {
         HealthCareFacility hc = new HealthCareFacility();
