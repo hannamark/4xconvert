@@ -1,5 +1,6 @@
 import groovy.sql.Sql
 
+println "Person Role.Groovy"
 
 def poSourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], properties['datawarehouse.po.db.username'], 
     properties['datawarehouse.po.db.password'], properties['datawarehouse.po.jdbc.driver'])
