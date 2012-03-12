@@ -19,7 +19,7 @@ poSourceConnection.eachRow(hcpSql) { row ->
 
 
 hcps.each {row ->
-	roles.add(paSourceConnection.firstRow("select * from dw_person where po_id=?", [row]))
+	roles.add(paSourceConnection.firstRow("select * from DW_PERSON where po_id=?", [row]))
 }
 
 destinationConnection.execute("UPDATE DW_PERSON_ROLE set ROLE_NAME = 'Healthcare Provider' where Role_name is null")
@@ -33,7 +33,7 @@ poSourceConnection.eachRow(crsSql) { row ->
 }
 
 crss.each {row ->
-	roles.add(paSourceConnection.firstRow("select * from dw_person where po_id=?", [row]))
+	roles.add(paSourceConnection.firstRow("select * from DW_PERSON where po_id=?", [row]))
 }
 
 destinationConnection.execute("UPDATE DW_PERSON_ROLE set ROLE_NAME = 'Clinical Research Staff' where Role_name is null")
