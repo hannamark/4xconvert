@@ -847,4 +847,8 @@
         <comment>Updated views to return DCP and CTEP identifiers in Study Protocol DTOs.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4665.sql"/>
      </changeSet>
+     <changeSet id="PO-4732" author="guptag">
+        <comment>Updated view to return last updated date and amendemnt submission date in Study Protocol DTOs.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4732.sql"/>
+     </changeSet>
 </databaseChangeLog>

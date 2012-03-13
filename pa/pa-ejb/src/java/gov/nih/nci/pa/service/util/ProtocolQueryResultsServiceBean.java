@@ -151,7 +151,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + ",current_admin_milestone,current_scientific_milestone,current_other_milestone,admin_checkout_identifier"
             + ",admin_checkout_user,scientific_checkout_identifier,scientific_checkout_user,study_pi_first_name"
             + ",study_pi_last_name,user_last_created_login,user_last_created_first,user_last_created_last, " 
-            + "dcp_id, ctep_id"
+            + "dcp_id, ctep_id,amendment_date,date_last_updated"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -165,6 +165,10 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "where healthcare_facility.organization_identifier="
             + "(select organization.identifier from organization where "
             + "cast (organization.assigned_identifier as bigint)=:orgId))";
+    
+    static final String OTHER_IDENTIFIERS_QRY_STRING = "select study_protocol_id , extension, " 
+            + "identifier_name FROM study_otheridentifiers "
+            + "WHERE study_protocol_id IN (:ids)";
     
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
@@ -196,6 +200,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int USER_LAST_CREATED_LAST_IDX = 27;
     private static final int DCP_ID_IDX = 28;
     private static final int CTEP_ID_IDX = 29;
+    private static final int AMENDMENT_DATE = 30;
+    private static final int DATE_LAST_UPDATED = 31;
 
     private static final int ACCESS_NO = 0;
     private static final int ACCESS_ADMIN = 1;
@@ -225,7 +231,26 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         query.setText(QRY_STRING);
         query.addParameter("ids", ownerMap.keySet());
         List<Object[]> queryList = dataAccessService.findByQuery(query);
-        return convertResults(queryList, ownerMap, myTrialsOnly, userId, studyIDAndSiteOwnershipMap, rssOrgs);
+         
+        List<StudyProtocolQueryDTO> dtoList = convertResults(queryList, 
+                ownerMap, myTrialsOnly, userId, studyIDAndSiteOwnershipMap, rssOrgs);
+        
+        query = new DAQuery();
+        query.setSql(true);
+        query.setText(OTHER_IDENTIFIERS_QRY_STRING);
+        query.addParameter("ids", ownerMap.keySet());       
+        List<Object[]> otherIdentifierQueryList = dataAccessService.findByQuery(query);
+        
+        for (Object[] obj : otherIdentifierQueryList) { 
+            Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+            for (StudyProtocolQueryDTO dto : dtoList) {                
+               if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                   dto.getOtherIdentifiers().add((String) obj[1]);
+               }
+            }
+        }
+        
+        return dtoList;
     }
     
     /**
@@ -405,6 +430,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setStudyProtocolId(((BigInteger) row[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue());
         dto.setDcpId((String) row[DCP_ID_IDX]);
         dto.setCtepId((String) row[CTEP_ID_IDX]);
+        dto.setAmendmentDate((Date) row[AMENDMENT_DATE]); 
+        dto.setUpdatedDate((Date) row[DATE_LAST_UPDATED]);
     }
 
     private void loadSubmissionType(StudyProtocolQueryDTO dto, Object[] row) {
