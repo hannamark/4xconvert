@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
+
 import javax.ejb.Local;
 
 /**
@@ -109,4 +110,15 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException the exception.
      */
     boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi) throws PAException;
+
+    /**
+     * This method does exact same validation as {@link #validate(StudyOverallStatusDTO, StudyProtocolDTO)} does,
+     * but instead of throwing a {@link PAValidationException} it stores validation error messages
+     * in {@link StringBuilder} provided.
+     * @param overallStatusDTO StudyOverallStatusDTO
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param errorMsg StringBuilder
+     */
+    void validate(StudyOverallStatusDTO overallStatusDTO,
+            StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg);
 }

@@ -96,7 +96,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -153,6 +153,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 
 /**
@@ -414,10 +416,20 @@ public class TrialRegistrationValidatorTest {
     @Test
     public void testValidateOverallStatusException() throws PAException {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
-        doThrow(new PAException("PAException")).when(studyOverallStatusService).validate(overallStatusDTO, studyProtocolDTO);
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                ((StringBuilder)invocation.getArguments()[2]).append("ERROR");
+                return null;
+            }
+        }).when(studyOverallStatusService).validate(overallStatusDTO,
+                studyProtocolDTO, errorMsg);       
+        
         validator.validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
-        verify(studyOverallStatusService).validate(overallStatusDTO, studyProtocolDTO);
-        checkErrorMsg("PAException");
+        verify(studyOverallStatusService).validate(overallStatusDTO, studyProtocolDTO, errorMsg);
+        
+        assertTrue(errorMsg.toString().equals("ERROR"));
+        
     }
     
     /**
@@ -428,8 +440,8 @@ public class TrialRegistrationValidatorTest {
     public void testValidateOverallStatusValid() throws PAException {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         validator.validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
-        verify(studyOverallStatusService).validate(overallStatusDTO, studyProtocolDTO);
-        checkErrorMsg("");
+        verify(studyOverallStatusService).validate(overallStatusDTO, studyProtocolDTO, errorMsg);
+        assertTrue(errorMsg.length()==0);
     }
     
     /**

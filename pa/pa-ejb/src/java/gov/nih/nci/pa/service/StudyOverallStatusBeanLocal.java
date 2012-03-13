@@ -335,16 +335,7 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     public void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuilder errorMsg = new StringBuilder();
-        if (statusDto == null) {
-            errorMsg.append("Study Overall Status cannot be null. ");
-        } else {
-            if (!ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())
-                    && isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier())) {
-                errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
-            }
-            errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
-            validateReasonText(statusDto);
-        }
+        this.validate(statusDto, studyProtocolDTO, errorMsg);
         if (errorMsg.length() > 0) {
             throw new PAValidationException("Validation Exception " + errorMsg);
         }
@@ -578,5 +569,30 @@ public class StudyOverallStatusBeanLocal extends
      */
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceLocal#validate(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO,
+     *  gov.nih.nci.pa.iso.dto.StudyProtocolDTO, java.lang.StringBuilder)
+     */
+    @Override
+    public void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        try {
+            if (statusDto == null) {
+                errorMsg.append("Study Overall Status cannot be null. ");
+            } else {
+                if (!ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())
+                        && this.isTrialStatusOrDateChanged(statusDto,
+                                studyProtocolDTO.getIdentifier())) {
+                    errorMsg.append(enforceBusniessRuleForUpdate(statusDto,
+                            studyProtocolDTO));
+                }
+                errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
+                validateReasonText(statusDto);
+            }
+        } catch (PAException e) {
+            errorMsg.append(e.getMessage());
+        }
     }
 }

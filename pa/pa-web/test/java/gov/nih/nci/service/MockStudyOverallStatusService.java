@@ -214,4 +214,13 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceLocal#validate(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO, gov.nih.nci.pa.iso.dto.StudyProtocolDTO, java.lang.StringBuilder)
+     */
+    @Override
+    public void validate(StudyOverallStatusDTO overallStatusDTO,
+            StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        errorMsg.append("Invalid study status transition");        
+    }
+
 }

@@ -921,8 +921,8 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     @Test
     public void createInterventionalStudyProtocolValidationTest() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Validation Exception Submitter is required.");
-        thrown.expectMessage("Validation Exception Anticipated Primary Completion Date must be current or in "
+        thrown.expectMessage("Submitter is required.");
+        thrown.expectMessage("Anticipated Primary Completion Date must be current or in "
                 + "the future.");
         thrown.expectMessage("Document badfile.xml has an invalid file type.");
 

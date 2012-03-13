@@ -96,6 +96,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -113,6 +114,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.RegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
@@ -204,6 +206,7 @@ public class TrialRegistrationValidator {
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     private StudyResourcingServiceLocal studyResourcingService;
     private StudySiteServiceLocal studySiteService;
+    private RegulatoryAuthorityServiceLocal regulatoryAuthorityService;
 
     /**
      * Validates the input for a trial update.
@@ -268,6 +271,7 @@ public class TrialRegistrationValidator {
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
      * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException 
      */
     void validateStatusAndDates(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             StringBuilder errorMsg) {
@@ -342,14 +346,11 @@ public class TrialRegistrationValidator {
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
      * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException 
      */
     void validateOverallStatus(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            StringBuilder errorMsg) {
-        try {
-            studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
-        } catch (PAException e) {
-            errorMsg.append(e.getMessage());
-        }
+            StringBuilder errorMsg) {        
+        studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO, errorMsg);        
     }
 
     /**
@@ -756,6 +757,19 @@ public class TrialRegistrationValidator {
             check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
                   "Delayed posting Indicator is required if Section 801 is true.\n", errorMsg);
 
+            if (studyRegAuthDTO != null
+                    && !ISOUtil.isIiNull(studyRegAuthDTO
+                            .getRegulatoryAuthorityIdentifier())) {
+                RegulatoryAuthorityDTO raDTO = regulatoryAuthorityService
+                        .get(studyRegAuthDTO.getRegulatoryAuthorityIdentifier());
+                check(raDTO == null,
+                        "Regulatory Authority with the given identifier "
+                                + studyRegAuthDTO
+                                        .getRegulatoryAuthorityIdentifier()
+                                        .getExtension() + " is not found.\n",
+                        errorMsg);
+            }
+            
             if (containsNonExemptInds(studyIndldeDTOs)) {
                 check(!fdaRegulated,
                       "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.\n",
@@ -1180,5 +1194,13 @@ public class TrialRegistrationValidator {
      */
     public void setStudySiteService(StudySiteServiceLocal studySiteService) {
         this.studySiteService = studySiteService;
+    }
+    
+    /**
+     * @param regulatoryAuthorityService RegulatoryAuthorityServiceLocal
+     */
+    public void setRegulatoryAuthorityService(
+            RegulatoryAuthorityServiceLocal regulatoryAuthorityService) {
+        this.regulatoryAuthorityService = regulatoryAuthorityService;
     }
 }

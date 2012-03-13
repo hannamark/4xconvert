@@ -198,6 +198,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     @EJB private StudySiteContactServiceLocal studySiteContactService;
     @EJB private StudySiteServiceLocal studySiteService;
     @EJB private TSRReportGeneratorServiceRemote tsrReportService;
+    private RegulatoryAuthorityServiceLocal regulatoryAuthorityService = new RegulatoryAuthorityBeanLocal();
 
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
@@ -1240,6 +1241,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
         validator.setStudyResourcingService(studyResourcingService);
         validator.setStudySiteService(studySiteService);
+        validator.setRegulatoryAuthorityService(regulatoryAuthorityService);
         return validator;
     }
 
@@ -1396,4 +1398,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
         this.tsrReportService = tsrReportService;
     }
+    
+    /**
+     * @param regulatoryAuthorityService RegulatoryAuthorityServiceLocal
+     */
+    public void setRegulatoryAuthorityService(
+            RegulatoryAuthorityServiceLocal regulatoryAuthorityService) {
+        this.regulatoryAuthorityService = regulatoryAuthorityService;
+    }
+    
 }
