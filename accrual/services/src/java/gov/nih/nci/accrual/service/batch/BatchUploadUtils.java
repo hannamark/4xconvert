@@ -98,9 +98,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -258,7 +261,10 @@ public class BatchUploadUtils {
                 if (raceMap.get(patientId) == null) {
                     raceMap.put(patientId, Arrays.asList(line[RACE_INDEX]));
                 } else {
-                    raceMap.get(patientId).add(line[RACE_INDEX]);
+                    Set<String> hashSet = new HashSet<String>();
+                    hashSet.addAll(raceMap.get(patientId));
+                    hashSet.add(line[RACE_INDEX]);
+                    raceMap.put(patientId, new LinkedList<String>(hashSet));
                 }
             }
         }
