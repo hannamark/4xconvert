@@ -211,6 +211,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public List<StudyProtocolQueryDTO> getResults(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
             throws PAException {
         if (ids == null) {
