@@ -90,7 +90,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -431,7 +430,7 @@ public final class SearchableUtils {
     private static void constructDistinctClause(StringBuffer selectClause,
             List<String> attributes, boolean isCountOnly) {
         String distinctClause;
-        if (CollectionUtils.isEmpty(attributes)) {
+        if (attributes == null || attributes.isEmpty()) {
             distinctClause = DISTINCT.concat(ROOT_OBJ_ALIAS);
         } else {
             distinctClause = DISTINCT;
