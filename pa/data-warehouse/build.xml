@@ -63,10 +63,8 @@
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
         <echo message = "Running Person"/>
         <groovy src="groovy/person.groovy"/>    
-        <!--
         <echo message = "Running Person Role"/>
-        <groovy src="groovy/person_role.groovy"/> 
-        -->       
+        <groovy src="groovy/person_role.groovy"/>        
         <echo message = "Running Org Audit"/>
         <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running generic_contact"/>
