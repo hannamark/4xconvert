@@ -97,10 +97,12 @@ public class ProtocolQueryResultsServiceTest {
         // set up users
         admin = new RegistryUser();
         admin.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        admin.setId(ADMIN_USERID);
         when(usrMock.getUserById(ADMIN_USERID)).thenReturn(admin);
         memb = new RegistryUser();
         memb.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         memb.setAffiliatedOrganizationId(1L);
+        memb.setId(MEMB_USERID);
         when(usrMock.getUserById(MEMB_USERID)).thenReturn(memb);
 
         // set up owned study
@@ -300,7 +302,7 @@ public class ProtocolQueryResultsServiceTest {
      */
     @Test
     public void testGetStudiesOnWhichUserHasSite() throws PAException {
-        Map<Long, Boolean> map = bean.getStudiesOnWhichUserHasSite(MEMB_USERID) ;
+        Map<Long, Boolean> map = bean.getStudiesOnWhichUserHasSite(memb) ;
         assertEquals(1, map.size());
         assertEquals(Boolean.TRUE, map.get(studyProtocolIdentifier.longValue()));
     }

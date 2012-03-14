@@ -217,7 +217,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         if (ids == null) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
-        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(ids, myTrialsOnly, userId);
+        RegistryUser user = registryUserService.getUserById(userId);
+        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(ids, myTrialsOnly, userId, user);
         if (ownerMap.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed " + PAConstants.MAX_SEARCH_RESULTS
                     + ". Please refine the search criteria.");
@@ -225,7 +226,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         if (ownerMap.isEmpty()) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
-        Map<Long, Boolean> studyIDAndSiteOwnershipMap = getStudiesOnWhichUserHasSite(userId);
+        Map<Long, Boolean> studyIDAndSiteOwnershipMap = getStudiesOnWhichUserHasSite(user);
         List<String> rssOrgs = getRSSOrganizationNames();
         DAQuery query = new DAQuery();
         query.setSql(true);
@@ -234,7 +235,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         List<Object[]> queryList = dataAccessService.findByQuery(query);
          
         List<StudyProtocolQueryDTO> dtoList = convertResults(queryList, 
-                ownerMap, myTrialsOnly, userId, studyIDAndSiteOwnershipMap, rssOrgs);
+                ownerMap, myTrialsOnly, user, studyIDAndSiteOwnershipMap, rssOrgs);
         
         query = new DAQuery();
         query.setSql(true);
@@ -270,10 +271,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      * @return IDs of studies on which the user's affiliated organization is a participating site.
      * @throws PAException
      */
-    Map<Long, Boolean> getStudiesOnWhichUserHasSite(Long userId)
+    Map<Long, Boolean> getStudiesOnWhichUserHasSite(RegistryUser user)
             throws PAException {
-        Map<Long, Boolean> map = new HashMap<Long, Boolean>();
-        RegistryUser user = registryUserService.getUserById(userId);
+        Map<Long, Boolean> map = new HashMap<Long, Boolean>();        
         if (user != null && user.getAffiliatedOrganizationId() != null) {
             DAQuery query = new DAQuery();
             query.setSql(true);
@@ -284,7 +284,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
                 BigInteger studyId = (BigInteger) row[0];
                 BigInteger siteOwnerId = (BigInteger) row[1];
                 Boolean isOwner = siteOwnerId == null
-                        || (siteOwnerId != null && siteOwnerId.longValue() == userId
+                        || (siteOwnerId != null && siteOwnerId.longValue() == user.getId()
                                 .longValue())
                         || Boolean.TRUE.equals(map.get(studyId.longValue()));
                 map.put(studyId.longValue(), isOwner);
@@ -293,16 +293,20 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return map;
     }
 
-    private Map<Long, Integer> getOwnerMapAndFilterTrials(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
+    private Map<Long, Integer> getOwnerMapAndFilterTrials(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId, 
+            RegistryUser user)
             throws PAException {
         Set<Long> ownedStudies = getOwnedStudies(userId);
         Map<Long, Integer> ownerMap = new HashMap<Long, Integer>();
+        final boolean isAdmin = isAdmin(user);
         for (StudyProtocol sp : ids) {
             Integer access = ACCESS_NO;
             if (ownedStudies.contains(sp.getId())) {
                 access = ACCESS_OWNER;
-            } else if (isAdmin(userId)) {
-                access = ACCESS_ADMIN;
+            } else {                
+                if (isAdmin) {
+                    access = ACCESS_ADMIN;
+                }
             }
             if (access != ACCESS_NO || !myTrialsOnly) {
                 ownerMap.put(sp.getId(), access);
@@ -311,8 +315,11 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return ownerMap;
     }
 
-    private boolean isAdmin(Long userId) throws PAException {
-        RegistryUser user = registryUserService.getUserById(userId);
+    /**
+     * @param user
+     * @return
+     */
+    private boolean isAdmin(RegistryUser user) {
         return user == null ? false : UserOrgType.ADMIN.equals(user.getAffiliatedOrgUserType());
     }
 
@@ -344,9 +351,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
     private List<StudyProtocolQueryDTO> convertResults(List<Object[]> qryList,
-            Map<Long, Integer> ownerMap, boolean myTrialsOnly, Long userId,
+            Map<Long, Integer> ownerMap, boolean myTrialsOnly, RegistryUser user,
             Map<Long, Boolean> studyIDAndSiteOwnershipMap, List<String> rssOrgs) throws PAException {
-        String affiliatedOrg = getAffiliatedOrg(userId);
+        String affiliatedOrg = getAffiliatedOrg(user);
         List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
         for (Object[] row : qryList) {
             StudyProtocolQueryDTO dto = convertRow(row, rssOrgs);
@@ -376,9 +383,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return result;
     }
 
-    private String getAffiliatedOrg(Long userId) throws PAException {
-        String affiliatedOrg = "";
-        RegistryUser user = registryUserService.getUserById(userId);
+    private String getAffiliatedOrg(RegistryUser user) throws PAException {
+        String affiliatedOrg = "";        
         if (user != null) {
             affiliatedOrg = user.getAffiliateOrg();
         }
