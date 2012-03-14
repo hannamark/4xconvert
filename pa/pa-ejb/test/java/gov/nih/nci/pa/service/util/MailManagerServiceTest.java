@@ -212,8 +212,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         CSMUserService.setInstance(new MockCSMUserService());
 
-        ctGovXmlSrv.setLookUpTableService(lookUpTableSrv);
-
         bean.setCtGovXmlGeneratorService(ctGovXmlSrv);
         bean.setProtocolQueryService(protocolQrySrv);
         bean.setRegistryUserService(registryUserSrv);
