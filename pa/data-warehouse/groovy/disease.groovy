@@ -31,7 +31,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def diseases = destinationConnection.dataSet("DW_STUDY_DISEASE");
+def diseases = destinationConnection.dataSet("STG_DW_STUDY_DISEASE");
 sourceConnection.eachRow(sql) { row ->
     diseases.add(ct_gov_xml_indicator: row.ct_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
             disease_code: row.disease_code, disease_preferred_name: row.preferred_name, disease_menu_display_name: row.menu_display_name,

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS DW_STUDY_OUTCOME_MEASURE;
-CREATE TABLE DW_STUDY_OUTCOME_MEASURE (
+DROP TABLE IF EXISTS STG_DW_STUDY_OUTCOME_MEASURE;
+CREATE TABLE STG_DW_STUDY_OUTCOME_MEASURE (
     DESCRIPTION character varying(1000),
     name character varying(256),
     NCI_ID character varying(255),
@@ -12,5 +12,3 @@ CREATE TABLE DW_STUDY_OUTCOME_MEASURE (
 	username_updated character varying (256)
     );
 
-CREATE INDEX DW_STUDY_OUTCOME_DESC_IDX on dw_study_outcome_measure(description);
-CREATE INDEX DW_STUDY_OUTCOME_NCI_IDX on dw_study_outcome_measure(description);

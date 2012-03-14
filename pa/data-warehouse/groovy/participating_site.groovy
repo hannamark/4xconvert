@@ -17,7 +17,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def participating_sites = destinationConnection.dataSet("DW_STUDY_PARTICIPATING_SITE")
+def participating_sites = destinationConnection.dataSet("STG_DW_STUDY_PARTICIPATING_SITE")
 
 sourceConnection.eachRow(sql) { row ->
         participating_sites.add(contact_email: row.email, contact_name: row.contact_name, internal_system_id: row.identifier,
@@ -30,7 +30,7 @@ sourceConnection.eachRow("""select oid.extension, ps.identifier from study_site 
     where ps.functional_code = 'TREATING_SITE'""") { row ->
         nci_id = row.extension
         id = row.identifier
-        destinationConnection.execute("UPDATE DW_STUDY_PARTICIPATING_SITE SET NCI_ID = ? where internal_system_id = ?", [nci_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY_PARTICIPATING_SITE SET NCI_ID = ? where internal_system_id = ?", [nci_id, id])
     }
 
 
@@ -42,14 +42,14 @@ sourceConnection.eachRow("""select generic_contact.email, ps.identifier, cast(oc
         inner join organizational_contact as oc on oc.identifier = generic_contact.organizational_contact_identifier and oc.person_identifier is null""") { row ->
             email = row.email
             id = row.identifier
-            def titleRow = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier])
+            def titleRow = destinationConnection.firstRow("SELECT gc.title from STG_DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier])
             if (titleRow != null) {
 	            title = titleRow.title
 	        }
-            statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET CONTACT_EMAIL = ? , GENERIC_CONTACT = ? where internal_system_id = ?"
+            statement = "UPDATE STG_DW_STUDY_PARTICIPATING_SITE SET CONTACT_EMAIL = ? , GENERIC_CONTACT = ? where internal_system_id = ?"
             destinationConnection.execute(statement, [email, title, id])
         }
 
-destinationConnection.execute("""UPDATE DW_STUDY_PARTICIPATING_SITE SET ORG_ORG_FAMILY = fam_org.family_name
-    from dw_family_organization fam_org where fam_org.organization_name = org_name""");
+destinationConnection.execute("""UPDATE STG_DW_STUDY_PARTICIPATING_SITE SET ORG_ORG_FAMILY = fam_org.family_name
+    from STG_DW_family_organization fam_org where fam_org.organization_name = org_name""");
         

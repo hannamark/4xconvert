@@ -26,7 +26,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def indides = destinationConnection.dataSet("DW_STUDY_IND_IDE")
+def indides = destinationConnection.dataSet("STG_DW_STUDY_IND_IDE")
 sourceConnection.eachRow(sql) { row ->
     indides.add(date_last_created: row.date_last_created, date_last_updated: row.date_last_updated, expanded_access_indicator: row.access_indicator,
             expanded_access_status_code: row.expanded_access_status_code, grantor_code: row.grantor_code, holder_type_code: row.holder_type_code,

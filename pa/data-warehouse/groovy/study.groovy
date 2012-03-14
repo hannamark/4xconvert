@@ -113,7 +113,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
         properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
         properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def studies = destinationConnection.dataSet("DW_STUDY")
+def studies = destinationConnection.dataSet("STG_DW_STUDY")
 sourceConnection.eachRow(sql) { row ->
     destinationConnection.withTransaction {
         try {
@@ -157,7 +157,7 @@ sourceConnection.eachRow("""select ec.eligible_gender_code, pa.study_protocol_id
     where pa.category_code = 'ELIGIBILITY_CRITERION'""") { row ->
         id = row.study_protocol_identifier
         gender = row.eligible_gender_code
-        destinationConnection.execute("UPDATE DW_STUDY SET ELIGIBLE_GENDER = ? where internal_system_id = ? ", [gender, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET ELIGIBLE_GENDER = ? where internal_system_id = ? ", [gender, id])
     }
 
 sourceConnection.eachRow("""select trunc(ec.min_value) || ' ' || ec.min_unit as min_age, trunc(ec.max_value) || ' ' || ec.max_unit as max_age,
@@ -167,7 +167,7 @@ sourceConnection.eachRow("""select trunc(ec.min_value) || ' ' || ec.min_unit as 
         id = row.study_protocol_identifier
         min_age = row.min_age
         max_age = row.max_age
-        destinationConnection.execute("UPDATE DW_STUDY SET ELIGIBLE_MIN_AGE = ?, ELIGIBLE_MAX_AGE = ? where internal_system_id = ? ", [min_age, max_age, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET ELIGIBLE_MIN_AGE = ?, ELIGIBLE_MAX_AGE = ? where internal_system_id = ? ", [min_age, max_age, id])
     }
 
 sourceConnection.eachRow("""select cc.first_name || ' ' || cc.last_name as central_contact, sc.study_protocol_identifier from study_contact sc
@@ -176,15 +176,15 @@ sourceConnection.eachRow("""select cc.first_name || ' ' || cc.last_name as centr
     where  sc.role_code = 'CENTRAL_CONTACT' and sc.organizational_contact_identifier is null""") { row ->
         id = row.study_protocol_identifier
         name = row.central_contact
-        destinationConnection.execute("UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'PERSONAL', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [name, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET CENTRAL_CONTACT_TYPE = 'PERSONAL', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [name, id])
     }
 
 sourceConnection.eachRow("""select sc.study_protocol_identifier, CAST(oc.assigned_identifier as INTEGER) from study_contact sc
     inner join organizational_contact as oc on oc.identifier = sc.organizational_contact_identifier
     where sc.role_code = 'CENTRAL_CONTACT' and sc.organizational_contact_identifier is not null""") { row ->
         id = row.study_protocol_identifier
-        title = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
-        destinationConnection.execute("UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'GENERIC', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [title, id])
+        title = destinationConnection.firstRow("SELECT gc.title from STG_DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET CENTRAL_CONTACT_TYPE = 'GENERIC', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [title, id])
     }
 
 sourceConnection.eachRow("""select resp.name, sc.email, sc.telephone, sc.study_protocol_identifier from study_contact sc
@@ -195,7 +195,7 @@ sourceConnection.eachRow("""select resp.name, sc.email, sc.telephone, sc.study_p
         name = row.name
         email = row.email
         phone = row.telephone
-        destinationConnection.execute("""UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?,
+        destinationConnection.execute("""UPDATE STG_DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?,
             SPONSOR_RESP_PARTY_PHONE = ?, RESP_PARTY_TYPE = 'PI' where internal_system_id = ? """, [name, email, phone, id])
     }
 
@@ -211,7 +211,7 @@ sourceConnection.eachRow("""select org.name, resp.email, resp.telephone, p.first
         email = row.email
         phone = row.telephone
         contact = row.contact
-        destinationConnection.execute("""UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?, SPONSOR_RESP_PARTY_PHONE = ?,
+        destinationConnection.execute("""UPDATE STG_DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?, SPONSOR_RESP_PARTY_PHONE = ?,
                     RESP_PARTY_TYPE = 'SPONSOR', RESPONSIBLE_PARTY_PERSONAL_CONTACT = ?  where internal_system_id = ? """, [name, email, phone, contact, id])
     }
 
@@ -225,8 +225,8 @@ sourceConnection.eachRow("""select org.name, resp.email, resp.telephone, ss.stud
         name = row.name
         email = row.email
         phone = row.telephone
-        contact = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
-        destinationConnection.execute("""UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?, SPONSOR_RESP_PARTY_PHONE = ?,
+        contact = destinationConnection.firstRow("SELECT gc.title from STG_DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
+        destinationConnection.execute("""UPDATE STG_DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?, SPONSOR_RESP_PARTY_PHONE = ?,
                     RESP_PARTY_TYPE = 'SPONSOR', RESPONSIBLE_PARTY_GENERIC_CONTACT = ?  where internal_system_id = ? """, [name, email, phone, contact, id])
     }
 
@@ -235,16 +235,16 @@ sourceConnection.eachRow("""select oid.extension as nci_id, oid.study_protocol_i
     where oid.root = '2.16.840.1.113883.3.26.4.3' and oid.extension is not null""") { row ->
         id = row.study_protocol_id
         nci_id = row.nci_id
-        destinationConnection.execute("UPDATE DW_STUDY SET NCI_ID = ? where internal_system_id = ?", [nci_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET NCI_ID = ? where internal_system_id = ?", [nci_id, id])
     }
-destinationConnection.execute("DELETE FROM DW_STUDY where NCI_ID is null")
+destinationConnection.execute("DELETE FROM STG_DW_STUDY where NCI_ID is null")
 
 sourceConnection.eachRow("""select oid.extension as cdr_id, oid.study_protocol_id from study_otheridentifiers as oid
     inner join study_protocol as sp on sp.identifier = oid.study_protocol_id and sp.status_code = 'ACTIVE'
     where oid.extension like 'CDR%' """) { row ->
         id = row.study_protocol_id
         cdr_id = row.cdr_id
-        destinationConnection.execute("UPDATE DW_STUDY SET CDR_ID = ? where internal_system_id = ?", [cdr_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET CDR_ID = ? where internal_system_id = ?", [cdr_id, id])
     }
 
 
@@ -254,7 +254,7 @@ sourceConnection.eachRow("""select ss.local_sp_indentifier as ctep_id, ss.study_
     where ss.functional_code = 'IDENTIFIER_ASSIGNER'""") { row ->
         id = row.study_protocol_identifier
         ctep_id = row.ctep_id
-        destinationConnection.execute("UPDATE DW_STUDY SET CTEP_ID = ? where internal_system_id = ?", [ctep_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET CTEP_ID = ? where internal_system_id = ?", [ctep_id, id])
     }
 
 sourceConnection.eachRow("""select ss.local_sp_indentifier as dcp_id, ss.study_protocol_identifier from study_site ss
@@ -264,7 +264,7 @@ sourceConnection.eachRow("""select ss.local_sp_indentifier as dcp_id, ss.study_p
     where ss.functional_code = 'IDENTIFIER_ASSIGNER'""") { row ->
         id = row.study_protocol_identifier
         dcp_id = row.dcp_id
-        destinationConnection.execute("UPDATE DW_STUDY SET DCP_ID = ? where internal_system_id = ?", [dcp_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET DCP_ID = ? where internal_system_id = ?", [dcp_id, id])
     }
 
 sourceConnection.eachRow("""select ss.local_sp_indentifier as nct_id, ss.study_protocol_identifier from study_site ss
@@ -273,127 +273,127 @@ sourceConnection.eachRow("""select ss.local_sp_indentifier as nct_id, ss.study_p
     where ss.functional_code = 'IDENTIFIER_ASSIGNER'""") { row ->
         id = row.study_protocol_identifier
         nct_id = row.nct_id
-        destinationConnection.execute("UPDATE DW_STUDY SET NCT_ID = ? where internal_system_id = ?", [nct_id, id])
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET NCT_ID = ? where internal_system_id = ?", [nct_id, id])
     }
 
-destinationConnection.execute("""UPDATE DW_STUDY SET LEAD_ORG_ORG_FAMILY = fam_org.family_name
-    from dw_family_organization fam_org where fam_org.organization_name = lead_org""")
-destinationConnection.execute("""UPDATE DW_STUDY SET SPONSOR_ORG_FAMILY = fam_org.family_name
-    from dw_family_organization fam_org where fam_org.organization_name = sponsor""")
-destinationConnection.execute("""UPDATE DW_STUDY SET SUBMITTER_ORGANIZATION_FAMILY = fam_org.family_name
-    from dw_family_organization fam_org where fam_org.organization_name = submitter_organization""")
-destinationConnection.execute("""UPDATE DW_STUDY SET SUMMARY_4_FUNDING_SPONSOR_FAMILY = fam_org.family_name
-    from dw_family_organization fam_org where fam_org.organization_name = summary_4_funding_sponsor""")
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET LEAD_ORG_ORG_FAMILY = fam_org.family_name
+    from STG_DW_family_organization fam_org where fam_org.organization_name = lead_org""")
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET SPONSOR_ORG_FAMILY = fam_org.family_name
+    from STG_DW_family_organization fam_org where fam_org.organization_name = sponsor""")
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET SUBMITTER_ORGANIZATION_FAMILY = fam_org.family_name
+    from STG_DW_family_organization fam_org where fam_org.organization_name = submitter_organization""")
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET SUMMARY_4_FUNDING_SPONSOR_FAMILY = fam_org.family_name
+    from STG_DW_family_organization fam_org where fam_org.organization_name = summary_4_funding_sponsor""")
     
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Submission Received Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Submission Received Date'    
 	where CURRENT_MILESTONE='SUBMISSION_RECEIVED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Submission Acceptance Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Submission Acceptance Date'    
 	where CURRENT_MILESTONE='SUBMISSION_ACCEPTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Submission Rejection Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Submission Rejection Date'    
 	where CURRENT_MILESTONE='SUBMISSION_REJECTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Administrative Processing Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Administrative Processing Start Date'    
 	where CURRENT_MILESTONE='ADMINISTRATIVE_PROCESSING_START_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Administrative Processing Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Administrative Processing Completed Date'    
 	where CURRENT_MILESTONE='ADMINISTRATIVE_PROCESSING_COMPLETED_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Ready for Administrative QC Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Ready for Administrative QC Date'    
 	where CURRENT_MILESTONE='ADMINISTRATIVE_READY_FOR_QC'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Administrative QC Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Administrative QC Start Date'    
 	where CURRENT_MILESTONE='ADMINISTRATIVE_QC_START'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Administrative QC Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Administrative QC Completed Date'    
 	where CURRENT_MILESTONE='ADMINISTRATIVE_QC_COMPLETE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Scientific Processing Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Scientific Processing Start Date'    
 	where CURRENT_MILESTONE='SCIENTIFIC_PROCESSING_START_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Scientific Processing Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Scientific Processing Completed Date'    
 	where CURRENT_MILESTONE='SCIENTIFIC_PROCESSING_COMPLETED_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Ready for Scientific QC Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Ready for Scientific QC Date'    
 	where CURRENT_MILESTONE='SCIENTIFIC_READY_FOR_QC'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Scientific QC Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Scientific QC Start Date'    
 	where CURRENT_MILESTONE='SCIENTIFIC_QC_START'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Scientific QC Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Scientific QC Completed Date'    
 	where CURRENT_MILESTONE='SCIENTIFIC_QC_COMPLETE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Ready for Trial Summary Report Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Ready for Trial Summary Report Date'    
 	where CURRENT_MILESTONE='READY_FOR_TSR'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Trial Summary Report Sent Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Trial Summary Report Sent Date'    
 	where CURRENT_MILESTONE='TRIAL_SUMMARY_SENT'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Submitter Trial Summary Report Feedback Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Submitter Trial Summary Report Feedback Date'    
 	where CURRENT_MILESTONE='TRIAL_SUMMARY_FEEDBACK'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Initial Abstraction Verified Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Initial Abstraction Verified Date'    
 	where CURRENT_MILESTONE='INITIAL_ABSTRACTION_VERIFY'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='On-going Abstraction Verified Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='On-going Abstraction Verified Date'    
 	where CURRENT_MILESTONE='ONGOING_ABSTRACTION_VERIFICATION'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Late Rejection Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_MILESTONE='Late Rejection Date'    
 	where CURRENT_MILESTONE='LATE_REJECTION_DATE'""")
 
 
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Submitted'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Submitted'    
 	where PROCESSING_STATUS='SUBMITTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Amendment Submitted'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Amendment Submitted'    
 	where PROCESSING_STATUS='AMENDMENT_SUBMITTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Accepted'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Accepted'    
 	where PROCESSING_STATUS='ACCEPTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Rejected'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Rejected'    
 	where PROCESSING_STATUS='REJECTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstracted'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Abstracted'    
 	where PROCESSING_STATUS='ABSTRACTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Verification Pending'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Verification Pending'    
 	where PROCESSING_STATUS='VERIFICATION_PENDING'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstraction Verified Response'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Abstraction Verified Response'    
 	where PROCESSING_STATUS='ABSTRACTION_VERIFIED_RESPONSE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstraction Verified No Response'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='Abstraction Verified No Response'    
 	where PROCESSING_STATUS='ABSTRACTION_VERIFIED_NORESPONSE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='On-Hold'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET PROCESSING_STATUS='On-Hold'    
 	where PROCESSING_STATUS='ON_HOLD'""")
 
-destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Randomized Controlled Trial'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET MASKING_ALLOCATION_CODE='Randomized Controlled Trial'    
 	where MASKING_ALLOCATION_CODE='RANDOMIZED_CONTROLLED_TRIAL'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Non-Randomized Trial'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET MASKING_ALLOCATION_CODE='Non-Randomized Trial'    
 	where MASKING_ALLOCATION_CODE='NON_RANDOMIZED_TRIAL'""")
 	
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Efficacy'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Efficacy'    
 	where CLASSIFICATION_CODE='EFFICACY'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics'    
 	where CLASSIFICATION_CODE='PHARMACOKINETICS'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacodynamics'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Pharmacodynamics'    
 	where CLASSIFICATION_CODE='PHARMACODYNAMICS'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Safety/Efficacy'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Safety/Efficacy'    
 	where CLASSIFICATION_CODE='SAFETY_OR_EFFICACY'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Bio-availability'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Bio-availability'    
 	where CLASSIFICATION_CODE='BIO_AVAILABILITY'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Bio-equivalence'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Bio-equivalence'    
 	where CLASSIFICATION_CODE='BIO_EQUIVALENCE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics/dynamics'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics/dynamics'    
 	where CLASSIFICATION_CODE='PHARMACOKINETICS_OR_DYNAMICS'""")
 
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='In Review'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='In Review'    
 	where CURRENT_TRIAL_STATUS='IN_REVIEW'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Approved'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Approved'    
 	where CURRENT_TRIAL_STATUS='APPROVED'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Active'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Active'    
 	where CURRENT_TRIAL_STATUS='ACTIVE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Enrolling by Invitation'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Enrolling by Invitation'    
 	where CURRENT_TRIAL_STATUS='ENROLLING_BY_INVITATION'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual'    
 	where CURRENT_TRIAL_STATUS='CLOSED_TO_ACCRUAL'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual and Intervention'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual and Intervention'    
 	where CURRENT_TRIAL_STATUS='CLOSED_TO_ACCRUAL_AND_INTERVENTION'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual'    
 	where CURRENT_TRIAL_STATUS='TEMPORARILY_CLOSED_TO_ACCRUAL'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual and Intervention'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual and Intervention'    
 	where CURRENT_TRIAL_STATUS='TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Withdrawn'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Withdrawn'    
 	where CURRENT_TRIAL_STATUS='WITHDRAWN'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Administratively Complete'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Administratively Complete'    
 	where CURRENT_TRIAL_STATUS='ADMINISTRATIVELY_COMPLETE'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Complete'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET CURRENT_TRIAL_STATUS='Complete'    
 	where CURRENT_TRIAL_STATUS='COMPLETE'""")
 
-destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Single Group'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='Single Group'    
 	where INTERVENTIONAL_MODEL='SINGLE_GROUP'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Parallel'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='Parallel'    
 	where INTERVENTIONAL_MODEL='PARALLEL'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Cross-over'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='Cross-over'    
 	where INTERVENTIONAL_MODEL='CROSSOVER'""")
-destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Factorial'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='Factorial'    
 	where INTERVENTIONAL_MODEL='FACTORIAL'""")
 
 		

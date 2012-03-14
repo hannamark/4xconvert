@@ -44,7 +44,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], 
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'], 
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
 
-def persons = destinationConnection.dataSet("DW_PERSON")
+def persons = destinationConnection.dataSet("STG_DW_PERSON")
 
 sourceConnection.eachRow(sql) { row ->
     persons.add(
@@ -70,5 +70,3 @@ sourceConnection.eachRow(sql) { row ->
  	 	tty: row.tty
 	)
 }
-
-println "Done with Person"

@@ -8,7 +8,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'], 
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def anatomic_sites = destinationConnection.dataSet("DW_STUDY_ANATOMIC_SITE")
+def anatomic_sites = destinationConnection.dataSet("STG_DW_STUDY_ANATOMIC_SITE")
 sourceConnection.eachRow(sql) { row ->
     anatomic_sites.add(anatomic_site_name: row.display_name, nci_id: row.extension)
 }

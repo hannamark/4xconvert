@@ -13,7 +13,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def grants = destinationConnection.dataSet("DW_STUDY_GRANT")
+def grants = destinationConnection.dataSet("STG_DW_STUDY_GRANT")
 sourceConnection.eachRow(sql) { row ->
     grants.add(active_indicator: row.active, funding_mechanism_code: row.funding_mechanism_code, internal_system_id: row.identifier,
             nci_division_or_program: row.nci_division_program_code, nci_id: row.extension, nih_institution_code: row.nih_institute_code,

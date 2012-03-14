@@ -18,7 +18,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], 
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'], 
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
 
-def audits = destinationConnection.dataSet("DW_PERSON_AUDIT")
+def audits = destinationConnection.dataSet("STG_DW_PERSON_AUDIT")
 
 sourceConnection.eachRow(sql) { row ->
     audits.add(

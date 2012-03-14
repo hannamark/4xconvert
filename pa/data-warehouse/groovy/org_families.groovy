@@ -7,7 +7,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], 
     properties['datawarehouse.po.db.password'], properties['datawarehouse.po.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'], 
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def org_families = destinationConnection.dataSet("DW_FAMILY_ORGANIZATION");
+def org_families = destinationConnection.dataSet("STG_DW_FAMILY_ORGANIZATION");
 sourceConnection.eachRow(sql) { row ->
     org_families.add(family_name: row.family_name, organization_name: row.org_name)
 }

@@ -13,7 +13,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def oids = destinationConnection.dataSet("DW_STUDY_OTHER_IDENTIFIER");
+def oids = destinationConnection.dataSet("STG_DW_STUDY_OTHER_IDENTIFIER");
 
 sourceConnection.eachRow(sql) { row ->
     oids.add(

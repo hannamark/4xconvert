@@ -13,7 +13,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def biomarkers = destinationConnection.dataSet("DW_STUDY_BIOMARKER");
+def biomarkers = destinationConnection.dataSet("STG_DW_STUDY_BIOMARKER");
 sourceConnection.eachRow(sql) { row ->
     biomarkers.add(assay_purpose: row.assay_purpose_code, assay_purpose_description: row.assay_purpose_other_text, assay_type_code: row.assay_type_code,
             assay_type_description: row.assay_type_other_text, assay_use:row.assay_use_code, internal_system_id: row.identifier,
@@ -21,81 +21,81 @@ sourceConnection.eachRow(sql) { row ->
             tissue_collection_method_code: row.tissue_collection_method_code, tissue_specimen_type_code: row.tissue_specimen_type_code)
 }
 
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Correlative'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Correlative'    
 	where ASSAY_USE='CORRELATIVE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Integrated'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Integrated'    
 	where ASSAY_USE='INTEGRATED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Integral'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Integral'    
 	where ASSAY_USE='INTEGRAL'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Research'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Research'    
 	where ASSAY_USE='RESEARCH'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Unspecified'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Unspecified'    
 	where ASSAY_USE='UNSPECIFIED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_USE='Unclear'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_USE='Unclear'    
 	where ASSAY_USE='UNCLEAR'""")
 
 
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='RT-PCR'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='RT-PCR'    
 	where ASSAY_TYPE_CODE='RT_PCR'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Ligand Binding Assay'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Ligand Binding Assay'    
 	where ASSAY_TYPE_CODE='LIGAND_BINDING_ASSAY'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='In Situ Hybridization'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='In Situ Hybridization'    
 	where ASSAY_TYPE_CODE='IN_SITU_HYBRIDIZATION'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Microarray'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Microarray'    
 	where ASSAY_TYPE_CODE='MICROARRAY'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Comparative Genomic Hybridization'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Comparative Genomic Hybridization'    
 	where ASSAY_TYPE_CODE='CGH'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Loss of Heterozygosity'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Loss of Heterozygosity'    
 	where ASSAY_TYPE_CODE='LOH'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Fluorescence in situ hybridization'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Fluorescence in situ hybridization'    
 	where ASSAY_TYPE_CODE='FISH'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Immunohistochemistry'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Immunohistochemistry'    
 	where ASSAY_TYPE_CODE='IMMUNOHISTOCHEMISTRY'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Serum ECD Test'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Serum ECD Test'    
 	where ASSAY_TYPE_CODE='SERUM_ECD_TEST'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Unspecified'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Unspecified'    
 	where ASSAY_TYPE_CODE='UNSPECIFIED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Other'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_TYPE_CODE='Other'    
 	where ASSAY_TYPE_CODE='OTHER'""")
 
 
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Stratification Factor'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Stratification Factor'    
 	where ASSAY_PURPOSE='STRATIFICATION_FACTOR'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Treatment Assignment'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Treatment Assignment'    
 	where ASSAY_PURPOSE='TREATMENT_ASSIGNMENT'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Eligibility Criterion'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Eligibility Criterion'    
 	where ASSAY_PURPOSE='ELIGIBILITY_CRITERION'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Research'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Research'    
 	where ASSAY_PURPOSE='RESEARCH'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='PD - Dose Adjustment'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='PD - Dose Adjustment'    
 	where ASSAY_PURPOSE='PD'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Unspecified'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Unspecified'    
 	where ASSAY_PURPOSE='UNSPECIFIED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Other'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET ASSAY_PURPOSE='Other'    
 	where ASSAY_PURPOSE='OTHER'""")
 
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Unspecified'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Unspecified'    
 	where TISSUE_COLLECTION_METHOD_CODE='UNSPECIFIED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Voluntary'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Voluntary'    
 	where TISSUE_COLLECTION_METHOD_CODE='VOLUNTARY'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Mandatory on Consent'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Mandatory on Consent'    
 	where TISSUE_COLLECTION_METHOD_CODE='MANDATORY_ON_CONSENT'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Mandatory'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_COLLECTION_METHOD_CODE='Mandatory'    
 	where TISSUE_COLLECTION_METHOD_CODE='MANDATORY'""")
 	
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Unspecified'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Unspecified'    
 	where TISSUE_SPECIMEN_TYPE_CODE='UNSPECIFIED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Serum'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Serum'    
 	where TISSUE_SPECIMEN_TYPE_CODE='SERUM'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Plasma'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Plasma'    
 	where TISSUE_SPECIMEN_TYPE_CODE='PLASMA'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Whole Blood'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Whole Blood'    
 	where TISSUE_SPECIMEN_TYPE_CODE='WHOLE_BLOOD'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Tissue'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Tissue'    
 	where TISSUE_SPECIMEN_TYPE_CODE='TISSUE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Citrated Plasma'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Citrated Plasma'    
 	where TISSUE_SPECIMEN_TYPE_CODE='CITRATED_PLASMA'""")
-destinationConnection.execute("""UPDATE DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Other Fluid'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Other Fluid'    
 	where TISSUE_SPECIMEN_TYPE_CODE='OTHER_FLUID'""")
 	
 	

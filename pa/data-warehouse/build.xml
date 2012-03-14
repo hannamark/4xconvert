@@ -11,6 +11,18 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/> 
     
+    <target name="populate" depends="gen" description="Rename from staging to final tables, add indexes">
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
+            expandproperties="true" autocommit="true">
+	        <transaction src="${basedir}/sql/rename_all.sql"/> 
+	        <transaction src="${basedir}/sql/add_indexes.sql"/> 
+	        <classpath>
+	            <path refid="bda-utils.classpath"/>
+	        </classpath>
+        </sql>
+    </target>
+    
     <target name="init-db" description="Initializes the data warehousing tables">
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
@@ -48,11 +60,13 @@
         </sql>
     </target>
     
-    <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+    <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
         <echo message = "Running Person"/>
-        <groovy src="groovy/person.groovy"/>        
-<!--        <echo message = "Running Person Role"/>
-        <groovy src="groovy/person_role.groovy"/>        -->
+        <groovy src="groovy/person.groovy"/>    
+        <!--
+        <echo message = "Running Person Role"/>
+        <groovy src="groovy/person_role.groovy"/> 
+        -->       
         <echo message = "Running Org Audit"/>
         <groovy src="groovy/org_audit.groovy"/>
         <echo message = "Running generic_contact"/>
@@ -102,4 +116,6 @@
         <echo message = "Running participating_site"/>
         <groovy src="groovy/participating_site.groovy"/>
     </target>
+
+    
 </project>
