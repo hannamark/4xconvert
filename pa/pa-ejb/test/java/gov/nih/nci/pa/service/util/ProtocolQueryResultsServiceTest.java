@@ -155,30 +155,26 @@ public class ProtocolQueryResultsServiceTest {
     @Test
     public void emptyListTest() throws Exception {
         assertEquals(0, bean.getResults(null, false, null).size());
-        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), false, null).size());
-        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), false, 1L).size());
-        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), true, null).size());
-        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), true, 1L).size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, 1L).size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), true, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), true, 1L).size());
     }
 
     @Test(expected = PAException.class)
     public void tooManyResultsTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
-        for (long x = 0; x < 501; x++) {
-            StudyProtocol id = new StudyProtocol();
-            id.setId(x);
-            ids.add(id);
+        List<Long> ids = new ArrayList<Long>();
+        for (long x = 0; x < 501; x++) {           
+            ids.add(x);
         }
         bean.getResults(ids, false, null);
     }
 
     @Test(expected = PAException.class)
     public void tooManyResultsMyTrialsOnlyTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
-        for (long x = 0; x < 501; x++) {
-            StudyProtocol id = new StudyProtocol();
-            id.setId(x);
-            ids.add(id);
+        List<Long> ids = new ArrayList<Long>();
+        for (long x = 0; x < 501; x++) {          
+            ids.add(x);
         }
      //   assertEquals(1, bean.getResults(ids, true, MEMB_USERID).size());
         bean.getResults(ids, true, ADMIN_USERID);
@@ -186,21 +182,19 @@ public class ProtocolQueryResultsServiceTest {
 
     @Test
     public void noOwnedTrialsTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
-        for (long x = 0; x < 501; x++) {
-            StudyProtocol id = new StudyProtocol();
-            id.setId(x);
-            ids.add(id);
+        List<Long> ids = new ArrayList<Long>();
+        for (long x = 0; x < 501; x++) {           
+            ids.add(x);
         }
         assertEquals(0, bean.getResults(ids, true, null).size());
     }
 
     @Test
     public void submissionTypeTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        List<Long> ids = new ArrayList<Long>();
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
-        ids.add(id);
+        ids.add(studyProtocolIdentifier.longValue());
         // update
         List<StudyProtocolQueryDTO> trials = bean.getResults(ids, false, MEMB_USERID);
         assertEquals(1, trials.size());
@@ -219,10 +213,10 @@ public class ProtocolQueryResultsServiceTest {
 
     @Test
     public void adminTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        List<Long> ids = new ArrayList<Long>();
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
-        ids.add(id);
+        ids.add(studyProtocolIdentifier.longValue());
         // get all trials
         assertEquals(1, bean.getResults(ids, false, ADMIN_USERID).size());
         // get owned trials, not affiliated, not trial owner
@@ -246,10 +240,10 @@ public class ProtocolQueryResultsServiceTest {
 
     @Test
     public void memberTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        List<Long> ids = new ArrayList<Long>();
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
-        ids.add(id);
+        ids.add(studyProtocolIdentifier.longValue());
         // all trials
         assertEquals(1, bean.getResults(ids, false, MEMB_USERID).size());
         // owned trials, still returns since user is trial owner
@@ -258,10 +252,10 @@ public class ProtocolQueryResultsServiceTest {
 
     @Test
     public void nullSafeResultsTest() throws Exception {
-        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        List<Long> ids = new ArrayList<Long>();
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
-        ids.add(id);
+        ids.add(studyProtocolIdentifier.longValue());
         // don't null [0] as study_protocol_identifier never null
         for (int x = 1; x < qryResult.length; x++) {
             qryResult[x] = null;

@@ -95,6 +95,7 @@ import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -149,6 +150,21 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 leftJoinClause + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(getCriteria(), this.spo));
     }
+    
+    /**
+     * @param attributes attributes
+     * @param orderByProperty orderByProperty
+     * @param leftJoinClause leftJoinClause
+     * @param isCountOnly isCountOnly
+     * @return Query
+     */
+    public Query getQuery(List<String> attributes, String orderByProperty,
+            String leftJoinClause, boolean isCountOnly) {
+        return SearchableUtils.getQueryBySearchableFields(getCriteria(),
+                attributes, isCountOnly, orderByProperty, "", leftJoinClause
+                        + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(
+                        getCriteria(), this.spo));
+    } 
 
     /**
      * Helper that adds synonym checks to the searches.

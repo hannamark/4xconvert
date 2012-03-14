@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 
@@ -101,6 +100,6 @@ public interface ProtocolQueryResultsServiceLocal {
      * @return the populated list for display, empy list if not found
      * @throws PAException exception
      */
-    List<StudyProtocolQueryDTO> getResults(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
+    List<StudyProtocolQueryDTO> getResults(List<Long> ids, boolean myTrialsOnly, Long userId)
             throws PAException;
 }

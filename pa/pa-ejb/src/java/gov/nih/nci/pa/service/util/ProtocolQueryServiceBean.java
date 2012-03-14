@@ -126,6 +126,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -187,7 +188,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             throw new PAException("At least one criteria is required.");
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
+        List<Long> queryList = getStudyProtocolIdQueryResults(spsc);
         pdtos = protocolQueryResultsService.getResults(queryList,
                 BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId());
         if (CollectionUtils.isNotEmpty(pdtos)) {
@@ -459,6 +460,26 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             results = query.list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
+        }
+        return results;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<Long> getStudyProtocolIdQueryResults(
+            StudyProtocolQueryCriteria criteria) throws PAException {
+        StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
+        List<Long> results = new ArrayList<Long>();
+        try {
+            validateSearchCriteria(crit);
+            String orderBy = "";
+            String joinClause = createJoinClauseByCriteria(criteria);
+            Query query = crit.getQuery(Arrays.asList(new String[] {"id"}),
+                    orderBy, joinClause, false);
+            LOG.debug(query.getQueryString());
+            results = query.list();
+        } catch (Exception e) {
+            throw new PAException(
+                    "An error has occurred when searching for trials.", e);
         }
         return results;
     }

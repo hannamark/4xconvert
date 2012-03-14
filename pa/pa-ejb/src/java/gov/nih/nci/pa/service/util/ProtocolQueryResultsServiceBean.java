@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -212,13 +211,13 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      */
     @Override
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    public List<StudyProtocolQueryDTO> getResults(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
+    public List<StudyProtocolQueryDTO> getResults(List<Long> protocols, boolean myTrialsOnly, Long userId)
             throws PAException {
-        if (ids == null) {
+        if (protocols == null) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
         RegistryUser user = registryUserService.getUserById(userId);
-        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(ids, myTrialsOnly, userId, user);
+        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(protocols, myTrialsOnly, userId, user);
         if (ownerMap.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed " + PAConstants.MAX_SEARCH_RESULTS
                     + ". Please refine the search criteria.");
@@ -293,15 +292,15 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return map;
     }
 
-    private Map<Long, Integer> getOwnerMapAndFilterTrials(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId, 
-            RegistryUser user)
-            throws PAException {
+    private Map<Long, Integer> getOwnerMapAndFilterTrials(
+            List<Long> protocols, boolean myTrialsOnly, Long userId,
+            RegistryUser user) throws PAException {
         Set<Long> ownedStudies = getOwnedStudies(userId);
         Map<Long, Integer> ownerMap = new HashMap<Long, Integer>();
         final boolean isAdmin = isAdmin(user);
-        for (StudyProtocol sp : ids) {
+        for (Long spID : protocols) {
             Integer access = ACCESS_NO;
-            if (ownedStudies.contains(sp.getId())) {
+            if (ownedStudies.contains(spID)) {
                 access = ACCESS_OWNER;
             } else {                
                 if (isAdmin) {
@@ -309,7 +308,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
                 }
             }
             if (access != ACCESS_NO || !myTrialsOnly) {
-                ownerMap.put(sp.getId(), access);
+                ownerMap.put(spID, access);
             }
         }
         return ownerMap;
@@ -349,7 +348,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      * @return
      * @throws PAException
      */
-    @SuppressWarnings("PMD.CyclomaticComplexity")
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveParameterList" })
     private List<StudyProtocolQueryDTO> convertResults(List<Object[]> qryList,
             Map<Long, Integer> ownerMap, boolean myTrialsOnly, RegistryUser user,
             Map<Long, Boolean> studyIDAndSiteOwnershipMap, List<String> rssOrgs) throws PAException {

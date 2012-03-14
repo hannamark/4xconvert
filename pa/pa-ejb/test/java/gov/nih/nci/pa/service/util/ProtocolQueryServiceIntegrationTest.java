@@ -142,6 +142,7 @@ import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -155,6 +156,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -172,16 +174,18 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
      */
     class MockResultsService implements ProtocolQueryResultsServiceLocal {
         @Override
-        public List<StudyProtocolQueryDTO> getResults(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
+        public List<StudyProtocolQueryDTO> getResults(List<Long> ids, boolean myTrialsOnly, Long userId)
                 throws PAException {
             List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
-            for (StudyProtocol id : ids) {
+            for (Long id : ids) {
+                Session session = PaHibernateUtil.getCurrentSession();
+                StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class, id);                
                 StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
-                dto.setStudyProtocolId(id.getId());
-                dto.setOfficialTitle(id.getOfficialTitle());
-                dto.setPhaseCode(id.getPhaseCode());
-                dto.setPhaseAdditionalQualifier(id.getPhaseAdditionalQualifierCode());
-                dto.setProprietaryTrial(id.getProprietaryTrialIndicator());
+                dto.setStudyProtocolId(id);
+                dto.setOfficialTitle(sp.getOfficialTitle());
+                dto.setPhaseCode(sp.getPhaseCode());
+                dto.setPhaseAdditionalQualifier(sp.getPhaseAdditionalQualifierCode());
+                dto.setProprietaryTrial(sp.getProprietaryTrialIndicator());
                 result.add(dto);
             }
             return result;
