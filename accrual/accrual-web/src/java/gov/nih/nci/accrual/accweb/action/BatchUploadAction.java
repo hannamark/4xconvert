@@ -103,7 +103,8 @@ import org.apache.log4j.Logger;
 public class BatchUploadAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(BatchUploadAction.class);
-    private static final List<String> ALLOWED_TYPES = Arrays.asList("text/plain", "application/zip");
+    private static final List<String> ALLOWED_TYPES = Arrays.asList("text/plain", "application/zip", 
+            "application/x-zip-compressed");
     private File upload;
     private String uploadFileName;
     private String uploadContentType;
