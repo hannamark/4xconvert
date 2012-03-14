@@ -247,5 +247,13 @@ public interface RegistryUserService {
      */
     void removeSiteOwnership(Long userId, Long studySiteId) throws PAException;
 
+    /**
+     * Retrieves user's ID by login name.
+     * @param loginName loginName
+     * @return id
+     * @throws PAException PAException
+     */
+    Long getUserId(String loginName) throws PAException;
+    
     
 }

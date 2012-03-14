@@ -116,6 +116,7 @@ public class TestRegistryUserSchema {
     public static Long randomUserId;
     public static Long orgId;
     public static Long participatingSiteId;
+    public static Long csmUserTrialOwnerId;
 
     /**
      *
@@ -166,6 +167,7 @@ public class TestRegistryUserSchema {
         csmUserTrialOwner.setLastName("testO");
         csmUserTrialOwner.setUpdateDate(new Date());
         addUpdObject(csmUserTrialOwner);
+        csmUserTrialOwnerId = csmUserTrialOwner.getUserId();
 
         RegistryUser randomUser = new RegistryUser();
         randomUser.setCsmUser(csmUserRandom);

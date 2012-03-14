@@ -140,7 +140,8 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
 
         User csmUser = new User();
-
+        csmUser.setUserId(TestRegistryUserSchema.csmUserTrialOwnerId);
+        csmUser.setLoginName("trialOwnerTest");
         when(csmSvc.getCSMUserById(anyLong())).thenReturn(csmUser);
         when(csmSvc.getCSMUser(anyString())).thenReturn(csmUser);
         when(csmSvc.createCSMUser((RegistryUser)anyObject(), anyString(), anyString())).thenReturn(csmUser);
@@ -230,6 +231,13 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         RegistryUser usr = remoteEjb.getUserById(TestRegistryUserSchema.randomUserId);
         assertNotNull(usr);
     }
+    
+    @Test
+    public void getUserId() throws PAException {
+        Long id = remoteEjb.getUserId("trialOwnerTest");
+        assertEquals(TestRegistryUserSchema.trialOwnerUserId, id);
+    }
+    
 
     /**
      * Test the getUserByUserOrgType method.

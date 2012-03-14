@@ -218,4 +218,8 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
        
         
     }
+    
+    public Long getUserId(String loginName) throws PAException {
+        return 0L;
+    }
 }

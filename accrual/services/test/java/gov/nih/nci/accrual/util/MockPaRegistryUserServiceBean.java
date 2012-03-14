@@ -226,5 +226,9 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
             throws PAException {
         
     }
+    
+    public Long getUserId(String loginName) throws PAException {       
+        return 0L;
+    }
 
 }

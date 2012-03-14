@@ -85,7 +85,6 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -298,8 +297,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
         String loginName = ServletActionContext.getRequest().getRemoteUser();
-        RegistryUser loggedInUser = registryUserService.getUser(loginName);
-        queryCriteria.setUserId(loggedInUser.getId());
+        Long loggedInUserId = registryUserService.getUserId(loginName);
+        queryCriteria.setUserId(loggedInUserId);
         
         queryCriteria.setTrialCategory(criteria.getTrialCategory());
 

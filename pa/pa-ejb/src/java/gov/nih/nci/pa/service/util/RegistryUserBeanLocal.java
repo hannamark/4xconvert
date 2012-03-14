@@ -565,4 +565,25 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#getUserId(java.lang.String)
+     */
+    @Override
+    public Long getUserId(String loginName) throws PAException {        
+        Long id = null;
+        try {
+            User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
+            if (csmUser != null) {
+                Session session = PaHibernateUtil.getCurrentSession();
+                String hql = "select ru.id from RegistryUser ru where ru.csmUser = :csmuser";
+                Query query = session.createQuery(hql);
+                query.setParameter("csmuser", csmUser);
+                id = (Long) query.uniqueResult();
+            }
+        } catch (Exception cse) {
+            throw new PAException("CSM exception while retrieving user: " + loginName, cse);
+        }
+        return id;
+    }
+
 }
