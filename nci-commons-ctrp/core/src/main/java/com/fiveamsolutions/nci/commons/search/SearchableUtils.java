@@ -86,9 +86,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -99,7 +101,7 @@ import org.hibernate.Session;
  * 
  * @see Searchable
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 public final class SearchableUtils {
 
     /**
@@ -201,7 +203,7 @@ public final class SearchableUtils {
     /**
      * Callback interface.
      */
-    public static interface AnnotationCallback {
+    public interface AnnotationCallback {
         /**
          * @param m method callback was invoked on
          * @param result result of invoking the method
@@ -299,16 +301,47 @@ public final class SearchableUtils {
      * @param helper helper function to call after iterating, but before doing hibernate session work
      * @return query object
      */
-    @SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })
+    @SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })   
     public static Query getQueryBySearchableFields(final Object obj, boolean isCountOnly, String orderByClause,
-            String groupByClause, String leftJoinClause, Session session, AfterIterationHelper helper) {
+            String groupByClause, String leftJoinClause, Session session, AfterIterationHelper helper) {   
+        return getQueryBySearchableFields(obj, new ArrayList<String>(),
+                isCountOnly, orderByClause, groupByClause, leftJoinClause,
+                session, helper);
+    }
+    
+    /**
+     * @param obj
+     *            object to inspect
+     * @param isCountOnly
+     *            do a count query
+     * @param orderByClause
+     *            hql order by clause, if none leave blank
+     * @param groupByClause
+     *            hql group by clause, if none leave blank
+     * @param leftJoinClause
+     *            hql left join clause, if none leave blank
+     * @param session
+     *            hibernate session
+     * @param helper
+     *            helper function to call after iterating, but before doing
+     *            hibernate session work
+     * @param attributes object attributes to select
+     * @return query object
+     */
+    @SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })
+    // CHECKSTYLE:OFF
+    public static Query getQueryBySearchableFields(final Object obj,
+            List<String> attributes, boolean isCountOnly, String orderByClause,
+            String groupByClause, String leftJoinClause, Session session,
+            AfterIterationHelper helper) {
         final StringBuffer selectClause = new StringBuffer(SELECT);
         final Map<String, Object> params = new HashMap<String, Object>();
-        
-        constructSelectClause(obj, isCountOnly, orderByClause, groupByClause, leftJoinClause, helper, 
-                selectClause, params);
+
+        constructSelectClause(obj, attributes, isCountOnly, orderByClause,
+                groupByClause, leftJoinClause, helper, selectClause, params);
         return callback.doQueryInteraction(session, params, selectClause);
     }
+    // CHECKSTYLE:ON
     
     /**
      * 
@@ -332,7 +365,8 @@ public final class SearchableUtils {
         final StringBuffer selectClause = new StringBuffer(SELECT);
         final Map<String, Object> params = new HashMap<String, Object>();
         
-        constructSelectClause(obj, isCountOnly, orderByClause, groupByClause, leftJoinClause, helper, 
+        constructSelectClause(obj, new ArrayList<String>(), isCountOnly,
+                orderByClause, groupByClause, leftJoinClause, helper,
                 selectClause, params);
         selectClause.append(" " + HAVING);
         selectClause.append(" COUNT(" + ROOT_OBJ_ALIAS + ") ");
@@ -344,7 +378,7 @@ public final class SearchableUtils {
     
     @SuppressWarnings("PMD.ExcessiveParameterList")
     //CHECKSTYLE:OFF - maximum parameters
-    private static void constructSelectClause(final Object obj, boolean isCountOnly, String orderByClause,
+    private static void constructSelectClause(final Object obj, List<String> attributes, boolean isCountOnly, String orderByClause,
             String groupByClause, String leftJoinClause, AfterIterationHelper helper, final StringBuffer selectClause, 
             final Map<String, Object> params) {
         //CHECKSTYLE:ON
@@ -356,8 +390,7 @@ public final class SearchableUtils {
             selectClause.append(", COUNT(" + ROOT_OBJ_ALIAS + ") ");
             dontIncludeInSelect = true;
         } else {
-            String distinctClause = DISTINCT.concat(ROOT_OBJ_ALIAS); 
-            selectClause.append(isCountOnly ? "COUNT (" + distinctClause + ")" : distinctClause);
+            constructDistinctClause(selectClause, attributes, isCountOnly);           
         }
 
         if (!isCountOnly) {
@@ -387,6 +420,33 @@ public final class SearchableUtils {
         } else if (StringUtils.isNotBlank(orderByClause)) {
             selectClause.append(orderByClause);
         }
+    }
+
+    /**
+     * @param selectClause
+     * @param attributes
+     * @param isCountOnly
+     * @return
+     */
+    private static void constructDistinctClause(StringBuffer selectClause,
+            List<String> attributes, boolean isCountOnly) {
+        String distinctClause;
+        if (CollectionUtils.isEmpty(attributes)) {
+            distinctClause = DISTINCT.concat(ROOT_OBJ_ALIAS);
+        } else {
+            distinctClause = DISTINCT;
+            for (Iterator<String> iterator = attributes.iterator(); iterator
+                    .hasNext();) {
+                String attr = (String) iterator.next();
+                distinctClause = distinctClause.concat(ROOT_OBJ_ALIAS + DOT
+                        + attr);
+                if (iterator.hasNext()) {
+                    distinctClause = distinctClause.concat(COMMA);
+                }
+            }
+        }
+        selectClause.append(isCountOnly ? "COUNT (" + distinctClause + ")"
+                : distinctClause);
     }
 
     private static void addGroupByFieldsToSelectClause(StringBuffer selectClause, String groupByClause) {
@@ -419,7 +479,7 @@ public final class SearchableUtils {
     /**
      * Mechanism for users to add extra clauses after every call to getQUeryBySearchableFields.
      */
-    public static interface AfterIterationHelper {
+    public interface AfterIterationHelper {
         /**
          * Callback routine.
          * 

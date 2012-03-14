@@ -87,6 +87,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1611,6 +1612,42 @@ public class SearchableUtilsTest {
         });
         SearchableUtils.getQueryBySearchableFields(new Outer3(), false, null,
                 "GROUP BY obj.foo",  null, null, null, 5, SearchableUtils.GREATER_THAN);
+        
+        // test create query with explicitly specified object attributes
+        SearchableUtils.setCallback(new SearchableUtils.QueryCallback() {
+            @Override
+            public Query doQueryInteraction(Session session, Map<String, Object> params, StringBuffer selectClause) {
+                assertNull(session);
+                assertTrue(params.size() > 0);
+                assertTrue(selectClause.toString().contains("SELECT DISTINCT obj.firstName , obj.lastName, f.id , foobar.name FROM"));
+                assertTrue(selectClause.toString().contains(Outer3.class.getName()));
+                assertTrue(selectClause.toString().contains(" LEFT JOIN foobar f"));
+                assertTrue(selectClause.toString().contains(" ORDER BY f.id ASC, foobar.name DESC"));
+                return null;
+            }
+        });
+        SearchableUtils.getQueryBySearchableFields(new Outer3(),
+                Arrays.asList(new String[] { "firstName", "lastName" }), false,
+                " ORDER BY f.id ASC, foobar.name DESC", "",
+                " LEFT JOIN foobar f", null, null);
+        
+        SearchableUtils.setCallback(new SearchableUtils.QueryCallback() {
+            @Override
+            public Query doQueryInteraction(Session session, Map<String, Object> params, StringBuffer selectClause) {
+                assertNull(session);
+                assertTrue(params.size() > 0);
+                assertTrue(selectClause.toString().contains("SELECT DISTINCT obj.firstName , obj.lastName FROM"));
+                assertTrue(selectClause.toString().contains(Outer3.class.getName()+" obj "));
+                assertTrue(selectClause.toString().contains(" LEFT JOIN foobar f"));                
+                return null;
+            }
+        });
+        SearchableUtils.getQueryBySearchableFields(new Outer3(),
+                Arrays.asList(new String[] { "firstName", "lastName" }), false,
+                "", "",
+                " LEFT JOIN foobar f", null, null);
+        
+        
     }
 
     @Test
