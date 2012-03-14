@@ -16,7 +16,7 @@ poSourceConnection.eachRow(hcpSql) { row ->
 }
 
 hcps.each {row ->
-	roles.add(paSourceConnection.firstRow("select * from STG_DW_PERSON where po_id=?", [row]))
+	roles.add(destinationConnection.firstRow("select * from STG_DW_PERSON where po_id=?", [row]))
 }
 
 destinationConnection.execute("UPDATE STG_DW_PERSON_ROLE set ROLE_NAME = 'Healthcare Provider' where Role_name is null")
