@@ -169,6 +169,10 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      * DASH.
      */
     public static final String DASH = "- ";
+    
+    private static final String PO_ID = "po_id";
+    private static final String CTEP_ID = "ctep_id";
+    
 
     /**
      * Load PO Organization into xml.
@@ -181,11 +185,11 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         Map<String, String> addressBo = AddressConverterUtil.convertToAddressBo(orgDTO.getPostalAddress());
         DSet<Tel> telecom = orgDTO.getTelecomAddress();
 
-        appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
+        appendElement(lead, createElementWithTextblock(PO_ID, StringUtils.substring(
                 orgDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
         if (!ISOUtil.isIiNull(ctepId))  {
-            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock(CTEP_ID, StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
 
@@ -218,11 +222,11 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      * @param ctepId ctep id
      */
     public static void loadPersonIds(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
-        appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
+        appendElement(lead, createElementWithTextblock(PO_ID, StringUtils.substring(
                 perDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
         if (!ISOUtil.isIiNull(ctepId))  {
-            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock(CTEP_ID, StringUtils.substring(ctepId.getExtension(), 0,
                     PAAttributeMaxLen.LEN_160), doc));
         }
     }
@@ -235,10 +239,10 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      * @param ctepId ctep id
      */
     public static void loadPersonIds(Person per, Element lead, Document doc, Ii ctepId) {
-        appendElement(lead, createElementWithTextblock("po_id", per.getIdentifier(), doc));
+        appendElement(lead, createElementWithTextblock(PO_ID, per.getIdentifier(), doc));
 
         if (!ISOUtil.isIiNull(ctepId))  {
-            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock(CTEP_ID, StringUtils.substring(ctepId.getExtension(), 0,
                     PAAttributeMaxLen.LEN_160), doc));
         }
     }    
@@ -267,11 +271,11 @@ public class XmlGenHelper extends BaseXmlGenHelper {
     @SuppressWarnings("unchecked")
     public static void loadPoOrgContact(OrganizationalContactDTO ocDTO, Element lead, Document doc, Ii ctepId) {
         DSet<Tel> telecom = ocDTO.getTelecomAddress();
-        appendElement(lead, createElementWithTextblock("po_id",
+        appendElement(lead, createElementWithTextblock(PO_ID,
                 StringUtils.substring(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         if (!ISOUtil.isIiNull(ctepId))  {
-            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+            appendElement(lead, createElementWithTextblock(CTEP_ID, StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
         if (ISOUtil.isDSetNotEmpty(ocDTO.getPostalAddress())) {

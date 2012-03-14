@@ -146,7 +146,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     @Override
     public void performTask() throws PAException {
         Calendar startDateTime = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US);
         long startTime = System.currentTimeMillis();
         String folderPath = PaEarPropertyReader.getPDQUploadPath();
         //First, delete all files older than 30 days.

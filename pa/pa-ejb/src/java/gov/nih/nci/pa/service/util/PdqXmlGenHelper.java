@@ -129,9 +129,7 @@ import org.w3c.dom.Element;
  * @author mshestopalov
  *
  */
-@SuppressWarnings({ "PMD.TooManyMethods" })
 public class PdqXmlGenHelper {
-
 
     private static Map<String, Ii> personCtepIdMap = new HashMap<String, Ii>();
     private static Map<String, PersonDTO> personDTOMap = 
@@ -451,16 +449,11 @@ public class PdqXmlGenHelper {
     }
 
     private static void loadPoPerson(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
-        loadPoPersonBase(child, doc, p, ctepId, perDTO);
+        loadPoPersonBase(child, doc, p);
         XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
     }
-    
-    private static void loadPoPersonNoAddress(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
-        loadPoPersonBase(child, doc, p, ctepId, perDTO);
-        XmlGenHelper.loadPoPersonNoAddress(perDTO, child, doc, ctepId);
-    }
 
-    private static void loadPoPersonBase(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
+    private static void loadPoPersonBase(Element child, Document doc, Person p) {
         BaseXmlGenHelper.appendElement(child,
                 BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
         BaseXmlGenHelper.appendElement(child,
