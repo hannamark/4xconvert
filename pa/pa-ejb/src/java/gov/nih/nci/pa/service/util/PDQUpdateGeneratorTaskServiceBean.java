@@ -178,18 +178,20 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         mailBody.append("Finish Time ::::  " + dateFormat.format(endDateTime.getTime())).append("\n");
         mailBody.append("Total trails processed     :: " + collaborativeTrials.size()).append("\n");
         mailBody.append("Number of trails with errors :: " + failureList.size()).append("\n").append("\n");
-        mailBody.append("Total time taken :: " + getDurationBreakdown((endTime-startTime)));
+        mailBody.append("Total time taken :: "
+                + getDurationBreakdown((endTime - startTime)));
         sendPDQExportSummaryEmail(mailBody.toString());
-        if(!failureList.isEmpty()){
+        if (!failureList.isEmpty()) {
             StringBuilder failedTrials = new StringBuilder();
-            for(String each : failureList){
-                 failedTrials.append(each).append(",");
+            for (String each : failureList) {
+                failedTrials.append(each).append(",");
             }
             LOG.info("List of Erroneous Trails  :::  ");
             LOG.info(failedTrials.toString());
         }
-        LOG.info("PDQ trial exporter complete :: "+ 
-                 dateFormat.format(endDateTime.getTime()) +" Finished in : "+ (endTime-startTime) + " ms" );
+        LOG.info("PDQ trial exporter complete :: "
+                + dateFormat.format(endDateTime.getTime()) + " Finished in : "
+                + (endTime - startTime) + " ms");
     }
 
     private void generateZipFile(File zipArchive, List<StudyProtocolDTO> collaborativeTrials, String zipFilePath,
@@ -204,7 +206,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
                 long eachTrialStartTime = System.currentTimeMillis();
                 String pdqXml = xmlGeneratorService.generatePdqXml(sp.getIdentifier());
                 String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
-                if(StringUtils.contains(pdqXml, "<error>")){
+                if (StringUtils.contains(pdqXml, "<error>")) {
                     failureList.add(assignedIdentifier);
                 }
                 String fileName = assignedIdentifier + ".xml";
@@ -219,8 +221,8 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
                 FileUtils.deleteQuietly(xmlFile);
                 PaHibernateUtil.getCurrentSession().clear();
                 long eachTrialEndTime = System.currentTimeMillis();
-                LOG.debug("Trial " + assignedIdentifier + " exported in :: " + 
-                              (eachTrialEndTime-eachTrialStartTime) + " ms") ;
+                LOG.debug("Trial " + assignedIdentifier + " exported in :: "
+                        + (eachTrialEndTime - eachTrialStartTime) + " ms");
             }
             lock.release();
             channel.close();
@@ -284,15 +286,17 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     
     
     /**
-     * Convert a millisecond duration to a string format
+     * Convert a millisecond duration to a string format.
      * 
-     * @param millis A duration to convert to a string form
+     * @param millis
+     *            A duration to convert to a string form
      * @return A string of the form "X Days Y Hours Z Minutes A Seconds".
      */
-    private static String getDurationBreakdown(long timeInMillis){
+    private static String getDurationBreakdown(long timeInMillis) {
         long millis = timeInMillis;
-        if(millis < 0){
-            throw new IllegalArgumentException("Duration must be greater than zero!");
+        if (millis < 0) {
+            throw new IllegalArgumentException(
+                    "Duration must be greater than zero!");
         }
         long days = TimeUnit.MILLISECONDS.toDays(millis);
         millis -= TimeUnit.DAYS.toMillis(days);
@@ -301,7 +305,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
         millis -= TimeUnit.MINUTES.toMillis(minutes);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-        StringBuilder sb = new StringBuilder(64);
+        StringBuilder sb = new StringBuilder();
         sb.append(days);
         sb.append(" Days ");
         sb.append(hours);
@@ -310,7 +314,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         sb.append(" Minutes ");
         sb.append(seconds);
         sb.append(" Seconds");
-        return(sb.toString());
+        return (sb.toString());
     }
     
     private void sendPDQExportSummaryEmail(String mailBody) {

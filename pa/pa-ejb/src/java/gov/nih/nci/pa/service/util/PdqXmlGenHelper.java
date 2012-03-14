@@ -257,20 +257,21 @@ public class PdqXmlGenHelper {
             Ii paRoIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
         ResearchOrganizationDTO roDTO = researchOrgDTOMap.get(paRoIi.getExtension());
-        if(roDTO == null){
+        if (roDTO == null) {
             roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);
             if (roDTO != null) {
                 researchOrgDTOMap.put(paRoIi.getExtension(), roDTO);
-            }else{
+            } else {
                 return;
             }
         }
         OrganizationDTO orgDTO = organizationDTOMap.get(roDTO.getPlayerIdentifier().getExtension());
-        if(orgDTO == null){
+        if (orgDTO == null) {
             try {
                 orgDTO = PoRegistry.getOrganizationEntityService()
-                    .getOrganization(roDTO.getPlayerIdentifier());
-                organizationDTOMap.put(roDTO.getPlayerIdentifier().getExtension(), orgDTO);
+                        .getOrganization(roDTO.getPlayerIdentifier());
+                organizationDTOMap.put(roDTO.getPlayerIdentifier()
+                        .getExtension(), orgDTO);
             } catch (NullifiedEntityException e) {
                 throw new PAException(e);
             }
@@ -309,19 +310,21 @@ public class PdqXmlGenHelper {
             Ii paHcfIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
         HealthCareFacilityDTO hcfDTO = healthcareFacilityDTOMap.get(paHcfIi.getExtension());
-        if(hcfDTO == null){
+        if (hcfDTO == null) {
             hcfDTO = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(paHcfIi, corrUtils);
             if (hcfDTO != null) {
-                healthcareFacilityDTOMap.put(paHcfIi.getExtension(), hcfDTO);                
-            }else{
+                healthcareFacilityDTOMap.put(paHcfIi.getExtension(), hcfDTO);
+            } else {
                 return;
             }
         }
         OrganizationDTO orgDTO = organizationDTOMap.get(hcfDTO.getPlayerIdentifier().getExtension());
-        if(orgDTO == null){
+        if (orgDTO == null) {
             try {
-                orgDTO = PoRegistry.getOrganizationEntityService().getOrganization(hcfDTO.getPlayerIdentifier());
-                organizationDTOMap.put(hcfDTO.getPlayerIdentifier().getExtension(), orgDTO);
+                orgDTO = PoRegistry.getOrganizationEntityService()
+                        .getOrganization(hcfDTO.getPlayerIdentifier());
+                organizationDTOMap.put(hcfDTO.getPlayerIdentifier()
+                        .getExtension(), orgDTO);
             } catch (NullifiedEntityException e) {
                 throw new PAException(e);
             }
@@ -365,23 +368,23 @@ public class PdqXmlGenHelper {
             return;
         }
         PersonDTO perDTO = personDTOMap.get(p.getIdentifier());
-        if(perDTO == null){
+        if (perDTO == null) {
             try {
                 Ii personIi = createPersonIi(p.getIdentifier());
-                perDTO = PoRegistry.getPersonEntityService().getPerson(personIi);
+                perDTO = PoRegistry.getPersonEntityService()
+                        .getPerson(personIi);
                 personDTOMap.put(p.getIdentifier(), perDTO);
             } catch (NullifiedEntityException e) {
                 throw new PAException(e);
             }
         }
         Ii ctepIi = personCtepIdMap.get(p.getIdentifier());        
-        if(ctepIi == null){
+        if (ctepIi == null) {
             List<IdentifiedPersonDTO> ipDtos;
             Ii personIi = createPersonIi(p.getIdentifier());
             try {
-                ipDtos =
-                    PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
-                            new Ii[]{personIi});
+                ipDtos = PoRegistry.getIdentifiedPersonEntityService()
+                        .getCorrelationsByPlayerIds(new Ii[] {personIi});
                 ctepIi = findCtepIdForPerson(ipDtos);
                 personCtepIdMap.put(p.getIdentifier(), ctepIi);
             } catch (NullifiedRoleException e) {
@@ -401,10 +404,10 @@ public class PdqXmlGenHelper {
     /**
      * This method takes a playerId and creates an Person Ii which is used 
      * to query PO for Identified Person.
-     * @param playerId
+     * @param playerId String
      * @return A personIi
      */
-    protected static Ii createPersonIi(String playerId){
+    protected static Ii createPersonIi(String playerId) {
         Ii personIi = new Ii();
         personIi.setExtension(playerId);
         personIi.setDisplayable(Boolean.TRUE);
@@ -431,7 +434,7 @@ public class PdqXmlGenHelper {
             return;
         }
         Ii ctepIi = personCtepIdMap.get(p.getIdentifier());
-        if(ctepIi == null){
+        if (ctepIi == null) {
             Ii personIi = createPersonIi(p.getIdentifier());
             List<IdentifiedPersonDTO> ipDtos;
             try {
