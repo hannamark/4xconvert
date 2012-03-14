@@ -329,7 +329,8 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public void testGetOrgThrowNpe() throws PAException, NullifiedEntityException {
         when(poOrgSvc.getOrganization(any(Ii.class))).thenThrow(new NullifiedEntityException(spId));
         assertTrue(getBean().generateCTGovXml(spId).contains("<error_description>"));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<contact_info>This issue has been reported to the CTRP Tech support</contact_info>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<study_identifier>"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<error_messages>"));
     }
 
     @Test

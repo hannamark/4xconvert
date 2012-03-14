@@ -553,12 +553,12 @@
     <xs:element name="error">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="error_description" />
-                <xs:element ref="study_identifier" />
-                <xs:element ref="study_title" />
-                <xs:element ref="contact_info" />
-                <xs:element ref="error_type" />
-                <xs:element ref="error_messages" />
+                <xs:element ref="error_description" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="study_identifier" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="study_title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="contact_info" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="error_type" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="error_messages" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

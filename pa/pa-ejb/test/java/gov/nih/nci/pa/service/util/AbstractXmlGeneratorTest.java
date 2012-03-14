@@ -82,11 +82,10 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.util.AbstractMockitoTest;
+
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
-
-import gov.nih.nci.pa.util.AbstractMockitoTest;
 
 /**
  * @author ludetc
@@ -121,7 +120,6 @@ public abstract class AbstractXmlGeneratorTest extends AbstractMockitoTest {
         getBean().setRegistryUserService(regUserSvc);
         getBean().setStudySiteService(studySiteSvc);
         getBean().setStudyProtocolService(spSvc);
-        getBean().setLookUpTableService(lookupSvc);
     }
 
 }

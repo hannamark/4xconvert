@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
@@ -114,7 +116,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -127,6 +131,18 @@ import org.w3c.dom.Element;
  */
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class PdqXmlGenHelper {
+
+
+    private static Map<String, Ii> personCtepIdMap = new HashMap<String, Ii>();
+    private static Map<String, PersonDTO> personDTOMap = 
+                 new HashMap<String, PersonDTO>();
+    private static Map<String, HealthCareFacilityDTO> healthcareFacilityDTOMap = 
+                 new HashMap<String, HealthCareFacilityDTO>();
+    private static Map<String, OrganizationDTO> organizationDTOMap = 
+                 new HashMap<String, OrganizationDTO>();
+    private static Map<String, ResearchOrganizationDTO> researchOrgDTOMap = 
+                 new HashMap<String, ResearchOrganizationDTO>();
+    
 
     /**
      * Get Po RO dto by Pa RO ii.
@@ -240,16 +256,24 @@ public class PdqXmlGenHelper {
     protected static void addPoOrganizationByPaRoIi(Element root, String childName,
             Ii paRoIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
-        ResearchOrganizationDTO roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);
-        if (roDTO == null) {
-            return;
+        ResearchOrganizationDTO roDTO = researchOrgDTOMap.get(paRoIi.getExtension());
+        if(roDTO == null){
+            roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);
+            if (roDTO != null) {
+                researchOrgDTOMap.put(paRoIi.getExtension(), roDTO);
+            }else{
+                return;
+            }
         }
-        OrganizationDTO orgDTO;
-        try {
-            orgDTO = PoRegistry.getOrganizationEntityService()
-                .getOrganization(roDTO.getPlayerIdentifier());
-        } catch (NullifiedEntityException e) {
-            throw new PAException(e);
+        OrganizationDTO orgDTO = organizationDTOMap.get(roDTO.getPlayerIdentifier().getExtension());
+        if(orgDTO == null){
+            try {
+                orgDTO = PoRegistry.getOrganizationEntityService()
+                    .getOrganization(roDTO.getPlayerIdentifier());
+                organizationDTOMap.put(roDTO.getPlayerIdentifier().getExtension(), orgDTO);
+            } catch (NullifiedEntityException e) {
+                throw new PAException(e);
+            }
         }
         addPoOrganizationByPaRoIi(root, childName, doc, roDTO, orgDTO);
     }
@@ -284,16 +308,23 @@ public class PdqXmlGenHelper {
     protected static void addPoOrganizationByPaHcfIi(Element root, String childName,
             Ii paHcfIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
-        HealthCareFacilityDTO hcfDTO = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(paHcfIi, corrUtils);
-        if (hcfDTO == null) {
-            return;
+        HealthCareFacilityDTO hcfDTO = healthcareFacilityDTOMap.get(paHcfIi.getExtension());
+        if(hcfDTO == null){
+            hcfDTO = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(paHcfIi, corrUtils);
+            if (hcfDTO != null) {
+                healthcareFacilityDTOMap.put(paHcfIi.getExtension(), hcfDTO);                
+            }else{
+                return;
+            }
         }
-        OrganizationDTO orgDTO;
-        try {
-            orgDTO = PoRegistry.getOrganizationEntityService()
-                .getOrganization(hcfDTO.getPlayerIdentifier());
-        } catch (NullifiedEntityException e) {
-            throw new PAException(e);
+        OrganizationDTO orgDTO = organizationDTOMap.get(hcfDTO.getPlayerIdentifier().getExtension());
+        if(orgDTO == null){
+            try {
+                orgDTO = PoRegistry.getOrganizationEntityService().getOrganization(hcfDTO.getPlayerIdentifier());
+                organizationDTOMap.put(hcfDTO.getPlayerIdentifier().getExtension(), orgDTO);
+            } catch (NullifiedEntityException e) {
+                throw new PAException(e);
+            }
         }
         Ii hcfCtepId = DSetConverter
             .getFirstInDSetByRoot(hcfDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
@@ -328,33 +359,60 @@ public class PdqXmlGenHelper {
     protected static void addPoPersonByPaCrsIi(Element root, String childName,
             Ii paCrsIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
+        
         Person p = corrUtils.getPAPersonByIi(paCrsIi);
-        ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
-        if (p == null || crsDTO == null) {
+        if (p == null) {
             return;
         }
-        PersonDTO perDTO;
-        try {
-            perDTO = PoRegistry.getPersonEntityService().getPerson(crsDTO.getPlayerIdentifier());
-        } catch (NullifiedEntityException e) {
-            throw new PAException(e);
+        PersonDTO perDTO = personDTOMap.get(p.getIdentifier());
+        if(perDTO == null){
+            try {
+                Ii personIi = createPersonIi(p.getIdentifier());
+                perDTO = PoRegistry.getPersonEntityService().getPerson(personIi);
+                personDTOMap.put(p.getIdentifier(), perDTO);
+            } catch (NullifiedEntityException e) {
+                throw new PAException(e);
+            }
         }
-        List<IdentifiedPersonDTO> ipDtos;
-        try {
-            ipDtos =
-                PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
-                        new Ii[]{crsDTO.getPlayerIdentifier()});
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        Ii ctepIi = personCtepIdMap.get(p.getIdentifier());        
+        if(ctepIi == null){
+            List<IdentifiedPersonDTO> ipDtos;
+            Ii personIi = createPersonIi(p.getIdentifier());
+            try {
+                ipDtos =
+                    PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
+                            new Ii[]{personIi});
+                ctepIi = findCtepIdForPerson(ipDtos);
+                personCtepIdMap.put(p.getIdentifier(), ctepIi);
+            } catch (NullifiedRoleException e) {
+                throw new PAException(e);
+            }
         }
-
         if (StringUtils.isEmpty(childName)) {
-            loadPoPerson(root, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+            loadPoPerson(root, doc, p, ctepIi, perDTO);
         } else {
             Element child = doc.createElement(childName);
-            loadPoPerson(child, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+            loadPoPerson(child, doc, p, ctepIi, perDTO);
             BaseXmlGenHelper.appendElement(root, child);
         }
+    }
+    
+    
+    /**
+     * This method takes a playerId and creates an Person Ii which is used 
+     * to query PO for Identified Person.
+     * @param playerId
+     * @return A personIi
+     */
+    protected static Ii createPersonIi(String playerId){
+        Ii personIi = new Ii();
+        personIi.setExtension(playerId);
+        personIi.setDisplayable(Boolean.TRUE);
+        personIi.setIdentifierName(IiConverter.PERSON_IDENTIFIER_NAME);
+        personIi.setReliability(IdentifierReliability.ISS);
+        personIi.setRoot(IiConverter.PERSON_ROOT);
+        personIi.setScope(IdentifierScope.OBJ);
+        return personIi;
     }
 
     /**
@@ -368,36 +426,32 @@ public class PdqXmlGenHelper {
     protected static void loadPersonIdsByPaCrsIi(Element elementToAddTo,
             Ii paCrsIi, Document doc, CorrelationUtils corrUtils) throws PAException {
 
-        ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
         Person p = corrUtils.getPAPersonByIi(paCrsIi);
-        if (p == null || crsDTO == null) {
+        if (p == null) {
             return;
         }
-        PersonDTO perDTO;
-        try {
-            perDTO = PoRegistry.getPersonEntityService().getPerson(crsDTO.getPlayerIdentifier());
-        } catch (NullifiedEntityException e) {
-            throw new PAException(e);
+        Ii ctepIi = personCtepIdMap.get(p.getIdentifier());
+        if(ctepIi == null){
+            Ii personIi = createPersonIi(p.getIdentifier());
+            List<IdentifiedPersonDTO> ipDtos;
+            try {
+                ipDtos =
+                    PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
+                            new Ii[]{personIi});
+            } catch (NullifiedRoleException e) {
+                throw new PAException(e);
+            }
+            ctepIi = findCtepIdForPerson(ipDtos);
+            personCtepIdMap.put(p.getIdentifier(), ctepIi);
         }
-        List<IdentifiedPersonDTO> ipDtos;
-        try {
-            ipDtos =
-                PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
-                        new Ii[]{crsDTO.getPlayerIdentifier()});
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
-        }
-
-        XmlGenHelper.loadPersonIds(perDTO, elementToAddTo, doc, findCtepIdForPerson(ipDtos));
-
+        XmlGenHelper.loadPersonIds(p, elementToAddTo, doc, ctepIi);
     }
-
 
     private static void loadPoPerson(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
         loadPoPersonBase(child, doc, p, ctepId, perDTO);
         XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
     }
-
+    
     private static void loadPoPersonNoAddress(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
         loadPoPersonBase(child, doc, p, ctepId, perDTO);
         XmlGenHelper.loadPoPersonNoAddress(perDTO, child, doc, ctepId);
@@ -657,5 +711,15 @@ public class PdqXmlGenHelper {
                 exCrit.append(descriptionText);
                 exCrit.append('\n');
             }
+    }
+    
+    /**
+     * Clears all the Maps used to cache PO entities and CTEPIDs. 
+     */
+    protected static void clearPOCache() {
+        healthcareFacilityDTOMap.clear();
+        organizationDTOMap.clear();
+        personCtepIdMap.clear();
+        researchOrgDTOMap.clear();
     }
 }

@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.AdxpZip;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -208,7 +209,7 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         loadPoAddress(addressBo, lead, doc);
         loadPoTelecom(telecom, lead, doc);
     }
-
+    
     /**
      * Load PO Person ID into xml.
      * @param perDTO dto
@@ -225,6 +226,23 @@ public class XmlGenHelper extends BaseXmlGenHelper {
                     PAAttributeMaxLen.LEN_160), doc));
         }
     }
+    
+    /**
+     * Load PO Person ID into xml.
+     * @param per dto
+     * @param lead element
+     * @param doc document
+     * @param ctepId ctep id
+     */
+    public static void loadPersonIds(Person per, Element lead, Document doc, Ii ctepId) {
+        appendElement(lead, createElementWithTextblock("po_id", per.getIdentifier(), doc));
+
+        if (!ISOUtil.isIiNull(ctepId))  {
+            appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
+                    PAAttributeMaxLen.LEN_160), doc));
+        }
+    }    
+    
 
     /**
      * Load PO Person into xml.

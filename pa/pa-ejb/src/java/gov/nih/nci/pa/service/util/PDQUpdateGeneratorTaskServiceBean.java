@@ -97,13 +97,16 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -132,6 +135,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
     private static final Logger LOG = Logger.getLogger(PDQUpdateGeneratorTaskServiceBean.class);
+    private final List<String> failureList = new ArrayList<String>(); 
 
     @EJB
     private PDQXmlGeneratorServiceRemote xmlGeneratorService;
@@ -141,6 +145,9 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      */
     @Override
     public void performTask() throws PAException {
+        Calendar startDateTime = Calendar.getInstance();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        long startTime = System.currentTimeMillis();
         String folderPath = PaEarPropertyReader.getPDQUploadPath();
         //First, delete all files older than 30 days.
         Date thirtyDaysAgo = DateUtils.addDays(new Date(), MAX_FILE_AGE);
@@ -152,7 +159,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         }
         //Name of the file will be CTRP-TRIALS-YYYY-MM-DD.zip
         Date now = new Date();
-        LOG.info("PDQ trial exporter started.");
+        LOG.info("PDQ trial exporter started." + dateFormat.format(startDateTime.getTime()));
         String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
         //Using the temp path to ensure locking is correctly working.
         String tempZipFilePath = folderPath + File.separator + "TEMP-" + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
@@ -164,6 +171,25 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         List<StudyProtocolDTO> collaborativeTrials =
             PaRegistry.getStudyProtocolService().getAbstractedCollaborativeTrials();
         generateZipFile(zipArchive, collaborativeTrials, zipFilePath, folderPath);
+        long endTime = System.currentTimeMillis();
+        StringBuilder mailBody = new StringBuilder();
+        Calendar endDateTime = Calendar.getInstance();
+        mailBody.append("Start Time  ::::  " + dateFormat.format(startDateTime.getTime())).append("\n");
+        mailBody.append("Finish Time ::::  " + dateFormat.format(endDateTime.getTime())).append("\n");
+        mailBody.append("Total trails processed     :: " + collaborativeTrials.size()).append("\n");
+        mailBody.append("Number of trails with errors :: " + failureList.size()).append("\n").append("\n");
+        mailBody.append("Total time taken :: " + getDurationBreakdown((endTime-startTime)));
+        sendPDQExportSummaryEmail(mailBody.toString());
+        if(!failureList.isEmpty()){
+            StringBuilder failedTrials = new StringBuilder();
+            for(String each : failureList){
+                 failedTrials.append(each).append(",");
+            }
+            LOG.info("List of Erroneous Trails  :::  ");
+            LOG.info(failedTrials.toString());
+        }
+        LOG.info("PDQ trial exporter complete :: "+ 
+                 dateFormat.format(endDateTime.getTime()) +" Finished in : "+ (endTime-startTime) + " ms" );
     }
 
     private void generateZipFile(File zipArchive, List<StudyProtocolDTO> collaborativeTrials, String zipFilePath,
@@ -173,9 +199,15 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipArchive)));
             FileChannel channel = new RandomAccessFile(zipArchive, "rw").getChannel();
             FileLock lock = channel.lock();
+            failureList.clear();
             for (StudyProtocolDTO sp : collaborativeTrials) {
+                long eachTrialStartTime = System.currentTimeMillis();
                 String pdqXml = xmlGeneratorService.generatePdqXml(sp.getIdentifier());
-                String fileName = PAUtil.getAssignedIdentifierExtension(sp) + ".xml";
+                String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
+                if(StringUtils.contains(pdqXml, "<error>")){
+                    failureList.add(assignedIdentifier);
+                }
+                String fileName = assignedIdentifier + ".xml";
                 File xmlFile = new File(folderPath + File.separator + fileName);
                 //Write xml to temporary file.
                 FileUtils.writeStringToFile(xmlFile, pdqXml);
@@ -186,17 +218,20 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
                 //After file has been written to zip archive, delete it.
                 FileUtils.deleteQuietly(xmlFile);
                 PaHibernateUtil.getCurrentSession().clear();
+                long eachTrialEndTime = System.currentTimeMillis();
+                LOG.debug("Trial " + assignedIdentifier + " exported in :: " + 
+                              (eachTrialEndTime-eachTrialStartTime) + " ms") ;
             }
             lock.release();
             channel.close();
             zipOutput.close();
             //Finally move the generic file to the more specific path.
             FileUtils.moveFile(zipArchive, new File(zipFilePath));
-            LOG.info("PDQ trial exporter processed " + collaborativeTrials.size() + " trials");
         } catch (IOException e) {
             throw new PAException("Error attempting to create PDQ XML Archive.", e);
         } finally {
             IOUtils.closeQuietly(zipOutput);
+            PdqXmlGenHelper.clearPOCache();
         }
     }
 
@@ -246,6 +281,47 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         }
         return filePath.toString();
     }
+    
+    
+    /**
+     * Convert a millisecond duration to a string format
+     * 
+     * @param millis A duration to convert to a string form
+     * @return A string of the form "X Days Y Hours Z Minutes A Seconds".
+     */
+    private static String getDurationBreakdown(long timeInMillis){
+        long millis = timeInMillis;
+        if(millis < 0){
+            throw new IllegalArgumentException("Duration must be greater than zero!");
+        }
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(days);
+        sb.append(" Days ");
+        sb.append(hours);
+        sb.append(" Hours ");
+        sb.append(minutes);
+        sb.append(" Minutes ");
+        sb.append(seconds);
+        sb.append(" Seconds");
+        return(sb.toString());
+    }
+    
+    private void sendPDQExportSummaryEmail(String mailBody) {
+        try {
+            String mailTo = PaRegistry.getLookUpTableService().getPropertyValue("ctrp.support.email");
+            PaRegistry.getMailManagerService()
+                .sendMailWithAttachment(mailTo, "PDQ Export Summary", mailBody, null);
+        } catch (PAException e) {
+            LOG.error("Error sending error email during CTGov.xml generation.", e);
+        }
+    }    
 
     /**
      * Sets the xml generator.

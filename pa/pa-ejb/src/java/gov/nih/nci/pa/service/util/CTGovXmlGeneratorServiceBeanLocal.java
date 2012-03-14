@@ -138,7 +138,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -158,7 +157,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -188,9 +186,6 @@ import org.w3c.dom.Element;
 public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGeneratorServiceBean
     implements CTGovXmlGeneratorServiceLocal {
 
-    @EJB
-    private LookUpTableServiceRemote lookUpTableService;
-
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBeanLocal.class);
     private static final String YYYYMMDD = "yyyy-MM-dd";
     private static final String YYYYMM = "yyyy-MM";
@@ -210,7 +205,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (studyProtocolIi == null) {
             throw new PAException("Study Protocol Identifier is null");
         }
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         StudyProtocolDTO spDTO = null;
         try {
@@ -266,7 +260,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             createOverallOfficial(spDTO.getIdentifier(), doc, root);
             createOverallContact(spDTO.getIdentifier(), doc, root);
             createLocation(spDTO, doc, root);
-
             XmlGenHelper.appendElement(root,
                     XmlGenHelper.createElementWithTextblock("keyword",
                             StringUtils.substring(StConverter.convertToString(spDTO
@@ -292,6 +285,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             return writer.toString();
+            
         } catch (Exception e) {
             LOG.error("Error while generating CT.GOV.xml", e);
             return createErrorXml(spDTO, e);
@@ -323,17 +317,11 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 XmlGenHelper.createElement("study_identifier", "Unknown", doc, root);
             } else {
                 XmlGenHelper.createElement("study_identifier", PAUtil.getAssignedIdentifierExtension(spDTO), doc, root);
-                XmlGenHelper.createElement("study_title", spDTO.getOfficialTitle().getValue(), doc, root);
             }
-            XmlGenHelper.createElement("contact_info", "This issue has been reported to the CTRP Tech support", doc,
-                    root);
-            XmlGenHelper.createElement("error_type", e.toString(), doc, root);
-            StackTraceElement[] st = e.getStackTrace();
+            
             Element errorMessages = doc.createElement("error_messages");
-            for (int x = 0; x < Math.min(XmlGenHelper.ERROR_COUNT, st.length); x++) {
-                XmlGenHelper.appendElement(errorMessages,
-                        XmlGenHelper.createElementWithTextblock("error_message", st[x].toString(), doc));
-            }
+            XmlGenHelper.appendElement(errorMessages,
+                 XmlGenHelper.createElementWithTextblock("error_message", e.getMessage(), doc));
             XmlGenHelper.appendElement(root, errorMessages);
             DOMSource domSource = new DOMSource(doc);
             StreamResult result = new StreamResult(writer);
@@ -343,20 +331,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         } catch (Exception e1) {
             LOG.error("Error while generating CT.GOV.xml", e1);
         }
-        sendErrorEmail(writer.toString());
         return writer.toString();
-    }
-
-    private void sendErrorEmail(String mailBody) {
-        try {
-            String mailTo = lookUpTableService.getPropertyValue("ctrp.support.email");
-            //We have to use the registry lookup instead of a directly injected EJB here because the mail service
-            //depends on this bean as well, causing a circular dependency error if directly injected.
-            PaRegistry.getMailManagerService()
-                .sendMailWithAttachment(mailTo, "Error while generating CT.GOV.xml", mailBody, null);
-        } catch (PAException e) {
-            LOG.error("Error sending error email during CTGov.xml generation.", e);
-        }
     }
 
     /**
@@ -1613,12 +1588,5 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
         DateFormat formatter1 = new SimpleDateFormat(YYYYMMDD, Locale.getDefault());
         return formatter1.format(ts);
-    }
-
-    /**
-     * @param lookUpTableService the lookUpTableService to set
-     */
-    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
-        this.lookUpTableService = lookUpTableService;
     }
 }
