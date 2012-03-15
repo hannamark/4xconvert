@@ -585,8 +585,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 orderStr.append(order.toString());
                 addFieldError("reOrder", orderStr.toString());
             } else {
+                fixDisplayOrder();
                 for (ISDesignDetailsWebDTO dto : eligibilityList) {
-                    fixDisplayOrder();
                     PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto
                         .getId()));
                     PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
@@ -605,11 +605,13 @@ public class EligibilityCriteriaAction extends ActionSupport {
          * Sets the correct numbering to display orders in eligibility criteria.
          */
         private void fixDisplayOrder() {
-            Collections.sort(eligibilityList, iSDesignDetailsWebDTOComparator);
-            int i = 1;
-            for (ISDesignDetailsWebDTO dto : eligibilityList) {
-                dto.setDisplayOrder(String.valueOf(i));
-                i++;
+            if (eligibilityList != null && !eligibilityList.isEmpty()) {
+                Collections.sort(eligibilityList, iSDesignDetailsWebDTOComparator);
+                int i = 1;
+                for (ISDesignDetailsWebDTO dto : eligibilityList) {
+                    dto.setDisplayOrder(String.valueOf(i));
+                    i++;
+                }
             }
         }
         
