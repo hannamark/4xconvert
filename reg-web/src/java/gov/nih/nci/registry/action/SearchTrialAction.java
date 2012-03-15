@@ -86,6 +86,8 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -133,6 +135,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -148,6 +154,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  */
 public class SearchTrialAction extends ActionSupport implements Preparable {
+   
     private static final long serialVersionUID = 1L;
     private static final Set<DocumentWorkflowStatusCode> ABSTRACTED_CODES =
             EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
@@ -164,6 +171,23 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
         EXECUTE_ACTIONS.add("UPDATE");
     }
     
+    private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE_KEY";
+    private static final int CACHE_TTL = 60 * 2;
+    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    static {
+        initializeCache(CACHE_TTL);
+    }
+
+    // cache initialization is extracted into this method so that unit tests can alter it.
+    static void initializeCache(int ttl) {
+        // CHECKSTYLE:OFF
+        Cache cache = new Cache(CRITERIA_COLLECTIONS_CACHE_KEY, 10, false,
+                false, ttl, ttl, false, 0);
+        CACHE_MANAGER.removeCache(CRITERIA_COLLECTIONS_CACHE_KEY);
+        CACHE_MANAGER.addCache(cache);
+        // CHECKSTYLE:ON
+    }
+
     private AbstractionCompletionServiceRemote abstractionCompletionService;
     private DocumentServiceLocal documentService;
     private MailManagerServiceLocal mailManagerService;
@@ -621,6 +645,76 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
             }
         }
         return errorExist;
+    }
+    
+    /**
+     * A caching delegate for the
+     * PAOrganizationServiceRemote#getOrganizationsAssociatedWithStudyProtocol(String)
+     * . searchTrialCriteria.jsp invokes the aforementioned method each time the
+     * Search page is rendered, including cases where a user is looping through
+     * the search results. Even caching for a short period of time can result in
+     * significant performance improvements. We will cache on a Web App level.
+     * 
+     * @see https://tracker.nci.nih.gov/browse/PO-4785
+     * @param organizationType
+     *            organizationType
+     * @return List<PaOrganizationDTO>
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("unchecked")
+    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(
+            String organizationType) throws PAException {
+        Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
+        final String elementKey = "OrganizationsAssociatedWithStudyProtocol_"
+                + organizationType;
+        Element element = cache.get(elementKey);
+        if (element != null) {
+            List<PaOrganizationDTO> list = (List<PaOrganizationDTO>) element
+                    .getObjectValue();
+            if (list != null) {
+                return list;
+            }
+        }
+        final List<PaOrganizationDTO> list = PaRegistry
+                .getPAOrganizationService()
+                .getOrganizationsAssociatedWithStudyProtocol(organizationType);
+        element = new Element(elementKey, list);
+        cache.put(element);
+        return list;
+    }
+    
+    /**
+     * A caching delegate for the
+     * PAPersonServiceRemote#getAllPrincipalInvestigators() .
+     * searchTrialCriteria.jsp invokes the aforementioned method each time the
+     * Search page is rendered, including cases where a user is looping through
+     * the search results. Even caching for a short period of time can result in
+     * significant performance improvements. We will cache on a Web App level.
+     * 
+     * @see https://tracker.nci.nih.gov/browse/PO-4785
+     * 
+     * @return List<PaPersonDTO>
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("unchecked")
+    public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
+        Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
+        final String elementKey = "AllPrincipalInvestigators";
+        Element element = cache.get(elementKey);
+        if (element != null) {
+            List<PaPersonDTO> list = (List<PaPersonDTO>) element
+                    .getObjectValue();
+            if (list != null) {
+                return list;
+            }
+        }
+        final List<PaPersonDTO> list = PaRegistry.getPAPersonService()
+                .getAllPrincipalInvestigators();
+        element = new Element(elementKey, list);
+        cache.put(element);
+        return list;
     }
 
     /**

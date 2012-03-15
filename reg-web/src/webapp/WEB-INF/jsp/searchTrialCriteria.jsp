@@ -172,7 +172,7 @@
                     <label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
                 </td>
                 <td id="Lead">
-                    <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
+                    <s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
                     <s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssStyle="width:206px"/>
                     <span class="formErrorMsg">
                         <s:fielderror>
@@ -181,7 +181,7 @@
                     </span>
                 </td>
                 <td id="Site" style="display:none">
-                    <s:set name="participatingSites" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
+                    <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
                     <s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
                     <span class="formErrorMsg">
                         <s:fielderror>
@@ -190,7 +190,7 @@
                     </span>
                 </td>
             </tr>
-            <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
+            <s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
              <tr>
                 <td  scope="row" class="label">
                     <label for="principalInvestigator"> <fmt:message key="search.trial.principalInvestigator"/></label>

@@ -32,6 +32,10 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
         orgList.add(dto);
         
     }
+    
+    public static List<PaOrganizationDTO> leadPaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
+    public static List<PaOrganizationDTO> sitePaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
+    
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationByIndetifers(gov.nih.nci.pa.domain.Organization)
      */
@@ -50,8 +54,10 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
      */
     public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(
             String organizationType) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+        if ("Lead Organization".equals(organizationType)) {
+            return leadPaOrganizationDTOs;
+        }
+        return sitePaOrganizationDTOs;
     }
 
     /**

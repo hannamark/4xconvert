@@ -3,7 +3,6 @@ package gov.nih.nci.registry.test.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -95,6 +94,7 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
+import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
 import gov.nih.nci.registry.service.MockStudyProtocolStageService;
@@ -124,6 +124,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudySiteServiceLocal studySiteService = new MockStudySiteService();
     private final StudyResourcingServiceLocal studyResourcingService = new MockStudyResourcingService();
     private final PAOrganizationServiceRemote paOrganizationService = new MockPAOrganizationService();
+    private final PAPersonServiceRemote paPersonServiceRemote = new MockPAPersonServiceRemote();
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = new MockOrganizationCorrelationService();
     private final RegistryUserServiceLocal registryUserService = new MockRegistryUserService();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
@@ -198,7 +199,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      */
     @Override
     public PAPersonServiceRemote getPAPersonService() {
-        return mock(PAPersonServiceRemote.class);
+        return paPersonServiceRemote;
     }
 
     /**

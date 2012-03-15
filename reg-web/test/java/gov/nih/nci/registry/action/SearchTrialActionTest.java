@@ -4,23 +4,30 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
+import gov.nih.nci.registry.service.MockPAOrganizationService;
+import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
 import gov.nih.nci.registry.util.TrialUtil;
+
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -253,4 +260,57 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         assertEquals("success", action.query());
         assertTrue(action.getRecords().size() >= 1);
     }
+    
+    @Test
+    public void testGetOrganizationsAssociatedWithStudyProtocol() throws PAException, InterruptedException {
+        SearchTrialAction.initializeCache(3);
+        
+        // note the instance equality operator. Do not use equals here.
+        assertTrue(MockPAOrganizationService.leadPaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Lead Organization"));
+        assertTrue(MockPAOrganizationService.sitePaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Participating Site"));    
+        
+        // Point the mock at different collections.
+        MockPAOrganizationService.leadPaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
+        MockPAOrganizationService.sitePaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
+        
+        // now should be false because previous cached objects will be returned instead of above ones.
+        assertFalse(MockPAOrganizationService.leadPaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Lead Organization"));
+        assertFalse(MockPAOrganizationService.sitePaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Participating Site"));
+        
+        Thread.sleep(7000);
+        
+        // cache has expired; so now we should get out new fresh objects back.
+        assertTrue(MockPAOrganizationService.leadPaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Lead Organization"));
+        assertTrue(MockPAOrganizationService.sitePaOrganizationDTOs == action
+                .getOrganizationsAssociatedWithStudyProtocol("Participating Site"));           
+    }
+    
+    @Test
+    public void testGetAllPrincipalInvestigators() throws PAException, InterruptedException {
+        SearchTrialAction.initializeCache(3);
+        
+        // note the instance equality operator. Do not use equals here.
+        assertTrue(MockPAPersonServiceRemote.investigators == action
+                .getAllPrincipalInvestigators());         
+        
+        // Point the mock at different collections.
+        MockPAPersonServiceRemote.investigators = new ArrayList<PaPersonDTO>();        
+        
+        // now should be false because previous cached objects will be returned instead of above ones.
+        assertFalse(MockPAPersonServiceRemote.investigators == action
+                .getAllPrincipalInvestigators());        
+        
+        Thread.sleep(7000);
+        
+        // cache has expired; so now we should get out new fresh objects back.
+        assertTrue(MockPAPersonServiceRemote.investigators == action
+                .getAllPrincipalInvestigators());         
+                 
+    }
+    
 }
