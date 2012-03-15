@@ -61,6 +61,8 @@
     </target>
     
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Outcome Measure"/>
+        <groovy src="groovy/outcome_measure.groovy"/>
         <echo message = "Running Person"/>
         <groovy src="groovy/person.groovy"/>    
         <echo message = "Running Person Role"/>
@@ -73,8 +75,6 @@
         <groovy src="groovy/study.groovy"/>
         <echo message = "Running milestones"/>
         <groovy src="groovy/milestone.groovy"/>
-        <echo message = "Running Outcome Measure"/>
-        <groovy src="groovy/outcome_measure.groovy"/>
         <echo message = "Running Study Audit"/>
         <groovy src="groovy/study_audit.groovy"/>        
         <echo message = "Running Person Audit"/>
