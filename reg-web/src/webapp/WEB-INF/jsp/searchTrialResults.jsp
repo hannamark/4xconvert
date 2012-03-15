@@ -37,7 +37,7 @@ $(document).ready(function () {
 			width:100px; 
 			background:#ccc; 
 			position:relative;
-			z-index:1; 
+			z-index:2; 
 			margin:0 1px;
 		}
 		
@@ -76,6 +76,7 @@ $(document).ready(function () {
 			width:100px; 
 			float:left; 
 			border-top:1px solid #fff;
+			z-index: 3;
 		}
 		
 		/* display block will make the link fill the whole area of LI */
@@ -194,30 +195,36 @@ $(document).ready(function () {
 						<li>Action
 							<ul>
 								<li>
-									<s:if test="%{#attr.row.proprietaryTrial}">
+									<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
+										<s:if test="%{#attr.row.proprietaryTrial}">
 				                        <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" />Update</s:a>
-				                    </s:if>
-				                    <s:else>
-				                        <s:url id="url" action="updateTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" />Update</s:a>
-				                    </s:else>
+					                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+					                    </s:if>
+					                    <s:else>
+					                        <s:url id="url" action="updateTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+					                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
+					                    </s:else>
+									</s:if>																	
 								</li>
 								<li>
-									<s:url action="amendTrialview.action" var="urlTag" >
-									    <s:param name="studyProtocolId"><s:property value="%{#attr.row.studyProtocolId}" /></s:param>
-									</s:url>
-									<s:a href="%{urlTag}">Amend</s:a>
+									<s:if test="%{!(#attr.row.amend == null || #attr.row.amend.equals(''))}">
+										<s:url action="amendTrialview.action" var="urlTag" >
+										    <s:param name="studyProtocolId"><s:property value="%{#attr.row.studyProtocolId}" /></s:param>
+										</s:url>
+										<s:a href="%{urlTag}">Amend</s:a>
+									</s:if>
 								</li>
 								<li>
-									<s:if test="%{#attr.row.proprietaryTrial}">
-				                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" />Change status</a>
+									<s:if test="%{!(#attr.row.statusChangeLinkText == null || #attr.row.statusChangeLinkText.equals(''))}">
+										<s:if test="%{#attr.row.proprietaryTrial}">
+					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+					                    </s:if>
+					                    <s:else>
+					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+					                    </s:else>
 				                    </s:if>
-				                    <s:else>
-				                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-				                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" />Change status</a>
-				                    </s:else>
 								</li>
 								<li>
 									<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
