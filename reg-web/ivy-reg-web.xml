@@ -50,6 +50,9 @@ This is the definition of a virtual module called bda-download that has a depend
 
 
     <!-- compile -->
+    <dependency org="net.sf.ehcache"      name="ehcache"            rev="1.2.4"           conf="compile->master" transitive="false">
+       <exclude module="commons-logging"/>
+    </dependency>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="compile->master">
