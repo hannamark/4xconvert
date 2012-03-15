@@ -99,11 +99,13 @@ public class ProtocolQueryResultsServiceTest {
         admin.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         admin.setId(ADMIN_USERID);
         when(usrMock.getUserById(ADMIN_USERID)).thenReturn(admin);
+        when(usrMock.getPartialUserById(ADMIN_USERID)).thenReturn(admin);
         memb = new RegistryUser();
         memb.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         memb.setAffiliatedOrganizationId(1L);
         memb.setId(MEMB_USERID);
         when(usrMock.getUserById(MEMB_USERID)).thenReturn(memb);
+        when(usrMock.getPartialUserById(MEMB_USERID)).thenReturn(memb);
 
         // set up owned study
         List<Object> ownedStudies = new ArrayList<Object>();

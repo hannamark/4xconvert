@@ -244,4 +244,9 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         return 0L;
     }
 
+    
+    public RegistryUser getPartialUserById(Long userId) throws PAException {      
+        return getUserById(userId);
+    }
+
 }

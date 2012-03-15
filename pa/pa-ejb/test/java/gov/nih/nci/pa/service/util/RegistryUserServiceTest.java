@@ -232,6 +232,17 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertNotNull(usr);
     }
     
+    /**
+     * Test the getPartialUserById method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void getPartialUserById() throws PAException {
+        RegistryUser usr = remoteEjb.getPartialUserById(TestRegistryUserSchema.randomUserId);
+        assertNotNull(usr);
+    }
+    
+    
     @Test
     public void getUserId() throws PAException {
         Long id = remoteEjb.getUserId("trialOwnerTest");

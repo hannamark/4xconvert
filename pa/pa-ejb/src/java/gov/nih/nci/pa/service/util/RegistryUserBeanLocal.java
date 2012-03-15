@@ -586,4 +586,25 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return id;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * gov.nih.nci.pa.service.util.RegistryUserService#getPartialUserById(java
+     * .lang.Long)
+     */    
+    @Override
+    public RegistryUser getPartialUserById(Long userId) throws PAException {
+        RegistryUser registryUser = null;
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            Criteria criteria = session.createCriteria(RegistryUser.class);
+            criteria.add(Restrictions.eq("id", userId)).setMaxResults(1);
+            registryUser = (RegistryUser) criteria.uniqueResult();             
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
+        return registryUser;
+    }
+
 }

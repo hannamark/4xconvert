@@ -255,5 +255,13 @@ public interface RegistryUserService {
      */
     Long getUserId(String loginName) throws PAException;
     
-    
+    /**
+     * This method returns a user with the given ID. The difference between this method
+     * and {@link #getUserById(Long)} is that this method is performance-oriented and will return
+     * <b>partially initalized</b> {@link RegistryUser} object: its associations will not be initialized.
+     * @param userId userId
+     * @return RegistryUser
+     * @throws PAException PAException
+     */
+    RegistryUser getPartialUserById(Long userId) throws PAException;
 }

@@ -216,7 +216,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         if (protocols == null) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
-        RegistryUser user = registryUserService.getUserById(userId);
+        RegistryUser user = registryUserService.getPartialUserById(userId);
         Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(protocols, myTrialsOnly, userId, user);
         if (ownerMap.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Results exceed " + PAConstants.MAX_SEARCH_RESULTS
