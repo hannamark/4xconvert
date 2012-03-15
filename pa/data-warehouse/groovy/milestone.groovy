@@ -27,7 +27,7 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
-def milestones = destinationConnection.dataSet("DW_STUDY_MILESTONE");
+def milestones = destinationConnection.dataSet("STG_DW_STUDY_MILESTONE");
 
 sourceConnection.eachRow(sql) { row ->
     milestones.add(
@@ -44,43 +44,43 @@ sourceConnection.eachRow(sql) { row ->
             
             
    
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Submission Received Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submission Received Date'    
 	where NAME='SUBMISSION_RECEIVED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Submission Acceptance Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submission Acceptance Date'    
 	where NAME='SUBMISSION_ACCEPTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Submission Rejection Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submission Rejection Date'    
 	where NAME='SUBMISSION_REJECTED'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Administrative Processing Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Administrative Processing Start Date'    
 	where NAME='ADMINISTRATIVE_PROCESSING_START_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Administrative Processing Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Administrative Processing Completed Date'    
 	where NAME='ADMINISTRATIVE_PROCESSING_COMPLETED_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Ready for Administrative QC Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Ready for Administrative QC Date'    
 	where NAME='ADMINISTRATIVE_READY_FOR_QC'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Administrative QC Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Administrative QC Start Date'    
 	where NAME='ADMINISTRATIVE_QC_START'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Administrative QC Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Administrative QC Completed Date'    
 	where NAME='ADMINISTRATIVE_QC_COMPLETE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Scientific Processing Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Scientific Processing Start Date'    
 	where NAME='SCIENTIFIC_PROCESSING_START_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Scientific Processing Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Scientific Processing Completed Date'    
 	where NAME='SCIENTIFIC_PROCESSING_COMPLETED_DATE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Ready for Scientific QC Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Ready for Scientific QC Date'    
 	where NAME='SCIENTIFIC_READY_FOR_QC'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Scientific QC Start Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Scientific QC Start Date'    
 	where NAME='SCIENTIFIC_QC_START'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Scientific QC Completed Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Scientific QC Completed Date'    
 	where NAME='SCIENTIFIC_QC_COMPLETE'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Ready for Trial Summary Report Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Ready for Trial Summary Report Date'    
 	where NAME='READY_FOR_TSR'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Trial Summary Report Sent Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Trial Summary Report Sent Date'    
 	where NAME='TRIAL_SUMMARY_SENT'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Submitter Trial Summary Report Feedback Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submitter Trial Summary Report Feedback Date'    
 	where NAME='TRIAL_SUMMARY_FEEDBACK'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Initial Abstraction Verified Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Initial Abstraction Verified Date'    
 	where NAME='INITIAL_ABSTRACTION_VERIFY'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='On-going Abstraction Verified Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='On-going Abstraction Verified Date'    
 	where NAME='ONGOING_ABSTRACTION_VERIFICATION'""")
-destinationConnection.execute("""UPDATE DW_STUDY_MILESTONE SET NAME='Late Rejection Date'    
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Late Rejection Date'    
 	where NAME='LATE_REJECTION_DATE'""")
 	
 	
