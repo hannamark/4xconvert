@@ -190,9 +190,9 @@ $(document).ready(function () {
                            onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update</a>
                     </s:if>
                 </display:column>        
-          	 	<display:column title="Action" sortable="false" headerClass="sortable" media="html">
+          	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
                 	<ul id="nav">
-						<li>Action
+						<li>&nbsp;Select action &nbsp;&nbsp;&nbsp;&nbsp; &nabla;
 							<ul>
 								<li>
 									<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
