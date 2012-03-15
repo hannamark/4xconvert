@@ -107,6 +107,7 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
@@ -195,9 +196,8 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class);
         criteria.add(Restrictions.eq("passedValidation", Boolean.TRUE));
         criteria.add(Restrictions.eq("processed", Boolean.FALSE));
-        
         try {
-            return criteria.list();
+            return criteria.setResultTransformer(new DistinctRootEntityResultTransformer()).list();
         } catch (HibernateException hbe) {
             throw new PAException("Error while retrieving available batch files.", hbe);
         }

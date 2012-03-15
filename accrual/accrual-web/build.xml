@@ -131,23 +131,11 @@
         <delete dir="${web.test.reports}"/>
     </target>
 
-
-    <!-- ====================================================================== -->
-    <!-- Get quartz ejb3 invoked job                                            -->
-    <!-- ====================================================================== -->
-
-    <target name="get-ejb3-invoker">
-        <delete dir="${web.build.utilDir}"/>
-        <copy todir="${web.build.utilDir}">
-            <fileset file="${software.dir}/pa/pa-web/src/java/gov/nih/nci/pa/util/EJBInvokerJob.java"/>
-        </copy>
-    </target>
-
     <!-- ====================================================================== -->
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile"  depends="pre-clean, get-ejb3-invoker, determine-build-version" description="Compiles the subproject">
+    <target name="compile"  depends="pre-clean, determine-build-version" description="Compiles the subproject">
         <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
@@ -167,11 +155,6 @@
             <fileset dir="${basedir}/src/webapp">
                 <exclude name="**/web.xml"/>
             </fileset>
-        </copy>
-        <copy file="${resource.dir}/quartz_jobs.xml" todir="${web.build.outputDir}" overwrite="true">
-            <filterset>
-                <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-            </filterset>
         </copy>
         <copy todir="${web.build.webappDir}/WEB-INF" filtering="true">
             <fileset dir="${basedir}/src/webapp/WEB-INF">

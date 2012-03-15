@@ -1,0 +1,12 @@
+DROP TABLE qrtz_ac_job_details;
+DROP TABLE qrtz_ac_job_listeners;
+DROP TABLE qrtz_ac_triggers;
+DROP TABLE qrtz_ac_simple_triggers;
+DROP TABLE qrtz_ac_cron_triggers;
+DROP TABLE qrtz_ac_blob_triggers;
+DROP TABLE qrtz_ac_trigger_listeners;
+DROP TABLE qrtz_ac_calendars;
+DROP TABLE qrtz_ac_paused_trigger_grps;
+DROP TABLE qrtz_ac_fired_triggers ;
+DROP TABLE qrtz_ac_scheduler_state;
+DROP TABLE qrtz_ac_locks;

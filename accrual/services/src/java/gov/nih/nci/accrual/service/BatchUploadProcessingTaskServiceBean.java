@@ -118,7 +118,7 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
     /**
      * {@inheritDoc}
      */
-    public void processBatchUploads() throws PAException {
+    public synchronized void processBatchUploads() throws PAException {
         CdusBatchUploadReaderServiceLocal batchUploadService = 
             AccrualServiceLocator.getInstance().getBatchUploadReaderService();
 

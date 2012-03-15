@@ -837,9 +837,9 @@
      <changeSet id="PO-2034" author="krylovd">
         <comment>Added study_site_owner table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-2034.sql"/>
-     </changeSet>     
+     </changeSet>
      <changeSet id="PO-4736" author="krylovd">
-        <comment>Some of 'Other' identifiers in study_otheridentifiers had their identifier_name as null. 
+        <comment>Some of 'Other' identifiers in study_otheridentifiers had their identifier_name as null.
                  Set to 'Study Protocol Other Identifier'</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4736.sql"/>
      </changeSet>
@@ -850,5 +850,9 @@
      <changeSet id="PO-4732" author="guptag">
         <comment>Updated view to return last updated date and amendemnt submission date in Study Protocol DTOs.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4732.sql"/>
+     </changeSet>
+     <changeSet id="PO-4788" author="Hugh">
+        <comment>Remove Accrual Quartz tables.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4788.sql"/>
      </changeSet>
 </databaseChangeLog>

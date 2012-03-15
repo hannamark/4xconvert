@@ -175,11 +175,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <mkdir dir="${doc.upload.filepath.loc}" />
       <available file="${doc.upload.filepath.loc}" property="doc.upload.filepath.exists" />
       <fail unless="doc.upload.filepath.exists" message="The doc upload dir at ${doc.upload.filepath.loc} has not been created." />
-      
+
       <mkdir dir="${pdq.upload.filepath.loc}" />
       <available file="${pdq.upload.filepath.loc}" property="pdq.upload.filepath.exists" />
       <fail unless="pdq.upload.filepath.exists" message="The pdq upload dir at ${pdq.upload.filepath.loc} has not been created." />
-      
+
       <runtarget target="copy-tooltips"/>
 
       <!-- added to ensure working.dirs are fresh for our install -->
@@ -211,18 +211,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <isfalse value="${tooltips.file.present}" />
             <istrue value="${tooltips.file.overwrite}" />
         </or>
-      </condition>  
+      </condition>
   </target>
-    
+
   <target name="copy-tooltips-file" if="copy.tooltips.file">
     <echo message="Copying ${temp.dir}/reg-web-war/WEB-INF/classes/RegWebTooltips.properties to ${tooltips.filepath.loc}" />
     <delete dir="${temp.dir}/reg-web-war" />
     <unzip src="${temp.dir}/pa-ear/reg-web.war" dest="${temp.dir}/reg-web-war" />
-    <copy file="${temp.dir}/reg-web-war/WEB-INF/classes/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />      
+    <copy file="${temp.dir}/reg-web-war/WEB-INF/classes/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
   </target>
-    
+
   <target name="copy-tooltips"  depends="prepare-tooltips, copy-tooltips-file"/>
-    
+
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
       <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" log.level.hibernate="${app.log.level.hibernate}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
@@ -273,7 +273,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
-      
+
       <echo message="Looking for jboss-service.xml in ${pa-ear.dir.dist}"/>
       <delete file="${temp.dir}/pa-ear/jboss-service.xml"/>
       <copy todir="${temp.dir}/pa-ear" filtering="true">
@@ -307,15 +307,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <replaceregexp file="${temp.dir}/pa-ejb-jar/po.jndi.properties" byline="true"
                      match="^(java.naming.provider.url)=.*"
                      replace="# modified by installer ${line.separator}\1=jnp://${po.server.name}:${po.port.number}"/>
-      
+
       <replaceregexp file="${temp.dir}/pa-ejb-jar/po.jndi.properties" byline="true"
                      match="^(java.naming.security.principal)=.*"
                      replace="# modified by installer ${line.separator}\1=${po.username}"/>
-      
+
       <replaceregexp file="${temp.dir}/pa-ejb-jar/po.jndi.properties" byline="true"
                      match="^(java.naming.security.credentials)=.*"
                      replace="# modified by installer ${line.separator}\1=${po.pass}"/>
-      
+
       <move file="${pa-ear.dir.dist}/${pa-ear.ear.file}" tofile="${pa-ear.dir.dist}/${pa-ear.ear.file}.orig"/>
       <move file="${temp.dir}/pa-ear/pa-ejb.jar" tofile="${temp.dir}/pa-ejb.jar.orig"/>
       <move file="${temp.dir}/pa-ear/pa-web.war" tofile="${temp.dir}/pa-web.war.orig"/>
@@ -347,8 +347,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
       <unzip src="${temp.dir}/accrual-ear/accrual.war" dest="${temp.dir}/accrual-war"/>
-      
-      <copy file="${temp.dir}/accrual-war/WEB-INF/classes/quartz_jobs.xml" todir="${temp.dir}/accrual-war"/>
+
       <echo message="Looking for quartz_jobs.xml in ${temp.dir}/accrual-war"/>
       <copy todir="${temp.dir}/accrual-war/WEB-INF/classes" filtering="true" overwrite="true">
           <fileset dir="${temp.dir}/accrual-war">
@@ -359,7 +358,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </filterset>
       </copy>
       <delete file="${temp.dir}/accrual-war/quartz_jobs.xml"/>
-      
+
       <delete file="${temp.dir}/accrual-services-jar/paear.properties"/>
       <echo message="Looking for paear.properties in ${pa-ear.dir.dist}"/>
       <copy todir="${temp.dir}/accrual-services-jar" filtering="true">
@@ -368,7 +367,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           </fileset>
           <filterset refid="embedded.filterset"/>
       </copy>
-      
+
       <delete file="${temp.dir}/accrual-ear/META-INF/security-config.xml"/>
       <copy todir="${temp.dir}/accrual-ear/META-INF" filtering="true">
           <fileset dir="${jboss-conf.dir.dest}">
@@ -377,7 +376,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <filterset refid="embedded.filterset"/>
       </copy>
       <move file="${temp.dir}/accrual-ear/META-INF/accrual-security-config.xml" tofile="${temp.dir}/accrual-ear/META-INF/security-config.xml"/>
-      
+
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
       <var name="file.list"
         value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties"/>
@@ -436,12 +435,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
            compress="true"
            index="false"
            basedir="${temp.dir}/accrual-services-jar"/>
-      
+
       <war destfile="${temp.dir}/accrual-ear/accrual.war"
            compress="true"
            index="false"
            basedir="${temp.dir}/accrual-war"/>
-      
+
       <ear destfile="${pa-ear.dir.dist}/${accrual-ear.ear.file}"
            basedir="${temp.dir}/accrual-ear"
            compress="false"
@@ -455,7 +454,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <delete dir="${jboss.home}/server/${jboss.server.name}/tmp" failonerror="false"/>
       <delete dir="${jboss.home}/server/${jboss.server.name}/work" failonerror="false"/>
       <move file="${jboss.home}/server/${jboss.server.name}/log/server.log" tofile="${jboss.home}/server/${jboss.server.name}/log/server.log.${install.time}" failonerror="false"/>
-            
+
       <mkdir dir="${accrual.batch.upload.filepath.loc}" />
       <available file="${accrual.batch.upload.filepath.loc}" property="accrual.batch.upload.filepath.exists" />
       <fail unless="accrual.batch.upload.filepath.exists" message="The accrual batch upload dir at ${accrual.batch.upload.filepath.loc} has not been created." />

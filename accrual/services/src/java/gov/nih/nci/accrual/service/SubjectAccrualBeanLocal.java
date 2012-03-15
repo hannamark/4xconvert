@@ -131,6 +131,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -139,6 +142,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -152,6 +156,8 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
+    private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
+
     @EJB
     private PatientServiceLocal patientService;
     @EJB
@@ -166,8 +172,39 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private BatchFileService batchFileService;    
     @EJB 
     private SubjectAccrualValidator subjectAccrualValidator;
+    @EJB
+    private BatchUploadProcessingTaskServiceLocal batchUploadProcessingTaskService;
     
-   
+    /**
+     * Class used to run separate thread for processing batch submissions.
+     */
+    private class BatchFileProcessor implements Runnable {
+        @Override
+        public void run() {
+            try {
+                batchUploadProcessingTaskService.processBatchUploads();
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+    }
+    
+    /**
+     * Class used to manage batch processing thread.
+     */
+    private class BatchThreadManager implements Runnable {
+        @Override
+        public void run() {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            try {
+                executor.submit(new BatchFileProcessor()).get(2, TimeUnit.HOURS);
+            } catch (Exception e) {
+                LOG.error("Forcing shutdown of batch file processing thread.");
+                executor.shutdownNow();
+            }
+        }
+    }
+
     /**
      * The 1st 4 bytes of a byte of a file that indicates a zip file. Used to determine if the information
      * passed in to the submitBatchData method is a zip file. 
@@ -196,8 +233,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return results;
     }
 
-
-   
     /**
      * {@inheritDoc}
      */
@@ -228,9 +263,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 IiConverter.convertToLong(studySubject.getIdentifier()));
         return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
     }
-    
 
-    
     /**
      * {@inheritDoc}
      */
@@ -284,14 +317,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         return studySubjectDTO;
     }
-    
+
     private Ii getOrganizationIi(Ii hcfIi) {
         Criteria crit = PaHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class);
         crit.add(Restrictions.eq("identifier", hcfIi.getExtension()));
         HealthCareFacility hcf = (HealthCareFacility) crit.uniqueResult();
         return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -328,7 +361,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         doUpdateToSubjectAccrual(participatingSiteIi, count);
     }
-    
+
     private void doUpdateToSubjectAccrual(Ii participatingSiteIi, Int count) throws PAException {
         StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
         .getCountByStudySiteId(participatingSiteIi);
@@ -344,7 +377,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         counts.add(ssAccCount);
         getSubjectAccrualCountSvc().save(counts);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -376,8 +409,15 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         batch.setFileLocation(filePath);
         batch.setPassedValidation(validateBatchFile(batch));
         getBatchFileService().save(batch);
+        processBatchFiles();
     }
 
+    @Override
+    public void processBatchFiles() {
+        Thread batchThread = new Thread(new BatchThreadManager());
+        batchThread.start();
+    }
+    
 
     private void writeBatchFileToFilesystem(Ed batchFile, String filePath) throws PAException {
         try {
@@ -387,7 +427,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             throw new PAException("An error has occurred while trying to submit your batch data. Please try again.", e);
         }
     }
-    
+
     private String generateFileLocation(Ed batchFile) throws PAException {
         try {
             DataInputStream in = 
@@ -399,12 +439,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             throw new PAException("Unable to determine whether batch is an archive or a single file.", e);
         }
     }
-    
+
     private RegistryUser getBatchSubmitter() throws PAException {
         return PaServiceLocator.getInstance().getRegistryUserService().getUser(AccrualCsmUtil.getInstance()
                 .getCSMUser(CaseSensitiveUsernameHolder.getUser()).getLoginName());
     }
-    
+
     /**
      * Validates the given file, returning true is validation has passed, false otherwise.
      * @param file the file to validate
@@ -441,7 +481,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         return convertStudySubjectDtoToSubjectAccrualDTOList(studySubjectDtoList);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -457,7 +497,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             session.delete(ss);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -577,5 +617,4 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public void setSubjectAccrualValidator(SubjectAccrualValidator subjectAccrualValidator) {
         this.subjectAccrualValidator = subjectAccrualValidator;
     }
-    
 }

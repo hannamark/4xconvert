@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.accrual.accweb.action;
 
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
@@ -108,9 +107,7 @@ public class BatchUploadAction extends AbstractAccrualAction {
     private File upload;
     private String uploadFileName;
     private String uploadContentType;
-    private boolean processImmediately = false;
 
-    
     /**
      * {@inheritDoc}
      */
@@ -140,20 +137,11 @@ public class BatchUploadAction extends AbstractAccrualAction {
      * @throws PAException on error
      */
     private void handleBatchFile(File file) throws IOException, PAException {
-        if (processImmediately) {
-            //Validate then import, sending emails as necessary.
-            BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
-            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
-            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
-            List<BatchImportResults> results =  getCdusBatchUploadReaderSvc().importBatchData(batchFile);
-            getCdusBatchUploadReaderSvc().sendConfirmationEmail(results, batchFile);
-            getBatchFileSvc().update(batchFile);
-        } else {
-            BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
-            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
-            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
-            getBatchFileSvc().update(batchFile);
-        }
+        BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
+        List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
+        getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
+        getBatchFileSvc().update(batchFile);
+        getSubjectAccrualSvc().processBatchFiles();
     }
     
     /**
@@ -175,19 +163,5 @@ public class BatchUploadAction extends AbstractAccrualAction {
      */
     public void setUploadContentType(String uploadContentType) {
         this.uploadContentType = uploadContentType;
-    }
-
-    /**
-     * @return the processImmediately
-     */
-    public boolean isProcessImmediately() {
-        return processImmediately;
-    }
-
-    /**
-     * @param processImmediately the processImmediately to set
-     */
-    public void setProcessImmediately(boolean processImmediately) {
-        this.processImmediately = processImmediately;
     }
 }

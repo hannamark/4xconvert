@@ -26,7 +26,6 @@
     </dependency>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="runtime->default"/>
     <dependency org="opensymphony"           name="sitemesh"                rev="2.3"             conf="runtime->default"/>
-    <dependency org="opensymphony"           name="quartz-all"              rev="1.6.3"           conf="runtime->default"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.3"           conf="runtime->default">
         <exclude module="commons-logging"/>
     </dependency>

@@ -18,9 +18,6 @@
                    <td class="value" style="width:250px">
                         <s:file name="upload" label="File"/>
                    </td>
-                   <td>
-                        <fmt:message key="accrual.batchUpload.processImmediately"/><s:checkbox name="processImmediately" value="processImmediately"/>
-                   </td>
                 </tr>
             </table>
             <div class="actionsrow">

@@ -172,20 +172,4 @@ public class BatchUploadActionTest extends AbstractAccrualActionTest {
         assertTrue(batchUploadAction.hasActionErrors());
         assertFalse(batchUploadAction.hasActionMessages());
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Test
-    public void testImmediateProcessing() {
-        batchUploadAction.setUpload(txtUploadFile);
-        batchUploadAction.setUploadContentType("text/plain");
-        batchUploadAction.setUploadFileName(txtFileUploadName);
-        batchUploadAction.setProcessImmediately(true);
-        
-        assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
-        assertFalse(batchUploadAction.hasActionErrors());
-        assertTrue(batchUploadAction.hasActionMessages());
-        batchUploadAction.clearActionErrors();
-    }
 }

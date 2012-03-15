@@ -136,4 +136,9 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @throws PAException on error
      */
     void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException;
+    
+    /**
+     * Start a thread to process batch files.
+     */
+    void processBatchFiles();
 }
