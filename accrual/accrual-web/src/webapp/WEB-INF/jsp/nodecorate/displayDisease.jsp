@@ -4,6 +4,8 @@
                cssStyle="width:280px;float:left" cssClass="readonly"/> 
   <s:hidden name="patient.sdcDiseaseIdentifier"/>
   <s:hidden name="patient.icd9DiseaseIdentifier"/>
+  <s:hidden name="patient.sdcDiseasePreferredName"/>
+  <s:hidden name="patient.icd9DiseasePreferredName"/>
   <ul>
       <li style="padding-left: 0"><a href="#" class="btn"
           onclick="lookup();" /><span class="btn_img"><span
