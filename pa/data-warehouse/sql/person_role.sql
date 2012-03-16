@@ -10,7 +10,6 @@ CREATE TABLE STG_DW_PERSON_ROLE (
 	COUNTRY character varying (50),
 	CTEP_ID character varying (50),
 	CURATOR_COMMENT text,
-	NAME character varying (255),
 	PO_ID integer,
 	PREFIX character varying (10),
 	STATUS character varying (20),
