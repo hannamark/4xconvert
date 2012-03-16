@@ -142,7 +142,10 @@ import net.sf.ehcache.Element;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
@@ -153,8 +156,12 @@ import com.opensymphony.xwork2.Preparable;
  * @author Bala Nair
  *
  */
-public class SearchTrialAction extends ActionSupport implements Preparable {
+public class SearchTrialAction extends ActionSupport implements Preparable, ServletRequestAware {
    
+    private static final Logger LOG = Logger
+            .getLogger(SearchTrialAction.class);    
+    
+    private static final int PAGE_SIZE = 10;
     private static final long serialVersionUID = 1L;
     private static final Set<DocumentWorkflowStatusCode> ABSTRACTED_CODES =
             EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
@@ -172,18 +179,21 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
     }
     
     private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE_KEY";
-    private static final int CACHE_TTL = 60 * 2;
-    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static final int CRITERIA_COLLECTIONS_CACHE_TTL = 60 * 2;
+    private static final String SEARCH_RESULTS_CACHE_KEY = "SEARCH_RESULTS_CACHE_KEY";
+    private static final int SEARCH_RESULTS_CACHE_TTL = 60;    
+    static final CacheManager CACHE_MANAGER = CacheManager.create();
     static {
-        initializeCache(CACHE_TTL);
+        initializeCache(CRITERIA_COLLECTIONS_CACHE_KEY, CRITERIA_COLLECTIONS_CACHE_TTL);
+        initializeCache(SEARCH_RESULTS_CACHE_KEY, SEARCH_RESULTS_CACHE_TTL);
     }
 
-    // cache initialization is extracted into this method so that unit tests can alter it.
-    static void initializeCache(int ttl) {
+    // cache initialization is extracted into this method so that unit tests can
+    // alter it.
+    static void initializeCache(String cacheName, int ttl) {
         // CHECKSTYLE:OFF
-        Cache cache = new Cache(CRITERIA_COLLECTIONS_CACHE_KEY, 10, false,
-                false, ttl, ttl, false, 0);
-        CACHE_MANAGER.removeCache(CRITERIA_COLLECTIONS_CACHE_KEY);
+        CACHE_MANAGER.removeCache(cacheName);
+        Cache cache = new Cache(cacheName, 7, false, false, ttl, ttl, false, 0);        
         CACHE_MANAGER.addCache(cache);
         // CHECKSTYLE:ON
     }
@@ -203,6 +213,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
     private String trialAction;
     private Long identifier;
     private TrialUtil trialUtils = new TrialUtil();
+    private HttpServletRequest httpServletRequest;
     
     /**
      * {@inheritDoc}
@@ -250,13 +261,76 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            records = protocolQueryService.getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
-            checkToShow();
+            final StudyProtocolQueryCriteria spQueryCriteria = convertToStudyProtocolQueryCriteria();
+            prepareSearchResults(spQueryCriteria);
             return SUCCESS;
         } catch (Exception e) {
+            LOG.error(ExceptionUtils.getFullStackTrace(e));
             addActionError(e.getLocalizedMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             return ERROR;
+        }
+    }
+
+    /**
+     * @param spQueryCriteria
+     * @throws PAException
+     */
+    private void prepareSearchResults(
+            final StudyProtocolQueryCriteria spQueryCriteria)
+            throws PAException {
+        // The way Search Trials screen works today is that POST means a user is executing a new search,
+        // while GET means the user is paginating through results. So for POST we always hit the back-end,
+        // while for GET we also look in cache for previously retrieved query results.
+        // Based on Search Trials usage pattern, if more than 10 results are retrieved by initial search,
+        // the user is likely to go through pages. It makes sense to cache the search results just for a little
+        // while and avoid hitting the database on each page change.
+        // We are not using HttpSession as cache, because it is long-lived, is specific to each user, and does not
+        // handle multiple browser tabs very well. Using HttpSession would increase risk of significant memory 
+        // consumption, a memory that we don't really have.
+        // We are using an EhCache instance instead, which is strictly limited by a max. number of elements in memory
+        // and TTL. Enough to improve pagination performance. 
+        if (!"GET".equalsIgnoreCase(httpServletRequest.getMethod())) {
+            retrieveResultsFromBackend(spQueryCriteria);
+        } else {
+            retrieveResultsFromCache(spQueryCriteria);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void retrieveResultsFromCache(
+            StudyProtocolQueryCriteria spQueryCriteria) throws PAException {
+        List<StudyProtocolQueryDTO> cachedList = null;
+        Cache cache = CACHE_MANAGER.getCache(SEARCH_RESULTS_CACHE_KEY);
+        String elementKey = spQueryCriteria.getUniqueCriteriaKey();
+        Element element = cache.get((Object) elementKey);
+        if (element != null) {
+            cachedList = (List<StudyProtocolQueryDTO>) element.getObjectValue();
+            if (cachedList != null) {
+                records = cachedList;
+            }
+        }
+        if (cachedList == null) {
+            retrieveResultsFromBackend(spQueryCriteria);
+        }
+    }
+
+    /**
+     * @param spQueryCriteria
+     * @throws PAException
+     */
+    private void retrieveResultsFromBackend(
+            final StudyProtocolQueryCriteria spQueryCriteria)
+            throws PAException {
+        records = protocolQueryService
+                .getStudyProtocolByCriteria(spQueryCriteria);
+        checkToShow();
+        if (records.size() > PAGE_SIZE) {
+            Cache cache = CACHE_MANAGER.getCache(SEARCH_RESULTS_CACHE_KEY);
+            String elementKey = spQueryCriteria.getUniqueCriteriaKey();
+            cache.remove((Object) elementKey);
+            Element element = new Element(elementKey, records);
+            cache.put(element);
         }
     }
     
@@ -296,7 +370,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
      * @return StudyProtocolQueryCriteria
      * @throws PAException
      */
-    private StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() throws PAException {
+    StudyProtocolQueryCriteria convertToStudyProtocolQueryCriteria() throws PAException {
 
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setOfficialTitle(criteria.getOfficialTitle());
@@ -668,7 +742,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
         Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
         final String elementKey = "OrganizationsAssociatedWithStudyProtocol_"
                 + organizationType;
-        Element element = cache.get(elementKey);
+        Element element = cache.get((Object) elementKey);
         if (element != null) {
             List<PaOrganizationDTO> list = (List<PaOrganizationDTO>) element
                     .getObjectValue();
@@ -702,7 +776,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
     public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
         Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
         final String elementKey = "AllPrincipalInvestigators";
-        Element element = cache.get(elementKey);
+        Element element = cache.get((Object) elementKey);
         if (element != null) {
             List<PaPersonDTO> list = (List<PaPersonDTO>) element
                     .getObjectValue();
@@ -846,6 +920,14 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
      */
     public void setStudyProtocolStageService(StudyProtocolStageServiceLocal studyProtocolStageService) {
         this.studyProtocolStageService = studyProtocolStageService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.struts2.interceptor.ServletRequestAware#setServletRequest(javax.servlet.http.HttpServletRequest)
+     */
+    @Override
+    public void setServletRequest(HttpServletRequest request) {
+        this.httpServletRequest = request;
     }
 
 }

@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -18,6 +18,7 @@ import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -25,12 +26,18 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
+import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.util.TrialUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +93,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
 
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
 
         HttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setResponse(response);
@@ -263,7 +271,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     
     @Test
     public void testGetOrganizationsAssociatedWithStudyProtocol() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache(3);
+        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAOrganizationService.leadPaOrganizationDTOs == action
@@ -292,7 +300,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     
     @Test
     public void testGetAllPrincipalInvestigators() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache(3);
+        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAPersonServiceRemote.investigators == action
@@ -312,5 +320,87 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
                 .getAllPrincipalInvestigators());         
                  
     }
+    
+    @Test
+    public void testQueryCacheHit() throws PAException, InterruptedException {
+
+        SearchTrialAction.initializeCache("SEARCH_RESULTS_CACHE_KEY", 5);
+        Cache cache = SearchTrialAction.CACHE_MANAGER
+                .getCache("SEARCH_RESULTS_CACHE_KEY");
+        cache.removeAll();
+
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("");
+        criteria.setIdentifierType("");
+        criteria.setOfficialTitle("");
+        criteria.setOrganizationType("");
+        criteria.setPhaseCode("");
+        criteria.setPrimaryPurposeCode("");
+        criteria.setMyTrialsOnly(true); // this will cause the mock to return
+                                        // entire MockProtocolQueryService.list.
+        List<StudyProtocolQueryDTO> searchResults = MockProtocolQueryService.list;
+        action.setCriteria(criteria);
+
+        StudyProtocolQueryCriteria studyProtocolQueryCriteria = action
+                .convertToStudyProtocolQueryCriteria();
+        String key = studyProtocolQueryCriteria.getUniqueCriteriaKey();
+
+        // Make sure results are cached.
+        ((MockHttpServletRequest) ServletActionContext.getRequest())
+                .setMethod("POST");
+        assertEquals("success", action.query());
+        assertTrue(action.getRecords() == searchResults);
+        Element element = cache.get((Object) key);
+        assertNotNull(element);
+        assertNotNull(element.getObjectValue());
+        assertTrue(searchResults == element.getObjectValue());
+
+        // Subsequent call as GET with same criteria should return cached
+        // object.
+        // Let's change the cached object.
+        final ArrayList newSearchResults = new ArrayList();
+        element = new Element(key, newSearchResults);
+        cache.put(element);
+        ((MockHttpServletRequest) ServletActionContext.getRequest())
+                .setMethod("GET");
+        assertEquals("success", action.query());
+        assertFalse(action.getRecords() == searchResults);
+        element = cache.get((Object) key);
+        assertNotNull(element);
+        assertNotNull(element.getObjectValue());
+        assertTrue(newSearchResults == element.getObjectValue());
+
+        // A change in search criteria should result in a cache miss and in a
+        // new cache entry.
+        criteria.setOfficialTitle("title");
+        ((MockHttpServletRequest) ServletActionContext.getRequest())
+                .setMethod("GET");
+        assertEquals("success", action.query());
+        assertTrue(action.getRecords() == searchResults);
+        final String newKey = action.convertToStudyProtocolQueryCriteria()
+                .getUniqueCriteriaKey();
+        element = cache.get((Object) newKey);
+        assertFalse(newKey.equals(key));
+        assertNotNull(element.getObjectValue());
+        assertTrue(searchResults == element.getObjectValue());
+
+        // Make sure items in cache expire.
+        Thread.sleep(10000);
+        element = cache.get((Object) key);
+        assertNull(element);
+        element = cache.get((Object) newKey);
+        assertNull(element);
+
+        // Make sure the cache is limited in size.
+        cache.removeAll();
+        for (int i = 0; i < 100; i++) {
+            criteria.setOfficialTitle("title" + i);
+            ((MockHttpServletRequest) ServletActionContext.getRequest())
+                    .setMethod("POST");
+            assertEquals("success", action.query());
+        }
+        assertEquals(7, cache.getSize());
+
+    }    
     
 }

@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.SerializationUtils;
+
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
@@ -28,7 +30,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtocol> implements ProtocolQueryServiceLocal {
-    static List<StudyProtocolQueryDTO> list;
+    public static List<StudyProtocolQueryDTO> list;
     static {
         list = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO spQueryDTO = new StudyProtocolQueryDTO();
@@ -68,6 +70,26 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         list.add(spQueryDTO);
+        
+        // bump up the list to go over a single page of results.
+        for (int i = 10; i < 20; i++) {
+            spQueryDTO = new StudyProtocolQueryDTO();
+            spQueryDTO.setLeadOrganizationId(3L);
+            spQueryDTO.setStudyProtocolId(3L);
+            spQueryDTO.setNciIdentifier("NCI-2009-000" + i);
+            spQueryDTO
+                    .setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier"
+                            + i);
+            spQueryDTO.setOfficialTitle("officialTitle");
+            spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
+            spQueryDTO.setStudyStatusDate(PAUtil
+                    .dateStringToTimestamp("4/15/2009"));
+            spQueryDTO
+                    .setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+            spQueryDTO.setCtgovXmlRequiredIndicator(true);
+            list.add(spQueryDTO);
+        }
+        
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
