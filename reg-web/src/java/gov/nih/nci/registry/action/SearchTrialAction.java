@@ -181,19 +181,22 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE_KEY";
     private static final int CRITERIA_COLLECTIONS_CACHE_TTL = 60 * 2;
     private static final String SEARCH_RESULTS_CACHE_KEY = "SEARCH_RESULTS_CACHE_KEY";
-    private static final int SEARCH_RESULTS_CACHE_TTL = 60;    
+    private static final int SEARCH_RESULTS_CACHE_TTL_CREATE = 180;    
+    private static final int SEARCH_RESULTS_CACHE_TTL_IDLE = 90;
     static final CacheManager CACHE_MANAGER = CacheManager.create();
     static {
-        initializeCache(CRITERIA_COLLECTIONS_CACHE_KEY, CRITERIA_COLLECTIONS_CACHE_TTL);
-        initializeCache(SEARCH_RESULTS_CACHE_KEY, SEARCH_RESULTS_CACHE_TTL);
+        initializeCache(CRITERIA_COLLECTIONS_CACHE_KEY,
+                CRITERIA_COLLECTIONS_CACHE_TTL, CRITERIA_COLLECTIONS_CACHE_TTL);
+        initializeCache(SEARCH_RESULTS_CACHE_KEY,
+                SEARCH_RESULTS_CACHE_TTL_CREATE, SEARCH_RESULTS_CACHE_TTL_IDLE);
     }
 
     // cache initialization is extracted into this method so that unit tests can
     // alter it.
-    static void initializeCache(String cacheName, int ttl) {
+    static void initializeCache(String cacheName, int ttlSinceCreate, int ttlSinceLastAccess) {
         // CHECKSTYLE:OFF
         CACHE_MANAGER.removeCache(cacheName);
-        Cache cache = new Cache(cacheName, 7, false, false, ttl, ttl, false, 0);        
+        Cache cache = new Cache(cacheName, 7, false, false, ttlSinceCreate, ttlSinceLastAccess, false, 0);        
         CACHE_MANAGER.addCache(cache);
         // CHECKSTYLE:ON
     }

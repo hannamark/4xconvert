@@ -271,7 +271,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     
     @Test
     public void testGetOrganizationsAssociatedWithStudyProtocol() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3);
+        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3, 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAOrganizationService.leadPaOrganizationDTOs == action
@@ -300,7 +300,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     
     @Test
     public void testGetAllPrincipalInvestigators() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3);
+        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3, 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAPersonServiceRemote.investigators == action
@@ -324,7 +324,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testQueryCacheHit() throws PAException, InterruptedException {
 
-        SearchTrialAction.initializeCache("SEARCH_RESULTS_CACHE_KEY", 5);
+        SearchTrialAction.initializeCache("SEARCH_RESULTS_CACHE_KEY", 5, 5);
         Cache cache = SearchTrialAction.CACHE_MANAGER
                 .getCache("SEARCH_RESULTS_CACHE_KEY");
         cache.removeAll();
