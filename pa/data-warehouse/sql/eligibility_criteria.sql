@@ -12,6 +12,7 @@ CREATE TABLE STG_DW_STUDY_ELIGIBILITY_CRITERIA (
     NCI_ID character varying(255),
     OPERATOR character varying(50),
     UNIT character varying(50),
+    DESCRIPTION character varying (5000),
     VALUE character varying(50)    
 );
 

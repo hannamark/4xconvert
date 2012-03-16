@@ -61,6 +61,8 @@
     </target>
     
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Eligibility Criteria"/>
+        <groovy src="groovy/eligibility_criteria.groovy"/>
         <echo message = "Running Outcome Measure"/>
         <groovy src="groovy/outcome_measure.groovy"/>
         <echo message = "Running Person"/>
@@ -91,8 +93,6 @@
         <groovy src="groovy/overall_status.groovy"/>
         <echo message = "Running Amendment"/>
         <groovy src="groovy/amendment.groovy"/>
-        <echo message = "Running Eligibility Criteria"/>
-        <groovy src="groovy/eligibility_criteria.groovy"/>
         <echo message = "Running Other IdS"/>
         <groovy src="groovy/other_id.groovy"/>
         <echo message = "Running On Hold Status"/>

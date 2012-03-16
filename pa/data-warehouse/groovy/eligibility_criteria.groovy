@@ -11,12 +11,14 @@ def sql = """SELECT
 				elig.text_value,
 				elig.cde_public_identifier,
 				elig.cde_version_number,
+				pa.text_description,
 				nci_id.extension as extension
                 FROM PLANNED_eligibility_criterion elig
                 inner join planned_activity as pa on pa.identifier = elig.identifier
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = pa.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3' 
-                    """                   
+                where elig.criterion_name is null or elig.criterion_name NOT IN ('GENDER', 'AGE', 'MINIMUM-AGE')
+                """                   
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
@@ -37,7 +39,8 @@ sourceConnection.eachRow(sql) { row ->
             criterion_name: row.criterion_name,
             operator: row.operator,
             unit: row.unit,
-            value: row.text_value
+            value: row.text_value,
+            description: row.text_description
             )
             }
             
