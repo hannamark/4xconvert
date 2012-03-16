@@ -600,7 +600,10 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             Session session = PaHibernateUtil.getCurrentSession();
             Criteria criteria = session.createCriteria(RegistryUser.class);
             criteria.add(Restrictions.eq("id", userId)).setMaxResults(1);
-            registryUser = (RegistryUser) criteria.uniqueResult();             
+            registryUser = (RegistryUser) criteria.uniqueResult();
+            if (registryUser != null) {
+                session.evict(registryUser);
+            }
         } catch (Exception cse) {
             throw new PAException(cse);
         }
