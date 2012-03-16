@@ -83,13 +83,19 @@
 package gov.nih.nci.pa.dto;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.IdentifierType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Test;
 
 /**
@@ -193,4 +199,382 @@ public class StudyProtocolQueryCriteriaTest {
         assertEquals("Wrong result(0)", "name1", result.get(0));
         assertEquals("Wrong result(1)", "name2", result.get(1));
     }
+    
+    @Test
+    public void testGetUniqueCriteriaKey() throws IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        Collection<String> usedKeys = new HashSet<String>();
+        StudyProtocolQueryCriteria c1 = new StudyProtocolQueryCriteria();
+        StudyProtocolQueryCriteria c2 = new StudyProtocolQueryCriteria();
+        assertEquals(c1.getUniqueCriteriaKey(), c2.getUniqueCriteriaKey());
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "studyProtocolId", 10L);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "studyProtocolId", 10L);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "nciIdentifier", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "nciIdentifier", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "dcpIdentifier", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "dcpIdentifier", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "ctepIdentifier", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "ctepIdentifier", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "nctNumber", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "nctNumber", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "officialTitle", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "officialTitle", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "otherIdentifier", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "otherIdentifier", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "leadOrganizationTrialIdentifier",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "leadOrganizationTrialIdentifier",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "phaseAdditionalQualifierCode",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "phaseAdditionalQualifierCode",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "studyStatusCode", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "studyStatusCode", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "principalInvestigatorId",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "principalInvestigatorId",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils
+                .setSimpleProperty(c1, "primaryPurposeCode", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils
+                .setSimpleProperty(c2, "primaryPurposeCode", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "identifierType", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "identifierType", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "organizationType", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "organizationType", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "userLastCreated", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "userLastCreated", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "excludeRejectProtocol",
+                Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "excludeRejectProtocol",
+                Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        // for Registry trial search
+        PropertyUtils.setSimpleProperty(c1, "myTrialsOnly", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "myTrialsOnly", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "searchOnHold", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "searchOnHold", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "studyMilestone", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "studyMilestone", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "submissionType", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "submissionType", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        // for Inbox Processing
+        PropertyUtils.setSimpleProperty(c1, "inBoxProcessing", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "inBoxProcessing", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "studyLockedBy", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "studyLockedBy", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "searchCTEPTrials", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "searchCTEPTrials", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "searchDCPTrials", Boolean.TRUE);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "searchDCPTrials", Boolean.TRUE);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "trialCategory", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "trialCategory", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "userId", 10L);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "userId", 10L);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "ctgovXmlRequiredIndicator",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "ctgovXmlRequiredIndicator",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "summ4FundingSourceId", 10L);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "summ4FundingSourceId", 10L);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "summ4FundingSourceTypeCode",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "summ4FundingSourceTypeCode",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "countryName", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "countryName", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "city", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "city", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "bioMarkerIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "bioMarkerIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "bioMarkerNames",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "bioMarkerNames",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "documentWorkflowStatusCodes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "documentWorkflowStatusCodes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "interventionIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "interventionIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "interventionAlternateNameIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "interventionAlternateNameIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "interventionTypes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "interventionTypes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "leadOrganizationIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "leadOrganizationIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "participatingSiteIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "participatingSiteIds",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "pdqDiseases",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "pdqDiseases",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "phaseCodes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "phaseCodes",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "states",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "states",
+                Arrays.asList(new String[] { "S1", "S2" }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "summary4AnatomicSites",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "summary4AnatomicSites",
+                Arrays.asList(new Long[] { 1L, 2L }));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "familyId", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "familyId", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "participatingSiteFamilyId",
+                "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "participatingSiteFamilyId",
+                "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+    }
+    
 }

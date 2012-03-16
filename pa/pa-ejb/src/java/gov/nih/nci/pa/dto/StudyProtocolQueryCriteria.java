@@ -917,6 +917,71 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setSearchDCPTrials(boolean searchDCPTrials) {
         this.searchDCPTrials = searchDCPTrials;
+    }
+
+    /**
+     * Returns a {@link String} key that identifies this criteria. Two criteria
+     * objects that are exactly the same will return the same key. Two criteria
+     * objects that are different at least in one field value will have
+     * different keys.
+     * 
+     * @return String
+     */
+    public String getUniqueCriteriaKey() { // NOPMD
+        StringBuilder builder = new StringBuilder();
+        builder.append("StudyProtocolQueryCriteria [studyProtocolId=")
+                .append(studyProtocolId).append(", nciIdentifier=")
+                .append(nciIdentifier).append(", dcpIdentifier=")
+                .append(dcpIdentifier).append(", ctepIdentifier=")
+                .append(ctepIdentifier).append(", nctNumber=")
+                .append(nctNumber).append(", officialTitle=")
+                .append(officialTitle).append(", otherIdentifier=")
+                .append(otherIdentifier)
+                .append(", leadOrganizationTrialIdentifier=")
+                .append(leadOrganizationTrialIdentifier)
+                .append(", phaseAdditionalQualifierCode=")
+                .append(phaseAdditionalQualifierCode)
+                .append(", studyStatusCode=").append(studyStatusCode)
+                .append(", principalInvestigatorId=")
+                .append(principalInvestigatorId)
+                .append(", primaryPurposeCode=").append(primaryPurposeCode)
+                .append(", identifierType=").append(identifierType)
+                .append(", organizationType=").append(organizationType)
+                .append(", userLastCreated=").append(userLastCreated)
+                .append(", excludeRejectProtocol=")
+                .append(excludeRejectProtocol).append(", myTrialsOnly=")
+                .append(myTrialsOnly).append(", searchOnHold=")
+                .append(searchOnHold).append(", studyMilestone=")
+                .append(studyMilestone).append(", submissionType=")
+                .append(submissionType).append(", inBoxProcessing=")
+                .append(inBoxProcessing).append(", studyLockedBy=")
+                .append(studyLockedBy).append(", searchCTEPTrials=")
+                .append(searchCTEPTrials).append(", searchDCPTrials=")
+                .append(searchDCPTrials).append(", trialCategory=")
+                .append(trialCategory).append(", userId=").append(userId)
+                .append(", ctgovXmlRequiredIndicator=")
+                .append(ctgovXmlRequiredIndicator)
+                .append(", summ4FundingSourceId=").append(summ4FundingSourceId)
+                .append(", summ4FundingSourceTypeCode=")
+                .append(summ4FundingSourceTypeCode).append(", countryName=")
+                .append(countryName).append(", city=").append(city)
+                .append(", bioMarkerIds=").append(bioMarkerIds)
+                .append(", bioMarkerNames=").append(bioMarkerNames)
+                .append(", documentWorkflowStatusCodes=")
+                .append(documentWorkflowStatusCodes)
+                .append(", interventionIds=").append(interventionIds)
+                .append(", interventionAlternateNameIds=")
+                .append(interventionAlternateNameIds)
+                .append(", interventionTypes=").append(interventionTypes)
+                .append(", leadOrganizationIds=").append(leadOrganizationIds)
+                .append(", participatingSiteIds=").append(participatingSiteIds)
+                .append(", pdqDiseases=").append(pdqDiseases)
+                .append(", phaseCodes=").append(phaseCodes).append(", states=")
+                .append(states).append(", summary4AnatomicSites=")
+                .append(summary4AnatomicSites).append(", familyId=")
+                .append(familyId).append(", participatingSiteFamilyId=")
+                .append(participatingSiteFamilyId).append("]");
+        return builder.toString();
     }    
     
 }
