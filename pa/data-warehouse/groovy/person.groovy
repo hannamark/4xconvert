@@ -25,7 +25,9 @@ def sql = """select
 			 url.value as url
 			 from Person per
 			 join address add on add.id = per.postal_address_id
-			 left outer join identifiedperson ctepid on ctepid.player_id = per.id and ctepid.assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier'
+			 left outer join identifiedperson ctepid on ctepid.player_id = per.id 
+			 	and ctepid.assigned_identifier_root = '2.16.840.1.113883.3.26.6.1'
+			 	and ctepid.status = 'ACTIVE'
 			 left outer join country on country.id = add.country_id
 			 left outer join person_email p_e on p_e.person_id = per.id
 			 left outer join email e on e.id = p_e.email_id
