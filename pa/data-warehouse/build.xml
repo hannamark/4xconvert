@@ -61,6 +61,8 @@
     </target>
     
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Arm / Interventions"/>
+        <groovy src="groovy/arm_intervention.groovy"/>
         <echo message = "Running Eligibility Criteria"/>
         <groovy src="groovy/eligibility_criteria.groovy"/>
         <echo message = "Running Outcome Measure"/>
@@ -81,8 +83,6 @@
         <groovy src="groovy/study_audit.groovy"/>        
         <echo message = "Running Person Audit"/>
         <groovy src="groovy/person_audit.groovy"/>
-        <echo message = "Running Arm / Interventions"/>
-        <groovy src="groovy/arm_intervention.groovy"/>
         <echo message = "Running Subgroup"/>
         <groovy src="groovy/subgroup.groovy"/>
         <echo message = "Running Record Owner"/>
