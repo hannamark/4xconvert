@@ -55,7 +55,6 @@ sourceConnection.eachRow(sql) { row ->
     	country: row.country_name,
     	ctep_id: row.ctep_id,
     	curator_comment: row.comments,
-    	name: row.firstname + " " + row.lastname,
  		po_id: row.id,
  		prefix: row.prefix,
  		status: row.status,
@@ -80,9 +79,7 @@ sql = """select
 			 country.name as country_name,
 			 ctepid.assigned_identifier_extension as ctep_id,
 			 per.comments,
-			 per.firstname,
-			 per.lastname,	
-			 hcf.id,
+			 hcp.id,
 			 per.prefix,
 			 per.status,
 			 per.statusdate,
@@ -95,7 +92,7 @@ sql = """select
 			 tty.value as tty,
 			 url.value as url
 			 from Person per
-			 join healthcarefacility hcf on hcf.player_id = per.id
+			 join healthcareprovider hcp on hcp.person_id = per.id
 			 join address add on add.id = per.postal_address_id
 			 left outer join identifiedperson ctepid on ctepid.player_id = per.id and ctepid.assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier'
 			 left outer join country on country.id = add.country_id
