@@ -6,8 +6,6 @@
     <head>
         <title><fmt:message key="plannedMarker.details.title" /></title>
         <s:head />
-        <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-        <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
         <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>

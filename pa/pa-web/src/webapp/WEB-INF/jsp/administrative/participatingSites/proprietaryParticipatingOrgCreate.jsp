@@ -7,8 +7,6 @@
     <head>
         <title><fmt:message key="participatingOrganizations.subtitle" /></title>
         <s:head/>
-        <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" src="scripts/js/prototype.js"></script>
         <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
@@ -21,12 +19,6 @@
         <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
         <c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" />
-        <style type="text/css"> 
-        .disabled 
-        { 
-         background-color: #CCC; 
-        } 
-        </style> 
 
         <script language="javascript" type="text/javascript">
             addCalendar("Cal1", "Select Date", "recStatusDate", "proprietarySite");
