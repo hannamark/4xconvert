@@ -15,6 +15,7 @@ CREATE TABLE STG_DW_PERSON (
 	STATUS character varying (20),
 	STATUS_DATE date,
 	SEX_CODE character varying (20),
+	RACE_CODE character varying (255),
 	STATE_OR_PROVINCE character varying (255),
 	SUFFIX character varying (10),
 	EMAIL character varying (256),
