@@ -163,25 +163,6 @@ public class ProtocolQueryResultsServiceTest {
         assertEquals(0, bean.getResults(new ArrayList<Long>(), true, 1L).size());
     }
 
-    @Test(expected = PAException.class)
-    public void tooManyResultsTest() throws Exception {
-        List<Long> ids = new ArrayList<Long>();
-        for (long x = 0; x < 501; x++) {           
-            ids.add(x);
-        }
-        bean.getResults(ids, false, null);
-    }
-
-    @Test(expected = PAException.class)
-    public void tooManyResultsMyTrialsOnlyTest() throws Exception {
-        List<Long> ids = new ArrayList<Long>();
-        for (long x = 0; x < 501; x++) {          
-            ids.add(x);
-        }
-     //   assertEquals(1, bean.getResults(ids, true, MEMB_USERID).size());
-        bean.getResults(ids, true, ADMIN_USERID);
-    }
-
     @Test
     public void noOwnedTrialsTest() throws Exception {
         List<Long> ids = new ArrayList<Long>();

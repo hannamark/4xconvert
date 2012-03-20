@@ -475,6 +475,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             String joinClause = createJoinClauseByCriteria(criteria);
             Query query = crit.getQuery(Arrays.asList(new String[] {"id"}),
                     orderBy, joinClause, false);
+            query.setCacheable(false);            
             LOG.debug(query.getQueryString());
             results = query.list();
         } catch (Exception e) {

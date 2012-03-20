@@ -89,7 +89,6 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.convert.BaseStudyProtocolQueryConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -218,10 +217,6 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         }
         RegistryUser user = registryUserService.getPartialUserById(userId);
         Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(protocols, myTrialsOnly, userId, user);
-        if (ownerMap.size() > PAConstants.MAX_SEARCH_RESULTS) {
-            throw new PAException("Results exceed " + PAConstants.MAX_SEARCH_RESULTS
-                    + ". Please refine the search criteria.");
-        }
         if (ownerMap.isEmpty()) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
