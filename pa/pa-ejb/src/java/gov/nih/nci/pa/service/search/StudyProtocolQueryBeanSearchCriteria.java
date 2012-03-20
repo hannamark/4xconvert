@@ -377,7 +377,11 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
                         + "not null and offholdDate is null) > 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
-            }
+            } else if (spo.isSearchOffHoldTrials()) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                        + "not null and offholdDate is null) = 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
+            }            
 
             if (spo.getTrialSubmissionType() == SubmissionTypeCode.A) {
                 String operator = determineOperator(whereClause);

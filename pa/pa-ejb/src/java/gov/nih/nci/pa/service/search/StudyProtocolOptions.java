@@ -102,6 +102,7 @@ public class StudyProtocolOptions {
     private boolean excludeRejectedTrials;
     private boolean myTrialsOnly;
     private boolean searchOnHoldTrials;   
+    private boolean searchOffHoldTrials;
     private SubmissionTypeCode trialSubmissionType;
     private boolean lockedTrials;
     private boolean searchCTEPTrials;
@@ -472,6 +473,20 @@ public class StudyProtocolOptions {
      */
     public void setSearchDCPTrials(boolean searchDCPTrials) {
         this.searchDCPTrials = searchDCPTrials;
+    }
+
+    /**
+     * @return the searchOffHoldTrials
+     */
+    public boolean isSearchOffHoldTrials() {
+        return searchOffHoldTrials;
+    }
+
+    /**
+     * @param searchOffHoldTrials the searchOffHoldTrials to set
+     */
+    public void setSearchOffHoldTrials(boolean searchOffHoldTrials) {
+        this.searchOffHoldTrials = searchOffHoldTrials;
     }
     
     

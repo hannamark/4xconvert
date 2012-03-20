@@ -131,8 +131,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String userLastCreated;
     private Boolean excludeRejectProtocol;
     // for Registry trial search
-    private Boolean myTrialsOnly;
-    private boolean searchOnHold;
+    private Boolean myTrialsOnly;    
     private String studyMilestone;
     private String submissionType;
 
@@ -142,6 +141,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private boolean searchCTEPTrials;
     private boolean searchDCPTrials;
     private String trialCategory;
+    private String holdStatus;
     private Long userId;
     
     private String ctgovXmlRequiredIndicator;
@@ -429,20 +429,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public Boolean isMyTrialsOnly() {
         return myTrialsOnly;
-    }
-
-    /**
-     * @param searchOnHold the searchOnHold to set
-     */
-    public void setSearchOnHold(boolean searchOnHold) {
-        this.searchOnHold = searchOnHold;
-    }
-
-    /**
-     * @return the searchOnHold
-     */
-    public boolean isSearchOnHold() {
-        return searchOnHold;
     }
 
     /**
@@ -950,15 +936,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", userLastCreated=").append(userLastCreated)
                 .append(", excludeRejectProtocol=")
                 .append(excludeRejectProtocol).append(", myTrialsOnly=")
-                .append(myTrialsOnly).append(", searchOnHold=")
-                .append(searchOnHold).append(", studyMilestone=")
+                .append(myTrialsOnly).append(", studyMilestone=")
                 .append(studyMilestone).append(", submissionType=")
                 .append(submissionType).append(", inBoxProcessing=")
                 .append(inBoxProcessing).append(", studyLockedBy=")
                 .append(studyLockedBy).append(", searchCTEPTrials=")
                 .append(searchCTEPTrials).append(", searchDCPTrials=")
-                .append(searchDCPTrials).append(", trialCategory=")
-                .append(trialCategory).append(", userId=").append(userId)
+                .append(searchDCPTrials).append(", trialCategory=")                
+                .append(trialCategory).append(", holdStatus=")
+                .append(holdStatus).append(", userId=").append(userId)
                 .append(", ctgovXmlRequiredIndicator=")
                 .append(ctgovXmlRequiredIndicator)
                 .append(", summ4FundingSourceId=").append(summ4FundingSourceId)
@@ -982,6 +968,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(familyId).append(", participatingSiteFamilyId=")
                 .append(participatingSiteFamilyId).append("]");
         return builder.toString();
+    }
+
+    /**
+     * @return the holdStatus
+     */
+    public String getHoldStatus() {
+        return holdStatus;
+    }
+
+    /**
+     * @param holdStatus the holdStatus to set
+     */
+    public void setHoldStatus(String holdStatus) {
+        this.holdStatus = holdStatus;
     }    
     
 }

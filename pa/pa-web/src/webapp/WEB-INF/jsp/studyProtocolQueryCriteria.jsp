@@ -26,7 +26,7 @@
                 $("studyStatusCode").value="";
                 $("documentWorkflowStatusCode").value="";
                 $("studyMilestone").value="";
-                $("searchOnHold").checked=false;
+                $("holdStatus").value="";
                 $("submissionType").value="";
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
@@ -159,11 +159,11 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="searchOnHold"> <fmt:message key="studyProtocol.searchOnHold"/></label>
+                            <label for="holdStatus"> <fmt:message key="studyProtocol.searchOnHold"/></label>
                         </td>
                         <td>
-                            <s:checkbox id="searchOnHold" name="criteria.searchOnHold" />
-                            <input type="hidden" id="searchOnHold" value="false">
+                            <s:select headerKey="" headerValue="Both" id="holdStatus" name="criteria.holdStatus" 
+                                list="#{'onhold':'On-Hold','notonhold':'Not On-Hold'}"  value="criteria.holdStatus" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="studyLockedBy"> <fmt:message key="studyProtocol.searchOnCheckout"/></label>

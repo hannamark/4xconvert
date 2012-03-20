@@ -423,8 +423,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setSearchDCPTrials(criteria.isSearchDCPTrials());
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
         options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
-        options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
-        options.setSearchOnHoldTrials(criteria.isSearchOnHold());
+        options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));        
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
         options.setPhaseCodesByValues(criteria.getPhaseCodes());
         options.setCountryName(criteria.getCountryName());
@@ -442,6 +441,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         } else {
             options.setCtgovXmlRequiredIndicator(null);
         }
+        
+        if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), "onhold")) {
+            options.setSearchOnHoldTrials(true);
+        } else if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), "notonhold")) { 
+            options.setSearchOffHoldTrials(true);
+        }        
+        
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
@@ -678,7 +684,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
-                && !criteria.isSearchOnHold()
+                && StringUtils.isEmpty(criteria.getHoldStatus())
                 && !criteria.isStudyLockedBy()
                 && !criteria.isSearchCTEPTrials()
                 && !criteria.isSearchDCPTrials()
