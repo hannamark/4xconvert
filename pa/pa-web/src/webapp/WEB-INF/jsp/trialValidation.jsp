@@ -35,6 +35,18 @@
                 jQuery("#onholdButton").bind("click", function(ev) {
                     var form = document.forms[0];
                     form.action = "onhold.action";
+                    // We are essentially doing a redirect to a different Action here using Form POST submit.
+                    // Since Trial Validation form here is being submitted to a different Action, this generates
+                    // a bunch of harmless error messages in the log, which are, however, bothering the QA: https://tracker.nci.nih.gov/browse/PO-4815
+                    // We'll effectively disable all form controls, except struts token, here to avoid those errors.
+                    try {                    
+                    	$(form).getElements().each(function (el) {
+                    		if (!el.name.startsWith("struts."))
+                    			  el.disable();
+                    	});
+                    } catch(err) {
+                    	// oops.
+                    }
                     form.submit();
                 });
             });
