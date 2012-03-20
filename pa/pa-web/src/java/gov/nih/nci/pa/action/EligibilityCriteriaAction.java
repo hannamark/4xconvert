@@ -570,29 +570,31 @@ public class EligibilityCriteriaAction extends ActionSupport {
         StringBuffer ruleError = new StringBuffer();
         HashSet<String> order = new HashSet<String>();
         try {
-            for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
-                ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
-                checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), buildDisplayOrderUIList(),
-                                        order);
-            }
-            if (ruleError.length() > 0) {
-                addFieldError("reOrder", ruleError.toString());
-                populateList();
-                return ELIGIBILITY;
-            }
-            if (!order.isEmpty()) {
-                StringBuffer orderStr = new StringBuffer("Display Order(s) exist: ");
-                orderStr.append(order.toString());
-                addFieldError("reOrder", orderStr.toString());
-            } else {
-                fixDisplayOrder();
-                for (ISDesignDetailsWebDTO dto : eligibilityList) {
-                    PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, Long.parseLong(dto
-                        .getId()));
-                    PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+            if (getEligibilityList() != null) {
+                for (ISDesignDetailsWebDTO dto : getEligibilityList()) {
+                    ruleError.append(rulesForDisplayOrder(dto.getDisplayOrder()));
+                    checkDisplayOrderExists(dto.getDisplayOrder(), Long.parseLong(dto.getId()), 
+                            buildDisplayOrderUIList(), order);
                 }
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-                query();
+                if (ruleError.length() > 0) {
+                    addFieldError("reOrder", ruleError.toString());
+                    populateList();
+                    return ELIGIBILITY;
+                }
+                if (!order.isEmpty()) {
+                    StringBuffer orderStr = new StringBuffer("Display Order(s) exist: ");
+                    orderStr.append(order.toString());
+                    addFieldError("reOrder", orderStr.toString());
+                } else {
+                    fixDisplayOrder();
+                    for (ISDesignDetailsWebDTO dto : eligibilityList) {
+                        PlannedEligibilityCriterionDTO pecDTO = createPlannedEligibilityCriterion(dto, 
+                                Long.parseLong(dto.getId()));
+                        PaRegistry.getPlannedActivityService().updatePlannedEligibilityCriterion(pecDTO);
+                    }
+                    ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+                    query();
+                }
             }
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
