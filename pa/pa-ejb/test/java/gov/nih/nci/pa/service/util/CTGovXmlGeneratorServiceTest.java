@@ -660,9 +660,16 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         studyOutcomeMeasureDto.setName(new St());
         studyOutcomeMeasureDto.setTimeFrame(new St());
         studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(true));
+        St desc = new St();
+        desc.setValue("testSomPrimTrue -- Some description");
+        studyOutcomeMeasureDto.setDescription(desc);
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
-        assertFalse(getBean().generateCTGovXml(spId).contains("<primary_outcome>"));
+        String ctGovXml = getBean().generateCTGovXml(spId);
+        assertTrue(ctGovXml.contains("<primary_outcome>"));
+        assertFalse(ctGovXml.contains("<secondary_outcome>"));
+        assertTrue(ctGovXml.contains("<outcome_description>"));
+        
     }
 
     @Test
@@ -672,9 +679,15 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         studyOutcomeMeasureDto.setName(new St());
         studyOutcomeMeasureDto.setTimeFrame(new St());
         studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(false));
+        St desc = new St();
+        desc.setValue("testSomPrimFalse -- Some description");
+        studyOutcomeMeasureDto.setDescription(desc);
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
-        assertFalse(getBean().generateCTGovXml(spId).contains("<primary_outcome>"));
+        String ctGovXml = getBean().generateCTGovXml(spId);
+        assertFalse(ctGovXml.contains("<primary_outcome>"));
+        assertTrue(ctGovXml.contains("<secondary_outcome>"));
+        assertTrue(ctGovXml.contains("<outcome_description>"));
     }
 
     @Test

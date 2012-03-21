@@ -221,13 +221,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (IiConverter.ORG_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append(" where org.id = ").append(isoIi.getExtension());
         } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
+            throw new PAException(" Unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
         List<Organization> queryList = PaHibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
-            throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  "
-                    + isoIi.getExtension() + isoIi.getIdentifierName());
+            throw new PAException("PO Identifier " + isoIi.getExtension()
+                    + " is associated with more than one Organization record. ");
         }
         if (!queryList.isEmpty()) {
             org = queryList.get(0);
@@ -259,13 +259,13 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if (IiConverter.PERSON_PA_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append(" where per.id = ").append(isoIi.getExtension());
         } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
+            throw new PAException(" Unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
         List<Person> queryList = PaHibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
-            throw new PAException(" Person  should not be more than 1 record for a Po Identifier = "
-                    + isoIi.getExtension());
+            throw new PAException("PO Identifier " + isoIi.getExtension()
+                    + " is associated with more than one Person record. ");
         }
         if (!queryList.isEmpty()) {
             per = queryList.get(0);

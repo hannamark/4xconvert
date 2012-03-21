@@ -23,7 +23,7 @@
                 <xs:element ref="study_design" />
                 <xs:element minOccurs="0" maxOccurs="unbounded" ref="primary_outcome" />
                 <xs:element minOccurs="0" maxOccurs="unbounded" ref="secondary_outcome" />
-                <xs:element minOccurs="0" maxOccurs="1" ref="disease_conditions" />
+                <xs:element minOccurs="0"  ref="disease_conditions" />
                 <xs:element minOccurs="0" ref="sub_groups" />
                 <xs:element minOccurs="0" ref="enrollment" />
                 <xs:element minOccurs="0" ref="enrollment_type" />
@@ -41,8 +41,8 @@
     
     <xs:group name="id_group">
         <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" ref="po_id" />
-            <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
+            <xs:element minOccurs="0"  ref="po_id" />
+            <xs:element minOccurs="0"  ref="ctep_id" />
         </xs:sequence>
     </xs:group>
     
@@ -51,8 +51,8 @@
             <xs:sequence>
                 <xs:element ref="org_study_id" />
                 <xs:choice maxOccurs="unbounded">
-                    <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
-                    <xs:element minOccurs="0" maxOccurs="1" ref="dcp_id" />
+                    <xs:element minOccurs="0"  ref="ctep_id" />
+                    <xs:element minOccurs="0"  ref="dcp_id" />
                     <xs:element ref="secondary_id" />
                 </xs:choice>
                 <xs:element ref="org_name" />
@@ -70,6 +70,7 @@
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" ref="phone" />
             <xs:element minOccurs="0" maxOccurs="unbounded" ref="fax" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="tty" />
             <xs:element minOccurs="0" maxOccurs="unbounded" ref="email" />
         </xs:sequence>
     </xs:group>
@@ -149,7 +150,10 @@
     <xs:element name="resp_party">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="resp_party_person" />
+                <xs:choice minOccurs="0" >
+                    <xs:element ref="resp_party_person" minOccurs="0"/>
+                    <xs:element ref="resp_party_generic_contact" minOccurs="0"/>
+                </xs:choice>
                 <xs:element ref="resp_party_organization" />
             </xs:sequence>
         </xs:complexType>
@@ -159,7 +163,7 @@
             <xs:sequence>
                 <xs:group ref="person_name_group" />
                 <xs:element ref="po_id" />
-                <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
+                <xs:element minOccurs="0"  ref="ctep_id" />
                 <xs:element ref="address" />
                 <xs:group ref="telecom_group" />
             </xs:sequence>
@@ -167,6 +171,7 @@
     </xs:element>
     <xs:element name="fax" type="xs:string" />
     <xs:element name="resp_party_organization" type="org_name_type" />
+    <xs:element name="resp_party_generic_contact" type="generic_org_name_type" />
     <xs:element name="collaborator">
         <xs:complexType>
             <xs:sequence>
@@ -208,7 +213,7 @@
                 <xs:element ref="current_trial_status" />
                 <xs:element ref="current_trial_status_date" />
                 <xs:element minOccurs="0" ref="why_stopped" />
-                <xs:element minOccurs="1" maxOccurs="1" ref="current_trial_start_date" />
+                <xs:element ref="current_trial_start_date" />
                 <xs:element ref="current_trial_start_date_type" />
                 <xs:element ref="current_trial_completion_date" />
                 <xs:element ref="current_trial_completion_date_type" />
@@ -307,6 +312,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="outcome_measure" />
+                <xs:element minOccurs="0" ref="outcome_description" />
                 <xs:element ref="outcome_safety_issue" />
                 <xs:element ref="outcome_time_frame" />
             </xs:sequence>
@@ -510,6 +516,7 @@
     <xs:element name="country" type="xs:string" />
     <xs:element name="phone" type="xs:string" />
     <xs:element name="email" type="xs:string" />
+    <xs:element name="tty" type="xs:string" />
     <xs:element name="textblock" type="xs:string" />
     <xs:element name="outcome_measure" type="text_block_type" />
     <xs:element name="outcome_safety_issue" type="xs:string" />
@@ -529,13 +536,23 @@
             <xs:extension base="name">
                 <xs:sequence>
                     <xs:element ref="po_id" />
-                    <xs:element minOccurs="0" maxOccurs="1" ref="ctep_id" />
+                    <xs:element minOccurs="0" ref="ctep_id" />
                     <xs:element ref="address" />
                     <xs:group ref="telecom_group" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+    <xs:complexType name="generic_org_name_type">
+       <xs:sequence>
+           <xs:element ref="name" minOccurs="0"/>
+           <xs:element ref="po_id" minOccurs="0"/>
+           <xs:element ref="ctep_id" minOccurs="0"/>
+           <xs:element ref="address" minOccurs="0"/>
+           <xs:group   ref="telecom_group" minOccurs="0"/>
+       </xs:sequence>
+    </xs:complexType>
+    
     <xs:complexType name="contact_type">
         <xs:sequence>
             <xs:group ref="person_name_group" />
@@ -553,12 +570,12 @@
     <xs:element name="error">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="error_description" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="study_identifier" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="study_title" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="contact_info" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="error_type" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="error_messages" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="error_description" minOccurs="0"/>
+                <xs:element ref="study_identifier" minOccurs="0"/>
+                <xs:element ref="study_title" minOccurs="0"/>
+                <xs:element ref="contact_info" minOccurs="0"/>
+                <xs:element ref="error_type" minOccurs="0"/>
+                <xs:element ref="error_messages" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

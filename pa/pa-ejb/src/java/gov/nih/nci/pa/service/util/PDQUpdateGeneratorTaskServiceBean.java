@@ -135,8 +135,8 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
     private static final Logger LOG = Logger.getLogger(PDQUpdateGeneratorTaskServiceBean.class);
-    private final List<String> failureList = new ArrayList<String>(); 
-
+    private static final String CLOSING_TD_TR = "</td></tr>";
+    
     @EJB
     private PDQXmlGeneratorServiceRemote xmlGeneratorService;
 
@@ -172,26 +172,14 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             PaRegistry.getStudyProtocolService().getAbstractedCollaborativeTrials();
         generateZipFile(zipArchive, collaborativeTrials, zipFilePath, folderPath);
         long endTime = System.currentTimeMillis();
-        StringBuilder mailBody = new StringBuilder();
         Calendar endDateTime = Calendar.getInstance();
-        mailBody.append("Start Time  ::::  " + dateFormat.format(startDateTime.getTime())).append("\n");
-        mailBody.append("Finish Time ::::  " + dateFormat.format(endDateTime.getTime())).append("\n");
-        mailBody.append("Total trails processed     :: " + collaborativeTrials.size()).append("\n");
-        mailBody.append("Number of trails with errors :: " + failureList.size()).append("\n").append("\n");
-        mailBody.append("Total time taken :: "
-                + getDurationBreakdown((endTime - startTime)));
-        sendPDQExportSummaryEmail(mailBody.toString());
-        if (!failureList.isEmpty()) {
-            StringBuilder failedTrials = new StringBuilder();
-            for (String each : failureList) {
-                failedTrials.append(each).append(",");
-            }
-            LOG.info("List of Erroneous Trails  :::  ");
-            LOG.info(failedTrials.toString());
-        }
-        LOG.info("PDQ trial exporter complete :: "
-                + dateFormat.format(endDateTime.getTime()) + " Finished in : "
-                + (endTime - startTime) + " ms");
+        sendPDQExportSummaryEmail(createMailBody(
+                dateFormat.format(startDateTime.getTime()),
+                dateFormat.format(endDateTime.getTime()),
+                collaborativeTrials.size(),
+                getDurationBreakdown((endTime - startTime))));
+        PdqXmlGenHelper.getFailedTrialsMap().clear();
+        LOG.info("PDQ trial exporter complete :: Duration :: " + getDurationBreakdown((endTime - startTime)));
     }
 
     private void generateZipFile(File zipArchive, List<StudyProtocolDTO> collaborativeTrials, String zipFilePath,
@@ -201,14 +189,10 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipArchive)));
             FileChannel channel = new RandomAccessFile(zipArchive, "rw").getChannel();
             FileLock lock = channel.lock();
-            failureList.clear();
             for (StudyProtocolDTO sp : collaborativeTrials) {
                 long eachTrialStartTime = System.currentTimeMillis();
                 String pdqXml = xmlGeneratorService.generatePdqXml(sp.getIdentifier());
                 String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
-                if (StringUtils.contains(pdqXml, "<error>")) {
-                    failureList.add(assignedIdentifier);
-                }
                 String fileName = assignedIdentifier + ".xml";
                 File xmlFile = new File(folderPath + File.separator + fileName);
                 //Write xml to temporary file.
@@ -321,11 +305,40 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         try {
             String mailTo = PaRegistry.getLookUpTableService().getPropertyValue("ctrp.support.email");
             PaRegistry.getMailManagerService()
-                .sendMailWithAttachment(mailTo, "PDQ Export Summary", mailBody, null);
+                .sendMailWithHtmlBody(mailTo, "PDQ Export Summary", mailBody);
         } catch (PAException e) {
             LOG.error("Error sending error email during CTGov.xml generation.", e);
         }
-    }    
+    }   
+    
+    private String createMailBody(String jobStartTime, String jobEndTime,
+            int totalTrials, String jobDuration) {
+        StringBuilder mailBody = new StringBuilder();
+        mailBody.append("<html><body><form>");
+        mailBody.append("<table border=\"1\" width=\"50%\">");
+        mailBody.append("<tr align=\"left\"><td>Duration</td><td>" + jobDuration + CLOSING_TD_TR);
+        mailBody.append("<tr align=\"left\"><td>Start time</td><td>" + jobStartTime + CLOSING_TD_TR);
+        mailBody.append("<tr align=\"left\"><td>Finish time</td><td>" + jobEndTime + CLOSING_TD_TR);
+        mailBody.append("<tr align=\"left\"><td>Total trials processed</td><td>" + totalTrials + CLOSING_TD_TR);
+        mailBody.append("</table>");
+        if (!PdqXmlGenHelper.getFailedTrialsMap().isEmpty()) {
+            mailBody.append("<br>");
+            mailBody.append("List of erroneous trials. (" + PdqXmlGenHelper.getFailedTrialsMap().size() + " trials)");
+            mailBody.append("<table border=\"1\" width=\"50%\">");
+            mailBody.append("<tr><th style=\"width:20%;\">Identifier</th>");
+            mailBody.append("<th style=\"width:80%;\">Error message</th></tr>");
+            for (String id : PdqXmlGenHelper.getFailedTrialsMap().keySet()) {
+                mailBody.append("<tr align=\"center\"><td>" + id + "</td><td>"
+                        + PdqXmlGenHelper.getFailedTrialsMap().get(id)
+                        + CLOSING_TD_TR);
+            }
+            mailBody.append("</table>");
+        }
+        mailBody.append("<br><br>");
+        mailBody.append("Thank you,<br><br>NCI Clinical Trials Reporting Program");
+        mailBody.append("</form></body></html>");
+        return mailBody.toString();
+    }
 
     /**
      * Sets the xml generator.

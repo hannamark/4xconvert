@@ -285,7 +285,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             return writer.toString();
-            
         } catch (Exception e) {
             LOG.error("Error while generating CT.GOV.xml", e);
             return createErrorXml(spDTO, e);
@@ -313,15 +312,15 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             Element root = doc.createElement("error");
             doc.appendChild(root);
             XmlGenHelper.createElement("error_description", "Unable to generate the XML", doc, root);
-            if (spDTO == null) {
-                XmlGenHelper.createElement("study_identifier", "Unknown", doc, root);
-            } else {
-                XmlGenHelper.createElement("study_identifier", PAUtil.getAssignedIdentifierExtension(spDTO), doc, root);
+            String assignedIdentifierExtension = "Unknown";
+            if (spDTO != null) {
+                assignedIdentifierExtension = PAUtil.getAssignedIdentifierExtension(spDTO);
             }
-            
+            PdqXmlGenHelper.getFailedTrialsMap().put(assignedIdentifierExtension, e.getMessage());
+            XmlGenHelper.createElement("study_identifier", assignedIdentifierExtension, doc, root);
             Element errorMessages = doc.createElement("error_messages");
             XmlGenHelper.appendElement(errorMessages,
-                 XmlGenHelper.createElementWithTextblock("error_message", e.getMessage(), doc));
+                 XmlGenHelper.createElement("error_message", e.getMessage(), doc));
             XmlGenHelper.appendElement(root, errorMessages);
             DOMSource domSource = new DOMSource(doc);
             StreamResult result = new StreamResult(writer);
@@ -1050,7 +1049,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 List<ArmDTO> armDtos = getArmService().getByPlannedActivity(pa.getIdentifier());
                 for (ArmDTO armDTO : armDtos) {
                     XmlGenHelper.appendElement(intervention,
-                            XmlGenHelper.createElementWithTextblock("arm_group_label", StringUtils.substring(StConverter
+                            XmlGenHelper.createElement("arm_group_label", StringUtils.substring(StConverter
                             .convertToString(armDTO.getName()), 0, PAAttributeMaxLen.LEN_62), doc));
                 }
                 if (intervention.hasChildNodes()) {
@@ -1208,6 +1207,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         XmlGenHelper.createElement("outcome_measure",
                                 StringUtils.substring(smDTO.getName().getValue(), 0,
                         PAAttributeMaxLen.LEN_254), doc));
+                if (!ISOUtil.isStNull(smDTO.getDescription())) {
+                    createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
+                            PAAttributeMaxLen.LEN_600), doc, om);
+                }                
                 XmlGenHelper.appendElement(om,
                         XmlGenHelper.createElement(
                                 "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO

@@ -140,7 +140,8 @@ public class PdqXmlGenHelper {
                  new HashMap<String, OrganizationDTO>();
     private static Map<String, ResearchOrganizationDTO> researchOrgDTOMap = 
                  new HashMap<String, ResearchOrganizationDTO>();
-    
+    private static Map<String, String> failedTrialsMap = 
+            new HashMap<String, String>();
 
     /**
      * Get Po RO dto by Pa RO ii.
@@ -511,11 +512,10 @@ public class PdqXmlGenHelper {
     }
 
     private static void throwNullifiedException(Exception e, Ii ii) throws PAException {
-        StringBuilder message = new StringBuilder("Nullified Exception for Ii = ");
+        StringBuilder message = new StringBuilder("Nullified Record ");
         if (ii != null) {
-            message.append(ii.getRoot());
-            message.append(" - ");
-            message.append(ii.getExtension());
+            message.append("for Ii with root = ").append(ii.getRoot()); 
+            message.append(" & exension =  ").append(ii.getExtension());
         }
         throw new PAException(message.toString(), e);
     }
@@ -612,7 +612,6 @@ public class PdqXmlGenHelper {
                     criteriaElement);
         }
         return criteriaElement;
-
     }
 
     /**
@@ -649,7 +648,6 @@ public class PdqXmlGenHelper {
         } else {
             loadEligCritNoAgeOrGenderOrDescTxt(paEC, pq, incCrit, nullCrit, exCrit);
         }
-
         BaseXmlGenHelper.appendElement(eligibility, loadCriteriaElement(incCrit, nullCrit,
                 exCrit, doc));
     }
@@ -689,24 +687,24 @@ public class PdqXmlGenHelper {
     }
 
     private static void loadEligCritDescTxt(Boolean incIndicator, String descriptionText,
-            StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
+        StringBuffer incCrit, StringBuffer nullCrit, StringBuffer exCrit) {
 
-            if (incIndicator == null) {
-                nullCrit.append(XmlGenHelper.TAB);
-                nullCrit.append(XmlGenHelper.DASH);
-                nullCrit.append(descriptionText);
-                nullCrit.append('\n');
-            } else if (incIndicator) {
-                incCrit.append(XmlGenHelper.TAB);
-                incCrit.append(XmlGenHelper.DASH);
-                incCrit.append(descriptionText);
-                incCrit.append('\n');
-            } else {
-                exCrit.append(XmlGenHelper.TAB);
-                exCrit.append(XmlGenHelper.DASH);
-                exCrit.append(descriptionText);
-                exCrit.append('\n');
-            }
+        if (incIndicator == null) {
+            nullCrit.append(XmlGenHelper.TAB);
+            nullCrit.append(XmlGenHelper.DASH);
+            nullCrit.append(descriptionText);
+            nullCrit.append('\n');
+        } else if (incIndicator) {
+            incCrit.append(XmlGenHelper.TAB);
+            incCrit.append(XmlGenHelper.DASH);
+            incCrit.append(descriptionText);
+            incCrit.append('\n');
+        } else {
+            exCrit.append(XmlGenHelper.TAB);
+            exCrit.append(XmlGenHelper.DASH);
+            exCrit.append(descriptionText);
+            exCrit.append('\n');
+        }
     }
     
     /**
@@ -717,5 +715,13 @@ public class PdqXmlGenHelper {
         organizationDTOMap.clear();
         personCtepIdMap.clear();
         researchOrgDTOMap.clear();
+    }
+
+    /**
+     * Getter method for failedTrialsMap.
+     * @return return a HasMap with key as NCi identifier and value as the error message.
+     */
+    public static Map<String, String> getFailedTrialsMap() {
+        return failedTrialsMap;
     }
 }

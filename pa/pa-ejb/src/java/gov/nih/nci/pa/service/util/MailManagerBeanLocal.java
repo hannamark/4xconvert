@@ -185,6 +185,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String USERNAME_SEARCH_BODY_PROPERTY = "user.usernameSearch.body";
     private static final String USERNAME_SEARCH_SUBJECT_PROPERTY = "user.usernameSearch.subject";
     private static final String ERRORS = "${errors}";
+    private static final int SMTP_TIMEOUT = 120000;
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -1088,5 +1089,35 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         PAServiceUtils servUtil = new PAServiceUtils();
         return servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
                 .valueOf(user.getAffiliatedOrganizationId())));
+    }
+
+    @Override
+    public void sendMailWithHtmlBody(String mailTo, String subject, String mailBody) {
+        Session session = null;
+        try {
+            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
+            // get system properties
+            Properties props = System.getProperties();
+            // Set up mail server
+            props.put("mail.smtp.host", lookUpTableService.getPropertyValue("smtp"));
+            props.put("mail.smtp.timeout", SMTP_TIMEOUT);
+            // Get session
+            session = Session.getDefaultInstance(props, null);
+            // Define Message
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(mailFrom));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+            message.setSentDate(new java.util.Date());
+            message.setSubject(subject);
+            message.setContent(mailBody, "text/html");
+            // Send Message
+            Transport.send(message);            
+        } catch (Exception e) {
+            LOG.error("Send Mail error", e);
+        } finally {
+            if (session != null) {
+                
+            }
+        }
     }
 }

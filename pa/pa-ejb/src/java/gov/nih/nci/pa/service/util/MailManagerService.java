@@ -242,5 +242,15 @@ public interface MailManagerService {
      */
     void sendUnidentifiableOwnerEmail(Long studyProtocolId,
             Collection<String> emails) throws PAException;
+    
+    
+    /**
+     * Sends an email with text/html content.
+     * 
+     * @param mailTo to
+     * @param subject subject
+     * @param mailBody body
+     */
+    void sendMailWithHtmlBody(String mailTo, String subject, String mailBody);
 
 }
