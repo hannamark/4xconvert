@@ -155,15 +155,13 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         Ii otherId = secondaryIds.get(rowid - 1);
         otherId.setExtension(otherIdentifier);
+        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
         if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
             otherId.setIdentifierName(IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME);
-            otherId.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
         } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
             otherId.setIdentifierName(IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME);
-            otherId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         } else {
             otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
-            otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
         }       
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
         return "display_otherIdentifiers";
