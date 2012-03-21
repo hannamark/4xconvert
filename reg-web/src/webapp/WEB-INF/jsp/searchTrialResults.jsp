@@ -167,29 +167,14 @@ $(document).ready(function () {
                 <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.nctNumber" property="nctNumber" sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>
-                
-                <display:column title="Last update date" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
-                <display:column title="Last amendment submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+                <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>                
+                <display:column title="Last Updated Date" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+                <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column title="Other Identifiers" >
                 	<s:iterator value="%{#attr.row.otherIdentifiers}" >
-				    	<s:property/> <br/>				
+				    	<s:property/>				
 					</s:iterator>
-                </display:column>               
-                <display:column titleKey="search.trial.addMySite" sortable="false" headerClass="sortable" media="html">
-                    <s:if test="%{#attr.row.currentUserCanAddSite}">
-                        <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-                        <a href="javascript:void(0);" onclick="showPopup('${addMySiteUrl}', '', 'Add Participating Site');" 
-                           onkeypress="showPopup('${addMySiteUrl}', '', 'Add Participating Site');">Add</a>
-                    </s:if>
-                </display:column>
-                <display:column titleKey="search.trial.updateMySite" sortable="false" headerClass="sortable" media="html">
-                    <s:if test="%{#attr.row.currentUserCanEditSite}">
-                        <s:url id="updateMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-                        <a href="javascript:void(0);" onclick="showPopup('${updateMySiteUrl}', '', 'Update Participating Site');" 
-                           onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update</a>
-                    </s:if>
-                </display:column>        
+                </display:column>                                                
           	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
                 	<ul id="nav">
 						<li>&nbsp;Select action &nbsp;&nbsp;&nbsp;&nbsp; &nabla;
@@ -229,6 +214,20 @@ $(document).ready(function () {
 								<li>
 									<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
 				                         <a href="#" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
+				                    </s:if>
+								</li>
+								<li>
+									<s:if test="%{#attr.row.currentUserCanAddSite}">
+				                        <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+				                        <a href="javascript:void(0);" onclick="showPopup('${addMySiteUrl}', '', 'Add Participating Site');" 
+				                           onkeypress="showPopup('${addMySiteUrl}', '', 'Add Participating Site');">Add My Site</a>
+				                    </s:if>
+								</li>
+								<li>
+									<s:if test="%{#attr.row.currentUserCanEditSite}">
+				                        <s:url id="updateMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+				                        <a href="javascript:void(0);" onclick="showPopup('${updateMySiteUrl}', '', 'Update Participating Site');" 
+				                           onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update My Site</a>
 				                    </s:if>
 								</li>
 							</ul>

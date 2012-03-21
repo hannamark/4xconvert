@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -115,6 +118,33 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      * is a study site owner for.
      */
     private boolean currentUserIsSiteOwner;
+    
+    
+    /**
+     * @return link
+     */
+    public String getAmend() {
+        boolean isProprietaryTrial = isProprietaryTrial();
+        boolean isOwner = isSearcherTrialOwner();
+        DocumentWorkflowStatusCode dwfs = getDocumentWorkflowStatusCode();
+        StudyStatusCode studyStatusCode = getStudyStatusCode();
+
+        if (!isProprietaryTrial && isAmendDWFS(dwfs) && isOwner && isAmendStatus(studyStatusCode)) {
+            return "Amend";
+        }
+        return "";
+    }
+
+    private boolean isAmendStatus(StudyStatusCode statusCode) {
+        return !(StudyStatusCode.WITHDRAWN.equals(statusCode)
+                || StudyStatusCode.COMPLETE.equals(statusCode)
+                || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(statusCode));
+    }
+
+    private boolean isAmendDWFS(DocumentWorkflowStatusCode dwfs) {
+        return DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwfs)
+                || DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.equals(dwfs);
+    }
     
 
     /**
