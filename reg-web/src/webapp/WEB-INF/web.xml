@@ -25,6 +25,10 @@
 
     <!-- Filters -->
     <filter>
+        <filter-name>gov.nih.nci.registry.util.HttpRequestBindingFilter</filter-name>
+        <filter-class>gov.nih.nci.registry.util.HttpRequestBindingFilter</filter-class>
+    </filter>     
+    <filter>
         <filter-name>usernameFilter</filter-name>
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.UsernameFilter</filter-class>
         <init-param>
@@ -66,6 +70,12 @@
         <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
     </filter>
 
+    <filter-mapping>
+        <filter-name>gov.nih.nci.registry.util.HttpRequestBindingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>usernameFilter</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -127,6 +137,10 @@
         <description>Sets the various paths variables in the servlet context for use in jsps</description>
         <listener-class>gov.nih.nci.registry.util.ServletContextConfigurator</listener-class>
     </listener>
+    <listener>
+        <description>The purpose of this listener is to solely debug https://tracker.nci.nih.gov/browse/PO-4773.</description>
+        <listener-class>gov.nih.nci.registry.util.HttpSessionDebuggingListener</listener-class>
+    </listener>    
     <!-- Registry session-timeout -->
     <session-config>
         <session-timeout>120</session-timeout>
