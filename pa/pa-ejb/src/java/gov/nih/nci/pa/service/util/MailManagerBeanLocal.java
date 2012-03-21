@@ -186,6 +186,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String USERNAME_SEARCH_SUBJECT_PROPERTY = "user.usernameSearch.subject";
     private static final String ERRORS = "${errors}";
     private static final int SMTP_TIMEOUT = 120000;
+    private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -681,7 +682,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             Multipart multipart = new MimeMultipart();
             message.setFrom(new InternetAddress(mailFrom));
             message.addRecipient(Message.RecipientType.TO,
-                                 new InternetAddress(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL")));
+                                 new InternetAddress(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL)));
             message.setSentDate(new java.util.Date());
             message.setSubject(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
 
@@ -728,7 +729,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             body = body.replace("${markerTextClause}", markerTextClause);
 
-            String toAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
             subject = subject.replace("${trialIdentifier}", spDTO.getNciIdentifier());
             subject = subject.replace("${markerName}", StConverter.convertToString(marker.getName()));
@@ -752,7 +753,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             if (foundInHugo) {
                 hugoCode = CdConverter.convertCdToString(marker.getHugoBiomarkerCode());
             }
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
             Date date = new Date();
 
             String body = "Dear caDSR," + "\n\n"
@@ -771,7 +772,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             + "\n"
             + "NCI Clinical Trials Reporting Program";          
 
-            String toAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
@@ -806,7 +807,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + "Thank you\n"
                 + "NCI Clinical Trials Reporting Program"; 
 
-            String fromAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String fromAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = "Question regarding new biomarker "
                 + StConverter.convertToString(marker.getName()) 
                 + " Request for Trial " 
@@ -1114,10 +1115,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             Transport.send(message);            
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
-        } finally {
-            if (session != null) {
-                
-            }
         }
     }
 }
