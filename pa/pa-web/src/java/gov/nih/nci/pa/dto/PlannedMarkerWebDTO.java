@@ -87,6 +87,7 @@ package gov.nih.nci.pa.dto;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class PlannedMarkerWebDTO {
 
     private Long id;

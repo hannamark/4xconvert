@@ -119,6 +119,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private static final String SHOW_VIEW = "view";
