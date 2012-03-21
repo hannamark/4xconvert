@@ -142,7 +142,8 @@ public class PdqXmlGenHelper {
                  new HashMap<String, ResearchOrganizationDTO>();
     private static Map<String, String> failedTrialsMap = 
             new HashMap<String, String>();
-
+    private static final String DEPRECATION = "deprecation"; 
+    
     /**
      * Get Po RO dto by Pa RO ii.
      * @param paRoIi pa org ii
@@ -150,6 +151,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
+    @SuppressWarnings(DEPRECATION)
     protected static ResearchOrganizationDTO getPoRODTOByPaRoIi(Ii paRoIi, CorrelationUtils corrUtils)
         throws PAException {
         ResearchOrganization paRo = corrUtils.getStructuralRoleByIi(paRoIi);
@@ -170,6 +172,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
+    @SuppressWarnings(DEPRECATION)
     protected static HealthCareFacilityDTO getPoHCFDTOByPaHcfIi(Ii paHcfIi, CorrelationUtils corrUtils)
         throws PAException {
         HealthCareFacility paHcf = corrUtils.getStructuralRoleByIi(paHcfIi);
@@ -210,6 +213,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
+    @SuppressWarnings(DEPRECATION)
     protected static OrganizationalContactDTO getPoOCDTOByPaOcIi(Ii paOcIi, CorrelationUtils corrUtils)
     throws PAException {
         OrganizationalContact paOc = corrUtils.getStructuralRoleByIi(paOcIi);
@@ -230,6 +234,7 @@ public class PdqXmlGenHelper {
      * @return po org dto
      * @throws PAException when error.
      */
+    @SuppressWarnings(DEPRECATION)
     protected static ClinicalResearchStaffDTO getPoCrsDTOByPaCrsIi(Ii paCrsIi, CorrelationUtils corrUtils)
         throws PAException {
         ClinicalResearchStaff paCrs = corrUtils.getStructuralRoleByIi(paCrsIi);
