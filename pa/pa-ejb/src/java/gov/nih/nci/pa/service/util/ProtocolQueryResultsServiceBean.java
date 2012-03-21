@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.convert.BaseStudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -239,8 +240,10 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         
         for (Object[] obj : otherIdentifierQueryList) { 
             Long studyprotocolId = ((BigInteger) obj[0]).longValue();
-            for (StudyProtocolQueryDTO dto : dtoList) {                
-               if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+            for (StudyProtocolQueryDTO dto : dtoList) {     
+               String identifierName = (String) obj[2];
+               if (dto.getStudyProtocolId().equals(studyprotocolId) 
+                       && !identifierName.equals(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME)) {                  
                    dto.getOtherIdentifiers().add((String) obj[1]);
                }
             }
