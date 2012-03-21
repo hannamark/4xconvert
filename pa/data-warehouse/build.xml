@@ -28,6 +28,8 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/organization.sql"/> 
+<!--            <transaction src="${basedir}/sql/organization_role.sql"/> -->
             <transaction src="${basedir}/sql/person_role.sql"/> 
             <transaction src="${basedir}/sql/outcome_measure.sql"/> 
             <transaction src="${basedir}/sql/person_audit.sql"/>
@@ -61,6 +63,12 @@
     </target>
     
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
+<!--
+        <echo message = "Running Organization Roles"/>
+        <groovy src="groovy/organization_role.groovy"/>
+        -->
+        <echo message = "Running Organization"/>
+        <groovy src="groovy/organization.groovy"/>
         <echo message = "Running Arm / Interventions"/>
         <groovy src="groovy/arm_intervention.groovy"/>
         <echo message = "Running Eligibility Criteria"/>
