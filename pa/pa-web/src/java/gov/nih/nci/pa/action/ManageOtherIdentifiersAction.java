@@ -106,19 +106,29 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     @SuppressWarnings("unchecked")
     public String addOtherIdentifier() {
         String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
+        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType");
+
         List<Ii> secondaryIds =
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         Ii otherId = new Ii();
         otherId.setExtension(otherIdentifier);
-        otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
-        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
+            otherId.setIdentifierName(IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
+            otherId.setIdentifierName(IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        } else {
+            otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        }
         if (secondaryIds == null) {
             secondaryIds = new ArrayList<Ii>();
         }
         secondaryIds.add(otherId);
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
         return "display_otherIdentifiers";
-    }
+    }       
 
     /**
      * @return result
@@ -130,6 +140,33 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         secondaryIds.remove(rowid - 1);
 
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
+        return "display_otherIdentifiers";
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public String saveOtherIdentifierRow() {
+        int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
+        String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
+        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType"); 
+        
+        List<Ii> secondaryIds =
+            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+        Ii otherId = secondaryIds.get(rowid - 1);
+        otherId.setExtension(otherIdentifier);
+        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
+            otherId.setIdentifierName(IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
+            otherId.setIdentifierName(IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        } else {
+            otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+            otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        }       
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
         return "display_otherIdentifiers";
     }

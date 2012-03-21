@@ -98,6 +98,12 @@ public class IiConverter {
 
     /** Study Protocol Identifier. */
     public static final String STUDY_PROTOCOL_IDENTIFIER_NAME = "NCI study protocol entity identifier";
+    
+    /** Duplicate NCI Study Protocol Identifier. */
+    public static final String DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME = "Duplicate NCI study protocol identifier";
+    
+    /** Obsolete NCT Study Protocol Identifier. */
+    public static final String OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME = "Obsolete NCT study protocol identifier";
 
     /** Study Protocol Other identifier Root. */
     public static final String STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT = "2.16.840.1.113883.19";

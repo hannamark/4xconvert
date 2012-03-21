@@ -102,11 +102,37 @@
                 var aj = callAjaxPost(div, url, params);
             }
 
+            function saveIdentifierRow(rowid){
+                      	var orgValue = $("identifier_"+rowid).value;
+                          var otherIdentifierTypeValue = $("identifierType_"+rowid).value;
+                          if (orgValue != null && orgValue != '') {
+            		            	var  url = 'ajaxManageOtherIdentifiersActionsaveOtherIdentifierRow.action';
+            		                var params = { uuid: rowid, otherIdentifier : orgValue,
+            		    	                 otherIdentifierType : otherIdentifierTypeValue };
+            		                var div = $('otherIdentifierdiv');
+            		                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
+            		                var aj = callAjaxPost(div, url, params); 
+                          } else {
+                              alert("Please enter a valid Other identifier.");
+                          }
+                      }
+            	 
+             function editIdentifierRow(rowid){
+             	jQuery("#identifierDiv_"+rowid).hide();
+             	jQuery("#identifierInputDiv_"+rowid).show(); 
+             	jQuery("#identifierTypeDiv_"+rowid).hide();
+             	jQuery("#identifierTypeInputDiv_"+rowid).show();
+             	jQuery("#actionEdit_"+rowid).hide();
+             	jQuery("#actionSave_"+rowid).show();            	            	
+             }
+
             function addOtherIdentifier() {
                 var orgValue = $("otherIdentifierOrg").value;
+                var otherIdentifierTypeValue = $("otherIdentifierType").value;
                 if (orgValue != null && orgValue != '') {
                     var  url = 'ajaxManageOtherIdentifiersActionaddOtherIdentifier.action';
-                    var params = { otherIdentifier: orgValue };  
+                    var params = { otherIdentifier: orgValue, otherIdentifierType: otherIdentifierTypeValue };  
+                                      
                     var div = $('otherIdentifierdiv');   
                     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
                     var aj = callAjaxPost(div, url, params);
@@ -258,10 +284,23 @@
                             <td scope="row" class="label">
                                 <label for="submitTrial_protocolWebDTO_otherIdentifiers">Other Identifier</label>
                             </td>
-                            <td>
-                                <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" />&nbsp; 
-                                <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
-                            </td>
+                            <td>                               
+                                 <table>
+									<tr>								
+										<td><select name="otherIdentifierType"
+											id="otherIdentifierType" style="margin-top: 0px;">
+												<option value="0">Other</option>
+												<option value="1">Obsolete NCT ID</option>
+												<option value="2">Duplicate NCI ID</option>
+										</select></td>
+										<td><input type="text" name="otherIdentifierOrg"
+											id="otherIdentifierOrg" value="" />&nbsp;</td>
+										<td><input type="button" id="otherIdbtnid"
+											value="Add Other Identifier" onclick="addOtherIdentifier();" />
+										</td>
+									</tr>
+								</table>
+							</td>
                         </tr>
                         <tr>
                             <td colspan="2" class="space">
