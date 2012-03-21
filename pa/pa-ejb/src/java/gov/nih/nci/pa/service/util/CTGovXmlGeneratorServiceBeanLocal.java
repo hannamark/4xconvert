@@ -1364,11 +1364,11 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         List<Element> collaborators = new ArrayList<Element>();
         List<Organization> orgs = getOrgCorrelationService().getOrganizationByStudySite(Long.valueOf(studyProtocolIi
                 .getExtension()), StudySiteFunctionalCode.COLLABORATORS);
-
-        if (CollectionUtils.isNotEmpty(orgs)) {
+    
+        for (Organization eachOrg : orgs) {
             Element collaborator = doc.createElement("collaborator");
             XmlGenHelper.appendElement(collaborator,
-                    XmlGenHelper.createElementWithTextblock("agency", StringUtils.substring(orgs.get(0).getName(), 0,
+                    XmlGenHelper.createElementWithTextblock("agency", StringUtils.substring(eachOrg.getName(), 0,
                         PAAttributeMaxLen.LEN_160), doc));
             collaborators.add(collaborator);
         }
