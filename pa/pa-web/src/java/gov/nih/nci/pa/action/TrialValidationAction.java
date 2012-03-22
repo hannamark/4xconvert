@@ -193,6 +193,8 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             TrialHelper helper = new TrialHelper();
             gtdDTO = helper.getTrialDTO(studyProtocolIi, "validation");
             session.setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
+            session.setAttribute("nctIdentifier", gtdDTO.getNctIdentifier());
+            session.setAttribute("nciIdentifier", gtdDTO.getAssignedIdentifier());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }

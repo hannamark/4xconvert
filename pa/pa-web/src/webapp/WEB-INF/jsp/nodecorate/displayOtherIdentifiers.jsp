@@ -1,5 +1,12 @@
+<%@page import="org.springframework.web.context.request.RequestScope"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:choose>
+<c:if test="${requestScope.duplicateIdentifier != null && requestScope.duplicateIdentifier != ''}">
+		<div style="color: red">			
+			<%= request.getAttribute("duplicateIdentifier") %>
+			<% request.removeAttribute("duplicateIdentifier"); %>
+		</div>
+</c:if>
+<c:choose>	
     <c:when test="${fn:length(sessionScope.otherIdentifiersList) > 0}">
 		<display:table class="data" decorator="" sort="list" size="false"
 			id="row" name="${sessionScope.otherIdentifiersList}" requestURI=""
@@ -29,7 +36,7 @@
 						<option value="2">Duplicate NCI ID</option>
 					</select>
 				</div>
-			</display:column>
+			</display:column>	
 			<display:column title="Action" class="action" sortable="false" style="width:110px">
 				<div id="actionEdit_${row_rowNum}">
 					<input type="button" value="Edit"

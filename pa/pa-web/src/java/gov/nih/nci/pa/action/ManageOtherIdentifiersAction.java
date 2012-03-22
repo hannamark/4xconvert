@@ -97,8 +97,11 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Abraham Evans-EL
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class ManageOtherIdentifiersAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
+    private static final String DISPLAY_OTHER_IDENTIFIERS = "display_otherIdentifiers";
+    private static final String DUPLICATE_IDENTIFIER = "duplicateIdentifier";
 
     /**
      * @return s
@@ -107,7 +110,14 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     public String addOtherIdentifier() {
         String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
         String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType");
-
+        
+        ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, "");
+        if (validateUniqueOtherIdentifier(otherIdentifier, otherIdentifierType)) {
+            String duplicateErrorMessage = otherIdentifier + " already exist.";
+            ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);
+            return DISPLAY_OTHER_IDENTIFIERS; 
+        }
+        
         List<Ii> secondaryIds =
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         Ii otherId = new Ii();
@@ -125,8 +135,40 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
         }
         secondaryIds.add(otherId);
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
-        return "display_otherIdentifiers";
-    }       
+        return DISPLAY_OTHER_IDENTIFIERS;
+    } 
+    
+    private boolean validateUniqueOtherIdentifier(String otherIdentifier, String otherIdentifierType) {
+        String nciIdentifier = (String) ServletActionContext.getRequest()
+                                        .getSession().getAttribute("nciIdentifier");
+        String nctIdentifier = (String) ServletActionContext.getRequest()
+                                        .getSession().getAttribute("nctIdentifier");
+        
+        String otherIdentifierExtension = "";
+        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
+            otherIdentifierExtension = IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME;   
+        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
+            otherIdentifierExtension = IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME;
+        } else {
+            otherIdentifierExtension = IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME;
+        }
+        
+        if (nciIdentifier != null && nciIdentifier.equals(otherIdentifier) && otherIdentifierType.equals("2")) {
+            return true;
+        }
+        if (nctIdentifier != null && nctIdentifier.equals(otherIdentifier) && otherIdentifierType.equals("1")) {
+            return true;
+        }
+        List<Ii> secondaryIds =
+            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+        for (Ii ii : secondaryIds) {
+            if (otherIdentifier.equals(ii.getExtension()) 
+                    && ii.getIdentifierName().equals(otherIdentifierExtension)) {
+              return true;  
+            }
+        }        
+        return false;
+    }
 
     /**
      * @return result
@@ -139,7 +181,7 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
         secondaryIds.remove(rowid - 1);
 
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
-        return "display_otherIdentifiers";
+        return DISPLAY_OTHER_IDENTIFIERS;
     }
     
     /**
@@ -149,10 +191,17 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     public String saveOtherIdentifierRow() {
         int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
         String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
-        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType"); 
-        
+        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType");
+        ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, "");
+                
         List<Ii> secondaryIds =
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+        
+        if (validateUniqueOtherIdentifier(otherIdentifier, otherIdentifierType)) {
+            String duplicateErrorMessage = otherIdentifier + " already exist.";
+            ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);           
+            return DISPLAY_OTHER_IDENTIFIERS; 
+        }
         Ii otherId = secondaryIds.get(rowid - 1);
         otherId.setExtension(otherIdentifier);
         otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
@@ -164,7 +213,7 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
             otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
         }       
         ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
-        return "display_otherIdentifiers";
+        return DISPLAY_OTHER_IDENTIFIERS;
     }
 
     /**

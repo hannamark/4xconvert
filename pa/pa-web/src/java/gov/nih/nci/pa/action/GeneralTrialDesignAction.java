@@ -280,8 +280,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
     }
 
     private void populateOtherIdentifiers() {
-        ServletActionContext.getRequest().getSession()
-            .setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
+        session.setAttribute("nctIdentifier", gtdDTO.getNctIdentifier());
+        session.setAttribute("nciIdentifier", gtdDTO.getAssignedIdentifier());
     }
 
     /**
