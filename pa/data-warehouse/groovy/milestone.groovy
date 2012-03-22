@@ -21,7 +21,10 @@ def sql = """SELECT
                 left outer join csm_user as creator on sm.user_last_created_id = creator.user_id   
                 left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
                 left outer join csm_user as updater on sm.user_last_created_id = updater.user_id
-                left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id"""
+                left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
+                join study_protocol sp on sp.identifier = sm.study_protocol_identifier
+                   and sp.status_code = 'ACTIVE'
+                """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
