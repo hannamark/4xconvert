@@ -5,6 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="viewer" default="war" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -14,7 +15,7 @@
     <property name="checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
-    
+
     <property name="lib.dir" value="${software.dir}/target/pa/lib/viewer/web"/>
     <property name="reportDir" value="${pa.report.dir}/viewer/web"/>
 
@@ -45,10 +46,8 @@
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo"/>
 
     <property name="bda-utils" value="${software.dir}/target/pa/bda-utils"/>
-    
+
     <property name="selenium.delay" value="10"/>
-    
-    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->
@@ -533,7 +532,7 @@
             </else>
        </if>
    </target>
-    
+
     <target name="test-dynamic-analysis"
             depends="ivy-get,compile,compile-tests,test-cobertura"
             description="Run dynamic analysis."/>

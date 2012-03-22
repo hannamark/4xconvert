@@ -5,6 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="accrual.ear" default="ear" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${basedir}/../../build-pa/version.properties"/>
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -20,7 +21,6 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -63,14 +63,14 @@
     </target>
 
     <target name="ear" depends="ivy-get, package-setup" description="Makes an EAR archive.">
-        <copy file="${services.package}" 
+        <copy file="${services.package}"
              todir="${ear.build.dir}/${ear.build.finalName}"/>
-        <copy file="${accweb.package}" 
+        <copy file="${accweb.package}"
              todir="${ear.build.dir}/${ear.build.finalName}"/>
         <copy todir="${ear.build.dir}/${ear.build.finalName}">
             <fileset dir="${lib.dir}/ear/runtime"/>
         </copy>
-        
+
         <fail unless="database.url" message="Missing required property database.url."/>
         <fail unless="database.user" message="Missing required property database.user."/>
         <fail unless="database.password" message="Missing required property database.password."/>
@@ -86,13 +86,13 @@
                 <filter token="accrual.db.password" value="${database.password}"/>
             	<filter token="gridServicePrincipal" value="${gridServicePrincipal}"/>
             	<filter token="gridServiceCredential" value="${gridServiceCredential}"/>
-                <filter token="pa.version" value="${pa.version}"/>
+                <filter token="pa.clients.version" value="${pa.clients.version}"/>
             </filterset>
             <fileset dir="${ear.resource.dir}" includes="**/*" />
         </copy>
-        <ear destfile="${ear.build.dir}/${ear.build.finalName}.ear" 
-             basedir="${ear.build.dir}/${ear.build.finalName}" 
-             compress="false" 
+        <ear destfile="${ear.build.dir}/${ear.build.finalName}.ear"
+             basedir="${ear.build.dir}/${ear.build.finalName}"
+             compress="false"
              appxml="${ear.build.dir}/${ear.build.finalName}/META-INF/application.xml"/>
     </target>
 
@@ -112,8 +112,8 @@
         <ivy:retrieve pattern="${lib.dir}/ear/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="runtime" />
     </target>
 
-    <target name="ivy-get" 
-            depends="ivy-runtime" 
+    <target name="ivy-get"
+            depends="ivy-runtime"
             description="Updates the local ivy repository">
     </target>
 

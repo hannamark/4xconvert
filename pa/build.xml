@@ -8,7 +8,6 @@
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
     <property name="jdbc.base" value="jdbc:${db.type}://${db.server}:${db.port}"/>
-    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
     <!-- PATHS -->
     <path id="macrodef">
@@ -101,7 +100,7 @@
         <ant target="package" dir="pa-web" inheritAll="false"/>
         <ant target="ear" dir="pa-ear" inheritAll="false"/>
     </target>
-    
+
     <target name="maven:install" depends="clean">
         <ant target="maven:install" dir="commons" inheritall="true"/>
         <ant target="maven:install" dir="pa-ejb" inheritall="true"/>

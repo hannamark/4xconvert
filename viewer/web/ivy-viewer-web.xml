@@ -16,7 +16,7 @@
     <!-- runtime -->
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="(,1.4.1]"       conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
-    </dependency>    
+    </dependency>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.3"           conf="runtime->default">
        <exclude module="commons-logging"/>
     </dependency>
@@ -34,7 +34,7 @@
     <dependency org="org.apache.struts"      name="struts2-json-plugin"     rev="2.2.3.1"         conf="runtime->default"/>
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
-    
+
     <!-- compile -->
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="javax.ejb"              name="ejb-api"                 rev="3.0"             conf="compile->master"/>
@@ -74,7 +74,7 @@
 
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="selenium->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons-test"      rev="1.3.7"           conf="selenium->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.version}"   conf="selenium->master">
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"   conf="selenium->master">
         <artifact name="pa-commons" m:classifier="test"/>
     </dependency>
     <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="selenium->master"/>

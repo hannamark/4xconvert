@@ -5,6 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="accrual.accrual-web" default="war" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${basedir}/../../build-pa/version.properties"/>
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -42,7 +43,6 @@
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
     <property name="selenium.delay" value="10"/>
-    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->

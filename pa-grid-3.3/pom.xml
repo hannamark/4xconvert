@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>PaServices</artifactId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.3</version>
 
     <dependencies>
         <dependency>

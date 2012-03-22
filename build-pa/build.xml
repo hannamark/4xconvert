@@ -15,6 +15,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <os family="windows" />
     </condition>
   <!-- The project.properties stores properties that are shared between both build.xml and install.xml. Typically properties that are related to the distribution directories, or files. -->
+  <property file="version.properties" />
   <property file="local.properties" />
   <property file="project.properties" />
   <property name="properties.file" value="install.properties"/>
@@ -152,7 +153,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-    
+
     <!-- Properties to control the pa-grid-3.4 build -->
     <property name="pa-grid-3.4.base.dir" location="${software.dir}/pa-grid-3.4"/>
     <property name="pa-grid-3.4.build.file" location="${pa-grid-3.4.base.dir}/build.xml"/>
@@ -1560,14 +1561,14 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
         depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
     </target>
-    
+
     <target name="maven:install" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="${maven.install.target}">
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
         </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.install.target}"/>
     </target>
-    
+
     <target name="maven:deploy" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="${maven.deploy.target}">
             <property name="maven.username"  value="${maven.username}"/>
@@ -1782,19 +1783,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             uml.source.path="bda-blueprints.classpath.ref"
             />
     </target>
-    
+
     <target name="build-and-populate-data-warehouse" description="Constructs and populates the data warehouse">
         <ant inheritAll="false" inheritRefs="false" antfile="${data-warehouse.build.file}" dir="${data-warehouse.base.dir}" >
             <property name="datawarehouse.pa.dest.jdbc.driver" value="${database.driver}"/>
             <property name="datawarehouse.pa.dest.jdbc.url"  value="${database.url}"/>
             <property name="datawarehouse.pa.dest.db.username" value="${database.user}" />
             <property name="datawarehouse.pa.dest.db.password" value="${database.password}"/>
-            
+
             <property name="datawarehouse.pa.source.jdbc.driver" value="${datawarehouse.pa.source.jdbc.driver}"/>
             <property name="datawarehouse.pa.source.jdbc.url"  value="${datawarehouse.pa.source.jdbc.url}"/>
             <property name="datawarehouse.pa.source.db.username" value="${datawarehouse.pa.source.db.username}" />
             <property name="datawarehouse.pa.source.db.password" value="${datawarehouse.pa.source.db.password}"/>
-            
+
             <property name="datawarehouse.po.jdbc.driver" value="${database.driver}"/>
             <property name="datawarehouse.po.jdbc.url"  value="${datawarehouse.po.database.url}"/>
             <property name="datawarehouse.po.db.username" value="${datawarehouse.po.database.user}" />

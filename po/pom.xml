@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa.po</groupId>
     <artifactId>po</artifactId>
-    <version>3.8-SNAPSHOT</version>
+    <version>3.8</version>
     <packaging>pom</packaging>
     <name>po</name>
     <url>https://wiki.nci.nih.gov/x/BAAuAQ</url>

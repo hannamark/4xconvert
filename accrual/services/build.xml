@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- ====================================================================== -->
-<!-- ant script for CTRP Viewer Services                                    -->
+<!-- ant script for CTRP Accrual Services                                   -->
 <!-- ====================================================================== -->
 
 <project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
@@ -9,6 +9,7 @@
     <property name="services.coverage.branch" value="86"/>
     <property name="services.pmd.maxerrors" value="1"/>
 
+    <property file="${basedir}/../../build-pa/version.properties"/>
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -39,8 +40,6 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-services.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-
-    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->
@@ -404,13 +403,13 @@
     <target name="maven:generate-pom">
         <!-- We cannot use in memory poms due to a bug: http://jira.codehaus.org/browse/MANTTASKS-170 -->
         <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven.classpath" />
-        <artifact:pom id="accrual-pom-temp" groupId="gov.nih.nci.coppa.accrual" artifactId="accrual-services-client" version="${accrual.version}" name="Accrual Services Client"/>
+        <artifact:pom id="accrual-pom-temp" groupId="gov.nih.nci.coppa.accrual" artifactId="accrual-services-client" version="${pa.clients.version}" name="Accrual Services Client"/>
         <artifact:writepom pomRefId="accrual-pom-temp" file="target/pom.xml"/>
         <artifact:pom id="accrual-pom" file="target/pom.xml"/>
     </target>
 
     <target name="maven:install" depends="jar-notest,maven:generate-pom">
-        <echo message="Installing version ${accrual.version} to the local maven repo."/>
+        <echo message="Installing version ${pa.clients.version} to the local maven repo."/>
         <artifact:install file="${services.build.dir}/${services-client.jar}">
             <pom refid="accrual-pom"/>
         </artifact:install>
@@ -420,7 +419,7 @@
         <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
             <authentication username="${maven.username}" password="${maven.password}"/>
         </artifact:remoteRepository>
-        <echo message="Installing version ${accrual.version} to the remote maven repo."/>
+        <echo message="Installing version ${pa.clients.version} to the remote maven repo."/>
         <artifact:deploy file="${services.build.dir}/${services-client.jar}" uniqueversion="false">
             <remoteRepository refid="remote.repository" />
             <pom refid="accrual-pom"/>
