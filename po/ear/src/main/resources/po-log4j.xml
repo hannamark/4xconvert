@@ -85,6 +85,10 @@
     <category name="com.opensymphony.xwork2.ObjectFactory">
        <priority value="fatal"/>
     </category>
+    <!-- Required to deal with token tag when tokenSession interceptor bypassed -->
+    <category name="com.opensymphony.xwork2.ognl">
+       <priority value="ERROR"/>
+    </category>
 
 
    <!-- ======================= -->

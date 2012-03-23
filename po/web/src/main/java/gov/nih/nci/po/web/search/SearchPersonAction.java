@@ -35,6 +35,7 @@ public class SearchPersonAction extends ActionSupport implements Preparable {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         if (getRootKey() != null) {
@@ -62,6 +63,15 @@ public class SearchPersonAction extends ActionSupport implements Preparable {
         GenericSearchServiceUtil.search(PoRegistry.getPersonService(), criteria, getResults(),
                 PersonSortCriterion.class);
         return SUCCESS;
+    }
+
+    /**
+     * Wrapper used by displaytag to bypass validation and tokenSession intercepter.
+     *
+     * @return success
+     */
+    public String searchdt() {
+        return search();
     }
 
     /**

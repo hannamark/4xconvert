@@ -109,7 +109,6 @@
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">accept</param>
-                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
            </interceptor-stack>
 
@@ -201,7 +200,6 @@
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">search</param>
-                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
             </interceptor-stack>
             <!-- END : Special interceptors designed to NOT trim leading whitespace -->

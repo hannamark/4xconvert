@@ -17,8 +17,12 @@ public class SearchOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void search() {
-
         assertEquals(Action.SUCCESS, action.search());
+    }
+
+    @Test
+    public void searchdt() {
+        assertEquals(Action.SUCCESS, action.searchdt());
     }
 
     private SearchOrganizationAction action;

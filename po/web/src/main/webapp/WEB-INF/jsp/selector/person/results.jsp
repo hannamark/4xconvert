@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<c:url value="/protected/ajax/selector/person/results/search.action" var="sortUrl" />
+<c:url value="/protected/ajax/selector/person/results/searchdt.action" var="sortUrl" />
 <s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepOrganizationImporter@CTEP_ROOT"/>
 <ajax:displayTag id="duplicatePersonSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}">

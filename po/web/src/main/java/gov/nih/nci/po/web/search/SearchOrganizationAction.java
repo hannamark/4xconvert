@@ -35,6 +35,7 @@ public class SearchOrganizationAction extends ActionSupport implements Preparabl
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         if (getRootKey() != null) {
@@ -62,6 +63,15 @@ public class SearchOrganizationAction extends ActionSupport implements Preparabl
         GenericSearchServiceUtil.search(PoRegistry.getOrganizationService(), criteria, getResults(),
                 OrganizationSortCriterion.class);
         return SUCCESS;
+    }
+
+    /**
+     * Wrapper used by displaytag to bypass validation and tokenSession intercepter.
+     *
+     * @return success
+     */
+    public String searchdt() {
+        return search();
     }
 
     /**
