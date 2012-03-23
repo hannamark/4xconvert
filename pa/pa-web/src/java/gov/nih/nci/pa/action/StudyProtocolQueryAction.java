@@ -177,11 +177,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
                 isScientificAbstractor);
         ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
-        if (isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor) {
+        if (isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer) {
             return "criteriaProtected";
-        } else if (ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER)) {
-            return "criteriaReport";
-        }
+        } 
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
                 + "for this application.");
     }
@@ -230,9 +228,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             criteria.setIdentifier(getIdentifier());
         }
     }
-
-   
-
 
     /**
      * @return res

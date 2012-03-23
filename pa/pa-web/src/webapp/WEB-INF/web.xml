@@ -160,6 +160,7 @@
             <role-name>AdminAbstractor</role-name>
             <role-name>ScientificAbstractor</role-name>
             <role-name>SuAbstractor</role-name>
+            <role-name>ReportViewer</role-name>
         </auth-constraint>
     </security-constraint>
     <security-constraint>

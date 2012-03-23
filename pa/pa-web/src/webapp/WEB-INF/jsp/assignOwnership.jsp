@@ -83,122 +83,127 @@
                     <c:out value="${row.city}"/>
                     <c:out value="${row.state}"/>
                     <c:out value="${row.postalCode}"/>
-                </display:column>.       
-                <display:column class="title" titleKey="studyProtocol.action">
-                    <a href="#" onclick="removeOwner('${row.id}');">Remove Ownership</a>   
-                </display:column>              
+                </display:column>
+                <pa:displayWhenCheckedOut>       
+	                <display:column class="title" titleKey="studyProtocol.action">
+	                    <a href="#" onclick="removeOwner('${row.id}');">Remove Ownership</a>
+	                </display:column>
+                </pa:displayWhenCheckedOut>              
             </display:table>
         </div>
-        <div class="box"><pa:sucessMessage /> 
-            <s:if test="hasActionErrors()">
-                <div class="error_msg"><s:actionerror /></div>
-            </s:if> 
-            <s:form name="assignOwnershipForm" action="assignOwnershipview.action">
-                <pa:studyUniqueToken/>
-                <h2 id="search_form">Search Users</h2>
-                <table class="form">
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="assignOwnership_criteria_firstName">
-                                <fmt:message key="assignOwnership.criteria.firstname" />
-                            </label>
-                        </td>
-                        <td>
-                            <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"
-                                         cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="assignOwnership_criteria_lastName"> 
-                                <fmt:message key="assignOwnership.criteria.lastname" />
-                            </label>
-                        </td>
-                        <td>
-                            <s:textfield id="lastName" name="criteria.lastName" maxlength="200" size="100"
-                                         cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="assignOwnership_criteria_email"> 
-                                <fmt:message key="assignOwnership.criteria.email" />
-                            </label>
-                        </td>
-                        <td>
-                            <s:textfield id="emailAddress" name="criteria.emailAddress" maxlength="200" size="100"
-                                         cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="assignOwnership.criteria.organization">
-                                <fmt:message key="assignOwnership.criteria.organization" />
-                            </label>
-                        </td>
-                        <td colspan="2">
-                            <div id="loadOrgField">
-                                <table>
-                                    <tr>
-                                        <td>
-                                            <s:textfield label="Organization Name" name="criteria.affiliatedOrgName" 
-                                                         size="30" cssStyle="width:200px" readonly="true" 
-                                                         cssClass="readonly"/>
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn" onclick="lookup4loadorg();" />
-                                                <span class="btn_img"><span class="organization">Look Up Org</span></span>
-                                            </a>
-                                            <s:hidden name="criteria.affiliatedOrgId" id="affiliatedOrgId" />
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div> 
-                        </td>
-                    </tr>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="#" cssClass="btn" onclick="searchForUsers();">
-                                    <span class="btn_img"><span class="search"><fmt:message key="assignOwnership.buttons.search" /></span></span>
-                                </s:a> 
-                                <s:a href="#" cssClass="btn" onclick="resetSearch();">
-                                    <span class="btn_img"><span class="cancel"><fmt:message key="assignOwnership.buttons.reset" /></span></span>
-                                </s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
-                <div class="line"></div>
-                <s:set name="users" value="users" scope="request" />
-                <s:if test="users != null">
-                    <h2 id="search_results">Search Results</h2>
-                    <s:hidden name="currentAction" />
-                    <display:table class="data" pagesize="10" id="results" name="users" requestURI="assignOwnershipsearch.action" export="false">
-                        <display:column  titleKey="pending.userFirstName" sortable="true" headerClass="sortable" >
-                           <c:out value="${results.regUser.firstName}"/> 
-                        </display:column>
-                        <display:column  titleKey="pending.userLastName"  sortable="true" headerClass="sortable">
-                           <c:out value="${results.regUser.lastName}"/> 
-                        </display:column>
-                        <display:column  titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
-                           <c:out value="${results.regUser.emailAddress}"/> 
-                        </display:column>
-                        <display:column class="title" titleKey="studyProtocol.action">
-                            <c:choose>
-                                <c:when test="${results.owner == true}">
-                                    <a href="#" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="#" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
-                                </c:otherwise>
-                            </c:choose>
-                        </display:column>
-                    </display:table>
-                </s:if>
-            </s:form>
-        </div>
+        
+        <pa:displayWhenCheckedOut>
+	        <div class="box"><pa:sucessMessage /> 
+	            <s:if test="hasActionErrors()">
+	                <div class="error_msg"><s:actionerror /></div>
+	            </s:if> 
+	            <s:form name="assignOwnershipForm" action="assignOwnershipview.action">
+	                <pa:studyUniqueToken/>
+	                <h2 id="search_form">Search Users</h2>
+	                <table class="form">
+	                    <tr>
+	                        <td scope="row" class="label">
+	                            <label for="assignOwnership_criteria_firstName">
+	                                <fmt:message key="assignOwnership.criteria.firstname" />
+	                            </label>
+	                        </td>
+	                        <td>
+	                            <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"
+	                                         cssStyle="width:200px" />
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td scope="row" class="label">
+	                            <label for="assignOwnership_criteria_lastName"> 
+	                                <fmt:message key="assignOwnership.criteria.lastname" />
+	                            </label>
+	                        </td>
+	                        <td>
+	                            <s:textfield id="lastName" name="criteria.lastName" maxlength="200" size="100"
+	                                         cssStyle="width:200px" />
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td scope="row" class="label">
+	                            <label for="assignOwnership_criteria_email"> 
+	                                <fmt:message key="assignOwnership.criteria.email" />
+	                            </label>
+	                        </td>
+	                        <td>
+	                            <s:textfield id="emailAddress" name="criteria.emailAddress" maxlength="200" size="100"
+	                                         cssStyle="width:200px" />
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td scope="row" class="label">
+	                            <label for="assignOwnership.criteria.organization">
+	                                <fmt:message key="assignOwnership.criteria.organization" />
+	                            </label>
+	                        </td>
+	                        <td colspan="2">
+	                            <div id="loadOrgField">
+	                                <table>
+	                                    <tr>
+	                                        <td>
+	                                            <s:textfield label="Organization Name" name="criteria.affiliatedOrgName" 
+	                                                         size="30" cssStyle="width:200px" readonly="true" 
+	                                                         cssClass="readonly"/>
+	                                        </td>
+	                                        <td>
+	                                            <a href="#" class="btn" onclick="lookup4loadorg();" />
+	                                                <span class="btn_img"><span class="organization">Look Up Org</span></span>
+	                                            </a>
+	                                            <s:hidden name="criteria.affiliatedOrgId" id="affiliatedOrgId" />
+	                                        </td>
+	                                    </tr>
+	                                </table>
+	                            </div> 
+	                        </td>
+	                    </tr>
+	                </table>
+	                <div class="actionsrow">
+	                    <del class="btnwrapper">
+	                        <ul class="btnrow">
+	                            <li>
+	                                <s:a href="#" cssClass="btn" onclick="searchForUsers();">
+	                                    <span class="btn_img"><span class="search"><fmt:message key="assignOwnership.buttons.search" /></span></span>
+	                                </s:a> 
+	                                <s:a href="#" cssClass="btn" onclick="resetSearch();">
+	                                    <span class="btn_img"><span class="cancel"><fmt:message key="assignOwnership.buttons.reset" /></span></span>
+	                                </s:a>
+	                            </li>
+	                        </ul>
+	                    </del>
+	                </div>
+	                <div class="line"></div>
+	                <s:set name="users" value="users" scope="request" />
+	                <s:if test="users != null">
+	                    <h2 id="search_results">Search Results</h2>
+	                    <s:hidden name="currentAction" />
+	                    <display:table class="data" pagesize="10" id="results" name="users" requestURI="assignOwnershipsearch.action" export="false">
+	                        <display:column  titleKey="pending.userFirstName" sortable="true" headerClass="sortable" >
+	                           <c:out value="${results.regUser.firstName}"/> 
+	                        </display:column>
+	                        <display:column  titleKey="pending.userLastName"  sortable="true" headerClass="sortable">
+	                           <c:out value="${results.regUser.lastName}"/> 
+	                        </display:column>
+	                        <display:column  titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
+	                           <c:out value="${results.regUser.emailAddress}"/> 
+	                        </display:column>
+	                        <display:column class="title" titleKey="studyProtocol.action">
+	                            <c:choose>
+	                                <c:when test="${results.owner == true}">
+	                                    <a href="#" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
+	                                </c:when>
+	                                <c:otherwise>
+	                                    <a href="#" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
+	                                </c:otherwise>
+	                            </c:choose>
+	                        </display:column>
+	                    </display:table>
+	                </s:if>
+	            </s:form>
+	        </div>
+        </pa:displayWhenCheckedOut>
     </body>
 </html>

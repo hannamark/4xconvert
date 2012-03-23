@@ -13,7 +13,7 @@
         </ul>
     </li>
 
-    <c:if test="${sessionScope.trialSummary != null && (sessionScope.isAbstractor || sessionScope.isSuAbstractor)}">
+    <c:if test="${sessionScope.trialSummary != null && (sessionScope.isAbstractor || sessionScope.isSuAbstractor || sessionScope.isReportViewer)}">
         <c:set var="status" value="${ (sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'On-Hold') ? sessionScope.trialSummary.lastOffHollStatusCode.code : sessionScope.trialSummary.documentWorkflowStatusCode.code}"/>
         <c:choose>
             <c:when test="${status == 'Submitted' || status == 'Amendment Submitted'}">
