@@ -120,6 +120,7 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(PaHibernateSessionInterceptor.class)
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServiceLocal {
 
     @EJB
@@ -168,6 +169,10 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     static final String OTHER_IDENTIFIERS_QRY_STRING = "select study_protocol_id , extension, " 
             + "identifier_name FROM study_otheridentifiers "
             + "WHERE study_protocol_id IN (:ids)";
+    
+    static final String LAST_UPDATED_DATE = "select study_protocol_identifier, max(open_date) " 
+            + "from study_inbox where study_protocol_identifier " 
+            + "IN (:ids) group by study_protocol_identifier";
     
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
@@ -249,6 +254,20 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             }
         }
         
+        query = new DAQuery();
+        query.setSql(true);
+        query.setText(LAST_UPDATED_DATE);
+        query.addParameter("ids", ownerMap.keySet());       
+        List<Object[]> lastUpdatedDateQueryList = dataAccessService.findByQuery(query);
+        for (StudyProtocolQueryDTO dto : dtoList) {   
+            for (Object[] obj : lastUpdatedDateQueryList) {
+                Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+                if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                    Date openDate = (Date) obj[1];
+                    dto.setUpdatedDate(openDate);
+                }
+            }
+        }
         return dtoList;
     }
     

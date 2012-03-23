@@ -165,7 +165,7 @@ body {
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.nctNumber" property="nctNumber" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>                
-                <display:column title="Last Updated Date" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+                <display:column title="Last Update Submitted" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column title="Other Identifiers" >
                 	<s:iterator value="%{#attr.row.otherIdentifiers}" >

@@ -152,6 +152,18 @@ public class ProtocolQueryResultsServiceTest {
         List<Object> result1 = new ArrayList<Object>();
         when(daMock.findByQuery(qryMain1)).thenReturn(result1);
         
+        // fetch last updated date
+        DAQuery qryMain2 = new DAQuery();
+        qryMain2.setSql(true);
+        qryMain2.setText(ProtocolQueryResultsServiceBean.LAST_UPDATED_DATE);
+        Set<Long> ids2 = new HashSet<Long>();
+        ids1.add(studyProtocolIdentifier.longValue());
+        Map<String, Object> params2 = new HashMap<String, Object>();
+        params2.put("ids", ids2);
+        qryMain2.setParameters(params2);
+        List<Object> result2 = new ArrayList<Object>();
+        when(daMock.findByQuery(qryMain1)).thenReturn(result2);
+        
     }
 
     @Test
