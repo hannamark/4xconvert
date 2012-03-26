@@ -495,6 +495,14 @@ public class TestSchema {
         
         ssaa = new StudySiteAccrualAccess();
         ssaa.setRegistryUser(registryUser);
+        ssaa.setStudySite(studySites.get(6));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+        
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(7));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));

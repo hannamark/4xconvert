@@ -261,15 +261,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     
     private void validateStudySiteAccrualAccessCode(String key, List<String> values, StringBuffer errMsg,
             long lineNumber) {
-        if (StringUtils.equals("ACCRUAL_COUNT", key)) {
-            String studySiteID = StringUtils
-                .trim(values.get(BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1));
-            if (!StringUtils.isEmpty(studySiteID)) {
-                if (!isCorrectOrganizationId(studySiteID, errMsg)) {
-                    return;
-                }
-                validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, values, lineNumber);
+        String studySiteID = null;
+        if (StringUtils.equals("PATIENTS", key)) {
+            studySiteID = StringUtils.trim(values.get(BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1));
+        } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
+            studySiteID = StringUtils.trim(values.get(BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1));
+        }
+        if (!StringUtils.isEmpty(studySiteID)) {
+            if (!isCorrectOrganizationId(studySiteID, errMsg)) {
+                return;
             }
+            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, values, lineNumber);
         }
     }
 
