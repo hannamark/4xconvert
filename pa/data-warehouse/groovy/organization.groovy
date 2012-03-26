@@ -23,7 +23,7 @@ def sql = """select
 			 crcount
 			 from Organization org
 			 left outer join address add on add.id = org.postal_address_id
-			 left outer join identifiedorganization ctepid on ctepid.player_id = org.id and ctepid.assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier'
+			 left outer join identifiedorganization ctepid on ctepid.player_id = org.id and ctepid.assigned_identifier_root = '2.16.840.1.113883.3.26.6.2'
 			 left outer join country on country.id = add.country_id
 			 left outer join organization_email o_e on o_e.organization_id = org.id
 			 left outer join email e on e.id = o_e.email_id
