@@ -57,7 +57,7 @@ sourceConnection.eachRow(sql) { row ->
     	country: row.country_name,
     	ctep_id: row.ctep_id,
     	curator_comment: row.comments,
-        name: orgname,
+        name: row.orgname,
  		po_id: row.id,
  		status: row.status,
  		status_date: row.statusdate,
