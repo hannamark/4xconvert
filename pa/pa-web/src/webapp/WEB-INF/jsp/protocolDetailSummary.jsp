@@ -66,6 +66,12 @@
     			<span class="value"><c:out value="${sessionScope.trialSummary.studyStatusCode.code }"/></span>
     		</div>
 		</c:if>
+        <c:if test="${sessionScope.trialSummary.studyStatusDate != null}">
+            <div class="row">
+                <span class="label"><fmt:message key="studyProtocol.studyStatusDate"/>:</span>
+                <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.studyStatusDate }" dateStyle="short"/></span>
+            </div>
+        </c:if>
 		<div class="row">
 			<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span>
 			<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
