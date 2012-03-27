@@ -87,7 +87,7 @@
                             </reg-web:valueRow>
                             <c:if test="${trialDTO.nctIdentifier != null}">
                                 <reg-web:valueRow labelKey="view.trial.nctNumber">
-                                    <c:out value="${trialDTO.nctIdentifier}"/>>
+                                    <c:out value="${trialDTO.nctIdentifier}"/>
                                 </reg-web:valueRow>
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
