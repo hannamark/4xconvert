@@ -19,7 +19,7 @@
             <c:when test="${status == 'Submitted' || status == 'Amendment Submitted'}">
                 <c:set var="menuStatus" value="submitted" />
             </c:when>
-            <c:when test="${status == 'Rejected'}">
+            <c:when test="${status == 'Rejected' || status == 'Submission Terminated'}">
                 <c:set var="menuStatus" value="rejected" />
             </c:when>
             <c:otherwise>

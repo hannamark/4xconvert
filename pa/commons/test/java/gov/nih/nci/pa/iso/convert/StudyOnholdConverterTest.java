@@ -104,6 +104,7 @@ import org.joda.time.DateTime;
 public class StudyOnholdConverterTest extends AbstractConverterTest<StudyOnholdConverter, StudyOnholdDTO, StudyOnhold> {
 
     private static final String REASON_TEXT = "reason";
+    private static final String LOG_TEXT = "log";
     private static final OnholdReasonCode REASON_CODE = OnholdReasonCode.INVALID_GRANT;
     private static final Timestamp ON_HOLD_DATE = new Timestamp(new DateTime().getMillis());
     private static final Timestamp OFF_HOLD_DATE = new Timestamp(new DateTime().plusDays(1).getMillis());
@@ -124,6 +125,7 @@ public class StudyOnholdConverterTest extends AbstractConverterTest<StudyOnholdC
         bo.setOnholdDate(ON_HOLD_DATE);
         bo.setOffholdDate(OFF_HOLD_DATE);
         bo.setPreviousStatusCode(STATUS_CODE);
+        bo.setProcessingLog(LOG_TEXT);
         return bo;
     }
 
@@ -139,6 +141,7 @@ public class StudyOnholdConverterTest extends AbstractConverterTest<StudyOnholdC
         dto.setOnholdReasonCode(CdConverter.convertToCd(REASON_CODE));
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(ON_HOLD_DATE, OFF_HOLD_DATE));
         dto.setPreviousStatusCode(CdConverter.convertToCd(STATUS_CODE));
+        dto.setProcessingLog(StConverter.convertToSt(LOG_TEXT));
         return dto;
     }
 
@@ -154,6 +157,7 @@ public class StudyOnholdConverterTest extends AbstractConverterTest<StudyOnholdC
         assertEquals("Wrong onhold date", ON_HOLD_DATE, bo.getOnholdDate());
         assertEquals("Wrong offhold date", OFF_HOLD_DATE, bo.getOffholdDate());
         assertEquals("Wrong previous status Code", STATUS_CODE, bo.getPreviousStatusCode());
+        assertEquals("Wrong log text", LOG_TEXT, bo.getProcessingLog());
     }
 
     /**
@@ -165,6 +169,7 @@ public class StudyOnholdConverterTest extends AbstractConverterTest<StudyOnholdC
         assertEquals("Wrong study protocol identifier", IiConverter.convertToStudyProtocolIi(2L),
                      dto.getStudyProtocolIdentifier());
         assertEquals("Wrong Reason Text", REASON_TEXT, StConverter.convertToString(dto.getOnholdReasonText()));
+        assertEquals("Wrong Log Text", LOG_TEXT, StConverter.convertToString(dto.getProcessingLog()));
         assertEquals("Wrong Reason Code", REASON_CODE.getCode(),
                      CdConverter.convertCdToString(dto.getOnholdReasonCode()));
         assertEquals("Wrong onhold date", ON_HOLD_DATE, IvlConverter.convertTs().convertLow(dto.getOnholdDate()));

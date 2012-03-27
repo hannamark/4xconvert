@@ -104,6 +104,16 @@ public enum MilestoneCode implements CodedEnum<String> {
     SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, false, true),
     /** Submission Rejected. */
     SUBMISSION_REJECTED("Submission Rejection Date", true, false, false, true),
+    
+    /**
+     * Submission Terminated Date.
+     */
+    SUBMISSION_TERMINATED("Submission Terminated Date", false, false, true, true),
+    /**
+     * Submission Reactivated Date.
+     */
+    SUBMISSION_REACTIVATED("Submission Reactivated Date", false, false, true, true),
+    
     /** Administrative processing start. */
     ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, true, true),
     /** Administrative processing completed. */
@@ -173,6 +183,14 @@ public enum MilestoneCode implements CodedEnum<String> {
 
         tmpSet = EnumSet.of(DocumentWorkflowStatusCode.REJECTED);
         tmp.put(SUBMISSION_REJECTED, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = EnumSet.complementOf(EnumSet.of(
+                DocumentWorkflowStatusCode.REJECTED,
+                DocumentWorkflowStatusCode.SUBMISSION_TERMINATED));
+        tmp.put(SUBMISSION_TERMINATED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.SUBMISSION_TERMINATED);
+        tmp.put(SUBMISSION_REACTIVATED, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED,
                             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,

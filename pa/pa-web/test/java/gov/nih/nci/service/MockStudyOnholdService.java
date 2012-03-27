@@ -227,4 +227,8 @@ public class MockStudyOnholdService extends MockAbstractBaseIsoService<StudyOnho
         return null;
 
     }
+
+    @Override
+    public void processOnHoldTrials() {        
+    }
 }

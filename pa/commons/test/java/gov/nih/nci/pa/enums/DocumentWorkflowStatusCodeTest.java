@@ -133,13 +133,16 @@ public class DocumentWorkflowStatusCodeTest {
     public static Collection<? extends Object> data() {
         Object[][] data = new Object[][]{
                 {DocumentWorkflowStatusCode.SUBMITTED, false, false, false,
-                    EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.REJECTED) },
+                    EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.REJECTED, 
+                            DocumentWorkflowStatusCode.SUBMISSION_TERMINATED) },
                     
                 {DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED, false, false, false, 
-                    EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.REJECTED)},
+                    EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.REJECTED, 
+                            DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
                     
                 {DocumentWorkflowStatusCode.ACCEPTED, false, false, true, 
-                    EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED, DocumentWorkflowStatusCode.REJECTED)},
+                    EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED, DocumentWorkflowStatusCode.REJECTED, 
+                            DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
                     
                 {DocumentWorkflowStatusCode.REJECTED, false, false, false, 
                     EnumSet.noneOf(DocumentWorkflowStatusCode.class)},
@@ -147,20 +150,24 @@ public class DocumentWorkflowStatusCodeTest {
                 {DocumentWorkflowStatusCode.ABSTRACTED, false, true, true, 
                     EnumSet.of(DocumentWorkflowStatusCode.REJECTED, DocumentWorkflowStatusCode.VERIFICATION_PENDING, 
                                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
-                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)},
+                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                               DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
                                
                 {DocumentWorkflowStatusCode.VERIFICATION_PENDING, false, true, true, 
                     EnumSet.of(DocumentWorkflowStatusCode.REJECTED, 
                                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, 
-                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)},
+                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                               DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
                                
                 {DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, true, true, true, 
                     EnumSet.of(DocumentWorkflowStatusCode.REJECTED, 
-                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)},
+                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                               DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
                                
                 {DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, true, true, true, 
                     EnumSet.of(DocumentWorkflowStatusCode.REJECTED, 
-                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)},
+                               DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, 
+                               DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)},
         };
         return Arrays.asList(data);
     }

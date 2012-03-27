@@ -442,9 +442,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             options.setCtgovXmlRequiredIndicator(null);
         }
         
-        if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), "onhold")) {
+        if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), PAConstants.ON_HOLD)) {
             options.setSearchOnHoldTrials(true);
-        } else if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), "notonhold")) { 
+        } else if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), PAConstants.NOT_ON_HOLD)) { 
             options.setSearchOffHoldTrials(true);
         }        
         

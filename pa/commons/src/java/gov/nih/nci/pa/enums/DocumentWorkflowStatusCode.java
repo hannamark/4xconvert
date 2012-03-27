@@ -103,6 +103,8 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
     /** Submitted. */
     SUBMITTED("Submitted", false, false, false),
+    /** Submission Terminated. */
+    SUBMISSION_TERMINATED("Submission Terminated", false, false, false),    
     /** Amendment Submitted. */
     AMENDMENT_SUBMITTED("Amendment Submitted", false, false, false),
     /** Accepted. */
@@ -131,31 +133,35 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> tmp =
                 new HashMap<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>>();
 
-        Set<DocumentWorkflowStatusCode> tmpSet = EnumSet.of(ACCEPTED, REJECTED);
+        Set<DocumentWorkflowStatusCode> tmpSet = EnumSet.of(ACCEPTED, REJECTED, SUBMISSION_TERMINATED);
         tmp.put(SUBMITTED, Collections.unmodifiableSet(tmpSet));
         tmp.put(AMENDMENT_SUBMITTED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ABSTRACTED, REJECTED);
+        tmpSet = EnumSet.of(ABSTRACTED, REJECTED, SUBMISSION_TERMINATED);
         tmp.put(ACCEPTED, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = EnumSet.noneOf(DocumentWorkflowStatusCode.class);
         tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
         
         tmpSet = EnumSet.of(REJECTED, VERIFICATION_PENDING, ABSTRACTION_VERIFIED_RESPONSE,
-                            ABSTRACTION_VERIFIED_NORESPONSE);
+                            ABSTRACTION_VERIFIED_NORESPONSE, SUBMISSION_TERMINATED);
         tmp.put(ABSTRACTED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE, ABSTRACTION_VERIFIED_NORESPONSE);
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE, ABSTRACTION_VERIFIED_NORESPONSE, 
+                SUBMISSION_TERMINATED);
         tmp.put(VERIFICATION_PENDING, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_NORESPONSE);
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_NORESPONSE, SUBMISSION_TERMINATED);
         tmp.put(ABSTRACTION_VERIFIED_RESPONSE, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE, SUBMISSION_TERMINATED);
         tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
         
-        tmpSet = EnumSet.complementOf(EnumSet.of(REJECTED, ON_HOLD));
+        tmpSet = EnumSet.complementOf(EnumSet.of(REJECTED, ON_HOLD, SUBMISSION_TERMINATED));
         tmp.put(ON_HOLD, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = EnumSet.complementOf(EnumSet.of(SUBMISSION_TERMINATED));
+        tmp.put(SUBMISSION_TERMINATED, Collections.unmodifiableSet(tmpSet));        
         
         TRANSITIONS = Collections.unmodifiableMap(tmp);
     }

@@ -99,6 +99,7 @@ public class OnholdWebDTO {
     private String reasonText;
     private String dateLow;
     private String dateHigh;
+    private String processingLog;
 
     /** */
     public OnholdWebDTO() {
@@ -113,6 +114,7 @@ public class OnholdWebDTO {
         this.reasonText = StConverter.convertToString(isoDto.getOnholdReasonText());
         this.dateLow = IvlConverter.convertTs().convertLowToString(isoDto.getOnholdDate());
         this.dateHigh = IvlConverter.convertTs().convertHighToString(isoDto.getOnholdDate());
+        this.processingLog = StConverter.convertToString(isoDto.getProcessingLog());
     }
     /**
      * @param studyProtocolIi Ii for the associated study protocol
@@ -125,6 +127,7 @@ public class OnholdWebDTO {
         isoDto.setOnholdReasonCode(CdConverter.convertStringToCd(getReasonCode()));
         isoDto.setOnholdReasonText(StConverter.convertToSt(getReasonText()));
         isoDto.setOnholdDate(IvlConverter.convertTs().convertToIvl(getDateLow(), getDateHigh()));
+        isoDto.setProcessingLog(StConverter.convertToSt(processingLog));
         return isoDto;
     }
     /**
@@ -186,5 +189,17 @@ public class OnholdWebDTO {
      */
     public void setDateHigh(String dateHigh) {
         this.dateHigh = PAUtil.normalizeDateString(dateHigh);
+    }
+    /**
+     * @return the processingLog
+     */
+    public String getProcessingLog() {
+        return processingLog;
+    }
+    /**
+     * @param processingLog the processingLog to set
+     */
+    public void setProcessingLog(String processingLog) {
+        this.processingLog = processingLog;
     }
 }

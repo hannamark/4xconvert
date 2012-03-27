@@ -688,6 +688,7 @@ public class TestSchema {
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
         
+        // Study On-Hold
         sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
         dates = sp.getDates();
@@ -720,8 +721,9 @@ public class TestSchema {
         StudyOnhold onhold = new StudyOnhold();
         onhold.setStudyProtocol(sp);
         onhold.setOnholdReasonCode(OnholdReasonCode.SUBMISSION_INCOM);
-        onhold.setOnholdReasonText("reason text");
+        onhold.setOnholdReasonText("onhold_reason_text");
         onhold.setOnholdDate(TODAY);
+        onhold.setPreviousStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
         addUpdObject(onhold);
         studyOnholdIds.add(onhold.getId());
 
@@ -1129,7 +1131,18 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-    
+
+    public static DocumentWorkflowStatus createOnHoldDocumentWorkflowStatus(StudyProtocol sp) {
+        DocumentWorkflowStatus create = new DocumentWorkflowStatus();        
+        create.setStudyProtocol(sp);
+        create.setStatusCode(DocumentWorkflowStatusCode.ON_HOLD);
+        create.setStatusDateRangeLow(TODAY);
+        create.setCommentText("On Hold");
+        create.setUserLastUpdated(getUser());
+        create.setDateLastUpdated(TODAY);
+        return create;
+    }
+
 
     public static HealthCareFacility createHealthCareFacilityObj(Organization o) {
         HealthCareFacility hc = new HealthCareFacility();

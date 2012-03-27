@@ -93,6 +93,12 @@
                         </a>
                         <pa:fieldError fieldName="onhold.dateHigh"/>
                     </pa:valueRow>
+                    <s:if test="%{onhold.processingLog!=null && onhold.processingLog!=''}">
+	                    <pa:valueRow labelKey="onhold.processingLog">
+	                        <s:textarea name="onhold.processingLog" rows="5" cssStyle="width:500px;float:left;" 
+	                         readonly="true" cssClass="readonly"/>
+	                    </pa:valueRow>                    
+                    </s:if>                    
                 </table>
                 <pa:buttonBar>
                     <s:if test="%{currentAction == 'create'}">

@@ -90,6 +90,8 @@ public class CommonsConstant {
     public static final int LONG_TEXT_LENGTH = 200;
     /** Len 2000. **/
     public static final int LEN_2000 = 2000;
+    /** Len 4096. **/
+    public static final int LEN_4096 = 4096;    
     /** yes. */
     public static final String YES = "Yes";
     /** no. */

@@ -79,11 +79,14 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Bala Nair
@@ -243,6 +246,16 @@ public interface MailManagerService {
     void sendUnidentifiableOwnerEmail(Long studyProtocolId,
             Collection<String> emails) throws PAException;
     
+    /**
+     * Sends On-Hold reminder to all trial record owners and the trial submitter.
+     * @param studyProtocolId studyProtocolId
+     * @param onhold onhold
+     * @param deadline deadline
+     * @throws PAException PAException
+     * @return list of email addresses to which the reminder was sent.
+     */
+    List<String> sendOnHoldReminder(Long studyProtocolId, StudyOnhold onhold, Date deadline) throws PAException;    
+    
     
     /**
      * Sends an email with text/html content.
@@ -252,5 +265,20 @@ public interface MailManagerService {
      * @param mailBody body
      */
     void sendMailWithHtmlBody(String mailTo, String subject, String mailBody);
+
+    /**
+     * Send the following email to the CTRO general mailbox: Subject Line:.
+     * Submission terminated for trial <NCI_ID> due to lack of response Message
+     * Body: The system has performed the following actions on trial <NCI_ID>,
+     * <trial_title>: submitted multiple requests for information to the
+     * submitter and trial record owner(s) with no response received within the
+     * allotted response period closed the trial's on-hold state as of today's
+     * date added a Submission Terminated Date milestone
+     * 
+     * @param studyProtocolId
+     *            studyProtocolId
+     * @throws PAException PAException
+     */
+    void sendSubmissionTerminationEmail(Long studyProtocolId) throws PAException;
 
 }

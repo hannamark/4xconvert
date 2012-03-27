@@ -70,6 +70,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="joda-time"              name="joda-time"               rev="1.6.2"           conf="compile->master"/>
+    <dependency org="de.jollyday"            name="jollyday"                rev="0.4.5"           conf="compile->master" transitive="false"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.7"           conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.5"             conf="compile->master"/>

@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**
@@ -684,4 +686,40 @@ public class PAUtilTest {
         assertTrue(PAUtil.isUsOrCanadaPhoneNumber("555-555-5555x123"));
     }
     
+    @Test
+    public void testIsBusinessDay() throws ParseException {
+        final String[] pattern = new String[] {"MM/dd/yyyy"};
+        // days of week
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("03/24/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("03/25/2012", pattern)));
+        assertTrue(PAUtil.isBusinessDay(DateUtils.parseDate("03/19/2012", pattern)));
+        assertTrue(PAUtil.isBusinessDay(DateUtils.parseDate("03/20/2012", pattern)));
+        assertTrue(PAUtil.isBusinessDay(DateUtils.parseDate("03/21/2012", pattern)));
+        assertTrue(PAUtil.isBusinessDay(DateUtils.parseDate("03/22/2012", pattern)));
+        assertTrue(PAUtil.isBusinessDay(DateUtils.parseDate("03/23/2012", pattern)));
+        
+        // federal holidays        
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("01/02/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("01/16/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("02/20/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("05/28/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("07/04/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("09/03/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("10/08/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("11/12/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("11/22/2012", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("12/25/2012", pattern)));
+        
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("01/01/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("01/21/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("02/18/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("05/27/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("07/04/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("09/02/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("10/14/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("11/11/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("11/28/2013", pattern)));
+        assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("12/25/2013", pattern)));
+        
+    }
 }

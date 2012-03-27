@@ -97,5 +97,14 @@ public interface DocumentWorkflowStatusService extends StudyCurrentPaService<Doc
      * @throws PAException exception
      */
     DocumentWorkflowStatusDTO getLatestOffholdStatus(Ii spIi) throws PAException;
+    
+    /**
+     * Gets the previous status of the study protocol.
+     * @param spIi The study protocol Ii
+     * @return The previous status of the study protocol.
+     * @throws PAException exception
+     */
+    DocumentWorkflowStatusDTO getPreviousStatus(Ii spIi) throws PAException;
+    
 
 }

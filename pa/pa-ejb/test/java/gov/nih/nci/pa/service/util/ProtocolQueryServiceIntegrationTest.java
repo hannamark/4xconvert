@@ -409,11 +409,11 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 7, results.size());
 
-        otherCriteria.setHoldStatus("onhold");
+        otherCriteria.setHoldStatus(PAConstants.ON_HOLD);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
         
-        otherCriteria.setHoldStatus("notonhold");
+        otherCriteria.setHoldStatus(PAConstants.NOT_ON_HOLD);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 6, results.size());        
 

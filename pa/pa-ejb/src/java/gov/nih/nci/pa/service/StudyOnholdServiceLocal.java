@@ -96,4 +96,11 @@ public interface StudyOnholdServiceLocal extends StudyPaService<StudyOnholdDTO> 
      * @throws PAException exception
      */
     Bl isOnhold(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * Sends out email notifications about on-hold trials.
+     * @see https://tracker.nci.nih.gov/browse/PO-2899
+     */
+    void processOnHoldTrials(); 
+    
 }

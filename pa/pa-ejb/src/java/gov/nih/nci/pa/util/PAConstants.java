@@ -170,4 +170,15 @@ public class PAConstants {
      * NCI Org Name.
      */
     public static final String NCI_ORG_NAME = "National Cancer Institute";
+    
+    /**
+     * On hold.
+     */
+    public static final String ON_HOLD = "onhold";
+    
+    /**
+     * Not on hold.
+     */
+    public static final String NOT_ON_HOLD = "notonhold";
+    
 }

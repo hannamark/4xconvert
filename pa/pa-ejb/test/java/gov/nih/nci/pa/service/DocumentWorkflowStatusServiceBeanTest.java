@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -103,6 +103,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -284,6 +285,22 @@ public class DocumentWorkflowStatusServiceBeanTest extends AbstractHibernateTest
         DocumentWorkflowStatusDTO result = sut.getLatestOffholdStatus(spIi);
         assertEquals("Wrong status returned", statuses.get(2), result);
     }
+    
+    @Test
+    public void testGetPreviousStatus() throws PAException {
+        DocumentWorkflowStatusBeanLocal sut = mock(DocumentWorkflowStatusBeanLocal.class);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).getPreviousStatus(spIi);
+        List<DocumentWorkflowStatusDTO> statuses = createStatusDtos();
+        when(sut.getByStudyProtocol(spIi)).thenReturn(statuses);
+        DocumentWorkflowStatusDTO result = sut.getPreviousStatus(spIi);
+        assertEquals("Wrong status returned", statuses.get(1), result);
+        
+        when(sut.getByStudyProtocol(spIi)).thenReturn(Arrays.asList(statuses.get(0)));
+        result = sut.getPreviousStatus(spIi);
+        assertNull(result);        
+    }
+    
 
     private List<DocumentWorkflowStatusDTO> createStatusDtos() {
         List<DocumentWorkflowStatusDTO> dtos = new ArrayList<DocumentWorkflowStatusDTO>();

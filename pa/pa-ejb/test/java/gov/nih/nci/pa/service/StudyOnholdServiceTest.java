@@ -82,36 +82,54 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -127,8 +145,26 @@ import org.mockito.InOrder;
  */
 public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     
-    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService =
-            mock(DocumentWorkflowStatusServiceLocal.class);
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = mock(DocumentWorkflowStatusServiceLocal.class);
+    private ProtocolQueryServiceLocal protocolQueryServiceBean = mock(ProtocolQueryServiceLocal.class);
+    private LookUpTableServiceRemote lookUpTableServiceRemote = mock(LookUpTableServiceRemote.class);
+    private MailManagerServiceLocal mailManagerServiceLocal = mock(MailManagerServiceLocal.class);
+    private StudyMilestoneServicelocal studyMilestoneServicelocal = mock(StudyMilestoneServicelocal.class);
+    
+    private StudyProtocol onholdStudy;
+    private StudyOnhold onholdRecord;
+    private StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+    
+    private static final OnholdReasonCode[] reasonsToSkipReminders = new OnholdReasonCode[] {            
+            OnholdReasonCode.INVALID_GRANT, OnholdReasonCode.OTHER,
+            OnholdReasonCode.PENDING_CTRP_REVIEW,
+            OnholdReasonCode.PENDING_DISEASE_CUR,
+            OnholdReasonCode.PENDING_INTERVENTION_CUR,
+            OnholdReasonCode.PENDING_ORG_CUR,
+            OnholdReasonCode.PENDING_PERSON_CUR};
+    
+    private Timestamp today;
+    
     /**
      * Exception rule.
      */
@@ -137,11 +173,50 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
  
     /**
      * Initialization of database.
+     * @throws PAException 
+     * @throws ParseException 
      */
     @Before
-    public void setUp() {
+    public void setUp() throws PAException, ParseException {
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        onholdRecord = (StudyOnhold) session.get(StudyOnhold.class, TestSchema.studyOnholdIds.get(0));
+        onholdStudy = onholdRecord.getStudyProtocol();
+        
+        studyProtocolQueryDTO.setStudyProtocolId(onholdStudy.getId());
+        studyProtocolQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ON_HOLD);        
+        when(protocolQueryServiceBean.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class))).
+            thenReturn(Arrays.asList(studyProtocolQueryDTO));
+        
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.reminder.reasons")))
+                .thenReturn("SUBMISSION_INCOM,SUBMISSION_INCOM_MISSING_DOCS");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.deadline")))
+                .thenReturn("21");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.reminder.frequency")))
+                .thenReturn("3");        
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.reminder.logentry")))
+                .thenReturn("${date}_${emails}");        
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.termination.logentry")))
+                .thenReturn("${date}");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.termination.comment")))
+                .thenReturn("trial.onhold.termination.comment");        
+        
+        today =  new Timestamp(DateUtils.parseDate("03/23/2012", new String[] {"MM/dd/yyyy"}).getTime());
+        
     }
     
     /**
@@ -161,6 +236,12 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     private StudyOnholdBeanLocal createStudyOnholdBeanLocalMock() {
         StudyOnholdBeanLocal service = mock(StudyOnholdBeanLocal.class);
         doCallRealMethod().when(service).setDocumentWorkflowStatusService(documentWorkflowStatusService);
+        doCallRealMethod().when(service).setLookUpTableServiceRemote(lookUpTableServiceRemote);
+        doCallRealMethod().when(service).setProtocolQueryServiceLocal(protocolQueryServiceBean);
+        doCallRealMethod().when(service).setMailManagerSerivceLocal(mailManagerServiceLocal);
+        doCallRealMethod().when(service).setStudyMilestoneService(studyMilestoneServicelocal);
+        doCallRealMethod().when(service).processOnHoldTrials();
+        when(service.getTodaysDate()).thenReturn(today);
         setDependencies(service);
         return service;
     }
@@ -170,6 +251,10 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
      */
     private void setDependencies(StudyOnholdBeanLocal service) {
         service.setDocumentWorkflowStatusService(documentWorkflowStatusService);
+        service.setLookUpTableServiceRemote(lookUpTableServiceRemote);
+        service.setProtocolQueryServiceLocal(protocolQueryServiceBean);
+        service.setMailManagerSerivceLocal(mailManagerServiceLocal);
+        service.setStudyMilestoneService(studyMilestoneServicelocal);
     }
     
     /**
@@ -638,6 +723,151 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         x.setStudyProtocolIdentifier(spIi);
         sut.create(x);
         assertEquals(originalCount + 1, sut.getByStudyProtocol(spIi).size());
+    }
+    
+    @Test
+    public void testNoOnHoldProcessing() throws PAException {
+        reset(mailManagerServiceLocal, studyMilestoneServicelocal);
+        StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock(); 
+        Session session = PaHibernateUtil.getCurrentSession();
+        
+        // too early to send a reminder.
+        onholdRecord.setOnholdDate(new Timestamp(DateUtils.addDays(today, -2).getTime()));
+        onholdRecord.setOffholdDate(null);
+        session.update(onholdRecord);
+        session.flush();
+        session.evict(onholdRecord);                
+        
+        studyOnholdBeanLocal.processOnHoldTrials();        
+        verifyNoProcessingHappened(session);
+        
+        // reminder is due, but on-hold reason is not suitable
+        for (OnholdReasonCode code : reasonsToSkipReminders) {
+            onholdRecord = (StudyOnhold) session.get(StudyOnhold.class, onholdRecord.getId());
+            onholdRecord.setOnholdDate(new Timestamp(DateUtils.addDays(today, -3).getTime()));
+            onholdRecord.setOffholdDate(null);
+            onholdRecord.setOnholdReasonCode(code);
+            session.update(onholdRecord);            
+            session.flush();       
+            session.evict(onholdRecord);
+            
+            studyOnholdBeanLocal.processOnHoldTrials();        
+            verifyNoProcessingHappened(session);            
+        }
+        
+        // reminder due, reason ok, but hold is closed.
+        onholdRecord = (StudyOnhold) session.get(StudyOnhold.class, onholdRecord.getId());
+        onholdRecord.setOnholdDate(new Timestamp(DateUtils.addDays(today, -3).getTime()));
+        onholdRecord.setOffholdDate(new Timestamp(today.getTime()));
+        onholdRecord.setOnholdReasonCode(OnholdReasonCode.SUBMISSION_INCOM);
+        session.update(onholdRecord);            
+        session.flush();       
+        session.evict(onholdRecord);
+        
+        studyOnholdBeanLocal.processOnHoldTrials();        
+        verifyNoProcessingHappened(session);
+        
+        // bad data: onhold date is after today's date.
+        onholdRecord = (StudyOnhold) session.get(StudyOnhold.class, onholdRecord.getId());
+        onholdRecord.setOnholdDate(new Timestamp(DateUtils.addDays(today, +3).getTime()));
+        onholdRecord.setOffholdDate(null);
+        onholdRecord.setOnholdReasonCode(OnholdReasonCode.SUBMISSION_INCOM);
+        session.update(onholdRecord);            
+        session.flush();       
+        session.evict(onholdRecord);
+        
+        studyOnholdBeanLocal.processOnHoldTrials();        
+        verifyNoProcessingHappened(session);            
+        
+        
+    }
+    
+    @Test
+    public void testOnHoldReminder() throws PAException {
+        reset(mailManagerServiceLocal, studyMilestoneServicelocal);
+        StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        // reminder is due.
+        onholdRecord.setOnholdDate(new Timestamp(DateUtils.addDays(today, -3)
+                .getTime()));
+        onholdRecord.setOffholdDate(null);
+        onholdRecord.setProcessingLog(null);
+        session.update(onholdRecord);
+        session.flush();
+
+        when(
+                mailManagerServiceLocal.sendOnHoldReminder(any(Long.class),
+                        any(StudyOnhold.class), any(Date.class))).thenReturn(
+                Arrays.asList("denis.krylov@semanticbits.com"));
+        studyOnholdBeanLocal.processOnHoldTrials();
+        verify(mailManagerServiceLocal, times(1)).sendOnHoldReminder(
+                eq(onholdStudy.getId()), eq(onholdRecord),
+                eq(DateUtils.addDays(onholdRecord.getOnholdDate(), 21)));
+        assertEquals("03/23/2012_denis.krylov@semanticbits.com",
+                onholdRecord.getProcessingLog());
+
+    }
+    
+    @Test
+    public void testSubmissionTermination() throws PAException {
+        reset(mailManagerServiceLocal, studyMilestoneServicelocal);
+        StudyOnholdBeanLocal studyOnholdBeanLocal = createStudyOnholdBeanLocalMock();
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        onholdRecord.setOnholdDate(new Timestamp(DateUtils.addMinutes(
+                DateUtils.addDays(today, -21), -1).getTime()));
+        onholdRecord.setOffholdDate(null);
+        onholdRecord.setProcessingLog(null);
+        session.update(onholdRecord);
+        session.flush();
+
+        ArgumentCaptor<StudyMilestoneDTO> milestoneCaptor = ArgumentCaptor
+                .forClass(StudyMilestoneDTO.class);
+        ArgumentCaptor<StudyOnholdDTO> holdCaptor = ArgumentCaptor
+                .forClass(StudyOnholdDTO.class);
+
+        studyOnholdBeanLocal.processOnHoldTrials();
+        verify(mailManagerServiceLocal, times(1))
+                .sendSubmissionTerminationEmail(eq(onholdStudy.getId()));
+        verify(studyMilestoneServicelocal).create(milestoneCaptor.capture());
+        verify(studyOnholdBeanLocal).update(holdCaptor.capture());
+
+        StudyMilestoneDTO milestone = milestoneCaptor.getValue();
+        assertEquals("trial.onhold.termination.comment", milestone
+                .getCommentText().getValue());
+        assertEquals("unspecifieduser", milestone.getCreator().getValue());
+        assertEquals(onholdStudy.getId().toString(), milestone
+                .getStudyProtocolIdentifier().getExtension());
+        assertEquals(MilestoneCode.SUBMISSION_TERMINATED.getCode(), milestone
+                .getMilestoneCode().getCode());
+        assertTrue(DateUtils.isSameDay(today,
+                TsConverter.convertToTimestamp(milestone.getCreationDate())));
+        assertTrue(DateUtils.isSameDay(today,
+                TsConverter.convertToTimestamp(milestone.getMilestoneDate())));
+
+        StudyOnholdDTO holdDTO = holdCaptor.getValue();
+        assertEquals("03/23/2012", holdDTO.getProcessingLog().getValue());
+        assertTrue(DateUtils.isSameDay(today, IvlConverter.convertTs()
+                .convertHigh(holdDTO.getOnholdDate())));
+
+    }    
+
+    /**
+     * @param session
+     * @throws HibernateException
+     */
+    private void verifyNoProcessingHappened(Session session)
+            throws HibernateException {
+        verifyZeroInteractions(mailManagerServiceLocal, studyMilestoneServicelocal);        
+        StudyOnhold newOnHold = (StudyOnhold) session.get(StudyOnhold.class, onholdRecord.getId());
+        assertEquals(onholdRecord.getDateLastCreated(), newOnHold.getDateLastCreated());
+        assertEquals(onholdRecord.getDateLastUpdated(), newOnHold.getDateLastUpdated());
+        assertEquals(onholdRecord.getOffholdDate(), newOnHold.getOffholdDate());        
+        assertEquals(onholdRecord.getOnholdReasonCode(), newOnHold.getOnholdReasonCode());
+        assertEquals(onholdRecord.getOnholdReasonText(), newOnHold.getOnholdReasonText());
+        assertEquals(onholdRecord.getPreviousStatusCode(), newOnHold.getPreviousStatusCode());
+        assertEquals(onholdRecord.getProcessingLog(), newOnHold.getProcessingLog());
     }
 
    

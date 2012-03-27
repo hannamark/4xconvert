@@ -91,6 +91,12 @@ public enum OnholdReasonCode implements CodedEnum<String> {
      * SUBMISSION_INCOM.
      */
     SUBMISSION_INCOM("Submission Incomplete"),
+    
+    /**
+     * SUBMISSION_INCOM_MISSING_DOCS.
+     */
+    SUBMISSION_INCOM_MISSING_DOCS("Submission Incomplete -- Missing Documents"),    
+    
     /**
      * INVALID_GRANT.
      */

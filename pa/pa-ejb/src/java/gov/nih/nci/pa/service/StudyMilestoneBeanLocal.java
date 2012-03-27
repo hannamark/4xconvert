@@ -176,6 +176,13 @@ public class StudyMilestoneBeanLocal
         return (dw == null) ? null : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw
             .getStatusCode()));
     }
+    
+    private DocumentWorkflowStatusCode getPreviousStatus(Ii studyProtocolIi) throws PAException {
+        DocumentWorkflowStatusDTO dw = documentWorkflowStatusService.getPreviousStatus(studyProtocolIi);
+        return (dw == null) ? null : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw
+            .getStatusCode()));
+    }
+    
 
     private StudyMilestoneDTO businessRules(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
@@ -190,6 +197,7 @@ public class StudyMilestoneBeanLocal
         checkMilestoneSpecificRules(newCode, existingDtoList);
         checkDocumentWorkflowStatusRules(dto, newCode);
         checkAbstractionsRules(dto, newCode);
+        checkTerminationRules(newCode, existingDtoList, spIi);
         return dto;
     }
 
@@ -263,6 +271,25 @@ public class StudyMilestoneBeanLocal
                 }
             }
         }
+    }
+    
+    private void checkTerminationRules(MilestoneCode newCode,
+            List<StudyMilestoneDTO> existingDtoList, Ii studyProtocolIi)
+            throws PAException {
+        DocumentWorkflowStatusCode docStatus = getLatestOffholdStatus(studyProtocolIi);
+        if (newCode != MilestoneCode.SUBMISSION_REACTIVATED) {
+            List<MilestoneCode> codes = getExistingMilestones(existingDtoList);
+            if (DocumentWorkflowStatusCode.SUBMISSION_TERMINATED == docStatus
+                    && codes.contains(MilestoneCode.SUBMISSION_TERMINATED)) {
+                throw new PAException(
+                        "'Submission Terminated Date' milestone can only be followed by "
+                                + "'Submission Reactivated Date' milestone.");
+            }
+        } else if (DocumentWorkflowStatusCode.SUBMISSION_TERMINATED != docStatus) {
+            throw new PAException(
+                    "'Submission Reactivated Date' milestone can only be added when the submission is terminated.");
+        }
+
     }
 
     private void checkDocumentWorkflowStatusRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
@@ -367,6 +394,7 @@ public class StudyMilestoneBeanLocal
     private void checkProcessAndQC(List<MilestoneCode> milestones, MilestoneCode milestone) throws PAException {
         List<MilestoneCode> mainSequence = null;
         List<MilestoneCode> altSequence = null;
+        
         if (MilestoneCode.ADMIN_SEQ.contains(milestone)) {
             mainSequence = MilestoneCode.ADMIN_SEQ;
             altSequence = MilestoneCode.SCIENTIFIC_SEQ;
@@ -379,7 +407,7 @@ public class StudyMilestoneBeanLocal
         if (milestoneIndex > 0) {
             predecessors.add(mainSequence.get(milestoneIndex - 1));
         } else {
-            predecessors.add(MilestoneCode.SUBMISSION_ACCEPTED);
+            predecessors.add(MilestoneCode.SUBMISSION_ACCEPTED);            
             predecessors.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
         }
         for (int i = milestones.size() - 1; i >= 0; i--) {
@@ -402,8 +430,27 @@ public class StudyMilestoneBeanLocal
         throw new PAException(MessageFormat.format(msg, milestone.getCode()));
     }
 
+    /**
+     * @param milestones
+     */
+    private void removeSubmissionTerminationAndReactivation(
+            List<MilestoneCode> milestones) {
+        // get rid of SUBMISSION_TERMINATED->SUBMISSION_REACTIVATED milestones.
+        // As per PO-2899, they can be inserted anywhere within the chain and
+        // mess up
+        // the logic.
+        while (milestones.indexOf(MilestoneCode.SUBMISSION_TERMINATED) >= 0
+                && milestones.indexOf(MilestoneCode.SUBMISSION_TERMINATED) == milestones
+                        .indexOf(MilestoneCode.SUBMISSION_REACTIVATED) - 1) {
+            milestones.remove(milestones
+                    .indexOf(MilestoneCode.SUBMISSION_TERMINATED));
+            milestones.remove(milestones
+                    .indexOf(MilestoneCode.SUBMISSION_REACTIVATED));
+        }
+    }
+
     private void checkPreRequisite(List<MilestoneCode> milestones, MilestoneCode milestone,
-            Set<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
+            Set<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {        
         for (int i = milestones.size() - 1; i >= 0; i--) {
             MilestoneCode current = milestones.get(i);
             if (current.equals(preRequisite)) {
@@ -424,12 +471,14 @@ public class StudyMilestoneBeanLocal
                 existingMilestones.add(MilestoneCode.getByCode(edto.getMilestoneCode().getCode()));
             }
         }
+        removeSubmissionTerminationAndReactivation(existingMilestones);
         return existingMilestones;
     }
 
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         DocumentWorkflowStatusCode dwStatus = getLatestOffholdStatus(dto.getStudyProtocolIdentifier());
+        DocumentWorkflowStatusCode prevDwStatus = getPreviousStatus(dto.getStudyProtocolIdentifier());
         StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
 
         if (newCode == MilestoneCode.SUBMISSION_RECEIVED && sp.getSubmissionNumber().getValue().intValue() == 1) {
@@ -445,6 +494,16 @@ public class StudyMilestoneBeanLocal
         if (newCode == MilestoneCode.SUBMISSION_REJECTED
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+        }
+        if (newCode == MilestoneCode.SUBMISSION_TERMINATED
+                && canTransition(dwStatus, DocumentWorkflowStatusCode.SUBMISSION_TERMINATED)) {
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMISSION_TERMINATED , dto);
+        }
+        if (newCode == MilestoneCode.SUBMISSION_REACTIVATED
+                && prevDwStatus != null
+                && canTransition(dwStatus, prevDwStatus)) {
+            createDocumentWorkflowStatus(
+                    prevDwStatus, dto);
         }
         if (newCode == MilestoneCode.READY_FOR_TSR && dwStatus != null
                 && DocumentWorkflowStatusCode.ACCEPTED == dwStatus
@@ -557,7 +616,7 @@ public class StudyMilestoneBeanLocal
 
     private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
         boolean admin = false;
-        boolean scientific = false;
+        boolean scientific = false;        
         for (int i = mileStones.size() - 1; i >= 0; i--) {
             switch (mileStones.get(i)) {
             case ADMINISTRATIVE_QC_COMPLETE:

@@ -111,6 +111,7 @@ public class StudyOnhold extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 3521786448684361882L;
     
     private String onholdReasonText;
+    private String processingLog;
     private OnholdReasonCode onholdReasonCode;
     private Timestamp onholdDate;
     private Timestamp offholdDate;
@@ -195,5 +196,21 @@ public class StudyOnhold extends AbstractStudyEntity implements Auditable {
      */
     public void setPreviousStatusCode(DocumentWorkflowStatusCode previousStatusCode) {
         this.previousStatusCode = previousStatusCode;
+    }
+
+    /**
+     * @return the processingLog
+     */
+    @Column(name = "PROCESSING_LOG")
+    @Length(max = CommonsConstant.LEN_4096)    
+    public String getProcessingLog() {
+        return processingLog;
+    }
+
+    /**
+     * @param processingLog the processingLog to set
+     */
+    public void setProcessingLog(String processingLog) {
+        this.processingLog = processingLog;
     }
 }

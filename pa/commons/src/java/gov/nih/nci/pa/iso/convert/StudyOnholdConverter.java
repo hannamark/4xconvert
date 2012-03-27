@@ -100,6 +100,7 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
     public StudyOnholdDTO convertFromDomainToDto(StudyOnhold bo) {
         StudyOnholdDTO dto = new StudyOnholdDTO();
         dto.setOnholdReasonText(StConverter.convertToSt(bo.getOnholdReasonText()));
+        dto.setProcessingLog(StConverter.convertToSt(bo.getProcessingLog()));
         dto.setIdentifier(IiConverter.convertToStudyOnHoldIi(bo.getId()));
         dto.setOnholdReasonCode(CdConverter.convertToCd(bo.getOnholdReasonCode()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
@@ -127,6 +128,7 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         bo.setOnholdReasonText(StConverter.convertToString(dto.getOnholdReasonText()));
+        bo.setProcessingLog(StConverter.convertToString(dto.getProcessingLog()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setOnholdReasonCode(OnholdReasonCode.getByCode(CdConverter.convertCdToString(dto.getOnholdReasonCode())));
         bo.setOnholdDate(IvlConverter.convertTs().convertLow(dto.getOnholdDate()));

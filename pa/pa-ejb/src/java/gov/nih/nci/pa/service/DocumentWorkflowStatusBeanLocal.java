@@ -89,6 +89,9 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -184,6 +187,28 @@ implements DocumentWorkflowStatusServiceLocal {
             }
         }
         return result;
+    }
+
+    @Override
+    public DocumentWorkflowStatusDTO getPreviousStatus(Ii spIi)
+            throws PAException {
+        List<DocumentWorkflowStatusDTO> list = getByStudyProtocol(spIi);
+        Collections.sort(list, new Comparator<DocumentWorkflowStatusDTO>() {
+            @Override
+            public int compare(DocumentWorkflowStatusDTO o1,
+                    DocumentWorkflowStatusDTO o2) {
+                Timestamp time1 = IvlConverter.convertTs().convertLow(
+                        o1.getStatusDateRange());
+                Timestamp time2 = IvlConverter.convertTs().convertLow(
+                        o2.getStatusDateRange());
+                return -(time1.compareTo(time2));
+            }
+        });
+        if (list.size() >= 2) {
+            return list.get(1);
+        } else {
+            return null;
+        }
     }
 
 }

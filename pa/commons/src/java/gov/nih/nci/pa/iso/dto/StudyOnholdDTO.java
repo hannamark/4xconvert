@@ -92,6 +92,7 @@ public class StudyOnholdDTO extends StudyDTO {
     private static final long serialVersionUID = 7153947378245021625L;
     
     private St onholdReasonText;
+    private St processingLog;
     private Cd onholdReasonCode;
     private Ivl<Ts> onholdDate;
     private Cd previousStatusCode;
@@ -150,6 +151,20 @@ public class StudyOnholdDTO extends StudyDTO {
      */
     public void setPreviousStatusCode(Cd previousStatusCode) {
         this.previousStatusCode = previousStatusCode;
+    }
+
+    /**
+     * @return the processingLog
+     */
+    public St getProcessingLog() {
+        return processingLog;
+    }
+
+    /**
+     * @param processingLog the processingLog to set
+     */
+    public void setProcessingLog(St processingLog) {
+        this.processingLog = processingLog;
     }
 
 }

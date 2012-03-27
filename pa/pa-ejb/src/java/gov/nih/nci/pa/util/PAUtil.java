@@ -135,6 +135,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -150,9 +151,15 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
+
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
+import de.jollyday.Holiday;
+import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayManager;
 
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
@@ -165,8 +172,12 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class PAUtil {
+    /**
+     * Date format.
+     */
+    public static final String DATE_FORMAT = "MM/dd/yyyy";
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
     private static final Logger LOG = Logger.getLogger(PAUtil.class);
@@ -175,6 +186,10 @@ public class PAUtil {
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
 
+    private static final String HOLIDAY_STATE = "dc";
+    private static final int DATE_YEAR_DIFF = 1900;
+    private static final HolidayManager HOLIDAY_MANAGER = HolidayManager
+            .getInstance(HolidayCalendar.UNITED_STATES);
 
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
@@ -595,7 +610,7 @@ public class PAUtil {
             return false;
         }
         //set the format to use as a constructor argument
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         if (dateString.trim().length() != dateFormat.toPattern().length())  {
             return false;
         }
@@ -1117,7 +1132,7 @@ public class PAUtil {
      * @throws ParseException if parse error.
      */
     public static Timestamp getCurrentTime() throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         String simpleDate = sdf.format(new Date());
         return new Timestamp(sdf.parse(simpleDate).getTime());
     }
@@ -1312,5 +1327,44 @@ public class PAUtil {
         }
         return countryName;
     }
+    
+    /**
+     * Returns true if the given date is a business day in Washington, DC, USA.
+     * 
+     * @param date
+     *            Date
+     * @return boolean
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public static boolean isBusinessDay(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+            return false;
+        }
+
+        Set<Holiday> holidays = HOLIDAY_MANAGER.getHolidays(date.getYear()
+                + DATE_YEAR_DIFF, HOLIDAY_STATE);
+        for (Holiday holiday : holidays) {
+            final Date holidayDate = holiday.getDate()
+                    .toDateTimeAtStartOfDay().toDate();
+            if (DateUtils.isSameDay(date, holidayDate)) {
+                return false;
+            }
+            // The library does not properly handle situation when a holiday
+            // falls on Sat/Sun and is therefore
+            // pushed to the following Monday.
+            // CHECKSTYLE:OFF
+            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY
+                    && (DateUtils.isSameDay(DateUtils.addDays(date, -1),
+                            holidayDate) || DateUtils.isSameDay(
+                            DateUtils.addDays(date, -2), holidayDate))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     
 }
