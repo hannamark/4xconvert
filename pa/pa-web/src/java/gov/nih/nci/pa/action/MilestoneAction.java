@@ -103,9 +103,12 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -117,11 +120,13 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTime;
+
+import com.opensymphony.xwork2.ActionSupport;
 /**
-* @author Hugh Reinhart
-* @since 1/16/2009
+* @author Monish Dombla
+* @since 3/26/2012
 */
-public final class MilestoneAction extends AbstractListEditAction {
+public final class MilestoneAction extends ActionSupport {
 
     private static final long serialVersionUID = -2837652488778559394L;
 
@@ -136,28 +141,73 @@ public final class MilestoneAction extends AbstractListEditAction {
     private Integer submissionNumber;
     private List<String> allowedMilestones;
     private boolean addAllowed;
+    private Ii spIi;
 
     /**
-     * {@inheritDoc}
+     * @return string
      */
-    @Override
-    public void prepare() throws PAException {
-        super.prepare();
-        mailManagerService = PaRegistry.getMailManagerService();
-        protocolQueryService = PaRegistry.getProtocolQueryService();
-        studyMilestoneService = PaRegistry.getStudyMilestoneService();
-        studyProtocolService = PaRegistry.getStudyProtocolService();
+    public String view() {
+        try {
+            loadAmendmentMap();
+            Ii spIiBySubmissionNumber = getTrialIiBySubmissionNumber();
+            addAllowed = spIiBySubmissionNumber.getExtension().equals(
+                    getSpIi().getExtension())
+                    && !computeAllowedMilestones().isEmpty();
+            List<StudyMilestoneDTO> smList = getStudyMilestoneService().getByStudyProtocol(spIiBySubmissionNumber);
+            milestoneList = new ArrayList<MilestoneWebDTO>();
+            for (StudyMilestoneDTO sm : smList) {
+                milestoneList.add(new MilestoneWebDTO(sm));
+            }
+            initiliazeAddForm();
+        } catch (PAException paE) {
+            addActionError("Unable to lookup milestones for trial.");
+        }
+        return SUCCESS;
     }
-
+    
     /**
+     * @return action result
      * @throws PAException exception
      */
-    @Override
-    protected void loadEditForm() throws PAException {
-        milestone = new MilestoneWebDTO();
-        allowedMilestones = computeAllowedMilestones();
+    public String add() throws PAException {
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        milestone.setDate(PAUtil.normalizeDateStringWithTime(milestone.getDate()));
+        String date = milestone.getDate();
+        dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
+        dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
+        Date now = new DateTime().toDate();
+        if (StringUtils.isNotEmpty(date) && DateUtils.isSameDay(now, PAUtil.dateStringToDateTime(date))) {
+            dto.setMilestoneDate(TsConverter.convertToTs(now));
+        } else {
+            dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
+        }
+        dto.setStudyProtocolIdentifier(getSpIi());
+        try {
+            getStudyMilestoneService().create(dto);
+            // update the trial summary session bean
+            Long spId = IiConverter.convertToLong(getSpIi());
+            StudyProtocolQueryDTO studyProtocolQueryDTO = getProtocolQueryService()
+                    .getTrialSummaryByStudyProtocolId(spId);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(milestone.getMilestone())) {
+                StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(getSpIi());
+                Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
+                if (sn > 1) {
+                    // send mail
+                    getMailManagerService().sendAmendAcceptEmail(getSpIi());
+                } else {
+                    getMailManagerService().sendAcceptEmail(getSpIi());
+                }
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            view();
+            return SUCCESS;
+        }
+        view();
+        return SUCCESS;
     }
-
+    
     private List<String> computeAllowedMilestones() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
@@ -169,39 +219,30 @@ public final class MilestoneAction extends AbstractListEditAction {
     }
 
     private Ii getTrialIiBySubmissionNumber() {
-        Ii spIi = null;
         if (amendmentMap.isEmpty()) {
-            spIi = getSpIi();
+            return getSpIi();
         } else {
-            spIi = amendmentMap.get(submissionNumber).getIdentifier();
+            return amendmentMap.get(submissionNumber).getIdentifier();
         }
-        return spIi;
     }
-
-    /**
-     * @throws PAException exception
-     */
-    @Override
-    protected void loadListForm() throws PAException {
-        loadAmendmentMap();
-        Ii spIi = getTrialIiBySubmissionNumber();
-        addAllowed = spIi.getExtension().equals(getSpIi().getExtension()) && !computeAllowedMilestones().isEmpty();
-        List<StudyMilestoneDTO> smList = studyMilestoneService.getByStudyProtocol(spIi);
-        milestoneList = new ArrayList<MilestoneWebDTO>();
-        for (StudyMilestoneDTO sm : smList) {
-            milestoneList.add(new MilestoneWebDTO(sm));
-        }
+    
+    private void initiliazeAddForm() {
+        milestone = new MilestoneWebDTO();
+        allowedMilestones = computeAllowedMilestones();
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        Date now = new Date();
+        milestone.setDate(dateFormat.format(now));
     }
 
     private void loadAmendmentMap() throws PAException {
         Ii studyProtocolIi = getSpIi();
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
         toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         Map<Integer, MilestoneTrialHistoryWebDTO> spMap = new TreeMap<Integer, MilestoneTrialHistoryWebDTO>();
         try {
-            List<StudyProtocolDTO> spList = studyProtocolService.search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> spList = getStudyProtocolService().search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(spList)) {
                 for (StudyProtocolDTO sp : spList) {
                     Integer sn = IntConverter.convertToInteger(sp.getSubmissionNumber());
@@ -217,46 +258,6 @@ public final class MilestoneAction extends AbstractListEditAction {
         setAmendmentMap(spMap);
     }
 
-    /**
-     * @return action result
-     * @throws PAException exception
-     */
-    @Override
-    public String add() throws PAException {
-        StudyMilestoneDTO dto = new StudyMilestoneDTO();
-        String date = milestone.getDate();
-        dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
-        dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
-        Date now = new DateTime().toDate();
-        if (StringUtils.isNotEmpty(date) && DateUtils.isSameDay(now, PAUtil.dateStringToDateTime(date))) {
-            dto.setMilestoneDate(TsConverter.convertToTs(now));
-        } else {
-            dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
-        }
-        dto.setStudyProtocolIdentifier(getSpIi());
-        try {
-            studyMilestoneService.create(dto);
-            // update the trial summary session bean
-            Long spIi = IiConverter.convertToLong(getSpIi());
-            StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spIi);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(milestone.getMilestone())) {
-                StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(getSpIi());
-                Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
-                if (sn > 1) {
-                    // send mail
-                    mailManagerService.sendAmendAcceptEmail(getSpIi());
-                } else {
-                    mailManagerService.sendAcceptEmail(getSpIi());
-                }
-            }
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return super.create();
-        }
-
-        return super.add();
-    }
 
     /**
      * @return the milestone
@@ -369,5 +370,65 @@ public final class MilestoneAction extends AbstractListEditAction {
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
+    
+    /**
+     * 
+     * @return mailManagerService to use. 
+     */
+    public MailManagerServiceLocal getMailManagerService() {
+        if (mailManagerService == null) {
+            mailManagerService = PaRegistry.getMailManagerService();
+        }
+        return mailManagerService;
+    }
 
+    /**
+     * 
+     * @return protocolQueryService to use.
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        if (protocolQueryService == null) {
+            protocolQueryService = PaRegistry.getProtocolQueryService();
+        }
+        return protocolQueryService;
+    }
+
+    /**
+     * 
+     * @return studyMilestoneService to use.
+     */
+    public StudyMilestoneServicelocal getStudyMilestoneService() {
+        if (studyMilestoneService == null) {
+            studyMilestoneService = PaRegistry.getStudyMilestoneService();
+        }
+        return studyMilestoneService;
+    }
+
+    /**
+     * 
+     * @return studyProtocolService to use.
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        if (studyProtocolService == null) {
+            studyProtocolService = PaRegistry.getStudyProtocolService();
+        }
+        return studyProtocolService;
+    }
+    
+    /**
+     * 
+     * @return StudyProtocol Ii in session.
+     */
+    public Ii getSpIi() {
+        spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        return spIi;
+    }
+
+    /**
+     * Set StudyProtocol Ii.
+     * @param spIi StudyProtocol Ii to set
+     */
+    public void setSpIi(Ii spIi) {
+        this.spIi = spIi;
+    }
 }

@@ -34,7 +34,7 @@
                     <ul>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/studyProtocolview.action?studyProtocolId=${sessionScope.trialSummary.studyProtocolId}" labelKey="pamenu.overview.identification" selected="${requestScope.topic == 'trialdetails'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialHistory.action" labelKey="pamenu.overview.history" selected="${requestScope.topic == 'trialhistory'}"/>
-                        <pa:menuLink href="${pageContext.request.contextPath}/protected/milestone.action" labelKey="pamenu.overview.milestone" selected="${requestScope.topic == 'trialmilestones'}"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/milestoneview.action" labelKey="pamenu.overview.milestone" selected="${requestScope.topic == 'trialmilestones'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/onhold.action" labelKey="pamenu.overview.onhold" selected="${requestScope.topic == 'trialonhold'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/manageAccrualAccess.action" labelKey="pamenu.overview.accrualaccess" selected="${requestScope.topic == 'accrualaccess'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/ajaxAbstractionCompletionviewTSR.action" labelKey="pamenu.overview.viewTsr"/>

@@ -521,15 +521,15 @@
             <result name="display_otherIdentifiers">/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp</result>
             <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
         </action>
-
+        
         <action name="milestone*" class="gov.nih.nci.pa.action.MilestoneAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
                 <param name="includeMethods">execute</param>
             </interceptor-ref>
-            <result name="edit">/WEB-INF/jsp/milestoneedit.jsp</result>
-            <result name="list">/WEB-INF/jsp/milestone.jsp</result>
-        </action>
+            <result>/WEB-INF/jsp/milestone.jsp</result>
+        </action>        
+        
         <action name="onhold*" class="gov.nih.nci.pa.action.OnholdAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">

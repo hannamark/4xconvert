@@ -45,7 +45,6 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     @Before
     public void prepare() throws PAException {
         action = new MilestoneAction();
-        action.prepare();
     }
 
     @After
@@ -69,14 +68,14 @@ public class MilestoneActionTest extends AbstractPaActionTest {
 
     @Test
     public void testLoadEditForm() throws PAException {
-        action.loadEditForm();
+        action.view();
         assertNotNull(action.getMilestone());
     }
 
     @Test
     public void testLoadListForm() throws PAException {
         setUpAmendmentSearch();
-        action.loadListForm();
+        action.view();
         assertNotNull("No milestone list", action.getMilestoneList());
         assertNotNull("No amendment map", action.getAmendmentMap());
         assertEquals("Wrong size of amendment map", 1, action.getAmendmentMap().size());
@@ -85,7 +84,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     @Test
     public void testLoadListFormWithRejectedStatus() throws PAException {
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
-        action.loadListForm();
+        action.view();
         assertNotNull("No milestone list", action.getMilestoneList());
         assertNotNull("No amendment map", action.getAmendmentMap());
         assertEquals("Wrong size of amendment map", 0, action.getAmendmentMap().size());

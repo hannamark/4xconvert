@@ -119,7 +119,6 @@ public class MilestoneWebDTOTest {
     private void verify(MilestoneWebDTO webDto) {       
         assertEquals(COMMENT, webDto.getComment());
         assertEquals(MilestoneCode.SUBMISSION_RECEIVED.getCode(), webDto.getMilestone());
-        assertEquals(PAUtil.normalizeDateStringWithTime(MILESTONE_DATE.toString()), webDto.getDate());
     }
 
     /**

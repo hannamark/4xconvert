@@ -147,7 +147,7 @@ public class MilestoneWebDTO {
      * @param date the date to set
      */
     public void setDate(String date) {
-        this.date = PAUtil.normalizeDateStringWithTime(date);
+        this.date = date;
     }
 
     /**
