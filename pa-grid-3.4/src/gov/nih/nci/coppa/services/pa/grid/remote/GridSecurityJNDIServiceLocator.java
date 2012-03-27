@@ -88,6 +88,7 @@ import gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
@@ -111,6 +112,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceRemote;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
@@ -201,6 +203,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(InterventionDTO.class, this.getClass().getMethod("getInterventionService"));
             values.put(RegulatoryAuthorityDTO.class, this.getClass().getMethod("getRegulatoryAuthorityService"));
             values.put(ParticipatingSiteDTO.class, this.getClass().getMethod("getParticipatingSiteService"));
+            values.put(DocumentWorkflowStatusDTO.class, this.getClass().getMethod("getDocumentWorkflowStatusService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -385,6 +388,16 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
         return result;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws NamingException {
+        DocumentWorkflowStatusServiceRemote result =
+            (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+        return result;
+    }
+    
 
     /**
      * {@inheritDoc}
