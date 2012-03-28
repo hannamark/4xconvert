@@ -384,26 +384,19 @@ public class StudyProtocolQueryCriteriaTest {
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());
 
-        PropertyUtils.setSimpleProperty(c1, "searchCTEPTrials", Boolean.TRUE);
-        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
-        PropertyUtils.setSimpleProperty(c2, "searchCTEPTrials", Boolean.TRUE);
-        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
-        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
-        usedKeys.add(c1.getUniqueCriteriaKey());
-
-        PropertyUtils.setSimpleProperty(c1, "searchDCPTrials", Boolean.TRUE);
-        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
-        PropertyUtils.setSimpleProperty(c2, "searchDCPTrials", Boolean.TRUE);
-        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
-        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
-        usedKeys.add(c1.getUniqueCriteriaKey());
-
         PropertyUtils.setSimpleProperty(c1, "trialCategory", "TEST STRING");
         assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         PropertyUtils.setSimpleProperty(c2, "trialCategory", "TEST STRING");
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());
+        
+        PropertyUtils.setSimpleProperty(c1, "ctepDcpCategory", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "ctepDcpCategory", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());        
 
         PropertyUtils.setSimpleProperty(c1, "userId", 10L);
         assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));

@@ -138,9 +138,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     // for Inbox Processing
     private Boolean inBoxProcessing;
     private boolean studyLockedBy;
-    private boolean searchCTEPTrials;
-    private boolean searchDCPTrials;
     private String trialCategory;
+    private String ctepDcpCategory;
     private String holdStatus;
     private Long userId;
     
@@ -876,36 +875,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @return the searchCTEPTrials
-     */
-    public boolean isSearchCTEPTrials() {
-        return searchCTEPTrials;
-    }
-
-    /**
-     * @param searchCTEPTrials
-     *            the searchCTEPTrials to set
-     */
-    public void setSearchCTEPTrials(boolean searchCTEPTrials) {
-        this.searchCTEPTrials = searchCTEPTrials;
-    }
-
-    /**
-     * @return the searchDCPTrials
-     */
-    public boolean isSearchDCPTrials() {
-        return searchDCPTrials;
-    }
-
-    /**
-     * @param searchDCPTrials
-     *            the searchDCPTrials to set
-     */
-    public void setSearchDCPTrials(boolean searchDCPTrials) {
-        this.searchDCPTrials = searchDCPTrials;
-    }
-
-    /**
      * Returns a {@link String} key that identifies this criteria. Two criteria
      * objects that are exactly the same will return the same key. Two criteria
      * objects that are different at least in one field value will have
@@ -940,11 +909,10 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(studyMilestone).append(", submissionType=")
                 .append(submissionType).append(", inBoxProcessing=")
                 .append(inBoxProcessing).append(", studyLockedBy=")
-                .append(studyLockedBy).append(", searchCTEPTrials=")
-                .append(searchCTEPTrials).append(", searchDCPTrials=")
-                .append(searchDCPTrials).append(", trialCategory=")                
-                .append(trialCategory).append(", holdStatus=")
-                .append(holdStatus).append(", userId=").append(userId)
+                .append(studyLockedBy).append(", trialCategory=")                
+                .append(trialCategory).append(", holdStatus=")                
+                .append(holdStatus).append(", ctepDcpCategory=")
+                .append(ctepDcpCategory).append(", userId=").append(userId)
                 .append(", ctgovXmlRequiredIndicator=")
                 .append(ctgovXmlRequiredIndicator)
                 .append(", summ4FundingSourceId=").append(summ4FundingSourceId)
@@ -982,6 +950,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setHoldStatus(String holdStatus) {
         this.holdStatus = holdStatus;
+    }
+
+    /**
+     * @return the ctepDcpCategory
+     */
+    public String getCtepDcpCategory() {
+        return ctepDcpCategory;
+    }
+
+    /**
+     * @param ctepDcpCategory the ctepDcpCategory to set
+     */
+    public void setCtepDcpCategory(String ctepDcpCategory) {
+        this.ctepDcpCategory = ctepDcpCategory;
     }    
     
 }

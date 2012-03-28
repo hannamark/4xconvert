@@ -30,8 +30,7 @@
                 $("submissionType").value="";
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
-                $("searchCTEPTrials").checked=false;
-                $("searchDCPTrials").checked=false;
+                $("ctepDcpCategory").value="";
             }
 
             document.onkeypress = runEnterScript;
@@ -198,27 +197,14 @@
                            value="criteria.ctgovXmlRequiredIndicator" cssStyle="width:206px" />                         
                         </td>   
                         <td scope="row" class="label">
-                            <label for="searchCTEPTrials"><fmt:message key="studyProtocol.searchCTEPTrials"/></label>
+                            <label for="ctepDcpCategory"><fmt:message key="studyProtocol.ctepDcpCategory"/></label>
                         </td>
                         <td>
-                            <s:checkbox id="searchCTEPTrials"
-                                onclick="if (this.checked) {$('searchDCPTrials').checked=false;}" 
-                                onkeypress="if (this.checked) {$('searchDCPTrials').checked=false;}"
-                                name="criteria.searchCTEPTrials" />                            
+                            <s:select headerKey="" headerValue="All Trials" id="ctepDcpCategory" name="criteria.ctepDcpCategory" 
+                                list="#{'ctepdcp':'CTEP and DCP PIO Trials Only','ctep':'CTEP PIO Trials Only','dcp':'DCP PIO Trials Only'}"  
+                                value="criteria.ctepDcpCategory" cssStyle="width:206px" />                        
                         </td>                                            
                     </tr>
-                    <tr>
-                        <td scope="row" class="label" colspan="2"></td>   
-                        <td scope="row" class="label">
-                            <label for="searchDCPTrials"><fmt:message key="studyProtocol.searchDCPTrials"/></label>
-                        </td>
-                        <td>
-                            <s:checkbox id="searchDCPTrials"
-                                onclick="if (this.checked) {$('searchCTEPTrials').checked=false;}" 
-                                onkeypress="if (this.checked) {$('searchCTEPTrials').checked=false;}"                             
-                                name="criteria.searchDCPTrials"/>                            
-                        </td>                                            
-                    </tr>                    
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">

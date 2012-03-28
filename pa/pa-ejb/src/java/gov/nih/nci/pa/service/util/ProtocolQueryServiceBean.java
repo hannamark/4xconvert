@@ -162,6 +162,12 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
+    private static final String DCP = "dcp";
+
+    private static final String CTEP = "ctep";
+
+    private static final String CTEP_DCP = "ctepdcp";
+
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
     @EJB
@@ -419,8 +425,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setExcludeRejectedTrials(BooleanUtils.isTrue(criteria.isExcludeRejectProtocol()));
         options.setLockedTrials(criteria.isStudyLockedBy());
         options.setLockedUser(criteria.getUserLastCreated());
-        options.setSearchCTEPTrials(criteria.isSearchCTEPTrials());
-        options.setSearchDCPTrials(criteria.isSearchDCPTrials());
+        options.setSearchCTEPTrials(includeCTEP(criteria));
+        options.setSearchDCPTrials(includeDCP(criteria));
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
         options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));        
@@ -451,6 +457,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
+
+    private boolean includeCTEP(StudyProtocolQueryCriteria criteria) {
+        return CTEP_DCP.equals(criteria.getCtepDcpCategory()) || CTEP.equals(criteria.getCtepDcpCategory());
+    }
+    
+    private boolean includeDCP(StudyProtocolQueryCriteria criteria) {
+        return CTEP_DCP.equals(criteria.getCtepDcpCategory()) || DCP.equals(criteria.getCtepDcpCategory());
+    }    
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
@@ -686,8 +700,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
                 && StringUtils.isEmpty(criteria.getHoldStatus())
                 && !criteria.isStudyLockedBy()
-                && !criteria.isSearchCTEPTrials()
-                && !criteria.isSearchDCPTrials()
+                && StringUtils.isEmpty(criteria.getCtepDcpCategory())
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null
