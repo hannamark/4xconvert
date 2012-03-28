@@ -144,6 +144,9 @@
         </s:else>
       </td>
     </tr>
+
+    <%@ include file="/WEB-INF/jsp/nodecorate/uploadOtherDocuments.jsp" %>    
+    
     <tr>
       <td colspan="2"><span class="required">**</span> <fmt:message key="error.submit.changeMemoOrProtocolHighlight"/></td>
     </tr>
