@@ -149,7 +149,7 @@ public class ParticipatingSitesAction extends ActionSupport implements Preparabl
         organizationList = new ArrayList<PaOrganizationDTO>();
         String studyProtocolIdStr = ServletActionContext.getRequest().getParameter("studyProtocolId");
         Long studyProtocolId;
-        if (StringUtils.isEmpty(studyProtocolIdStr)) {
+        if (!StringUtils.isEmpty(studyProtocolIdStr)) {
             studyProtocolId = Long.parseLong(studyProtocolIdStr);
             Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
             StudySiteDTO srDTO = new StudySiteDTO();
