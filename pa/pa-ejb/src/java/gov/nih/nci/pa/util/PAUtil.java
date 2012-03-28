@@ -95,6 +95,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -1364,6 +1365,19 @@ public class PAUtil {
             }
         }
         return true;
+    }
+    
+    /**
+     * Null-safe method to get the code from a coded enum; returns "" if the enum is null.
+     * @param ce CodedEnum from which to get the code (may be null)
+     * @return the code or the empty string if <code>ce</code> was null
+     */
+    public static String getCode(CodedEnum<String> ce) {
+        String str = "";
+        if (ce != null) {
+            str = ce.getCode();
+        }
+        return str;
     }
     
     

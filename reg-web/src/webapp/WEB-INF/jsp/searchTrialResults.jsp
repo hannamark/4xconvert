@@ -175,7 +175,11 @@ body {
                 	<s:iterator value="%{#attr.row.otherIdentifiers}" >
 				    	<s:property/>				
 					</s:iterator>
-                </display:column>                                                
+                </display:column>  
+                <display:column title="Participating Sites">
+                	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                   	<a href="#" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
+               </display:column>                                              
           	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
                 	<ul id="nav">
 						<li>&nbsp;Select action &nbsp;&nbsp;&nbsp;&nbsp; &nabla;
@@ -204,11 +208,11 @@ body {
 									<s:if test="%{!(#attr.row.statusChangeLinkText == null || #attr.row.statusChangeLinkText.equals(''))}">
 										<s:if test="%{#attr.row.proprietaryTrial}">
 					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
 					                    </s:if>
 					                    <s:else>
 					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
 					                    </s:else>
 				                    </s:if>
 								</li>

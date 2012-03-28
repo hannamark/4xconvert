@@ -354,6 +354,10 @@
                 <param name="contentDisposition">attachment;filename="${id}.xml"</param>
             </result>
         </action>
+        
+        <action name="participatingSitespopup*" class="gov.nih.nci.registry.action.ParticipatingSitesAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/nodecorate/viewParticipatingSites.jsp</result>         
+        </action>
 
     </package>
 </struts>
