@@ -108,6 +108,8 @@ body {
             <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results"
                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
                            name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="true">
+                <display:setProperty name="paging.banner.item_name" value="trial"/>
+                <display:setProperty name="paging.banner.items_name" value="trials"/>                           
                 <display:setProperty name="export.xml" value="false"/>
                 <display:setProperty name="export.excel.filename" value="resultsSavedDraftSearch.xls"/>
                 <display:setProperty name="export.excel.include_header" value="true"/>
@@ -145,6 +147,8 @@ body {
             <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results"
                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
                            name="records" requestURI="searchTrialquery.action" export="true">
+                <display:setProperty name="paging.banner.item_name" value="trial"/>
+                <display:setProperty name="paging.banner.items_name" value="trials"/>
                 <display:setProperty name="export.xml" value="false"/>
                 <display:setProperty name="export.excel.filename" value="resultsTrialSearch.xls"/>
                 <display:setProperty name="export.excel.include_header" value="true"/>
