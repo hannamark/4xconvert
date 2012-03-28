@@ -107,6 +107,7 @@ public class StudyProtocolOptions {
     private boolean lockedTrials;
     private boolean searchCTEPTrials;
     private boolean searchDCPTrials;    
+    private boolean searchCTEPAndDCPTrials;
     private Long userId;
     private String lockedUser;
     private boolean inboxProcessing;
@@ -487,6 +488,20 @@ public class StudyProtocolOptions {
      */
     public void setSearchOffHoldTrials(boolean searchOffHoldTrials) {
         this.searchOffHoldTrials = searchOffHoldTrials;
+    }
+
+    /**
+     * @return the searchCTEPAndDCPTrials
+     */
+    public boolean isSearchCTEPAndDCPTrials() {
+        return searchCTEPAndDCPTrials;
+    }
+
+    /**
+     * @param searchCTEPAndDCPTrials the searchCTEPAndDCPTrials to set
+     */
+    public void setSearchCTEPAndDCPTrials(boolean searchCTEPAndDCPTrials) {
+        this.searchCTEPAndDCPTrials = searchCTEPAndDCPTrials;
     }
     
     

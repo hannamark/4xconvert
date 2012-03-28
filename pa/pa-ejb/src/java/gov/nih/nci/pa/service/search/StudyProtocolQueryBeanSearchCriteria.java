@@ -420,7 +420,17 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + "and ssdcp.functionalCode = :"
                     + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
                     + " and ssdcp.researchOrganization.organization.name='"
-                    + PAConstants.DCP_ORG_NAME + "') ";            
+                    + PAConstants.DCP_ORG_NAME + "') ";
+            
+            final String ctepIdExistsClause = "exists (select ssctep.id from StudySite ssctep where "
+                    + "ssctep.studyProtocol.id = "
+                    + SearchableUtils.ROOT_OBJ_ALIAS
+                    + ".id and ssctep.localStudyProtocolIdentifier is not null "
+                    + "and ssctep.functionalCode = :"
+                    + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
+                    + " and ssctep.researchOrganization.organization.name='"
+                    + PAConstants.CTEP_ORG_NAME
+                    + "') ";            
             
             if (spo.isSearchDCPTrials()) {
                 String operator = determineOperator(whereClause);
@@ -433,20 +443,20 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             if (spo.isSearchCTEPTrials()) {
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
-                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);                
                 whereClause
                         .append(String
-                                .format(" %s exists (select ssctep.id from StudySite ssctep where "
-                                        + "ssctep.studyProtocol.id = "
-                                        + SearchableUtils.ROOT_OBJ_ALIAS
-                                        + ".id and ssctep.localStudyProtocolIdentifier is not null "
-                                        + "and ssctep.functionalCode = :"
-                                        + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
-                                        + " and ssctep.researchOrganization.organization.name='"
-                                        + PAConstants.CTEP_ORG_NAME
-                                        + "') and not " + dcpIdExistsClause,
+                                .format(" %s " + ctepIdExistsClause + " and not " + dcpIdExistsClause,
                                         operator));
-            }       
+            }
+            
+            if (spo.isSearchCTEPAndDCPTrials()) {
+                String operator = determineOperator(whereClause);
+                params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                whereClause.append(String.format(" %s (" + ctepIdExistsClause
+                        + " or " + dcpIdExistsClause + ") ", operator));
+            }            
 
             if (spo.isInboxProcessing()) {
                 String operator = determineOperator(whereClause);

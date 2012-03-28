@@ -427,6 +427,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setLockedUser(criteria.getUserLastCreated());
         options.setSearchCTEPTrials(includeCTEP(criteria));
         options.setSearchDCPTrials(includeDCP(criteria));
+        options.setSearchCTEPAndDCPTrials(includeDCPAndCTEP(criteria));
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
         options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));        
@@ -459,12 +460,17 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
 
     private boolean includeCTEP(StudyProtocolQueryCriteria criteria) {
-        return CTEP_DCP.equals(criteria.getCtepDcpCategory()) || CTEP.equals(criteria.getCtepDcpCategory());
+        return CTEP.equals(criteria.getCtepDcpCategory());
     }
     
     private boolean includeDCP(StudyProtocolQueryCriteria criteria) {
-        return CTEP_DCP.equals(criteria.getCtepDcpCategory()) || DCP.equals(criteria.getCtepDcpCategory());
-    }    
+        return DCP.equals(criteria.getCtepDcpCategory());
+    }
+    
+    private boolean includeDCPAndCTEP(StudyProtocolQueryCriteria criteria) {
+        return CTEP_DCP.equals(criteria.getCtepDcpCategory());
+    }   
+
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
