@@ -67,15 +67,16 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testLoadEditForm() throws PAException {
-        action.view();
+    public void testInitiliazeAddForm() throws PAException {
+        action.initiliazeAddForm();
         assertNotNull(action.getMilestone());
+        assertNotNull(action.getMilestone().getDate());
     }
 
     @Test
-    public void testLoadListForm() throws PAException {
+    public void testinitiliazeListForm() throws PAException {
         setUpAmendmentSearch();
-        action.view();
+        action.initiliazeListForm();
         assertNotNull("No milestone list", action.getMilestoneList());
         assertNotNull("No amendment map", action.getAmendmentMap());
         assertEquals("Wrong size of amendment map", 1, action.getAmendmentMap().size());
@@ -84,25 +85,10 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     @Test
     public void testLoadListFormWithRejectedStatus() throws PAException {
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
-        action.view();
+        action.initiliazeListForm();
         assertNotNull("No milestone list", action.getMilestoneList());
         assertNotNull("No amendment map", action.getAmendmentMap());
         assertEquals("Wrong size of amendment map", 0, action.getAmendmentMap().size());
-    }
-
-    @Test
-    public void testAddThrowsEx() throws PAException {
-        MilestoneWebDTO webDTO = new MilestoneWebDTO();
-        webDTO.setComment("comment");
-        webDTO.setDate("06/18/2009");
-        webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
-        action.setMilestone(webDTO);
-        action.setSpIi(IiConverter.convertToStudyProtocolIi(9L));
-        String result = action.add();
-        assertEquals("Wrong result from add action", "edit", result);
-        assertNotNull(action.getAllowedMilestones());
-        assertFalse(action.getAllowedMilestones().isEmpty());
-        assertNotNull(action.getMilestone());
     }
 
     @Test
@@ -114,7 +100,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         action.setMilestone(webDTO);
         setUpAmendmentSearch();
         String result = action.add();
-        assertEquals("Wrong result from add action", "list", result);
+        assertEquals("Wrong result from add action", "success", result);
     }
 
     @Test
@@ -143,7 +129,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         setUpDateCheckForTodayOnMilestone();
         setUpAmendmentSearch();
         String result = action.add();
-        assertEquals("Wrong result from add action", "list", result);
+        assertEquals("Wrong result from add action", "success", result);
     }
 
     private void setUpAmendmentSearch() {

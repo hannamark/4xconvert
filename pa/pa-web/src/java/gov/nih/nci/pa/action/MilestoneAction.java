@@ -148,21 +148,40 @@ public final class MilestoneAction extends ActionSupport {
      */
     public String view() {
         try {
-            loadAmendmentMap();
-            Ii spIiBySubmissionNumber = getTrialIiBySubmissionNumber();
-            addAllowed = spIiBySubmissionNumber.getExtension().equals(
-                    getSpIi().getExtension())
-                    && !computeAllowedMilestones().isEmpty();
-            List<StudyMilestoneDTO> smList = getStudyMilestoneService().getByStudyProtocol(spIiBySubmissionNumber);
-            milestoneList = new ArrayList<MilestoneWebDTO>();
-            for (StudyMilestoneDTO sm : smList) {
-                milestoneList.add(new MilestoneWebDTO(sm));
-            }
+            initiliazeListForm();
             initiliazeAddForm();
         } catch (PAException paE) {
             addActionError("Unable to lookup milestones for trial.");
         }
         return SUCCESS;
+    }
+    
+    /**
+     * Setup the milestone add form data.
+     */
+    protected void initiliazeAddForm() {
+        milestone = new MilestoneWebDTO();
+        allowedMilestones = computeAllowedMilestones();
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+        Date now = new Date();
+        milestone.setDate(dateFormat.format(now));
+    }
+    
+    /**
+     * Setup the milestone list form data.
+     * @throws PAException throws exception.
+     */
+    protected void initiliazeListForm() throws PAException {
+        loadAmendmentMap();
+        Ii spIiBySubmissionNumber = getTrialIiBySubmissionNumber();
+        addAllowed = spIiBySubmissionNumber.getExtension().equals(
+                getSpIi().getExtension())
+                && !computeAllowedMilestones().isEmpty();
+        List<StudyMilestoneDTO> smList = getStudyMilestoneService().getByStudyProtocol(spIiBySubmissionNumber);
+        milestoneList = new ArrayList<MilestoneWebDTO>();
+        for (StudyMilestoneDTO sm : smList) {
+            milestoneList.add(new MilestoneWebDTO(sm));
+        }
     }
     
     /**
@@ -226,13 +245,6 @@ public final class MilestoneAction extends ActionSupport {
         }
     }
     
-    private void initiliazeAddForm() {
-        milestone = new MilestoneWebDTO();
-        allowedMilestones = computeAllowedMilestones();
-        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
-        Date now = new Date();
-        milestone.setDate(dateFormat.format(now));
-    }
 
     private void loadAmendmentMap() throws PAException {
         Ii studyProtocolIi = getSpIi();
@@ -420,7 +432,9 @@ public final class MilestoneAction extends ActionSupport {
      * @return StudyProtocol Ii in session.
      */
     public Ii getSpIi() {
-        spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        if (spIi == null) {
+            spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        }
         return spIi;
     }
 
