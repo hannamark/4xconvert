@@ -5,10 +5,10 @@
 <!-- ====================================================================== -->
 
 <project name="pa-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="pa-web.coverage.line" value="65"/>
+    <property name="pa-web.coverage.line" value="66"/>
     <property name="pa-web.coverage.branch" value="50"/>
     <property name="pa-web.pmd.maxerrors" value="92"/>
-    
+
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>

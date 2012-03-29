@@ -16,7 +16,7 @@
         <script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"> </script>
         <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
+        <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
         <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>

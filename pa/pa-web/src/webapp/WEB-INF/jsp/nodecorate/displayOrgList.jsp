@@ -4,7 +4,7 @@
 
     <s:set name="orgs" value="orgs" scope="request" />
     <display:table class="data" sort="list" pagesize="10" uid="row" name="orgs" export="false"
-        requestURI="popupdisplayOrgListDisplayTag.action">
+        requestURI="popupOrgdisplayOrgListDisplayTag.action">
         <display:setProperty name="basic.msg.empty_list"
             value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column escapeXml="true" title="PO-ID" property="id" headerClass="sortable" />

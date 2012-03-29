@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
-<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+<c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
 <script language="javascript" type="text/javascript">

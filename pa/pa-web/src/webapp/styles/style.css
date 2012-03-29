@@ -274,7 +274,7 @@ DIV.homepage
 
 /* Filters */
 
-.filter_checkbox LABEL:hover
+.filter_checkbox
 { text-decoration:underline; background:#fff url("../images/bg_fadepanel.gif") repeat-x top;}
 .filter_wrapper
 { background:#d9e3ec; }

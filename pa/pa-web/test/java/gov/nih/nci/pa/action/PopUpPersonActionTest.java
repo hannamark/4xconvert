@@ -6,13 +6,11 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Country;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,13 +18,14 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class PopUpActionTest extends AbstractPaActionTest {
+public class PopUpPersonActionTest extends AbstractPaActionTest {
 
-    PopUpAction popUpAction;
+    PopUpPersonAction popUpAction;
 
+    @Override
     @Before
     public void setUp(){
-        popUpAction = new PopUpAction();
+        popUpAction = new PopUpPersonAction();
         List<Country> countryList = new ArrayList <Country>();
         Country usa = new Country();
         usa.setName("United States");
@@ -37,7 +36,7 @@ public class PopUpActionTest extends AbstractPaActionTest {
     }
 
     /**
-     * Test method for {@link gov.nih.nci.pa.action.PopUpAction#lookupcontactpersons()}.
+     * Test method for {@link gov.nih.nci.pa.action.PopUpPersonAction#lookupcontactpersons()}.
      */
     @Test
     public void testLookupcontactpersons() throws Exception {
@@ -50,26 +49,6 @@ public class PopUpActionTest extends AbstractPaActionTest {
         assertEquals("132412312", getRequest().getSession().getAttribute("telephoneEntered"));
     }
 
-    /**
-     * Test method for {@link gov.nih.nci.pa.action.PopUpAction#lookuporgs()}.
-     */
-    @Test
-    public void testLookuporgs() {
-        assertEquals("orgs", popUpAction.lookuporgs());
-        assertEquals(1, popUpAction.getCountryList().size());
-        assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.action.PopUpAction#displayOrgList()}.
-     */
-    @Test
-    public void testLookuppersons() {
-        assertEquals("persons", popUpAction.lookuppersons());
-        assertEquals(1, popUpAction.getCountryList().size());
-        assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
-        assertTrue(CollectionUtils.isEmpty(popUpAction.getPersons()));
-    }
     @Test
     public void testdisplaycontactPersonsList() {
         popUpAction.setFirstName("fname");
@@ -117,36 +96,5 @@ public class PopUpActionTest extends AbstractPaActionTest {
         assertEquals("persons", popUpAction.displayPersonsListDisplayTag());
         assertNotNull(popUpAction.getPersons());
         assertEquals(0, popUpAction.getPersons().size());
-    }
-    @Test
-    public void testdisplayOrgList() {
-        popUpAction.setOrgName("OrgName");
-        popUpAction.setCountryName("USA");
-        popUpAction.setCityName("dallas");
-        popUpAction.setZipCode("75090");
-        popUpAction.setStateName("TX");
-        assertEquals("success", popUpAction.displayOrgList());
-        assertNotNull(popUpAction.getOrgs());
-        assertEquals(5, popUpAction.getOrgs().size());
-    }
-    
-    @Test
-    public void testdisplayOrgListByCtepId() {
-        popUpAction.setCtepId("CTEP ID");
-        assertEquals("success", popUpAction.displayOrgList());
-        assertNotNull(popUpAction.getOrgs());
-        assertEquals(1, popUpAction.getOrgs().size());
-    }
-    
-    @Test
-    public void testdisplayOrgListDisplayTag() {
-        popUpAction.setOrgName("OrgName");
-        popUpAction.setCountryName("USA");
-        popUpAction.setCityName("dallas");
-        popUpAction.setZipCode("75090");
-        popUpAction.setStateName("TX");
-        assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
-        assertNotNull(popUpAction.getOrgs());
-        assertEquals(5, popUpAction.getOrgs().size());
     }
 }

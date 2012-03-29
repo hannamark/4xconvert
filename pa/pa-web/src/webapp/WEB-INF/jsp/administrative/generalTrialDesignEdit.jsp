@@ -14,7 +14,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
-        <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+        <c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>

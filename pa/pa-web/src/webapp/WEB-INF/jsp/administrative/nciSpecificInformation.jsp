@@ -12,7 +12,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        <c:url value="/protected/popuplookuporgs.action" var="lookupUrl"/>
+        <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl"/>
         <script type="text/javascript" language="javascript">    
             
             // this function is called from body onload in main.jsp (decorator)

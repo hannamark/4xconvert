@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+<c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl"/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><fmt:message key="assignOwbership.title" /></title>

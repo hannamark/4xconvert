@@ -357,7 +357,6 @@
             <result>/WEB-INF/jsp/nodecorate/diseaseDetails.jsp</result>
         </action>
         <action name="popupDis*" class="gov.nih.nci.pa.action.PopUpDisAction" method="{1}">
-        
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases.jsp</result>
             <result name="displayList">/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp</result>
         </action>
@@ -383,9 +382,13 @@
             <result name="results">/WEB-INF/jsp/scientific/plannedMarker/cadsrLookupResults.jsp</result>
             <result name="email">/WEB-INF/jsp/scientific/plannedMarker/requestEmail.jsp</result>
         </action>
-        <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
+        <action name="popupOrg*" class="gov.nih.nci.pa.action.PopUpOrgAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="orgs">/WEB-INF/jsp/nodecorate/lookuporgs.jsp</result>
+            <result name="create_org_response">/WEB-INF/jsp/nodecorate/displayOrgList.jsp</result>
+        </action>
+        <action name="popup*" class="gov.nih.nci.pa.action.PopUpPersonAction" method="{1}">
+            <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
             <result name="contactpersons">/WEB-INF/jsp/nodecorate/lookupcontactpersons.jsp</result>
         </action>

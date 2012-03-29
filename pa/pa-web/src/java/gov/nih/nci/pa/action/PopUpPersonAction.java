@@ -80,65 +80,35 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.services.family.FamilyDTO;
-import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
- * Common module to call the PO Search and related functionalities.
+ * Call the PO Person Search and related functionalities.
  *
  * @author Harsha
  *
  */
-//need all these fields and methods
-@SuppressWarnings({"PMD.TooManyFields", "PMD.TooManyMethods" })
-public class PopUpAction extends ActionSupport {
+public class PopUpPersonAction extends AbstractPopUpPoAction {
     private static final long serialVersionUID = 4960297232842560635L;
-    private List<Country> countryList = new ArrayList<Country>();
-    private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
+
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
-    private PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
-    private PaPersonDTO perSearchCriteria = new PaPersonDTO();
+    private final PaPersonDTO perSearchCriteria = new PaPersonDTO();
     private String firstName;
     private String lastName;
-    private String countryName;
-    private String cityName;
-    private String zipCode;
-    private String stateName;
-    private String email;
-    private String telephone;
-    private String orgName;
-    private String familyName;
-    private String ctepId;
-    
+
     /**
      *
      * @return String success or failure
@@ -158,37 +128,6 @@ public class PopUpAction extends ActionSupport {
             return ERROR;
         }
         return "contactpersons";
-    }
-
-    /**
-     *
-     * @return String success or failure
-     */
-    public String lookuporgs() {
-        try {
-            getCountriesList();
-            orgs.clear();
-        } catch (Exception e) {
-            addActionError(e.getLocalizedMessage());
-            return ERROR;
-        }
-        return "orgs";
-    }
-
-    /**
-     *
-     * @return result
-     */
-    public String displayOrgList() {
-        return processDisplayOrganizations(SUCCESS);
-    }
-
-    /**
-     *
-     * @return result
-     */
-    public String displayOrgListDisplayTag() {
-        return processDisplayOrganizations("orgs");
     }
 
     /**
@@ -224,142 +163,18 @@ public class PopUpAction extends ActionSupport {
     }
 
     /**
-     * @return the orgSearchCriteria
-     */
-    public PaOrganizationDTO getOrgSearchCriteria() {
-        return orgSearchCriteria;
-    }
-
-    /**
-     * @param orgSearchCriteria the orgSearchCriteria to set
-     */
-    public void setOrgSearchCriteria(PaOrganizationDTO orgSearchCriteria) {
-        this.orgSearchCriteria = orgSearchCriteria;
-    }
-
-    /**
      *
      * @return String success or failure
      */
     public String lookuppersons() {
         try {
             getCountriesList();
-            orgs.clear();
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
         persons = null;
         return "persons";
-    }
-
-    /**
-     * @return the countryList
-     */
-    public List<Country> getCountryList() {
-        return countryList;
-    }
-
-    /**
-     * @param countryList the countryList to set
-     */
-    public void setCountryList(List<Country> countryList) {
-        this.countryList = countryList;
-    }
-
-    /**
-     * @return the orgs
-     */
-    public List<PaOrganizationDTO> getOrgs() {
-        return orgs;
-    }
-
-    /**
-     * @param orgs the orgs to set
-     */
-    public void setOrgs(List<PaOrganizationDTO> orgs) {
-        this.orgs = orgs;
-    }
-
-    /**
-     * @return the persons
-     */
-    public List<PaPersonDTO> getPersons() {
-        return persons;
-    }
-
-    /**
-     * @param persons the persons to set
-     */
-    public void setPersons(List<PaPersonDTO> persons) {
-        this.persons = persons;
-    }
-
-    private String processDisplayOrganizations(String retvalue) {
-        try {
-            getCountriesList();
-            if (isOrgSearchCriteriaSet()) {
-                String message = "Please enter at least one search criteria";
-                orgs.clear();
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
-                return retvalue;
-            }
-            List<OrganizationDTO> orgList = performOrgSearch();            
-            Map<Ii, FamilyDTO> familyMap = getFamilyDTOs(orgList);
-            convertToWebDTO(orgList, familyMap);
-            return retvalue;
-        } catch (Exception e) {
-            return ERROR;
-        }
-    }
-
-    @SuppressWarnings("unchecked")    
-    private void convertToWebDTO(List<OrganizationDTO> orgList, Map<Ii, FamilyDTO> familyMap) throws PAException {
-        for (OrganizationDTO dto : orgList) {
-            PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, countryList);
-            paDTO.setFamilies(getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
-            orgs.add(paDTO);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<Ii, FamilyDTO> getFamilyDTOs(List<OrganizationDTO> orgList) {
-        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
-        for (OrganizationDTO dto : orgList) {
-            if (CollectionUtils.isNotEmpty(dto.getFamilyOrganizationRelationships().getItem())) {
-                famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
-            }
-        }
-        return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
-    }
-
-    private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
-        // Set the values; so paging will retain them
-        orgSearchCriteria.setName(getOrgName());
-        orgSearchCriteria.setFamilyName(getFamilyName());
-        orgSearchCriteria.setCity(cityName);
-        orgSearchCriteria.setCountry(countryName);
-        orgSearchCriteria.setZip(zipCode);
-        orgSearchCriteria.setState(stateName);
-        orgSearchCriteria.setCtepId(ctepId);
-        return PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
-    }
-
-    private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
-        Map<Long, String> retMap = new HashMap<Long, String>();
-        Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
-        for (Ii ii : famOrgIis) {
-            FamilyDTO dto = familyMap.get(ii);
-            retMap
-                    .put(IiConverter.convertToLong(dto.getIdentifier()), EnOnConverter.convertEnOnToString(dto
-                            .getName()));
-        }
-        return retMap;
-    }
-
-    private boolean isOrgSearchCriteriaSet() {
-        return StringUtils.isBlank(orgName) && StringUtils.isBlank(familyName) && StringUtils.isBlank(countryName)
-                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode) && StringUtils.isBlank(ctepId);
     }
 
     private String processDisplayPersons(String retvalue) {
@@ -370,16 +185,17 @@ public class PopUpAction extends ActionSupport {
             return retvalue;
         }
         // Set the values; so paging will retain them
-        perSearchCriteria.setFirstName(firstName);
-        perSearchCriteria.setLastName(lastName);
-        perSearchCriteria.setCity(cityName);
-        perSearchCriteria.setState(stateName);
-        perSearchCriteria.setCountry(countryName);
-        perSearchCriteria.setZip(zipCode);
+        perSearchCriteria.setFirstName(getFirstName());
+        perSearchCriteria.setLastName(getLastName());
+        perSearchCriteria.setCity(getCityName());
+        perSearchCriteria.setState(getStateName());
+        perSearchCriteria.setCountry(getCountryName());
+        perSearchCriteria.setZip(getZipCode());
         //
         PersonDTO p = new PersonDTO();
-        p.setName(EnPnConverter.convertToEnPn(firstName, null, lastName, null, null));
-        p.setPostalAddress(AddressConverterUtil.create(null, null, cityName, stateName, zipCode, countryName));
+        p.setName(EnPnConverter.convertToEnPn(getFirstName(), null, getLastName(), null, null));
+        p.setPostalAddress(AddressConverterUtil.create(null, null, getCityName(), getStateName(), getZipCode(),
+                getCountryName()));
         try {
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
             List<PersonDTO> persList = new ArrayList<PersonDTO>();
@@ -395,31 +211,24 @@ public class PopUpAction extends ActionSupport {
     }
 
     private boolean isPersonSearchCriteriaSet() {
-        return StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(countryName)
-                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode) && StringUtils.isBlank(stateName);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void getCountriesList() throws PAException {
-        countryList = (List<Country>) ServletActionContext.getRequest().getSession().getAttribute("countrylist");
-        if (countryList == null) {
-            countryList = PaRegistry.getLookUpTableService().getCountries();
-            ServletActionContext.getRequest().getSession().setAttribute("countrylist", countryList);
-        }
+        return StringUtils.isBlank(getFirstName()) && StringUtils.isBlank(getLastName())
+                && StringUtils.isBlank(getCountryName())
+                && StringUtils.isBlank(getCityName()) && StringUtils.isBlank(getZipCode())
+                && StringUtils.isBlank(getStateName());
     }
 
     /**
-     * @return the perSearchCriteria
+     * @return the persons
      */
-    public PaPersonDTO getPerSearchCriteria() {
-        return perSearchCriteria;
+    public List<PaPersonDTO> getPersons() {
+        return persons;
     }
 
     /**
-     * @param perSearchCriteria the perSearchCriteria to set
+     * @param persons the persons to set
      */
-    public void setPerSearchCriteria(PaPersonDTO perSearchCriteria) {
-        this.perSearchCriteria = perSearchCriteria;
+    public void setPersons(List<PaPersonDTO> persons) {
+        this.persons = persons;
     }
 
     /**
@@ -448,131 +257,5 @@ public class PopUpAction extends ActionSupport {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    /**
-     * @return the countryName
-     */
-    public String getCountryName() {
-        return countryName;
-    }
-
-    /**
-     * @param countryName the countryName to set
-     */
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    /**
-     * @return the cityName
-     */
-    public String getCityName() {
-        return cityName;
-    }
-
-    /**
-     * @param cityName the cityName to set
-     */
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
-    /**
-     * @return the zipCode
-     */
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    /**
-     * @param zipCode the zipCode to set
-     */
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
-    /**
-     * @return the stateName
-     */
-    public String getStateName() {
-        return stateName;
-    }
-
-    /**
-     * @param stateName the stateName to set
-     */
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param telephone the telephone to set
-     */
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    /**
-     * @return the telephone
-     */
-    public String getTelephone() {
-        return telephone;
-    }
-
-    /**
-     * @param orgName the orgName to set
-     */
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
-    }
-
-    /**
-     * @return the orgName
-     */
-    public String getOrgName() {
-        return orgName;
-    }
-
-    /**
-     * @param familyName the familyName to set
-     */
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    /**
-     * @return the familyName
-     */
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    /**
-     * @param ctepId the ctepId to set
-     */
-    public void setCtepId(String ctepId) {
-        this.ctepId = ctepId;
-    }
-
-    /**
-     * @return the ctepId
-     */
-    public String getCtepId() {
-        return ctepId;
     }
 }
