@@ -161,10 +161,16 @@ public class ParticipatingSitesAction extends ActionSupport implements Preparabl
                 orgWebDTO.setId(IiConverter.convertToString(studySiteDTO.getIdentifier()));
                 orgWebDTO.setName(orgBo.getName());
                 orgWebDTO.setNciNumber(orgBo.getIdentifier());   
-                orgWebDTO.setStatus(studySiteDTO.getStatusCode().getCode());
-                orgWebDTO.setProgramCode(StConverter.convertToString(studySiteDTO.getProgramCodeText()));
-                final Long studySiteId = Long.valueOf(studySiteDTO.getIdentifier().getExtension().toString());
-                orgWebDTO.setInvestigator(convertInvestigators(studySiteId));
+                if (studySiteDTO.getStatusCode() != null) {
+                    orgWebDTO.setStatus(studySiteDTO.getStatusCode().getCode());
+                }
+                if (studySiteDTO.getProgramCodeText() != null) {
+                    orgWebDTO.setProgramCode(StConverter.convertToString(studySiteDTO.getProgramCodeText()));
+                }
+                if (studySiteDTO.getIdentifier() != null && studySiteDTO.getIdentifier().getExtension() != null) {
+                    final Long studySiteId = Long.valueOf(studySiteDTO.getIdentifier().getExtension().toString());
+                    orgWebDTO.setInvestigator(convertInvestigators(studySiteId));
+                }
                 organizationList.add(orgWebDTO);
             }
         }
