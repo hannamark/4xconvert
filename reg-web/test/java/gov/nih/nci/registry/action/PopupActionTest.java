@@ -31,7 +31,7 @@ public class PopupActionTest extends AbstractRegWebTest {
     public void testLookuporgs(){
         popUpAction = new PopupAction();
         assertEquals("orgs",popUpAction.lookuporgs());
-        assertNull(popUpAction.getOrgs());        
+        assertNull(popUpAction.getOrgs());
     }
     @Test
     public void testLookuporgsCountryListInSession(){
@@ -127,7 +127,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
     }
-    
+
     @Test
     public void testDisplayOrgListDisplayTag(){
         popUpAction = new PopupAction();
@@ -200,7 +200,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Organization is a required field"));
     }
-    
+
     @Test
     public void testCreateOrg_BadURL() throws PAException{
         popUpAction = new PopupAction();
@@ -210,26 +210,26 @@ public class PopupActionTest extends AbstractRegWebTest {
         assertTrue(popUpAction.getActionErrors().contains("Please provide a full URL that includes protocol " +
         		"and host, e.g. http://cancer.gov/"));
     }
-    
+
     @Test
     public void testCreateOrg_BadPhones() throws PAException{
         popUpAction = new PopupAction();
         populateValidUSAOrg();
         popUpAction.setPhoneNumber("5555555555");
         popUpAction.setFax("555-5555555x");
-        popUpAction.setTty("+1-555-5555555");        
+        popUpAction.setTty("+1-555-5555555");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada phone numbers must match ###-###-####x#*, " +
         		"e.g. 555-555-5555 or 555-555-5555x123"));
         assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada fax numbers must match ###-###-####x#*, " +
-                "e.g. 555-555-5555 or 555-555-5555x123"));        
+                "e.g. 555-555-5555 or 555-555-5555x123"));
         assertTrue(popUpAction.getActionErrors().contains("Valid USA/Canada TTY numbers must match ###-###-####x#*, " +
-                "e.g. 555-555-5555 or 555-555-5555x123"));        
+                "e.g. 555-555-5555 or 555-555-5555x123"));
     }
-    
-    
+
+
     /**
-     * 
+     *
      */
     private void populateValidUSAOrg() {
         popUpAction.setOrgName("Some Name");
@@ -242,7 +242,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setFax("fax");
         popUpAction.setTty("tty");
         popUpAction.setUrl("http://org@org.com");
-    }    
+    }
 
     @Test
     public void testCreateOrgWithEmptyStAddress() throws PAException{
@@ -411,6 +411,18 @@ public class PopupActionTest extends AbstractRegWebTest {
     }
 
     @Test
+    public void testCreatePersonInvalidUrl() throws PAException {
+        popUpAction = new PopupAction();
+        popUpAction.setFirstName("FirstName");
+        popUpAction.setLastName("lastName");
+        popUpAction.setEmail("org@org.com");
+        popUpAction.setUrl("org.com");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains(
+                "Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/"));
+    }
+
+    @Test
     public void testCreatePerson_USA() throws PAException{
         popUpAction = new PopupAction();
         popUpAction.setFirstName("FirstName");
@@ -511,7 +523,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setCtepid("2");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }
-    
+
     @Test
     public void testDisplayOrgList2() throws PAException{
         popUpAction = new PopupAction();

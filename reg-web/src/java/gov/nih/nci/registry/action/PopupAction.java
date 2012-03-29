@@ -146,7 +146,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
     private static final int AUS_STATE_CODE_LEN = 3;
-    
+
     private static final Logger LOG  = Logger.getLogger(PopupAction.class);
 
 
@@ -184,6 +184,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void prepare() throws Exception {
         populateCountryList();
@@ -355,7 +356,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
-        PaOrganizationDTO criteria = new PaOrganizationDTO(); 
+        PaOrganizationDTO criteria = new PaOrganizationDTO();
         criteria.setName(orgName);
         criteria.setFamilyName(familyName);
         criteria.setCity(cityName);
@@ -378,10 +379,10 @@ public class PopupAction extends ActionSupport implements Preparable {
         return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
     }
 
-    
+
     private boolean isOrgCriterionEmpty() {
         return StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
-                && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid) 
+                && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid)
                 && StringUtils.isEmpty(familyName);
     }
 
@@ -447,15 +448,15 @@ public class PopupAction extends ActionSupport implements Preparable {
         } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
-        
+
         if (StringUtils.isNotBlank(url) && !PAUtil.isCompleteURL(url)) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
-        
+
         String phoneNumer = getPhoneNumber();
         String faxNumber = getFax();
         String ttyNumber = getTty();
-        
+
         String badPhoneMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
                 + "555-555-5555 or 555-555-5555x123";
         if (StringUtils.isNotBlank(phoneNumer) && usaOrCanada
@@ -471,8 +472,8 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (StringUtils.isNotBlank(ttyNumber) && usaOrCanada
                 && !PAUtil.isUsOrCanadaPhoneNumber(ttyNumber)) {
             addActionError(String.format(badPhoneMsg, "TTY"));
-        }        
-        
+        }
+
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -530,7 +531,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
         return "create_org_response";
     }
-    
+
     private String handleError(Exception exception) {
         LOG.error(ExceptionUtils.getFullStackTrace(exception));
         return handleError(exception.getMessage());
@@ -586,7 +587,9 @@ public class PopupAction extends ActionSupport implements Preparable {
                 && (StringUtils.isEmpty(state) || state.trim().length() > AUS_STATE_CODE_LEN)) {
             addActionError("2/3-letter State/Province Code required for Australia");
         }
-
+        if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
+            addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
+        }
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -697,7 +700,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             orgs.add(displayElement);
         }
     }
-    
+
     private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
         Map<Long, String> retMap = new HashMap<Long, String>();
         Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
@@ -927,7 +930,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String getFamilyName() {
         return familyName;
     }
-    
+
     /**
      * @param familyName the familyName to set
      */

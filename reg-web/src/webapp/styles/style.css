@@ -292,8 +292,8 @@ A.helpbutton:hover
 /* Filters */
 #filters
 { padding:5px 15px 0 15px }
-.filter_checkbox LABEL:hover
-{ text-decoration:underline }
+.filter_checkbox
+{ text-decoration:underline; background:#fff url("../images/bg_fadepanel.gif") repeat-x top;}
 
 /* Login/Account Pages */
 
