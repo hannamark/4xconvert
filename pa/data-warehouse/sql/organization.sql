@@ -13,7 +13,6 @@ CREATE TABLE STG_DW_ORGANIZATION (
 	PO_ID integer,
 	STATUS character varying (20),
 	STATUS_DATE date,
-	SUFFIX character varying (10),
 	EMAIL character varying (256),
 	FAX character varying (256),
 	PHONE character varying (256),
