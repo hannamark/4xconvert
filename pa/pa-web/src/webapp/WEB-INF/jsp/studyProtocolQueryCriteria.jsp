@@ -31,6 +31,8 @@
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
                 $("ctepDcpCategory").value="";
+                $("ctgovXmlRequiredIndicator").value="";
+                
             }
 
             document.onkeypress = runEnterScript;
