@@ -74,6 +74,11 @@
                 var aj = callAjaxPost(div, url, params, options);
             }
 
+            function cancelAction(url){
+            	document.forms[0].setAttribute("action", url);
+            	document.forms[0].submit();
+            }
+
         </script>
     </head>
     <body>
@@ -112,7 +117,7 @@
                                             <s:a cssClass="btn" href="#" onclick="document.forms[0].submit();">
                                                 <span class="btn_img"><span class="add">Save</span></span>
                                             </s:a>
-                                            <s:a href="%{cancelUrl}" cssClass="btn">
+                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="#" cssClass="btn">
                                                 <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
                                         </li>
