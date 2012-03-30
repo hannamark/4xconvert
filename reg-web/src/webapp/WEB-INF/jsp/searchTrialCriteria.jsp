@@ -22,6 +22,8 @@
         document.getElementById("organizationId").value="";
         document.getElementById("participatingSiteId").value="";
         document.getElementById("phaseAdditionalQualifierCode").value="";
+        document.getElementById("principalInvestigatorId").value="";
+        document.getElementById("trialCategory").value="";                
     }
     function handleAction(){
          var input = "criteria.myTrialsOnly";
