@@ -37,6 +37,10 @@
 	<tr>
 	    <td scope="row" class="label" style="width:250px" align="right"><b>Phone:</b></td>
 	    <td class="value" colspan="2"><s:property value="webDTO.telephone"/></td>	        
-	</tr>	
+	</tr>
+    <tr>
+        <td scope="row" class="label" style="width:250px" align="right"><b>Organization:</b></td>
+        <td class="value" colspan="2"><s:property value="webDTO.affiliateOrg"/></td>           
+    </tr>		
 	</s:if>	
 </table>

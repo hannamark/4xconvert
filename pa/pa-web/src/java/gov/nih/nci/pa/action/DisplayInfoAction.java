@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -134,6 +135,14 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
             persWebDTO.setCountry(userInfo.getCountry());
             persWebDTO.setZip(userInfo.getPostalCode());
             persWebDTO.setTelephone(userInfo.getPhone());
+            if (userInfo.getAffiliatedOrganizationId() != null) {
+                PAServiceUtils servUtil = new PAServiceUtils();
+                String affiliatedOrgName = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
+                        .valueOf(userInfo.getAffiliatedOrganizationId())));
+                persWebDTO.setAffiliateOrg(affiliatedOrgName);
+            } else {
+                persWebDTO.setAffiliateOrg(userInfo.getAffiliateOrg());
+            }
             return SUCCESS;
         } catch (PAException pax) {
             return ERROR;
