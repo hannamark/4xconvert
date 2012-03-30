@@ -2,11 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all" />
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.1.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
+
+	        jQuery(function(){
+	        	jQuery(window).keypress(function(e) {
+		            if(e.keyCode == 13) {	              
+		              loadResults();
+		            }
+		          });        	
+	        });
+	        
              function reset() {
                  $('searchName').value = '';
                  $('searchMeaning').value = '';
