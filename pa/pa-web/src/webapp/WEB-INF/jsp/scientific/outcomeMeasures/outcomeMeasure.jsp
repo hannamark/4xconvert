@@ -21,6 +21,9 @@
         // there are no onload functions to call for this jsp
         // leave this function to prevent 'error on page'
     }
+    
+        
+    
 </SCRIPT>
 
 <body>
@@ -33,6 +36,7 @@
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">
   <pa:sucessMessage/>
+  <pa:failureMessage/>
     <s:form>
         <s:actionerror/>
         <pa:studyUniqueToken/>
@@ -57,8 +61,7 @@
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column title="Delete" class="action">
-                <s:url id="url" action="interventionalStudyDesignoutcomedelete"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /></s:url>
-                <s:a href="%{url}"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16"/></s:a>
+                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.outcomeMeasure.id}" value="%{#attr.row.outcomeMeasure.id in objectsToDelete}"/>
             </display:column>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
 	</display:table>
@@ -68,6 +71,9 @@
 				<ul class="btnrow">
                     <pa:scientificAbstractorDisplayWhenCheckedOut>
 					   <li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{outcomeList != null && !outcomeList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected outcome measure(s) from the study. Cancel to abort.', 'interventionalStudyDesignoutcomedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected outcome measure(s) from the study. Cancel to abort.', 'interventionalStudyDesignoutcomedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                        </s:if>					   
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>

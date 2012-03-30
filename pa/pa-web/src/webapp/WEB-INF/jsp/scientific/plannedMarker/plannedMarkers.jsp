@@ -8,7 +8,7 @@
         <script type="text/javascript" src="<c:url value='/scripts/js/scriptaculous.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>        
         <script type="text/javascript">
              function callOnloadFunctions(){
                 // there are no onload functions to call for this jsp
@@ -22,6 +22,7 @@
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage/>
+            <pa:failureMessage/>
             <s:if test="hasActionErrors()">
                 <div class="error_msg"><s:actionerror/></div>
             </s:if>
@@ -51,12 +52,7 @@
                                         </s:a>
                                     </display:column>
                                     <display:column titleKey="plannedMarker.delete" headerClass="centered" class="action">
-                                        <s:url id="deleteUrl" namespace="/protected" action="plannedMarker" method="delete">
-                                            <s:param name="selectedRowIdentifier" value="%{#attr.row.id}"/>
-                                        </s:url>
-                                        <s:a href="%{deleteUrl}" onclick="return confirm('Click OK to remove the marker from the study. Cancel to abort.');">
-                                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
-                                        </s:a>
+                                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
                                     </display:column>
                                 </pa:scientificAbstractorDisplayWhenCheckedOut>
                             </display:table>
@@ -73,6 +69,9 @@
                                         <span class="btn_img"><span class="add">Add</span></span>
                                     </s:a>
                                 </li>
+		                        <s:if test="%{plannedMarkerList != null && !plannedMarkerList.isEmpty()}">
+		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+		                        </s:if>                                
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

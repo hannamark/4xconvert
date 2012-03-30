@@ -150,7 +150,7 @@ public class AnatomicSiteActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testDelete()  throws PAException{
-        anatomicSiteAction.setSelectedRowIdentifier("code");
+        anatomicSiteAction.setObjectsToDelete(new String[] {"1"});
         assertEquals("list", anatomicSiteAction.delete());
     }
     @Test

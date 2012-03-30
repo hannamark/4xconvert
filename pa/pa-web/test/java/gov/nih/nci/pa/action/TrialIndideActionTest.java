@@ -133,11 +133,16 @@ public class TrialIndideActionTest extends AbstractPaActionTest {
 	 */
     @Test
     public void testDelete() {
-        trialIndideAction.setCbValue(1L);
-        assertEquals("query",trialIndideAction.delete());
-        trialIndideAction.setCbValue(3L);
+        trialIndideAction.setObjectsToDelete(new String[0]);
         assertEquals("query",trialIndideAction.delete());
         assertNotNull(getRequest().getAttribute("failureMessage"));
+        getRequest().removeAttribute("failureMessage");
+        getRequest().removeAttribute("successMessage");
+        
+        trialIndideAction.setObjectsToDelete(new String[] {"1"});
+        assertEquals("query",trialIndideAction.delete());
+        assertNull(getRequest().getAttribute("failureMessage"));
+        assertNotNull(getRequest().getAttribute("successMessage"));
     }
 
     /**

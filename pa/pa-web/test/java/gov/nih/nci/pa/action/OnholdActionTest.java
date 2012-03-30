@@ -83,6 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Before;
@@ -189,4 +190,10 @@ public class OnholdActionTest extends AbstractPaActionTest {
         assertFalse(act.hasErrors());
         assertEquals(initialSize, act.getOnholdList().size());
     }
+    
+    @Test(expected=UnsupportedOperationException.class)
+    public void testDeleteObject() throws PAException {
+        act.deleteObject(1l);
+    }
+    
 }

@@ -112,13 +112,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 /**
  * @author Kalpana Guthikonda
  * @since 10/20/2008
  */
-public class InterventionalStudyDesignAction extends ActionSupport implements Preparable {
+public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAction implements Preparable {
 
     /**
      * Maximum length for Outcome name and time frame.
@@ -389,7 +388,7 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
                     outcomeList.add(setOutcomeMeasureDTO(dto));
                 }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                setSuccessMessageIfNotYet(
                         getText("No OutcomeMeasures exists for the trial."));
             }
 
@@ -505,13 +504,17 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
      */
     public String outcomedelete()  {
         try {
-            PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToStudyOutcomeMeasureIi(id));
-            outcomeQuery();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-        } catch (Exception e) {
+            deleteSelectedObjects();            
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-        return OUTCOME;
+        return outcomeQuery();
+    }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToStudyOutcomeMeasureIi(objectId));      
     }
 
     private ISDesignDetailsWebDTO setOutcomeMeasureDTO(StudyOutcomeMeasureDTO dto) {

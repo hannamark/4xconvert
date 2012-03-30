@@ -247,4 +247,10 @@ public class OnholdAction extends AbstractListEditAction {
     public void setStudyOnholdService(StudyOnholdServiceLocal studyOnholdService) {
         this.studyOnholdService = studyOnholdService;
     }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        throw new UnsupportedOperationException();
+    }
+
 }

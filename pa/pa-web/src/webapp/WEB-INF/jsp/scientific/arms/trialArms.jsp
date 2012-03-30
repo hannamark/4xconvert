@@ -25,14 +25,7 @@ function handleEditGroup(rowId){
     document.armForm.action="trialArmseditGroup.action";
     document.armForm.submit();
 }
-function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the arm from the study.  Cancel to abort.");
-    if (input_box==true){
-        document.armForm.selectedArmIdentifier.value = rowId;
-        document.armForm.action="trialArmsdelete.action";
-        document.armForm.submit();
-    }
-}
+
 function handleCreateArm(){
     document.armForm.action="trialArmscreate.action";
     document.armForm.submit();
@@ -47,7 +40,7 @@ function handleCreateGroup(){
 <h1><fmt:message key="arms.details.title" /></h1>
 <c:set var="topic" scope="request" value="abstractarms"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-<div class="box"><pa:sucessMessage /> <s:if
+<div class="box"><pa:sucessMessage /><pa:failureMessage/> <s:if
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> 
@@ -85,9 +78,7 @@ function handleCreateGroup(){
                         </s:elseif>
                     </display:column>
                     <display:column titleKey="arms.delete" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
-                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
-                        </s:a>
+                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.identifier}" value="%{#attr.row.identifier in objectsToDelete}"/>
                     </display:column>
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>
@@ -99,6 +90,9 @@ function handleCreateGroup(){
         <pa:scientificAbstractorDisplayWhenCheckedOut>
             <s:if test="%{currentAction == 'listArm'}">
                 <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <s:if test="%{armList != null && !armList.isEmpty()}">
+                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                </s:if>                
             </s:if>
             <s:elseif test="%{currentAction == 'listGroup'}">
                 <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>

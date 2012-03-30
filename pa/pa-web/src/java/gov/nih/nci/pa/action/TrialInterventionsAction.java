@@ -105,6 +105,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -187,12 +188,13 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     @Override
     public String delete() throws PAException {
         try {
-            plannedActivityService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            deleteSelectedObjects();
+            return super.delete();
         } catch (PAException e) {
-            addActionError(e.getMessage());
-            return AR_LIST;
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());            
         }
-        return super.delete();
+        return execute();    
     }
 
     /**
@@ -1070,5 +1072,12 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
         this.plannedActivityService = plannedActivityService;
     }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        plannedActivityService.delete(IiConverter.convertToIi(objectId));
+    }
+
 
 }

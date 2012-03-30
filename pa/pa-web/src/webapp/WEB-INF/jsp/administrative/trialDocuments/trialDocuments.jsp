@@ -14,6 +14,9 @@ function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
     // leave this function to prevent 'error on page'
 }
+
+
+
 </SCRIPT>
  <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
@@ -31,6 +34,8 @@ function callOnloadFunctions(){
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
+    
+    <s:set name="hasDeletableDocs" value="%{false}" scope="request"/>
     <s:if test="trialDocumentList != null">
     <s:set name="trialDocumentList" value="trialDocumentList" scope="request"/>
     <display:table name="${trialDocumentList}" id="row" class="data" sort="list"  pagesize="10" requestURI="trialDocumentquery.action" export="false">
@@ -51,11 +56,9 @@ function callOnloadFunctions(){
 		      </s:elseif>
 		      <s:elseif test="%{#attr.row.typeCode.equals('Change Memo Document')}">
               </s:elseif>
-    		  <s:else>
-			     <s:url id="url" action="trialDocumentdelete">
-                    <s:param name="id" value="%{#attr.row.id}" />
-                 </s:url>
-    		     <s:a href="%{url}"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16"/></s:a>
+    		  <s:else>			     
+    		     <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
+    		      <s:set name="hasDeletableDocs" value="%{true}" scope="request"/>
 		      </s:else>
     	   </display:column>
         </pa:adminAbstractorDisplayWhenCheckedOut>
@@ -66,6 +69,9 @@ function callOnloadFunctions(){
 				<ul class="btnrow">
                     <pa:adminAbstractorDisplayWhenCheckedOut>
 					   <li><s:a href="trialDocumentinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{trialDocumentList != null && !trialDocumentList.isEmpty() && #request.hasDeletableDocs}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected document(s) from the study. Cancel to abort.', 'trialDocumentdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected document(s) from the study. Cancel to abort.', 'trialDocumentdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                        </s:if>					   
                     </pa:adminAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>

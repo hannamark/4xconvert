@@ -83,6 +83,7 @@ import gov.nih.nci.pa.dto.SubGroupsWebDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -92,8 +93,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
 /**
  * @author Kalpana Guthikonda
  * @since 10/13/2008
@@ -101,7 +100,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class SubGroupsAction extends ActionSupport {
+public class SubGroupsAction extends AbstractMultiObjectDeleteAction {
 
     private static final long serialVersionUID = -8004079339636348299L;
     private List<SubGroupsWebDTO> subGroupsList;
@@ -123,7 +122,7 @@ public class SubGroupsAction extends ActionSupport {
                     subGroupsList.add(new SubGroupsWebDTO(dto));
                 }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                setSuccessMessageIfNotYet(
                         getText("error.subGroups.noRecords"));
             }
             return SUCCESS;
@@ -210,21 +209,26 @@ public class SubGroupsAction extends ActionSupport {
          return SUCCESS;
      }
 
-     /**
-      * @return result
-      */
-     public String delete()  {
-         try {
-             PaRegistry.getStratumGroupService().delete(IiConverter.convertToIi(id));
-             query();
-             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-             return SUCCESS;
+    /**
+     * @return result
+     */
+    public String delete() {
+        try {
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return query(); 
+    }
 
-         } catch (Exception e) {
-             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return SUCCESS;
-         }
-     }
+     @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+         PaRegistry.getStratumGroupService().delete(IiConverter.convertToIi(objectId));        
+    }
 
     /**
      * @return id

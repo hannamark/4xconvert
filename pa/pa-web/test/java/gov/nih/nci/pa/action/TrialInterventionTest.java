@@ -10,6 +10,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -148,11 +149,12 @@ public class TrialInterventionTest extends AbstractPaActionTest {
 
     @Test
     public void testDelete() throws PAException{
-        trialIntervention.setSelectedRowIdentifier("1");
+        trialIntervention.setObjectsToDelete(new String[] {"1"});
         assertEquals(trialIntervention.delete(),"list");
-        trialIntervention.setSelectedRowIdentifier("6");
+        trialIntervention.setObjectsToDelete(new String[] {"6"});
         assertEquals(trialIntervention.delete(),"list");
-        assertTrue(!CollectionUtils.isEmpty(trialIntervention.getActionErrors()));
+        assertTrue(ServletActionContext.getRequest().getAttribute(
+                Constants.FAILURE_MESSAGE)!=null);
     }
     @Test
     public void testDisplay() throws PAException{

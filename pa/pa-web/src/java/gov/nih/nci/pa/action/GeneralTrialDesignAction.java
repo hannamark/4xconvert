@@ -108,6 +108,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author NAmiruddin
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class GeneralTrialDesignAction extends ActionSupport {
 
     private static final long serialVersionUID = -541776965053776382L;

@@ -22,12 +22,8 @@ function handleAction(studyResourcingId){
     document.forms[0].action="trialFundingedit.action";
     document.forms[0].submit();
 }
-function handleDelete(studyResourcingId){
-    document.forms[0].cbValue.value = studyResourcingId;
-     document.forms[0].page.value = "Delete";
-     document.forms[0].action="trialFundingdelete.action";
-    document.forms[0].submit();
-}
+
+
 
 </SCRIPT>
 
@@ -42,6 +38,7 @@ function handleDelete(studyResourcingId){
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
   <div class="box">
   <pa:sucessMessage/>
+   <pa:failureMessage/>
     <s:form>
         <s:token/>
         <s:actionerror/>
@@ -61,7 +58,7 @@ function handleDelete(studyResourcingId){
                 <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" /></s:a>
             </display:column>
             <display:column title="Delete" class="action">
-                <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src='<c:url value="/images/ico_delete.gif"/>' alt="Delete" width="16" height="16"/></s:a>
+                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
             </display:column>
         </pa:adminAbstractorDisplayWhenCheckedOut>
     </display:table>
@@ -71,6 +68,9 @@ function handleDelete(studyResourcingId){
                 <ul class="btnrow">
                     <pa:adminAbstractorDisplayWhenCheckedOut>
                         <li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{trialFundingList != null && !trialFundingList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected NIH Grant(s) from the study. Cancel to abort.', 'trialFundingdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected NIH Grant(s) from the study. Cancel to abort.', 'trialFundingdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                        </s:if>                        
                     </pa:adminAbstractorDisplayWhenCheckedOut>
                 </ul>
             </del>

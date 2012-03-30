@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -105,8 +106,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
-
-import com.opensymphony.xwork2.ActionSupport;
 /**
  *
  * @author Kalpana Guthikonda
@@ -116,7 +115,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * copyright holder, NCI.
  */
 
-public class TrialDocumentAction extends ActionSupport implements ServletResponseAware {
+public class TrialDocumentAction extends AbstractMultiObjectDeleteAction implements ServletResponseAware {
 
     private static final long serialVersionUID = 2798002815820961877L;
     private static final Logger LOG  = Logger.getLogger(TrialDocumentAction.class);
@@ -291,34 +290,39 @@ public class TrialDocumentAction extends ActionSupport implements ServletRespons
          return SUCCESS;
      }
 
-     /**
-      * @return result
-      */
-     public String delete()  {
-         if (StringUtils.isEmpty(trialDocumentWebDTO.getInactiveCommentText())) {
-             addFieldError("trialDocumentWebDTO.inactiveCommentText", getText("error.trialDocument.delete.reason"));
-         }
-         if (hasFieldErrors()) {
-             return DELETE_RESULT;
-         }
-         try {
-             DocumentDTO docDTO = new DocumentDTO();
-
-             docDTO = PaRegistry.getDocumentService().get(
-                     IiConverter.convertToIi(id));
-             docDTO.setInactiveCommentText(StConverter.convertToSt(
-                     trialDocumentWebDTO.getInactiveCommentText()));
-             PaRegistry.getDocumentService().delete(docDTO.getIdentifier());
-
-             query();
-             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-             return SUCCESS;
-
-         } catch (Exception e) {
-             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-             return DELETE_RESULT;
-         }
-     }
+    /**
+     * @return result
+     */
+    public String delete() {
+        try {
+            checkIfAnythingSelected();
+            if (StringUtils.isEmpty(trialDocumentWebDTO
+                    .getInactiveCommentText())) {
+                addFieldError("trialDocumentWebDTO.inactiveCommentText",
+                        getText("error.trialDocument.delete.reason"));
+            }
+            if (hasFieldErrors()) {
+                return DELETE_RESULT;
+            }
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return query();
+    }
+     
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO = PaRegistry.getDocumentService().get(
+                IiConverter.convertToIi(objectId));
+        docDTO.setInactiveCommentText(StConverter
+                .convertToSt(trialDocumentWebDTO.getInactiveCommentText()));
+        PaRegistry.getDocumentService().delete(docDTO.getIdentifier());
+    }
 
      /**
       * @return fileName

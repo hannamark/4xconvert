@@ -22,15 +22,8 @@ function handleAction(studyProtocolIi){
     document.forms[0].action="trialIndideedit.action";
     document.forms[0].submit();
 }
-function handleDelete(studyProtocolIi){
-	input_box=confirm("Click OK to remove the IND/IDE from the Study.  Cancel to Abort.");
-	if (input_box==true){
-    document.forms[0].cbValue.value = studyProtocolIi;
-    document.forms[0].page.value = "Delete";
-    document.forms[0].action="trialIndidedelete.action";
-    document.forms[0].submit();
-	}
-}
+
+
 
 </SCRIPT>
 
@@ -72,7 +65,7 @@ function handleDelete(studyProtocolIi){
                 <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column title="Delete" class="action">
-        	   <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src='<c:url value="/images/ico_delete.gif"/>' alt="Delete" width="16" height="16"/></s:a>
+        	   <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
             </display:column>
         </pa:adminAbstractorDisplayWhenCheckedOut>
     </display:table>
@@ -82,6 +75,9 @@ function handleDelete(studyProtocolIi){
                 <ul class="btnrow">
                     <pa:adminAbstractorDisplayWhenCheckedOut>
                         <li><s:a href="trialIndide.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{studyIndideList != null && !studyIndideList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected IND/IDE(s) from the study. Cancel to abort.', 'trialIndidedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected IND/IDE(s) from the study. Cancel to abort.', 'trialIndidedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                        </s:if>
                     </pa:adminAbstractorDisplayWhenCheckedOut>
                 </ul>
             </del>

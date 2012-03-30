@@ -288,4 +288,9 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         assertEquals("list", trialHistory.acceptUpdate());
         assertEquals(1, trialHistory.getActionErrors().size());
     }
+    
+    @Test(expected=UnsupportedOperationException.class)
+    public void testDeleteObject() throws PAException {
+        trialHistory.deleteObject(1l);
+    }
 }

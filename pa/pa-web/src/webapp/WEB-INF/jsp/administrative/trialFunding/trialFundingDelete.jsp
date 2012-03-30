@@ -40,6 +40,7 @@ function handleAction(){
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
    <s:hidden name="page"/>
     <s:hidden name="cbValue"/>
+    <s:hidden name="objectsToDelete"/>
     <table class="form">
                 <tr>
                     <td scope="row" class="label">

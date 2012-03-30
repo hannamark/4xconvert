@@ -109,14 +109,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
 * @author Hugh Reinhart
 * @since 10/31/2008
 */
-public class TrialArmsAction extends ActionSupport implements Preparable {
+public class TrialArmsAction extends AbstractMultiObjectDeleteAction implements Preparable {
     private static final long serialVersionUID = 1884666890L;
 
     private static final String ACT_EDIT = "edit";
@@ -225,11 +224,22 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
      * @throws PAException exception
      */
     public String delete() throws PAException {
-        armService.delete(IiConverter.convertToIi(getSelectedArmIdentifier()));
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-        loadForm();
-        return ACT_LIST;
+        try {
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return execute();
     }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        armService.delete(IiConverter.convertToIi(objectId));        
+    }
+    
     /**
      * @return result
      * @throws PAException exception

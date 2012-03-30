@@ -123,7 +123,8 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     @Test
     public void testDelete() {
         eligibilityCriteriaAction.setId(null);
-       String result =  eligibilityCriteriaAction.delete();
+        eligibilityCriteriaAction.setObjectsToDelete(new String[] {"1"});
+        String result =  eligibilityCriteriaAction.delete();
         assertEquals("eligibility", result);
     }
     @Test(expected=Exception.class)

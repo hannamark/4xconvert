@@ -25,15 +25,7 @@
                 form.submit();
             }
             
-            function handleDelete(rowId) {
-                input_box=confirm("Click OK to remove the disease from the study.  Cancel to abort.");
-                if (input_box == true){
-                    var form = document.diseaseForm;
-                    form.selectedRowIdentifier.value = rowId;
-                    form.action = "diseasedelete.action";
-                    form.submit();
-                }
-            }
+            
             
             function handleCreate() {
                 showPopup('${lookupUrl}', refresh, 'Disease');
@@ -52,6 +44,7 @@
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage />
+            <pa:failureMessage/>
             <s:if test="hasActionErrors()">
                 <div class="error_msg"><s:actionerror /></div>
             </s:if>
@@ -90,9 +83,7 @@
                                         </s:a>
                                     </display:column>
                                     <display:column titleKey="disease.delete" headerClass="centered" class="action">
-                                        <s:a href="#" onclick="handleDelete(%{#attr.row.studyDiseaseIdentifier})">
-                                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
-                                        </s:a>
+                                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.studyDiseaseIdentifier}" value="%{#attr.row.studyDiseaseIdentifier in objectsToDelete}"/>
                                     </display:column>
                                 </pa:scientificAbstractorDisplayWhenCheckedOut>
                             </display:table>
@@ -108,6 +99,9 @@
                                         <span class="btn_img"><span class="add">Add </span></span>
                                     </a>
                                 </li>
+		                        <s:if test="%{diseaseList != null && !diseaseList.isEmpty()}">
+		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+		                        </s:if>                                
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

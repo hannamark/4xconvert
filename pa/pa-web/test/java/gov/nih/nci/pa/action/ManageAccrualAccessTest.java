@@ -279,5 +279,10 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         assertEquals(newStatusCode, dto.getStatusCode());
         assertEquals(newRequestDetails, dto.getRequestDetails());
     }
+    
+    @Test(expected=UnsupportedOperationException.class)
+    public void testDeleteObject() throws PAException {
+        act.deleteObject(1l);
+    }
 
 }

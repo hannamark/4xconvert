@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,8 +94,26 @@ public class TrialDocumentActionTest extends AbstractPaActionTest{
     @Test
     public void testDelete() {
         String result = trialDocumentAction.delete();
+        assertEquals("success",result);
+        assertTrue(ServletActionContext.getRequest().getAttribute(
+                Constants.FAILURE_MESSAGE)!=null);
+        
+        trialDocumentAction.clearErrorsAndMessages();
+        
+        trialDocumentAction.setObjectsToDelete(new String[] {"1"});
+        result = trialDocumentAction.delete();
         assertEquals("delete",result);
-        assertTrue(trialDocumentAction.hasFieldErrors());
+        
+        trialDocumentAction.clearErrorsAndMessages();
+        
+        trialDocumentAction.setObjectsToDelete(new String[] {"1"});
+        trialDocumentAction.getTrialDocumentWebDTO().setInactiveCommentText("test");
+        result = trialDocumentAction.delete();
+        assertEquals("success",result);        
+        
+        assertTrue(ServletActionContext.getRequest().getAttribute(
+                Constants.SUCCESS_MESSAGE)!=null);
+        
     }
 
 }

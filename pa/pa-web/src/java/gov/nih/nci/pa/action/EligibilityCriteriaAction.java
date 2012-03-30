@@ -132,14 +132,12 @@ import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 
 /**
  * @author Kalpana Guthikonda
  * @since 11/12/2008
  */
-public class EligibilityCriteriaAction extends ActionSupport {
+public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
     private static final String STRUCTURED = "Structured";
     private static final String LAB_TEST_VALUES = "labTestNameValues";
@@ -194,6 +192,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
      */
     public String query() {
         try {
+            eligibilityList = null;
             retrieveFromPaProperties();
             getClassSchemeItems();
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
@@ -759,16 +758,27 @@ public class EligibilityCriteriaAction extends ActionSupport {
      * @return result
      */
     public String delete() {
-
+        String message = null;
         try {
-            PaRegistry.getPlannedActivityService().deletePlannedEligibilityCriterion(IiConverter.convertToIi(id));
-            query();
-            reOrder();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+            deleteSelectedObjects();
+            message = Constants.MULTI_DELETE_MESSAGE;
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
         }
+        query();
+        reOrder();
+        ServletActionContext.getRequest().setAttribute(
+                Constants.SUCCESS_MESSAGE, message);
         return ELIGIBILITY;
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        PaRegistry.getPlannedActivityService()
+                .deletePlannedEligibilityCriterion(
+                        IiConverter.convertToIi(objectId));
     }
 
     /**

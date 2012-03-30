@@ -88,7 +88,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -97,7 +96,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 12/6/2008
  */
-public abstract class AbstractListEditAction extends ActionSupport implements Preparable {
+public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAction implements Preparable {
     
     private static final long serialVersionUID = -739752598760711484L;
 
@@ -189,7 +188,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
      * @throws PAException exception
      */
     public String delete() throws PAException {
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
         return execute();
     }
 

@@ -116,8 +116,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTime;
 

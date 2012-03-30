@@ -98,6 +98,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
     }
     @Test
     public void testDelete() throws Exception {
+        action.setObjectsToDelete(new String[] {"1"});
         assertEquals("delete",action.delete());
     }
     @Test

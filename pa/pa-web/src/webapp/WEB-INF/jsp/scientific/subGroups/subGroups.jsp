@@ -39,8 +39,7 @@ function callOnloadFunctions(){
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column title="Delete" class="action">
-                <s:url id="url" action="subGroupsdelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
-                <s:a href="%{url}"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16"/></s:a>
+                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>                
             </display:column>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     	</display:table>
@@ -50,6 +49,9 @@ function callOnloadFunctions(){
 				<ul class="btnrow">
                     <pa:scientificAbstractorDisplayWhenCheckedOut>                       
 					   <li><s:a href="javascript:void(0);" onclick="submitXsrfForm('subGroupsinput.action');" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{subGroupsList != null && !subGroupsList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected sub-group(s) from the study. Cancel to abort.', 'subGroupsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected sub-group(s) from the study. Cancel to abort.', 'subGroupsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                        </s:if>					   
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>

@@ -16,14 +16,9 @@ function callOnloadFunctions(){
     // leave this function to prevent 'error on page'
 }
 
-function handleDelete(code){
-    input_box=confirm("Click OK to remove the Summary 4 Anatomic Site from the study.  Cancel to abort.");
-    if (input_box==true){
-        document.anatomicSiteForm.selectedRowIdentifier.value = code;
-        document.anatomicSiteForm.action="anatomicSitedelete.action";
-        document.anatomicSiteForm.submit();
-    }
-}
+ 
+
+
 function handleCreate(){
     document.anatomicSiteForm.action="anatomicSitecreate.action";
     document.anatomicSiteForm.submit();
@@ -36,6 +31,7 @@ function handleCreate(){
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage />
+    <pa:failureMessage/>
     <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
     <s:form name="anatomicSiteForm">
@@ -51,9 +47,7 @@ function handleCreate(){
                 <display:column escapeXml="true" property="code" sortable="true" titleKey="anatomicSite.code" headerClass="sortable" />
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="anatomicSite.delete" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleDelete(\"%{#attr.row.code}\")">
-                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
-                        </s:a>
+                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
                     </display:column>
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>
@@ -64,6 +58,9 @@ function handleCreate(){
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
             <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            <s:if test="%{anatomicSiteList != null && !anatomicSiteList.isEmpty()}">
+                <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected anatomic site(s) from the study. Cancel to abort.', 'anatomicSitedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected anatomic site(s) from the study. Cancel to abort.', 'anatomicSitedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+            </s:if>            
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>

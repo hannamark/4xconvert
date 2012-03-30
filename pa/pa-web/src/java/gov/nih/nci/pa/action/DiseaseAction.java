@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -152,8 +153,20 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
      */
     @Override
     public String delete() throws PAException {
-        studyDiseaseService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        return super.delete();
+        try {
+            deleteSelectedObjects();
+            return super.delete();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            return execute();
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        studyDiseaseService.delete(IiConverter.convertToIi(objectId));        
     }
 
     /**

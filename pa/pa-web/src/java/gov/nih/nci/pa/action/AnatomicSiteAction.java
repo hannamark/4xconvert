@@ -86,8 +86,10 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
+import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -96,6 +98,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -143,17 +146,14 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
      */
     @Override
     public String delete() throws PAException {
-        StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-        if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
-            for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
-                if (as.getCode().equals(getSelectedRowIdentifier())) {
-                    studyProtocolDto.getSummary4AnatomicSites().getItem().remove(as);
-                    break;
-                }
-            }
-            PaRegistry.getStudyProtocolService().updateStudyProtocol(studyProtocolDto);
+        try {
+            deleteSelectedObjects();
+            return super.delete();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-        return super.delete();
+        return execute();
     }
 
     private void enforceBusinessRules() throws PAException {
@@ -194,7 +194,8 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
         if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
             for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
-                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO(as);
+                AnatomicSiteWebDTO n = new AnatomicSiteWebDTO(
+                        AnatomicSiteConverter.convertFromDTOToDomain(as));
                 anatomicSiteList.add(n);
             }
         }
@@ -213,6 +214,24 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
                 anatomicSiteList.add(n);
         }
         setAnatomicSiteList(anatomicSiteList);
+    }
+
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        StudyProtocolDTO studyProtocolDto = PaRegistry
+                .getStudyProtocolService().getStudyProtocol(getSpIi());
+        if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
+            for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
+                if (AnatomicSiteConverter.convertFromDTOToDomain(as).getId()
+                        .equals(objectId)) {
+                    studyProtocolDto.getSummary4AnatomicSites().getItem()
+                            .remove(as);
+                    break;
+                }
+            }
+            PaRegistry.getStudyProtocolService().updateStudyProtocol(
+                    studyProtocolDto);
+        }
     }
 
 }

@@ -293,6 +293,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
 
     @Test
     public void testOutcomedelete(){
+        action.setObjectsToDelete(new String[] {"1"});
      assertEquals("outcome", action.outcomedelete());
     }
 

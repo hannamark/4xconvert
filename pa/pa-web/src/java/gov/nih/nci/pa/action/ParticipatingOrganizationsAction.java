@@ -150,7 +150,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Action;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -159,7 +158,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart, Harsha
  * @since 08/20/2008
  */
-public class ParticipatingOrganizationsAction extends ActionSupport implements Preparable {
+public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteAction implements Preparable {
     private static final long serialVersionUID = 123412653L;
     private static final Logger LOG = Logger.getLogger(ParticipatingOrganizationsAction.class);
     
@@ -504,15 +503,25 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     public String delete() throws PAException {
         clearErrorsAndMessages();
-        studySiteService.delete(IiConverter.convertToIi(cbValue));
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        try {
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
         loadForm();
         if (proprietaryTrialIndicator != null
                 && proprietaryTrialIndicator.equalsIgnoreCase("true")) {
             return "proprietaryList";
         }
-
         return ParticipatingOrganizationsAction.ACT_DELETE;
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {     
+        studySiteService.delete(IiConverter.convertToIi(objectId));
     }
 
     private void loadForm() throws PAException {

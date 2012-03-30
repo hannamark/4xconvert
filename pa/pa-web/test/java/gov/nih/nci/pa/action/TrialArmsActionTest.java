@@ -83,8 +83,9 @@ public class TrialArmsActionTest extends AbstractPaActionTest {
 	 */
 	@Test
 	public void testDelete() throws PAException {
+	    trialsArmsAction.setObjectsToDelete(new String[] {"1"});
 		trialsArmsAction.delete();
-		 assertEquals("Record Deleted", getRequest().getAttribute("successMessage"));
+		 assertEquals("Record(s) Deleted", getRequest().getAttribute("successMessage"));
 	}
 
 	/**

@@ -113,6 +113,10 @@ public class Constants {
     public static final String FAILURE_MESSAGE = "failureMessage";
     /** Deleted Message . */
     public static final String DELETE_MESSAGE = "Record Deleted";
+    /** Deleted Message . */
+    public static final String NOTHING_TO_DELETE_MESSAGE = "Please select one, or more, record(s) to delete";    
+    /** Deleted Message . */
+    public static final String MULTI_DELETE_MESSAGE = "Record(s) Deleted";
     /** Updated Message . */
     public static final String UPDATE_MESSAGE = "Record Updated";
     /** Create Message . */

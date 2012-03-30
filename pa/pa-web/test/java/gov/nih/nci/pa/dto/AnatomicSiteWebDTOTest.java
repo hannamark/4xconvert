@@ -83,7 +83,7 @@
 package gov.nih.nci.pa.dto;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -103,6 +103,7 @@ public class AnatomicSiteWebDTOTest {
         anatomicSiteWebDTO = new AnatomicSiteWebDTO(new Cd());
         anatomicSiteWebDTO.setDisplayName("alternames");
         anatomicSiteWebDTO.setCode("code");
+        anatomicSiteWebDTO.setId(1L);
     }
 
    @Test
@@ -123,6 +124,7 @@ public class AnatomicSiteWebDTOTest {
        anatomicSiteWebDTO = new AnatomicSiteWebDTO(cd);
        assertEquals("cdCode", anatomicSiteWebDTO.getCode());
        assertEquals("stDisplayName", anatomicSiteWebDTO.getDisplayName());
+       assertNull(anatomicSiteWebDTO.getId());
    }
    
    @Test
@@ -130,8 +132,10 @@ public class AnatomicSiteWebDTOTest {
        AnatomicSite as = new AnatomicSite();
        as.setCode("asCode");
        as.setDisplayName("asDisplayName");
+       as.setId(2l);
        anatomicSiteWebDTO = new AnatomicSiteWebDTO(as);
        assertEquals("asCode", anatomicSiteWebDTO.getCode());
        assertEquals("asDisplayName", anatomicSiteWebDTO.getDisplayName());
+       assertEquals(2, anatomicSiteWebDTO.getId().longValue());
    }
 }

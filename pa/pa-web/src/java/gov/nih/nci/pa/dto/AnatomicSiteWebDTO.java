@@ -95,6 +95,7 @@ public class AnatomicSiteWebDTO {
     
     private String displayName;
     private String code;
+    private Long id;
     
     /**
      * Const empty. Needed for action use.
@@ -119,6 +120,7 @@ public class AnatomicSiteWebDTO {
     public AnatomicSiteWebDTO(AnatomicSite as) {
         displayName = as.getDisplayName();
         code = as.getCode();
+        id = as.getId();
     }
     
     /**
@@ -144,6 +146,20 @@ public class AnatomicSiteWebDTO {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
     }
     
 }

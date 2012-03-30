@@ -83,6 +83,9 @@ function handleReOrderAction(){
     document.forms[0].action="eligibilityCriteriareOrder.action";
     document.forms[0].submit(); 
 } 
+
+
+
 function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
@@ -304,10 +307,7 @@ BubbleTips.activateTipOn("dfn");
                          </td>
                          <td>
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
-                                <s:url id="url" action="eligibilityCriteriadelete">
-                                    <s:param name="id" value="%{id}" />
-                                </s:url>
-                                <s:a href="%{url}"><img src="<c:url value="/images/ico_delete.gif"/>" alt="Delete" width="16" height="16"/></s:a>
+                                <s:checkbox name="objectsToDelete" fieldValue="%{id}" value="%{id in objectsToDelete}"/>                            
                             </pa:scientificAbstractorDisplayWhenCheckedOut>   
                          </td>
                      </tr>
@@ -335,6 +335,9 @@ BubbleTips.activateTipOn("dfn");
                     <s:if test="list != null">
                         <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
                     </s:if>
+                    <s:if test="%{eligibilityList != null && !eligibilityList.isEmpty()}">
+                        <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete Other Criterion</span></span></s:a></li>
+                    </s:if>                    
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </ul>   
         </del>

@@ -485,4 +485,10 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     public void setAccrualAccessHelper(ManageAccrualAccessHelper accrualAccessHelper) {
         this.accrualAccessHelper = accrualAccessHelper;
     }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        throw new UnsupportedOperationException();
+    }
+    
 }

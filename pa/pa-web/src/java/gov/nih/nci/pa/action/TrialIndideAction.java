@@ -97,13 +97,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
 /**
  * @author Hong Gao
  * @author Kalpana Guthikonda
  */
-public class TrialIndideAction extends ActionSupport {
+@SuppressWarnings("PMD.TooManyMethods")
+public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
     private static final long serialVersionUID = -9192130934354005933L;
     private static final String QUERY_RESULT = "query";
     private static final String EDIT_RESULT = "edit";
@@ -133,7 +132,7 @@ public class TrialIndideAction extends ActionSupport {
                   studyIndideList.add(new StudyIndldeWebDTO(dto));
               }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                setSuccessMessageIfNotYet(
                         getText("No IND/IDE records exist on the trial"));
             }
             return QUERY_RESULT;
@@ -232,17 +231,22 @@ public class TrialIndideAction extends ActionSupport {
     /**
      * @return result
      */
-    public String delete()  {
+    public String delete() {
         try {
-            PaRegistry.getStudyIndldeService().delete(IiConverter.convertToIi(cbValue));
-            query();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-            return QUERY_RESULT;
-
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            return QUERY_RESULT;
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
+        return query();
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        PaRegistry.getStudyIndldeService().delete(IiConverter.convertToIi(objectId));             
     }
 
     /**

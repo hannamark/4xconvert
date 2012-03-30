@@ -86,7 +86,7 @@ public class DiseaseActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testDelete() throws PAException {
-        diseaseAction.setSelectedRowIdentifier("1");
+        diseaseAction.setObjectsToDelete(new String[] {"1"});
         assertEquals("list", diseaseAction.delete());
     }
 

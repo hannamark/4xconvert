@@ -74,7 +74,7 @@ public class SubGroupsActionTest extends AbstractPaActionTest{
      */
     @Test
     public void testDelete() {
-        dto.setId("1");
+        subGroupsAction.setObjectsToDelete(new String[] {"1"});
         String result = subGroupsAction.delete(); 
         assertEquals("success",result);
     }

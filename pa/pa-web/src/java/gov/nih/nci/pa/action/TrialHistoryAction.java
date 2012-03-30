@@ -537,5 +537,11 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        throw new UnsupportedOperationException();
+    }
+
 
 }

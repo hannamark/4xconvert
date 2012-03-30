@@ -17,11 +17,8 @@ function callOnloadFunctions(){
 }
 
 function handleAction(){
-input_box=confirm("Click OK to save changes or Cancel to Abort.");
-	if (input_box==true){
- 		document.forms[0].action="trialDocumentdelete.action";
- 		document.forms[0].submit();
-	} 
+	document.forms[0].action="trialDocumentdelete.action";
+	document.forms[0].submit(); 
 }
 
 </SCRIPT>
@@ -41,6 +38,7 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialDocument.subtitle" /></h2>
     <s:hidden name="id"/>
+    <s:hidden name="objectsToDelete"/>
     <table class="form">
                 <tr>
                     <td scope="row" class="label">

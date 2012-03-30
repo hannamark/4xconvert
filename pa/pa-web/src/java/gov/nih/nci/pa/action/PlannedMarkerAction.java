@@ -200,8 +200,14 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     public String delete() throws PAException {
-        plannedMarkerService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        return super.delete();
+        try {
+            deleteSelectedObjects();
+            return super.delete();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return execute();
     }
 
     /**
@@ -406,4 +412,11 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
     }
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        plannedMarkerService.delete(IiConverter.convertToIi(objectId));
+    }
+
 }

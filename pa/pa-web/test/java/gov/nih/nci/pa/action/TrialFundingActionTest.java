@@ -4,11 +4,13 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -96,14 +98,16 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 	 */
 	@Test
 	public void testDelete() {
-	    assertEquals("delete",trialFundingAction.delete());
+	    assertEquals("query",trialFundingAction.delete());
+	    assertTrue(ServletActionContext.getRequest().getAttribute(
+                Constants.FAILURE_MESSAGE)!=null);	    
 	    trialFundingAction.clearErrorsAndMessages();
 
 	    TrialFundingWebDTO dto = new TrialFundingWebDTO();
         dto.setInactiveCommentText("Deleting Funding");
 
         trialFundingAction.setTrialFundingWebDTO(dto);
-        trialFundingAction.setCbValue(1L);
+        trialFundingAction.setObjectsToDelete(new String[] {"1"});
         assertEquals(trialFundingAction.delete(), "query");
 	}
 

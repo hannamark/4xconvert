@@ -111,7 +111,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -120,7 +119,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 08/20/2008
  */
-public class CollaboratorsAction extends ActionSupport implements Preparable {
+@SuppressWarnings("PMD.TooManyMethods")
+public class CollaboratorsAction extends AbstractMultiObjectDeleteAction implements Preparable {
 
     private static final long serialVersionUID = 123412653L;
     private static final int AD_CITY_IDX = 1;
@@ -299,12 +299,20 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
      */
     public String delete() throws PAException {
         clearErrorsAndMessages();
-
-        sPartService.delete(IiConverter.convertToStudySiteIi(cbValue));
-
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        try {
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
         loadForm();
         return ACT_DELETE;
+    }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        sPartService.delete(IiConverter.convertToStudySiteIi(objectId));        
     }
 
     private void loadForm() throws PAException {

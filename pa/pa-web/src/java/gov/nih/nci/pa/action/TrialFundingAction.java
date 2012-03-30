@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -95,14 +96,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
-
-import com.opensymphony.xwork2.ActionSupport;
 /**
  *
  * @author Kalpana Guthikonda
  *
  */
-public class TrialFundingAction extends ActionSupport {
+public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
     private static final long serialVersionUID = 4865176377748106852L;
     private static final String QUERY_RESULT = "query";
     private static final String DELETE_RESULT = "delete";
@@ -133,7 +132,7 @@ public class TrialFundingAction extends ActionSupport {
                     trialFundingList.add(new TrialFundingWebDTO(dto));
                 }
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                setSuccessMessageIfNotYet(
                         getText("error.trialFunding.noRecords"));
             }
             return QUERY_RESULT;
@@ -214,30 +213,37 @@ public class TrialFundingAction extends ActionSupport {
     /**
      * @return result
      */
-    public String delete()  {
-        if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
-            addFieldError("trialFundingWebDTO.inactiveCommentText", getText("error.trialFunding.delete.reason"));
-        }
-        if (hasFieldErrors()) {
-            return DELETE_RESULT;
-        }
+    public String delete() {
         try {
-            StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-
-            studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
-                    IiConverter.convertToIi(cbValue));
-            studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
-                    trialFundingWebDTO.getInactiveCommentText()));
-            PaRegistry.getStudyResourcingService().deleteStudyResourcingById(studyResoureDTO);
-
-            query();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
-            return QUERY_RESULT;
+            checkIfAnythingSelected();
+            if (StringUtils.isEmpty(trialFundingWebDTO.getInactiveCommentText())) {
+                addFieldError("trialFundingWebDTO.inactiveCommentText",
+                        getText("error.trialFunding.delete.reason"));
+            }
+            if (hasFieldErrors()) {
+                return DELETE_RESULT;
+            }            
+            deleteSelectedObjects();
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-            return DELETE_RESULT;
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
         }
+        return query();
     }
+    
+    @Override
+    public void deleteObject(Long objectId) throws PAException {
+        StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
+        studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
+                IiConverter.convertToIi(objectId));
+        studyResoureDTO.setInactiveCommentText(StConverter.convertToSt(
+                trialFundingWebDTO.getInactiveCommentText()));
+        PaRegistry.getStudyResourcingService().deleteStudyResourcingById(studyResoureDTO);
+        
+    }
+    
     /**
      * @return result
      */

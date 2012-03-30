@@ -28,14 +28,7 @@ function handleEdit(studyResourcingId){
     document.partOrgs.action="participatingOrganizationsproprietaryEdit.action";
     document.partOrgs.submit();
 }
-function handleDelete(studyResourcingId){
-    input_box=confirm("Click OK to delete the organization as a participant in the study.  Cancel to abort.");
-    if (input_box==true){
-        document.partOrgs.cbValue.value = studyResourcingId;
-        document.partOrgs.action="participatingOrganizationsdelete.action";
-        document.partOrgs.submit();
-    }
-}
+
 </SCRIPT>
 
 <body>
@@ -44,6 +37,7 @@ function handleDelete(studyResourcingId){
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
     <pa:sucessMessage/>
+    <pa:failureMessage/>
     <s:actionerror />
     <s:form name="partOrgs">
     <s:token/>
@@ -64,7 +58,7 @@ function handleDelete(studyResourcingId){
                 <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
-                <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src='<c:url value="/images/ico_delete.gif"/>' alt="Delete" width="16" height="16"/></s:a>
+                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
             </display:column>
         </pa:adminAbstractorDisplayWhenCheckedOut>
     </display:table>
@@ -75,7 +69,10 @@ function handleDelete(studyResourcingId){
         <ul class="btnrow">
             <pa:adminAbstractorDisplayWhenCheckedOut>
                 <li><a href="#" class="btn" onclick="this.blur();submitXsrfForm('participatingOrganizationsproprietaryCreate.action');"><span class="btn_img"><span class="add" >Add </span></span></a></li>
-            </pa:adminAbstractorDisplayWhenCheckedOut>
+                <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
+                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                </s:if>
+            </pa:adminAbstractorDisplayWhenCheckedOut>            
             <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
             <li><a href="#"
                     class="btn" onclick="this.blur();submitXsrfForm('trialFundingquery.action');"><span class="btn_img"><span class="back">Back</span></span></a></li>

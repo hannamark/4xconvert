@@ -197,7 +197,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
 
     @Test
     public void testDelete() throws PAException {
-        plannedMarkerAction.setSelectedRowIdentifier("1");
+        plannedMarkerAction.setObjectsToDelete(new String[] {"1"});
         assertEquals(plannedMarkerAction.delete(), "list");
     }
 
