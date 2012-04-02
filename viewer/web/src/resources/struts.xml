@@ -35,7 +35,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />

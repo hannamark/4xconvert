@@ -185,7 +185,7 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
     @Override
     public List<PDQDisease> getByIds(List<Long> ids) {
         Session session = PaHibernateUtil.getCurrentSession();
-        String hql = "select pd from PDQDisease pd where id in (:ids) order by id "; 
+        String hql = "select pd from PDQDisease pd where id in (:ids) order by id ";
         Query query = session.createQuery(hql);
         query.setParameterList("ids", ids);
         return query.list();
@@ -230,13 +230,13 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             if (CollectionUtils.isEmpty(disease.getDiseaseParents())) {
                 PDQDiseaseNode node = new PDQDiseaseNode();
                 node.setId(disease.getId());
-                node.setName(disease.getDisplayName());
+                node.setName(disease.getPreferredName());
                 tree.add(node);
             } else {
                 for (PDQDiseaseParent parent : disease.getDiseaseParents()) {
                     PDQDiseaseNode node = new PDQDiseaseNode();
                     node.setId(disease.getId());
-                    node.setName(disease.getDisplayName());
+                    node.setName(disease.getPreferredName());
                     node.setParentId(parent.getParentDisease().getId());
                     tree.add(node);
                 }
