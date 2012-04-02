@@ -171,6 +171,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
      */
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
        
+        private static final String CONNECTOR = " %s ";
         private static final String CITY_PARAM = "city";       
         private static final String STATES_PARAM = "states";        
         private static final String COUNTRY_NAME_PARAM = "countryName";      
@@ -253,7 +254,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             
             handlePhaseCodes(whereClause, params);
             handleSummary4AnatomicSites(whereClause, params);
-            handleLeadOrganizationIds(whereClause, params);
+            handleOrganizationIds(whereClause, params);
             generateLocationWhereClause(whereClause, params);
             handleOtherIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
@@ -283,14 +284,46 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
         }
 
-        private void handleLeadOrganizationIds(StringBuffer whereClause, Map<String, Object> params) {
-            if (CollectionUtils.isNotEmpty(spo.getLeadOrganizationIds())) {
-                String operator = determineOperator(whereClause);
-                String fmt = " %s leadOrgSite.functionalCode = :%s and leadOrgRo.organization.id  in (:%s) ";
+        private void handleOrganizationIds(StringBuffer whereClause, Map<String, Object> params) {
+            final boolean hasLeadOrgs = CollectionUtils.isNotEmpty(spo.getLeadOrganizationIds());
+            final boolean hasSites = CollectionUtils.isNotEmpty(spo.getParticipatingSiteIds());
+            final String leadOrgClause = "leadOrgSite.functionalCode = :%s and leadOrgRo.organization.id  in (:%s) ";
+            final String siteClause = "exists (select sps2.id from StudySite sps2 "
+                    + "left outer join sps2.healthCareFacility as hcf "
+                    + "left outer join hcf.organization as site "
+                    + "where sps2.studyProtocol.id = %s.id and site.id in (:%s))";            
+            final String operator = determineOperator(whereClause);
+            
+            if (hasLeadOrgs && hasSites) {
+                String fmt = CONNECTOR;
+                whereClause.append(String.format(fmt, operator));
+                whereClause.append("((");
+                whereClause.append(String.format(leadOrgClause,
+                        LEAD_ORG_FUNCTIONAL_CODE_PARAM, LEAD_ORG_IDS_PARAM));
+                whereClause.append(") or ");
+                whereClause.append(String.format(siteClause,
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        PARTICIPATING_SITE_PARAM));
+                whereClause.append(") ");
+                params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());
+                params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
+                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());                
+            } else if (hasLeadOrgs) {                                
+                String fmt = CONNECTOR
+                        + leadOrgClause;
                 whereClause.append(String.format(fmt, operator, LEAD_ORG_FUNCTIONAL_CODE_PARAM, LEAD_ORG_IDS_PARAM));
                 params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
-                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());
-            }
+                params.put(LEAD_ORG_IDS_PARAM, spo.getLeadOrganizationIds());                
+            } else if (hasSites) {                              
+                whereClause
+                        .append(String
+                                .format(CONNECTOR + siteClause,
+                                        operator,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        PARTICIPATING_SITE_PARAM));
+                params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());                
+            }            
+            
         }
         
         private void generateLocationWhereClause(StringBuffer whereClause, Map<String, Object> params) {
@@ -363,16 +396,6 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         }
 
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {
-            if (CollectionUtils.isNotEmpty(spo.getParticipatingSiteIds())) {
-                String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s exists (select sps2.id from StudySite sps2 "
-                        + "left outer join sps2.healthCareFacility as hcf "
-                        + "left outer join hcf.organization as site "
-                        + "where sps2.studyProtocol.id = %s.id and site.id in (:%s))",
-                        operator, SearchableUtils.ROOT_OBJ_ALIAS, PARTICIPATING_SITE_PARAM));
-                        params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());
-            }
-
             if (spo.isSearchOnHoldTrials()) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
@@ -436,7 +459,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 String operator = determineOperator(whereClause);
                 params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
                         StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-                whereClause.append(String.format(" %s " + dcpIdExistsClause,
+                whereClause.append(String.format(CONNECTOR + dcpIdExistsClause,
                         operator));
             }
             
@@ -446,7 +469,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);                
                 whereClause
                         .append(String
-                                .format(" %s " + ctepIdExistsClause + " and not " + dcpIdExistsClause,
+                                .format(CONNECTOR + ctepIdExistsClause + " and not " + dcpIdExistsClause,
                                         operator));
             }
             
