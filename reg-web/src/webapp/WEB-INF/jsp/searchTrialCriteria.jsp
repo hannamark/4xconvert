@@ -21,6 +21,7 @@
         document.getElementById("typeCodeValues").value="";
         document.getElementById("organizationId").value="";
         document.getElementById("participatingSiteId").value="";
+        document.getElementById("leadAndParticipatingOrgId").value="";
         document.getElementById("phaseAdditionalQualifierCode").value="";
         document.getElementById("principalInvestigatorId").value="";
         document.getElementById("trialCategory").value="";                
@@ -63,14 +64,24 @@
     function displayOrg(){
         var input="criteria.organizationType";
         var inputElement = document.forms[0].elements[input];
-            if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
+	        if (inputElement.options[inputElement.selectedIndex].value == "Either or Both") {
+	            document.getElementById("Lead").style.display = "none";
+	            document.getElementById("Site").style.display = "none";
+	            document.getElementById("LeadOrSite").style.display = "";
+	            document.getElementById("organizationId").value="";
+	            document.getElementById("participatingSiteId").value="";	            
+	        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
                 document.getElementById("Lead").style.display = "none";
+                document.getElementById("LeadOrSite").style.display = "none";
                 document.getElementById("Site").style.display = "";
                 document.getElementById("organizationId").value="";
+                document.getElementById("leadAndParticipatingOrgId").value="";
             } else {
                 document.getElementById("Lead").style.display = "";
                 document.getElementById("Site").style.display = "none";
+                document.getElementById("LeadOrSite").style.display = "none";
                 document.getElementById("participatingSiteId").value="";
+                document.getElementById("leadAndParticipatingOrgId").value="";
             }
     }
     function viewPartialProtocol(pId,user) {
@@ -168,7 +179,7 @@
                     <label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
                 </td>
                 <td>
-                    <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
+                    <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Either or Both':'Either or Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
                 </td>
                 <td scope="row" class="label">
                     <label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
@@ -191,6 +202,15 @@
                        </s:fielderror>
                     </span>
                 </td>
+                <td id="LeadOrSite" style="display:none">   
+                    <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />                
+                    <s:select id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" list="#leadAndParticipatingOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.leadAndParticipatingOrgId" cssStyle="width:206px"/>
+                    <span class="formErrorMsg">
+                        <s:fielderror>
+                        <s:param>criteria.organizationId</s:param>
+                       </s:fielderror>
+                    </span>
+                </td>                
             </tr>
             <s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
              <tr>

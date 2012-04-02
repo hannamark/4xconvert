@@ -15,6 +15,7 @@ public class SearchProtocolCriteria {
     private String officialTitle;
     private String organizationId;
     private String participatingSiteId;
+    private String leadAndParticipatingOrgId;
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
@@ -158,20 +159,36 @@ public class SearchProtocolCriteria {
     
     /**
      * Gets the trial category.
+     * 
      * @return trialCategory
      */
     public String getTrialCategory() {
         return trialCategory;
     }
 
-/**
- * Sets trial category.
- * @param trialCategory trialCategory
- */
-public void setTrialCategory(String trialCategory) { 
-   this.trialCategory = trialCategory;
-}
-    
-    
+    /**
+     * Sets trial category.
+     * 
+     * @param trialCategory
+     *            trialCategory
+     */
+    public void setTrialCategory(String trialCategory) {
+        this.trialCategory = trialCategory;
+    }
+
+    /**
+     * @return the leadAndParticipatingOrgId
+     */
+    public String getLeadAndParticipatingOrgId() {
+        return leadAndParticipatingOrgId;
+    }
+
+    /**
+     * @param leadAndParticipatingOrgId
+     *            the leadAndParticipatingOrgId to set
+     */
+    public void setLeadAndParticipatingOrgId(String leadAndParticipatingOrgId) {
+        this.leadAndParticipatingOrgId = leadAndParticipatingOrgId;
+    }    
 
 }

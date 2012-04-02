@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
@@ -28,10 +29,13 @@ import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
+import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -322,6 +326,59 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         assertTrue(MockPAPersonServiceRemote.investigators == action
                 .getAllPrincipalInvestigators());         
                  
+    }
+    
+    @Test
+    public void testGetLeadAndParticipatingOrganizations() throws PAException,
+            IllegalAccessException, InvocationTargetException {
+        SearchTrialAction searchTrialAction = mock(SearchTrialAction.class);
+
+        PaOrganizationDTO org1 = new PaOrganizationDTO();
+        org1.setId("1");
+        org1.setName("o1");
+        PaOrganizationDTO org2 = new PaOrganizationDTO();
+        org2.setId("2");
+        org2.setName("o2");
+        PaOrganizationDTO org3 = new PaOrganizationDTO();
+        org3.setId("3");
+        org3.setName("o3");
+        PaOrganizationDTO org4 = new PaOrganizationDTO();
+        org4.setId("4");
+        org4.setName("o4");
+        PaOrganizationDTO org5 = new PaOrganizationDTO();
+        org5.setId("1");
+        org5.setName("o5");
+
+        when(
+                searchTrialAction
+                        .getOrganizationsAssociatedWithStudyProtocol(eq("Lead Organization")))
+                .thenReturn(
+                        Arrays.asList(org4, org3, org3, org3, org3, org3, org3,
+                                org5));
+        when(
+                searchTrialAction
+                        .getOrganizationsAssociatedWithStudyProtocol(eq("Participating Site")))
+                .thenReturn(
+                        Arrays.asList(org4, org3, org1, org2, org4, org3, org1,
+                                org2, org5));
+        when(searchTrialAction.getLeadAndParticipatingOrganizations())
+                .thenCallRealMethod();
+
+        assertEquals(4, searchTrialAction
+                .getLeadAndParticipatingOrganizations().size());
+        assertEquals("1", new ArrayList<ComparableOrganizationDTO>(
+                searchTrialAction.getLeadAndParticipatingOrganizations())
+                .get(0).getId());
+        assertEquals("2", new ArrayList<ComparableOrganizationDTO>(
+                searchTrialAction.getLeadAndParticipatingOrganizations())
+                .get(1).getId());
+        assertEquals("3", new ArrayList<ComparableOrganizationDTO>(
+                searchTrialAction.getLeadAndParticipatingOrganizations())
+                .get(2).getId());
+        assertEquals("4", new ArrayList<ComparableOrganizationDTO>(
+                searchTrialAction.getLeadAndParticipatingOrganizations())
+                .get(3).getId());
+
     }
     
     @Test

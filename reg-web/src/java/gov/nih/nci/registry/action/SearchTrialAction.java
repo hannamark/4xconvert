@@ -119,6 +119,7 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.TrialDTO;
+import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
@@ -126,11 +127,14 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -326,6 +330,10 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         if (StringUtils.isNotBlank(criteria.getParticipatingSiteId())) {
             queryCriteria.getParticipatingSiteIds().add(Long.parseLong(criteria.getParticipatingSiteId()));
         }
+        if (StringUtils.isNotEmpty(criteria.getLeadAndParticipatingOrgId())) {
+            queryCriteria.getLeadOrganizationIds().add(Long.valueOf(criteria.getLeadAndParticipatingOrgId()));
+            queryCriteria.getParticipatingSiteIds().add(Long.parseLong(criteria.getLeadAndParticipatingOrgId()));
+        }        
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
         queryCriteria.setMyTrialsOnly(criteria.isMyTrialsOnly());
         queryCriteria.setUserLastCreated(UsernameHolder.getUser());
@@ -490,8 +498,11 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
 
     private void validateOrganizationType() {
         if (StringUtils.isNotEmpty(criteria.getOrganizationType())
-                && (criteria.getOrganizationId() == null && criteria.getParticipatingSiteId() == null)) {
-            addFieldError("criteria.organizationId", getText("error.search.organization"));
+                && (criteria.getOrganizationId() == null
+                        && criteria.getParticipatingSiteId() == null && criteria
+                        .getLeadAndParticipatingOrgId() == null)) {
+            addFieldError("criteria.organizationId",
+                    getText("error.search.organization"));
 
         }
     }
@@ -680,6 +691,29 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             String organizationType) throws PAException {
         return PaRegistry.getCachingPAOrganizationService()
                 .getOrganizationsAssociatedWithStudyProtocol(organizationType);
+    }
+    
+    /**
+     * Merged collection of lead orgs and participating sites.
+     * 
+     * @return Collection<PaOrganizationDTO>
+     * @throws PAException
+     *             PAException
+     * @throws InvocationTargetException InvocationTargetException
+     * @throws IllegalAccessException IllegalAccessException
+     */
+    public Collection<ComparableOrganizationDTO> getLeadAndParticipatingOrganizations()
+            throws PAException, IllegalAccessException,
+            InvocationTargetException {
+        List<PaOrganizationDTO> list = new ArrayList<PaOrganizationDTO>();
+        list.addAll(getOrganizationsAssociatedWithStudyProtocol("Lead Organization"));
+        list.addAll(getOrganizationsAssociatedWithStudyProtocol("Participating Site"));
+
+        Set<ComparableOrganizationDTO> set = new TreeSet<ComparableOrganizationDTO>();
+        for (PaOrganizationDTO dto : list) {
+            set.add(new ComparableOrganizationDTO(dto));
+        }
+        return set;
     }
     
     /**
