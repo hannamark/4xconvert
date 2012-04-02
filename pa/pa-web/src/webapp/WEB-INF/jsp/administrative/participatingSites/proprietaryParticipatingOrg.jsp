@@ -71,6 +71,7 @@ function handleEdit(studyResourcingId){
                 <li><a href="#" class="btn" onclick="this.blur();submitXsrfForm('participatingOrganizationsproprietaryCreate.action');"><span class="btn_img"><span class="add" >Add </span></span></a></li>
                 <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
                     <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><pa:toggleDeleteBtn/></li>
                 </s:if>
             </pa:adminAbstractorDisplayWhenCheckedOut>            
             <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">

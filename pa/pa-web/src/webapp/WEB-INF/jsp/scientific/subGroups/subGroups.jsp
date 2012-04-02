@@ -51,6 +51,7 @@ function callOnloadFunctions(){
 					   <li><s:a href="javascript:void(0);" onclick="submitXsrfForm('subGroupsinput.action');" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                         <s:if test="%{subGroupsList != null && !subGroupsList.isEmpty()}">
                             <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected sub-group(s) from the study. Cancel to abort.', 'subGroupsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected sub-group(s) from the study. Cancel to abort.', 'subGroupsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><pa:toggleDeleteBtn/></li>
                         </s:if>					   
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>

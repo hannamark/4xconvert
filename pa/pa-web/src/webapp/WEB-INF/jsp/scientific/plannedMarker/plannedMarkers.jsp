@@ -71,6 +71,7 @@
                                 </li>
 		                        <s:if test="%{plannedMarkerList != null && !plannedMarkerList.isEmpty()}">
 		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+		                            <li><pa:toggleDeleteBtn/></li>
 		                        </s:if>                                
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>

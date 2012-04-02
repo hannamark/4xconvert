@@ -42,13 +42,13 @@
 					<input type="button" value="Edit"
 						onclick="editIdentifierRow('${row_rowNum}')" />&nbsp;
 					<input type="button" value="Delete"
-						onclick="deleteOtherIdentifierRow('${row_rowNum}')" />
+						onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
 				</div>
 				<div id="actionSave_${row_rowNum}" style="display: none;">
 					<input type="button" value="Done"
 						onclick="saveIdentifierRow('${row_rowNum}')" />&nbsp;
 					<input type="button" value="Delete"
-						onclick="deleteOtherIdentifierRow('${row_rowNum}')" />
+						onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
 				</div>				
 			</display:column>
 		</display:table>

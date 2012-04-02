@@ -40,3 +40,18 @@ function handleMultiDelete(confirmationMessage, submitAction) {
     
 }
 
+
+var deleteAllToggled = false;
+function toggleDeleteCheckboxes() {
+	deleteAllToggled = !deleteAllToggled;
+	$(document.forms[0]).getInputs().each(function(el) {
+        if (el.name=='objectsToDelete') {
+        	el.checked = deleteAllToggled;
+        }
+    });
+	if ($('multiDeleteBtnText')!=null) {
+		$('multiDeleteBtnText').innerHTML = deleteAllToggled?'Deselect All':'Select All';
+	}
+}
+
+

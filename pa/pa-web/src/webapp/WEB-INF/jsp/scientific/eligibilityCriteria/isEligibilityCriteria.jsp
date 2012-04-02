@@ -337,6 +337,7 @@ BubbleTips.activateTipOn("dfn");
                     </s:if>
                     <s:if test="%{eligibilityList != null && !eligibilityList.isEmpty()}">
                         <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete Other Criterion</span></span></s:a></li>
+                        <li><pa:toggleDeleteBtn/></li>
                     </s:if>                    
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </ul>   

@@ -71,6 +71,7 @@ function callOnloadFunctions(){
 					   <li><s:a href="trialDocumentinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                         <s:if test="%{trialDocumentList != null && !trialDocumentList.isEmpty() && #request.hasDeletableDocs}">
                             <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected document(s) from the study. Cancel to abort.', 'trialDocumentdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected document(s) from the study. Cancel to abort.', 'trialDocumentdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><pa:toggleDeleteBtn/></li>
                         </s:if>					   
                     </pa:adminAbstractorDisplayWhenCheckedOut>
 				</ul>

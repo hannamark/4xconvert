@@ -72,6 +72,7 @@ function handleCreate(){
                 <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
                 <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
                     <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected collaborator(s) from the study. Cancel to abort.', 'collaboratorsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected collaborator(s) from the study. Cancel to abort.', 'collaboratorsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><pa:toggleDeleteBtn/></li>
                 </s:if>                
             </pa:adminAbstractorDisplayWhenCheckedOut>
         </ul>
