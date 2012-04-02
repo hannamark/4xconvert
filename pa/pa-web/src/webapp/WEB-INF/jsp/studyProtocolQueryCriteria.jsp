@@ -58,7 +58,7 @@
             <s:token/>
                 <pa:failureMessage/>
                 <table class="form">
-                    <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
+                    <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getCachingPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
                     <tr>
                         <td  scope="row" class="label">
                             <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label>
@@ -102,7 +102,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
+                        <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getCachingPAPersonService().getAllPrincipalInvestigators()" />
                         <td  scope="row" class="label">
                             <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                         </td>

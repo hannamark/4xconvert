@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -101,12 +102,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -120,7 +123,8 @@ import com.opensymphony.xwork2.Preparable;
  *
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware {
+public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware, 
+                                                            ServletRequestAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private static final String SHOW_VIEW = "view";
     private static final String SHOW_VIEW_REFRESH = "viewRefresh";
@@ -133,6 +137,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId;
     private HttpServletResponse servletResponse;
+    private HttpServletRequest httpServletRequest;
     private List<String> checkoutCommands;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
    
@@ -143,7 +148,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     @Override
     public void prepare() {
-        protocolQueryService = PaRegistry.getProtocolQueryService();
+        protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         studyCheckoutService = PaRegistry.getStudyCheckoutService();
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
     }
@@ -199,6 +204,30 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
 
         try {
             populateIdentifierSearchParameters();
+            // The way Search Trials screen works today is that POST means a
+            // user is executing a new search,
+            // while GET means the user is paginating through results. So for
+            // POST we always hit the back-end,
+            // while for GET we also look in cache for previously retrieved
+            // query results.
+            // Based on Search Trials usage pattern, if more than 10 results are
+            // retrieved by initial search,
+            // the user is likely to go through pages. It makes sense to cache
+            // the search results just for a little
+            // while and avoid hitting the database on each page change.
+            // We are not using HttpSession as cache, because it is long-lived,
+            // is specific to each user, and does not
+            // handle multiple browser tabs very well. Using HttpSession would
+            // increase risk of significant memory
+            // consumption, a memory that we don't really have.
+            // We are using an EhCache instance instead, which is strictly
+            // limited by a max. number of elements in memory
+            // and TTL. Enough to improve pagination performance.
+            if (!"GET".equalsIgnoreCase(httpServletRequest.getMethod())) {
+                CacheUtils.removeItemFromCache(
+                        CacheUtils.getSearchResultsCache(),
+                        criteria.getUniqueCriteriaKey());
+            }     
             records = protocolQueryService.getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
@@ -557,13 +586,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * @param protocolQueryService the protocolQueryService to set
-     */
-    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
-        this.protocolQueryService = protocolQueryService;
-    }
-
-    /**
      * @param studyCheckoutService the studyCheckoutService to set
      */
     public void setStudyCheckoutService(StudyCheckoutServiceLocal studyCheckoutService) {
@@ -575,5 +597,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest request) {
+        this.httpServletRequest = request;
     }
 }

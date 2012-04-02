@@ -110,6 +110,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -135,10 +136,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -161,7 +158,6 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private static final Logger LOG = Logger
             .getLogger(SearchTrialAction.class);    
     
-    private static final int PAGE_SIZE = 10;
     private static final long serialVersionUID = 1L;
     private static final Set<DocumentWorkflowStatusCode> ABSTRACTED_CODES =
             EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
@@ -177,33 +173,10 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         EXECUTE_ACTIONS.add("AMEND");
         EXECUTE_ACTIONS.add("UPDATE");
     }
-    
-    private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE_KEY";
-    private static final int CRITERIA_COLLECTIONS_CACHE_TTL = 60 * 2;
-    private static final String SEARCH_RESULTS_CACHE_KEY = "SEARCH_RESULTS_CACHE_KEY";
-    private static final int SEARCH_RESULTS_CACHE_TTL_CREATE = 180;    
-    private static final int SEARCH_RESULTS_CACHE_TTL_IDLE = 90;
-    static final CacheManager CACHE_MANAGER = CacheManager.create();
-    static {
-        initializeCache(CRITERIA_COLLECTIONS_CACHE_KEY,
-                CRITERIA_COLLECTIONS_CACHE_TTL, CRITERIA_COLLECTIONS_CACHE_TTL);
-        initializeCache(SEARCH_RESULTS_CACHE_KEY,
-                SEARCH_RESULTS_CACHE_TTL_CREATE, SEARCH_RESULTS_CACHE_TTL_IDLE);
-    }
-
-    // cache initialization is extracted into this method so that unit tests can
-    // alter it.
-    static void initializeCache(String cacheName, int ttlSinceCreate, int ttlSinceLastAccess) {
-        // CHECKSTYLE:OFF
-        CACHE_MANAGER.removeCache(cacheName);
-        Cache cache = new Cache(cacheName, 7, false, false, ttlSinceCreate, ttlSinceLastAccess, false, 0);        
-        CACHE_MANAGER.addCache(cache);
-        // CHECKSTYLE:ON
-    }
 
     private AbstractionCompletionServiceRemote abstractionCompletionService;
     private DocumentServiceLocal documentService;
-    private MailManagerServiceLocal mailManagerService;
+    private MailManagerServiceLocal mailManagerService;    
     private ProtocolQueryServiceLocal protocolQueryService;
     private RegistryUserServiceLocal registryUserService;
     private RegulatoryInformationServiceRemote regulatoryInformationService;
@@ -225,8 +198,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     public void prepare() {
         abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
         documentService = PaRegistry.getDocumentService();
-        mailManagerService = PaRegistry.getMailManagerService();
-        protocolQueryService = PaRegistry.getProtocolQueryService();
+        mailManagerService = PaRegistry.getMailManagerService();        
+        protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
@@ -292,49 +265,13 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         // handle multiple browser tabs very well. Using HttpSession would increase risk of significant memory 
         // consumption, a memory that we don't really have.
         // We are using an EhCache instance instead, which is strictly limited by a max. number of elements in memory
-        // and TTL. Enough to improve pagination performance. 
+        // and TTL. Enough to improve pagination performance.
         if (!"GET".equalsIgnoreCase(httpServletRequest.getMethod())) {
-            retrieveResultsFromBackend(spQueryCriteria);
-        } else {
-            retrieveResultsFromCache(spQueryCriteria);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void retrieveResultsFromCache(
-            StudyProtocolQueryCriteria spQueryCriteria) throws PAException {
-        List<StudyProtocolQueryDTO> cachedList = null;
-        Cache cache = CACHE_MANAGER.getCache(SEARCH_RESULTS_CACHE_KEY);
-        String elementKey = spQueryCriteria.getUniqueCriteriaKey();
-        Element element = cache.get((Object) elementKey);
-        if (element != null) {
-            cachedList = (List<StudyProtocolQueryDTO>) element.getObjectValue();
-            if (cachedList != null) {
-                records = cachedList;
-            }
-        }
-        if (cachedList == null) {
-            retrieveResultsFromBackend(spQueryCriteria);
-        }
-    }
-
-    /**
-     * @param spQueryCriteria
-     * @throws PAException
-     */
-    private void retrieveResultsFromBackend(
-            final StudyProtocolQueryCriteria spQueryCriteria)
-            throws PAException {
+            CacheUtils.removeItemFromCache(CacheUtils.getSearchResultsCache(), spQueryCriteria.getUniqueCriteriaKey());
+        }        
         records = protocolQueryService
                 .getStudyProtocolByCriteria(spQueryCriteria);
         checkToShow();
-        if (records.size() > PAGE_SIZE) {
-            Cache cache = CACHE_MANAGER.getCache(SEARCH_RESULTS_CACHE_KEY);
-            String elementKey = spQueryCriteria.getUniqueCriteriaKey();
-            cache.remove((Object) elementKey);
-            Element element = new Element(elementKey, records);
-            cache.put(element);
-        }
     }
     
     private void checkToShow() {
@@ -738,27 +675,11 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      * @return List<PaOrganizationDTO>
      * @throws PAException
      *             PAException
-     */
-    @SuppressWarnings("unchecked")
+     */  
     public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(
             String organizationType) throws PAException {
-        Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
-        final String elementKey = "OrganizationsAssociatedWithStudyProtocol_"
-                + organizationType;
-        Element element = cache.get((Object) elementKey);
-        if (element != null) {
-            List<PaOrganizationDTO> list = (List<PaOrganizationDTO>) element
-                    .getObjectValue();
-            if (list != null) {
-                return list;
-            }
-        }
-        final List<PaOrganizationDTO> list = PaRegistry
-                .getPAOrganizationService()
+        return PaRegistry.getCachingPAOrganizationService()
                 .getOrganizationsAssociatedWithStudyProtocol(organizationType);
-        element = new Element(elementKey, list);
-        cache.put(element);
-        return list;
     }
     
     /**
@@ -774,24 +695,10 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      * @return List<PaPersonDTO>
      * @throws PAException
      *             PAException
-     */
-    @SuppressWarnings("unchecked")
+     */    
     public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
-        Cache cache = CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
-        final String elementKey = "AllPrincipalInvestigators";
-        Element element = cache.get((Object) elementKey);
-        if (element != null) {
-            List<PaPersonDTO> list = (List<PaPersonDTO>) element
-                    .getObjectValue();
-            if (list != null) {
-                return list;
-            }
-        }
-        final List<PaPersonDTO> list = PaRegistry.getPAPersonService()
+        return PaRegistry.getCachingPAPersonService()
                 .getAllPrincipalInvestigators();
-        element = new Element(elementKey, list);
-        cache.put(element);
-        return list;
     }
 
     /**
@@ -888,13 +795,6 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      */
     public void setDocumentService(DocumentServiceLocal documentService) {
         this.documentService = documentService;
-    }
-
-    /**
-     * @param protocolQueryService the protocolQueryService to set
-     */
-    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
-        this.protocolQueryService = protocolQueryService;
     }
 
     /**

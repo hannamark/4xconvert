@@ -120,12 +120,15 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAPersonServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -187,6 +190,19 @@ public final class PaRegistry {
     public static PAOrganizationServiceRemote getPAOrganizationService() {
         return getInstance().getServiceLocator().getPAOrganizationService();
     }
+    
+    /**
+     * {@link PAOrganizationServiceRemote} returned by this method has the same
+     * functionality as {@link #getPAOrganizationService()}, except that caching is
+     * enabled. Use this method if you are looking for performance optimizations
+     * at a cost of small risk of encountering stale data. If only fresh data is
+     * needed, use {@link #getPAOrganizationService()} instead.
+     * 
+     * @return PAOrganization Service.
+     */    
+    public static PAOrganizationServiceRemote getCachingPAOrganizationService() {
+        return new PAOrganizationServiceCachingDecorator(getPAOrganizationService());
+    }
 
     /**
      * @return the serviceLocator
@@ -208,6 +224,20 @@ public final class PaRegistry {
     public static PAPersonServiceRemote getPAPersonService() {
         return getInstance().getServiceLocator().getPAPersonService();
     }
+    
+    /**
+     * {@link PAPersonServiceRemote} returned by this method has the same
+     * functionality as {@link #getPAPersonService()}, except that caching is
+     * enabled. Use this method if you are looking for performance optimizations
+     * at a cost of small risk of encountering stale data. If only fresh data is
+     * needed, use {@link #getPAPersonService()} instead.
+     * 
+     * @return PAPerson Service.
+     */
+    public static PAPersonServiceRemote getCachingPAPersonService() {
+        return new PAPersonServiceCachingDecorator(getPAPersonService());
+    }
+    
 
     /**
      *
@@ -263,6 +293,20 @@ public final class PaRegistry {
      */
     public static ProtocolQueryServiceLocal getProtocolQueryService() {
         return getInstance().getServiceLocator().getProtocolQueryService();
+    }
+    
+    /**
+     * {@link ProtocolQueryServiceLocal} returned by this method has the same
+     * functionality as {@link #getProtocolQueryService()}, except that caching
+     * is enabled. Use this method if you are looking for performance
+     * optimizations at a cost of small risk of encountering stale data. If only
+     * fresh data is needed, use {@link #getProtocolQueryService()} instead.
+     * 
+     * @return PAPerson Service.
+     */
+    public static ProtocolQueryServiceLocal getCachingProtocolQueryService() {
+        return new ProtocolQueryServiceCachingDecorator(
+                getProtocolQueryService());
     }
 
     /**

@@ -39,6 +39,25 @@
         memoryStoreEvictionPolicy="LRU"
          />
 
+    <!-- Caches used for trial search optimizations. -->
+    <cache
+         name="CRITERIA_COLLECTIONS_CACHE"
+         maxElementsInMemory="10"
+         eternal="false"         
+         timeToLiveSeconds="120"
+         overflowToDisk="false"
+    />
+    
+    <cache
+         name="SEARCH_RESULTS_CACHE"
+         maxElementsInMemory="10"
+         eternal="false"         
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="180"
+         overflowToDisk="false"
+    />
+    
+
     <!-- Hibernate Query Cache Regions -->
     <cache
          name="org.hibernate.cache.StandardQueryCache"

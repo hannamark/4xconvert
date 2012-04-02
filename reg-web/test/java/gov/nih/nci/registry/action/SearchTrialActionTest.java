@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -22,6 +22,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
@@ -29,15 +30,16 @@ import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.util.TrialUtil;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +54,7 @@ import com.opensymphony.xwork2.Action;
  *
  */
 public class SearchTrialActionTest extends AbstractRegWebTest {
+    private static final int MAX_CACHE_SIZE = 10;
     private SearchTrialAction action;
 
     /**
@@ -270,8 +273,8 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     }
     
     @Test
-    public void testGetOrganizationsAssociatedWithStudyProtocol() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3, 3);
+    public void testGetOrganizationsAssociatedWithStudyProtocol() throws PAException, InterruptedException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+        initializeCache("CRITERIA_COLLECTIONS_CACHE", 3, 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAOrganizationService.leadPaOrganizationDTOs == action
@@ -299,8 +302,8 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     }
     
     @Test
-    public void testGetAllPrincipalInvestigators() throws PAException, InterruptedException {
-        SearchTrialAction.initializeCache("CRITERIA_COLLECTIONS_CACHE_KEY", 3, 3);
+    public void testGetAllPrincipalInvestigators() throws PAException, InterruptedException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+        initializeCache("CRITERIA_COLLECTIONS_CACHE", 3, 3);
         
         // note the instance equality operator. Do not use equals here.
         assertTrue(MockPAPersonServiceRemote.investigators == action
@@ -322,11 +325,10 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     }
     
     @Test
-    public void testQueryCacheHit() throws PAException, InterruptedException {
+    public void testQueryCacheHit() throws PAException, InterruptedException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
 
-        SearchTrialAction.initializeCache("SEARCH_RESULTS_CACHE_KEY", 5, 5);
-        Cache cache = SearchTrialAction.CACHE_MANAGER
-                .getCache("SEARCH_RESULTS_CACHE_KEY");
+        initializeCache("SEARCH_RESULTS_CACHE", 5, 5);
+        Cache cache = CacheUtils.getSearchResultsCache();
         cache.removeAll();
 
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
@@ -399,8 +401,19 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
                     .setMethod("POST");
             assertEquals("success", action.query());
         }
-        assertEquals(7, cache.getSize());
+        assertEquals(MAX_CACHE_SIZE, cache.getSize());
 
-    }    
+    }
+
+    private void initializeCache(String name, int ttl, int tti)
+            throws SecurityException, NoSuchFieldException,
+            IllegalArgumentException, IllegalAccessException {
+        Field field = CacheUtils.class.getDeclaredField("CACHE_MANAGER");
+        field.setAccessible(true);
+        CacheManager cacheManager = (CacheManager) field.get(null);
+        cacheManager.removeCache(name);
+        Cache cache = new Cache(name, MAX_CACHE_SIZE, false, false, ttl, tti);
+        cacheManager.addCache(cache);
+    }   
     
 }

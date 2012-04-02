@@ -35,6 +35,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="mail"                    rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="joda-time"              name="joda-time"               rev="1.6.2"           conf="compile->master"/>
     <dependency org="de.jollyday"            name="jollyday"                rev="0.4.5"           conf="compile->master" transitive="false"/>
+    <dependency org="net.sf.ehcache"      name="ehcache"            rev="1.2.4"           conf="compile->master" transitive="false">
+       <exclude module="commons-logging"/>
+    </dependency>
     
 
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
