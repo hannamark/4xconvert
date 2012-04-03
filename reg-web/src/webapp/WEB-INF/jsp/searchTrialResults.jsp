@@ -154,9 +154,9 @@ body {
                 <display:setProperty name="export.excel.include_header" value="true"/>
                 <display:setProperty name="export.csv.filename" value="resultsTrialSearch.csv"/>
                 <display:setProperty name="export.csv.include_header" value="true"/>
-                <display:column class="title" title="NCI Trial Identifier" sortable="true" headerScope="col" scope="row" media="html">
-                    <a href="#" onclick="viewProtocol('${row.studyProtocolId}');"><c:out value="${row.nciIdentifier}"/></a>
-                </display:column>
+                <display:column escapeXml="true" class="title" title="NCI Trial Identifier" sortable="true"
+                    property="nciIdentifier" href="searchTrialview.action" paramId="studyProtocolId" paramProperty="studyProtocolId"
+                    headerClass="sortable" headerScope="col" scope="row" media="html"/>
                 <display:column class="title" title="NCI Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
