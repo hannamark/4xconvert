@@ -591,7 +591,9 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         tree.add(node);
         when(diseaseService.getDiseaseTree()).thenReturn(tree);
         String result = sut.getDiseaseTree();
-        assertEquals("Wrong json string returned", "[{\"id\":1,\"name\":\"name value\",\"parentId\":2}]", result);
+        System.out.println(result);
+        assertEquals("Wrong json string returned",
+                "[{\"hasChildren\":null,\"id\":1,\"name\":\"name value\",\"parentId\":2}]", result);
     }
     
     /**

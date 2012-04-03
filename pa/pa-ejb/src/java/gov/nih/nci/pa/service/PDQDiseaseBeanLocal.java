@@ -228,21 +228,24 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         Query query = session.createQuery(hql);
         for (PDQDisease disease : (List<PDQDisease>) query.list()) {
             if (CollectionUtils.isEmpty(disease.getDiseaseParents())) {
-                PDQDiseaseNode node = new PDQDiseaseNode();
-                node.setId(disease.getId());
-                node.setName(disease.getPreferredName());
-                tree.add(node);
+                tree.add(getNode(disease, null, !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
             } else {
                 for (PDQDiseaseParent parent : disease.getDiseaseParents()) {
-                    PDQDiseaseNode node = new PDQDiseaseNode();
-                    node.setId(disease.getId());
-                    node.setName(disease.getPreferredName());
-                    node.setParentId(parent.getParentDisease().getId());
-                    tree.add(node);
+                    tree.add(getNode(disease, parent.getParentDisease().getId(),
+                            !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
                 }
             }
         }
         return tree;
+    }
+
+    private PDQDiseaseNode getNode(PDQDisease disease, Long parentId, Boolean hasChildren) {
+        PDQDiseaseNode node = new PDQDiseaseNode();
+        node.setId(disease.getId());
+        node.setName(disease.getPreferredName());
+        node.setParentId(parentId);
+        node.setHasChildren(hasChildren);
+        return node;
     }
 
 }

@@ -94,6 +94,7 @@ public class PDQDiseaseNode implements Serializable {
     private Long id;
     private String name;
     private Long parentId;
+    private Boolean hasChildren;
 
     /**
      * @return the id
@@ -135,5 +136,19 @@ public class PDQDiseaseNode implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the hasChildren
+     */
+    public Boolean getHasChildren() {
+        return hasChildren;
+    }
+
+    /**
+     * @param hasChildren the hasChildren to set
+     */
+    public void setHasChildren(Boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 }

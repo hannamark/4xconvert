@@ -1,6 +1,6 @@
 /**
  * Disease Filter of the Ad-Hoc Report
- * @input @global diseaseTree PDQ disease tree to run the name lookup against [{'id':'', 'name':'', 'parentId':''}, ...]
+ * @input @global diseaseTree PDQ disease tree to run the name lookup against [{'id':'', 'name':'', 'parentId':'', 'hasChildren':''}, ...]
  */
 
 var bJstreeOperationReady = true;
@@ -544,9 +544,9 @@ FiveAmUtil = {
     
         createBox : function( id, parentIds, pdqData ) {
             var bcItem = [];
-            bcItem.push({'id': id, 'name': pdqData[id].name, 'isFeatured': true});
+            bcItem.push({'id': id, 'name': pdqData[id].name, 'hasChildren':  pdqData[id].hasChildren, 'isFeatured': true});
             for( var i=0; i<parentIds.length; i++ ) 
-                bcItem.push({'id': parentIds[i], 'name': pdqData[parentIds[i]].name, 'isFeatured': false});
+                bcItem.push({'id': parentIds[i], 'name': pdqData[parentIds[i]].name, 'hasChildren': true, 'isFeatured': false});
             return bcItem.reverse();
         },
 
@@ -554,7 +554,7 @@ FiveAmUtil = {
             var bcItems = [];
             var populateBreadcrumbItem = function( bcItem, pdqData, pdqItemId, isFeatured, bcItems ) {
                 var pdqItem = pdqData[ pdqItemId ];
-                bcItem.push({'id': pdqItemId, 'name':pdqItem.name, 'isFeatured':isFeatured});
+                bcItem.push({'id':pdqItemId, 'name':pdqItem.name, 'hasChildren':pdqItem.hasChildren, 'isFeatured':isFeatured});
                 if ( pdqItem.parentId != null && !(pdqItem.parentId.length==1 && pdqItem.parentId[0]==null) ) {
                     for (var i=0 ; i < pdqItem.parentId.length ; i++ ) {
                         populateBreadcrumbItem(FiveAmUtil.breadcrumbsPkg.clone(bcItem), pdqData, pdqItem.parentId[i], false, bcItems );
@@ -598,7 +598,7 @@ FiveAmUtil = {
                     continue;
                 var pdqItem = diseaseTree[i];
                 if( !this.pdqData.hasOwnProperty( pdqItem.id ))
-                    this.pdqData[pdqItem.id] = {'name':pdqItem.name.toLowerCase(), 'parentId':[pdqItem.parentId] };
+                    this.pdqData[pdqItem.id] = {'name':pdqItem.name.toLowerCase(), 'parentId':[pdqItem.parentId], 'hasChildren':pdqItem.hasChildren};
                 else
                     this.pdqData[pdqItem.id].parentId.push(pdqItem.parentId);
             }
