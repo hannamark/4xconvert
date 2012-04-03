@@ -14,6 +14,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransform
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
+import gov.nih.nci.coppa.services.pa.grid.remote.GridSecurityJNDIServiceLocator;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeProprietaryTrialManagementEjb;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeTrialRegistrationEjb;
 import gov.nih.nci.iso21090.Bl;
@@ -35,11 +36,15 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
 import java.util.List;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -63,6 +68,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
   public gov.nih.nci.iso21090.extensions.Id amendInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationSiteIdentifier,gov.nih.nci.coppa.services.pa.StudySite[] nctIdentifierSiteIdentifiers,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing,gov.nih.nci.iso21090.extensions.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
+            checkForRegistryUserExistence();
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
             List<StudyIndldeDTO> studyIndldeDTOs = StudyIndldeTransformer.INSTANCE.convert(studyIndlde);
@@ -103,6 +109,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
   public void updateInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudySite[] studyIdentifiers,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing,gov.nih.nci.iso21090.extensions.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority,gov.nih.nci.coppa.services.pa.StudySite[] collaborators,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus[] studySiteAccrualStatuses,gov.nih.nci.coppa.services.pa.StudySite[] studySites) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
+            checkForRegistryUserExistence();
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
             StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
             List<StudySiteDTO> studyIdentifierDTOs = StudySiteTransformer.INSTANCE.convert(studyIdentifiers);
@@ -145,9 +152,24 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
       loggedInUser.setValue(identity);
       studyProtocolDTO.setUserLastCreated(loggedInUser);
   }
+  
+    private void checkForRegistryUserExistence() throws NamingException,
+            Exception {
+        String identity = SecurityManager.getManager().getCaller();
+        RegistryUserServiceRemote registryUserServiceRemote = GridSecurityJNDIServiceLocator
+                .newInstance().getRegistryUserService();
+        boolean exists = registryUserServiceRemote
+                .doesRegistryUserExist(identity);
+        if (!exists) {
+            throw new PAException(
+                    "Only valid Registry users can access the Trial Registration service. "
+                            + "Please self-register in the Registry application on the current tier.");
+        }
+    }
 
   public gov.nih.nci.iso21090.extensions.Id createCompleteInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudyOverallStatus studyOverallStatus,gov.nih.nci.coppa.services.pa.StudyIndlde[] studyIndlde,gov.nih.nci.coppa.services.pa.StudyResourcing[] studyResourcing,gov.nih.nci.coppa.services.pa.Document[] document,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person principalInvestigator,gov.nih.nci.coppa.po.Organization sponsorOrganization,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationSiteIdentifier,gov.nih.nci.coppa.services.pa.StudySite[] nctIdentifierSiteIdentifiers,gov.nih.nci.coppa.services.pa.StudyContact studyContact,gov.nih.nci.coppa.services.pa.StudySiteContact studySiteContact,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing,gov.nih.nci.iso21090.extensions.Id responsiblePartyContact,gov.nih.nci.coppa.services.pa.StudyRegulatoryAuthority studyRegulatoryAuthority) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
+          checkForRegistryUserExistence();
           StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
           StudyOverallStatusDTO overallStatusDTO = StudyOverallStatusTransformer.INSTANCE.toDto(studyOverallStatus);
           List<StudyIndldeDTO> studyIndldeDTOs = StudyIndldeTransformer.INSTANCE.convert(studyIndlde);
@@ -189,6 +211,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
   public gov.nih.nci.iso21090.extensions.Id createAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
+          checkForRegistryUserExistence();
           StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE.toDto(studyProtocol);
           StudySiteAccrualStatusDTO studySiteAccrualStatusDTO =
               StudySiteAccrualStatusTransformer.INSTANCE.toDto(studySiteAccrualStatus);
@@ -221,7 +244,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
   public gov.nih.nci.coppa.services.pa.Ed getCtGovXml(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
 
-     try {
+     try {          
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
           return EdTransformer.INSTANCE.toXml(EDTransformer.INSTANCE.toXml(trialRegService.getCTGovXml(iiDto)));
       } catch (Exception e) {
@@ -256,6 +279,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             throws RemoteException,
             gov.nih.nci.coppa.services.pa.faults.PAFault {
         try {
+            checkForRegistryUserExistence();
             StudyProtocolDTO studyProtocolDTO = InterventionalStudyProtocolTransformer.INSTANCE
                     .toDto(studyProtocol);
             defaultingUserLoggedIn(studyProtocolDTO);

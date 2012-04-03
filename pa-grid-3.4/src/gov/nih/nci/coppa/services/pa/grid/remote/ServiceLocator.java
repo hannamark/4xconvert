@@ -111,6 +111,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import javax.naming.NamingException;
 
@@ -315,4 +316,12 @@ public interface ServiceLocator {
     * @throws NamingException if unable to lookup.
     */
    CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws NamingException;
+   
+    /**
+     * RegistryUserServiceRemote.
+     * @return RegistryUserServiceRemote
+     * @throws NamingException NamingException
+     */
+    RegistryUserServiceRemote getRegistryUserService() throws NamingException;
+
 }
