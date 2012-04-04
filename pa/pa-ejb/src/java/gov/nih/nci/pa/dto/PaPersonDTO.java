@@ -108,8 +108,6 @@ public class PaPersonDTO {
     private String url;
     private List<String> emailList;
     private String title;
-    private String affiliateOrg;
-
     /*
      * This field is used to further identify this person whether he is primary contact or not
      */
@@ -475,21 +473,5 @@ public class PaPersonDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * 
-     * @return Organization name the person is affiliated to.
-     */
-    public String getAffiliateOrg() {
-        return affiliateOrg;
-    }
-
-    /**
-     * Set Organization name the person is affiliated to.
-     * @param affiliateOrg Organization name the person is affiliated to.
-     */
-    public void setAffiliateOrg(String affiliateOrg) {
-        this.affiliateOrg = affiliateOrg;
     }
 }

@@ -52,6 +52,10 @@
 			<span class="label">Trial Submitter:</span>
 			<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.lastCreated.userLastCreatedUsername }"/></a></span>
 		</div>
+		<div class="row">
+            <span class="label">Trial Submitter Organization:</span>
+            <span class="value"><c:out value="${sessionScope.trialSubmitterOrg}"/></span>
+        </div>
 	    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
             <div class="row">
                 <span class="label"><fmt:message key="studyProtocol.amendmentDate"/>:</span>

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CheckOutType;
@@ -289,6 +290,17 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                 session.setAttribute("ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
                     .convertToStudyProtocolIi(studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
             }
+            String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
+            String trialSubmitterOrg = "";
+            RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
+            if (userInfo.getAffiliatedOrganizationId() != null) {
+                PAServiceUtils servUtil = new PAServiceUtils();
+                trialSubmitterOrg = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
+                        .valueOf(userInfo.getAffiliatedOrganizationId())));
+            } else {
+                trialSubmitterOrg = userInfo.getAffiliateOrg();
+            }
+            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
             return SHOW_VIEW;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());

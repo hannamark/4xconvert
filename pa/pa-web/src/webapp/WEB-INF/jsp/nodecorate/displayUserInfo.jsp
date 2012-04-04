@@ -39,8 +39,8 @@
 	    <td class="value" colspan="2"><s:property value="webDTO.telephone"/></td>	        
 	</tr>
     <tr>
-        <td scope="row" class="label" style="width:250px" align="right"><b>Organization:</b></td>
-        <td class="value" colspan="2"><s:property value="webDTO.affiliateOrg"/></td>           
+        <td scope="row" class="label" style="width:250px" align="right"><b>Trial Submitter Organization:</b></td>
+        <td class="value" colspan="2"><c:out value="${sessionScope.trialSubmitterOrg}"/></td>           
     </tr>		
 	</s:if>	
 </table>
