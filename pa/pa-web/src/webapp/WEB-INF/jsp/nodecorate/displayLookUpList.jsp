@@ -10,7 +10,7 @@
 	<display:column escapeXml="true" title="Public Id" property="publicId"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="Description" property="description"  headerClass="sortable"/>
 	<display:column title="Action" class="action" sortable="false">
-		<a href="#" class="btn" onclick="submitLookUp('${row.id}','${row.divName}','${row.type}')">
+		<a href="javascript:void(0)" class="btn" onclick="submitLookUp('${row.id}','${row.divName}','${row.type}')">
 		<span class="btn_img"><span class="add">Select</span></span></a>
 	</display:column>
 </display:table>

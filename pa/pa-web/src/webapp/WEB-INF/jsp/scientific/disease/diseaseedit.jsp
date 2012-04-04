@@ -57,7 +57,7 @@
                                 <ul class="btnrow">
                                     <li>
                                         <s:if test="%{currentAction == 'edit'}">
-                                            <s:a href="#" cssClass="btn" onclick="diseaseUpdate();">
+                                            <s:a href="javascript:void(0)" cssClass="btn" onclick="diseaseUpdate();">
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
                                         </s:if> 

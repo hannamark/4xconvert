@@ -85,8 +85,8 @@
                             <li>
                                 <div><label for="includeXml"><fmt:message key="${pagePrefix}includeXml"/></label>  
                                 <s:checkbox id="includeXml" name="includeXml" /></div>
-                                <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search"><fmt:message key="${pagePrefix}button.search" /></span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin(true);"><span class="btn_img"><span class="close"><fmt:message key="${pagePrefix}button.close" /></span></span></s:a>  
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search"><fmt:message key="${pagePrefix}button.search" /></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin(true);"><span class="btn_img"><span class="close"><fmt:message key="${pagePrefix}button.close" /></span></span></s:a>  
                             </li>
                         </ul>
                     </del>

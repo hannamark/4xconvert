@@ -177,14 +177,14 @@
                                             <ul class="btnrow">
                                                 <li>
                                                     <s:if test="%{currentAction == 'create'}">
-                                                        <s:a href="#" cssClass="btn" onclick="accessAdd();"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                                                        <s:a href="javascript:void(0)" cssClass="btn" onclick="accessAdd();"><span class="btn_img"><span class="save">Save</span></span></s:a>
                                                     </s:if>
                                                     <s:else>
-                                                        <s:a href="#" cssClass="btn" onclick="accessUpdate();"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                                                        <s:a href="javascript:void(0)" cssClass="btn" onclick="accessUpdate();"><span class="btn_img"><span class="save">Save</span></span></s:a>
                                                     </s:else>
                                                 </li>
                                                 <li>
-                                                    <s:a href="#" cssClass="btn" onclick="cancel();">
+                                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="cancel();">
                                                         <span class="btn_img"><span class="cancel">Cancel</span></span>
                                                     </s:a>
                                                 </li>

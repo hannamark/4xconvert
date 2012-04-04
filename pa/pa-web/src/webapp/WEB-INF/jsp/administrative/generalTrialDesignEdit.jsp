@@ -344,7 +344,7 @@
                                       <td>
                                           <ul style="margin-top:-1px;">
                                               <li style="padding-left:0">
-                                                  <a href="#" class="btn" onclick="lookupGenericCentralContact();" title="Opens a popup form to select Central Contact">
+                                                  <a href="javascript:void(0)" class="btn" onclick="lookupGenericCentralContact();" title="Opens a popup form to select Central Contact">
                                                       <span class="btn_img"><span class="person">Look Up Generic Contact</span></span>
                                                   </a>
                                               </li>
@@ -385,7 +385,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
-                                <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

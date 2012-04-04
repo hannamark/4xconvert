@@ -114,10 +114,10 @@
                                 <del class="btnwrapper">
                                     <ul class="btnrow">
                                         <li>
-                                            <s:a cssClass="btn" href="#" onclick="document.forms[0].submit();">
+                                            <s:a cssClass="btn" href="javascript:void(0)" onclick="document.forms[0].submit();">
                                                 <span class="btn_img"><span class="add">Save</span></span>
                                             </s:a>
-                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="#" cssClass="btn">
+                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
                                                 <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
                                         </li>

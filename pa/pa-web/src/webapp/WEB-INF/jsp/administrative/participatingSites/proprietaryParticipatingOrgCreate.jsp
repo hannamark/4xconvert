@@ -170,7 +170,7 @@
                                     </td>
                                     <td>
                                         <ul class="btnrow">         
-                                            <li style="padding-left:0"><a href="#" class="btn" onclick="lookupStatusHistory()"><span class="btn_img"><span class="history">History</span></span></a></li>
+                                            <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookupStatusHistory()"><span class="btn_img"><span class="history">History</span></span></a></li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -230,7 +230,7 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <li><a href="#" class="btn" onclick="save();"><span class="btn_img"><span class="add" >Save </span></span></a></li>
+                            <li><a href="javascript:void(0)" class="btn" onclick="save();"><span class="btn_img"><span class="add" >Save </span></span></a></li>
                             <li><a href="participatingOrganizations.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Cancel</span></span></a></li>
                         </ul>   
                     </del>

@@ -69,7 +69,7 @@
 						<div class="actionsrow">
 							<del class="btnwrapper">
 								<ul class="btnrow">
-									<li><s:a cssClass="btn" href="#"
+									<li><s:a cssClass="btn" href="javascript:void(0)"
 											onclick="document.forms[0].submit();">
 											<span class="btn_img">Submit</span>
 										</s:a> <s:a href="%{cancelUrl}" cssClass="btn">

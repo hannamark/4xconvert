@@ -148,7 +148,7 @@
                          <td>  
                             <ul style="margin-top:-3px;">
                                 <li style="padding-left:0">
-                                    <a href="#" class="btn" onclick="lookup();"><span class="btn_img"><span class="search">Look Up</span></span></a>
+                                    <a href="javascript:void(0)" class="btn" onclick="lookup();"><span class="btn_img"><span class="search">Look Up</span></span></a>
                                 </li>
                             </ul>
                          </td>
@@ -207,7 +207,7 @@
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
                                 <li>
-                                    <s:a href="#" cssClass="btn" onclick="irbSave();"><span class="btn_img"> <span class="save">Save</span></span></s:a>
+                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="irbSave();"><span class="btn_img"> <span class="save">Save</span></span></s:a>
                                 </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>

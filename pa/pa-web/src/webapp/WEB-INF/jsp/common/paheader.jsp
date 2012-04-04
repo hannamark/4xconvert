@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <div id="header">
-   <div id="logo"><a href="#"><img src="<%=request.getContextPath()%>/images/logo_pa.gif" width="264" height="43" alt="PA | Protocol Abstraction" /></a></div>
+   <div id="logo"><a href="javascript:void(0)"><img src="<%=request.getContextPath()%>/images/logo_pa.gif" width="264" height="43" alt="PA | Protocol Abstraction" /></a></div>
     <!--User Details-->
   	<c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">

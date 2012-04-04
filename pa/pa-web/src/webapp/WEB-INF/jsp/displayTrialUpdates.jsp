@@ -7,7 +7,7 @@
     <display:column escapeXml="false" titleKey="trialHistoryUpdate.updatedDate" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="false" headerClass="sortable"/>
     <display:column escapeXml="true" titleKey="trialHistoryUpdate.updateReason" property="comment" headerClass="sortable" sortable="false" />
     <display:column class="title" titleKey="trialHistoryUpdate.accept" sortable="false" >
-        <a href="#" class="title" onclick="javascript:acceptTrialUpdate('${row.id}');">Accept</a>
+        <a href="javascript:void(0)" class="title" onclick="javascript:acceptTrialUpdate('${row.id}');">Accept</a>
     </display:column>
 </display:table>
 </s:form>

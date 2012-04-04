@@ -8,7 +8,7 @@
     <display:column title="Public Id" property="viewPublicId"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Version" property="version"  headerClass="sortable"/>
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
-           <a href="#" class="btn" onclick="top.window.loadDiv('${row.id}')">
+           <a href="javascript:void(0)" class="btn" onclick="top.window.loadDiv('${row.id}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>
     </display:column>

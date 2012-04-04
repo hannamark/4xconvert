@@ -206,7 +206,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
-                                <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

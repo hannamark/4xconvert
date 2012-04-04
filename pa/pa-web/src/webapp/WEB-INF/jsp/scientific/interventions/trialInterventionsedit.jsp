@@ -141,18 +141,18 @@
                                 <ul class="btnrow">
                                     <li>
                                         <s:if test="%{currentAction == 'edit'}">
-                                            <s:a href="#" cssClass="btn" onclick="interventionUpdate();">
+                                            <s:a href="javascript:void(0)" cssClass="btn" onclick="interventionUpdate();">
                                                 <span class="btn_img"><span class="save"><fmt:message key="interventions.button.save" /></span></span>
                                             </s:a>
                                         </s:if> 
                                         <s:else>
-                                            <s:a href="#" cssClass="btn" onclick="interventionAdd();">
+                                            <s:a href="javascript:void(0)" cssClass="btn" onclick="interventionAdd();">
                                                 <span class="btn_img"><span class="save"><fmt:message key="interventions.button.save" /></span></span>
                                             </s:a>
                                         </s:else>
                                     </li>
                                     <li>
-                                        <s:a href="#" cssClass="btn" onclick="cancel();">
+                                        <s:a href="javascript:void(0)" cssClass="btn" onclick="cancel();">
                                             <span class="btn_img"><span class="cancel"><fmt:message key="interventions.button.cancel" /></span></span>
                                         </s:a>
                                     </li>

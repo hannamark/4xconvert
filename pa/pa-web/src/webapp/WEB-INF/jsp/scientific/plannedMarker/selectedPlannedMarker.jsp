@@ -19,7 +19,7 @@
         <td class="value">
             <ul style="margin-top: -6px;">
                 <li style="padding-left: 0">
-                    <s:a href="#" cssClass="btn" id="cadsrLookup" onclick="cadsrLookup();">
+                    <s:a href="javascript:void(0)" cssClass="btn" id="cadsrLookup" onclick="cadsrLookup();">
                         <span class="btn_img"><span class="search"><fmt:message key="plannedMarker.caDSR"/></span></span>
                     </s:a>
                 </li>

@@ -4,4 +4,4 @@
 <%@ attribute name="imgClass" required="false" type="java.lang.String" description="The css class for the image" %>
 <%@ attribute name="labelKey" required="true" type="java.lang.String" description="The key of the label message" %>
 
-<li><a href="#" class="btn" id="${id}"><span class="btn_img"><span class="${imgClass}"><fmt:message key="${labelKey}"/></span></span></a></li>
+<li><a href="javascript:void(0)" class="btn" id="${id}"><span class="btn_img"><span class="${imgClass}"><fmt:message key="${labelKey}"/></span></span></a></li>

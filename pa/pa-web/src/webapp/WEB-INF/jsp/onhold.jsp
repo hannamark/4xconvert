@@ -57,7 +57,7 @@
                                 <pa:displayWhenCheckedOut>
                                     <display:column titleKey="onhold.edit" headerClass="centered" class="action">
                                         <c:if test="${(row.dateHigh==null)}">
-                                            <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                                            <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.identifier})">
                                                 <img src="${imagePath}/ico_edit.gif" alt="Edit" width="16" height="16" />
                                             </s:a>
                                         </c:if>

@@ -54,7 +54,7 @@ function handleCreate(){
                 <display:column escapeXml="true" property="functionalRole" titleKey="participatingOrganizations.functionalRole" class="sortable" />
                 <pa:adminAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
+                        <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.id})">
                             <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                         </s:a>
                     </display:column>
@@ -69,7 +69,7 @@ function handleCreate(){
     <div class="actionsrow"><del class="btnwrapper">
         <ul class="btnrow">
             <pa:adminAbstractorDisplayWhenCheckedOut>
-                <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
                 <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
                     <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected collaborator(s) from the study. Cancel to abort.', 'collaboratorsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected collaborator(s) from the study. Cancel to abort.', 'collaboratorsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                     <li><pa:toggleDeleteBtn/></li>

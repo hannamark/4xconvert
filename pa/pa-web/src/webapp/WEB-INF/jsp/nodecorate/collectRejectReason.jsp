@@ -30,9 +30,9 @@
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:a href="#" cssClass="btn" onclick="submitform();"><span class="btn_img"><span class="save">Submit</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close">Close</span></span></s:a>
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="submitform();"><span class="btn_img"><span class="save">Submit</span></span></s:a>
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close">Close</span></span></s:a>
                 </li>
             </ul>   
         </del>

@@ -7,7 +7,7 @@
         <td> 
             <ul style="margin-top:-1px;">
                 <li style="padding-left:0">
-                    <a href="#" class="btn" onclick="lookup4sponsor();"/>
+                    <a href="javascript:void(0)" class="btn" onclick="lookup4sponsor();"/>
                         <span class="btn_img"><span class="organization">Look Up Sponsor</span></span>
                     </a>
                 </li>

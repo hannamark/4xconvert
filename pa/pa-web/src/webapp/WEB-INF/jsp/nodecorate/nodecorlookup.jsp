@@ -71,7 +71,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>         
-                               <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search"><fmt:message key="${pagePrefix}button.search" /></span></span></s:a>
+                               <s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search"><fmt:message key="${pagePrefix}button.search" /></span></span></s:a>
                             </li>
                         </ul>   
                     </del>

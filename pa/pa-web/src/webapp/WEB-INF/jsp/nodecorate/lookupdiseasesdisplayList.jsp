@@ -12,12 +12,12 @@
         <display:column title="Select" headerClass="centered" sortable="false">
             <c:choose>
             <c:when test="${!row.selected && row.menuDisplayName != null && row.menuDisplayName != ''}">
-                <a href="#" class="btn" onclick="addDisease('${row.diseaseIdentifier}')">
+                <a href="javascript:void(0)" class="btn" onclick="addDisease('${row.diseaseIdentifier}')">
                     <span class="btn_img"><span class="add">Add</span></span>
                 </a>
             </c:when>
             <c:when test="${row.selected}">
-                <a href="#" class="btn" onclick="removeDisease('${row.studyDiseaseIdentifier}')">
+                <a href="javascript:void(0)" class="btn" onclick="removeDisease('${row.studyDiseaseIdentifier}')">
                     <span class="btn_img"><span class="add">Remove</span></span>
                 </a>
             </c:when>

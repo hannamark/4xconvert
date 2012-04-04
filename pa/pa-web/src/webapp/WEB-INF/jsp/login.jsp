@@ -94,7 +94,7 @@ function validateForm() {
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="validateForm();" id="loginLink"><span class="btn_img"><span class="login">Login</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="validateForm();" id="loginLink"><span class="btn_img"><span class="login">Login</span></span></s:a>
                     </li>
                 </ul>
             </del>

@@ -96,12 +96,12 @@
                                 <ul class="btnrow">
                                     <li>
                                         <s:if test="%{currentAction == 'edit'}">
-                                            <s:a href="#" cssClass="btn" onclick="facilityUpdate();">
+                                            <s:a href="javascript:void(0)" cssClass="btn" onclick="facilityUpdate();">
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
                                         </s:if> 
                                         <s:else>
-                                            <s:a href="#" cssClass="btn" onclick="facilitySave();">
+                                            <s:a href="javascript:void(0)" cssClass="btn" onclick="facilitySave();">
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
                                         </s:else>

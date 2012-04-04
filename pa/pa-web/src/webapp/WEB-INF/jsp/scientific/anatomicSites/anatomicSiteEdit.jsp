@@ -54,7 +54,7 @@
             <div class="actionsrow"><del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:a href="#" cssClass="btn" onclick="anatomicSiteAdd();">
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="anatomicSiteAdd();">
                         <span class="btn_img"> <span class="save">Save</span></span>
                     </s:a>
                     <s:a href="%{cancelUrl}" cssClass="btn">

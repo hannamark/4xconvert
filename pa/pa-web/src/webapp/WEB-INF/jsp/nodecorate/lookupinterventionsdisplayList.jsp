@@ -11,7 +11,7 @@
     <display:column escapeXml="true" title="CTGOV<br>Type Code" property="ctGovType"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Description" property="description"  headerClass="sortable"/>
     <display:column title="Action" headerClass="centered" class="action" sortable="false">
-        <a href="#" class="btn" onclick="submitform('${row.identifier}')">
+        <a href="javascript:void(0)" class="btn" onclick="submitform('${row.identifier}')">
             <span class="btn_img"><span class="add">Select</span></span>
         </a>
     </display:column>

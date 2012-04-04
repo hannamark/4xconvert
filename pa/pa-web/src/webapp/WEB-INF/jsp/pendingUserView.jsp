@@ -68,8 +68,8 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">         
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="handleAction('accept')"><span class="btn_img"><span class="save">Accept</span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="handleAction('reject')"><span class="btn_img"><span class="cancel">Reject</span></span></s:a>  
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction('accept')"><span class="btn_img"><span class="save">Accept</span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction('reject')"><span class="btn_img"><span class="cancel">Reject</span></span></s:a>  
                             </li>
                         </ul>   
                     </del>

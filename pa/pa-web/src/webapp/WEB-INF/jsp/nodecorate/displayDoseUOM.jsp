@@ -5,7 +5,7 @@
                     cssStyle="width:120px;float:left" cssClass="readonly"/> 
        
              <ul style="margin-top: -7px;">
-                <li style="padding-left: 0"><a href="#" class="btn"
+                <li style="padding-left: 0"><a href="javascript:void(0)" class="btn"
                     onclick="lookupDoseUOM();" /><span class="btn_img"><span
                     class="search">Look Up</span></span></a></li>
             </ul>

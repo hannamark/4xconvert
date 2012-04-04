@@ -86,7 +86,7 @@
                 </display:column>
                 <pa:displayWhenCheckedOut>       
 	                <display:column class="title" titleKey="studyProtocol.action">
-	                    <a href="#" onclick="removeOwner('${row.id}');">Remove Ownership</a>
+	                    <a href="javascript:void(0)" onclick="removeOwner('${row.id}');">Remove Ownership</a>
 	                </display:column>
                 </pa:displayWhenCheckedOut>              
             </display:table>
@@ -150,7 +150,7 @@
 	                                                         cssClass="readonly"/>
 	                                        </td>
 	                                        <td>
-	                                            <a href="#" class="btn" onclick="lookup4loadorg();" />
+	                                            <a href="javascript:void(0)" class="btn" onclick="lookup4loadorg();" />
 	                                                <span class="btn_img"><span class="organization">Look Up Org</span></span>
 	                                            </a>
 	                                            <s:hidden name="criteria.affiliatedOrgId" id="affiliatedOrgId" />
@@ -165,10 +165,10 @@
 	                    <del class="btnwrapper">
 	                        <ul class="btnrow">
 	                            <li>
-	                                <s:a href="#" cssClass="btn" onclick="searchForUsers();">
+	                                <s:a href="javascript:void(0)" cssClass="btn" onclick="searchForUsers();">
 	                                    <span class="btn_img"><span class="search"><fmt:message key="assignOwnership.buttons.search" /></span></span>
 	                                </s:a> 
-	                                <s:a href="#" cssClass="btn" onclick="resetSearch();">
+	                                <s:a href="javascript:void(0)" cssClass="btn" onclick="resetSearch();">
 	                                    <span class="btn_img"><span class="cancel"><fmt:message key="assignOwnership.buttons.reset" /></span></span>
 	                                </s:a>
 	                            </li>
@@ -193,10 +193,10 @@
 	                        <display:column class="title" titleKey="studyProtocol.action">
 	                            <c:choose>
 	                                <c:when test="${results.owner == true}">
-	                                    <a href="#" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
+	                                    <a href="javascript:void(0)" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
 	                                </c:when>
 	                                <c:otherwise>
-	                                    <a href="#" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
+	                                    <a href="javascript:void(0)" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
 	                                </c:otherwise>
 	                            </c:choose>
 	                        </display:column>

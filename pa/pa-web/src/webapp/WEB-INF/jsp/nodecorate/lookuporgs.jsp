@@ -143,11 +143,11 @@
                  <del class="btnwrapper">
                      <ul class="btnrow">
                          <li>
-                           <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search"><fmt:message key="popUpOrg.button.search"/></span></span></s:a>
+                           <s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search"><fmt:message key="popUpOrg.button.search"/></span></span></s:a>
                            <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor}">
-                             <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn"><span class="btn_img"><span class="add">Add Org</span></span></s:a>
+                             <s:a href="javascript:void(0)" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn"><span class="btn_img"><span class="add">Add Org</span></span></s:a>
                            </c:if>
-                           <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel"><fmt:message key="popUpOrg.button.reset"/></span></span></s:a>
+                           <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel"><fmt:message key="popUpOrg.button.reset"/></span></span></s:a>
                          </li>
                      </ul>   
                  </del>

@@ -39,7 +39,7 @@
 
     <div class="actionsrow"><del class="btnwrapper"><ul class="btnrow">
         <li>
-            <s:a href="#" cssClass="btn" onclick="handleClose()"><span class="btn_img"><span class="logout">Close</span></span></s:a>
+            <s:a href="javascript:void(0)" cssClass="btn" onclick="handleClose()"><span class="btn_img"><span class="logout">Close</span></span></s:a>
         </li>
     </ul></del></div>
 
@@ -51,7 +51,7 @@
           <display:table name="parentList" id="row" class="data">
             <display:column escapeXml="true" property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
             <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
-                <s:a href="#" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
+                <s:a href="javascript:void(0)" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
                     <img src="<%=request.getContextPath()%>/images/ico_search.gif" alt="View" width="16" height="16" />
                 </s:a>
             </display:column>
@@ -64,7 +64,7 @@
           <display:table name="childList" id="row" class="data">
             <display:column escapeXml="true" property="preferredName" titleKey="disease.preferredName" headerClass="small"/>
             <display:column titleKey="disease.view" headerClass="centeredsmall" class="action" style="width:30%">
-                <s:a href="#" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
+                <s:a href="javascript:void(0)" onclick="callParentHandleView(%{#attr.row.diseaseIdentifier})">
                     <img src="<%=request.getContextPath()%>/images/ico_search.gif" alt="View" width="16" height="16" />
                 </s:a>
             </display:column>

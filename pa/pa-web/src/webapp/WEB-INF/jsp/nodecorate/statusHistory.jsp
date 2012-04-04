@@ -34,7 +34,7 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="closepopup()"><span class="btn_img"><span class="logout">Close</span></span></s:a>  
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="closepopup()"><span class="btn_img"><span class="logout">Close</span></span></s:a>  
                     </li>
                 </ul>
             </del>

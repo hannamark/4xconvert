@@ -12,7 +12,7 @@
 		</td>			        
 		<td class="value">
 			<ul style="margin-top:-6px;">			
-				<li style="padding-left:0"><a href="#" class="btn" onclick="lookupcontactperson();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
+				<li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookupcontactperson();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
 			</ul>
 		</td> 
 	</tr>
@@ -39,7 +39,7 @@
     <td>
         <ul style="margin-top:-5px;">              
             <li style="padding-left:0">
-            <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4genericcontact();" title="Opens a popup form to select Site Contact"/><span class="btn_img">
+            <a href="javascript:void(0)" class="btn" id="lookupbtn4RP" onclick="lookup4genericcontact();" title="Opens a popup form to select Site Contact"/><span class="btn_img">
             <span class="person">Look Up Generic Contact</span></span></a>
             </li>
         </ul>

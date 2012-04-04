@@ -62,7 +62,7 @@ function handleAction(studyProtocolIi){
         
         <pa:adminAbstractorDisplayWhenCheckedOut>
             <display:column title="Edit" class="action">
-                <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
+                <s:a href="javascript:void(0)" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column title="Delete" class="action">
         	   <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>

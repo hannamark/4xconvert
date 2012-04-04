@@ -56,7 +56,7 @@ function handleCreate(){
                 <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable"  />
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="interventions.edit" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
+                        <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
                             <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                         </s:a>
                     </display:column>
@@ -71,7 +71,7 @@ function handleCreate(){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
-            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
             <s:if test="%{interventionsList != null && !interventionsList.isEmpty()}">
                 <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                 <li><pa:toggleDeleteBtn/></li>

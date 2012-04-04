@@ -6,7 +6,7 @@
            
                  <ul style="margin-top: -7px;">
                     <li style="padding-left: 0">
-                        <a href="#" class="btn" onclick="lookupUOM();">
+                        <a href="javascript:void(0)" class="btn" onclick="lookupUOM();">
                             <span class="btn_img">
                                 <span class="search">Look Up</span>
                             </span>

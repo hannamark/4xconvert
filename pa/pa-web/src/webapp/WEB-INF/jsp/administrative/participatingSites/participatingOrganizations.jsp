@@ -61,7 +61,7 @@ function handleEdit(studyResourcingId){
                     <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
                     <pa:adminAbstractorDisplayWhenCheckedOut>
                         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
-                            <s:a href="#" onclick="handleEdit(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
+                            <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>
                         </display:column>
                         <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action" >
                             <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>

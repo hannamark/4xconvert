@@ -49,10 +49,10 @@
             <c:if test="${sessionScope.isSuAbstractor}">
                 <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable">
                 	<s:if test="%{#attr.row.adminCheckout.checkoutBy != null}">
-                		<a href="#" onclick="adminCheckIn('${row.studyProtocolId}')">Check-In (Admin)</a><br/>
+                		<a href="javascript:void(0)" onclick="adminCheckIn('${row.studyProtocolId}')">Check-In (Admin)</a><br/>
                     </s:if>
                     <s:if test="%{#attr.row.scientificCheckout.checkoutBy != null}">
-                        <a href="#" onclick="scientificCheckIn('${row.studyProtocolId}')">Check-In (Scientific)</a><br/>
+                        <a href="javascript:void(0)" onclick="scientificCheckIn('${row.studyProtocolId}')">Check-In (Scientific)</a><br/>
                     </s:if>
                 </display:column>
             </c:if>

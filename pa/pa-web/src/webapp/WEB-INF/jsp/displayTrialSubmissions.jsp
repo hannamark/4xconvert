@@ -16,7 +16,7 @@
     <pa:displayWhenCheckedOut>
         <display:column title="Action" headerClass="centered" class="action">
             <s:if test="%{#attr.row.submissionNumber != 1}">
-                <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.identifier})">
                     <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                 </s:a>
             </s:if>

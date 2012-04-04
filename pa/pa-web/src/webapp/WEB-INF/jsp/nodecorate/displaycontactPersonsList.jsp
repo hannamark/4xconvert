@@ -10,7 +10,7 @@
 	<display:column escapeXml="true" title="Last Name" property="lastName"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="E-mails" property="email" />
 	<display:column title="Action" class="action" sortable="false">
-	<a href="#" class="btn" onclick="callCreateContactPerson('${row.id}')">
+	<a href="javascript:void(0)" class="btn" onclick="callCreateContactPerson('${row.id}')">
 		<span class="btn_img"><span class="add">Select</span></span></a>
 	</display:column>
 </display:table>

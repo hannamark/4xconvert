@@ -52,7 +52,7 @@ function handleEdit(rowId){
                 <display:column escapeXml="true" property="statusCode" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
                 <pa:displayWhenCheckedOut>
                     <display:column titleKey="manageAccrualAccess.edit" headerClass="centered" class="action">
-                        <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                        <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.identifier})">
                             <img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" />
                         </s:a>
                     </display:column>
@@ -63,7 +63,7 @@ function handleEdit(rowId){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:displayWhenCheckedOut>
-            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
         </pa:displayWhenCheckedOut>
     </ul>
     </del></div>

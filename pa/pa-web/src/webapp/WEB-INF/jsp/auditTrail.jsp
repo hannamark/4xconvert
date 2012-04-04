@@ -74,7 +74,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <s:a href="#" cssClass="btn" onclick="$('auditTrailForm').submit();">
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="$('auditTrailForm').submit();">
                                 <span class="btn_img"><span class="confirm"><fmt:message key="auditTrail.view"/></span></span>
                             </s:a>
                         </td>

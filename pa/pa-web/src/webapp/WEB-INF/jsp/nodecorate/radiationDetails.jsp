@@ -125,7 +125,7 @@
        <td>
         </td>    
          <td>
-            <s:a href="#" cssClass="btn" onclick="generate();">
+            <s:a href="javascript:void(0)" cssClass="btn" onclick="generate();">
               <span class="btn_img"><span class="submit">Generate</span></span>
          </s:a>
     </td>

@@ -8,7 +8,7 @@
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.description" property="vmDescription" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.publicId" property="publicId" headerClass="sortable" />
         <display:column title="Select" headerClass="centered" class="action" sortable="false">
-            <a href="#" class="btn" onclick="top.window.loadDiv('${row.id}')">
+            <a href="javascript:void(0)" class="btn" onclick="top.window.loadDiv('${row.id}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>
         </display:column>

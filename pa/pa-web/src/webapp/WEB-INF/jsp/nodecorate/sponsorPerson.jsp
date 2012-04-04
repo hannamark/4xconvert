@@ -6,7 +6,7 @@
 <%--<input type="button" value="Look Up" onclick="lookupPerson();"/>--%>
 </td><td> 
                   <ul style="margin-top:-1px;">             
-                        <li style="padding-left:0"><a href="#" class="btn" onclick="lookupPerson();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
+                        <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookupPerson();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
                   </ul><s:hidden name="gtdDTO.responsiblePersonIdentifier" />
                   </td>
       </tr>

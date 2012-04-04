@@ -6,7 +6,7 @@
 <td class="value">
     <ul style="margin-top:-5px;">              
         <li style="padding-left:0">
-         <a href="#" class="btn" onclick="lookupperson();" title="Opens a popup form to select Principal Investigator"/>
+         <a href="javascript:void(0)" class="btn" onclick="lookupperson();" title="Opens a popup form to select Principal Investigator"/>
          <span class="btn_img"><span class="person">Look Up Person</span></span></a>
         </li>
     </ul>

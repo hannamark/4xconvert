@@ -112,12 +112,12 @@
                                         <del class="btnwrapper">
                                             <ul class="btnrow">
                                                 <li>
-                                                    <s:a href="#" cssClass="btn" onclick="milestoneAdd();">
+                                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="milestoneAdd();">
                                                         <span class="btn_img"> <span class="save">Save</span></span>
                                                     </s:a>
                                                 </li>
                                                 <li>
-                                                    <s:a href="#" cssClass="btn" onclick="cancel();">
+                                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="cancel();">
                                                         <span class="btn_img"><span class="cancel">Cancel</span></span>
                                                     </s:a>
                                                 </li>

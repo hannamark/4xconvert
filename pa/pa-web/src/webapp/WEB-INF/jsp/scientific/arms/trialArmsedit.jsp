@@ -106,7 +106,7 @@
             <s:set name="intList" value="intList" scope="request"/>
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
-                    <s:a href="#" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
+                    <s:a href="javascript:void(0)" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
                         <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
                     </s:a>
                 </display:column>
@@ -122,19 +122,19 @@
         <ul class="btnrow">
             <li>
             <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editGroup')}">
-                <s:a href="#" cssClass="btn" onclick="armUpdate();">
+                <s:a href="javascript:void(0)" cssClass="btn" onclick="armUpdate();">
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
             </s:if>
             <s:elseif test="%{(currentAction == 'editNewArm')||(currentAction == 'editNewGroup')}">
-                <s:a href="#" cssClass="btn" onclick="armAdd();">
+                <s:a href="javascript:void(0)" cssClass="btn" onclick="armAdd();">
                     <span class="btn_img"> <span class="save">Save</span></span>
                 </s:a>
             </s:elseif>
-            <s:a href="#" cssClass="btn" onclick="resetValues();return false">
+            <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false">
                 <span class="btn_img"><span class="cancel">Reset</span></span>
             </s:a>
-            <s:a href="#" cssClass="btn" onclick="cancel();">
+            <s:a href="javascript:void(0)" cssClass="btn" onclick="cancel();">
                <span class="btn_img"><span class="cancel">Cancel</span></span>
             </s:a>
             </li>

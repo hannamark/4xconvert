@@ -67,12 +67,12 @@ function handleCreateGroup(){
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="arms.edit" headerClass="centered" class="action">
                         <s:if test="%{currentAction == 'listArm'}">
-                            <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
+                            <s:a href="javascript:void(0)" onclick="handleEditArm(%{#attr.row.identifier})">
                                 <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                             </s:a>
                         </s:if>
                         <s:elseif test="%{currentAction == 'listGroup'}">
-                            <s:a href="#" onclick="handleEditGroup(%{#attr.row.identifier})">
+                            <s:a href="javascript:void(0)" onclick="handleEditGroup(%{#attr.row.identifier})">
                                 <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                             </s:a>
                         </s:elseif>
@@ -89,14 +89,14 @@ function handleCreateGroup(){
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
             <s:if test="%{currentAction == 'listArm'}">
-                <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateArm();"><span class="btn_img"><span class="add">Add </span></span></a></li>
                 <s:if test="%{armList != null && !armList.isEmpty()}">
                     <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                     <li><pa:toggleDeleteBtn/></li>
                 </s:if>                
             </s:if>
             <s:elseif test="%{currentAction == 'listGroup'}">
-                <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
             </s:elseif>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>

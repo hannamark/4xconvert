@@ -113,10 +113,10 @@
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:a href="#" cssClass="btn" onclick="sendEmail();">
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="sendEmail();">
                         <span class="btn_img"><span class="save">Send Email</span></span>
                     </s:a>
-                    <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();">
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();">
                         <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.cancel"/></span></span>
                     </s:a>
                 </li>

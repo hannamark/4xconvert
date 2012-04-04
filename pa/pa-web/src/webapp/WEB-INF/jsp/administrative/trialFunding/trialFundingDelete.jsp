@@ -61,7 +61,7 @@ function handleAction(){
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Done</span></span></s:a></li>                
+                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Done</span></span></s:a></li>                
                 </ul>   
             </del>
         </div>

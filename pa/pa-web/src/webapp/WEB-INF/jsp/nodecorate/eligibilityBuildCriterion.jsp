@@ -23,7 +23,7 @@
                         <s:hidden name="webDTO.cdeVersionNumber"/>
                           <ul >              
                     <li >
-                     <a href="#" class="btn" id="criteriaNameLookup" onclick="lookup();" />
+                     <a href="javascript:void(0)" class="btn" id="criteriaNameLookup" onclick="lookup();" />
                      <span class="btn_img"><span class="search">Look Up</span></span></a>
                     </li>
                 </ul>
@@ -156,7 +156,7 @@
                      
                    </td>
                     <td class="value">
-                    <s:a href="#" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Description  Text</span></span></s:a>
+                    <s:a href="javascript:void(0)" cssClass="btn" id="generateTextButton" onclick="handleGenerateCriteriaText()"><span class="btn_img"><span class="save">Generate Description  Text</span></span></s:a>
                 </tr> 
             <tr>
                 <th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></th>              

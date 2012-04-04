@@ -91,7 +91,7 @@
                                     <td>
                                         <ul class="btnrow">            
                                             <li style="padding-left:0">
-                                                <a href="#" class="btn" onclick="lookup()"><span class="btn_img"><span class="history">History</span></span></a>
+                                                <a href="javascript:void(0)" class="btn" onclick="lookup()"><span class="btn_img"><span class="history">History</span></span></a>
                                             </li>
                                         </ul>
                                     </td>
@@ -145,7 +145,7 @@
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
                                 <li>
-                                    <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
                                 </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>   

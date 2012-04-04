@@ -141,7 +141,7 @@
                                         </ul></del><br/><del class="btnwrapper"><ul class="btnrow">                                        
                                     </c:if>
                                     <li>
-                                        <a href="#" class="btn" onclick="handleAction('${command}')">
+                                        <a href="javascript:void(0)" class="btn" onclick="handleAction('${command}')">
                                             <span class="btn_img"><span class="save"><fmt:message key="studyProtocolView.button.${command}" /></span></span>
                                         </a>
                                     </li>

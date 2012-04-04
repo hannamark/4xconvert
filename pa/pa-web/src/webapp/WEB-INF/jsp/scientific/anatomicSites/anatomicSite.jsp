@@ -57,7 +57,7 @@ function handleCreate(){
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
-            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
             <s:if test="%{anatomicSiteList != null && !anatomicSiteList.isEmpty()}">
                 <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected anatomic site(s) from the study. Cancel to abort.', 'anatomicSitedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected anatomic site(s) from the study. Cancel to abort.', 'anatomicSitedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                 <li><pa:toggleDeleteBtn/></li>

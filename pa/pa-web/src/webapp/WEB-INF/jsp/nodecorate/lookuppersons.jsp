@@ -77,8 +77,8 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search"><fmt:message key="popUpPerson.button.search" /></span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel"><fmt:message key="popUpPerson.button.reset" /></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search"><fmt:message key="popUpPerson.button.search" /></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel"><fmt:message key="popUpPerson.button.reset" /></span></span></s:a>
                             </li>
                         </ul>
                     </del>

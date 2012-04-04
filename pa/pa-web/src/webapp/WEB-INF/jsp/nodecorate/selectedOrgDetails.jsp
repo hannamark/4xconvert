@@ -21,7 +21,7 @@
 			<td class="value">
 			         <s:if test="%{currentAction == 'create'}">
 						<ul style="margin-top:-6px;">			
-							<li style="padding-left:0"><a href="#" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
+							<li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
 						</ul>
 			     </s:if>
 			 </td> 

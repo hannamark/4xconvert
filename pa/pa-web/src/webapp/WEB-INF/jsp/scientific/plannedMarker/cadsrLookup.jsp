@@ -92,16 +92,16 @@
                 <del class="btnwrapper">
                     <ul class="btnrow">
                         <li>
-                            <s:a href="#" cssClass="btn" onclick="loadResults();">
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="loadResults();">
                                 <span class="btn_img"><span class="search"><fmt:message key="plannedMarker.lookup.search"/></span></span>
                             </s:a>
-                            <s:a href="#" cssClass="btn" onclick="reset();">
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="reset();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.reset"/></span></span>
                             </s:a>
-                            <s:a href="#" cssClass="btn" onclick="loadRequestEmail();">
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="loadRequestEmail();">
                                 <span class="btn_img"><span class="search"><fmt:message key="plannedMarker.lookup.createRequest"/></span></span>
                             </s:a>
-                            <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();">
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.cancel"/></span></span>
                             </s:a>
                         </li>

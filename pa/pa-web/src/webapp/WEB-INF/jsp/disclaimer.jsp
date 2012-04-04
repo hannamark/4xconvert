@@ -40,12 +40,12 @@
                 <del class="btnwrapper">
                     <ul class="btnrow">            
                         <li>
-                            <a href="#" class="btn" onclick="submitForm('accept');" id="acceptDisclaimer">
+                            <a href="javascript:void(0)" class="btn" onclick="submitForm('accept');" id="acceptDisclaimer">
                                 <span class="btn_img"><span class="confirm"><fmt:message key="${pagePrefix}button.accept"/></span></span>
                             </a>
                         </li> 
                         <li>
-                            <a href="#" class="btn" onclick="submitForm('decline');" id="rejectDisclaimer">
+                            <a href="javascript:void(0)" class="btn" onclick="submitForm('decline');" id="rejectDisclaimer">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="${pagePrefix}button.reject"/></span></span>
                             </a>
                         </li>

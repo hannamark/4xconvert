@@ -236,12 +236,12 @@
                                             <ul class="btnrow">
                                                 <li>
                                                     <s:if test="%{currentAction == 'edit'}">
-                                                        <s:a href="#" cssClass="btn" onclick="facilityUpdate();">
+                                                        <s:a href="javascript:void(0)" cssClass="btn" onclick="facilityUpdate();">
                                                             <span class="btn_img"><span class="save">Save</span></span>
                                                         </s:a>
                                                     </s:if>
                                                     <s:else>
-                                                        <s:a href="#" cssClass="btn" onclick="facilitySave();">
+                                                        <s:a href="javascript:void(0)" cssClass="btn" onclick="facilitySave();">
                                                             <span class="btn_img"><span class="save">Save</span></span>
                                                         </s:a>
                                                     </s:else>
@@ -262,7 +262,7 @@
                                     <del class="btnwrapper">
                                         <ul class="btnrow">
                                             <li>
-                                                <a href="#" class="btn" onclick="lookupperson();">
+                                                <a href="javascript:void(0)" class="btn" onclick="lookupperson();">
                                                     <span class="btn_img"><span class="add">Add</span></span>
                                                 </a>
                                             </li>
@@ -281,7 +281,7 @@
                                     <del class="btnwrapper">
                                         <ul class="btnrow">
                                             <li>
-                                                 <s:a href="#" cssClass="btn" onclick="savePrimaryContact();">
+                                                 <s:a href="javascript:void(0)" cssClass="btn" onclick="savePrimaryContact();">
                                                     <span class="btn_img"><span class="save">Save</span></span>
                                                 </s:a>
                                             </li>    

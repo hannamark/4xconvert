@@ -143,7 +143,7 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <pa:scientificAbstractorDisplayWhenCheckedOut>
-                        <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                        <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
                 </ul>   
             </del>

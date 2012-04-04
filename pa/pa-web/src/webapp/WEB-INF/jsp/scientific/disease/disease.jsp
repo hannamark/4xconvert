@@ -62,7 +62,7 @@
                                 <display:column escapeXml="true" property="preferredName" sortable="true"
                                                 titleKey="disease.preferredName" headerClass="sortable"/>
                                 <display:column titleKey="disease.view" headerClass="centered" class="action">
-                                    <s:a href="#" onclick="handleView(%{#attr.row.diseaseIdentifier})">
+                                    <s:a href="javascript:void(0)" onclick="handleView(%{#attr.row.diseaseIdentifier})">
                                         <img src="<c:url value='/images/ico_search.gif'/>" alt="View" width="16" height="16" />
                                     </s:a>
                                 </display:column>
@@ -78,7 +78,7 @@
                                                 titleKey="disease.includeInXML" headerClass="sortable"/>
                                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="disease.edit" headerClass="centered" class="action">
-                                        <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
+                                        <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
                                             <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                                         </s:a>
                                     </display:column>
@@ -95,7 +95,7 @@
                         <ul class="btnrow">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <li>
-                                    <a href="#" class="btn" onclick="this.blur();handleCreate();">
+                                    <a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();">
                                         <span class="btn_img"><span class="add">Add </span></span>
                                     </a>
                                 </li>
