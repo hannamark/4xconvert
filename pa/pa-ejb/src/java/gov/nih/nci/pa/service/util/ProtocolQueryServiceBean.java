@@ -130,6 +130,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -749,6 +750,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(PAConstants.MAX_SEARCH_RESULTS, 0,
                 StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
         return search(crit, params);
+    }
+    
+    
+    
+    @Override
+    public List<String> getOfficialTitles(String matchString)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        hql.append("select sp.officialTitle from StudyProtocol sp where upper(sp.officialTitle) like :matchString");
+        @SuppressWarnings("unchecked")
+        List<String> matches = session.createQuery(hql.toString())
+                .setParameter("matchString", "%" + matchString.toUpperCase(Locale.US) + "%").list();
+        return matches;
     }
 
     /**

@@ -98,4 +98,16 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
         return serviceLocal.getStudyProtocolByOrgIdentifier(orgIdentifier);
     }
 
+    /**
+     * @param matchString
+     *            String
+     * @return List<String>
+     * @throws PAException
+     *             PAException
+     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getOfficialTitles(java.lang.Long)
+     */
+    public List<String> getOfficialTitles(String matchString)
+            throws PAException {
+        return serviceLocal.getOfficialTitles(matchString);
+    }
 }

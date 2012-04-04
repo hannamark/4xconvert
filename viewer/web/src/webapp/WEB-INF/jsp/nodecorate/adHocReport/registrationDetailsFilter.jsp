@@ -1,10 +1,23 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<script type="text/javascript">
+jQuery(function() {
+      jQuery( "#officialTitle" ).autocomplete({delay: 600 ,
+          source: function(req, responseFn) {
+            var url = viewerApp.contextPath + '/ctro/json/refreshMatchingOfficalTitles.action?officialTitleMatchTerm=' + req.term;
+            jQuery.getJSON(url,null,function(data){
+            	responseFn(data.officialTitles);
+            });
+        }
+    });
+});
+</script>
+
 <h2><a href="#"><fmt:message key="adHocReport.details.header" /></a></h2>
 <div id="detailsSection">
     <table class="form-table">
         <tbody>
             <viewer:valueRow labelFor="officialTitle" labelKey="studyProtocol.officialTitle">
-                <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
+                <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="600" size="600" cssStyle="width:600px"/>
             </viewer:valueRow>
             <viewer:valueRow labelFor="primaryPurpose" labelKey="studyProtocol.primaryPurpose">
                 <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />

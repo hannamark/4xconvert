@@ -74,8 +74,9 @@
             <interceptor-ref name="defaultStack" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="acceptView" type="redirectAction">ctro/welcome.action</result>
-        </action>        
+        </action> 
     </package>
+    
     <package name="public" namespace="/public" extends="default">
         <default-interceptor-ref name="showDisclaimer" />
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
@@ -120,6 +121,10 @@
         <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
             <interceptor-ref name="methodValidationStack" />
         </action>
+        <action name="refreshOfficialTitles" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="loadOfficialTitles">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/adHocReport/registrationDetailsFilter.jsp</result>
+        </action>
     </package>
     
     <package name="ctrojson" namespace="/ctro/json" extends="public">
@@ -128,6 +133,10 @@
             <result type="json">
                 <param name="root">autoCompleteResult</param>
             </result>
+        </action>
+        
+        <action name="refreshMatchingOfficalTitles" class="gov.nih.nci.pa.viewer.action.JSONResultAction"  method="loadOfficalTitles">
+             <result type="json"/>
         </action>
     </package>
 </struts>
