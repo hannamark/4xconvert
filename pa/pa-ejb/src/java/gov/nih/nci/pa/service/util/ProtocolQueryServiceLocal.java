@@ -138,9 +138,9 @@ public interface ProtocolQueryServiceLocal {
     List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException;
     
     /**
-     * @param matchString 
-     * @return List of Official Titles matching the provided search string
-     * @throws PAException on error
+     * @param matchString search key.
+     * @return List of Official Titles matching the provided search string.
+     * @throws PAException on error.
      */
     List<String> getOfficialTitles(String matchString) throws PAException;
 }
