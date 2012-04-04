@@ -32,19 +32,23 @@ function setJstreeOperationReady(bReady) {
             self.updateQuickresultsCount( searchTerm, false );
             $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
             self.adjustBreadcrumbAppearance();
-    
-            $.each([$('.breadcrumbElementText'), $('.breadcrumbFeaturedElementText')], function(index, value) {
+
+            $.each([$('.breadcrumbElement'), $('.breadcrumbFeaturedElement')], function(index, value) {
                 $(value).live('click',function (e) {
-                    var selectedElement = $('<div></div>');
-                    var id = $(this).parent().attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
-                    selectedElement.attr('id', id);
-                    var parentIds = $.map( $(this).parent().prevAll('div[id^=breadcrumb_box]'), function(val,i) {
-                        return $(val).attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
-                    });
-                    selectedElement.data('parentIds', parentIds);
-                    selectedElement.append($(this).parent().prevAll().clone().get().reverse());
-                    selectedElement.append($(this).clone());
-                    self.addToSelections(self.generateSelectionItemBlock(selectedElement));
+                    var biBox = $(this).parent();
+                    var clickedItemId = $(this).attr('id');
+                    var addItems = false;
+                    biBox.find('.breadcrumbElement,.breadcrumbFeaturedElement').each(
+                        function(){
+                        	var currentItemId = $(this).attr('id');
+                        	if (currentItemId === clickedItemId) {
+                                addItems = true;
+                        	}
+                            if (addItems == true) {
+                            	self.addSelection(self, $(this));
+                            }
+                        }
+                    );
                     self.updateSelections(e);
                 });
             });
@@ -77,7 +81,20 @@ function setJstreeOperationReady(bReady) {
             var featMarginTop = (featTextHeight-featLinkHeight)/2
             $('.breadcrumbFeaturedElementImageLink A').css({'margin-top': ''+featMarginTop+'px'});
         },
-            
+        
+        addSelection : function (self2, curr) {
+            var selectedElement = $('<div></div>');
+            var id = curr.attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
+            selectedElement.attr('id', id);
+            var parentIds = $.map(curr.prevAll('div[id^=breadcrumb_box]'), function(val,i) {
+                return $(val).attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
+            });
+            selectedElement.data('parentIds', parentIds);
+            selectedElement.append(curr.prevAll().clone().get().reverse());
+            selectedElement.append(curr.find('.breadcrumbElementText,.breadcrumbFeaturedElementText').clone());
+            self2.addToSelections(self2.generateSelectionItemBlock(selectedElement));
+        },
+
         addToSelections : function (item) {
             var self = this;
             var total=0, distinct=0;
