@@ -92,7 +92,8 @@
                 <tr>
                     <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
                     <td class="value">
-                        <s:textarea name="armDescription" id="armDescription" rows="20" cssStyle="width:280px;float:left"/>
+                        <s:textarea name="armDescription" id="armDescription" rows="20" cssStyle="width:280px;"
+                            maxlength="1000" cssClass="charcounter"/>
                         <span class="formErrorMsg">
                                 <s:fielderror>
                                 <s:param>armDescription</s:param>

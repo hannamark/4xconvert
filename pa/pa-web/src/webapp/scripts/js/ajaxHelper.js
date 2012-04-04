@@ -8,9 +8,18 @@ function callAjaxPost(div, url, params, providedOptions) {
     options.asynchronous = true;
     options.evalScripts = false;
     options.method = 'post';
-    options.parameters = params;
+    options.parameters = params;    
+    
     if (div == null) {
         return new Ajax.Request(url, options);
     }
+    
+    if (options.onComplete==null) {
+	    options.onComplete = function() {
+	    	try {
+	    		parseCharCounts();
+	    	} catch (err) {}
+	    };
+    }    
     return new Ajax.Updater(div, url, options);
 }

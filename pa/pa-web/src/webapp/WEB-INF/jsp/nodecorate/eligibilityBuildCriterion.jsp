@@ -168,10 +168,11 @@
                                </s:fielderror>                            
                          </span>
                     <td scope="row"  class="label"><label>
-                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/><span class="required">*</span>(Max 5,000 chars)</label>
+                        <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/><span class="required">*</span></label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' />
+                        <s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' 
+                            maxlength="5000" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.TextDescription</s:param>

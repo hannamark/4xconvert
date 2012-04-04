@@ -60,17 +60,12 @@
         </td>
     </tr>
     <tr>
-        <td/>
-        <td class="value">
-            <s:label name="descriptionLimit" ><fmt:message key="${pagePrefix}descriptionLimit" /></s:label>
-        </td>
-    </tr>    
-    <tr>
         <td class="label">
             <s:label><fmt:message key="${pagePrefix}description" /></s:label>
         </td>
         <td class="value" colspan="2">
-            <s:textarea name="interventionDescription" rows="20" cssStyle="width:280px;float:left"/>
+            <s:textarea name="interventionDescription" rows="20" cssStyle="width:280px;"
+                maxlength="1000" cssClass="charcounter"/>
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>interventionDescription</s:param>

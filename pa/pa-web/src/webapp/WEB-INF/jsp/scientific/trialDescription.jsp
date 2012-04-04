@@ -57,7 +57,7 @@
                 <fmt:message key="trial.briefTitle"/> <span class="notRequired">*</span>
             </s:label>
             </td>
-            <td colspan="2" class="value"><s:textarea name="trialBriefTitle" 
+            <td colspan="2" class="value"><s:textarea name="trialBriefTitle" maxlength="300" cssClass="charcounter" 
                 cssStyle="width:606px" rows="4" /></td>
         </tr> 
         <tr> 
@@ -71,7 +71,7 @@
             </s:label>
             </td>
             <td colspan="2" class="value">
-            <s:textarea name="trialBriefSummary" cssStyle="width:606px" rows="20"/></td>
+            <s:textarea maxlength="5000" cssClass="charcounter" name="trialBriefSummary" cssStyle="width:606px" rows="20"/></td>
         </tr>        
         <tr>
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
@@ -83,7 +83,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea name="outline" cssStyle="width:606px" rows="20"/> (Max 32000 chars)
+        <s:textarea name="outline" cssStyle="width:606px" rows="20" maxlength="32000" cssClass="charcounter"/> 
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>outline</s:param>
@@ -98,7 +98,8 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="primary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="primary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+            maxlength="2000" /> 
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>primary</s:param>
@@ -113,7 +114,8 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+            maxlength="2000" /> 
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>secondary</s:param>
@@ -128,7 +130,8 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly"/> (Max 2000 chars)
+        <s:textarea readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+            maxlength="2000" />
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>ternary</s:param>

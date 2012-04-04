@@ -103,7 +103,7 @@
                                                     <span class="required">*</span>
                                                 </td>
                                                 <td class="value">
-                                                    <s:textarea name="milestone.comment" rows="3" cssStyle="width:280px;float:left"/>
+                                                    <s:textarea maxlength="200" name="milestone.comment" cssClass="charcounter" rows="3" cssStyle="width:280px;"/>
                                                 </td>
                                             </tr>
                                         </table>

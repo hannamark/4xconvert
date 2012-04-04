@@ -257,7 +257,8 @@
                             </label>
                         </td>
                         <td class="value">
-                            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
+                            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4" 
+                                maxlength="4000" cssClass="charcounter"/>
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>gtdDTO.officialTitle</s:param>
@@ -273,7 +274,8 @@
                            <label for=keywordText><fmt:message key="studyProtocol.keywordText"/></label>
                         </td>
                         <td class="value">
-                            <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"/>
+                            <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"
+                                maxlength="600" cssClass="charcounter" />
                         </td>
                     </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">

@@ -68,7 +68,7 @@
                     </pa:valueRow>
                     <pa:valueRow labelKey="onhold.reason.text">
                         <s:if test="%{currentAction == 'create'}">
-                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left"/>
+                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;" maxlength="200" cssClass="charcounter"/>
                         </s:if>
                         <s:else>
                             <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>

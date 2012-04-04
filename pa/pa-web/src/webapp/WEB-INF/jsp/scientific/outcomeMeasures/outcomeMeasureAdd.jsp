@@ -73,11 +73,12 @@ BubbleTips.activateTipOn("dfn");
 				<tr>
                      <td scope="row" class="label">
                      <label for="fileName">
-                            <fmt:message key="osdesign.outcome.name"/> (Max 254 chars)<span class="required">*</span>
+                            <fmt:message key="osdesign.outcome.name"/><span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.outcomeMeasure.name" rows="4" cssStyle="width:400px"/>
+                        <s:textarea name="webDTO.outcomeMeasure.name" rows="4" cssStyle="width:400px"
+                            maxlength="254" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.outcomeMeasure.name</s:param>
@@ -88,11 +89,12 @@ BubbleTips.activateTipOn("dfn");
                 <tr>
                      <td scope="row" class="label">
                      <label for="typeCode">
-                            <fmt:message key="osdesign.outcome.timeFrame"/> (Max 254 chars)<span class="required">*</span>
+                            <fmt:message key="osdesign.outcome.timeFrame"/><span class="required">*</span>
                      </label>
                     </td>
                     <td class="value">
-                            <s:textarea name="webDTO.outcomeMeasure.timeFrame" rows="4" cssStyle="width:400px"/>
+                            <s:textarea name="webDTO.outcomeMeasure.timeFrame" rows="4" cssStyle="width:400px"
+                                maxlength="254" cssClass="charcounter"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.outcomeMeasure.timeFrame</s:param>
@@ -103,11 +105,12 @@ BubbleTips.activateTipOn("dfn");
 				<tr>
                      <td scope="row" class="label">
                      <label for="fileName">
-                            <fmt:message key="osdesign.outcome.description"/> (Max 600 chars)
+                            <fmt:message key="osdesign.outcome.description"/>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.outcomeMeasure.description" rows="20" cssStyle="width:400px"/>
+                        <s:textarea name="webDTO.outcomeMeasure.description" rows="20" cssStyle="width:400px"
+                            maxlength="600" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.outcomeMeasure.description</s:param>

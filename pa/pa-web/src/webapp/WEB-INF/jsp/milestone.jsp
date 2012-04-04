@@ -156,7 +156,7 @@
 		                                                    <span class="required">*</span>
 		                                                </td>
 		                                                <td class="value">
-		                                                    <s:textarea name="milestone.comment" rows="3" cssStyle="width:280px;float:left" maxlength="200"/>
+		                                                    <s:textarea name="milestone.comment" rows="3" cssClass="charcounter" cssStyle="width:280px;" maxlength="200"/>
 		                                                </td>
 		                                            </tr>
 		                                        </table>

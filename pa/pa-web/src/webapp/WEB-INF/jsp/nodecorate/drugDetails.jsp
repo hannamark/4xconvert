@@ -75,14 +75,15 @@
         <tr>
         <td/>
         <td class="value">
-            <s:label name="doseLimit" >(Max 1000 Chars )</s:label>
+            <s:label name="doseLimit" ></s:label>
          </td>
     </tr>
     
       <tr>
         <td scope="row" class="label"><s:label>Dose Regimen:</s:label></td>
         <td class="value" >
-            <s:textarea name="doseRegimen" cssStyle="width:275px" rows="3"/> 
+            <s:textarea name="doseRegimen" cssStyle="width:275px" rows="3"
+                maxlength="1000" cssClass="charcounter"/> 
             <span class="formErrorMsg"> 
                <s:fielderror>
                    <s:param>doseRegimen</s:param>
