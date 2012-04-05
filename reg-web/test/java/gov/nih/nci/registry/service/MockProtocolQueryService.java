@@ -191,7 +191,11 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             returnList.add(sp);
         }
         return returnList;
-    }    
-    
+    }
 
+    @Override
+    public List<String> getOfficialTitles(String matchString)
+            throws PAException {
+        return null;
+    }    
 }
