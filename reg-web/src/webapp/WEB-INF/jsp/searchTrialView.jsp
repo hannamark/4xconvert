@@ -323,7 +323,7 @@
                     <div class="actionsrow">
                         <del class="btnwrapper">
                             <ul class="btnrow">
-                                <li><a href="#" class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
                             </ul>
                         </del>
                     </div>

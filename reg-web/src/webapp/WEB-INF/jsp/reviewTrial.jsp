@@ -291,9 +291,9 @@
                                    <br>Once you submit the trial you will not be able to modify the information.
                                 </p>
                                 <ul class="btnrow">
-                                    <li><a href="#" class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
-                                    <li><a href="#" class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
-                                    <li><a href="#"  class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>
+                                    <li><a href="javascript:void(0)" class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
+                                    <li><a href="javascript:void(0)" class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
+                                    <li><a href="javascript:void(0)"  class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>
                                 </ul>
                             </del>
                         </div>

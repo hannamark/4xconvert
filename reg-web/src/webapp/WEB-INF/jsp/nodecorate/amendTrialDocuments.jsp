@@ -9,7 +9,7 @@
       <td colspan="2"><fmt:message key="submit.trial.docInstructionalText" /></td>
     </tr>
     <tr>
-      <td colspan="2"><a href="#" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></td>
+      <td colspan="2"><a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></td>
     </tr>
     <tr>
       <td scope="row" class="label">

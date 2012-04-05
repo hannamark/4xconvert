@@ -116,7 +116,7 @@ body {
                 <display:setProperty name="export.csv.filename" value="resultsSavedDraftSearch.csv"/>
                 <display:setProperty name="export.csv.include_header" value="true"/>
                 <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="html">
-                    <a href="#" onclick="viewPartialProtocol('${row.studyProtocolId}');"><c:out value="${row.studyProtocolId}"/></a>
+                    <a href="javascript:void(0)" onclick="viewPartialProtocol('${row.studyProtocolId}');"><c:out value="${row.studyProtocolId}"/></a>
                 </display:column>
                 <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.studyProtocolId}"/>
@@ -178,7 +178,7 @@ body {
                 </display:column>  
                 <display:column title="Participating Sites">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-                   	<a href="#" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
+                   	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                </display:column>                                              
           	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
                 	<ul id="nav">
@@ -208,17 +208,17 @@ body {
 									<s:if test="%{!(#attr.row.statusChangeLinkText == null || #attr.row.statusChangeLinkText.equals(''))}">
 										<s:if test="%{#attr.row.proprietaryTrial}">
 					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
+					                        <a href="javascript:void(0)" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
 					                    </s:if>
 					                    <s:else>
 					                        <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-					                        <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
+					                        <a href="javascript:void(0)" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');">Change Status</a>
 					                    </s:else>
 				                    </s:if>
 								</li>
 								<li>
 									<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
-				                         <a href="#" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
+				                         <a href="javascript:void(0)" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
 				                    </s:if>
 								</li>
 								<li>

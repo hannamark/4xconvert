@@ -17,7 +17,7 @@
         <display:column escapeXml="true" title="Country" property="country"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Zip" property="zip"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column title="Action" class="action" sortable="false">
-            <a href="#" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}')">
+            <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}')">
                 <span class="btn_img"><span class="confirm">Select</span></span>
             </a>
         </display:column>

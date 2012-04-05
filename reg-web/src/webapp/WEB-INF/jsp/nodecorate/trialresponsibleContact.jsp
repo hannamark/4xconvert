@@ -10,7 +10,7 @@
     <td class="value">
         <ul style="margin-top:-5px;">
             <li style="padding-left:0">
-                <a href="#" class="btn" id="lookupbtn4RP" onclick="lookup4loadresponsibleparty();" title="Opens a popup form to select Responsible Party Contact">
+                <a href="javascript:void(0)" class="btn" id="lookupbtn4RP" onclick="lookup4loadresponsibleparty();" title="Opens a popup form to select Responsible Party Contact">
                     <span class="btn_img"><span class="person">Look Up Person</span></span>
                 </a>
             </li>

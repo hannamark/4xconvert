@@ -79,8 +79,8 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="siteadministration.buttons.search"/></span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="siteadministration.buttons.reset"/></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="siteadministration.buttons.search"/></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="siteadministration.buttons.reset"/></span></span></s:a>
                             </li>
                         </ul>
                     </del>
@@ -91,7 +91,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="save();"><span class="btn_img"><span class="save"><fmt:message key="siteadministration.buttons.save"/></span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="save();"><span class="btn_img"><span class="save"><fmt:message key="siteadministration.buttons.save"/></span></span></s:a>
                             </li>
                         </ul>
                     </del>

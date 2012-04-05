@@ -48,7 +48,7 @@ function handleAction(){
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img">
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img">
                         <span class="login">Next</span></span></s:a>
                     </li>
                 </ul>

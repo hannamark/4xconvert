@@ -77,10 +77,10 @@
                                     <del class="btnwrapper">
                                         <ul class="btnrow">
                                             <li>
-                                                <a href="#" class="btn" onclick="loadSelectedTrialType();"><span class="btn_img"><span class="save">Submit</span></span></a>
+                                                <a href="javascript:void(0)" class="btn" onclick="loadSelectedTrialType();"><span class="btn_img"><span class="save">Submit</span></span></a>
                                             </li>
                                             <li>
-                                                <a href="#" class="btn" onclick="submitform();"><span class="btn_img"><span class="cancel">Cancel</span></span></a>
+                                                <a href="javascript:void(0)" class="btn" onclick="submitform();"><span class="btn_img"><span class="cancel">Cancel</span></span></a>
                                             </li>          
                                         </ul>   
                                     </del>

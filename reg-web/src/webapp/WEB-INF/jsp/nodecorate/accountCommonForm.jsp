@@ -157,7 +157,7 @@
     </td>
     <td>
         <s:textfield readonly="true" size="30" name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg" cssStyle="float:left; width:250px" cssClass="readonly"/>
-        <a href="#" class="btn" onclick="lookupAffiliateOrg();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
+        <a href="javascript:void(0)" class="btn" onclick="lookupAffiliateOrg();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.affiliateOrg</s:param>

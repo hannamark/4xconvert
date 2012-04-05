@@ -13,7 +13,7 @@
   </tr>
   <tr>
     <td colspan="2">
-      <a href="#" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a>
+      <a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a>
     </td>
   </tr>
   <tr>

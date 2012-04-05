@@ -69,13 +69,13 @@ Please do not use wildcard characters.<br>
 <div class="actionsrow">
 <div class="btnwrapper">
 <ul class="btnrow">
-    <li><s:a href="#" cssClass="btn" onclick="loadDiv();" id="search_organization_btn">
+    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv();" id="search_organization_btn">
         <span class="btn_img"><span class="search">Search</span></span>
-    </s:a> <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn">
+    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn">
         <span class="btn_img"><span class="add">Add Org</span></span>
-    </s:a> <s:a href="#" cssClass="btn" onclick="formReset();" id="search_organization_reset_btn">
+    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();" id="search_organization_reset_btn">
         <span class="btn_img"><span class="cancel">Reset</span></span>
-    </s:a> <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();" id="search_organization_close_btn">
+    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();" id="search_organization_close_btn">
         <span class="btn_img"><span class="close">Close</span></span>
     </s:a></li>
 </ul>

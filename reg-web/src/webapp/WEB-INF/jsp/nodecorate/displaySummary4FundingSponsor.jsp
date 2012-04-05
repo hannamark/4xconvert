@@ -8,7 +8,7 @@
 <td class="value">
     <ul style="margin-top:-5px;">              
         <li style="padding-left:0">
-         <a href="#" class="btn" onclick="lookup4loadSummary4Sponsor();" title="Opens a popup form to select Summary4 Sponsor"/>
+         <a href="javascript:void(0)" class="btn" onclick="lookup4loadSummary4Sponsor();" title="Opens a popup form to select Summary4 Sponsor"/>
          <span class="btn_img"><span class="organization">Look Up Sponsor</span></span></a>
         </li>
     </ul>

@@ -12,7 +12,7 @@
          <s:select name="phones" id="%{#attr.row.identifier.extension}phone"  list="%{#attr.row.phones}"/>
     </display:column>
     <display:column title="Action" class="action" sortable="false"  headerScope="col">
-        <a href="#" class="btn" onclick="submitform('${row.identifier.extension}','${func:escapeJavaScript(row.title)}')">
+        <a href="javascript:void(0)" class="btn" onclick="submitform('${row.identifier.extension}','${func:escapeJavaScript(row.title)}')">
             <span class="btn_img"><span class="confirm">Select</span></span>
         </a>
     </display:column>

@@ -240,10 +240,10 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="handleMyAction()" id="searchMyTrialsBtn"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="handleAction()" id="searchAllTrialsBtn"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="resetValues();return false" id="resetSearchBtn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                        <s:a href="#" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn"><span class="btn_img"><span class="search">Search Saved Drafts</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="handleMyAction()" id="searchMyTrialsBtn"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()" id="searchAllTrialsBtn"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false" id="resetSearchBtn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn"><span class="btn_img"><span class="search">Search Saved Drafts</span></span></s:a>
                     </li>
                 </ul>
             </del>

@@ -62,8 +62,8 @@
  <del class="btnwrapper">
     <ul class="btnrow">
        <li>
-           <s:a href="#" cssClass="btn" onclick="createOrg()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-           <s:a href="#" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Cancel</span></span></s:a>
+           <s:a href="javascript:void(0)" cssClass="btn" onclick="createOrg()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+           <s:a href="javascript:void(0)" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Cancel</span></span></s:a>
        </li>
        </ul>   
   </del>

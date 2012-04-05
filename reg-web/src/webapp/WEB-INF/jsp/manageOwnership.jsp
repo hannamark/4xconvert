@@ -105,8 +105,8 @@
                 <del class="btnwrapper">
                     <ul class="btnrow">
                         <li>
-                            <s:a href="#" cssClass="btn" onclick="updateOwnership(true);"><span class="btn_img"><span class="save"><fmt:message key="managetrialownership.buttons.assign"/></span></span></s:a>
-                            <s:a href="#" cssClass="btn" onclick="updateOwnership(false);"><span class="btn_img"><span class="delete"><fmt:message key="managetrialownership.buttons.unassign"/></span></span></s:a>
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="updateOwnership(true);"><span class="btn_img"><span class="save"><fmt:message key="managetrialownership.buttons.assign"/></span></span></s:a>
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="updateOwnership(false);"><span class="btn_img"><span class="delete"><fmt:message key="managetrialownership.buttons.unassign"/></span></span></s:a>
                         </li>
                     </ul>
                 </del>

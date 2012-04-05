@@ -11,7 +11,7 @@
         <display:column escapeXml="true" title="Last Name" property="lastName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column title="Action" class="action" sortable="false"  headerScope="col">
-            <a href="#" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')">
+            <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')">
                 <span class="btn_img"><span class="confirm">Select</span></span>
             </a>
         </display:column>

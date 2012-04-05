@@ -79,8 +79,8 @@ function viewPagination() {
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                       <s:a href="#" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="displaytrialownership.buttons.search"/></span></span></s:a>
-                       <s:a href="#" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="displaytrialownership.buttons.reset"/></span></span></s:a>
+                       <s:a href="javascript:void(0)" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="displaytrialownership.buttons.search"/></span></span></s:a>
+                       <s:a href="javascript:void(0)" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="displaytrialownership.buttons.reset"/></span></span></s:a>
                     </li>
                 </ul>
             </del>
@@ -89,7 +89,7 @@ function viewPagination() {
         <s:set name="records" value="trialOwnershipInfo" scope="request"/>
         <h2 id="search_results">Search Results</h2>
         <div id="viewAll" style="display:'none'">
-           <s:a href="#" onclick="viewPagination();" id="pageView"> View Pagination </s:a>
+           <s:a href="javascript:void(0)" onclick="viewPagination();" id="pageView"> View Pagination </s:a>
            <display:table class="data" summary="This table contains your search results."
                      sort="list" id="row" name="records" requestURI="displayTrialOwnershipview.action" export="false">
             <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
@@ -108,7 +108,7 @@ function viewPagination() {
         </display:table>
         </div>
         <div id="viewPagination">
-           <s:a href="#" onclick="viewAll();" id="allView"> View All </s:a>
+           <s:a href="javascript:void(0)" onclick="viewAll();" id="allView"> View All </s:a>
            <display:table class="data" summary="This table contains your search results."
                      sort="list" pagesize="50" id="row"
                          name="records" requestURI="displayTrialOwnershipview.action" export="false">
