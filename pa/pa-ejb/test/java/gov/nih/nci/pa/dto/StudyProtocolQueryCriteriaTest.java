@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.pa.dto;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -108,6 +108,28 @@ public class StudyProtocolQueryCriteriaTest {
     /**
      * Test the setIdentifier method for the CTEP case.
      */
+    
+    @Test
+    public void testSetIdentifierAll() {
+        sut.setCtepIdentifier(ID);
+        sut.setDcpIdentifier(ID);
+        sut.setNctNumber(ID);
+        sut.setLeadOrganizationTrialIdentifier(ID);
+        sut.setNciIdentifier(ID);
+        sut.setOtherIdentifier(ID);
+
+        sut.setIdentifierType("All");
+        sut.setIdentifier(ID);
+
+        assertEquals("Wrong identifier value", ID, sut.getAnyTypeIdentifier());
+        assertNull(sut.getCtepIdentifier());
+        assertNull(sut.getDcpIdentifier());
+        assertNull(sut.getNctNumber());
+        assertNull(sut.getLeadOrganizationTrialIdentifier());
+        assertNull(sut.getNciIdentifier());
+        assertNull(sut.getOtherIdentifier());
+    }
+    
     @Test
     public void testSetIdentifierCTEP() {
         sut.setIdentifierType(IdentifierType.CTEP.getCode());
@@ -567,6 +589,13 @@ public class StudyProtocolQueryCriteriaTest {
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());
+        
+        PropertyUtils.setSimpleProperty(c1, "anyTypeIdentifier", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "anyTypeIdentifier", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());        
 
     }
     

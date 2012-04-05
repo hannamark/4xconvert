@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
@@ -67,6 +68,49 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
     public void testQuery() throws PAException {
         assertEquals("success", spqAction.query());
     }
+    
+    @Test
+    public void testAnyIdentifierTypeHandling() throws PAException {
+        StudyProtocolQueryAction action = new StudyProtocolQueryAction();
+        action.prepare();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        action.setIdentifier("ID");
+        action.setCriteria(criteria);
+        assertEquals("success", action.query());
+        
+        assertEquals("ID", criteria.getAnyTypeIdentifier());
+        assertNull(criteria.getCtepIdentifier());
+        assertNull(criteria.getDcpIdentifier());
+        assertNull(criteria.getNctNumber());
+        assertNull(criteria.getLeadOrganizationTrialIdentifier());
+        assertNull(criteria.getNciIdentifier());
+        assertNull(criteria.getOtherIdentifier());        
+        
+    }
+    
+    @Test
+    public void testIdentifiersValidation() throws PAException {
+        StudyProtocolQueryAction action = new StudyProtocolQueryAction();
+        action.prepare();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("");
+        action.setIdentifier("ABC");
+        criteria.setOfficialTitle("");
+        criteria.setOrganizationType("");
+        criteria.setPhaseCode("");
+        criteria.setPrimaryPurposeCode("");
+        action.setCriteria(criteria);
+
+        assertEquals("error", action.query());
+        assertEquals("error.studyProtocol.identifierType", action
+                .getFieldErrors().get("criteria.identifierType").get(0));
+
+        action.clearErrorsAndMessages();
+        criteria.setIdentifierType("All");
+        assertEquals("success", action.query());
+
+    }    
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#view()}.

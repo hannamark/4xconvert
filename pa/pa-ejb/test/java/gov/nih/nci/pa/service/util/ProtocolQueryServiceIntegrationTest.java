@@ -971,6 +971,100 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals(1, result.size());
         assertEquals(testBean.output.get(0), result.get(0).getId());
     }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByAllIdentifiers() throws PAException {
+        StudyProtocol leadSp = createStudyProtocol();
+        StudySite site = getLeadOrganizationStudySite(leadSp.getStudySites());
+        site.setLocalStudyProtocolIdentifier("LEAD_ORG_ID");
+        TestSchema.addUpdObject(site);
+
+        StudyProtocol ctepSp = createStudyProtocol();
+        StudySite site2 = createIdentifierAssignerStudySite(ctepSp, PAConstants.CTEP_ORG_NAME);
+        site2.setLocalStudyProtocolIdentifier("CTEP_ID");
+        TestSchema.addUpdObject(site2);
+
+        StudyProtocol dcpSp = createStudyProtocol();
+        StudySite site3 = createIdentifierAssignerStudySite(dcpSp, PAConstants.DCP_ORG_NAME);
+        site3.setLocalStudyProtocolIdentifier("DCP_ID");
+        TestSchema.addUpdObject(site3);
+        
+        StudyProtocol nctSp = createStudyProtocol();
+        StudySite site4 = createIdentifierAssignerStudySite(nctSp, PAConstants.CTGOV_ORG_NAME);
+        site4.setLocalStudyProtocolIdentifier("NCT_CTGOV_ID");
+        TestSchema.addUpdObject(site4);
+        
+        StudyProtocol otherSp = createStudyProtocol();
+        otherSp.getOtherIdentifiers().add(IiConverter.convertToOtherIdentifierIi("OTHER_ID"));
+        TestSchema.addUpdObject(otherSp);
+        
+        StudyProtocol nciSp = createStudyProtocol();
+        nciSp.getOtherIdentifiers().add(IiConverter.convertToAssignedIdentifierIi("NCI_ID"));
+        TestSchema.addUpdObject(nciSp);        
+
+        // All 6 match.
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("ID");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(6, result.size());
+        assertTrue(result.contains(leadSp));
+        assertTrue(result.contains(ctepSp));
+        assertTrue(result.contains(dcpSp));
+        assertTrue(result.contains(nctSp));
+        assertTrue(result.contains(otherSp));
+        assertTrue(result.contains(nciSp));
+        
+        // Lead
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("LEAD_ORG_");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(leadSp, result.get(0));
+        
+        // CTEP
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("CTEP_ID");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(ctepSp, result.get(0));
+
+        // DCP
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("DCP_ID");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(dcpSp, result.get(0));
+
+        // NCT
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("NCT_CTGOV_ID");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(nctSp, result.get(0));
+        
+        // OTHER
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("OTHER_ID");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(otherSp, result.get(0));
+        
+        // NCI
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("All");
+        criteria.setIdentifier("NCI_ID");
+        result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        assertEquals(nciSp, result.get(0));
+        
+    }
+    
 
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
@@ -1263,13 +1357,26 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         result.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         result.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-        result.setResearchOrganization(createResearchOrganization());
+        result.setResearchOrganization(createResearchOrganization(null));
         List<StudySite> studySites = Arrays.asList(new StudySite[]{result });
         result.getResearchOrganization().setStudySites(studySites);
         TestSchema.addUpdObject(result.getResearchOrganization());
         TestSchema.addUpdObject(result);
         return result;
     }
+    
+    private StudySite createIdentifierAssignerStudySite(StudyProtocol sp, String orgName) {
+        StudySite result = TestSchema.createStudySiteObj(sp, null);
+        result.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        result.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        result.setResearchOrganization(createResearchOrganization(orgName));
+        List<StudySite> studySites = Arrays.asList(new StudySite[]{result });
+        result.getResearchOrganization().setStudySites(studySites);
+        TestSchema.addUpdObject(result.getResearchOrganization());
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+    
 
     private StudySite createTreatingSiteStudySite(StudyProtocol sp) {
         StudySite result = TestSchema.createStudySiteObj(sp, createHealthCareFacility());
@@ -1282,7 +1389,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     }
 
     private HealthCareFacility createHealthCareFacility() {
-        Organization org = createOrganization();
+        Organization org = createOrganization(null);
         org.setCountryName("USA");
         org.setState("MD");
         org.setCity("Rockville");
@@ -1292,9 +1399,9 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         return result;
     }
 
-    private ResearchOrganization createResearchOrganization() {
+    private ResearchOrganization createResearchOrganization(String name) {
         ResearchOrganization result = new ResearchOrganization();
-        Organization org = createOrganization();
+        Organization org = createOrganization(name);
         result.setOrganization(org);
         result.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         result.setIdentifier("abc" + org.getId());
@@ -1302,11 +1409,14 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         return result;
     }
 
-    private Organization createOrganization() {
+    private Organization createOrganization(String name) {
         Organization result = TestSchema.createOrganizationObj();
         result.setCountryName("USA");
         result.setState("VA");
         result.setCity("Arlington");
+        if (name!=null) {
+            result.setName(name);
+        }
         TestSchema.addUpdObject(result);
         return result;
     }
