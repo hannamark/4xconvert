@@ -199,6 +199,9 @@ public class Constants {
 
     /** TRIAL IDENTIFIER TYPE CODE - NCI. */
     public static final String IDENTIFIER_TYPE_NCI = "NCI";
+    
+    /** TRIAL IDENTIFIER TYPE CODE - ALL. */
+    public static final String IDENTIFIER_TYPE_ALL = "All";    
 
     /** TRIAL IDENTIFIER TYPE CODE - Lead Organization. */
     public static final String IDENTIFIER_TYPE_LEAD_ORG = "Lead Organization";

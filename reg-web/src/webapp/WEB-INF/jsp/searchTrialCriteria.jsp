@@ -148,8 +148,8 @@
                 <td>
                     <s:select
                         id = "identifierType"
-                        headerKey=""
-                        headerValue="--Select--"
+                        headerKey="All"
+                        headerValue="All"
                         name="criteria.identifierType"
                         list="#{'NCI':'NCI','NCT':'NCT (Exact Match)','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}"
                         value="criteria.identifierType"

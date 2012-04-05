@@ -360,6 +360,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             queryCriteria.setNctNumber(criteria.getIdentifier());
         } else if (Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER.equals(criteria.getIdentifierType())) {
             queryCriteria.setOtherIdentifier(criteria.getIdentifier());
+        } else if (Constants.IDENTIFIER_TYPE_ALL.equals(criteria.getIdentifierType())) {
+            queryCriteria.setAnyTypeIdentifier(criteria.getIdentifier());
         }
     }
 
@@ -485,8 +487,12 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     }
 
     private void validateEmptyIdentifierType() {
-        if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isEmpty(criteria.getIdentifier())) {
-            addFieldError("criteria.identifier", getText("error.search.identifier"));
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType())
+                && !Constants.IDENTIFIER_TYPE_ALL.equals(criteria
+                        .getIdentifierType())
+                && StringUtils.isEmpty(criteria.getIdentifier())) {
+            addFieldError("criteria.identifier",
+                    getText("error.search.identifier"));
         }
     }
 
