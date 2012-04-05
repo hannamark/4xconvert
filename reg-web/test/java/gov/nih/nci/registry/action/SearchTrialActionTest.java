@@ -118,6 +118,8 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         assertEquals("criteria", action.showCriteria());
     }
 
+    
+    
     @Test
     public void testQueryErr(){
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
@@ -378,6 +380,97 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         assertEquals("4", new ArrayList<ComparableOrganizationDTO>(
                 searchTrialAction.getLeadAndParticipatingOrganizations())
                 .get(3).getId());
+
+    }
+    
+    @Test
+    public void testConvertIdentifierType_NCI() {
+        SearchTrialAction action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("NCI_ID");
+        criteria.setIdentifierType("NCI");
+        action.setCriteria(criteria);
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        action.convertIdentifierType(queryCriteria);
+        
+        assertEquals("NCI_ID", queryCriteria.getNciIdentifier());
+    }
+    
+    @Test
+    public void testConvertIdentifierType_LeadOrg() {
+        SearchTrialAction action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("LO_ID");
+        criteria.setIdentifierType("Lead Organization");
+        action.setCriteria(criteria);
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        action.convertIdentifierType(queryCriteria);
+        
+        assertEquals("LO_ID", queryCriteria.getLeadOrganizationTrialIdentifier());
+    }
+    
+    @Test
+    public void testConvertIdentifierType_NCT() {
+        SearchTrialAction action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("NCT_ID");
+        criteria.setIdentifierType("NCT");
+        action.setCriteria(criteria);
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        action.convertIdentifierType(queryCriteria);
+        
+        assertEquals("NCT_ID", queryCriteria.getNctNumber());
+    }
+    
+    @Test
+    public void testConvertIdentifierType_Other() {
+        SearchTrialAction action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("OTHER_ID");
+        criteria.setIdentifierType("Other Identifier");
+        action.setCriteria(criteria);
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        action.convertIdentifierType(queryCriteria);
+        
+        assertEquals("OTHER_ID", queryCriteria.getOtherIdentifier());
+    }    
+    
+    @Test
+    public void testConvertIdentifierType_AnyType() {
+        SearchTrialAction action = new SearchTrialAction();
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("ANY_ID");
+        criteria.setIdentifierType("All");
+        action.setCriteria(criteria);
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        action.convertIdentifierType(queryCriteria);
+        
+        assertEquals("ANY_ID", queryCriteria.getAnyTypeIdentifier());
+    }       
+    
+    @Test
+    public void testQueryByAllIdentifiers() {
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("ABC");
+        criteria.setIdentifierType("");
+        criteria.setOfficialTitle("");
+        criteria.setOrganizationType("");
+        criteria.setPhaseCode("");
+        criteria.setPrimaryPurposeCode("");
+        action.setCriteria(criteria);
+
+        assertEquals("error", action.query());
+        assertEquals("error.search.identifierType", action.getFieldErrors()
+                .get("criteria.identifierType").get(0));
+        
+        action.clearErrorsAndMessages();
+        criteria.setIdentifierType("All");        
+        assertEquals("success", action.query());
 
     }
     

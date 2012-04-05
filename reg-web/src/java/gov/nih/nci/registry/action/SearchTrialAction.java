@@ -351,7 +351,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         return queryCriteria;
     }
 
-    private void convertIdentifierType(StudyProtocolQueryCriteria queryCriteria) {
+    void convertIdentifierType(StudyProtocolQueryCriteria queryCriteria) {
         if (Constants.IDENTIFIER_TYPE_NCI.equals(criteria.getIdentifierType())) {
             queryCriteria.setNciIdentifier(criteria.getIdentifier());
         } else if (Constants.IDENTIFIER_TYPE_LEAD_ORG.equals(criteria.getIdentifierType())) {
