@@ -684,6 +684,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
         return (StringUtils.isEmpty(criteria.getNciIdentifier())
+                && StringUtils.isEmpty(criteria.getCtgovXmlRequiredIndicator())
                 && criteria.getStudyProtocolId() == null
                 && StringUtils.isEmpty(criteria.getOfficialTitle())
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
