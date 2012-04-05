@@ -444,6 +444,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
         options.setInterventionTypes(criteria.getInterventionTypes());
         options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
+        options.setAnyTypeIdentifier(criteria.getAnyTypeIdentifier());
         if (criteria.getCtgovXmlRequiredIndicator() != null && !criteria.getCtgovXmlRequiredIndicator().equals("")) {
             options.setCtgovXmlRequiredIndicator(Boolean.valueOf((criteria.getCtgovXmlRequiredIndicator())));
         } else {
@@ -695,6 +696,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getNctNumber())
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
+                && StringUtils.isEmpty(criteria.getAnyTypeIdentifier())
                 && StringUtils.isEmpty(criteria.getCountryName())
                 && StringUtils.isEmpty(criteria.getCity())
                 && CollectionUtils.isEmpty(criteria.getDocumentWorkflowStatusCodes())

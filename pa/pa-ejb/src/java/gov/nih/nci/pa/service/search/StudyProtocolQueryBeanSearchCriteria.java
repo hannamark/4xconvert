@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.HashSet;
@@ -100,6 +101,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
@@ -169,6 +171,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
     /**
      * Helper that adds synonym checks to the searches.
      */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
        
         private static final String CONNECTOR = " %s ";
@@ -256,7 +259,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleSummary4AnatomicSites(whereClause, params);
             handleOrganizationIds(whereClause, params);
             generateLocationWhereClause(whereClause, params);
-            handleOtherIdentifiersAndOwnership(whereClause, params);
+            handleIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
             
             if (spo.getCtgovXmlRequiredIndicator() != null) {  
@@ -551,24 +554,107 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             return sql;
         }
 
-        private void handleOtherIdentifiersAndOwnership(StringBuffer whereClause, Map<String, Object> params) {
-            if (CollectionUtils.isNotEmpty(sp.getOtherIdentifiers())) {
+        private void handleIdentifiersAndOwnership(StringBuffer whereClause,
+                Map<String, Object> params) {
+            final String anyTypeIdentifier = spo.getAnyTypeIdentifier();
+            if (StringUtils.isNotBlank(anyTypeIdentifier)) {
+                final String anyTypeIdentifierSQL = StringEscapeUtils
+                        .escapeSql(anyTypeIdentifier);
                 String operator = determineOperator(whereClause);
-                Iterator<Ii> ids = sp.getOtherIdentifiers().iterator();
                 whereClause.append(String.format("%s ( ", operator));
-                while (ids.hasNext()) {
-                    Ii id = ids.next();
-                    whereClause.append("exists (select oi.extension from obj.otherIdentifiers oi where oi.root = '"
-                            + id.getRoot() + "' and upper(oi.extension) like '%" + id.getExtension().toUpperCase()
-                            + "%') ");
-                    if (ids.hasNext()) {
-                        whereClause.append(" or ");
-                    } else {
-                        whereClause.append(") ");
-                    }
-                }
-            }
 
+                // Other identifiers
+                // Intentionally disable PMD complains here, because I want
+                // multiple appends for readability
+                // and know for sure what the default Locale will be.
+                appendOtherIdentifierSearchClause(whereClause,
+                        anyTypeIdentifierSQL, IiConverter.STUDY_PROTOCOL_ROOT);
+                whereClause.append(" or ");
+                appendOtherIdentifierSearchClause(whereClause,
+                        anyTypeIdentifierSQL,
+                        IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+                whereClause.append(" or ");
+
+                // DCP
+                appendIdentifierAssignerSearchClause(whereClause,
+                        anyTypeIdentifierSQL, PAConstants.DCP_ORG_NAME, params);
+                whereClause.append(" or "); // NOPMD
+
+                // NCT
+                appendIdentifierAssignerSearchClause(whereClause,
+                        anyTypeIdentifierSQL, PAConstants.CTGOV_ORG_NAME,
+                        params);
+                whereClause.append(" or "); // NOPMD
+
+                // CTEP
+                appendIdentifierAssignerSearchClause(whereClause,
+                        anyTypeIdentifierSQL, PAConstants.CTEP_ORG_NAME, params);
+                whereClause.append(" or "); // NOPMD
+
+                // Lead Org.
+                appendLeadOrgSearchClause(whereClause, anyTypeIdentifierSQL,
+                        params);
+
+                whereClause.append(" ) ");
+            }
+            handleOtherIdentifiers(whereClause);
+            handleMyTrialsOnly(whereClause, params);
+        }
+
+        /**
+         * @param whereClause
+         * @param anyTypeIdentifierSQL
+         */
+        private void appendLeadOrgSearchClause(StringBuffer whereClause,
+                final String anyTypeIdentifierSQL, Map<String, Object> params) {
+            whereClause
+                .append("exists (select ssdcp.id from StudySite ssdcp where " // NOPMD
+                    + "ssdcp.studyProtocol.id = "
+                    + SearchableUtils.ROOT_OBJ_ALIAS
+                    + ".id and lower(ssdcp.localStudyProtocolIdentifier) like '%"
+                    + anyTypeIdentifierSQL.toLowerCase() // NOPMD
+                    + "%' and ssdcp.functionalCode = :"
+                    + LEAD_ORG_FUNCTIONAL_CODE_PARAM
+                    + ") ");
+            params.put(LEAD_ORG_FUNCTIONAL_CODE_PARAM,
+                    StudySiteFunctionalCode.LEAD_ORGANIZATION);            
+        }
+        
+        private void appendOtherIdentifierSearchClause(
+                StringBuffer whereClause, String anyTypeIdentifierSQL,
+                String root) {
+            whereClause
+                    .append("exists (select oi.extension from obj.otherIdentifiers oi where oi.root = '" // NOPMD
+                            + root
+                            + "' and upper(oi.extension) like '%"
+                            + anyTypeIdentifierSQL.toUpperCase() // NOPMD
+                            + "%')");
+
+        }
+        
+        private void appendIdentifierAssignerSearchClause(
+                StringBuffer whereClause, String anyTypeIdentifierSQL,
+                String orgName, Map<String, Object> params) {
+            whereClause
+                    .append("exists (select ssdcp.id from StudySite ssdcp where " // NOPMD
+                            + "ssdcp.studyProtocol.id = "
+                            + SearchableUtils.ROOT_OBJ_ALIAS
+                            + ".id and lower(ssdcp.localStudyProtocolIdentifier) like '%"
+                            + anyTypeIdentifierSQL.toLowerCase() // NOPMD
+                            + "%' and ssdcp.functionalCode = :"
+                            + ID_ASSIGNER_FUNCTIONAL_CODE_PARAM
+                            + " and ssdcp.researchOrganization.organization.name='"
+                            + orgName + "') ");
+            params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
+                    StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleMyTrialsOnly(StringBuffer whereClause,
+                Map<String, Object> params) {
             if (spo.isMyTrialsOnly() && spo.getUserId() != null) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s  ( sowner.id = :%s or :%s in (select id from RegistryUser where "
@@ -587,6 +673,32 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         operator, STUDY_OWNER_PARAM, STUDY_OWNER_PARAM, STUDY_OWNER_DWS_PARAM));
                 params.put(STUDY_OWNER_PARAM, spo.getUserId());
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.SUBMITTED);
+            }
+        }
+
+        /**
+         * @param whereClause
+         */
+        private void handleOtherIdentifiers(StringBuffer whereClause) {
+            if (CollectionUtils.isNotEmpty(sp.getOtherIdentifiers())) {
+                String operator = determineOperator(whereClause);
+                Iterator<Ii> ids = sp.getOtherIdentifiers().iterator();
+                whereClause.append(String.format("%s ( ", operator));
+                while (ids.hasNext()) {
+                    Ii id = ids.next();
+                    whereClause
+                            .append("exists (select oi.extension from obj.otherIdentifiers oi where oi.root = '"
+                                    + id.getRoot()
+                                    + "' and upper(oi.extension) like '%"
+                                    + StringEscapeUtils.escapeSql(id
+                                            .getExtension().toUpperCase())
+                                    + "%') ");
+                    if (ids.hasNext()) {
+                        whereClause.append(" or ");
+                    } else {
+                        whereClause.append(") ");
+                    }
+                }
             }
         }
 

@@ -112,9 +112,15 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class StudyProtocolQueryCriteria implements Serializable {
 
+    /**
+     * All types of identifiers.
+     */
+    public static final String ALL = "All";
+
     private static final long serialVersionUID = 1047596217516203744L;
     
     private Long studyProtocolId;
+    private String anyTypeIdentifier;
     private String nciIdentifier;
     private String dcpIdentifier;
     private String ctepIdentifier;
@@ -789,28 +795,38 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public void setIdentifier(String identifier) {
-        IdentifierType idType = IdentifierType.getByCode(identifierType);
-        switch (idType) {
-        case CTEP:
-            setCtepIdentifier(identifier);
-            break;
-        case DCP:
-            setDcpIdentifier(identifier);
-            break;
-        case LEAD_ORG:
-            setLeadOrganizationTrialIdentifier(identifier);
-            break;
-        case NCI:
-            setNciIdentifier(identifier);
-            break;
-        case NCT:
-            setNctNumber(identifier);
-            break;
-        case OTHER_IDENTIFIER:
-            setOtherIdentifier(identifier);
-            break;
-        default:
-            break;
+        if (ALL.equals(identifierType)) {
+            setCtepIdentifier(null);
+            setDcpIdentifier(null);
+            setLeadOrganizationTrialIdentifier(null);
+            setNciIdentifier(null);
+            setNctNumber(null);
+            setOtherIdentifier(null);
+            setAnyTypeIdentifier(identifier);
+        } else {
+            IdentifierType idType = IdentifierType.getByCode(identifierType);
+            switch (idType) {
+            case CTEP:
+                setCtepIdentifier(identifier);
+                break;
+            case DCP:
+                setDcpIdentifier(identifier);
+                break;
+            case LEAD_ORG:
+                setLeadOrganizationTrialIdentifier(identifier);
+                break;
+            case NCI:
+                setNciIdentifier(identifier);
+                break;
+            case NCT:
+                setNctNumber(identifier);
+                break;
+            case OTHER_IDENTIFIER:
+                setOtherIdentifier(identifier);
+                break;
+            default:
+                break;
+            }
         }
     }
 
@@ -885,7 +901,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public String getUniqueCriteriaKey() { // NOPMD
         StringBuilder builder = new StringBuilder();
         builder.append("StudyProtocolQueryCriteria [studyProtocolId=")
-                .append(studyProtocolId).append(", nciIdentifier=")
+                .append(studyProtocolId).append(", anyTypeIdentifier=")
+                .append(anyTypeIdentifier).append(", nciIdentifier=")
                 .append(nciIdentifier).append(", dcpIdentifier=")
                 .append(dcpIdentifier).append(", ctepIdentifier=")
                 .append(ctepIdentifier).append(", nctNumber=")
@@ -964,6 +981,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setCtepDcpCategory(String ctepDcpCategory) {
         this.ctepDcpCategory = ctepDcpCategory;
+    }
+
+    /**
+     * @return the anyTypeIdentifier
+     */
+    public String getAnyTypeIdentifier() {
+        return anyTypeIdentifier;
+    }
+
+    /**
+     * @param anyTypeIdentifier the anyTypeIdentifier to set
+     */
+    public void setAnyTypeIdentifier(String anyTypeIdentifier) {
+        this.anyTypeIdentifier = anyTypeIdentifier;
     }    
     
 }

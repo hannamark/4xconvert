@@ -124,6 +124,7 @@ public class StudyProtocolOptions {
     private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
     private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
     private Boolean ctgovXmlRequiredIndicator; 
+    private String anyTypeIdentifier;
     
     /**
      * @return excludeRejectedTrials
@@ -502,6 +503,20 @@ public class StudyProtocolOptions {
      */
     public void setSearchCTEPAndDCPTrials(boolean searchCTEPAndDCPTrials) {
         this.searchCTEPAndDCPTrials = searchCTEPAndDCPTrials;
+    }
+
+    /**
+     * @return the anyTypeIdentifier
+     */
+    public String getAnyTypeIdentifier() {
+        return anyTypeIdentifier;
+    }
+
+    /**
+     * @param anyTypeIdentifier the anyTypeIdentifier to set
+     */
+    public void setAnyTypeIdentifier(String anyTypeIdentifier) {
+        this.anyTypeIdentifier = anyTypeIdentifier;
     }
     
     

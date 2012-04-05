@@ -80,7 +80,8 @@
                             <label for="identfierType"><fmt:message key="studyProtocol.identifierType"/></label>
                         </td>
                         <td>
-                            <s:select id="identifierType" headerKey="" headerValue="--Select--" name="criteria.identifierType"
+                            <s:select id="identifierType" headerKey="All" 
+                                headerValue="All" name="criteria.identifierType"
                                 list="#identifierSearchTypes" value="criteria.identifierType"  cssStyle="width:206px" />
                             <span class="formErrorMsg">
                                 <s:fielderror>

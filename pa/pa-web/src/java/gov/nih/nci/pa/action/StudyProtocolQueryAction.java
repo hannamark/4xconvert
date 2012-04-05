@@ -241,11 +241,17 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * Validates the identifier portion of the search.
      */
     private void validateIdentifierSearchParameters() {
-        if (criteria.getIdentifierType() != null && StringUtils.isEmpty(getIdentifier())) {
-            addFieldError("identifier", getText("error.studyProtocol.identifier"));
+        final String identifierType = criteria.getIdentifierType();
+        if (StringUtils.isNotEmpty(identifierType)
+                && !StudyProtocolQueryCriteria.ALL.equals(identifierType)
+                && StringUtils.isEmpty(getIdentifier())) {
+            addFieldError("identifier",
+                    getText("error.studyProtocol.identifier"));
         }
-        if (StringUtils.isNotEmpty(getIdentifier()) && criteria.getIdentifierType() == null) {
-            addFieldError("criteria.identifierType", getText("error.studyProtocol.identifierType"));
+        if (StringUtils.isNotEmpty(getIdentifier())
+                && StringUtils.isEmpty(identifierType)) {
+            addFieldError("criteria.identifierType",
+                    getText("error.studyProtocol.identifierType"));
         }
     }
 
@@ -254,7 +260,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     private void populateIdentifierSearchParameters() {
         criteria.setUserLastCreated(UsernameHolder.getUser());
-        if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isNotEmpty(getIdentifier())) {
             criteria.setIdentifier(getIdentifier());
         }
     }
