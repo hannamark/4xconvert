@@ -863,4 +863,8 @@
         <comment>Fixed data issue in study_overall_status: COMPLETED must be COMPLETE.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4836.sql"/>
      </changeSet>
+     <changeSet id="PO-4837" author="krylovd">
+        <comment>Fixed data issue in study_protocol.official_title: some unprintable characters with ascii code 160.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4837.sql"/>
+     </changeSet>     
 </databaseChangeLog>
