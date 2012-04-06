@@ -18,7 +18,7 @@
             function resetValues() {
                 $("officialTitle").value="";
                 $("leadOrganizationId").value="";
-                $("identifierType").value="";
+                $("identifierType").value="All";
                 $("identifier").value="";
                 $("principalInvestigatorId").value="";
                 $("phaseCode").value="";
@@ -71,7 +71,7 @@
                         </td>
                         <td>
                             <s:select name="criteria.leadOrganizationIds" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
-                                listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationIds" />
+                                listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationIds[0]" />
                         </td>
                     </tr>
                     <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />
@@ -133,7 +133,7 @@
                         </td>
                         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                         <td>
-                            <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+                            <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCodes[0]" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="studyStatus"> <fmt:message key="studyProtocol.studyStatus"/></label>
@@ -149,7 +149,7 @@
                         </td>
                         <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
                         <td>
-                           <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
+                           <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCodes[0]" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>
