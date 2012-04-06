@@ -369,7 +369,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
         } catch (PAException e) {
             if (!RegistryUtil.setFailureMessage(e)) {
-                addActionError("Error occured, please try again");
+                addActionError("Error occurred. Please try again.");
             }
             LOG.error("Exception occured while updating trial", e);
             TrialSessionUtil.addSessionAttributes(trialDTO);

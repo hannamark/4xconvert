@@ -119,7 +119,7 @@ public class UpdateTrialStatusAction extends UpdateTrialAction {
             return SUCCESS;
         } catch (Exception e) {
             addActionError("Error occured while querying trial: " + e.getMessage());
-            LOG.error("Exception occured while querying trial " + e);
+            LOG.error("Exception occured while querying trial " + e, e);
             return ERROR;
         }
     }
@@ -146,9 +146,9 @@ public class UpdateTrialStatusAction extends UpdateTrialAction {
             }
         } catch (Exception e) {
             if (!RegistryUtil.setFailureMessage(e)) {
-                addActionError("Error occured, please try again");
+                addActionError("Error occurred. Please try again.");
             }
-            LOG.error("Exception occured while querying trial " + e);
+            LOG.error("Exception occured while querying trial " + e, e);
 
         }
         return ERROR;

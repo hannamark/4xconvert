@@ -252,7 +252,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             final TrialDTO trialDTO = getTrialDTO();
             TrialSessionUtil.addSessionAttributes(trialDTO);
             if (!RegistryUtil.setFailureMessage(e)) {
-                addActionError("Error occured, please try again");
+                addActionError("Error occurred. Please try again.");
             }
             LOG.error("Exception occured while submitting trial", e);
             trialUtil.populateRegulatoryList(trialDTO);
