@@ -49,6 +49,7 @@
             		showCol(document.getElementById('milestoneComments'));
             	}
             }
+            Event.observe(window, "load", statusChange);
         </script>
     </head>
     <body>
@@ -98,7 +99,7 @@
                                                 <td class="label" id="milestoneComments">
                                                     <s:label><fmt:message key="milestone.comment"/></s:label>
                                                 </td>
-                                                <td class="label" id="latemilestoneComments">
+                                                <td class="label" id="latemilestoneComments" style="display: none;">
                                                     <s:label>Late Rejection <fmt:message key="milestone.comment"/></s:label>
                                                     <span class="required">*</span>
                                                 </td>
