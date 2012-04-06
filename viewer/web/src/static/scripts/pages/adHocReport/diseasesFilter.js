@@ -476,7 +476,7 @@ function setJstreeOperationReady(bReady) {
         $('#diseasesSection .diseaserescol input[type="text"]').autocomplete({
             source : function(request, response) {
                 var results = $.ui.autocomplete.filter(FiveAmUtil.PDQPkg.pdqDataDictionary, request.term);
-                response(results.slice(0, 8));
+                response(results.slice(0, 8).sort());
             }
         });
         
@@ -585,18 +585,6 @@ FiveAmUtil = {
                 var pdqItemId = searchResultsPDQ[i];
                 populateBreadcrumbItem( bcItem, pdqData, pdqItemId, true, bcItems );
             }
-            bcItems.sort( function(o1,o2) {
-                if( o1.length < o2.length ) 
-                    return -1;
-                else if( o1.length > o2.length )
-                    return 1;
-                else if( o1.name == searchTerm )
-                    return -1;
-                else if( o2.name == searchTerm )
-                    return 1;
-                else
-                    return 0;
-            });
             return {
                 'bcItems' : bcItems,
                 'searchTerm' : searchTerm
@@ -643,13 +631,19 @@ FiveAmUtil = {
         },  
 
         searchPDQ : function(term) {
-            var ids=[];
+            var results = new Array();
             for( var i in this.pdqData ) {
                 if(!this.pdqData.hasOwnProperty(i))
                     continue;
                 var pdqItem = this.pdqData[i];
-                if(pdqItem.name.indexOf(term)!=-1)
-                    ids.push(i);                    
+                if(pdqItem.name.indexOf(term)!=-1) {
+                    results.push([pdqItem.name, i]);
+                }
+            }
+            var sortedResults = results.sort();
+            var ids=[];
+            for (i=0;i<sortedResults.length;i++){
+                ids.push(sortedResults[i][1]);
             }
             return ids;
         },
