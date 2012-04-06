@@ -84,6 +84,8 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * StudyProtocolQueryDTO for transferring Study Protocol object .
@@ -315,5 +317,18 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setCurrentUserIsSiteOwner(boolean currentUserIsSiteOwner) {
         this.currentUserIsSiteOwner = currentUserIsSiteOwner;
+    }
+    
+    /**
+     *  Determines whether to show actions dropdown or not.
+     * @return boolean
+     */
+    public boolean isActionVisible() {
+        return StringUtils.isNotEmpty(getUpdate()) 
+            || StringUtils.isNotEmpty(getAmend()) 
+            || StringUtils.isNotEmpty(getStatusChangeLinkText()) 
+            || getShowSendXml().booleanValue() 
+            || isCurrentUserCanAddSite() 
+            || isCurrentUserCanEditSite();
     }
 }

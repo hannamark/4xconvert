@@ -173,14 +173,15 @@ body {
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column title="Other Identifiers" >
                 	<s:iterator value="%{#attr.row.otherIdentifiers}" >
-				    	<s:property/>				
+				    	'<s:property/>'				
 					</s:iterator>
                 </display:column>  
-                <display:column title="Participating Sites">
+                <display:column title="Participating Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                </display:column>                                              
           	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
+          	 		<s:if test="%{#attr.row.actionVisible}">
                 	<ul id="nav">
 						<li>&nbsp;Select action &nbsp;&nbsp;&nbsp;&nbsp; &nabla;
 							<ul>
@@ -237,7 +238,8 @@ body {
 								</li>
 							</ul>
 						</li>
-					</ul>                		                    	                    
+					</ul>  
+					</s:if>              		                    	                    
                  </display:column>     
             </display:table>
         </c:otherwise>
