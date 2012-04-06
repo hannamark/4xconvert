@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -111,14 +112,14 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      */
     protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
-            String protocolId = StringUtils.trim(values.get(ACCRUAL_COUNT_STUDY_INDEX));
+            String protocolId = AccrualUtil.safeGet(values, ACCRUAL_COUNT_STUDY_INDEX);
             StudyProtocolDTO sp = getStudyProtocol(protocolId);
             validateStudyType(errMsg, protocolId, sp);
-            String accrualStudySite = StringUtils.trim(values.get(ACCRUAL_STUDY_SITE_INDEX));
+            String accrualStudySite = AccrualUtil.safeGet(values, ACCRUAL_STUDY_SITE_INDEX);
             if (StringUtils.isEmpty(accrualStudySite)) {
                 errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append('\n');
             }
-            String accrualCount = StringUtils.trim(values.get(ACCRUAL_COUNT_INDEX));
+            String accrualCount = AccrualUtil.safeGet(values, ACCRUAL_COUNT_INDEX);
             if (StringUtils.isEmpty(accrualCount)) {
                 errMsg.append("Accrual count is missing").append(appendLineNumber(lineNumber)).append('\n');
             }
@@ -153,7 +154,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             List<String> patientsIdList = new ArrayList<String>();
             isPatientIdUnique(getPatientId(values), errMsg, lineNumber, patientsIdList);
-            String pBirthDate = StringUtils.trim(values.get(PATIENT_BRITH_DATE_INDEX));
+            String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);
             if (StringUtils.isEmpty(pBirthDate)) {
                 errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
                     .append(appendLineNumber(lineNumber)).append('\n');
@@ -177,7 +178,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      */
     protected void validatePatientRaceData(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
         if (StringUtils.equalsIgnoreCase("PATIENT_RACES", key)) {
-            String pRaceCode = StringUtils.trim(values.get(PATIENT_RACE_CODE_INDEX));
+            String pRaceCode = AccrualUtil.safeGet(values, PATIENT_RACE_CODE_INDEX);
             if (StringUtils.isEmpty(pRaceCode)) {
                 errMsg.append("Patient race code is missing for patient ID ").append(getPatientId(values))
                     .append(appendLineNumber(lineNumber)).append('\n');
@@ -195,7 +196,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      */
     protected void validateDateOfEntry(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String dateOfEntry = StringUtils.trim(values.get(PATIENT_DATE_OF_ENTRY_INDEX));
+        String dateOfEntry = AccrualUtil.safeGet(values, PATIENT_DATE_OF_ENTRY_INDEX);
         if (StringUtils.isEmpty(dateOfEntry)) {
             errMsg.append("Patient date of entry is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
@@ -212,7 +213,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      */
     protected void validateEthnicity(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String ethnicity = StringUtils.trim(values.get(PATIENT_ETHNICITY_INDEX));
+        String ethnicity = AccrualUtil.safeGet(values, PATIENT_ETHNICITY_INDEX);
         if (StringUtils.isEmpty(ethnicity)) {
             errMsg.append("Patient ethnicity is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
@@ -229,7 +230,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      */
     private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String genderCode = StringUtils.trim(values.get(PATIENT_GENDER_CODE_INDEX));
+        String genderCode = AccrualUtil.safeGet(values, PATIENT_GENDER_CODE_INDEX);
         if (StringUtils.isEmpty(genderCode)) {
             errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
@@ -252,7 +253,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         if (sp != null) {
             purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
         }
-        String code = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
+        String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
         if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION) {
             errMsg.append("Patient Disease Meddra/ICD9 Code is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');

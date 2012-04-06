@@ -93,7 +93,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -253,5 +256,18 @@ public class AccrualUtil {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Retrieve a trimmed String from a List<String>. Return null if index is invalid. 
+     * @param list the list
+     * @param index index to return
+     * @return trimmed String
+     */
+    public static String safeGet(List<String> list, int index) {
+        if (CollectionUtils.isEmpty(list) || list.size() <= index) {
+            return null;
+        }
+        return StringUtils.trim(list.get(index));
     }
 }

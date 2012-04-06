@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.accrual.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -99,7 +101,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -159,5 +163,18 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertFalse(AccrualUtil.isUserAllowedAccrualAccess(
                 IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
         
+    }
+    
+    @Test 
+    public void safeGetTest() {
+        assertNull(AccrualUtil.safeGet(null, 1));
+        assertNull(AccrualUtil.safeGet(new ArrayList<String>(), 2));
+        List<String> list = new ArrayList<String>();
+        list.add("value1");
+        assertEquals("value1", AccrualUtil.safeGet(list, 0));
+        assertNull(AccrualUtil.safeGet(list, 1));
+        list.add(" value2 ");
+        assertEquals("value2", AccrualUtil.safeGet(list, 1));
+        assertNull(AccrualUtil.safeGet(list, 2));
     }
 }

@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
@@ -320,7 +321,7 @@ public class BaseBatchUploadReader {
      * @return err if any
      */
     protected String getPatientId(List<String> values) {
-        return values.get(PATIENT_ID_INDEX).trim();
+        return AccrualUtil.safeGet(values, PATIENT_ID_INDEX);
     }   
     
     /**
@@ -329,7 +330,7 @@ public class BaseBatchUploadReader {
      * @return err if any
      */
     protected String getAccrualCountStudySiteId(List<String> values) {
-        return values.get(ACCRUAL_COUNT_STUDY_SITE_ID_INDEX).trim();
+        return AccrualUtil.safeGet(values, ACCRUAL_COUNT_STUDY_SITE_ID_INDEX);
     }   
     
     /**

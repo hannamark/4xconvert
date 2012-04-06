@@ -245,8 +245,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private void validateRegisteringInstitutionCode(String key, List<String> values, StringBuffer errMsg,
             long lineNumber) {
         if (StringUtils.equals("PATIENTS", key)) {
-            String registeringInstitutionID = StringUtils
-                .trim(values.get(BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1));
+            String registeringInstitutionID = AccrualUtil.safeGet(values, 
+                    BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
             if (StringUtils.isEmpty(registeringInstitutionID)) {
                 errMsg.append("Patient Registering Institution Code is missing for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
@@ -263,9 +263,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             long lineNumber) {
         String studySiteID = null;
         if (StringUtils.equals("PATIENTS", key)) {
-            studySiteID = StringUtils.trim(values.get(BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1));
+            studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
         } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
-            studySiteID = StringUtils.trim(values.get(BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1));
+            studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
         }
         if (!StringUtils.isEmpty(studySiteID)) {
             if (!isCorrectOrganizationId(studySiteID, errMsg)) {
@@ -279,6 +279,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * Test that Registering Institution Code is NCI PO ID or CTEP ID
      */
     private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
+        String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
+                + registeringInstitutionID + "\n";
         try {
             if (StringUtils.isNumeric(registeringInstitutionID)) {
                 OrganizationDTO poOrganization = PoRegistry.getOrganizationEntityService()
@@ -288,24 +290,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
             }
         } catch (NullifiedEntityException e) {
-            errMsg.append("The Registering Institution Code must be a valid PO or CTEP ID. Code: ")
-                .append(registeringInstitutionID);
-
+            errMsg.append(msg);
             return false;
         } catch (Exception e) {
             LOG.debug(e.getMessage());
         }
-
         try {
             getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
             return true;
-
         } catch (PAException e) {
             LOG.debug(e.getMessage());
         }
-
-        errMsg.append("The Registering Institution Code must be a valid PO or CTEP ID. Code: ")
-            .append(registeringInstitutionID);
+        errMsg.append(msg);
         return false;
     }
 
@@ -345,7 +341,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     }
     
     private boolean isValidTreatingSite(Ii studySiteOrgIi, List<String> values) {
-        StudyProtocolDTO spDto = getStudyProtocol(values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim());
+        StudyProtocolDTO spDto = getStudyProtocol(AccrualUtil.safeGet(values, 
+                BatchFileIndex.COLLECTION_PROTOCOL_INDEX));
         if (spDto == null) {
             return false;
         }
@@ -375,7 +372,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             addAccrualSiteValidationError(values, errMsg, lineNumber);  
             return;
         }  
-        StudyProtocolDTO spDto = getStudyProtocol(values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim());
+        StudyProtocolDTO spDto = getStudyProtocol(AccrualUtil.safeGet(values, 
+                BatchFileIndex.COLLECTION_PROTOCOL_INDEX));
         assertUserAllowedSiteAccess(spDto.getIdentifier(), studySiteOrgIi, regInstID, errMsg, lineNumber);
     }
     
@@ -430,10 +428,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private void validateProtocolNumber(String key, List<String> values, StringBuffer errMsg, long lineNumber, 
             String expectedProtocolId) {
-        String protocolId = null;
-        if (values.size() > BatchFileIndex.COLLECTION_PROTOCOL_INDEX) {
-            protocolId = values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim();
-        }
+        String protocolId = AccrualUtil.safeGet(values, BatchFileIndex.COLLECTION_PROTOCOL_INDEX);
         if (StringUtils.isEmpty(protocolId)) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
                 .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.\n");
