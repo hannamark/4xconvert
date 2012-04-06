@@ -608,7 +608,7 @@ public class StudyMilestoneBeanLocal
         if (canCreateReadyForTSRMilestone(mileStones)) {
             StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
             readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
-            readyForTSR.setMilestoneDate(dto.getMilestoneDate());
+            readyForTSR.setMilestoneDate(TsConverter.convertToTs(new Date()));
             readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
             create(readyForTSR);
         }
