@@ -84,14 +84,13 @@ import gov.nih.nci.pa.pdq.dml.DiseaseScript;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -131,11 +130,11 @@ public class PDQProcessor extends AbstractPDQProcessor {
 
         setDisplayName(disease, root);
 
+        addAltNames(danList, root);
+
         DiseaseScript.get().add(disease, danList, user);
 
         addParents(disease, root);
-
-        addAltNames(danList, root);
 
     }
 
