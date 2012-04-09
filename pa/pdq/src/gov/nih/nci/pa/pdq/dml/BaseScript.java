@@ -101,6 +101,8 @@ public class BaseScript {
             char c = original.charAt(i);
             if (c == '\'') {
                 revised += "''";
+            } else if (c == '\\') {
+                revised += ' ';
             } else if (c < 32 || c == 127) {
                 revised += ' ';
             } else {
