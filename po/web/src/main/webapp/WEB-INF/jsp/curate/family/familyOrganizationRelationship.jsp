@@ -18,7 +18,7 @@
             function confirmThenSubmit() {
                 var confirmation = ${isCreate} ||
                     $('familyOrgRelationshipForm.familyOrgRelationship.endDate').value.match(/^\s*$/) ||
-                    confirm('<s:text name="familyOrgRelationship.remove.confirmationMessage" />');
+                    confirm('<s:text name="familyOrgRelationship.enddate.confirmationMessage" />');
                 if (confirmation) {
                     $('familyOrgRelationshipForm').submit();
                 }
