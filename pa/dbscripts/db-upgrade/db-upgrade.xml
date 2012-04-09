@@ -866,5 +866,9 @@
      <changeSet id="PO-4837" author="krylovd">
         <comment>Fixed data issue in study_protocol.official_title: some unprintable characters with ascii code 160.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4837.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-2796" author="Hugh">
+        <comment>Remove anachronistic auditing schema objects.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-2796.sql"/>
+     </changeSet>
 </databaseChangeLog>
