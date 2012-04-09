@@ -69,6 +69,7 @@ import org.apache.struts2.ServletActionContext;
  *
  */
 public class TrialHelper {
+    private static final int PG_CODE_LEN = 100;
     private static final String SPONSOR = "sponsor";
     private static final int OFFICIAL_TITLE = 4000;
     private static final int KEYWORD = 600;
@@ -405,6 +406,7 @@ public class TrialHelper {
         spDTO.setOfficialTitle(StConverter.convertToSt(StringUtils.left(gtdDTO.getOfficialTitle(), OFFICIAL_TITLE)));
         spDTO.setAcronym(StConverter.convertToSt(gtdDTO.getAcronym()));
         spDTO.setKeywordText(StConverter.convertToSt(StringUtils.left(gtdDTO.getKeywordText(), KEYWORD)));
+        spDTO.setProgramCodeText(StConverter.convertToSt(StringUtils.left(gtdDTO.getProgramCodeText(), PG_CODE_LEN)));
         if (gtdDTO.getSubmissionNumber() > 1) {
             spDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(gtdDTO.getAmendmentReasonCode()));
         }

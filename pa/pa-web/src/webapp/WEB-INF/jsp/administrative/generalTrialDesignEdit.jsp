@@ -162,6 +162,7 @@
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
+                    <s:hidden name="gtdDTO.programCodeText" id="gtdDTO.programCodeText"/>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <s:hidden name="gtdDTO.phaseCode" id= "gtdDTO.phaseCode"></s:hidden>
                         <s:hidden name="gtdDTO.phaseAdditionalQualifierCode" id= "gtdDTO.phaseAdditionalQualifierCode"></s:hidden>
