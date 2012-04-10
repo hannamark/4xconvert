@@ -1,0 +1,33 @@
+<project name="pdq-export" default="gen" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+   <tstamp>
+        <format property="TODAY" pattern="MM-dd-yyyy-HHmm" locale="US"/>
+    </tstamp>   
+	
+	<property file="${basedir}/build.properties"/>
+	<echoproperties destfile="${basedir}/resolved.build.properties"/>
+	
+    <property name="archives.dir" value="${basedir}/archives" />
+    <property name="temp.dir" value="${basedir}/temp" />
+	<mkdir dir="${temp.dir}"/>
+	<mkdir dir="${archives.dir}"/>
+	
+    <path id="pdqexport.classpath">
+        <fileset dir="${basedir}/lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="pdqexport.classpath"/>
+    <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="pdqexport.classpath" name="groovy"/> 
+    
+	
+    <target name="gen" description="Generates the Export">
+        <echo message = "Generating PDQ Trial Export ...."/>
+        <groovy src="groovy/export.groovy"/>
+    	<zip destfile="${archives.dir}/CTRP-TRIALS-${TODAY}.zip" basedir="${temp.dir}"/>
+    	<delete quiet="true" file="${basedir}/resolved.build.properties"/>
+    	<delete dir="${temp.dir}"/>
+    </target>
+    
+</project>
