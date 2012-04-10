@@ -36,7 +36,7 @@
 							<display:column escapeXml="true" property="nciIdentifier"
 								sortable="false" titleKey="plannedMarker.protocolId"
 								headerClass="sortable" />
-							<display:column escapeXml="true" property="meaning" sortable="false"
+							<display:column escapeXml="true" property="name" sortable="false"
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
 							<display:column escapeXml="true" property="status"
 								sortable="false" titleKey="plannedMarker.markerStatus"

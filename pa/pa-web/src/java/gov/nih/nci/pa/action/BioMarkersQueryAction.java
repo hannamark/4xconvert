@@ -200,7 +200,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                     StConverter.convertToString(marker.getLongName()));
             for (PlannedMarkerDTO markerDTO : markerDTOs) {
                 markerDTO.setLongName(StConverter.convertToSt(plannedMarker.getMeaning()));
-                markerDTO.setName(StConverter.convertToSt(plannedMarker.getMeaning()));
+                markerDTO.setName(StConverter.convertToSt(plannedMarker.getName()));
                 markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                 plannedMarkerService.update(markerDTO);
             }           
