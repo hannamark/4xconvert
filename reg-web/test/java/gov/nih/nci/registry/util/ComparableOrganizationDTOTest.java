@@ -176,13 +176,13 @@ public class ComparableOrganizationDTOTest {
         ComparableOrganizationDTO dto1 = new ComparableOrganizationDTO();
         ComparableOrganizationDTO dto2 = new ComparableOrganizationDTO();
         
-        dto1.setId("1");
-        dto2.setId("2");
+        dto1.setName("1");
+        dto2.setName("2");
         assertEquals(-1, dto1.compareTo(dto2));
         assertEquals(+1, dto2.compareTo(dto1));
         
-        dto1.setId("1");
-        dto2.setId("1");
+        dto1.setName("1");
+        dto2.setName("1");
         assertEquals(0, dto1.compareTo(dto2));
         
     }

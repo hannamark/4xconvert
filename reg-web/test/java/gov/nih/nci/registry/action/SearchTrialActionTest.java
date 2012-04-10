@@ -349,7 +349,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         org4.setName("o4");
         PaOrganizationDTO org5 = new PaOrganizationDTO();
         org5.setId("1");
-        org5.setName("o5");
+        org5.setName("o1");
 
         when(
                 searchTrialAction

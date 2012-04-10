@@ -8,6 +8,7 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * I needed {@link PaOrganizationDTO} with Comparable and
@@ -91,7 +92,8 @@ public final class ComparableOrganizationDTO extends PaOrganizationDTO
 
     @Override
     public int compareTo(ComparableOrganizationDTO o) {
-        return getId().compareTo(o.getId());
+        return StringUtils.defaultString(getName()).compareTo(
+                StringUtils.defaultString(o.getName()));
     }
 
 }
