@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
@@ -17,8 +18,8 @@ public class SelectOrganizationActionTest extends AbstractPoTest {
 
     @Test
     public void search() {
-
         assertEquals(Action.SUCCESS, action.search());
+        assertTrue(action.hasActionErrors());
     }
 
     private SelectOrganizationAction action;
