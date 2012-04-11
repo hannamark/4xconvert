@@ -22,7 +22,8 @@
             <interceptor name="preventTrialEditing" class="gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor">
                 <param name="errorAction">duplicateTrialErrorAction</param>
             </interceptor>
-
+            <interceptor name="trialHeaderRefresh" class="gov.nih.nci.pa.interceptor.TrialHeaderInterceptor">
+            </interceptor>            
             <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="showDisclaimer" />
                 <interceptor-ref name="exception" />
@@ -130,6 +131,7 @@
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">add,update</param>
                 </interceptor-ref>
+                <interceptor-ref name="trialHeaderRefresh"></interceptor-ref>
             </interceptor-stack>
         </interceptors>
 
