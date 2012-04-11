@@ -7,14 +7,17 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyDocumentStage;
 import gov.nih.nci.pa.domain.StudyFundingStage;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
+import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.convert.StudyDocumentStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyFundingStageConverter;
 import gov.nih.nci.pa.iso.convert.StudyIndIdeStageConverter;
@@ -27,6 +30,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolStageSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -41,6 +45,7 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -309,7 +314,29 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         createPAPersonByPoId(paServiceUtil, sp.getPiIdentifier());
         createPAPersonByPoId(paServiceUtil, sp.getResponsibleIdentifier());
         createPAPersonByPoId(paServiceUtil, sp.getSitePiIdentifier());
+        createPAOrgContactByPoId(sp);
         return IiConverter.convertToStudyProtocolIi(sp.getId());
+    }
+
+    private Long createPAOrgContactByPoId(
+            StudyProtocolStage sp) throws PAException {
+        if (StringUtils.isNotBlank(sp.getResponsibleOcIdentifier())) {
+            PABaseCorrelation<PAOrganizationalContactDTO, OrganizationalContactDTO, OrganizationalContact, 
+            OrganizationalContactConverter> oc = new PABaseCorrelation<PAOrganizationalContactDTO, 
+            OrganizationalContactDTO, OrganizationalContact, OrganizationalContactConverter>(
+                    PAOrganizationalContactDTO.class,
+                    OrganizationalContact.class,
+                    OrganizationalContactConverter.class);
+            PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
+            orgContacPaDto.setOrganizationIdentifier(IiConverter
+                    .convertToPoOrganizationIi(sp.getSponsorIdentifier()));
+            orgContacPaDto.setIdentifier(IiConverter
+                    .convertToPoOrganizationalContactIi(sp
+                            .getResponsibleOcIdentifier()));
+            orgContacPaDto.setTypeCode(PAConstants.RESPONSIBLE_PARTY);
+            return oc.create(orgContacPaDto);
+        }
+        return null;
     }
 
     private void createPAOrganizationByPoId(PAServiceUtils paServiceUtil, String id) throws PAException {

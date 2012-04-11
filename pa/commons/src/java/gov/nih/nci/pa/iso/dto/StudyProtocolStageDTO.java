@@ -29,6 +29,7 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
 
     private St responsiblePartyType;
     private Ii responsibleIdentifier;
+    private Ii responsibleGenericContactIdentifier;
     private St contactPhone;
     private St contactEmail;
 
@@ -446,6 +447,19 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setSecondaryIdentifierList(List<Ii> secondaryIdentifierList) {
         this.secondaryIdentifierList = secondaryIdentifierList;
+    }
+    /**
+     * @return the responsibleGenericContactIdentifier
+     */
+    public Ii getResponsibleGenericContactIdentifier() {
+        return responsibleGenericContactIdentifier;
+    }
+    /**
+     * @param responsibleGenericContactIdentifier the responsibleGenericContactIdentifier to set
+     */
+    public void setResponsibleGenericContactIdentifier(
+            Ii responsibleGenericContactIdentifier) {
+        this.responsibleGenericContactIdentifier = responsibleGenericContactIdentifier;
     }
 
 }

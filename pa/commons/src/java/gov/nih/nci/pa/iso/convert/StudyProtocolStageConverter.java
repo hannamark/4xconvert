@@ -122,6 +122,8 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStage.getResponsiblePartyType()));
         studyProtocolStageDTO.setResponsibleIdentifier(IiConverter.convertToIi(
                 studyProtocolStage.getResponsibleIdentifier()));
+        studyProtocolStageDTO.setResponsibleGenericContactIdentifier(IiConverter.convertToPoOrganizationalContactIi(
+                studyProtocolStage.getResponsibleOcIdentifier()));        
         studyProtocolStageDTO.setContactEmail(StConverter.convertToSt(studyProtocolStage.getContactEmail()));
         studyProtocolStageDTO.setContactPhone(StConverter.convertToSt(studyProtocolStage.getContactPhone()));
         studyProtocolStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToPoOrganizationIi(
@@ -211,6 +213,8 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStageDTO.getResponsiblePartyType()));
         studyProtocolStage.setResponsibleIdentifier(IiConverter.convertToString(
                 studyProtocolStageDTO.getResponsibleIdentifier()));
+        studyProtocolStage.setResponsibleOcIdentifier(IiConverter.convertToString(
+                studyProtocolStageDTO.getResponsibleGenericContactIdentifier()));        
         studyProtocolStage.setContactEmail(StConverter.convertToString(studyProtocolStageDTO.getContactEmail()));
         studyProtocolStage.setContactPhone(StConverter.convertToString(studyProtocolStageDTO.getContactPhone()));
         studyProtocolStage.setSummaryFourOrgIdentifier(IiConverter.convertToString(

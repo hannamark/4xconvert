@@ -51,6 +51,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String sponsorIdentifier;
     private String responsiblePartyType;
     private String responsibleIdentifier;
+    private String responsibleOcIdentifier;
     private String contactPhone;
     private String contactEmail;
 
@@ -182,6 +183,21 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     public void setResponsibleIdentifier(String responsibleIdentifier) {
         this.responsibleIdentifier = responsibleIdentifier;
     }
+    
+    /**
+     * @return the responsibleOcIdentifier
+     */
+    @Column (name = "RESPONSIBLE_OC_IDENTIFIER")
+    public String getResponsibleOcIdentifier() {
+        return responsibleOcIdentifier;
+    }
+    /**
+     * @param responsibleOcIdentifier the responsibleOcIdentifier to set
+     */
+    public void setResponsibleOcIdentifier(String responsibleOcIdentifier) {
+        this.responsibleOcIdentifier = responsibleOcIdentifier;
+    }    
+    
     /**
      * @return the contactPhone
      */
@@ -520,4 +536,5 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
     }
+   
 }
