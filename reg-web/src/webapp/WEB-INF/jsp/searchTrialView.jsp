@@ -219,7 +219,7 @@
                                     && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'
                                     && requestScope.summaryFourOrgName != null}">
                             <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
-                            <reg-web:valueRow labelKey="view.trial.FundingCategory">
+                            <reg-web:valueRow labelKey="view.trial.SubmissionCategory">
                                 <c:out value="${requestScope.summaryFourFundingCategoryCode}"/>
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="view.trial.FundingSponsor">
