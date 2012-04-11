@@ -97,6 +97,7 @@
                 $('trialDTO.sponsorName').value = chosenname;
                 $('lookupbtn4RP').disabled = "";
                 $('trialDTO.responsiblePersonIdentifier').value = '';
+                $('trialDTO.responsibleGenericContactIdentifier').value = '';
                 $('trialDTO.responsibleGenericContactName').value = '';
                 $("trialDTO.contactEmail").value = '';
                 $("trialDTO.contactPhone").value = ''; 
@@ -109,10 +110,12 @@
                 $('trialDTO.responsiblePersonName').value = chosenname;
                 $('lookupbtn4RP').disabled = "";
                 $('trialDTO.responsibleGenericContactName').value = ''; 
+                $('trialDTO.responsibleGenericContactIdentifier').value = '';
             }
             
             function createOrgGenericContactDiv() {
-                $('trialDTO.responsiblePersonIdentifier').value = persid;
+            	$('trialDTO.responsibleGenericContactIdentifier').value = persid;
+                $('trialDTO.responsiblePersonIdentifier').value = '';
                 $('trialDTO.responsibleGenericContactName').value = chosenname;
                 $("trialDTO.contactEmail").value = contactMail;
                 $("trialDTO.contactPhone").value = contactPhone;
@@ -153,6 +156,7 @@
                     $('trialDTO.responsiblePersonName').value = '';
                     $('trialDTO.responsibleGenericContactName').value = '';
                     $('trialDTO.responsiblePersonIdentifier').value  = '';
+                    $('trialDTO.responsibleGenericContactIdentifier').value  = '';
                 }
                 if ($('trialDTO.responsiblePartyTypesponsor').checked == true) {
                     $('rpcid').style.display='';
@@ -358,6 +362,7 @@
                 <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
                 <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
                 <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
+                <s:hidden name="trialDTO.responsibleGenericContactIdentifier" id="trialDTO.responsibleGenericContactIdentifier"/>
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
                 <s:hidden name="page" />

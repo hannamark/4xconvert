@@ -104,6 +104,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialConvertUtils;
 import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -230,7 +231,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
                     studyContactDTO = util.convertToStudyContactDTO(trialDTO);
                 } else {
                    studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                   responsiblePartyContactIi = getResponsiblePartyContactIi();
+                   responsiblePartyContactIi = TrialConvertUtils.getResponsiblePartyContactIi(trialDTO);
                }
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
@@ -275,22 +276,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     }
 
 
-    /**
-     * @param responsiblePartyContactIi
-     * @return
-     */
-    private Ii getResponsiblePartyContactIi() {
-        Ii responsiblePartyContactIi = null;
-        final TrialDTO trialDTO = getTrialDTO();
-        if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
-            responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-        }
-        if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
-             responsiblePartyContactIi = IiConverter.convertToPoOrganizationalContactIi(
-                     trialDTO.getResponsiblePersonIdentifier());
-        }
-        return responsiblePartyContactIi;
-    }
+    
 
     /**
      * validate the submit trial form elements.

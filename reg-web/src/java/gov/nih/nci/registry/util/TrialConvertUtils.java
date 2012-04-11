@@ -950,6 +950,9 @@ public class TrialConvertUtils {
         spStageDTO.setSponsorIdentifier(IiConverter.convertToIi(trialDto.getSponsorIdentifier()));
         spStageDTO.setResponsiblePartyType(StConverter.convertToSt(trialDto.getResponsiblePartyType()));
         spStageDTO.setResponsibleIdentifier(IiConverter.convertToIi(trialDto.getResponsiblePersonIdentifier()));
+        spStageDTO.setResponsibleGenericContactIdentifier(IiConverter
+                .convertToPoOrganizationalContactIi(trialDto
+                        .getResponsibleGenericContactIdentifier()));
         spStageDTO.setContactEmail(StConverter.convertToSt(trialDto.getContactEmail()));
         spStageDTO.setContactPhone(StConverter.convertToSt(trialDto.getContactPhone()));
         spStageDTO.setProgramCodeText(StConverter.convertToSt(trialDto.getProgramCodeText()));
@@ -1003,6 +1006,27 @@ public class TrialConvertUtils {
                 : BlConverter.convertToBl(Boolean.FALSE));
         spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
     }
+    
+    /**
+     * Gets Responsible Party Contact Ii.
+     * @param trialDTO TrialDTO
+     * @return Ii Ii
+     */
+    public static Ii getResponsiblePartyContactIi(TrialDTO trialDTO) {
+        Ii responsiblePartyContactIi = null;
+        if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
+            responsiblePartyContactIi = IiConverter
+                    .convertToPoPersonIi(trialDTO
+                            .getResponsiblePersonIdentifier());
+        }
+        if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
+            responsiblePartyContactIi = IiConverter
+                    .convertToPoOrganizationalContactIi(trialDTO
+                            .getResponsibleGenericContactIdentifier());
+        }
+        return responsiblePartyContactIi;
+    }
+    
    /**
     * @param spStageDTO isoDto
     * @return webDto
@@ -1109,6 +1133,9 @@ public class TrialConvertUtils {
         trialDto.setResponsiblePartyType(StConverter.convertToString(spStageDTO.getResponsiblePartyType()));
 
         trialDto.setResponsiblePersonIdentifier(IiConverter.convertToString(spStageDTO.getResponsibleIdentifier()));
+        trialDto.setResponsibleGenericContactIdentifier(IiConverter
+                .convertToString(spStageDTO
+                        .getResponsibleGenericContactIdentifier()));
         trialDto.setContactEmail(StConverter.convertToString(spStageDTO.getContactEmail()));
         trialDto.setContactPhone(StConverter.convertToString(spStageDTO.getContactPhone()));
         trialDto.setProgramCodeText(StConverter.convertToString(spStageDTO.getProgramCodeText()));
@@ -1182,7 +1209,16 @@ public class TrialConvertUtils {
                 trialDto.setSponsorIdentifier(null);
             }
         }
-        if (!ISOUtil.isIiNull(spStageDTO.getResponsibleIdentifier())) {
+        
+        if (!ISOUtil.isIiNull(spStageDTO.getResponsibleGenericContactIdentifier())) {
+            OrganizationalContactDTO orgContactDTO =
+                    (OrganizationalContactDTO) paServiceUtil.getCorrelationByIi(IiConverter
+                        .convertToPoOrganizationalContactIi(spStageDTO.getResponsibleGenericContactIdentifier().
+                                getExtension()));
+            if (orgContactDTO != null) {
+                trialDto.setResponsibleGenericContactName(StConverter.convertToString(orgContactDTO.getTitle()));
+            }            
+        } else if (!ISOUtil.isIiNull(spStageDTO.getResponsibleIdentifier())) {
             PersonDTO perDto =
                     paServiceUtil.getPoPersonEntity(IiConverter.convertToPoPersonIi(spStageDTO
                         .getResponsibleIdentifier().getExtension()));
@@ -1196,11 +1232,14 @@ public class TrialConvertUtils {
                     trialDto.setResponsibleGenericContactName(StConverter.convertToString(orgContactDTO.getTitle()));
                 }
             }
-            if (StringUtils.isEmpty(trialDto.getResponsibleGenericContactName())
-                    && StringUtils.isEmpty(trialDto.getResponsiblePersonName())) {
-                trialDto.setResponsiblePersonIdentifier(null);
-            }
         }
+        
+        if (StringUtils.isEmpty(trialDto.getResponsibleGenericContactName())
+                && StringUtils.isEmpty(trialDto.getResponsiblePersonName())) {
+            trialDto.setResponsiblePersonIdentifier(null);
+            trialDto.setResponsibleGenericContactIdentifier(null);
+        }        
+        
         trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(spStageDTO.getSummaryFourOrgIdentifier()));
         trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(spStageDTO
             .getSummaryFourFundingCategoryCode()));

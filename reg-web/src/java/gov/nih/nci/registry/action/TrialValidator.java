@@ -261,8 +261,13 @@ public class TrialValidator {
                   fieldErrorMap);
         addErrors(trialDto.getSponsorIdentifier(), "trialDTO.sponsorIdentifier", "error.submit.sponsor", fieldErrorMap);
         if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDto.getResponsiblePartyType())) {
-            addErrors(trialDto.getResponsiblePersonIdentifier(), "sponsorContactMissing",
-                      "error.submit.sponsorResponsibleParty", fieldErrorMap);
+            addErrors(
+                    StringUtils.defaultString(trialDto
+                            .getResponsiblePersonIdentifier())
+                            + StringUtils.defaultString(trialDto
+                                    .getResponsibleGenericContactIdentifier()),
+                    "sponsorContactMissing",
+                    "error.submit.sponsorResponsibleParty", fieldErrorMap);
         }
         addErrors(trialDto.getContactPhone(), "trialDTO.contactPhone", "error.submit.contactPhone", fieldErrorMap);
         if (StringUtils.isNotEmpty(trialDto.getContactPhone()) && !PAUtil.isValidPhone(trialDto.getContactPhone())) {

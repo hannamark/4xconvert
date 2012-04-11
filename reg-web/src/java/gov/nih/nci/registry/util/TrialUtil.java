@@ -200,6 +200,7 @@ public class TrialUtil extends TrialConvertUtils {
                 if (paDto.getTitle() != null) {
                     trialDTO.setResponsibleGenericContactName(paDto.getTitle());
                     trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getSrIdentifier()));
+                    trialDTO.setResponsibleGenericContactIdentifier(PAUtil.getIiExtension(paDto.getSrIdentifier()));
                 }
             }
         }

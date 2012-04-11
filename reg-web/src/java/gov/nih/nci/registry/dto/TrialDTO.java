@@ -37,6 +37,7 @@ public class TrialDTO extends BaseTrialDTO {
     private String responsiblePartyType;
     private String responsiblePersonName;
     private String responsiblePersonIdentifier;
+    private String responsibleGenericContactIdentifier;
     private String contactPhone;
     private String contactEmail;
 
@@ -763,5 +764,20 @@ public class TrialDTO extends BaseTrialDTO {
             }
         }
         return null;
+    }
+
+    /**
+     * @return the responsibleGenericContactIdentifier
+     */
+    public String getResponsibleGenericContactIdentifier() {
+        return responsibleGenericContactIdentifier;
+    }
+
+    /**
+     * @param responsibleGenericContactIdentifier the responsibleGenericContactIdentifier to set
+     */
+    public void setResponsibleGenericContactIdentifier(
+            String responsibleGenericContactIdentifier) {
+        this.responsibleGenericContactIdentifier = responsibleGenericContactIdentifier;
     }
 }
