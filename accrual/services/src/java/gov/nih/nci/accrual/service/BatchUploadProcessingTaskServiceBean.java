@@ -127,9 +127,15 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
         for (BatchFile batchFile : filesToProcess) {
             //Process it, sending email as necessary.
             LOG.info("Processing batch upload: " + batchFile.getFileLocation());
-            List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
-            batchUploadService.sendConfirmationEmail(importResults, batchFile);
+            batchFile.setProcessed(true);
             batchFileSvc.update(batchFile);
+            try {
+                List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
+                batchUploadService.sendConfirmationEmail(importResults, batchFile);
+                batchFileSvc.update(batchFile);
+            } catch (Exception e) {
+                LOG.error("Error processing " + batchFile.getFileLocation(), e);
+            }
         }
     }
 

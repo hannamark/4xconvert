@@ -140,6 +140,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
     
+    private static final int RESULTS_LEN = 1000;
 
     /**
      * {@inheritDoc}
@@ -315,11 +316,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         result.getErrors()));
             }
         }
-        if (StringUtils.isEmpty(errorReport.toString().trim())) {
+        if (StringUtils.isBlank(errorReport.toString())) {
             batchFile.setPassedValidation(true);
         }
-        String subject = "Accrual Error Report";
-        sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, errorReport);
+        batchFile.setResults(StringUtils.substring(errorReport.toString(), 0, RESULTS_LEN));
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), "Accrual Error Report", errorReport);
     }
     
     /**
@@ -337,15 +338,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         result.getTotalImports(), result.getFileName()));
             }
         }
-        if (StringUtils.isNotEmpty(confirmation.toString().trim())) {
-            batchFile.setProcessed(true);
-        }
-        String subject = "Accrual Confirmation Report";
-        sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, confirmation);
+        batchFile.setResults(StringUtils.substring(confirmation.toString(), 0, RESULTS_LEN));
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), "Accrual Confirmation Report", confirmation);
     }
     
     private void sendEmail(String to, String subject, StringBuffer msg) {
-        if (StringUtils.isNotEmpty(msg.toString().trim())) {
+        if (StringUtils.isNotBlank(msg.toString())) {
             PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg.toString(), 
                     null);
         }

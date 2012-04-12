@@ -874,5 +874,9 @@
      <changeSet id="PO-4731" author="krylovd">
         <comment>Added a column to study_protocol_stage to be able to store generic contact ID.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4731.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-4919" author="Hugh">
+        <comment>Add column to store results.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4919.sql"/>
+     </changeSet>
 </databaseChangeLog>

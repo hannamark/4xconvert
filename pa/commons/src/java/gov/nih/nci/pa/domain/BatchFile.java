@@ -101,6 +101,7 @@ public class BatchFile extends AbstractEntity {
     private RegistryUser submitter;
     private boolean passedValidation = false;
     private boolean processed = false;
+    private String results;
     private String fileLocation;
 
     /**
@@ -151,6 +152,21 @@ public class BatchFile extends AbstractEntity {
      */
     public void setProcessed(boolean processed) {
         this.processed = processed;
+    }
+
+    /**
+     * @return the results
+     */
+    @Column(name = "results")
+    public String getResults() {
+        return results;
+    }
+
+    /**
+     * @param results the results to set
+     */
+    public void setResults(String results) {
+        this.results = results;
     }
 
     /**
