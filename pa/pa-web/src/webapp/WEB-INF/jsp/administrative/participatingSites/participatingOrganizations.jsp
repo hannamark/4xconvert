@@ -45,7 +45,20 @@ function handleEdit(studyResourcingId){
     <s:actionerror />
     <s:form name="partOrgs">
         <pa:studyUniqueToken/>
-        <h2><fmt:message key="participatingOrganizations.title" /></h2>
+        <h2><fmt:message key="participatingOrganizations.title" /></h2>        
+		<div class="actionstoprow">
+		    <del class="btnwrapper">
+		        <ul class="btnrow">
+		            <pa:adminAbstractorDisplayWhenCheckedOut>
+		                <li><a href="participatingOrganizationscreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add</span></span></a></li>
+		                <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
+		                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+		                    <li><pa:toggleDeleteBtn/></li>
+		                </s:if>                
+		            </pa:adminAbstractorDisplayWhenCheckedOut>
+		        </ul>
+		    </del>
+		</div>
     <table class="form">
         <tr>
             <td colspan="2">

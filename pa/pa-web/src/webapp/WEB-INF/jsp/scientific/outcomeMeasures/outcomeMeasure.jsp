@@ -41,6 +41,19 @@
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2>Outcome Measures</h2>
+    <div class="actionstoprow">
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                    <pa:scientificAbstractorDisplayWhenCheckedOut>
+                       <li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{outcomeList != null && !outcomeList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected outcome measure(s) from the study. Cancel to abort.', 'interventionalStudyDesignoutcomedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected outcome measure(s) from the study. Cancel to abort.', 'interventionalStudyDesignoutcomedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><pa:toggleDeleteBtn/></li>
+                        </s:if>                    
+                    </pa:scientificAbstractorDisplayWhenCheckedOut>
+                </ul>
+            </del>
+        </div>
     <s:if test="outcomeList != null">
     <s:hidden name="page" />
     <s:hidden name="id" />

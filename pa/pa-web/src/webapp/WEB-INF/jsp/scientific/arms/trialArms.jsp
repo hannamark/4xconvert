@@ -55,6 +55,22 @@ function handleCreateGroup(){
     <s:elseif test="%{currentAction == 'listGroup'}">
         <fmt:message key="arms.obs.details.title" /></s:elseif>
     </h2>
+    <div class="actionstoprow"><del class="btnwrapper">
+    <ul class="btnrow">
+        <pa:scientificAbstractorDisplayWhenCheckedOut>
+            <s:if test="%{currentAction == 'listArm'}">
+                <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateArm();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <s:if test="%{armList != null && !armList.isEmpty()}">
+                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected arm(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><pa:toggleDeleteBtn/></li>
+                </s:if>                
+            </s:if>
+            <s:elseif test="%{currentAction == 'listGroup'}">
+                <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            </s:elseif>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>
+    </ul>
+    </del></div>
     <table class="form">
         <tr>
             <td colspan="2"><s:hidden name="cbValue" />

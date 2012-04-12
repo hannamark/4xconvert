@@ -568,3 +568,6 @@ UL#maintabs LI.active
 UL#maintabs LI A:focus
 { -moz-outline-style:none; }
 
+.actionstoprow
+{ margin-top:20px; padding:5px 5px 5px 5px; clear:both; text-decoration:none; text-align:center; border-bottom:1px dotted #aeaeae}
+

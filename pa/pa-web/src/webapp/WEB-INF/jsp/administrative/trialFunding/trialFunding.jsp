@@ -44,6 +44,19 @@ function handleAction(studyResourcingId){
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
+    <div class="actionstoprow">
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                    <pa:adminAbstractorDisplayWhenCheckedOut>
+                        <li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                        <s:if test="%{trialFundingList != null && !trialFundingList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected NIH Grant(s) from the study. Cancel to abort.', 'trialFundingdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected NIH Grant(s) from the study. Cancel to abort.', 'trialFundingdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><pa:toggleDeleteBtn/></li>
+                        </s:if>                        
+                    </pa:adminAbstractorDisplayWhenCheckedOut>
+                </ul>
+            </del>
+        </div>
     <s:if test="trialFundingList != null">
     <s:hidden name="page" />
     <s:hidden name="cbValue" />

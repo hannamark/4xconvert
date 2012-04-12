@@ -54,6 +54,23 @@
                 <h2>
                     <fmt:message key="disease.details.title"/>
                 </h2>
+                <div class="actionstoprow">
+                    <del class="btnwrapper">
+                        <ul class="btnrow">
+                            <pa:scientificAbstractorDisplayWhenCheckedOut>
+                                <li>
+                                    <a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreate();">
+                                        <span class="btn_img"><span class="add">Add </span></span>
+                                    </a>
+                                </li>
+                                <s:if test="%{diseaseList != null && !diseaseList.isEmpty()}">
+                                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                                    <li><pa:toggleDeleteBtn/></li>
+                                </s:if>                                
+                            </pa:scientificAbstractorDisplayWhenCheckedOut>
+                        </ul>
+                    </del>
+                </div>
                 <table class="form">
                     <tr>
                         <td colspan="2">

@@ -155,9 +155,18 @@
             <s:form>
                 <s:token/>
                 <pa:studyUniqueToken/>
-                <s:actionerror/>
+                <s:actionerror/>                
+                <h2>General Trial Details</h2>
+                <div class="actionstoprow">
+                    <del class="btnwrapper">
+                        <ul class="btnrow">
+                            <pa:adminAbstractorDisplayWhenCheckedOut>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                            </pa:adminAbstractorDisplayWhenCheckedOut>
+                        </ul>
+                    </del>
+                </div>
                 <table class="form">
-                    <h2>General Trial Details</h2>
                     <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
