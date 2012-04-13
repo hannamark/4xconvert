@@ -220,7 +220,18 @@
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
         <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
-        <po:button id="reset_button" href="#" style="reject" text="Reset"/>
+        <c:set var="querystring" value="${pageContext.request.queryString}"/>
+        <c:choose>
+          <c:when test="${fn:contains(querystring, 'organization.id')}">
+            <c:url var="resetUrl" value="/protected/organization/curate/start.action">
+              <c:param name="organization.id">${organization.id}</c:param>
+            </c:url>
+          </c:when>
+          <c:otherwise>
+            <c:url var="resetUrl" value="/protected/create/organization/start.action"/>
+          </c:otherwise>
+        </c:choose>
+        <po:button id="reset_button" href="${resetUrl}" style="reject" text="Reset"/>
     </po:buttonRow>
 </div>
 
