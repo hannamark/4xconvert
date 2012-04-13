@@ -92,6 +92,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Naveen Amiruddin
  * @since 07/22/2007
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.TooManyFields", "PMD.CyclomaticComplexity" })
 public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO implements Serializable {
 
     private static final long serialVersionUID = 8200069337460780484L;
@@ -103,6 +104,17 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String summ4FundingSrcCategory;
     private boolean searcherTrialOwner = false;
     private String nctNumber;
+    
+    private String phaseName;
+    private Date startDate;
+    private String sponsorName;
+    private String summary4FundingSponsorName;
+    private String responsiblePartyName;
+    private String category;
+    
+    private String lastUpdatedUserDisplayName;
+    
+    private String lastUpdaterDisplayName;
     
     /**
      * Whether this trial permits self-registration of participating sites. 
@@ -319,6 +331,135 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
         this.currentUserIsSiteOwner = currentUserIsSiteOwner;
     }
     
+    
+    /**
+     * @return string
+     */
+    public String getPhaseName() {
+        return phaseName;
+    }
+
+    /**
+     * 
+     * @param phaseName phaseCode
+     */
+    public void setPhaseName(String phaseName) {
+        this.phaseName = phaseName;
+    }
+
+    /**
+     * 
+     * @return date
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * 
+     * @param startDate startDate
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * 
+     * @return string 
+     */
+    public String getSponsorName() {
+        return sponsorName;
+    }
+
+    /**
+     * 
+     * @param sponsorName sponsorName
+     */
+    public void setSponsorName(String sponsorName) {
+        this.sponsorName = sponsorName;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public String getSummary4FundingSponsorName() {
+        return summary4FundingSponsorName;
+    }
+
+    /**
+     * 
+     * @param summary4FundingSponsorName summary4FundingSponsorName
+     */
+    public void setSummary4FundingSponsorName(String summary4FundingSponsorName) {
+        this.summary4FundingSponsorName = summary4FundingSponsorName;
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public String getResponsiblePartyName() {
+        return responsiblePartyName;
+    }
+
+    /**
+     * 
+     * @param responsiblePartyName responsiblePartyName
+     */
+    public void setResponsiblePartyName(String responsiblePartyName) {
+        this.responsiblePartyName = responsiblePartyName;
+    }
+    
+
+    /**
+     * 
+     * @return String
+     */
+    public String getCategory() {
+        return category;
+    }
+
+    /**
+     * 
+     * @param category category
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    /**
+     * 
+     * @return String
+     */
+    public String getLastUpdatedUserDisplayName() {
+        return lastUpdatedUserDisplayName;
+    }
+
+    /**
+     * 
+     * @param lastUpdatedUserDisplayName lastUpdatedUserDisplayName
+     */
+    public void setLastUpdatedUserDisplayName(String lastUpdatedUserDisplayName) {
+        this.lastUpdatedUserDisplayName = lastUpdatedUserDisplayName;
+    }
+    
+    /**
+     * 
+     * @return String
+     */
+    public String getLastUpdaterDisplayName() {
+        return lastUpdaterDisplayName;
+    }
+
+    /**
+     * 
+     * @param lastUpdaterDisplayName lastUpdaterDisplayName
+     */
+    public void setLastUpdaterDisplayName(String lastUpdaterDisplayName) {
+        this.lastUpdaterDisplayName = lastUpdaterDisplayName;
+    }
+
     /**
      *  Determines whether to show actions dropdown or not.
      * @return boolean

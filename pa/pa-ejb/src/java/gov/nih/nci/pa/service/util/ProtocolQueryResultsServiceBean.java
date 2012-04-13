@@ -151,7 +151,10 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + ",current_admin_milestone,current_scientific_milestone,current_other_milestone,admin_checkout_identifier"
             + ",admin_checkout_user,scientific_checkout_identifier,scientific_checkout_user,study_pi_first_name"
             + ",study_pi_last_name,user_last_created_login,user_last_created_first,user_last_created_last, " 
-            + "dcp_id, ctep_id,amendment_date,date_last_updated"
+            + "dcp_id, ctep_id,amendment_date,date_last_updated,phase_code,primary_purpose_code,start_date," 
+            + "summary4fundingSponsor_type,sponsor_name,responsible_party_organization_name,"
+            + "responsible_party_PI_first_name,responsible_party_PI_last_name,user_last_updated_login, "
+            + "user_last_updated_first,user_last_updated_last "
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -170,10 +173,16 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "identifier_name FROM study_otheridentifiers "
             + "WHERE study_protocol_id IN (:ids)";
     
-    static final String LAST_UPDATED_DATE = "select study_protocol_identifier, max(open_date) " 
-            + "from study_inbox where study_protocol_identifier " 
-            + "IN (:ids) group by study_protocol_identifier";
-    
+    static final String LAST_UPDATED_DATE = "SELECT study_inbox.study_protocol_identifier, csm_user.first_name, "
+            + "csm_user.last_name, csm_user.login_name, study_inbox.open_date "
+            + "FROM study_inbox "
+            + "LEFT JOIN csm_user " 
+            + "ON study_inbox.user_last_updated_id = csm_user.user_id, "
+            + "(SELECT study_protocol_identifier id, max(open_date) maxdate "
+            + "FROM study_inbox WHERE study_protocol_identifier "
+            + "IN (:ids) " 
+            + "group by study_protocol_identifier) IQ "
+            + "WHERE study_protocol_identifier=IQ.id AND open_date=IQ.maxdate ";
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
     private static final int PROPRIETARY_TRIAL_INDICATOR_IDX = 2;
@@ -205,8 +214,24 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int DCP_ID_IDX = 28;
     private static final int CTEP_ID_IDX = 29;
     private static final int AMENDMENT_DATE = 30;
-    private static final int DATE_LAST_UPDATED = 31;
-
+    private static final int DATE_LAST_UPDATED = 31;    
+    private static final int PHASE_CODE = 32;
+    private static final int PRIMARY_PURPOSE_CODE = 33;
+    private static final int START_DATE = 34;    
+    private static final int SUMMARY4_FUNDING_SPONSOR_TYPE = 35;
+    private static final int SPONSOR_NAME = 36;
+    private static final int RESPONSIBILITY_PARTY_ORG_NAME = 37;
+    private static final int RESPONSIBILITY_PARTY_PI_FIRST_NAME = 38;
+    private static final int RESPONSIBILITY_PARTY_PI_LAST_NAME = 39;    
+    private static final int USER_LAST_UPDATED_LOGIN_IDX = 40;
+    private static final int USER_LAST_UPDATED_FIRST_IDX = 41;
+    private static final int USER_LAST_UPDATED_LAST_IDX = 42;
+    
+    private static final int UPDATER_FIRST_NAME_IDX = 1;
+    private static final int UPDATER_LAST_NAME_IDX = 2;
+    private static final int UPDATER_LOGIN_NAME_IDX = 3;
+    private static final int LAST_UPDATE_DATE_INX = 4;
+       
     private static final int ACCESS_NO = 0;
     private static final int ACCESS_ADMIN = 1;
     private static final int ACCESS_OWNER = 2;
@@ -261,10 +286,16 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         List<Object[]> lastUpdatedDateQueryList = dataAccessService.findByQuery(query);
         for (StudyProtocolQueryDTO dto : dtoList) {   
             for (Object[] obj : lastUpdatedDateQueryList) {
-                Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+                Long studyprotocolId = ((BigInteger) obj[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue();
                 if (dto.getStudyProtocolId().equals(studyprotocolId)) {
-                    Date openDate = (Date) obj[1];
+                    Date openDate = (Date) obj[LAST_UPDATE_DATE_INX];
                     dto.setUpdatedDate(openDate);
+                    
+                    User updater = new User();
+                    updater.setFirstName((String) obj[UPDATER_FIRST_NAME_IDX]);
+                    updater.setLastName((String) obj[UPDATER_LAST_NAME_IDX]);
+                    updater.setLoginName((String) obj[UPDATER_LOGIN_NAME_IDX]);
+                    dto.setLastUpdaterDisplayName(CsmUserUtil.getDisplayUsername(updater));
                 }
             }
         }
@@ -455,6 +486,26 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setCtepId((String) row[CTEP_ID_IDX]);
         dto.setAmendmentDate((Date) row[AMENDMENT_DATE]); 
         dto.setUpdatedDate((Date) row[DATE_LAST_UPDATED]);
+        
+        dto.setPhaseName((String) row[PHASE_CODE]);
+        dto.setPrimaryPurpose((String) row[PRIMARY_PURPOSE_CODE]);
+        dto.setStartDate((Date) row[START_DATE]);
+        dto.setSponsorName((String) row[SPONSOR_NAME]);
+        dto.setSummary4FundingSponsorName((String) row[SUMMARY4_FUNDING_SPONSOR_TYPE]);
+        String responsibleParty = (String) row[RESPONSIBILITY_PARTY_ORG_NAME];
+        if (StringUtils.isEmpty(responsibleParty) 
+                && StringUtils.isNotEmpty((String) row[RESPONSIBILITY_PARTY_PI_FIRST_NAME])) {           
+                responsibleParty = (String) row[RESPONSIBILITY_PARTY_PI_FIRST_NAME] + "," 
+                                + (String) row[RESPONSIBILITY_PARTY_PI_LAST_NAME]; 
+            
+        }
+        dto.setResponsiblePartyName(responsibleParty);
+        
+        User updatedUser = new User();
+        updatedUser.setFirstName((String) row[USER_LAST_UPDATED_FIRST_IDX]);
+        updatedUser.setLastName((String) row[USER_LAST_UPDATED_LAST_IDX]);
+        updatedUser.setLoginName((String) row[USER_LAST_UPDATED_LOGIN_IDX]);
+        dto.setLastUpdatedUserDisplayName(CsmUserUtil.getDisplayUsername(updatedUser));
     }
 
     private void loadSubmissionType(StudyProtocolQueryDTO dto, Object[] row) {

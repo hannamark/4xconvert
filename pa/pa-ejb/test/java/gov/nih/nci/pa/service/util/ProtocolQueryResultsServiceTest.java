@@ -73,16 +73,28 @@ public class ProtocolQueryResultsServiceTest {
     String userLastCreatedFirst = "Jane";
     String userLastCreatedLast = "Smith";
     String dcpId = "DCPID";
-    String ctepId = "CTEPID";
+    String ctepId = "CTEPID";    
     Date amendmentDate = new Date();
     Date updatedDate = new Date();
+    String phase = "0";
+    String primaryPusrpose = "TREATMENT";
+    Date startDate = new Date();
+    String summary4fundingSponsor = "";
+    String responsiblePartyOrganizationName = "";
+    String responsiblePartyPIFirstName = "";
+    String responsiblePartyPILastName = "";
+    String sponsor = "NCI";
+        
     Object[] qryResult = { studyProtocolIdentifier, officialTitle, proprietaryTrialIndicator, recordVerificationDate
             , ctgovXmlRequiredIndicator, updating, dateLastCreated, submissionNumber, nciNumber, nctNumber, leadOrgPoid
             , leadOrgName, leadOrgSpIdentifier, currentDwfStatusCode, currentDwfStatusDate, currentStudyOverallStatus
             , currentAdminMilestone, currentScientificMilestone, currentOtherMilestone, adminCheckoutIdentifier
             , adminCheckoutUser, scientificCheckoutIdentifiER, scientificCheckoutUser, studyPiFirstName,
             studyPiLastName
-            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId, amendmentDate, updatedDate };
+            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId, amendmentDate, updatedDate 
+            , phase, primaryPusrpose, startDate
+            , summary4fundingSponsor,sponsor,responsiblePartyOrganizationName
+            , responsiblePartyPIFirstName,responsiblePartyPILastName,userLastCreatedLogin,userLastCreatedFirst,userLastCreatedLast};
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

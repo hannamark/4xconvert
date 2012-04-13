@@ -258,6 +258,11 @@
     </s:form>
     </div>
     <div class="line"></div>
-    <jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
+    <s:if test="criteria.myTrialsOnly">
+      	<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
+    </s:if>
+    <s:else>
+    	<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
+    </s:else>
     </body>
 </html>
