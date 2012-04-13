@@ -131,6 +131,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.springframework.remoting.RemoteAccessException;
 
 
 /**
@@ -236,7 +237,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                     }
                 }
             }
-
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -264,7 +264,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             for (ClassSchemeClassSchemeItem csCsi : csItem) {
                 csisResult.add(csCsi.getClassificationSchemeItem());
             }
-
+        }  catch (RemoteAccessException e) {
+            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -278,26 +279,24 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     public String getClassifiedCDEs() {
         cadsrResult.clear();
         String csiName = ServletActionContext.getRequest().getParameter("csiName");
-        String deName = ServletActionContext.getRequest().getParameter("searchName");
+        String deName = ServletActionContext.getRequest().getParameter("searchName");        
         try {
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+
             DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
             criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
             criteria.createAlias("referenceDocumentCollection", "refDoc")
-                .add(Expression.eq("refDoc.type", "Preferred Question Text"))
-                .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
+            .add(Expression.eq("refDoc.type", "Preferred Question Text"))
+            .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
             DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
-                .createCriteria("classSchemeClassSchemeItem");
-
+            .createCriteria("classSchemeClassSchemeItem");
             DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
             csCriteria.add(Expression.eq("publicID", cadsrCsId));
             csCriteria.add(Expression.eq("version", cadsrCsVersion));
-
             DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
             csiCriteria.add(Expression.eq("longName", csiName));
 
             List<Object> classCes = appService.query(criteria);
-
             for (Object obj : classCes) {
                 CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
                 DataElement de = (DataElement) obj;
@@ -308,13 +307,15 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 cadsrResult.add(cadsrWebDTO);
             }
             if (cadsrResult.size() > MAX_CADSR_RESULT) {
-                ServletActionContext.getRequest()
+                    ServletActionContext.getRequest()
                     .setAttribute(Constants.FAILURE_MESSAGE, "Search results too large returned more than 200 records");
-                cadsrResult.clear();
-                return CDES_BY_CSI;
+                    cadsrResult.clear();
+                    return CDES_BY_CSI;
             }
             webDTO.setCdeCategoryCode(csiName);
             setCdeCategoryCode(csiName);
+        } catch (RemoteAccessException e) {
+            LOG.error("Error while instantiating caDSR Application Service.", e);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -347,20 +348,21 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     }
 
     private DataElement getCdeByPublicID(Long publicId) throws PAException {
-
         ApplicationService appService;
+        DataElement dEle = null;
         try {
             appService = ApplicationServiceProvider.getApplicationService();
-
             DataElement de = new DataElement();
             de.setPublicID(publicId);
             de.setLatestVersionIndicator("Yes");
-            Collection<Object> collResult = appService.search(DataElement.class, de);
-
-            return (DataElement) collResult.iterator().next();
+            Collection<Object> collResult = appService.search(DataElement.class, de);            
+            dEle =  (DataElement) collResult.iterator().next();
+        } catch (RemoteAccessException e) {
+            LOG.error("Error during instantiating caDSR Application Service.", e);
         } catch (Exception e) {
             throw new PAException(e);
         }
+        return dEle;
     }
 
     /**
@@ -368,22 +370,18 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
      * @return String
      */
     public String displaycde() {
-
         String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
         boolean isSpecialLabTestCase = false;
         try {
             ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+
             DataElement de = new DataElement();
             de.setId(cdeid);
-
             Collection<Object> collResult = appService.search(DataElement.class, de);
-
             cdeResult = (DataElement) collResult.iterator().next();
-
             if (labTestPubId.equals(cdeResult.getPublicID())) {
                 isSpecialLabTestCase = true;
             }
-
             webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
             permValues = null;
             List<String> labTestNameValues = null;
@@ -391,7 +389,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             ValueDomain vd = cdeResult.getValueDomain();
             if (vd instanceof EnumeratedValueDomain) {
                 EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
-
                 if (isSpecialLabTestCase) {
                     labTestNameValues = getPermValues(evd);
                     DataElement uOfMdE = getCdeByPublicID(labTestUofMPubId);
@@ -399,9 +396,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 } else {
                     permValues = getPermValues(evd);
                 }
-
             }
-
             if (isSpecialLabTestCase) {
                 cdeDatatype = "NUMBER";
             } else {
@@ -412,6 +407,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             webDTO.setCdeCategoryCode(getCdeCategoryCode());
             ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_VALUES, labTestNameValues);
             ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_UOM_VALUES, labTestUoMValues);
+        } catch (RemoteAccessException e) {
+            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -904,7 +901,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     }
 
     private void enforceBusinessRules() {
-
         StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.TRIAL_SUMMARY);
         if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
@@ -919,7 +915,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 addFieldError("samplingMethodCode", getText("error.samplingMethod"));
             }
         }
-
         if (StringUtils.isEmpty(acceptHealthyVolunteersIndicator)) {
             addFieldError("acceptHealthyVolunteersIndicator", getText("error.acceptHealthyVolunteersIndicator"));
         }
