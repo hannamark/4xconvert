@@ -213,10 +213,7 @@
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
         <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.person.comments').value = $F('curateEntityForm.person.commentsText'); return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
-        <c:url var="resetUrl" value="/protected/person/curate/start.action">
-            <c:param name="person.id">${person.id}</c:param>
-        </c:url>
-        <po:button id="reset_button" href="${resetUrl}" style="reject" text="Reset"/>
+        <po:button id="reset_button" href="#" style="reject" text="Reset"/>
     </po:buttonRow>
 </div>
 
