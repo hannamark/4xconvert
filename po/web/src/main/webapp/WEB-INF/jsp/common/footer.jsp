@@ -1,6 +1,6 @@
 			<div id="footerwrapper">
 				<div id="footernav">					
-					<a href="contact.htm">CONTACT US</a>
+					<a href="http://www.nih.gov/about/contact.htm">CONTACT US</a>
 					<a href="http://www.nih.gov/about/privacy.htm" target="_blank">PRIVACY NOTICE</a>
 					<a href="http://www.nih.gov/about/disclaim.htm" target="_blank">DISCLAIMER</a>
 					<a href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank">ACCESSIBILITY</a>
