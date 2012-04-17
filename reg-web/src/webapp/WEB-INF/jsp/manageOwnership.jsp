@@ -10,6 +10,11 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
     
         <script type="text/javascript" language="javascript">
+            var trialIds = new Array();
+            var checked = ${checked};
+            <c:forEach var="item" items="${studyProtocols}">
+                  trialIds = trialIds + <c:out value="${item.studyProtocol.id}"/> + ",";
+            </c:forEach>
             function updateOwnership(assignOwnership) {
                 var form = document.forms[0];
                 form.action = (assignOwnership) ? "${actionName}assignOwnership.action" : "${actionName}unassignOwnership.action";
@@ -35,6 +40,50 @@
                 var aj = callAjaxPost(null, url, params);
                 return false;
             }
+            
+            function check(field)
+            {
+                if (!checked) {
+                
+                    if(typeof field.length == 'undefined'){
+                        field.checked = true ;
+                    } else {
+                        for (i = 0; i < field.length; i++)
+                               field[i].checked = true ;
+                    }
+                    checked = true;
+                    document.getElementById('checkButton').value = "Uncheck All";
+                    
+                    var  url = '/registry/protected/${actionName}setTrial.action';
+                    var params = {
+                        selected: "true",
+                        trialIds: trialIds,
+                        checked: "true"
+                    };
+                    var aj = callAjaxPost(null, url, params);
+                    return false;
+                }
+                else {
+                    if(typeof field.length == 'undefined'){
+                            field.checked = false ;
+                    } else {
+                        for (i = 0; i < field.length; i++)
+                            field[i].checked = false ;
+                    }
+                    checked = false;
+                    document.getElementById('checkButton').value = "Check All";
+                    
+                    var  url = '/registry/protected/${actionName}setTrial.action';
+                    var params = {
+                    selected: "false",
+                    trialIds: trialIds,
+                    checked: "false"
+                    };
+                    var aj = callAjaxPost(null, url, params);
+                    return false;
+               }
+            }
+
         
         </script>
     </head>
@@ -46,6 +95,7 @@
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
             <s:form name="formManageTrialOwnership" action="%{#request.actionName}view.action">
+            <s:hidden name="checked" id="checked"/>
             <s:token/>
             <table class="form">
                 <tr>
@@ -79,6 +129,14 @@
                         </display:table>
                     </td>
                     <td scope="row" class="label">
+                        <c:choose>
+                            <c:when test="${checked}">
+                                <input type="button" id="checkButton" value="Uncheck All" onClick="check(document.formManageTrialOwnership.chkboxes)">
+                            </c:when>
+                            <c:otherwise>
+                               <input type="button" id="checkButton" value="Check All" onClick="check(document.formManageTrialOwnership.chkboxes)">
+                            </c:otherwise>
+                        </c:choose>
                         <s:set name="orgTrials" value="studyProtocols" scope="request"/>
                         <display:table class="data" summary="This table contains your search results."
                                        decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="studyProtocolRow"
@@ -89,10 +147,10 @@
                                 <c:set var="chkTrialId" value="chk${studyProtocolRow.studyProtocol.id}" />
                                 <c:choose>
                                     <c:when test="${studyProtocolRow.selected}">
-                                        <input type="checkbox" name="${chkTrialId}" value="true" id="${chkTrialId}" checked="checked" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
+                                        <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" checked="checked" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <input type="checkbox" name="${chkTrialId}" value="true" id="${chkTrialId}" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
+                                        <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
                                     </c:otherwise>
                                 </c:choose>
                             </display:column>

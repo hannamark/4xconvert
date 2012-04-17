@@ -10,6 +10,7 @@ import gov.nih.nci.registry.util.SelectedStudyProtocol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -23,6 +24,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Denis G. Krylov
  * 
  */
+@SuppressWarnings({  "PMD.TooManyMethods" })
 public abstract class AbstractManageOwnershipAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
@@ -39,6 +41,38 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     private boolean owner;
     private Long trialId = null;
     private boolean selected;
+    private String trialIds =  null;
+    private boolean checked = false;
+
+    /**
+     * @return the trialIds
+     */
+    public String getTrialIds() {
+        return trialIds;
+    }
+
+    /**
+     * @param trialIds
+     *            the trialIds to set
+     */
+    public void setTrialIds(String trialIds) {
+        this.trialIds = trialIds;
+    }
+
+    /**
+     * @return the isChecked
+     */
+    public boolean isChecked() {
+        return checked;
+    }
+
+    /**
+     * @param isChecked
+     *            the isChecked to set
+     */
+    public void setChecked(boolean isChecked) {
+        this.checked = isChecked;
+    }
 
     /**
      * @return the trialId
@@ -232,33 +266,38 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      */
     public void setTrial() throws PAException {
         if (trialId != null) {
-            SelectedStudyProtocol studyProtocol = getStudyProtocol(trialId);
-            if (studyProtocol != null) {
-                studyProtocol.setSelected(selected);
-                ServletActionContext
-                        .getRequest()
-                        .getSession()
-                        .setAttribute(
-                                AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST,
-                                studyProtocols);
+            updateSelectedField(trialId);
+        }
+        if (trialIds != null && !trialIds.isEmpty()) { 
+            List<String> idsList = new ArrayList<String>();
+            StringTokenizer st = new StringTokenizer(trialIds, ",");
+            while (st.hasMoreElements()) {
+                idsList.add((String) st.nextElement());
+            }
+            
+            for (String id : idsList) {
+                updateSelectedField(Long.valueOf(id));
+                ServletActionContext.getRequest().getSession().setAttribute("checked", checked);                
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private SelectedStudyProtocol getStudyProtocol(Long tId) {
-        SelectedStudyProtocol sp = null;
+    private void updateSelectedField(Long tId) {
+        SelectedStudyProtocol studyProtocol = null;
         studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
-                .getRequest()
-                .getSession()
-                .getAttribute(
+                .getRequest().getSession().getAttribute(
                         AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
         for (SelectedStudyProtocol selSP : studyProtocols) {
             if (tId.equals(selSP.getStudyProtocol().getId())) {
-                sp = selSP;
+                studyProtocol = selSP;
             }
         }
-        return sp;
+        if (studyProtocol != null) {
+            studyProtocol.setSelected(selected);
+            ServletActionContext.getRequest().getSession()
+            .setAttribute(AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST, studyProtocols);
+        }
     }
 
     /**
@@ -276,7 +315,9 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 .getSession()
                 .getAttribute(
                         AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
-
+        if (ServletActionContext.getRequest().getSession().getAttribute("checked") != null) {
+            checked = (Boolean) ServletActionContext.getRequest().getSession().getAttribute("checked"); 
+        }
         return VIEW_RESULTS;
     }
 
