@@ -73,3 +73,9 @@ sourceConnection.eachRow(sql) { row ->
  	 	tty: row.tty
 	)
 }
+
+def usql = """
+    UPDATE stg_dw_person per
+    SET affiliate_org = (SELECT affiliate_org FROM stg_dw_affiliate_org aff WHERE per.email = aff.email_address)
+    """
+destinationConnection.executeUpdate(usql)

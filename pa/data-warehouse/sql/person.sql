@@ -21,6 +21,7 @@ CREATE TABLE STG_DW_PERSON (
 	EMAIL character varying (256),
 	FAX character varying (256),
 	PHONE character varying (256),
-	TTY character varying (50)
+	TTY character varying (50),
+	AFFILIATE_ORG character varying(200)
 	)
 	;
