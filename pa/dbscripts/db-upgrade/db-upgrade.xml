@@ -879,4 +879,8 @@
         <comment>Add column to store results.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4919.sql"/>
      </changeSet>
+     <changeSet id="PO-4881" author="guptag">
+        <comment>Update search results views.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4881.sql"/>
+     </changeSet>
 </databaseChangeLog>
