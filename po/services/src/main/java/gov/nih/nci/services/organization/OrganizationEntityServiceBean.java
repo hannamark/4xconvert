@@ -99,6 +99,7 @@ import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.ExtendedOrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationSortCriterion;
@@ -119,6 +120,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
@@ -312,6 +314,26 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         } else {
             throw new IllegalArgumentException("Organization to be updated did not contain an identifier.");
         }    
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrganizationDTO> search(
+            OrganizationSearchCriteriaDTO criteriaDTO, LimitOffset pagination)
+            throws TooManyResultsException {
+
+        ExtendedOrganizationSearchCriteria criteria = new ExtendedOrganizationSearchCriteria();
+        try {
+            PropertyUtils.copyProperties(criteria, criteriaDTO);
+        } catch (Exception e) {
+            throw new RuntimeException(e); // NOPMD
+        }
+        PageSortParams<Organization> pageSortParams = new PageSortParams<Organization>(
+                pagination.getLimit(), pagination.getOffset(),
+                OrganizationSortCriterion.ORGANIZATION_ID, false);
+        List<Organization> results = getOrganizationServiceBean().search(
+                criteria, pageSortParams);
+        return PoXsnapshotHelper.createSnapshotList(results);
     }
 
 }

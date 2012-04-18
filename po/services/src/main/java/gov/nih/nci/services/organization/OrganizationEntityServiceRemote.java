@@ -158,6 +158,15 @@ public interface OrganizationEntityServiceRemote {
         throws TooManyResultsException;
     
     /**
+     * @param criteriaDTO OrganizationSearchCriteriaDTO
+     * @param pagination LimitOffset
+     * @return List<OrganizationDTO>
+     * @throws TooManyResultsException TooManyResultsException
+     */
+    List<OrganizationDTO> search(OrganizationSearchCriteriaDTO criteriaDTO, LimitOffset pagination) 
+            throws TooManyResultsException;    
+    
+    /**
      * This method is an extension of the existing paginated search method. The key difference being the support 
      * search by family name.
      * 

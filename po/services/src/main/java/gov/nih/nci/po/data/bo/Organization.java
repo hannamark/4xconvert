@@ -301,6 +301,9 @@ public class Organization extends AbstractOrganization
 
     /**
      * @return the statusDate
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ts"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.DateConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.TsConverter"
      */
     @Temporal(TemporalType.TIMESTAMP)
     public Date getStatusDate() {

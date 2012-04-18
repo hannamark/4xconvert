@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.external.CtepPersonImporter;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.io.Serializable;
@@ -97,76 +97,23 @@ import org.hibernate.Query;
 import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
 
 /**
- * Criteria class to search for people.
+ * Criteria class to search for organizations.
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> implements
-        Serializable {
+public class ExtendedOrganizationSearchCriteria extends
+        AbstractSearchCriteria<Organization> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String firstName, lastName;
-    private String email;
-    private String org;
-    private String ctepId;
-    private String role;
+    private String identifier;
+    private String familyName;
+    private String functionalRole;
+    private String city;
+    private String state;
+    private String country;
+    private String zip;
+    private String name;
     private String status;
-    private String id;
-
-    /**
-     * @return person's first name.
-     */
-    public String getFirstName() {
-        return firstName;
-    }
-
-    /**
-     * @param firstName person's first name.
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * @return person's last name.
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * @param lastName person's last name.
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * @return person's or played roles' email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email person's or played roles' email.
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return name of scoper org.
-     */
-    public String getOrg() {
-        return org;
-    }
-
-    /**
-     * @param org name of scoper org.
-     */
-    public void setOrg(String org) {
-        this.org = org;
-    }
+    private String ctepId;
 
     /**
      * @return CTEP identifier.
@@ -176,7 +123,8 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
     }
 
     /**
-     * @param ctepId CTEP identifier.
+     * @param ctepId
+     *            CTEP identifier.
      */
     public void setCtepId(String ctepId) {
         this.ctepId = ctepId;
@@ -187,19 +135,22 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
      */
     @Override
     public boolean hasOneCriterionSpecified() {
-        return StringUtils.isNotBlank(firstName)
-                || StringUtils.isNotBlank(lastName)
-                || StringUtils.isNotBlank(email) || StringUtils.isNotBlank(org)
-                || StringUtils.isNotBlank(ctepId) || StringUtils.isNotBlank(id)
-                || StringUtils.isNotBlank(role)
-                || StringUtils.isNotBlank(status);
+        return StringUtils.isNotBlank(city) || StringUtils.isNotBlank(country)
+                || StringUtils.isNotBlank(ctepId)
+                || StringUtils.isNotBlank(familyName)
+                || StringUtils.isNotBlank(functionalRole)
+                || StringUtils.isNotBlank(identifier)
+                || StringUtils.isNotBlank(name)
+                || StringUtils.isNotBlank(state)
+                || StringUtils.isNotBlank(status)
+                || StringUtils.isNotBlank(zip);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected Class<Person> getRootObjectType() {
-        return Person.class;
+    protected Class<Organization> getRootObjectType() {
+        return Organization.class;
     }
 
     /**
@@ -214,7 +165,7 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
      * {@inheritDoc}
      */
     @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength",
-    "PMD.ConsecutiveLiteralAppends", "PMD.UseLocaleWithCaseConversions" })
+            "PMD.ConsecutiveLiteralAppends", "PMD.UseLocaleWithCaseConversions" })
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         Map<String, String> params = new HashMap<String, String>();
         StringBuffer hql = new StringBuffer("SELECT ");
@@ -223,84 +174,67 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
         } else {
             hql.append("DISTINCT p");
         }
-        hql.append(" FROM ").append(Person.class.getName()).append(" p");
-        if (StringUtils.isNotBlank(email) || StringUtils.isNotBlank(org)
-                || StringUtils.isNotBlank(ctepId) || StringUtils.isNotBlank(role)) {
-            hql.append(" LEFT OUTER JOIN p.organizationalContacts as oc")
-                .append(" LEFT OUTER JOIN p.clinicalResearchStaff as crs")
-                .append(" LEFT OUTER JOIN p.healthCareProviders as hcp")
-                .append(" LEFT OUTER JOIN p.identifiedPersons as ip");
-            if (StringUtils.isNotBlank(org)) {
-                hql.append(" LEFT OUTER JOIN oc.scoper as ocscoper")
-                .append(" LEFT OUTER JOIN crs.scoper as crsscoper")
-                .append(" LEFT OUTER JOIN hcp.scoper as hcpscoper")
-                .append(" LEFT OUTER JOIN ip.scoper as ipscoper");
-            }
-        }
-        if (StringUtils.isNotBlank(email)) {
-            hql.append(" LEFT OUTER JOIN p.email as pemail")
-                .append(" LEFT OUTER JOIN oc.email as ocemail")
-                .append(" LEFT OUTER JOIN crs.email as crsemail")
-                .append(" LEFT OUTER JOIN hcp.email as hcpemail");
-        }
+        hql.append(" FROM ").append(Organization.class.getName()).append(" p");
+        hql.append(" LEFT OUTER JOIN p.familyOrganizationRelationships as fam")
+                .append(" LEFT OUTER JOIN p.healthCareFacilities as hcf")
+                .append(" LEFT OUTER JOIN p.identifiedOrganizations as io")
+                .append(" LEFT OUTER JOIN p.researchOrganizations as ro");
 
         hql.append(" WHERE p.statusCode <> 'NULLIFIED'");
+
         if (StringUtils.isNotBlank(status)) {
-            hql.append(" AND p.statusCode = '" + StringEscapeUtils.escapeSql(status.toUpperCase()) + "' ");
+            hql.append(" AND p.statusCode = '"
+                    + StringEscapeUtils.escapeSql(status.toUpperCase()) + "' ");
         }
-        if (StringUtils.isNotBlank(id)) {
-            hql.append(" AND p.id = " + Long.parseLong(id) + " ");
-        }   
-        if ("Healthcare Provider".equals(role)) {
-            hql.append(" AND p.healthCareProviders.size > 0 ");
+        if (StringUtils.isNotBlank(identifier)) {
+            hql.append(" AND p.id = " + Long.parseLong(identifier) + " ");
         }
-        if ("Clinical Research Staff".equals(role)) {
-            hql.append(" AND p.clinicalResearchStaff.size > 0 ");
+        if ("Research Organization".equals(functionalRole)) {
+            hql.append(" AND p.researchOrganizations.size > 0 ");
         }
-        if ("Organizational Contact".equals(role)) {
-            hql.append(" AND p.organizationalContacts.size > 0 ");
-        }        
-        if (StringUtils.isNotBlank(firstName)) {
-            hql.append(" AND lower(p.firstName) LIKE :firstName");
-            params.put("firstName", "%" + firstName.toLowerCase() + "%");
+        if ("Healthcare Facility".equals(functionalRole)) {
+            hql.append(" AND p.healthCareFacilities.size > 0 ");
         }
-        if (StringUtils.isNotBlank(lastName)) {
-            hql.append(" AND lower(p.lastName) LIKE :lastName");
-            params.put("lastName", "%" + lastName.toLowerCase() + "%");
-        }
-        if (StringUtils.isNotBlank(email)) {
-            hql.append(" AND (lower(pemail.value) LIKE :pemail")
-                    .append(" OR lower(ocemail.value) LIKE :ocemail")
-                    .append(" OR lower(crsemail.value) LIKE :crsemail")
-                    .append(" OR lower(hcpemail.value) LIKE :hcpemail")
-                    .append(')');
-            final String em = "%" + email.toLowerCase() + "%";
-            params.put("pemail", em);
-            params.put("ocemail", em);
-            params.put("crsemail", em);
-            params.put("hcpemail", em);
-        }
-        if (StringUtils.isNotBlank(org)) {
-            hql.append(" AND (lower(ocscoper.name) LIKE :ocname")
-                    .append(" OR lower(crsscoper.name) LIKE :crsname")
-                    .append(" OR lower(hcpscoper.name) LIKE :hcpname")
-                    .append(" OR lower(ipscoper.name) LIKE :ipname")
-                    .append(')');
-            final String on = "%" + org.toLowerCase() + "%";
-            params.put("ocname", on);
-            params.put("crsname", on);
-            params.put("hcpname", on);
-            params.put("ipname", on);
+        if (StringUtils.isNotBlank(name)) {
+            hql.append(" AND lower(p.name) LIKE :name");
+            params.put("name", "%" + name.toLowerCase() + "%");
         }
         if (StringUtils.isNotBlank(ctepId)) {
-            hql.append(" AND ltrim(ip.assignedIdentifier.root) = '").append(CtepPersonImporter.CTEP_PERSON_ROOT)
-                    .append("' AND lower(ip.assignedIdentifier.extension) like :ctepId");
-            params.put("ctepId", ctepId.toLowerCase());
+            hql.append(" AND ltrim(io.assignedIdentifier.root) = '")
+                    .append(CtepOrganizationImporter.CTEP_ORG_ROOT)
+                    .append("' AND lower(io.assignedIdentifier.extension) like :ctepId");
+            params.put("ctepId", "%" + ctepId.toLowerCase() + "%");
         }
+
+        if (StringUtils.isNotBlank(city)) {
+            hql.append(" AND lower(p.postalAddress.cityOrMunicipality) LIKE :city");
+            params.put("city", "%" + city.toLowerCase() + "%");
+        }
+
+        if (StringUtils.isNotBlank(country)) {
+            hql.append(" AND lower(p.postalAddress.country.alpha3) LIKE :country");
+            params.put("country", country.toLowerCase());
+        }
+
+        if (StringUtils.isNotBlank(state)) {
+            hql.append(" AND lower(p.postalAddress.stateOrProvince) LIKE :state");
+            params.put("state", "%" + state.toLowerCase() + "%");
+        }
+
+        if (StringUtils.isNotBlank(zip)) {
+            hql.append(" AND lower(p.postalAddress.postalCode) LIKE :zip");
+            params.put("zip", "%" + zip.toLowerCase() + "%");
+        }
+        if (StringUtils.isNotBlank(familyName)) {
+            hql.append(" AND lower(fam.family.name) LIKE :familyName");
+            params.put("familyName", "%" + familyName.toLowerCase() + "%");
+        }
+
         if (!isCountOnly) {
             hql.append(orderByProperty);
         }
-        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(
+                hql.toString());
         for (Map.Entry<String, String> e : params.entrySet()) {
             query.setString(e.getKey(), e.getValue());
         }
@@ -310,27 +244,14 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
     /**
      * {@inheritDoc}
      */
-    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
+    public Query getQuery(String orderByProperty, String leftJoinClause,
+            boolean isCountOnly) {
         if (leftJoinClause != null && StringUtils.isNotBlank(leftJoinClause)) {
-            throw new IllegalArgumentException("The use of the left join clause is currently not supported."
-                    + " Please ref jira issues PO-1115, PO-1116, PO-1118");
+            throw new IllegalArgumentException(
+                    "The use of the left join clause is currently not supported.");
         }
 
         return getQuery(orderByProperty, isCountOnly);
-    }
-
-    /**
-     * @return the role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * @param role the role to set
-     */
-    public void setRole(String role) {
-        this.role = role;
     }
 
     /**
@@ -341,24 +262,131 @@ public class StrutsPersonSearchCriteria extends AbstractSearchCriteria<Person> i
     }
 
     /**
-     * @param status the status to set
+     * @param status
+     *            the status to set
      */
     public void setStatus(String status) {
         this.status = status;
     }
 
     /**
-     * @return the id
+     * @return the identifier
      */
-    public String getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
     /**
-     * @param id the id to set
+     * @param identifier
+     *            the identifier to set
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @return the familyName
+     */
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    /**
+     * @param familyName
+     *            the familyName to set
+     */
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    /**
+     * @return the functionalRole
+     */
+    public String getFunctionalRole() {
+        return functionalRole;
+    }
+
+    /**
+     * @param functionalRole
+     *            the functionalRole to set
+     */
+    public void setFunctionalRole(String functionalRole) {
+        this.functionalRole = functionalRole;
+    }
+
+    /**
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * @param city
+     *            the city to set
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * @param state
+     *            the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country
+     *            the country to set
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * @return the zip
+     */
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * @param zip
+     *            the zip to set
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

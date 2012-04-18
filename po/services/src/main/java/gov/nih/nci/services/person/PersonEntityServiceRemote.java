@@ -166,6 +166,14 @@ public interface PersonEntityServiceRemote {
      */
     List<PersonDTO> search(PersonDTO person, LimitOffset pagination) throws TooManyResultsException;
     
+    /**
+     * @param criteriaDTO PersonSearchCriteriaDTO
+     * @param pagination LimitOffset
+     * @return List<PersonDTO>
+     * @throws TooManyResultsException TooManyResultsException
+     */
+    List<PersonDTO> search(PersonSearchCriteriaDTO criteriaDTO, LimitOffset pagination) throws TooManyResultsException;
+    
      /**
      * Propose a new entity value to the curator.
      * @param proposedState the CR containg the proposed stated.

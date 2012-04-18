@@ -113,6 +113,7 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
+import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.Utils;
@@ -132,6 +133,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 
@@ -405,5 +407,25 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
                 throw new IllegalArgumentException("Person to be updated did not contain an identifier.");
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PersonDTO> search(PersonSearchCriteriaDTO criteriaDTO,
+            LimitOffset pagination) throws TooManyResultsException {
+        StrutsPersonSearchCriteria criteria = new StrutsPersonSearchCriteria();
+        criteria.setCtepId(StringUtils.isNotBlank(criteriaDTO.getCtepId()) ? ("%"
+                + criteriaDTO.getCtepId() + "%")
+                : null);
+        criteria.setFirstName(criteriaDTO.getFirstName());
+        criteria.setLastName(criteriaDTO.getLastName());
+        criteria.setId(criteriaDTO.getId());
+        criteria.setOrg(criteriaDTO.getAffiliation());
+        criteria.setRole(criteriaDTO.getFunctionalRole());
+        criteria.setStatus(criteriaDTO.getStatus());
+        PageSortParams<Person> pageSortParams = new PageSortParams<Person>(
+                pagination.getLimit(), pagination.getOffset(), PersonSortCriterion.PERSON_LASTNAME, false);
+        List<Person> results = perService.search(criteria, pageSortParams);
+        return PoXsnapshotHelper.createSnapshotList(results);
     }
 }
