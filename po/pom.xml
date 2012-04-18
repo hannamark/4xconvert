@@ -384,8 +384,8 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>81</totalBranchRate>
-                        <totalLineRate>90</totalLineRate>
+                        <totalBranchRate>80</totalBranchRate>
+                        <totalLineRate>89</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>
