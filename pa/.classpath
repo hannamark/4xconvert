@@ -56,7 +56,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/selenium/selenium-server-coreless-1.0.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/selenium/coppa-commons-test-1.3.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ear/runtime/ehcache-1.2.4.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-ejb/compile/javassist-3.10.0.GA.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/javassist-3.10.0.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/authentication-service-client-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/opensaml-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/authentication-service-stubs-1.3.jar"/>
@@ -99,5 +99,6 @@
 	<classpathentry kind="var" path="PA_LIB/commons/compile/csm-stubs-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/commons/compile/gridgrouper-1.3nci.jar"/>
 	<classpathentry kind="var" path="PA_LIB/commons/compile/core-1.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/runtime/struts2-json-plugin-2.2.3.1.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

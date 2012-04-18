@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
+import org.hamcrest.core.AnyOf;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 /**
@@ -206,6 +207,26 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         assertEquals("Wrong CtGovXmlIndicator in webDTO",ctGovXmlIndicator, dto.getCtGovXmlIndicator());
     }
     
+    /**
+     * Test the add method when no error happens in the backend.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testAddDiseases() throws PAException {
+        
+        StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);
+        PopUpDisAction action = new PopUpDisAction();
+        action.setStudyDiseaseService(studyDiseaseService);
+
+        action.setDiseaseIds("123,321,4321");
+        String result = action.addDiseases();
+        assertEquals("success", result);
+        assertNotNull(action.getPdqDiseases());
+        assertEquals(3, action.getPdqDiseases().size());
+        assertTrue(action.getPdqDiseases().contains(new Long("123")));
+        assertTrue(action.getPdqDiseases().contains(new Long("321")));
+        assertTrue(action.getPdqDiseases().contains(new Long("4321")));
+    }
     
 	/**
 	 * Test the add method when no error happens in the backend.

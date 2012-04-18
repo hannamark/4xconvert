@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -97,14 +98,19 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.json.JSONException;
+import org.apache.struts2.json.JSONUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -128,6 +134,8 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     private List<DiseaseWebDTO> disWebList;
     private Long diseaseId;
     private boolean includeXml = true;
+    private List<Long> pdqDiseases = new ArrayList<Long>();
+    private String diseaseIds; 
 
     /**
      * {@inheritDoc}
@@ -137,6 +145,17 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         pdqDiseaseParentService = PaRegistry.getDiseaseParentService();
         pdqDiseaseService = PaRegistry.getDiseaseService();
         studyDiseaseService = PaRegistry.getStudyDiseaseService();
+    }
+    
+    
+    /**
+     * Gets the PDQDiseases for the disease section as a JSON collection.
+     * @return The result name
+     * @throws JSONException JSON Translation exception
+     */
+    public String getDiseaseTree() throws JSONException {
+        List<PDQDiseaseNode> diseaseTree = PaRegistry.getDiseaseService().getDiseaseTree();
+        return JSONUtil.serialize(diseaseTree);
     }
 
     /**
@@ -162,6 +181,15 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         }
         return "displayList";
     }
+    
+    /**
+     * 
+     * @return The disease widget jsp
+     */
+    public String displayDiseaseWidget() {
+        return "diseaseWidget";
+    }
+    
 
     /**
      * Gets the study protocol Ii from the session.
@@ -262,6 +290,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
      * Get the parent diseases of the diseases already in the disease web list.
      * @return The parent diseases of the diseases already in the disease web list.
      */
+    @SuppressWarnings("deprecation")
     List<PDQDiseaseParentDTO> getDiseaseParents() {
         Ii[] iis = new Ii[disWebList.size()];
         int x = 0;
@@ -294,14 +323,56 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         }
         return displayList();
     }
-
+    
     /**
      * Creates the new study disease dto to add.
      * @return the new study disease dto.
      */
+    @SuppressWarnings("deprecation")
     StudyDiseaseDTO getStudyDisease() {
         StudyDiseaseDTO sdDto = new StudyDiseaseDTO();
         sdDto.setDiseaseIdentifier(IiConverter.convertToIi(diseaseId));
+        sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(includeXml));
+        sdDto.setStudyProtocolIdentifier(getStudyProtocolIi());
+        return sdDto;
+    }    
+    
+
+    /**
+     * Add diseases to the study protocol.
+     * @return result
+     */
+    public String addDiseases() {
+        if (StringUtils.isEmpty(diseaseIds)) {
+            diseaseIds = ServletActionContext.getRequest().getParameter("selectedDiseaseIds");
+        }
+        if (StringUtils.isNotEmpty(diseaseIds)) {
+            String[] tempArr = StringUtils.splitByWholeSeparator(diseaseIds, ",");
+            List<Long> diesaseIdList = new ArrayList<Long>();
+            for (String id : tempArr) { 
+                diesaseIdList.add(Long.parseLong(id));
+            }
+            setPdqDiseases(diesaseIdList);
+            try {
+                for (Long id : getPdqDiseases()) {
+                    studyDiseaseService.create(getStudyDisease(id)); 
+                }
+            } catch (Exception e) {
+                addActionError(e.getMessage());
+            }
+        }
+        return SUCCESS;
+    }
+    
+
+    /**
+     * Creates the new study disease dto with the provided diseaseId.
+     * @return the new study disease dto.
+     */
+    @SuppressWarnings("deprecation")
+    StudyDiseaseDTO getStudyDisease(Long disId) {
+        StudyDiseaseDTO sdDto = new StudyDiseaseDTO();
+        sdDto.setDiseaseIdentifier(IiConverter.convertToIi(disId));
         sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(includeXml));
         sdDto.setStudyProtocolIdentifier(getStudyProtocolIi());
         return sdDto;
@@ -410,7 +481,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     public void setPdqDiseaseParentService(PDQDiseaseParentServiceRemote pdqDiseaseParentService) {
         this.pdqDiseaseParentService = pdqDiseaseParentService;
     }
-
+    
     /**
      * @param pdqDiseaseService the pdqDiseaseService to set
      */
@@ -423,5 +494,45 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
      */
     public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
         this.studyDiseaseService = studyDiseaseService;
+    }
+
+    /**
+     * @return the pdqDiseases
+     */
+    public List<Long> getPdqDiseases() {
+        return pdqDiseases;
+    }
+
+    /**
+     * @param pdqDiseaseIds the pdqDiseases to set
+     */
+    public void setPdqDiseases(List<Long> pdqDiseaseIds) {
+        List<Long> result = new ArrayList<Long>();
+        if (CollectionUtils.isNotEmpty(pdqDiseaseIds)) {
+            Set<Long> existingIds = new HashSet<Long>();
+            for (Long id : pdqDiseaseIds) {
+                if (id != null && !existingIds.contains(id)) {
+                    result.add(id);
+                    existingIds.add(id);
+                }
+            }
+        }
+        this.pdqDiseases = result;
+    }
+
+    /**
+     * 
+     * @return comma separated diseaseids
+     */
+    public String getDiseaseIds() {
+        return diseaseIds;
+    }
+
+    /**
+     * 
+     * @param diseaseIds comma separated diseaseids to set
+     */
+    public void setDiseaseIds(String diseaseIds) {
+        this.diseaseIds = diseaseIds;
     }
 }

@@ -10,7 +10,7 @@
         <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <c:url value="/protected/popupDis.action" var="lookupUrl" />
+        <c:url value="/protected/popupDisdisplayDiseaseWidget.action" var="lookupUrl" />
         
         <script language="javascript" type="text/javascript">
             function handleView(diseaseId) {
@@ -25,10 +25,8 @@
                 form.submit();
             }
             
-            
-            
             function handleCreate() {
-                showPopup('${lookupUrl}', refresh, 'Disease');
+            	showPopWin('${lookupUrl}', 985,500,refresh,'Diseases');
             }
             
             function refresh() {

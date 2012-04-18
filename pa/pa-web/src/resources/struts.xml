@@ -357,9 +357,11 @@
 
         <action name="popupDiseaseDetails" class="gov.nih.nci.pa.action.PopUpDiseaseDetailsAction">
             <result>/WEB-INF/jsp/nodecorate/diseaseDetails.jsp</result>
+
         </action>
         <action name="popupDis*" class="gov.nih.nci.pa.action.PopUpDisAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/lookupdiseases.jsp</result>
+	        <result>/WEB-INF/jsp/nodecorate/lookupdiseases.jsp</result>
+            <result name="diseaseWidget">/WEB-INF/jsp/nodecorate/diseaseWidget.jsp</result>
             <result name="displayList">/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp</result>
         </action>
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
