@@ -19,7 +19,7 @@
          var options = {
              onComplete: function(transport) {
                              if ($('passedValidation').value) {
-                                 top.window.loadMarkerWithRequestedCDE(name, foundInHugo, hugoCode);
+                                 top.window.loadMarkerWithRequestedCDE($('name').value, foundInHugo, hugoCode);
                              } else {
                                 toggleHugoCode();
                              }
