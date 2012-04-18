@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -104,30 +105,14 @@ public class ExtendedOrganizationSearchCriteria extends
         AbstractSearchCriteria<Organization> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private String identifier;
-    private String familyName;
-    private String functionalRole;
-    private String city;
-    private String state;
-    private String country;
-    private String zip;
-    private String name;
-    private String status;
-    private String ctepId;
+    private OrganizationSearchCriteriaDTO dto;
 
     /**
-     * @return CTEP identifier.
+     * @param dto
+     *            OrganizationSearchCriteriaDTO
      */
-    public String getCtepId() {
-        return ctepId;
-    }
-
-    /**
-     * @param ctepId
-     *            CTEP identifier.
-     */
-    public void setCtepId(String ctepId) {
-        this.ctepId = ctepId;
+    public ExtendedOrganizationSearchCriteria(OrganizationSearchCriteriaDTO dto) {
+        this.dto = dto;
     }
 
     /**
@@ -135,15 +120,16 @@ public class ExtendedOrganizationSearchCriteria extends
      */
     @Override
     public boolean hasOneCriterionSpecified() {
-        return StringUtils.isNotBlank(city) || StringUtils.isNotBlank(country)
-                || StringUtils.isNotBlank(ctepId)
-                || StringUtils.isNotBlank(familyName)
-                || StringUtils.isNotBlank(functionalRole)
-                || StringUtils.isNotBlank(identifier)
-                || StringUtils.isNotBlank(name)
-                || StringUtils.isNotBlank(state)
-                || StringUtils.isNotBlank(status)
-                || StringUtils.isNotBlank(zip);
+        return StringUtils.isNotBlank(dto.getCity())
+                || StringUtils.isNotBlank(dto.getCountry())
+                || StringUtils.isNotBlank(dto.getCtepId())
+                || StringUtils.isNotBlank(dto.getFamilyName())
+                || StringUtils.isNotBlank(dto.getFunctionalRole())
+                || StringUtils.isNotBlank(dto.getIdentifier())
+                || StringUtils.isNotBlank(dto.getName())
+                || StringUtils.isNotBlank(dto.getState())
+                || StringUtils.isNotBlank(dto.getStatus())
+                || StringUtils.isNotBlank(dto.getZip());
     }
 
     /**
@@ -182,52 +168,55 @@ public class ExtendedOrganizationSearchCriteria extends
 
         hql.append(" WHERE p.statusCode <> 'NULLIFIED'");
 
-        if (StringUtils.isNotBlank(status)) {
+        if (StringUtils.isNotBlank(dto.getStatus())) {
             hql.append(" AND p.statusCode = '"
-                    + StringEscapeUtils.escapeSql(status.toUpperCase()) + "' ");
+                    + StringEscapeUtils
+                            .escapeSql(dto.getStatus().toUpperCase()) + "' ");
         }
-        if (StringUtils.isNotBlank(identifier)) {
-            hql.append(" AND p.id = " + Long.parseLong(identifier) + " ");
+        if (StringUtils.isNotBlank(dto.getIdentifier())) {
+            hql.append(" AND p.id = " + Long.parseLong(dto.getIdentifier())
+                    + " ");
         }
-        if ("Research Organization".equals(functionalRole)) {
+        if ("Research Organization".equals(dto.getFunctionalRole())) {
             hql.append(" AND p.researchOrganizations.size > 0 ");
         }
-        if ("Healthcare Facility".equals(functionalRole)) {
+        if ("Healthcare Facility".equals(dto.getFunctionalRole())) {
             hql.append(" AND p.healthCareFacilities.size > 0 ");
         }
-        if (StringUtils.isNotBlank(name)) {
+        if (StringUtils.isNotBlank(dto.getName())) {
             hql.append(" AND lower(p.name) LIKE :name");
-            params.put("name", "%" + name.toLowerCase() + "%");
+            params.put("name", "%" + dto.getName().toLowerCase() + "%");
         }
-        if (StringUtils.isNotBlank(ctepId)) {
+        if (StringUtils.isNotBlank(dto.getCtepId())) {
             hql.append(" AND ltrim(io.assignedIdentifier.root) = '")
                     .append(CtepOrganizationImporter.CTEP_ORG_ROOT)
                     .append("' AND lower(io.assignedIdentifier.extension) like :ctepId");
-            params.put("ctepId", "%" + ctepId.toLowerCase() + "%");
+            params.put("ctepId", "%" + dto.getCtepId().toLowerCase() + "%");
         }
 
-        if (StringUtils.isNotBlank(city)) {
+        if (StringUtils.isNotBlank(dto.getCity())) {
             hql.append(" AND lower(p.postalAddress.cityOrMunicipality) LIKE :city");
-            params.put("city", "%" + city.toLowerCase() + "%");
+            params.put("city", "%" + dto.getCity().toLowerCase() + "%");
         }
 
-        if (StringUtils.isNotBlank(country)) {
+        if (StringUtils.isNotBlank(dto.getCountry())) {
             hql.append(" AND lower(p.postalAddress.country.alpha3) LIKE :country");
-            params.put("country", country.toLowerCase());
+            params.put("country", dto.getCountry().toLowerCase());
         }
 
-        if (StringUtils.isNotBlank(state)) {
+        if (StringUtils.isNotBlank(dto.getState())) {
             hql.append(" AND lower(p.postalAddress.stateOrProvince) LIKE :state");
-            params.put("state", "%" + state.toLowerCase() + "%");
+            params.put("state", "%" + dto.getState().toLowerCase() + "%");
         }
 
-        if (StringUtils.isNotBlank(zip)) {
+        if (StringUtils.isNotBlank(dto.getZip())) {
             hql.append(" AND lower(p.postalAddress.postalCode) LIKE :zip");
-            params.put("zip", "%" + zip.toLowerCase() + "%");
+            params.put("zip", "%" + dto.getZip().toLowerCase() + "%");
         }
-        if (StringUtils.isNotBlank(familyName)) {
+        if (StringUtils.isNotBlank(dto.getFamilyName())) {
             hql.append(" AND lower(fam.family.name) LIKE :familyName");
-            params.put("familyName", "%" + familyName.toLowerCase() + "%");
+            params.put("familyName", "%" + dto.getFamilyName().toLowerCase()
+                    + "%");
         }
 
         if (!isCountOnly) {
@@ -252,141 +241,6 @@ public class ExtendedOrganizationSearchCriteria extends
         }
 
         return getQuery(orderByProperty, isCountOnly);
-    }
-
-    /**
-     * @return the status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * @param status
-     *            the status to set
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the identifier
-     */
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * @param identifier
-     *            the identifier to set
-     */
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    /**
-     * @return the familyName
-     */
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    /**
-     * @param familyName
-     *            the familyName to set
-     */
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    /**
-     * @return the functionalRole
-     */
-    public String getFunctionalRole() {
-        return functionalRole;
-    }
-
-    /**
-     * @param functionalRole
-     *            the functionalRole to set
-     */
-    public void setFunctionalRole(String functionalRole) {
-        this.functionalRole = functionalRole;
-    }
-
-    /**
-     * @return the city
-     */
-    public String getCity() {
-        return city;
-    }
-
-    /**
-     * @param city
-     *            the city to set
-     */
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    /**
-     * @return the state
-     */
-    public String getState() {
-        return state;
-    }
-
-    /**
-     * @param state
-     *            the state to set
-     */
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    /**
-     * @return the country
-     */
-    public String getCountry() {
-        return country;
-    }
-
-    /**
-     * @param country
-     *            the country to set
-     */
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    /**
-     * @return the zip
-     */
-    public String getZip() {
-        return zip;
-    }
-
-    /**
-     * @param zip
-     *            the zip to set
-     */
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
 }

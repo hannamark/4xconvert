@@ -322,12 +322,7 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
             OrganizationSearchCriteriaDTO criteriaDTO, LimitOffset pagination)
             throws TooManyResultsException {
 
-        ExtendedOrganizationSearchCriteria criteria = new ExtendedOrganizationSearchCriteria();
-        try {
-            PropertyUtils.copyProperties(criteria, criteriaDTO);
-        } catch (Exception e) {
-            throw new RuntimeException(e); // NOPMD
-        }
+        ExtendedOrganizationSearchCriteria criteria = new ExtendedOrganizationSearchCriteria(criteriaDTO);
         PageSortParams<Organization> pageSortParams = new PageSortParams<Organization>(
                 pagination.getLimit(), pagination.getOffset(),
                 OrganizationSortCriterion.ORGANIZATION_ID, false);
