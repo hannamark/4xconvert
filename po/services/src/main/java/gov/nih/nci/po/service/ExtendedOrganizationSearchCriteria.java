@@ -105,7 +105,7 @@ public class ExtendedOrganizationSearchCriteria extends
         AbstractSearchCriteria<Organization> implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private OrganizationSearchCriteriaDTO dto;
+    private final OrganizationSearchCriteriaDTO dto;
 
     /**
      * @param dto
