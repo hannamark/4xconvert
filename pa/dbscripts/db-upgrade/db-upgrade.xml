@@ -883,4 +883,8 @@
         <comment>Update search results views.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4881.sql"/>
      </changeSet>
+     <changeSet id="PO-4950" author="guptag">
+        <comment>Update search results views to join rv_study_resourcing view.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4950.sql"/>
+     </changeSet>
 </databaseChangeLog>
