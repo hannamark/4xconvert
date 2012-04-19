@@ -112,6 +112,7 @@ public class PaEarPropertyReader {
     private static final String ACCRUAL_HELP_URL = "wikiHelp.baseUrl.accrual";
     private static final String VIEWER_HELP_URL = "wikiHelp.baseUrl.viewer";
     private static final String NCI_LDAP_PREFIX = "nci.ldap.prefix";
+    private static final String STATE_TRANSITION_DIAGRAM_URL = "wikiHelp.baseUrl.trialStatusRules";
 
     private static final String NO_VALUE = "does not have a value in paear.properties";
 
@@ -260,6 +261,15 @@ public class PaEarPropertyReader {
      */
     public static String getNciLdapPrefix() throws PAException {
         return getPropTemplate(NCI_LDAP_PREFIX);
+    }
+
+    /**
+     * Returns the STATE TRANSITION DIAGRAM URL.
+     * @return a URL.
+     * @throws PAException if the property is missing.
+     */    
+    public static String getStateTransitionDiagramUrl() throws PAException {
+        return getPropTemplate(STATE_TRANSITION_DIAGRAM_URL);
     }
 
     /**
