@@ -41,6 +41,9 @@
         <java>joda-time-1.6.2.jar</java>
     </module>
     <module>
+        <java>jollyday-0.4.5.jar</java>
+    </module>
+    <module>
         <java>opencsv-2.1.jar</java>
     </module>
     <module>
