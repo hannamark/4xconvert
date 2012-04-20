@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <script type="text/javascript">
 jQuery(function() {
-      jQuery( "#officialTitle" ).autocomplete({delay: 600 ,
+      jQuery( "#officialTitle" ).autocomplete({delay: 800 ,
           source: function(req, responseFn) {
             var url = viewerApp.contextPath + '/ctro/json/refreshMatchingOfficalTitles.action?officialTitleMatchTerm=' + req.term;
             jQuery.getJSON(url,null,function(data){
@@ -54,7 +54,7 @@ jQuery(function() {
                 </td>   
             </tr>             
             
-            <viewer:titleRow titleKey="adHocReport.leadOrganizations"/>        
+           <viewer:titleRow titleKey="adHocReport.leadOrganizations"/>        
            <viewer:valueRow labelKey="adHocReport.byFamily">
               
                 <s:select id="familyId" name="criteria.familyId" list="families" listKey="key"

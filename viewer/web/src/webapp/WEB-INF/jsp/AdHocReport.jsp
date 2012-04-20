@@ -203,7 +203,7 @@
                         <div id="collapseAll" style="display: none;">
                             <a href="#"><fmt:message key="adHocReport.collapse" /></a>
                         </div>
-                        <div id="detailsAccordion">
+                        <div>
                             <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/registrationDetailsFilter.jsp"/>
                         </div>
                         <div id="diseaseAccordion">

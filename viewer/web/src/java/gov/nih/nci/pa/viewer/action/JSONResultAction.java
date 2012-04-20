@@ -5,6 +5,8 @@ package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ranking.RankBasedSorterUtils;
+import gov.nih.nci.pa.util.ranking.Serializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +32,20 @@ public class JSONResultAction extends ActionSupport {
         
         String searchTerm = (String) (ServletActionContext.getRequest().getParameter("officialTitleMatchTerm"));
         List<String> mathches = new ArrayList<String>();
+        List<String> sortedList = null;
         try {
             mathches = PaRegistry.getProtocolQueryService().getOfficialTitles(searchTerm);
+            sortedList = RankBasedSorterUtils.sort(mathches, searchTerm, new Serializer<String>() {
+                public String serialize(String object) {
+                    return object;
+                }
+            });
         } catch (PAException e) {
             LOG.error("Error fetching Official Titles");
         }
-        setOfficialTitles(mathches);
+        setOfficialTitles(sortedList);
         return SUCCESS;
     }
-
 
     /**
      * 
