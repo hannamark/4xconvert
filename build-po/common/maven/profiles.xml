@@ -51,6 +51,7 @@
                 <gridServiceCredential>%%pogrid.jndi.credentials.encrypted%%</gridServiceCredential>
 
                 <helpUrl>%%wikiHelp.baseUrl%%</helpUrl>
+                <usersGuideUrl>%%wikiUsersGuide.url%%</usersGuideUrl>
             </properties>
         </profile>
         <profile>

@@ -337,6 +337,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <filter token="csm.sync.frequency.seconds" value="${csm.sync.frequency.seconds}"/>
 
             <filter token="wikiHelp.baseUrl" value="${wikiHelp.baseUrl}"/>
+            <filter token="wikiUsersGuide.url" value="${wikiUsersGuide.url}"/>
           </filterset>
         </copy>
         <copy todir="${temp.dir}/${relative.dir}" file="${temp.dir}/${file.name}" overwrite="true"/>
