@@ -393,7 +393,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
-                    <configLocation>5amCheckstyle-5.xml</configLocation>
+                    <configLocation>ctrpCheckstyle-5.xml</configLocation>
                 </configuration>
             </plugin>
             <plugin>
@@ -407,7 +407,7 @@
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
                     <rulesets>
-                        <ruleset>5amPmd.xml</ruleset>
+                        <ruleset>ctrpPmd.xml</ruleset>
                     </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <linkXref>true</linkXref>
