@@ -16,6 +16,7 @@
 	<h1>
 		<fmt:message key="plannedMarker.question.to.submitter" />
 	</h1>
+    <c:set var="topic" scope="request" value="abstractmarkers"/>
 	<s:url id="cancelUrl" namespace="/protected" action="bioMarkers" />
 	<div class="box">
 		<s:set var="submitUrl" value="'bioMarkerssendQuestionMail'" />

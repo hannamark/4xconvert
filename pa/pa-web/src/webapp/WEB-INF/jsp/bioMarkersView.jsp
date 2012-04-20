@@ -19,6 +19,7 @@
 	<h1>
 		<fmt:message key="plannedMarker.pending.markers.report" />
 	</h1>
+    <c:set var="topic" scope="request" value="abstractmarkers"/>
 	<div class="box">
 		<s:if test="hasActionErrors()">
 			<div class="error_msg">

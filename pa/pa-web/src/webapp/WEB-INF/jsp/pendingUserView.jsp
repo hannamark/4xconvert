@@ -34,6 +34,8 @@
         </script>
     </head>
     <body>
+    <h1>Requested Admin User</h1>
+    <c:set var="topic" scope="request" value="inboxaccess"/>
         <s:form>
             <pa:studyUniqueToken/>
             <input type="hidden" name="user_id" id="user_id" value="${requestScope.user.id}"/>

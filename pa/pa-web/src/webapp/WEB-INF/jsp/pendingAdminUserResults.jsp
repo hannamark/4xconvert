@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
  <s:if test="pendingAdminUsers != null"> 
-    <h2>Pending Admin User</h2>  
+    <h1>Pending Admin User</h1>  
     <s:form name="spForm">
         <s:actionerror/>
         <pa:studyUniqueToken/>
