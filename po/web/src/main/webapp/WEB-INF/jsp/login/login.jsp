@@ -5,6 +5,7 @@
 <html>
 <head>
     <title>Login</title>
+    <c:set var="topic" scope="request" value="login"/>
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/loginValidation.js'/>"></script>
 </head>
 <body onload="setFocusToFirstControl();">

@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="oversightCommittee.manage.title"/></title>
+<c:set var="topic" scope="request" value="manageoc"/>
 </head> 
 <body>
 

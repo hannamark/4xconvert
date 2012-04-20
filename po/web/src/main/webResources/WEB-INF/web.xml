@@ -37,6 +37,10 @@
         <param-name>helpUrl</param-name>
         <param-value>${helpUrl}</param-value>
     </context-param>
+    <context-param>
+        <param-name>usersGuideUrl</param-name>
+        <param-value>${usersGuideUrl}</param-value>
+    </context-param>
 
     <!-- Filters -->
     <filter>

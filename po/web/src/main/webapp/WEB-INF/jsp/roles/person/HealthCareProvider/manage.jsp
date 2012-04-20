@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="healthCareProvider.manage.title"/></title>
+<c:set var="topic" scope="request" value="managehcp"/>
 </head> 
 <body>
 

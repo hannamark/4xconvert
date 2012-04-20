@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="identifiedOrganization.manage.title"/></title>
+<c:set var="topic" scope="request" value="manageio"/>
 </head> 
 <body>
 

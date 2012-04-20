@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>CTEP Person Import</title>
+    <c:set var="topic" scope="request" value="importperson"/>
 <script type="text/javascript">
 function upload() {
     $('progress_div').show();

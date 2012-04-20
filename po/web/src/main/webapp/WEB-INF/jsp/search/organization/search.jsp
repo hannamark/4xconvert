@@ -2,6 +2,7 @@
 <html>
 <head>
     <title><fmt:message key="organization.search.title"/></title>
+    <c:set var="topic" scope="request" value="searchorg"/>
 </head>
 <body>
 <s:actionerror/>

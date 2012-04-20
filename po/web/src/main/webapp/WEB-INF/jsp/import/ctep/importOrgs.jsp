@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>CTEP Organization Import</title>
+    <c:set var="topic" scope="request" value="importorg"/>
 <script type="text/javascript">
 function upload() {
     $('progress_div').show();

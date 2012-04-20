@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="familyOrganizationRelationships.manage.title"/></title>
+<c:set var="topic" scope="request" value="manageorgfamily"/>
 </head> 
 <body>
 

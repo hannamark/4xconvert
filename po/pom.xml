@@ -47,7 +47,6 @@
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
 
         <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>
-        <helpUrl>https://wiki.nci.nih.gov/x/ExByAg#PersonandOrganizationCurationPortalHelpTopics</helpUrl>
 
         <database.hostname>localhost</database.hostname>
         <database.port>5432</database.port>

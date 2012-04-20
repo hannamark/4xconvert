@@ -11,6 +11,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/help.js"/>"></script>
 <script type="text/javascript" language="javascript">
     Help.url = '<c:out value="${initParam['helpUrl']}"/>';
+    Help.ugUrl = '<c:out value="${initParam['usersGuideUrl']}"/>';
 </script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/scriptaculous.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/effects.js"/>"></script>

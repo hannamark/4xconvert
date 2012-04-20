@@ -5,6 +5,7 @@
     <s:set name="isNotCreate" value="person.id != null"/>
     <s:if test="%{isCreate}">
         <title>Create <s:text name="person"/></title>
+        <c:set var="topic" scope="request" value="createperson"/>
     </s:if>
     <s:else>
         <c:if test="${fn:length(person.changeRequests) > 0}">
@@ -13,6 +14,7 @@
         <c:if test="${fn:length(person.changeRequests) == 0}">
            <title><s:text name="person.details.title"/></title>
         </c:if>
+        <c:set var="topic" scope="request" value="persondetails"/>
     </s:else>
     <%@include file="../../confirmThenSubmit.jsp" %>
     <%@include file="../defineMapToShowConfirm.jsp" %>

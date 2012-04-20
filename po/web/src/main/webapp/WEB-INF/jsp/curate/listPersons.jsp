@@ -2,6 +2,7 @@
 <html>
 <head>
     <title><fmt:message key="curate.search.entity.title"/> - <fmt:message key="curate.search.entity.person.title"/></title>
+    <c:set var="topic" scope="request" value="curateperson"/>
 </head>
 <body>
     <po:successMessages />

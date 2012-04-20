@@ -3,6 +3,12 @@
 <html>
 <head>
 <title><s:text name="organizationalContact.manage.title"/></title>
+<s:if test="%{#ocType == 'organizational'}">
+    <c:set var="topic" scope="request" value="manageorgcontact"/>
+</s:if>
+<s:else>
+    <c:set var="topic" scope="request" value="managepersoncontact"/>
+</s:else>
 </head> 
 <body>
 

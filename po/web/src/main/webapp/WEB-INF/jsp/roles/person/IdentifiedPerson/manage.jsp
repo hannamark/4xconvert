@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="identifiedPerson.manage.title"/></title>
+<c:set var="topic" scope="request" value="manageopi"/>
 </head> 
 <body>
 

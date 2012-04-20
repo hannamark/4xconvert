@@ -2,6 +2,7 @@
 <html>
 <head>
     <title><fmt:message key="person.search.title"/></title>
+    <c:set var="topic" scope="request" value="searchperson"/>
 </head>
 <body> 
 <s:actionerror/>

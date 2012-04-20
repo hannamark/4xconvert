@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Welcome</title>
+    <c:set var="topic" scope="request" value="usersGuide"/>
 </head>
 <body>
 <po:successMessages />

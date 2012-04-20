@@ -7,7 +7,7 @@
     <li class="liheader">PO Curation Portal</li>
     <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-            <li><a id="Help" href="#" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
+            <li><a id="Help" href="javascript:void(0)" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
             <li><a id="Logout" href="<c:url value="/login/logout.action"/>">Logout</a></li>
             <c:if test="${sessionScope.disclaimerAccepted}">
             <li class="lisubheader">Organization</li>

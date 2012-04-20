@@ -2,6 +2,7 @@
 <html>
 <head>
     <title><fmt:message key="family.search.title"/></title>
+    <c:set var="topic" scope="request" value="familylist"/>
 </head>
 <body> 
 <po:successMessages />

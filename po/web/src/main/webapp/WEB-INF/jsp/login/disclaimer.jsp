@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message key="disclaimer.page.title" /></title>
+<c:set var="topic" scope="request" value="usersGuide"/>
 <SCRIPT LANGUAGE="JavaScript">
 function submitForm(btnSelected){
     if(btnSelected == 'accept') {

@@ -5,6 +5,7 @@
         <s:set name="isEdit" value="familyOrgRelationship.id != null"/>
         <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
         <title><fmt:message key="familyOrgRelationship.details.title"/></title>
+        <c:set var="topic" scope="request" value="relationship"/>
         <script type="text/javascript" language="javascript">
             function orgSelectionCallback(returnValue) {
                 <c:url value="/protected/ajax/family/organization/relationship/loadOrganizationInfo.action" var="loadOrgUrl">

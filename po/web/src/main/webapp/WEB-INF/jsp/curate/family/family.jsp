@@ -6,9 +6,11 @@
     <s:set name="isNotCreate" value="family.id != null"/>
     <s:if test="%{isCreate}">
         <title>Create <s:text name="family"/></title>
+        <c:set var="topic" scope="request" value="createfamily"/>
     </s:if>
     <s:else>
        <title><s:text name="family.details.title"/></title>
+       <c:set var="topic" scope="request" value="editfamily"/>
     </s:else>
     <script type="text/javascript">
         function confirmThenSubmit(fieldId, formId){

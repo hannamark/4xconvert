@@ -2,6 +2,7 @@
 <html>
 <head>
 <title><s:text name="clinicalResearchStaff.manage.title"/></title>
+<c:set var="topic" scope="request" value="managecrs"/>
 </head> 
 <body>
 
