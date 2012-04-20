@@ -4,9 +4,16 @@
     <li class="stdnav">
         <div><fmt:message key="pamenu.abstraction"/></div>
         <ul>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/studyProtocolexecute.action" id="trialSearchMenuOption" labelKey="pamenu.abstraction.search" selected="${requestScope.topic == 'searchtrial'}"/>
+            <li><a href="javascript:void(0);"><fmt:message key="pamenu.abstraction.search"/></a></li>
+            <li class="stdsub">
+                <ul>
+		            <pa:menuLink href="${pageContext.request.contextPath}/protected/studyProtocolexecute.action" id="trialSearchMenuOption" labelKey="pamenu.abstraction.search.trials" selected="${requestScope.topic == 'searchtrial'}"/>
+                    <pa:menuLink href="${pageContext.request.contextPath}/protected/personsSearchexecute.action" id="personSearchMenuOption" labelKey="pamenu.abstraction.search.persons" selected="${requestScope.topic == 'searchperson'}"/>
+                    <pa:menuLink href="${pageContext.request.contextPath}/protected/organizationsSearchexecute.action" id="organizationSearchMenuOption" labelKey="pamenu.abstraction.search.organizations" selected="${requestScope.topic == 'searchorganization'}"/>
+	            </ul>            
+            </li>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxprocess' || requestScope.topic == 'inboxaccess'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'newMarkerRequest'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'newMarkerRequest'}"/>            
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
             </c:if>

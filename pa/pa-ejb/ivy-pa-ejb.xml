@@ -24,6 +24,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-io"             name="commons-io"              rev="1.4"             conf="compile->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
+    <dependency org="commons-beanutils"           name="commons-beanutils"            rev="1.6"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
 
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
@@ -47,7 +48,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="(,1.4.1]"        conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="(,1.4.1]"       conf="compile->default"/>
     
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.5"             conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="(,3.8]"             conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
     <dependency org="xerces"                 name="xercesImpl"              rev="2.6.0"           conf="compile->master"/>
 

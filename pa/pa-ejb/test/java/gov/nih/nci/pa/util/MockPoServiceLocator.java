@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.MockPoClinicalResearchStaffCorrelationService;
 import gov.nih.nci.pa.service.MockPoHealthCareFacilityCorrelationService;
 import gov.nih.nci.pa.service.MockPoHealthCareProviderCorrelationService;
+import gov.nih.nci.pa.service.MockPoIdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.pa.service.MockPoOrganizationEntityService;
 import gov.nih.nci.pa.service.MockPoOrganizationalContactCorrelationService;
 import gov.nih.nci.pa.service.MockPoOversightCommitteeCorrelationService;
@@ -22,6 +23,7 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemo
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
@@ -109,14 +111,26 @@ public class MockPoServiceLocator implements PoServiceLocator {
 
     /**
      * {@inheritDoc}
+     * @throws NullifiedRoleException 
      */
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()  {
         IdentifiedOrganizationCorrelationServiceRemote svc = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
         List<IdentifiedOrganizationDTO> results = new ArrayList<IdentifiedOrganizationDTO>();
         IdentifiedOrganizationDTO dto = new IdentifiedOrganizationDTO();
         dto.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        Ii id = new Ii();
+        id.setExtension("4648");
+        id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+        dto.setAssignedId(id);
         results.add(dto);
         when(svc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(results);
+        try {
+            when(svc.getCorrelationsByPlayerIds(any(Ii[].class))).thenReturn(results);
+        } catch (NullifiedRoleException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
         return svc;
     }
@@ -125,7 +139,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
      * {@inheritDoc}
      */
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
-        return null;
+        return new MockPoIdentifiedPersonCorrelationServiceRemote();
     }
 
     /**

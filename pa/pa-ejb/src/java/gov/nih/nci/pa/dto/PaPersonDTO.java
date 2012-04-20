@@ -97,6 +97,7 @@ public class PaPersonDTO {
     //these fields are used for creating the person
     private String preFix;
     private String streetAddress;
+    private String streetAddress2;
     private String city;
     private String state;
     private String zip;
@@ -108,6 +109,13 @@ public class PaPersonDTO {
     private String url;
     private List<String> emailList;
     private String title;
+    private String functionalRole;
+    private String ctepId;
+    private String status;
+    private String statusDate;
+    private String affiliation;
+    
+    
     /*
      * This field is used to further identify this person whether he is primary contact or not
      */
@@ -473,5 +481,89 @@ public class PaPersonDTO {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * @return the functionalRole
+     */
+    public String getFunctionalRole() {
+        return functionalRole;
+    }
+
+    /**
+     * @param functionalRole the functionalRole to set
+     */
+    public void setFunctionalRole(String functionalRole) {
+        this.functionalRole = functionalRole;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the affiliation
+     */
+    public String getAffiliation() {
+        return affiliation;
+    }
+
+    /**
+     * @param affiliation the affiliation to set
+     */
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation;
+    }
+
+    /**
+     * @return the streetAddress2
+     */
+    public String getStreetAddress2() {
+        return streetAddress2;
+    }
+
+    /**
+     * @param streetAddress2 the streetAddress2 to set
+     */
+    public void setStreetAddress2(String streetAddress2) {
+        this.streetAddress2 = streetAddress2;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
     }
 }

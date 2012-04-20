@@ -97,6 +97,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -253,6 +254,13 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
             returnList = new ArrayList<OrganizationDTO>();
         }
         return returnList;
+    }
+
+    
+    public List<OrganizationDTO> search(OrganizationSearchCriteriaDTO arg0,
+            LimitOffset arg1) throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

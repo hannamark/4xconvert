@@ -16,6 +16,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class MockPoOrganizationalContactCorrelationService implements
     public List<OrganizationalContactDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<OrganizationalContactDTO>();
     }
 
 }

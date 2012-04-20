@@ -18,6 +18,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -194,6 +195,21 @@ public class MockPoOrganizationEntityService implements
     public List<OrganizationDTO> search(OrganizationDTO arg0, EnOn arg1, LimitOffset arg2)
             throws TooManyResultsException {
         return search(arg0, arg2);
+    }
+
+    @Override
+    public List<OrganizationDTO> search(OrganizationSearchCriteriaDTO criteria,
+            LimitOffset lo) throws TooManyResultsException {       
+        List<OrganizationDTO> orgDtoList = new ArrayList<OrganizationDTO>();
+        OrganizationDTO dto = basicOrgDto("4648");
+        List<String> phones = new ArrayList<String>();
+        phones.add("7037071111");
+        phones.add("7037071112");
+        phones.add("7037071113");
+        DSet<Tel> master = new DSet<Tel>();
+        dto.setTelecomAddress(DSetConverter.convertListToDSet(phones, "PHONE",master));
+        orgDtoList.add(dto);
+        return orgDtoList;
     }
 
 }

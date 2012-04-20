@@ -12,7 +12,6 @@ import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -27,7 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -213,7 +211,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
             Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
             for (OrganizationDTO dto : orgList) {
                 PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());
-                paDTO.setFamilies(getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
+                paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
                 orgs.add(paDTO);
             }
             return retvalue;
@@ -233,22 +231,13 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         paOrg.setId(poOrg.getIdentifier().getExtension().toString());
         paOrg.setName(poOrg.getName().getPart().get(0).getValue());
         if (MapUtils.isNotEmpty(familyMap)) {
-            paOrg.setFamilies(getFamilies(poOrg.getFamilyOrganizationRelationships(), familyMap));
+            paOrg.setFamilies(PADomainUtils.getFamilies(poOrg.getFamilyOrganizationRelationships(), familyMap));
         }
         orgs.clear();
         orgs.add(paOrg);
     }
 
-    private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
-        Map<Long, String> retMap = new HashMap<Long, String>();
-        Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
-        for (Ii ii : famOrgIis) {
-            FamilyDTO dto = familyMap.get(ii);
-            retMap.put(IiConverter.convertToLong(dto.getIdentifier()),
-                    EnOnConverter.convertEnOnToString(dto.getName()));
-        }
-        return retMap;
-    }
+    
 
     /**
      * @return the orgs

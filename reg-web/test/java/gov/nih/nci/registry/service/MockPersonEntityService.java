@@ -18,6 +18,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -138,6 +139,13 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
             }
         }
         return matchingDTO;
+    }
+
+    
+    public List<PersonDTO> search(PersonSearchCriteriaDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -105,6 +105,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -355,7 +356,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
     }
 
-    private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
+    private List<OrganizationDTO> performOrgSearch()
+            throws TooManyResultsException, NullifiedRoleException,
+            NullifiedEntityException, PAException {
         PaOrganizationDTO criteria = new PaOrganizationDTO();
         criteria.setName(orgName);
         criteria.setFamilyName(familyName);

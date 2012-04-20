@@ -197,6 +197,21 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="report">
+    
+        <action name="organizationsSearch*" class="gov.nih.nci.pa.action.OrganizationSearchAction" method="{1}">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            
+            <result name="error">/WEB-INF/jsp/organizationSearchCriteria.jsp</result>
+            <result name="success">/WEB-INF/jsp/organizationSearchCriteria.jsp</result>     
+            <result name="details">/WEB-INF/jsp/nodecorate/displayOrgInfo.jsp</result>                   
+        </action>
+        
+        <action name="personsSearch*" class="gov.nih.nci.pa.action.PersonSearchAction" method="{1}">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            
+            <result name="error">/WEB-INF/jsp/personSearchCriteria.jsp</result>
+            <result name="success">/WEB-INF/jsp/personSearchCriteria.jsp</result>     
+            <result name="details">/WEB-INF/jsp/nodecorate/displayPersonInfo.jsp</result>                   
+        </action>        
+    
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">

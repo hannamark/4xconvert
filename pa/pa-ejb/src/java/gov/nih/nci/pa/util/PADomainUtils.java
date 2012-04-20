@@ -84,14 +84,18 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
 import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -100,28 +104,54 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.PaOrganizationContactInfoDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.AbstractRoleDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
@@ -131,7 +161,13 @@ import org.hibernate.Session;
  *
  * @author Abraham J. Evans-EL
  */
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity",
+        "PMD.ExcessiveClassLength" })
 public class PADomainUtils {
+    private static final String PARTICIPATING_SITE = "Participating Site";
+    private static final String LEAD_ORGANIZATION = "Lead Organization";
+    private static final String HEALTHCARE_FACILITY = "Healthcare Facility";
+    private static final String RESEARCH_ORGANIZATION = "Research Organization";
     private static final Logger LOG = Logger.getLogger(PADomainUtils.class);
     private static final int EMAIL_IDX = 7;
 
@@ -167,35 +203,46 @@ public class PADomainUtils {
     public static PaPersonDTO convertToPaPersonDTO(PersonDTO poPerson) {
         gov.nih.nci.pa.dto.PaPersonDTO personDTO = new gov.nih.nci.pa.dto.PaPersonDTO();
         personDTO.setId(Long.valueOf(poPerson.getIdentifier().getExtension()));
-        List<Enxp> nameList = poPerson.getName().getPart();
-        Iterator<Enxp> nameIte = nameList.iterator();
-        while (nameIte.hasNext()) {
-            Enxp part = nameIte.next();
-            if (EntityNamePartType.FAM == part.getType()) {
-                personDTO.setLastName(part.getValue());
-            } else if (EntityNamePartType.GIV == part.getType()) {
-                if (personDTO.getFirstName() == null) {
-                    personDTO.setFirstName(part.getValue());
-                } else {
-                    personDTO.setMiddleName(part.getValue());
-                }
-            }
-        }
+        personDTO.setStatus(poPerson.getStatusCode() != null
+                && poPerson.getStatusCode().getCode() != null ? poPerson
+                .getStatusCode().getCode().toUpperCase() : "");
+        personDTO.setStatusDate(TsConverter.convertToString(poPerson.getStatusDate()));
+        final EnPn personName = poPerson.getName();
+        setPersonName(personDTO, personName);
+        
         //TelEmail; I need only EMAIL, So I am not using the DSETCONVERTER Class
         DSet<Tel> telList = poPerson.getTelecomAddress();
-        Set<Tel> set = telList.getItem();
-        Iterator<Tel> iter = set.iterator();
-        while (iter.hasNext()) {
-            Object obj = iter.next();
-            if (obj instanceof TelEmail) {
-                personDTO.setEmail(((TelEmail) obj).getValue().toString().substring(EMAIL_IDX));
-            }
-        }
+        setPersonContactInfo(personDTO, telList);
+        
         //Populate the address information now!
-        List<Adxp> addressList = poPerson.getPostalAddress().getPart();
+        final Ad address = poPerson.getPostalAddress();
+        setPersonAddress(personDTO, address);
+        return personDTO;
+    }
+
+    /**
+     * @param personDTO
+     * @param address
+     */
+    private static void setPersonAddress(
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO, final Ad address) {
+        personDTO.setStreetAddress(null);
+        personDTO.setStreetAddress2(null);
+        personDTO.setState(null);
+        personDTO.setCity(null);
+        personDTO.setCountry(null);
+        personDTO.setZip(null);
+        
+        List<Adxp> addressList = address.getPart();
         Iterator<Adxp> addressIte = addressList.iterator();
         while (addressIte.hasNext()) {
             Adxp part = addressIte.next();
+            if (AddressPartType.AL == part.getType()) {
+                personDTO.setStreetAddress(part.getValue());
+            }
+            if (AddressPartType.ADL == part.getType()) {
+                personDTO.setStreetAddress2(part.getValue());
+            }            
             if (AddressPartType.STA == part.getType()) {
                 personDTO.setState(part.getValue());
             }
@@ -209,44 +256,162 @@ public class PADomainUtils {
                 personDTO.setZip(part.getValue());
             }
         }
-        return personDTO;
+    }
+
+    /**
+     * @param personDTO
+     * @param telList
+     */
+    private static void setPersonContactInfo(
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO, DSet<Tel> telList) {
+        if (telList != null) {
+            personDTO.setEmail(null);
+            personDTO.setUrl(null);
+
+            Set<Tel> set = telList.getItem();
+            Iterator<Tel> iter = set.iterator();
+            while (iter.hasNext()) {
+                Tel obj = iter.next();
+                if (obj instanceof TelEmail) {
+                    personDTO.setEmail(((TelEmail) obj).getValue().toString()
+                            .substring(EMAIL_IDX));
+                }
+                if (obj instanceof TelUrl) {
+                    personDTO.setUrl(obj.getValue().toString());
+                }
+            }
+
+            final List<String> phones = DSetConverter.getTelByType(telList,
+                    TelPhone.SCHEME_TEL + ":");
+            final List<String> faxes = DSetConverter.getTelByType(telList,
+                    TelPhone.SCHEME_X_TEXT_FAX + ":");
+            personDTO.setPhone(CollectionUtils.isNotEmpty(phones) ? phones
+                    .get(0) : null);
+            personDTO.setFax(CollectionUtils.isNotEmpty(faxes) ? faxes.get(0)
+                    : null);
+        }
+    }
+
+    /**
+     * @param personDTO
+     * @param personName
+     */
+    private static void setPersonName(gov.nih.nci.pa.dto.PaPersonDTO personDTO,
+            final EnPn personName) {
+        List<Enxp> nameList = personName.getPart();
+        Iterator<Enxp> nameIte = nameList.iterator();
+        while (nameIte.hasNext()) {
+            Enxp part = nameIte.next();
+            if (EntityNamePartType.PFX == part.getType()) {
+                personDTO.setPreFix(part.getValue());
+            }            
+            if (EntityNamePartType.FAM == part.getType()) {
+                personDTO.setLastName(part.getValue());
+            } else if (EntityNamePartType.GIV == part.getType()) {
+                if (personDTO.getFirstName() == null) {
+                    personDTO.setFirstName(part.getValue());
+                } else {
+                    personDTO.setMiddleName(part.getValue());
+                }
+            }
+        }
     }
 
     /**
      * @return OrganizationWebDTO for display.
-     * @param poOrgDto OrganizationDTO
-     * @param countryList CountryList
-     * @throws PAException on error
+     * @param poOrgDto
+     *            OrganizationDTO
+     * @param countryList
+     *            CountryList
+     * @throws PAException
+     *             on error
      */
-    public static PaOrganizationDTO convertPoOrganizationDTO(OrganizationDTO poOrgDto, List<Country> countryList)
+    public static PaOrganizationDTO convertPoOrganizationDTO(
+            OrganizationDTO poOrgDto, List<Country> countryList)
             throws PAException {
-        PaOrganizationDTO displayElement = null;
-        displayElement = new PaOrganizationDTO();
-        displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
-        displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
+        PaOrganizationDTO paOrgDTO = null;
+        paOrgDTO = new PaOrganizationDTO();
+        paOrgDTO.setId(poOrgDto.getIdentifier().getExtension().toString());
+        paOrgDTO.setName(poOrgDto.getName().getPart().get(0).getValue());
+        paOrgDTO.setStatus(poOrgDto.getStatusCode() != null
+                && poOrgDto.getStatusCode().getCode() != null ? poOrgDto
+                .getStatusCode().getCode().toUpperCase() : null);
+        paOrgDTO.setStatusDate(TsConverter.convertToString(poOrgDto.getStatusDate()));
+        final Ad postalAddress = poOrgDto.getPostalAddress();
+        setPostalAddressFields(countryList, paOrgDTO, postalAddress);
 
-        List<Adxp> addressList = poOrgDto.getPostalAddress().getPart();
+        final DSet<Tel> telecomAddr = poOrgDto.getTelecomAddress();
+        setContactInfoFields(paOrgDTO, telecomAddr);
+        return paOrgDTO;
+    }
+
+    /**
+     * @param paOrgDTO
+     * @param telecomAddr
+     */
+    private static void setContactInfoFields(PaOrganizationDTO paOrgDTO,
+            final DSet<Tel> telecomAddr) {
+        if (telecomAddr != null) {
+            final PaOrganizationContactInfoDTO contactInfo = new PaOrganizationContactInfoDTO();
+            paOrgDTO.setContactInfo(contactInfo);
+            for (Tel tel : telecomAddr.getItem()) {
+                if (tel instanceof TelUrl) {
+                    contactInfo.getWebsites().add(tel.getValue().toString());
+                }
+            }
+            contactInfo.getEmails().addAll(
+                    DSetConverter.getTelByType(telecomAddr,
+                            TelEmail.SCHEME_MAILTO + ":"));
+            contactInfo.getPhones().addAll(
+                    DSetConverter.getTelByType(telecomAddr, TelPhone.SCHEME_TEL
+                            + ":"));
+            contactInfo.getFaxes().addAll(
+                    DSetConverter.getTelByType(telecomAddr,
+                            TelPhone.SCHEME_X_TEXT_FAX + ":"));
+        }
+    }
+
+    /**
+     * @param countryList
+     * @param paOrgDTO
+     * @param postalAddress
+     */
+    private static void setPostalAddressFields(List<Country> countryList, // NOPMD
+            PaOrganizationDTO paOrgDTO, final Ad postalAddress) {
+        paOrgDTO.setAddress1(null);
+        paOrgDTO.setAddress2(null);
+        paOrgDTO.setState(null);
+        paOrgDTO.setCity(null);
+        paOrgDTO.setCountry(null);
+        paOrgDTO.setZip(null);
+        
+        List<Adxp> addressList = postalAddress.getPart();
         Iterator<Adxp> addressIte = addressList.iterator();
         while (addressIte.hasNext()) {
             Adxp part = addressIte.next();
+            if (AddressPartType.AL == part.getType()) {
+                paOrgDTO.setAddress1(part.getValue());
+            }
+            if (AddressPartType.ADL == part.getType()) {
+                paOrgDTO.setAddress2(part.getValue());
+            }
             if (AddressPartType.STA == part.getType()) {
-                displayElement.setState(part.getValue());
+                paOrgDTO.setState(part.getValue());
             }
             if (AddressPartType.CTY == part.getType()) {
-                displayElement.setCity(part.getValue());
+                paOrgDTO.setCity(part.getValue());
             }
             if (AddressPartType.CNT == part.getType()) {
                 if (countryList != null) {
-                    displayElement.setCountry(getCountryNameUsingCode(part.getCode(), countryList));
+                    paOrgDTO.setCountry(getCountryNameUsingCode(part.getCode(), countryList));
                 } else {
-                    displayElement.setCountry(part.getCode());
+                    paOrgDTO.setCountry(part.getCode());
                 }
             }
             if (AddressPartType.ZIP == part.getType()) {
-                displayElement.setZip(part.getValue());
+                paOrgDTO.setZip(part.getValue());
             }
         }
-        return displayElement;
     }
 
     /**
@@ -434,11 +599,82 @@ public class PADomainUtils {
     }
 
     /**
+     * Search PO organizations by a broad criteria.
+     * @param searchCriteria criteria
+     * @return PO org list.
+     * @throws TooManyResultsException when too many exceptions.
+     * @throws NullifiedRoleException  NullifiedRoleException
+     * @throws NullifiedEntityException NullifiedEntityException
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("unchecked")
+    public static List<OrganizationDTO> searchPoOrganizations(
+            OrganizationSearchCriteriaDTO searchCriteria)
+            // NOPMD
+            throws TooManyResultsException, NullifiedRoleException,
+            NullifiedEntityException, PAException {
+
+        validateSearchCriteria(searchCriteria);
+        
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<OrganizationDTO> results = convertToEnhancedOrgDTO(PoRegistry
+                .getOrganizationEntityService().search(searchCriteria, limit));
+
+        return results;
+    }
+
+    /**
+     * @param orgSearchCriteria
+     * @throws PAException
+     */
+    private static void validateSearchCriteria(
+            OrganizationSearchCriteriaDTO orgSearchCriteria) throws PAException {
+        if (isEmptyCriteria(orgSearchCriteria)) {
+            throw new PAException("At least one criterion must be provided");
+        }
+        if (StringUtils.isNotBlank(orgSearchCriteria.getIdentifier())
+                && !NumberUtils.isDigits(orgSearchCriteria.getIdentifier())) {
+            throw new PAException("PO ID must be numerical");
+        }
+    }
+
+    /**
+     * @param orgs
+     * @return
+     */
+    private static List<OrganizationDTO> convertToEnhancedOrgDTO(
+            List<OrganizationDTO> orgs) {
+        List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+        for (OrganizationDTO orgDTO : orgs) {
+            list.add(new EnhancedOrganizationDTO(orgDTO));
+        }
+        return list;
+    }
+
+    private static boolean isEmptyCriteria(OrganizationSearchCriteriaDTO criteria) {
+        return StringUtils.isBlank(criteria.getCtepId())
+                && isEmptyCoreCriteria(criteria)
+                && StringUtils.isBlank(criteria.getFunctionalRole());
+    }
+
+    private static boolean isEmptyCoreCriteria(OrganizationSearchCriteriaDTO criteria) {
+        return StringUtils.isBlank(criteria.getIdentifier())
+                && StringUtils.isBlank(criteria.getStatus())
+                && StringUtils.isBlank(criteria.getName())
+                && StringUtils.isBlank(criteria.getFamilyName())
+                && StringUtils.isBlank(criteria.getCountry())
+                && StringUtils.isBlank(criteria.getCity())
+                && StringUtils.isBlank(criteria.getState())
+                && StringUtils.isBlank(criteria.getZip());
+    }
+    
+    /**
      * Search PO organizations by name, address or ctep id.
      * @param orgSearchCriteria criteria
      * @return PO org list.
      * @throws TooManyResultsException when too many exceptions.
      */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     public static List<OrganizationDTO> orgSearchByNameAddressCtepId(PaOrganizationDTO orgSearchCriteria)
             throws TooManyResultsException {
 
@@ -458,11 +694,7 @@ public class PADomainUtils {
                     null, null, orgSearchCriteria.getCity(), orgSearchCriteria.getState(),
                         orgSearchCriteria.getZip(), orgSearchCriteria.getCountry()));
         }
-        return searchOrgEntityByCriteria(criteria, orgSearchCriteria);
-    }
-
-    private static List<OrganizationDTO> searchOrgEntityByCriteria(OrganizationDTO criteria,
-            PaOrganizationDTO orgSearchCriteria) throws TooManyResultsException {
+        
         List<OrganizationDTO> orgSearchResults = new ArrayList<OrganizationDTO>();
         if (criteria.getIdentifier() != null
                 || criteria.getName() != null
@@ -474,6 +706,475 @@ public class PADomainUtils {
         }
         return orgSearchResults;
     }
+    
 
+    /**
+     * Gets families.
+     * @param familyOrganizationRelationships DSet<Ii>
+     * @param familyMap Map<Ii, FamilyDTO>
+     * @return Map<Long, String>
+     */
+    public static Map<Long, String> getFamilies(
+            DSet<Ii> familyOrganizationRelationships,
+            Map<Ii, FamilyDTO> familyMap) {
+        Map<Long, String> retMap = new HashMap<Long, String>();
+        Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
+        for (Ii ii : famOrgIis) {
+            FamilyDTO dto = familyMap.get(ii);
+            retMap.put(IiConverter.convertToLong(dto.getIdentifier()),
+                    EnOnConverter.convertEnOnToString(dto.getName()));
+        }
+        return retMap;
+    }
+    
+    /**
+     * {@link OrganizationDTO} with equals and hashcode and ctepId.
+     * @author Denis G. Krylov
+     *
+     */
+    private static final class EnhancedOrganizationDTO extends // NOPMD
+            OrganizationDTO {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1406045576246541515L;
+
+        public EnhancedOrganizationDTO(OrganizationDTO organizationDTO) {
+            try {
+                PropertyUtils.copyProperties(this, organizationDTO);
+            } catch (Exception e) {
+                LOG.error(e, e);
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((getIdentifier() == null) ? 0 : getIdentifier().hashCode());
+            return result;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) { // NOPMD
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof OrganizationDTO)) {
+                return false;
+            }
+            OrganizationDTO other = (OrganizationDTO) obj;
+            if (getIdentifier() == null) {
+                if (other.getIdentifier() != null) {
+                    return false;
+                }
+            } else if (!getIdentifier().equals(other.getIdentifier())) {
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    /**
+     * Retrieve ctep IDs.
+     * 
+     * @param paOrgs
+     *            List<PaOrganizationDTO>
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    public static void addOrganizationCtepIDs(List<PaOrganizationDTO> paOrgs) // NOPMD
+            throws NullifiedRoleException {
+        if (CollectionUtils.isEmpty(paOrgs)) {
+            return;
+        }
+        
+        List<Ii> ids = new ArrayList<Ii>();
+        for (PaOrganizationDTO organizationDTO : paOrgs) {
+            ids.add(IiConverter.convertToPoOrganizationIi(organizationDTO
+                    .getId()));
+        }
+        List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                .getIdentifiedOrganizationEntityService()
+                .getCorrelationsByPlayerIds(ids.toArray(new Ii[0])); // NOPMD
+        for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
+            if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO
+                    .getAssignedId().getRoot())) {
+                String ctepID = idOrgDTO.getAssignedId().getExtension();
+                for (PaOrganizationDTO organizationDTO : paOrgs) {
+                    if (organizationDTO.getId().equals(
+                            idOrgDTO.getPlayerIdentifier().getExtension())) {
+                        organizationDTO.setCtepId(ctepID);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Iterates over organizations in the list and determines/sets their type.
+     * 
+     * @param orgs
+     *            List<PaOrganizationDTO>
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    public static void determineOrganizationType(List<PaOrganizationDTO> orgs)
+            throws NullifiedRoleException {
+        for (PaOrganizationDTO orgDTO : orgs) {
+            Ii[] playerIds = new Ii[] {IiConverter
+                    .convertToPoOrganizationIi(orgDTO.getId()) };
+            ResearchOrganizationCorrelationServiceRemote researchOrganizationService = PoRegistry
+                    .getResearchOrganizationCorrelationService();
+            if (!researchOrganizationService.getCorrelationsByPlayerIds(
+                    playerIds).isEmpty()) {
+                orgDTO.getOrganizationTypes().add(LEAD_ORGANIZATION);
+                orgDTO.setFunctionalRole(LEAD_ORGANIZATION);
+            }
+            HealthCareFacilityCorrelationServiceRemote hfRemote = PoRegistry
+                    .getHealthCareFacilityCorrelationService();
+            if (!hfRemote.getCorrelationsByPlayerIds(playerIds).isEmpty()) {
+                orgDTO.getOrganizationTypes().add(PARTICIPATING_SITE);
+                orgDTO.setFunctionalRole(PARTICIPATING_SITE);
+            }
+        }
+    }
+
+    /**
+     * Looks into this organization's roles to see if any of them override
+     * entity's address or contanct info. If true, this DTO gets updated to
+     * reflect the role's address or contact info.
+     * 
+     * @see https
+     *      ://tracker.nci.nih.gov/browse/PO-4648?focusedCommentId=145421#comment
+     *      -145421
+     * @param paOrgDTO
+     *            PaOrganizationDTO
+     * @param countries
+     *            List<Country>
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public static void retrieveAddressAndContactInfoFromRole(
+            PaOrganizationDTO paOrgDTO, List<Country> countries)
+            throws NullifiedRoleException {
+        Ii[] playerIds = new Ii[] {IiConverter
+                .convertToPoOrganizationIi(paOrgDTO.getId()) };
+        ResearchOrganizationCorrelationServiceRemote researchOrganizationService = PoRegistry
+                .getResearchOrganizationCorrelationService();
+        final List<ResearchOrganizationDTO> roDTOs = researchOrganizationService
+                .getCorrelationsByPlayerIds(playerIds);
+        for (ResearchOrganizationDTO roDTO : roDTOs) {
+            if (EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
+                    roDTO.getStatus().getCode())) {
+                if (CollectionUtils.isNotEmpty(roDTO.getPostalAddress()
+                        .getItem())) {
+                    setPostalAddressFields(countries, paOrgDTO, (Ad) roDTO
+                            .getPostalAddress().getItem().iterator().next());
+                }
+                if (CollectionUtils.isNotEmpty(roDTO.getTelecomAddress()
+                        .getItem())) {
+                    setContactInfoFields(paOrgDTO, roDTO.getTelecomAddress());
+                }
+
+            }
+        }
+        HealthCareFacilityCorrelationServiceRemote hcService = PoRegistry
+                .getHealthCareFacilityCorrelationService();
+        final List<HealthCareFacilityDTO> hcfDTOs = hcService
+                .getCorrelationsByPlayerIds(playerIds);
+        for (HealthCareFacilityDTO hcfDTO : hcfDTOs) {
+            if (EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
+                    hcfDTO.getStatus().getCode())) {
+                if (hcfDTO.getPostalAddress() != null
+                        && CollectionUtils.isNotEmpty(hcfDTO.getPostalAddress()
+                                .getItem())) {
+                    setPostalAddressFields(countries, paOrgDTO, (Ad) hcfDTO
+                            .getPostalAddress().getItem().iterator().next());
+                }
+                if (hcfDTO.getTelecomAddress() != null
+                        && CollectionUtils.isNotEmpty(hcfDTO
+                                .getTelecomAddress().getItem())) {
+                    setContactInfoFields(paOrgDTO, hcfDTO.getTelecomAddress());
+                }              
+            }
+        }
+
+    }
+
+    /**
+     * Searches for Persons in PO using a general criteria.
+     * 
+     * @param criteria
+     *            PaPersonDTO
+     * @return List<PaPersonDTO>
+     * @throws PAException PAException
+     * @throws TooManyResultsException TooManyResultsException
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    public static List<PaPersonDTO> searchPoPersons(PersonSearchCriteriaDTO criteria)
+            throws PAException, TooManyResultsException, NullifiedRoleException {
+
+        validateSearchCriteria(criteria);
+
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<PersonDTO> personDTOs = PoRegistry.getPersonEntityService()
+                .search(criteria, limit);
+        List<PaPersonDTO> paPersonDTOs = new ArrayList<PaPersonDTO>();
+        for (PersonDTO dto : personDTOs) {
+            paPersonDTOs.add(convertToPaPersonDTO(dto));
+        }
+        addPersonCtepIDs(paPersonDTOs);        
+        return convertToEnhancedPersonDTO(paPersonDTOs);
+    }
+    
+    /**
+     * @param persons
+     * @return
+     */
+    private static List<PaPersonDTO> convertToEnhancedPersonDTO(
+            List<PaPersonDTO> persons) {
+        List<PaPersonDTO> list = new ArrayList<PaPersonDTO>();
+        for (PaPersonDTO orgDTO : persons) {
+            list.add(new EnhancedPersonDTO(orgDTO));
+        }
+        return list;
+    } 
+    
+    /**
+     * Retrieve ctep IDs.
+     * 
+     * @param paPersons
+     *            List<PaOrganizationDTO>
+     * @throws NullifiedRoleException 
+     */
+    private static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
+            throws NullifiedRoleException {
+        if (CollectionUtils.isEmpty(paPersons)) {
+            return;
+        }
+
+        List<Ii> ids = new ArrayList<Ii>();
+        for (PaPersonDTO personDTO : paPersons) {
+            ids.add(IiConverter.convertToPoPersonIi(personDTO.getId()
+                    .toString()));
+        }
+        List<IdentifiedPersonDTO> identifiedPersons = PoRegistry
+                .getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
+                        ids.toArray(new Ii[0])); // NOPMD
+        for (IdentifiedPersonDTO idPersonDTO : identifiedPersons) {
+            if (IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(idPersonDTO
+                    .getAssignedId().getRoot())) {
+                String ctepID = idPersonDTO.getAssignedId().getExtension();
+                for (PaPersonDTO person : paPersons) {
+                    if (person
+                            .getId()
+                            .toString()
+                            .equals(idPersonDTO.getPlayerIdentifier()
+                                    .getExtension())) {
+                        person.setCtepId(ctepID);
+                    }
+                }
+            }
+        }
+    }    
+
+    /**
+     * @param criteria
+     * @throws PAException
+     */
+    private static void validateSearchCriteria(PersonSearchCriteriaDTO criteria)
+            throws PAException {
+        if (isEmptyCriteria(criteria)) {
+            throw new PAException("At least one criterion must be provided");
+        }
+        if (StringUtils.isNotBlank(criteria.getId())
+                && !NumberUtils.isDigits(criteria.getId())) {
+            throw new PAException("PO ID must be numerical");
+        }
+    }
+
+    private static boolean isEmptyCriteria(PersonSearchCriteriaDTO criteria) {
+        return  StringUtils.isBlank(criteria.getId()) 
+                && StringUtils.isBlank(criteria.getStatus())
+                && StringUtils.isBlank(criteria.getFirstName())
+                && StringUtils.isBlank(criteria.getLastName())
+                && StringUtils.isBlank(criteria.getAffiliation())
+                && StringUtils.isBlank(criteria.getFunctionalRole())
+                && StringUtils.isBlank(criteria.getCtepId());
+    }
+    
+    /**
+     * Provides additional on-demand functionality to {@link PaPersonDTO}.
+     * 
+     * @author Denis G. Krylov
+     * 
+     */
+    public static final class EnhancedPersonDTO extends PaPersonDTO {
+        /**
+         * 
+         */
+        @SuppressWarnings("unused")
+        private static final long serialVersionUID = 1406045576246541515L;
+        
+        private Collection<OrganizationDTO> organizations;
+        private Collection<String> roles;
+
+        /**
+         * @param personDTO PaPersonDTO
+         */
+        public EnhancedPersonDTO(PaPersonDTO personDTO) {
+            try {
+                PropertyUtils.copyProperties(this, personDTO);
+            } catch (Exception e) {
+                LOG.error(e, e);
+            }
+        }
+        
+        /**
+         * @return Collection<String>
+         * @throws NullifiedRoleException NullifiedRoleException
+         * @throws NullifiedEntityException NullifiedEntityException
+         * @throws PAException PAException
+         */
+        public Collection<String> getRoles() throws NullifiedRoleException,
+                NullifiedEntityException, PAException {
+            getOrganizations();
+            return roles;
+        }
+        
+        /**
+         * Gets affiliated organizations.
+         * @return Collection<OrganizationDTO>
+         * @throws NullifiedRoleException NullifiedRoleException
+         * @throws PAException PAException
+         * @throws NullifiedEntityException NullifiedEntityException
+         */
+        @SuppressWarnings("unused")
+        public Collection<OrganizationDTO> getOrganizations()
+                throws NullifiedRoleException, NullifiedEntityException,
+                PAException {
+            if (organizations == null) {
+                organizations = new LinkedHashSet<OrganizationDTO>();
+                roles = new ArrayList<String>();
+                
+                Ii[] playerIds = new Ii[] {IiConverter
+                        .convertToPoPersonIi(getId().toString()) };
+                final List<OrganizationDTO> crsOrgs = findAffiliatedOrgs(
+                        PoRegistry.getClinicalResearchStaffCorrelationService(),
+                        playerIds);
+                organizations.addAll(crsOrgs);
+                final List<OrganizationDTO> hcpOrgs = findAffiliatedOrgs(
+                        PoRegistry.getHealthCareProviderCorrelationService(),
+                        playerIds);
+                organizations.addAll(hcpOrgs);
+                final List<OrganizationDTO> ocOrgs = findAffiliatedOrgs(
+                        PoRegistry.getOrganizationalContactCorrelationService(),
+                        playerIds);
+                organizations.addAll(ocOrgs);
+                organizations.addAll(findAffiliatedOrgs(
+                        PoRegistry.getIdentifiedPersonEntityService(),
+                        playerIds));
+                
+                if (!crsOrgs.isEmpty()) {
+                    roles.add("Clinical Research Staff");
+                }
+                if (!hcpOrgs.isEmpty()) {
+                    roles.add("Healthcare Provider");
+                }
+                if (!ocOrgs.isEmpty()) {
+                    roles.add("Organizational Contact");
+                }
+                
+            }
+            return organizations;
+        }
+        
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static List<OrganizationDTO> findAffiliatedOrgs(
+            CorrelationService correlationService, Ii[] playerIds) {
+        List<OrganizationDTO> orgs = new ArrayList<OrganizationDTO>();
+        try {
+            List<AbstractRoleDTO> correlations = correlationService
+                    .getCorrelationsByPlayerIds(playerIds);
+            for (AbstractRoleDTO role : correlations) {
+                //Ii orgID = role.getScoperIdentifier();
+                Ii orgID = (Ii) PropertyUtils.getProperty(role, "scoperIdentifier");
+                OrganizationDTO orgDTO = PoRegistry
+                        .getOrganizationEntityService().getOrganization(orgID);
+                orgs.add(new EnhancedOrganizationDTO(orgDTO));
+            }
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+        return (orgs);
+    }
+
+    /**
+     * @param person PaPersonDTO
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    public static void retrieveAddressAndContactInfoFromRole(PaPersonDTO person)
+            throws NullifiedRoleException {
+        Ii[] ids = new Ii[] {IiConverter.convertToPoPersonIi(person.getId()
+                .toString()) };
+        
+        for (OrganizationalContactDTO dto : PoRegistry
+                .getOrganizationalContactCorrelationService()
+                .getCorrelationsByPlayerIds(ids)) {
+            transferAddressAndContactsFromRole(person, dto);
+        }
+
+        for (HealthCareProviderDTO dto : PoRegistry
+                .getHealthCareProviderCorrelationService()
+                .getCorrelationsByPlayerIds(ids)) {
+            transferAddressAndContactsFromRole(person, dto);
+        }        
+        
+        for (ClinicalResearchStaffDTO dto : PoRegistry
+                .getClinicalResearchStaffCorrelationService()
+                .getCorrelationsByPlayerIds(ids)) {
+            transferAddressAndContactsFromRole(person, dto);
+        }
+
+    }
+
+    /**
+     * @param person
+     * @param dto
+     */
+    private static void transferAddressAndContactsFromRole(PaPersonDTO person,
+            AbstractPersonRoleDTO dto) {
+        if (EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
+                dto.getStatus().getCode())) {
+            if (dto.getPostalAddress() != null
+                    && CollectionUtils.isNotEmpty(dto.getPostalAddress()
+                            .getItem())) {
+                setPersonAddress(person, (Ad) dto.getPostalAddress().getItem()
+                        .iterator().next());
+            }
+            if (dto.getTelecomAddress() != null
+                    && CollectionUtils.isNotEmpty(dto.getTelecomAddress()
+                            .getItem())) {
+                setPersonContactInfo(person, dto.getTelecomAddress());
+            }
+        }
+    }
+    
 }

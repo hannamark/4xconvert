@@ -71,6 +71,11 @@ public class PaPersonDTOTest extends AbstractHibernateTestCase {
         assertEquals("Testing last name failed", "TestLN", data.get(0).getLastName());
         assertNotNull("Testing Full name failed", data.get(0).getFullName());
         data.get(0).setStreetAddress("101 Renner rd");
+        data.get(0).setStreetAddress2("202 Renner rd");
+        data.get(0).setFunctionalRole("frole");
+        data.get(0).setCtepId("ctepid");
+        data.get(0).setStatus("status");
+        data.get(0).setAffiliation("affiliation");
         data.get(0).setCity("Richardson");
         data.get(0).setState("TX");
         data.get(0).setCountry("USA");
@@ -81,6 +86,11 @@ public class PaPersonDTOTest extends AbstractHibernateTestCase {
         data.get(0).setUrl("www.url.com");
         data.get(0).setFax("222222222");
 
+        assertNotNull(data.get(0).getStreetAddress2());
+        assertNotNull(data.get(0).getFunctionalRole());
+        assertNotNull(data.get(0).getCtepId());
+        assertNotNull(data.get(0).getStatus());
+        assertNotNull(data.get(0).getAffiliation());
         assertNotNull("Testing Address failed", data.get(0).getAddress());
         assertNotNull("Testing Email", data.get(0).getEmail());
         assertNotNull("Testing Phone", data.get(0).getPhone());

@@ -21,10 +21,12 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -159,6 +161,17 @@ public class MockPoPersonEntityService implements PersonEntityServiceRemote {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
         return matchingDTO;
+    }
+
+    @Override
+    public List<PersonDTO> search(PersonSearchCriteriaDTO c, LimitOffset arg1)
+            throws TooManyResultsException {       
+        for(PersonDTO dto:personList){
+            if(dto.getIdentifier().getExtension().equals(c.getId())){
+                return Arrays.asList(dto);
+            }
+        }
+        return new ArrayList<PersonDTO>();
     }
 
 }

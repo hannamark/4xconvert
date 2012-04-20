@@ -84,11 +84,13 @@ package gov.nih.nci.pa.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -101,10 +103,15 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -163,9 +170,23 @@ public class PADomainUtilsTest {
         org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
         Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
         org.setPostalAddress(address);
+        
+        List<String> phones = new ArrayList<String>();
+        String phone = "1111111111";
+        String email = "a@a.com";
+        phones.add(phone);
+        List<String> emails = new ArrayList<String>();
+        emails.add(email);        
+        DSet<Tel> dsetList = null;
+        dsetList = DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
+        dsetList = DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
+        org.setTelecomAddress(dsetList);        
+        
         PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, null);
         assertEquals("Testing org name", "org", paOrgDTO.getName());
         assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());
+        assertEquals("1111111111",paOrgDTO.getContactInfo().getPhones().get(0));
+        assertEquals("a@a.com",paOrgDTO.getContactInfo().getEmails().get(0));
     }
 
     @Test
@@ -205,7 +226,7 @@ public class PADomainUtilsTest {
     }
     
     @Test
-    public void testOrgSearchByAddressNameCtepId() throws TooManyResultsException {
+    public void testOrgSearchByAddressNameCtepId() throws TooManyResultsException, NullifiedRoleException, NullifiedEntityException, PAException {
         PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
         orgSearchCriteria.setName("unknown org name");
         List<OrganizationDTO> orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
@@ -227,6 +248,87 @@ public class PADomainUtilsTest {
         assertEquals(1, orgList.size());
     }
     
-    
+    @Test(expected=PAException.class)
+    public void testSearchPoOrganizationsEmptyCriteria() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
+        PADomainUtils.searchPoOrganizations(criteria);
+    }
 
+    @Test(expected=PAException.class)
+    public void testSearchPoOrganizationsInvalidCriteria() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
+        criteria.setIdentifier("A");
+        PADomainUtils.searchPoOrganizations(criteria);
+    }
+    
+    @Test
+    public void testSearchPoOrganizations() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
+        criteria.setName("PO-4648");
+        List<OrganizationDTO> orgs = PADomainUtils.searchPoOrganizations(criteria);
+        assertEquals(1, orgs.size());
+        assertEquals("4648", orgs.get(0).getIdentifier().getExtension());
+    }    
+    
+    @Test
+    public void testAddOrganizationCtepIDs() throws NullifiedRoleException {
+        PaOrganizationDTO dto = new PaOrganizationDTO();
+        dto.setId("1");
+        PADomainUtils.addOrganizationCtepIDs(Arrays.asList(dto));
+        assertEquals("4648", dto.getCtepId());
+    }
+    
+    @Test
+    public void testDetermineOrganizationType() throws NullifiedRoleException {
+        PaOrganizationDTO dto = new PaOrganizationDTO();
+        dto.setId("1");
+        PADomainUtils.determineOrganizationType(Arrays.asList(dto));
+        assertEquals(2, dto.getOrganizationTypes().size());
+        assertTrue(dto.getOrganizationTypes().contains("Lead Organization"));
+        assertTrue(dto.getOrganizationTypes().contains("Participating Site"));
+    }
+    
+    @Test
+    public void testRetrieveAddressAndContactInfoFromRole() throws NullifiedRoleException {
+        PaOrganizationDTO dto = new PaOrganizationDTO();
+        dto.setId("1");   
+        Country country = new Country();
+        country.setAlpha2("US");
+        country.setAlpha3("USA");      
+        country.setName("USA");
+        PADomainUtils.retrieveAddressAndContactInfoFromRole(dto, Arrays.asList(country));
+        
+        assertEquals("101 Renner rd", dto.getAddress1());
+        assertEquals("deliveryAddress", dto.getAddress2());
+        assertEquals("Richardson", dto.getCity());
+        assertEquals("TX", dto.getState());
+        assertEquals("75081", dto.getZip());
+        assertEquals("USA", dto.getCountry());
+    }
+    
+    @Test(expected=PAException.class)
+    public void testSearchPoPersonsEmptyCriteria() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
+        PADomainUtils.searchPoPersons(criteria);
+    }
+
+    @Test(expected=PAException.class)
+    public void testSearchPoPersonsInvalidCriteria() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
+        criteria.setId("A");
+        PADomainUtils.searchPoPersons(criteria);
+    }    
+    
+    @Test
+    public void testSearchPoPersons() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
+        criteria.setId("3");
+        List<PaPersonDTO> list = PADomainUtils.searchPoPersons(criteria);
+        assertEquals(1, list.size());
+        
+        assertEquals(3L, list.get(0).getId().longValue());
+        assertEquals("4648", list.get(0).getCtepId());
+        
+    }      
+    
 }

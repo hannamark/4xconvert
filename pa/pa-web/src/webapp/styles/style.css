@@ -113,6 +113,9 @@ TEXTAREA.readonly
 { margin:0;  }
 #leftnav UL.menu LI.stdnav UL LI
 { background:#b0c1e5; color:#333; text-transform:none; padding:0; margin:0 }
+#leftnav UL.menu LI.stdnav LI.stdsub A {
+	padding-left: 30px;
+}
 #leftnav UL.menu LI.stdnav A
 { text-decoration:none; background:#e9e9e9 url("../images/bg_menu.gif") repeat-y right; color:#333; display:block; padding:3px 8px 2px 18px; border-bottom:1px solid #fff; height:1% }
 #leftnav UL.menu LI.stdnav A:hover, #leftnav UL.menu LI.stdnav A:hover
@@ -571,3 +574,16 @@ UL#maintabs LI A:focus
 .actionstoprow
 { margin-top:20px; padding:5px 5px 5px 5px; clear:both; text-decoration:none; text-align:center; border-bottom:1px dotted #aeaeae}
 
+
+/* Misc */
+.fluid_width {
+	width: auto !important;
+}
+
+.popupwin {
+    min-width: 0px !important;	
+}
+
+.popupwin * td.value, .popupwin * td.label {
+	padding: 2px 2px 2px 2px !important;
+}

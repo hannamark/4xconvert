@@ -80,8 +80,13 @@ public class MockPoHealthCareFacilityCorrelationService implements HealthCareFac
 
     public List<HealthCareFacilityDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+        List<HealthCareFacilityDTO> ar = new ArrayList<HealthCareFacilityDTO>();
+        HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
+        hcf.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi("1")));
+        hcf.setPlayerIdentifier(arg0[0]);
+        hcf.setStatus(CdConverter.convertStringToCd("ACTIVE"));       
+        ar.add(hcf);
+        return ar;
     }
 
 }

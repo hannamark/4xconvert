@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,6 +102,8 @@ public class PaOrganizationDTO implements Serializable {
     private String recruitmentStatusDate;
     private String functionalRole;
     private String targetAccrualNumber;
+    private String address1;
+    private String address2;
     private String city;
     private String state;
     private String country;
@@ -108,9 +112,12 @@ public class PaOrganizationDTO implements Serializable {
     private String investigator;
     private String primarycontact;
     private String status;
+    private String statusDate;
     private String programCode;
     private String ctepId;
     private Map<Long, String> families;
+    private List<String> organizationTypes = new ArrayList<String>();
+    private PaOrganizationContactInfoDTO contactInfo = new PaOrganizationContactInfoDTO();
 
     /**
      * @return the programCode
@@ -390,6 +397,76 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    /**
+     * @return the address1
+     */
+    public String getAddress1() {
+        return address1;
+    }
+
+    /**
+     * @param address1 the address1 to set
+     */
+    public void setAddress1(String address1) {
+        this.address1 = address1;
+    }
+
+    /**
+     * @return the address2
+     */
+    public String getAddress2() {
+        return address2;
+    }
+
+    /**
+     * @param address2 the address2 to set
+     */
+    public void setAddress2(String address2) {
+        this.address2 = address2;
+    }
+
+    /**
+     * @return the organizationTypes
+     */
+    public List<String> getOrganizationTypes() {
+        return organizationTypes;
+    }
+
+    /**
+     * @param organizationTypes the organizationTypes to set
+     */
+    public void setOrganizationTypes(List<String> organizationTypes) {
+        this.organizationTypes = organizationTypes;
+    }
+
+    /**
+     * @return the contactInfo
+     */
+    public PaOrganizationContactInfoDTO getContactInfo() {
+        return contactInfo;
+    }
+
+    /**
+     * @param contactInfo the contactInfo to set
+     */
+    public void setContactInfo(PaOrganizationContactInfoDTO contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
+    /**
+     * @return the statusDate
+     */
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    /**
+     * @param statusDate the statusDate to set
+     */
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
     }    
     
 }

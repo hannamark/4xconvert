@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -160,7 +161,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     @Override
     public String execute() throws PAException {
-        if (!userRoleInSession()) {
+        if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
+                .getSession())) {
             return showCriteria();
         }
         return SUCCESS;
@@ -195,7 +197,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @throws PAException exception
      */
     public String query() throws PAException {
-        if (!userRoleInSession()) {
+        if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
+                .getSession())) {
             return showCriteria();
         }
         validateIdentifierSearchParameters();
@@ -270,7 +273,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @throws PAException exception
      */
     public String view() throws PAException {
-        if (!userRoleInSession()) {
+        if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
+                .getSession())) {
             return showCriteria();
         }
         try {
@@ -385,7 +389,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @throws PAException exception
      */
     public String viewTSR() throws PAException {
-        if (!userRoleInSession()) {
+        if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
+                .getSession())) {
             return showCriteria();
         }
         try {
@@ -506,18 +511,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             addActionError(e.getLocalizedMessage());
         }
         return SHOW_VIEW_REFRESH;
-    }
-
-    private boolean userRoleInSession() {
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        boolean isSuAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
-        boolean isAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ABSTRACTOR));
-        boolean isAdminAbstractor =
-                BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
-        boolean isScientificAbstractor =
-                BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
-        boolean isReportViewer = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_REPORT_VIEWER));
-        return isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer;
     }
 
     /**
