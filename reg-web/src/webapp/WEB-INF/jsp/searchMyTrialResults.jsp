@@ -164,7 +164,7 @@ body {
                 <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column titleKey="search.trial.nctNumber" property="nctNumber" sortable="true" headerClass="sortable"/>
+                <display:column titleKey="search.trial.nctNumber" property="nctIdentifier" sortable="true" headerClass="sortable"/>
                 <display:column title="Other Identifiers" >
                 	<s:iterator value="%{#attr.row.otherIdentifiers}" >
 				    	'<s:property/>'				
