@@ -1161,8 +1161,9 @@ public class PADomainUtils {
      */
     private static void transferAddressAndContactsFromRole(PaPersonDTO person,
             AbstractPersonRoleDTO dto) {
-        if (EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
-                dto.getStatus().getCode())) {
+        if (dto.getStatus() != null
+                && EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
+                        dto.getStatus().getCode())) {
             if (dto.getPostalAddress() != null
                     && CollectionUtils.isNotEmpty(dto.getPostalAddress()
                             .getItem())) {
