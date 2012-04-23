@@ -164,6 +164,14 @@ TEXTAREA.readonly
 { background:#eecf41 url("../images/arrow_right.gif") no-repeat right; }
 
 
+LI.stdsub {
+    *background-color: #E9E9E9 !important;
+}
+
+LI.stdsub UL {      
+    *margin-top: -12px !important;
+}
+
 /* Quicklinks */
 
 #leftnav UL.menu LI.stdnav UL.quicklinks
