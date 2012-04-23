@@ -89,11 +89,14 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -176,6 +179,7 @@ public class OnholdAction extends AbstractListEditAction {
             setOnhold(new OnholdWebDTO(studyOnholdService.get(onHoldIi)));
         } else {
             setOnhold(new OnholdWebDTO());
+            getOnhold().setDateLow(DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
         }
     }
 

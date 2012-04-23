@@ -75,15 +75,7 @@
                         </s:else>
                     </pa:valueRow>
                     <pa:valueRow labelKey="onhold.date.low" required="true">
-                        <s:if test="%{currentAction == 'create'}">
-                            <s:textfield name="onhold.dateLow" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                            <a href="javascript:showCal('Cal1')">
-                                <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                            </a>
-                        </s:if>
-                        <s:else>
-                            <s:textfield name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
-                        </s:else>
+                        <s:textfield name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
                         <pa:fieldError fieldName="onhold.dateLow"/>
                     </pa:valueRow>
                     <pa:valueRow labelKey="onhold.date.high">

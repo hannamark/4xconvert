@@ -617,7 +617,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testDateRulesLowFuture() throws PAException {
         expectedException.expect(PAException.class);
-        expectedException.expectMessage("On-hold dates must be only past or current dates.");
+        expectedException.expectMessage("On-hold date must be today's date.");
         StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
         StudyOnholdDTO dto = new StudyOnholdDTO();
         Timestamp low = new Timestamp(new DateTime().plusDays(1).getMillis());
@@ -633,7 +633,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     public void testDateRulesNoHigh() throws PAException {
         StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
         StudyOnholdDTO dto = new StudyOnholdDTO();
-        Timestamp low = new Timestamp(new DateTime().minusDays(1).getMillis());
+        Timestamp low = new Timestamp(new DateTime().getMillis());
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, null));
         sut.dateRules(dto);
     }
@@ -648,7 +648,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         expectedException.expectMessage("Off-hold dates must be only past or current dates.");
         StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
         StudyOnholdDTO dto = new StudyOnholdDTO();
-        Timestamp low = new Timestamp(new DateTime().minusDays(1).getMillis());
+        Timestamp low = new Timestamp(new DateTime().getMillis());
         Timestamp high = new Timestamp(new DateTime().plusDays(1).getMillis());
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
         sut.dateRules(dto);

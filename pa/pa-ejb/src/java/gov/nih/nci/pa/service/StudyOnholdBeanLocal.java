@@ -272,11 +272,11 @@ implements StudyOnholdServiceLocal {
         Timestamp low = IvlConverter.convertTs().convertLow(dto.getOnholdDate());
         if (low == null) {
             throw new PAFieldException(FN_DATE_LOW, "On-hold date is required.");
+        }        
+        if (!DateUtils.isSameDay(low, getTodaysDate())) {
+            throw new PAFieldException(FN_DATE_LOW, "On-hold date must be today's date.");
         }
         Timestamp now = new Timestamp(getTodaysDate().getTime());
-        if (now.before(low)) {
-            throw new PAFieldException(FN_DATE_LOW, "On-hold dates must be only past or current dates.");
-        }
         Timestamp high = IvlConverter.convertTs().convertHigh(dto.getOnholdDate());
         if (high != null) {
             if (now.before(high)) {
