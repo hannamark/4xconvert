@@ -5,7 +5,7 @@
     <div class="box_white">
         <po:inputRow>
             <po:inputRowElement>
-            <po:field labelKey="family.name" fieldRequired="true"><h2 style="background: none;">${familyOrgRelationship.family.name}</h2>
+            <po:field labelKey="family.name" fieldRequired="true"><h2 id="chkFamilyName" style="background: none;">${familyOrgRelationship.family.name}</h2>
                 <s:fielderror>
                     <s:param>familyOrgRelationship.family</s:param>
                 </s:fielderror>

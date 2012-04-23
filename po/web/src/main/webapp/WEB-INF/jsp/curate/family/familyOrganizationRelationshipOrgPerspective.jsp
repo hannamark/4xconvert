@@ -14,6 +14,13 @@
                 var url = '${loadFamilyUrl}' + '&selectedFamilyId=' + returnValue.id;
                 loadDiv(url, 'famOrgRelationshipFamilyInfo', true, null, false);
             }
+            function checkAndSubmit() {
+                var node = document.getElementById("chkFamilyName").innerHTML;
+                if(node == "")
+                    alert("Please select a Family Name.");
+                else
+                $('familyOrgRelationshipForm').submit();
+            }
         </script>
         <%@include file="familyOrganizationRelationshipCommon.jsp"%>
     </head>
@@ -99,7 +106,7 @@
         <div class="clear"></div> 
         <div class="btnwrapper" style="margin-bottom:20px;">
             <po:buttonRow>
-                <po:button id="save_button" href="javascript://noop/" onclick="$('familyOrgRelationshipForm').submit();" style="save" text="Save"/>
+                <po:button id="save_button" href="javascript://noop/" onclick="checkAndSubmit();" style="save" text="Save"/>
                 <c:url var="cancelUrl" value="/protected/roles/organizational/familyRelationships/start.action">
                     <c:param name="organization.id" value="${familyOrgRelationship.organization.id}"/>
                 </c:url>
