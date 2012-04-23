@@ -110,7 +110,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     public List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<IdentifiedOrganizationDTO>();
     }
 
 }

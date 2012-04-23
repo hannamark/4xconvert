@@ -170,6 +170,18 @@ A.helpbutton:hover
 #leftnav UL.menu LI.sub UL UL UL LI A.selected, #leftnav UL.menu LI.sub UL UL UL LI A.selected:hover
 { background:#eecf41 url("../images/arrow_right.gif") no-repeat right; }
 
+#leftnav UL.menu LI.stdnav LI.stdsub A {
+    padding-left: 30px;
+    
+}
+
+LI.stdsub {
+    *background-color: #E9E9E9 !important;
+}
+
+LI.stdsub UL {    	
+    *margin-top: -12px !important;
+}
 
 /* Quicklinks */
 
@@ -606,4 +618,18 @@ A.btn SPAN.decline
 /* Add Site */
 BODY.addsite {
 	background-color: white !important;
+}
+
+
+/* Misc */
+.fluid_width {
+    width: auto !important;
+}
+
+.popupwin {
+    min-width: 0px !important;  
+}
+
+.popupwin * td.value, .popupwin * td.label {
+    padding: 2px 2px 2px 2px !important;
 }

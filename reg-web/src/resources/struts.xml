@@ -189,6 +189,18 @@
             <result name="partialView">/WEB-INF/jsp/reviewTrial.jsp</result>
         </action>
         
+        <action name="organizationsSearch*" class="gov.nih.nci.registry.action.OrganizationSearchAction" method="{1}">                        
+            <result name="error">/WEB-INF/jsp/organizationSearchCriteria.jsp</result>
+            <result name="success">/WEB-INF/jsp/organizationSearchCriteria.jsp</result>     
+            <result name="details">/WEB-INF/jsp/nodecorate/displayOrgInfo.jsp</result>                   
+        </action>
+        
+        <action name="personsSearch*" class="gov.nih.nci.registry.action.PersonSearchAction" method="{1}">                        
+            <result name="error">/WEB-INF/jsp/personSearchCriteria.jsp</result>
+            <result name="success">/WEB-INF/jsp/personSearchCriteria.jsp</result>     
+            <result name="details">/WEB-INF/jsp/nodecorate/displayPersonInfo.jsp</result>                   
+        </action>            
+        
         <action name="submitTrial*" class="gov.nih.nci.registry.action.SubmitTrialAction" method="{1}">
             <result name="success">/WEB-INF/jsp/submitTrial.jsp</result>
             <result name="input">/WEB-INF/jsp/submitTrial.jsp</result>

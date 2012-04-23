@@ -13,6 +13,10 @@ import gov.nih.nci.registry.service.MockIdentifiedPersonCorrelationService;
 import gov.nih.nci.registry.service.MockOrganizationEntityService;
 import gov.nih.nci.registry.service.MockOrganizationalContactCorrelationService;
 import gov.nih.nci.registry.service.MockPersonEntityService;
+import gov.nih.nci.registry.service.MockPoClinicalResearchStaffCorrelationService;
+import gov.nih.nci.registry.service.MockPoHealthCareFacilityCorrelationService;
+import gov.nih.nci.registry.service.MockPoHealthCareProviderCorrelationService;
+import gov.nih.nci.registry.service.MockPoResearchOrganizationCorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -38,12 +42,12 @@ public class MockPoServiceLocator implements PoServiceLocator {
 
 
     private final OrganizationEntityServiceRemote orgEntityServiceRemote = new MockOrganizationEntityService();
-    private final HealthCareFacilityCorrelationServiceRemote hcfService = null;
-    private final ResearchOrganizationCorrelationServiceRemote roService = null;
+    private final HealthCareFacilityCorrelationServiceRemote hcfService = new MockPoHealthCareFacilityCorrelationService();
+    private final ResearchOrganizationCorrelationServiceRemote roService = new MockPoResearchOrganizationCorrelationService();
     private final OversightCommitteeCorrelationServiceRemote ocService = null;
     private final PersonEntityServiceRemote personEntityService = new MockPersonEntityService();
-    private final ClinicalResearchStaffCorrelationServiceRemote crsService = null;
-    private final HealthCareProviderCorrelationServiceRemote hcpService = null;
+    private final ClinicalResearchStaffCorrelationServiceRemote crsService = new MockPoClinicalResearchStaffCorrelationService();
+    private final HealthCareProviderCorrelationServiceRemote hcpService = new MockPoHealthCareProviderCorrelationService();
     private final OrganizationalContactCorrelationServiceRemote orgContact = new MockOrganizationalContactCorrelationService();
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationService = new MockIdentifiedOrganizationCorrelationService();
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();

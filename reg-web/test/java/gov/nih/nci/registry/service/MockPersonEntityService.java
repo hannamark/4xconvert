@@ -23,6 +23,7 @@ import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -142,10 +143,14 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
     }
 
     
-    public List<PersonDTO> search(PersonSearchCriteriaDTO arg0, LimitOffset arg1)
-            throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<PersonDTO> search(PersonSearchCriteriaDTO c, LimitOffset arg1)
+            throws TooManyResultsException {       
+        for(PersonDTO dto:personList){
+            if(dto.getIdentifier().getExtension().equals(c.getId())){
+                return Arrays.asList(dto);
+            }
+        }
+        return new ArrayList<PersonDTO>();
     }
 
 }

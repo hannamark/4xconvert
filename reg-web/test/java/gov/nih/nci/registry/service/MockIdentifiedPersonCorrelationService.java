@@ -15,6 +15,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -109,8 +110,18 @@ public class MockIdentifiedPersonCorrelationService implements
 
     public List<IdentifiedPersonDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
-        // TODO Auto-generated method stub
-        return null;
+        IdentifiedPersonDTO dto =  new IdentifiedPersonDTO();
+        dto.setPlayerIdentifier(IiConverter.convertToPoPersonIi("3"));
+        dto.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+        
+        Ii ii = new Ii();
+        ii.setExtension("4648");
+        ii.setIdentifierName(IiConverter.CTEP_PERSON_IDENTIFIER_NAME);
+        ii.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+        dto.setAssignedId(ii);
+        
+        return Arrays.asList(dto);
+
     }
 
 }

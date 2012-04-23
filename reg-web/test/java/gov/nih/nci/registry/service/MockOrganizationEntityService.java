@@ -9,8 +9,10 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -139,10 +141,30 @@ public class MockOrganizationEntityService implements
     }
 
    
-    public List<OrganizationDTO> search(OrganizationSearchCriteriaDTO arg0,
-            LimitOffset arg1) throws TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<OrganizationDTO> search(OrganizationSearchCriteriaDTO criteria,
+            LimitOffset lo) throws TooManyResultsException {       
+        List<OrganizationDTO> orgDtoList = new ArrayList<OrganizationDTO>();
+        OrganizationDTO dto = basicOrgDto("4648");
+        List<String> phones = new ArrayList<String>();
+        phones.add("7037071111");
+        phones.add("7037071112");
+        phones.add("7037071113");
+        DSet<Tel> master = new DSet<Tel>();
+        dto.setTelecomAddress(DSetConverter.convertListToDSet(phones, "PHONE",master));
+        orgDtoList.add(dto);
+        return orgDtoList;
+    }
+
+    private static OrganizationDTO basicOrgDto(String id) {
+        OrganizationDTO orgDto = new OrganizationDTO();
+        orgDto.setFamilyOrganizationRelationships(new DSet<Ii>());
+        orgDto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
+        orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(id));
+        orgDto.setName(EnOnConverter.convertToEnOn("OrgName"));
+        orgDto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        orgDto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine",
+                "cityOrMunicipality", "stateOrProvince", "postalCode", "USA"));
+        return orgDto;
     }
 
 }

@@ -245,7 +245,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             prepareSearchResults(spQueryCriteria);
             return SUCCESS;
         } catch (Exception e) {
-            LOG.debug(ExceptionUtils.getFullStackTrace(e));
+            e.printStackTrace(); // NOPMD
+            LOG.error(ExceptionUtils.getFullStackTrace(e));
             addActionError(e.getLocalizedMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             return ERROR;

@@ -37,17 +37,25 @@ function selectTrialType(){
                                        <li><a id="registerTrialMenuOption" href="javascript:void(0)" onclick="selectTrialType();" >Register Trial</a></li>
                                     </c:otherwise>
                                 </c:choose>
-                                <c:choose>
-                                    <c:when test="${requestScope.topic == 'searchtrials'}">
-                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Search Trials</a></li>
-                                    </c:when>
-                                    <c:when test="${requestScope.topic == 'searchresults'}">
-                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Search Trials</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" >Search Trials</a></li>
-                                    </c:otherwise>
-                                </c:choose>
+                                <li><a href="javascript:void(0)">Search</a></li>
+					            <li class="stdsub">
+					                <ul>
+	                                    <c:choose>                                
+		                                    <c:when test="${requestScope.topic == 'searchtrials'}">
+		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Trials</a></li>
+		                                    </c:when>
+		                                    <c:when test="${requestScope.topic == 'searchresults'}">
+		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Trials</a></li>
+		                                    </c:when>
+		                                    <c:otherwise>
+		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" >Trials</a></li>
+		                                    </c:otherwise>
+	                                    </c:choose>
+                                        <li><a id="personSearchMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/personsSearchexecute.action');" class="${requestScope.topic == 'searchperson'?'selected':''}">Persons</a></li>
+       					                <li><a id="organizationSearchMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/organizationsSearchexecute.action');" class="${requestScope.topic == 'searchorganization'?'selected':''}">Organizations</a></li>
+						            </ul>            
+					            </li>                                
+                                
                                 <c:if test="${sessionScope.regUserWebDto != null && sessionScope.regUserWebDto.affiliatedOrgType.code == 'Admin'}">
                                     <c:choose>
                                         <c:when test="${requestScope.topic == 'siteadmin'}">
