@@ -35,6 +35,26 @@ public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
         assertNotNull(validator.validateBatchDTO(dto));
     }
     @Test
+    public void testValidateBatchDTOInvalidOversight() {
+        // missing country
+        dto = getBatchDto();
+        dto.setOversightAuthorityCountry("");
+        assertEquals("Oversight Authority Country is required. \n", validator.validateBatchDTO(dto));
+        // missing org
+        dto = getBatchDto();
+        dto.setOversightOrgName(" ");
+        assertEquals("Oversight Authority Organization Name is required. \n", validator.validateBatchDTO(dto));
+        // invalid country
+        dto = getBatchDto();
+        dto.setOversightAuthorityCountry("xyzzy");
+        assertEquals("Oversight Authority Country is invalid. \n", validator.validateBatchDTO(dto));
+        // invalid org
+        dto = getBatchDto();
+        dto.setOversightOrgName("xyzzy");
+        assertEquals("Oversight Authority Organization is invalid. \n", validator.validateBatchDTO(dto));
+    }
+
+    @Test
     public void testValidateBatchDTOForOrginalSubmissionWithGrants() {
          //with grants
         dto = getBatchDto();

@@ -74,7 +74,7 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  */
 public abstract class AbstractRegWebTest {
     private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
-    
+
     /**
      * Creates the action context with a mock request.
      */
@@ -97,7 +97,7 @@ public abstract class AbstractRegWebTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setResponse(response);
     }
-    
+
     /**
      * Set up services.
      */
@@ -113,7 +113,7 @@ public abstract class AbstractRegWebTest {
     public void initMockrequest() {
         initActionContext();
     }
-    
+
     /**
      * Clean out the action context to ensure one test does not impact another.
      */
@@ -353,8 +353,8 @@ public abstract class AbstractRegWebTest {
         dto.setFdaRegulatoryInformationIndicator("Yes");
         dto.setSection801Indicator("YES");
         dto.setDelayedPostingIndicator("NO");
-        dto.setOversightAuthorityCountry("oversightAuthorityCountry");
-        dto.setOversightOrgName("oversightOrgName");
+        dto.setOversightAuthorityCountry("United States");
+        dto.setOversightOrgName("Federal Government");
         dto.setCtGovXmlIndicator(true);
         return dto;
     }
@@ -508,7 +508,7 @@ public abstract class AbstractRegWebTest {
        Date tomorrow = calendar.getTime();
        return PAUtil.normalizeDateString(tomorrow.toString());
    }
-   
+
    protected StudyProtocolDTO setupSpDto() {
        Ii spId = new Ii();
        spId.setExtension("1");
@@ -545,7 +545,7 @@ public abstract class AbstractRegWebTest {
        iis.add(assignedId);
        secondaryIdentifiers.setItem(iis);
        spDto.setSecondaryIdentifiers(secondaryIdentifiers);
-       
+
        return spDto;
    }
 

@@ -130,6 +130,27 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
 
+    private static List<CountryRegAuthorityDTO> regAuthorityCountries;
+    static {
+        regAuthorityCountries = new ArrayList<CountryRegAuthorityDTO>();
+        CountryRegAuthorityDTO rac = new CountryRegAuthorityDTO();
+        rac.setAlpha2("US");
+        rac.setAlpha3("USA");
+        rac.setId(1L);
+        rac.setName("United States");
+        rac.setNumeric("840");
+        regAuthorityCountries.add(rac);
+    }
+
+    private static List<RegulatoryAuthOrgDTO> regAuthorityOrgs;
+    static {
+        regAuthorityOrgs = new ArrayList<RegulatoryAuthOrgDTO>();
+        RegulatoryAuthOrgDTO rao = new RegulatoryAuthOrgDTO();
+        rao.setId(1L);
+        rao.setName("Federal Government");
+        regAuthorityOrgs.add(rao);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -217,8 +238,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
         try {
-            when(svc.getDistinctCountryNames()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
+            when(svc.getDistinctCountryNames()).thenReturn(regAuthorityCountries);
             when(svc.getRegulatoryAuthorityNameId(any(Long.class))).thenReturn(new ArrayList<RegulatoryAuthOrgDTO>());
+            when(svc.getRegulatoryAuthorityNameId(1L)).thenReturn(regAuthorityOrgs);
             when(svc.getRegulatoryAuthorityInfo(any(Long.class))).thenReturn(Arrays.asList(1L, 2L));
         } catch (PAException e) {
             //Unreachable
@@ -624,7 +646,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     @Override
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return mock(TSRReportGeneratorServiceRemote.class);
-    }   
+    }
 
     /**
      * {@inheritDoc}

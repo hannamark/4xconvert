@@ -1,6 +1,8 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
+import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
@@ -54,6 +56,7 @@ public class TrialBatchDataValidator {
     private static final int AUS_STATE_CODE_LEN = 3;
     private static final String DELEMITOR = ";";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+
     /**
      *
      * validate the submit trial form elements.
@@ -189,12 +192,7 @@ public class TrialBatchDataValidator {
 
     private StringBuffer validateOversightInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-        if (StringUtils.isEmpty(batchDto.getOversightOrgName())) {
-          fieldErr.append("Oversight Authority Organization Name is required. \n");
-        }
-        if (StringUtils.isEmpty(batchDto.getOversightAuthorityCountry())) {
-          fieldErr.append("Oversight Authority Country is required. \n");
-        }
+        fieldErr.append(validateOversightCountryOrg(batchDto));
         if (StringUtils.isEmpty(batchDto.getFdaRegulatoryInformationIndicator())) {
           fieldErr.append("FDA Regulatory Information Indicator is required. \n");
         }
@@ -226,6 +224,47 @@ public class TrialBatchDataValidator {
         }
         return fieldErr;
     }
+
+    private String validateOversightCountryOrg(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        if (StringUtils.isBlank(batchDto.getOversightOrgName())) {
+            fieldErr.append("Oversight Authority Organization Name is required. \n");
+        }
+        if (StringUtils.isBlank(batchDto.getOversightAuthorityCountry())) {
+            fieldErr.append("Oversight Authority Country is required. \n");
+        }
+        if (fieldErr.length() == 0) {
+            boolean validCountry = false;
+            boolean validOrg = false;
+            try {
+                List<CountryRegAuthorityDTO> cnts =
+                        PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+                for (CountryRegAuthorityDTO cnt : cnts) {
+                    if (StringUtils.equals(cnt.getName(), batchDto.getOversightAuthorityCountry())) {
+                        validCountry = true;
+                        List<RegulatoryAuthOrgDTO> orgs =
+                                PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(cnt.getId());
+                        for (RegulatoryAuthOrgDTO org : orgs) {
+                            if (StringUtils.equals(org.getName(), batchDto.getOversightOrgName())) {
+                                validOrg = true;
+                            }
+                        }
+                    }
+                }
+            } catch (PAException e) {
+                // do nothing
+            }
+            if (!validCountry) {
+                fieldErr.append("Oversight Authority Country is invalid. \n");
+            } else {
+                if (!validOrg) {
+                    fieldErr.append("Oversight Authority Organization is invalid. \n");
+                }
+            }
+        }
+        return fieldErr.toString();
+    }
+
     private StringBuffer validateGrantInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
       //validate grant
