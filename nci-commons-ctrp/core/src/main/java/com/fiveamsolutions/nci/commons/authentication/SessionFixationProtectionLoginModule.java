@@ -129,6 +129,8 @@ import org.apache.log4j.Logger;
 @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", "PMD.PreserveStackTrace" })
 public class SessionFixationProtectionLoginModule implements LoginModule {
 
+    private static final String EJB_INVOCATION_CHAIN_MARKER = "org.jboss.ejb3.security.Ejb3AuthenticationInterceptor";
+
     private static final Logger LOG = Logger.getLogger(SessionFixationProtectionLoginModule.class);
 
     private static final String WEB_REQUEST_KEY = "javax.servlet.http.HttpServletRequest";
@@ -202,7 +204,8 @@ public class SessionFixationProtectionLoginModule implements LoginModule {
             if (request != null) {
                 HttpSession session = request.getSession(false);
                 boolean alreadyMigrated = Boolean.TRUE.equals(session.getAttribute(MIGRATED_SESSION_KEY));
-                if (session != null && !alreadyMigrated) {
+                boolean withinEjbInvocationContext = isWithinEjbInvocationContext();
+                if (session != null && !alreadyMigrated && !withinEjbInvocationContext) {
                     migrateSession(session, request);
                 }
             }
@@ -211,6 +214,44 @@ public class SessionFixationProtectionLoginModule implements LoginModule {
             LOG.error("failed to get request", ex);
             throw new LoginException(ex.toString());
         }
+    }
+
+    /**
+     * See https://tracker.nci.nih.gov/browse/PO-4773. This login module has
+     * been responsible for a hard-to-reproduce bug described in the
+     * aforementioned JIRA item. Long story short, this login module was invoked
+     * within EJB3 invocation chain (see logs attached to the JIRA item) and was
+     * invalidating the session. As a result, the user would get a error page
+     * and kicked out of the application. I haven't been able to determine exact
+     * condition that would reproduce the problem, other than that it would
+     * happen when one EJB called another EJB. <br/>
+     * <br>
+     * This method will indicate whether or not this login module is being
+     * called within an EJB invocation chain. <b>No portability.</b> The method
+     * is JBoss-specific, although no compile- or run-time dependencies on
+     * JBoss' classes are present.
+     * 
+     * @return
+     * @see https://tracker.nci.nih.gov/browse/PO-4773
+     * @author Denis G. Krylov
+     */
+    boolean isWithinEjbInvocationContext() {
+        Throwable t = getThrowableWithStackTrace();
+        for (StackTraceElement element : t.getStackTrace()) {
+            if (EJB_INVOCATION_CHAIN_MARKER.equals(element.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return
+     */
+    Throwable getThrowableWithStackTrace() {
+        Throwable t = new Throwable();
+        t.fillInStackTrace();
+        return t;
     }
 
     /**

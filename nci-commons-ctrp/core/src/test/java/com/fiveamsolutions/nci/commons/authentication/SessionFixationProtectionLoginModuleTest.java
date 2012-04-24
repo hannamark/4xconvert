@@ -221,4 +221,24 @@ public class SessionFixationProtectionLoginModuleTest {
         assertTrue(instance.logout());
         
     }
+    
+    @Test
+    public void testIsWithinEjbInvocationContext() {
+        SessionFixationProtectionLoginModule module = new SessionFixationProtectionLoginModule();
+        assertFalse(module.isWithinEjbInvocationContext());
+
+        module = new SessionFixationProtectionLoginModule() {
+            @Override
+            Throwable getThrowableWithStackTrace() {
+                Throwable t = new Throwable();
+                StackTraceElement[] stack = new StackTraceElement[] { new StackTraceElement(
+                        "org.jboss.ejb3.security.Ejb3AuthenticationInterceptor",
+                        "invoke", "Ejb3AuthenticationInterceptor.java", 102) };
+                t.setStackTrace(stack);
+                return t;
+            }
+        };
+        assertTrue(module.isWithinEjbInvocationContext());
+    }
+   
 }
