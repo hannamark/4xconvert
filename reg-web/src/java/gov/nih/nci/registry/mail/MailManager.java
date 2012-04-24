@@ -173,22 +173,6 @@ public class MailManager {
         }
     }
 
-   /**
-     *
-     * @return String
-     */
-    public String formatFromAddress() {
-        String fromEmailAddress = null;
-        try {
-            String fromAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
-            fromEmailAddress = new MessageFormat(fromAddress).format(new String[] {fromAddress });
-        } catch (PAException e) {
-            LOG.error("Error retrieving, from mail address from database for Sumbission e-mail", e);
-        }
-
-        return fromEmailAddress;
-    }
-
     /**
      *
      * @param mailTo mailTo
@@ -205,22 +189,23 @@ public class MailManager {
         }
     }
 
-    private MimeMessage prepareMessage(String mailTo, String subject) throws PAException, MessagingException {
+    MimeMessage prepareMessage(String mailTo, String subject) throws PAException, MessagingException {
         Properties props = System.getProperties();
-        String to = mailTo;
         props.put("mail.smtp.host", PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
         Session session = Session.getDefaultInstance(props, null);
 
         // Define Message
+        String fromAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+        String toBCC = PaRegistry.getLookUpTableService().getPropertyValue("log.email.address");
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(formatFromAddress()));
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        message.setFrom(new InternetAddress(fromAddress));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+        message.addRecipient(Message.RecipientType.BCC, new InternetAddress(toBCC));
         message.setSubject(subject);
         return message;
     }
 
     /**
-     *
      * @param mailTo m
      * @param mailCC m
      * @param mailBody b

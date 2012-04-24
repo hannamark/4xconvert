@@ -153,6 +153,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -388,6 +392,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop = new PAProperties();
         prop.setName("CDE_REQUEST_TO_EMAIL");
         prop.setValue("to@example.com");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("log.email.address");
+        prop.setValue("logctrp@example.com");
         TestSchema.addUpdObject(prop);
     }
 
@@ -889,7 +898,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testSendUnidentifiableOwnerEmail() throws PAException {
         sut = createMailManagerServiceMock();
-        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        IiConverter.convertToStudyProtocolIi(1L);
         doCallRealMethod().when(sut).sendUnidentifiableOwnerEmail(
                 any(Long.class), any(Collection.class));
         when(sut.findAffiliatedOrg(any(RegistryUser.class))).thenReturn("NCI");
@@ -943,4 +952,18 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 mailBodyCaptor.getValue());
     }    
     
+    /**
+     * Test the method used to prepare all MIME messages.
+     */
+    @Test
+    public void prepareMessageTest() throws Exception {
+        MimeMessage result = bean.prepareMessage("to", "from", "subject");
+        Address from = result.getFrom()[0];
+        Address to = result.getRecipients(Message.RecipientType.TO)[0];
+        Address bcc = result.getRecipients(Message.RecipientType.BCC)[0];
+        assertEquals("from", from.toString());
+        assertEquals("to", to.toString());
+        assertEquals("logctrp@example.com", bcc.toString());
+        assertEquals("subject", result.getSubject());
+    }
 }

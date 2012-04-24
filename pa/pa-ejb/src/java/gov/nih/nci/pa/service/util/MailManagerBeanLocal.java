@@ -396,20 +396,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     private void sendMailWithAttachment(String mailTo, String mailFrom, String subject, String mailBody,
             File[] attachments) {
-        try {   
-            // Get session
-            Session session = getMailSession();
-
+        try {
             // Define Message
-            MimeMessage message = new MimeMessage(session);
+            MimeMessage message = prepareMessage(mailTo, mailFrom, subject);
             // body
             Multipart multipart = new MimeMultipart();
-
-            message.setFrom(new InternetAddress(mailFrom));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-            message.setSentDate(new java.util.Date());
-            message.setSubject(subject);
-
             BodyPart msgPart = new MimeBodyPart();
             msgPart.setText(mailBody);
             multipart.addBodyPart(msgPart);
@@ -694,19 +685,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     @Override
     public void sendCDERequestMail(String mailFrom, String mailBody) {
-        try {  
-            Session session = getMailSession();
-
+        try {
             // Define Message
-            MimeMessage message = new MimeMessage(session);
+            MimeMessage message = prepareMessage(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL), mailFrom,
+                    lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
             // body
             Multipart multipart = new MimeMultipart();
-            message.setFrom(new InternetAddress(mailFrom));
-            message.addRecipient(Message.RecipientType.TO,
-                                 new InternetAddress(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL)));
-            message.setSentDate(new java.util.Date());
-            message.setSubject(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
-
             BodyPart msgPart = new MimeBodyPart();
             msgPart.setText(mailBody);
             multipart.addBodyPart(msgPart);
@@ -1127,39 +1111,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     @Override
     public void sendMailWithHtmlBody(String mailTo, String subject, String mailBody) {
-        Session session = null;
         try {
-            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
-            session = getMailSession();
-            // Define Message
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(mailFrom));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-            message.setSentDate(new java.util.Date());
-            message.setSubject(subject);
+            MimeMessage message = prepareMessage(mailTo, lookUpTableService.getPropertyValue("fromaddress"), subject);
             message.setContent(mailBody, "text/html");
             // Send Message
             Transport.send(message);            
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
-    }
-
-    /**
-     * @return
-     * @throws PAException
-     */
-    private Session getMailSession() throws PAException {
-        Session session;
-        // get system properties
-        Properties props = System.getProperties();
-        // Set up mail server
-        props.put("mail.smtp.host", lookUpTableService.getPropertyValue("smtp"));
-        props.put("mail.smtp.timeout", SMTP_TIMEOUT);
-        props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
-        // Get session
-        session = Session.getDefaultInstance(props, null);
-        return session;
     }
 
     @Override
@@ -1175,5 +1134,30 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
         sendMailWithAttachment(ctroEmail, mailSubject, mailBody, new File[0]);        
+    }
+
+    MimeMessage prepareMessage(String mailTo, String mailFrom, String subject) throws PAException {
+        Session session;
+        // get system properties
+        Properties props = System.getProperties();
+        // Set up mail server
+        props.put("mail.smtp.host", lookUpTableService.getPropertyValue("smtp"));
+        props.put("mail.smtp.timeout", SMTP_TIMEOUT);
+        props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
+        // Get session
+        session = Session.getDefaultInstance(props, null);
+
+        MimeMessage result = new MimeMessage(session);
+        try {
+            result.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+            result.setFrom(new InternetAddress(mailFrom));
+            result.addRecipient(Message.RecipientType.BCC,
+                    new InternetAddress(lookUpTableService.getPropertyValue("log.email.address")));
+            result.setSentDate(new java.util.Date());
+            result.setSubject(subject);
+        } catch (Exception e) {
+            throw new PAException("Error preparing MIME message.", e);
+        }
+        return result;
     }
 }

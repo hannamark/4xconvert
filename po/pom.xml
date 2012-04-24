@@ -29,7 +29,7 @@
         <cargo-maven2-plugin.version>1.0.1-alpha-2</cargo-maven2-plugin.version>
         <maven-surefire-plugin.version>2.4.3</maven-surefire-plugin.version>
         <cobertura-maven-plugin.version>2.4</cobertura-maven-plugin.version>
-        <buildnumber-maven-plugin.version>1.0-beta-4</buildnumber-maven-plugin.version>
+        <buildnumber-maven-plugin.version>1.0-beta-1</buildnumber-maven-plugin.version>
         <maven-release-plugin.version>2.0-beta-9</maven-release-plugin.version>
         <sql-maven-plugin.version>1.4</sql-maven-plugin.version>
         <maven-javadoc-plugin.version>2.4</maven-javadoc-plugin.version>
