@@ -211,7 +211,8 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
                 .getSiteOrganizationIdentifier()));
 
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
-
+            clearDocumentIdentifiers(documentDTOs);
+            
             Ii studyProtocolIi =
                     PaRegistry.getTrialRegistrationService()
                         .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, siteAccrualStatusDTO,
@@ -305,6 +306,8 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
      */
     public String partialSave() {
         try {            
+            validateDocuments(); // this will make sure docs are in the session. PO-4914.            
+            getTrialDTO().setDocDtos(getTrialDocuments());
             setTrialDTO((ProprietaryTrialDTO) util.saveDraft(getTrialDTO()));
             final ProprietaryTrialDTO trialDTO = getTrialDTO();
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
@@ -339,6 +342,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             session.setAttribute(Constants.INDIDE_LIST, getTrialDTO().getIndIdeDtos());
             session.setAttribute(Constants.GRANT_LIST, getTrialDTO().getFundingDtos());
             setPageFrom("proprietaryTrial");
+            setDocumentsInSession(getTrialDTO());
         } catch (PAException e) {
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
         } catch (NullifiedRoleException e) {
@@ -359,5 +363,11 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
      */
     public String getSum4FundingCatCode() {
         return sum4FundingCatCode;
+    }
+    
+    private void clearDocumentIdentifiers(List<DocumentDTO> documentDTOs) {
+        for (DocumentDTO dto : documentDTOs) {
+           dto.setIdentifier(null);
+        }
     }
 }
