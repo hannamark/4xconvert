@@ -180,6 +180,7 @@ public class PAUtil {
      */
     public static final String DATE_FORMAT = "MM/dd/yyyy";
     private static final String EXTN = "extn";
+    private static final String EXT = "ext";
     private static final int EXTN_COUNT = 4;
     private static final Logger LOG = Logger.getLogger(PAUtil.class);
     private static final String ID_OPEN_PAREN = " (id = ";
@@ -812,6 +813,8 @@ public class PAUtil {
         String strExtn = "";
         if (phone.contains(EXTN)) {
             strExtn = phone.substring(phone.indexOf(EXTN) + EXTN_COUNT);
+        } else if (phone.contains(EXT)) {
+            strExtn = phone.substring(phone.indexOf(EXT) + EXT.length());
         }
         return strExtn;
     }
@@ -824,6 +827,8 @@ public class PAUtil {
         String strPhone = "";
         if (phone.contains(EXTN)) {
             strPhone = phone.substring(0, phone.indexOf(EXTN));
+        } else if (phone.contains(EXT)) {
+            strPhone = phone.substring(0, phone.indexOf(EXT));
         } else {
             strPhone = phone;
         }
