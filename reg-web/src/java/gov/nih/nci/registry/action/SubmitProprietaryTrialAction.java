@@ -50,6 +50,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author Vrushali
  *
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAction {
     /**
      *
