@@ -887,4 +887,8 @@
         <comment>Update search results views to join rv_study_resourcing view.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4950.sql"/>
      </changeSet>
+     <changeSet id="PO-4975" author="guptag">
+        <comment>Update search results views to add primary completion date column.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4975.sql"/>
+     </changeSet>
 </databaseChangeLog>

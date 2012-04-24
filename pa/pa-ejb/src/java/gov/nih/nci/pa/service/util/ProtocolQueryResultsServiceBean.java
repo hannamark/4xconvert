@@ -154,7 +154,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "dcp_id, ctep_id,amendment_date,date_last_updated,phase_code,primary_purpose_code,start_date," 
             + "summary4fundingSponsor_type,sponsor_name,responsible_party_organization_name,"
             + "responsible_party_PI_first_name,responsible_party_PI_last_name,user_last_updated_login, "
-            + "user_last_updated_first,user_last_updated_last "
+            + "user_last_updated_first,user_last_updated_last,primary_completion_date "
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -226,6 +226,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int USER_LAST_UPDATED_LOGIN_IDX = 40;
     private static final int USER_LAST_UPDATED_FIRST_IDX = 41;
     private static final int USER_LAST_UPDATED_LAST_IDX = 42;
+    private static final int PRIMARY_COMPLETION_DATE_IDX = 43;
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
@@ -500,6 +501,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             
         }
         dto.setResponsiblePartyName(responsibleParty);
+        dto.setPrimaryCompletionDate((Date) row[PRIMARY_COMPLETION_DATE_IDX]);
         
         User updatedUser = new User();
         updatedUser.setFirstName((String) row[USER_LAST_UPDATED_FIRST_IDX]);

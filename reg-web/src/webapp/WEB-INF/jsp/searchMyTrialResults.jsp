@@ -243,7 +243,8 @@ body {
           	    <display:column title="Sponsor" property="sponsorName" sortable="true" headerClass="sortable"/>
           	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorName" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
-                <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>                
+                <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>
+                <display:column title="Primary Completion Date" property="primaryCompletionDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>                             
                 <display:column title="Last Update Submitted" property="updatedDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column title="Last Updater Name" property="lastUpdaterDisplayName" sortable="true" headerClass="sortable"/>
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>                               

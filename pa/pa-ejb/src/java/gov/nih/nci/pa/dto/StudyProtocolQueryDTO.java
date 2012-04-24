@@ -133,6 +133,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     private boolean currentUserIsSiteOwner;
     
+    private Date primaryCompletionDate;
+    
     
     /**
      * @return link
@@ -165,7 +167,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      * @return the trialCategory
      */
     public String getTrialCategory() {
-        return this.proprietaryTrial ? "Abbreviated Trial" : "Complete Trial";
+        return isProprietaryTrial() ? "Abbreviated Trial" : "Complete Trial";
     }
 
     /**
@@ -458,6 +460,22 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setLastUpdaterDisplayName(String lastUpdaterDisplayName) {
         this.lastUpdaterDisplayName = lastUpdaterDisplayName;
+    }
+    
+    /**
+     * 
+     * @return PrimaryCompletionDate
+     */
+    public Date getPrimaryCompletionDate() {
+        return primaryCompletionDate;
+    }
+
+    /**
+     * 
+     * @param primaryCompletionDate primaryCompletionDate
+     */
+    public void setPrimaryCompletionDate(Date primaryCompletionDate) {
+        this.primaryCompletionDate = primaryCompletionDate;
     }
 
     /**
