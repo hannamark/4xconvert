@@ -180,6 +180,9 @@
                                     </reg-web:valueRow>
                                     <reg-web:valueRow labelKey="view.trial.respPartyPhone">
                                         <c:out value="${trialDTO.contactPhone}"/>
+                                        <c:if test="${not empty trialDTO.contactPhoneExtn}">
+                                        Ext. <c:out value="${trialDTO.contactPhoneExtn}"/>
+                                        </c:if>
                                     </reg-web:valueRow>
                                     <reg-web:spaceRow/>
                                 </c:if>
