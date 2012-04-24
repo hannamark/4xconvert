@@ -192,6 +192,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     private static final Set<StudyStatusCode> STOPPED_STATUSES = EnumSet.of(StudyStatusCode.WITHDRAWN,
             StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
             StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+    
+    private static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator";
+    private static final String SPONSOR = "Sponsor";
 
     static {
         createCtGovValues();
@@ -1270,15 +1273,15 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        DSet<Tel> dset = null;
         Person person = null;
         String resPartyContactName = null;
+        String resPartyType = null;
         Organization sponsor = null;
         if (CollectionUtils.isNotEmpty(scDtos)) {
             scDto = scDtos.get(0);
-            dset = scDto.getTelecomAddresses();
             person = getCorUtils().getPAPersonByIi(scDto.getClinicalResearchStaffIi());
             resPartyContactName = person.getFullName();
+            resPartyType = PRINCIPAL_INVESTIGATOR;
             StudySiteDTO spartDTO = new StudySiteDTO();
             spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
             List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO);
@@ -1291,10 +1294,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             List<StudySiteContactDTO> spcDtos = getStudySiteContactService().getByStudyProtocol(studyProtocolIi, spart);
             if (CollectionUtils.isNotEmpty(spcDtos)) {
                 spart = spcDtos.get(0);
-                dset = spart.getTelecomAddresses();
                 PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId((Long.valueOf(spart
                         .getOrganizationalContactIi().getExtension())));
                 resPartyContactName = paCDto.getResponsiblePartyContactName();
+                resPartyType = SPONSOR;
             }
             StudySiteDTO spDto = new StudySiteDTO();
             spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
@@ -1305,29 +1308,23 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             }
 
         }
-        if (resPartyContactName != null) {
+        if (resPartyType != null) {
             XmlGenHelper.appendElement(responsibleParty,
-                    XmlGenHelper.createElementWithTextblock("name_title", resPartyContactName, doc));
+                   XmlGenHelper.createElement("resp_party_type", resPartyType, doc));
+        }
+        if (PRINCIPAL_INVESTIGATOR.equals(resPartyType)) {
+            if (resPartyContactName != null) {
+                XmlGenHelper.appendElement(responsibleParty,
+                        XmlGenHelper.createElement("investigator_username", resPartyContactName, doc));
+            }
+            if (resPartyType != null) {
+                XmlGenHelper.appendElement(responsibleParty,
+                        XmlGenHelper.createElement("investigator_title", resPartyType, doc));
+            }
         }
         if (sponsor != null) {
             XmlGenHelper.appendElement(responsibleParty,
-                    XmlGenHelper.createElementWithTextblock("organization", sponsor.getName(), doc));
-        }
-        if (dset != null) {
-            List<String> phones = DSetConverter.convertDSetToList(dset, DSetConverter.TYPE_PHONE);
-            List<String> emails = DSetConverter.convertDSetToList(dset, DSetConverter.TYPE_EMAIL);
-            if (CollectionUtils.isNotEmpty(phones)) {
-                XmlGenHelper.appendElement(responsibleParty,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE,
-                                StringUtils.substring(phones.get(0), 0,
-                        PAAttributeMaxLen.LEN_30), doc));
-            }
-            if (CollectionUtils.isNotEmpty(emails)) {
-                XmlGenHelper.appendElement(responsibleParty,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.EMAIL,
-                                StringUtils.substring(emails.get(0), 0,
-                        PAAttributeMaxLen.LEN_254), doc));
-            }
+                    XmlGenHelper.createElement("investigator_affiliation", sponsor.getName(), doc));
         }
         return responsibleParty;
     }
