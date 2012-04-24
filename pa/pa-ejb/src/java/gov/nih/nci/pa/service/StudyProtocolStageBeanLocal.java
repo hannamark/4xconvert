@@ -50,6 +50,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -471,9 +472,16 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
                     sb.append(File.separator).append(studyProtocolStageIi.getExtension()).append(File.separator)
                       .append(docDTO.getIdentifier().getExtension()).append('-')
                       .append(StConverter.convertToString(docDTO.getFileName()));
+                    
                     File downloadFile = new File(sb.toString());
-                    docDTO.setText(EdConverter.convertToEd(
-                            IOUtils.toByteArray(FileUtils.openInputStream(downloadFile))));
+                    final InputStream stream = FileUtils.openInputStream(downloadFile);
+                    try {
+                        docDTO.setText(EdConverter.convertToEd(
+                            IOUtils.toByteArray(stream)));
+                    } finally {
+                        IOUtils.closeQuietly(stream);
+                    }
+                    
                 } catch (FileNotFoundException fe) {
                     throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
                 } catch (IOException io) {
@@ -489,8 +497,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
-       StringBuffer sql = new StringBuffer("DELETE FROM STUDY_DOCUMENT_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
-            .append(IiConverter.convertToString(studyProtocolStageIi));
+        StringBuffer sql = new StringBuffer(
+                "DELETE FROM STUDY_DOCUMENT_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
+                .append(IiConverter.convertToString(studyProtocolStageIi));
         PaHibernateUtil.getCurrentSession().createSQLQuery(sql.toString()).executeUpdate();
         deleteDocumentsFromFileSystem(studyProtocolStageIi);
     }
