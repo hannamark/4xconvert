@@ -21,7 +21,7 @@
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.2"             conf="runtime->master"/>
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.2-SNAPSHOT" conf="runtime->default">
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.3-SNAPSHOT" conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
     </dependency>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="runtime->default"/>
@@ -53,7 +53,7 @@
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="${pa.clients.version}"   conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.2.0-m10"  force="true"   conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.2-SNAPSHOT"  conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.3-SNAPSHOT"  conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="javax.servlet"          name="jstl"                    rev="1.1.2"           conf="compile->master"/>
     <dependency org="javax.ejb"              name="ejb-api"                 rev="3.0"             conf="compile->master"/>

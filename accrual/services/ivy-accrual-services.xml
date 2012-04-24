@@ -41,7 +41,7 @@
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="${pa.clients.version}"    conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.2.0-m10"       force="true"   conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.2-SNAPSHOT"  conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.3-SNAPSHOT"  conf="compile->master"/>
     <dependency org="asm"                    name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="asm"                    name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
