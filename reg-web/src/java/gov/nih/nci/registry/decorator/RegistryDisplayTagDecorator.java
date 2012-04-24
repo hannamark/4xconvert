@@ -266,9 +266,9 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
         boolean isProprietaryTrial =
             ((StudyProtocolQueryDTO) this.getCurrentRowObject()).isProprietaryTrial();
         if (isProprietaryTrial) {
-            trialCat = "Proprietary Trial";
+            trialCat = "Abbreviated";
         } else {
-            trialCat = "Non Proprietary Trial";
+            trialCat = "Complete";
         }
         return trialCat;
     }

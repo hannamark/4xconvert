@@ -252,14 +252,14 @@ public class RegistryDisplayTagDecoratorTest {
         dto.setNciIdentifier("");
         dto.setStudyProtocolId(1L);
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("Proprietary Trial", decorator.getTrialCategory());
+        assertEquals("Abbreviated", decorator.getTrialCategory());
 
         dto = new StudyProtocolQueryDTO();
         dto.getLastCreated().setUserLastCreated("muserLastCreated");
         dto.setProprietaryTrial(false);
         dto.setNciIdentifier("");
         decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("Non Proprietary Trial", decorator.getTrialCategory());
+        assertEquals("Complete", decorator.getTrialCategory());
     }
 
 }
