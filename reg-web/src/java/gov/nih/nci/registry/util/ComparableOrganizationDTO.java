@@ -92,8 +92,10 @@ public final class ComparableOrganizationDTO extends PaOrganizationDTO
 
     @Override
     public int compareTo(ComparableOrganizationDTO o) {
-        return StringUtils.defaultString(getName()).compareTo(
-                StringUtils.defaultString(o.getName()));
+        return StringUtils
+                .trim(StringUtils.defaultString(getName()))
+                .compareTo(
+                        StringUtils.trim(StringUtils.defaultString(o.getName())));
     }
 
 }
