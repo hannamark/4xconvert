@@ -150,11 +150,12 @@ public interface StudyProtocolService {
     /**
      *
      * @param ispDTO studyProtocolDTO
+     * @param page page
      * @return InterventionalStudyProtocolDTO
      * @throws PAException PAException
      */
     InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO ispDTO) throws PAException;
+            InterventionalStudyProtocolDTO ispDTO, String page) throws PAException;
 
     /**
      * for creating a new ISP.

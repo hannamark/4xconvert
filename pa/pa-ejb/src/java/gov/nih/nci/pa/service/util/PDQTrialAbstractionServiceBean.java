@@ -615,7 +615,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             ispDTO.setNumberOfInterventionGroups(interventionalStudyProtocolDTO.getNumberOfInterventionGroups());
             ispDTO.setAccrualReportingMethodCode(interventionalStudyProtocolDTO.getAccrualReportingMethodCode());
 
-            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO);
+            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO, null);
         } catch (PAException e) {
             LOG.error("error loading study protocol's related information" + studyProtocolIi.getExtension(), e);
         }

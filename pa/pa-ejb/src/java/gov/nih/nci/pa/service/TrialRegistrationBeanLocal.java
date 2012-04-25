@@ -1186,7 +1186,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                                                         studySiteAccrualStatusDTOs, null, studyResourcingDTOs);
 
             spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-            studyProtocolService.updateInterventionalStudyProtocol(spDTO);
+            studyProtocolService.updateInterventionalStudyProtocol(spDTO, null);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
 

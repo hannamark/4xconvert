@@ -117,6 +117,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Kalpana Guthikonda
  * @since 10/20/2008
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAction implements Preparable {
 
     /**
@@ -189,7 +190,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             }
             ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
 
-            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO);
+            PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO, "DesignDetails");
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         } catch (Exception e) {

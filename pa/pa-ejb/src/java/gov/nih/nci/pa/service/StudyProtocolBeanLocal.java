@@ -224,7 +224,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException(" studyProtocolDTO should not be null.");
         }
 
-        enForceBusinessRules(studyProtocolDTO);
+        enForceBusinessRules(studyProtocolDTO, null);
         Session session = PaHibernateUtil.getCurrentSession();
         Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
         StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
@@ -256,15 +256,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
-            throws PAException {
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO, 
+            String page) throws PAException {
         // enforce business rules
         int totBlindCodes = 0;
         if (ispDTO == null) {
             throw new PAException("InterventionalstudyProtocolDTO should not be null");
 
         }
-        enForceBusinessRules(ispDTO);
+        enForceBusinessRules(ispDTO, page);
         if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
@@ -309,7 +309,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
-        enForceBusinessRules(ispDTO);
+        enForceBusinessRules(ispDTO, null);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(isp, ispDTO, CREATE);
@@ -369,7 +369,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Extension should be null, but got  = " + ospDTO.getIdentifier().getExtension());
 
         }
-        enForceBusinessRules(ospDTO);
+        enForceBusinessRules(ospDTO, null);
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, CREATE);
@@ -439,7 +439,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         // Nothing to do
     }
 
-    private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
+    private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO, String page) throws PAException {
         boolean dateRulesApply = false;
 
         ActStatusCode ascStatusCode = null;
@@ -462,13 +462,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     dateRulesApply = true;
                 }
             }
-
         }
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
         }
         enForcePrimaryPurposeRules(studyProtocolDTO);
-        if (isCorrelationRuleRequired(studyProtocolDTO)) {
+        if (isCorrelationRuleRequired(studyProtocolDTO) && page == null) {
             List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
             if (paServiceUtils.containsNonExemptInds(list)) {
                 throw new PAException("Unable to set FDARegulatedIndicator to 'No', "

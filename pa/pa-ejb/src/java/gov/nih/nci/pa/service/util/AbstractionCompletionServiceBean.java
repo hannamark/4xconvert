@@ -273,7 +273,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
                     if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
-                        messages.addError("Select Arm from Interventional Trial Design under Scientific Data menu.",
+                        messages.addError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
                                           "Number of interventional trial arm records must be the same"
                                                   + " as Number of Arms assigned in Interventional Trial Design.");
                     }
@@ -286,7 +286,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (ospDTO.getNumberOfGroups().getValue() != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
                     if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
-                        messages.addError("Select Groups from Observational Trial Design under Scientific Data menu.",
+                        messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                           "Number of Observational study group records must be the same"
                                                   + " as Number of Groups assigned in Observational Study Design.");
                     }
@@ -606,7 +606,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi);
         if (dtos.isEmpty()) {
             if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
-                messages.addError("Select Arm from Interventional Trial Design " + "under Scientific Data menu.",
+                messages.addError("Select Arm under Scientific Data menu.",
                                   "No Arm exists for the trial.");
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
                 .equalsIgnoreCase("ObservationalStudyProtocol")) {
@@ -665,8 +665,25 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                                   + "Food and Drug Administration.");
                     }
                 }
+                if (isCorrelationRuleRequired(studyProtocolDto)) {
+                    messages.addError("Select Regulatory under Regulatory Information from Administrative "
+                            + "Data menu.",
+                            "FDA Regulated Intervention Indicator Should be Yes to add Trail IND IDE records.");
+                }
             }
         }
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @return
+     */
+    private boolean isCorrelationRuleRequired(StudyProtocolDTO studyProtocolDTO) {
+        Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+        return BooleanUtils.isTrue(ctGovIndicator) && (studyProtocolDTO.getIdentifier() != null
+                && studyProtocolDTO.getFdaRegulatedIndicator() != null)
+                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null)
+                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()));
     }
 
     private void checkDuplicateINDIDE(List<StudyIndldeDTO> siList, AbstractionMessageCollection messages) {

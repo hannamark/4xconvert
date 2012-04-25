@@ -455,8 +455,8 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getStudyDiseaseService()).thenReturn(studyDiseaseSvc);
         when(interventionSvc.search(any(InterventionDTO.class))).thenReturn(Arrays.asList(new InterventionDTO()));
         when(plannedActivitySvc.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(new PlannedActivityDTO()));
-        when(studyProtocolSvc.updateInterventionalStudyProtocol(any(InterventionalStudyProtocolDTO.class)))
-            .thenThrow(new PAException());
+        when(studyProtocolSvc.updateInterventionalStudyProtocol(any(InterventionalStudyProtocolDTO.class), 
+        		any(String.class))).thenThrow(new PAException());
         when(studyDiseaseSvc.create(any(StudyDiseaseDTO.class))).thenThrow(new PAException());
         when(plannedActivitySvc.create(any(PlannedActivityDTO.class))).thenThrow(new PAException());
         when(armSvc.create(any(ArmDTO.class))).thenThrow(new PAException());

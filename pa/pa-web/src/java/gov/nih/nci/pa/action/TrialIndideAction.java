@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyIndldeWebDTO;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -95,6 +96,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 /**
@@ -147,11 +149,11 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
      * @return result
      */
     public String create()  {
-        enforceBusinessRules();
-        if (hasFieldErrors()) {
-            return "add";
-        }
-        try {
+       try {
+            enforceBusinessRules();
+            if (hasFieldErrors()) {
+                return "add";
+            }
             saveOrUpdate();
         } catch (Exception e) {
           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -163,11 +165,11 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
      * @return result
      */
     public String update()  {
-        enforceBusinessRules();
-        if (hasFieldErrors()) {
-            return EDIT_RESULT;
-        }
         try {
+            enforceBusinessRules();
+            if (hasFieldErrors()) {
+                return EDIT_RESULT;
+            }
             saveOrUpdate();
         } catch (Exception e) {
           ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -262,7 +264,7 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
         return EDIT_RESULT;
     }
 
-    private void enforceBusinessRules() {
+    private void enforceBusinessRules() throws PAException {
       clearErrorsAndMessages();
       clearFieldErrors();
       validateIndIdeNumber();
@@ -291,7 +293,29 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
                       getText("error.trialIndide.nciDivProgHolder"));
           }
       }
+      if (BooleanUtils.isFalse(studyIndldeWebDTO.getExemptIndicator())) {
+         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
 
+         if (isCorrelationRuleRequired(spDTO)) {
+             throw new PAException("Unable to Create/Update Trial Ind/Ide Since FDARegulatedIndicator is" 
+                 + " set to 'No', "
+                 + " Please update Regulatory Information from Administrative Data menu and try again");
+         }
+       }
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @return
+     */
+    private boolean isCorrelationRuleRequired(StudyProtocolDTO studyProtocolDTO) {
+        Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
+        return BooleanUtils.isTrue(ctGovIndicator) && (studyProtocolDTO.getIdentifier() != null
+                && studyProtocolDTO.getFdaRegulatedIndicator() != null)
+                && (studyProtocolDTO.getFdaRegulatedIndicator().getValue() != null)
+                && (!Boolean.valueOf(studyProtocolDTO.getFdaRegulatedIndicator().getValue()));
     }
 
     /**

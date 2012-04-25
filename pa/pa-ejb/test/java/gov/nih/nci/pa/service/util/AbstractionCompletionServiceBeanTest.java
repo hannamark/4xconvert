@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -90,12 +91,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
@@ -109,6 +112,7 @@ import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceBeanTest;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
@@ -211,6 +215,39 @@ public class AbstractionCompletionServiceBeanTest {
         service.setStudySiteService(studySiteService);
         service.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         service.setStudySiteContactService(studySiteContactService);
+    }
+    
+    @Test
+    public void testStudyprotocolIiIsNull() throws PAException {
+    	AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();
+    	try {
+    		sut.validateAbstractionCompletion(null);
+    		fail("Study Protocol Identifier is null");
+    	} catch (PAException e) {
+    		assertEquals("Study Protocol Identifier is null",  e.getMessage());
+    	}
+    }
+    
+    @Test
+    public void testVerify() throws PAException {
+    	AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();
+        Ii spIi = IiConverter.convertToIi(1L);
+    	InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+    	 ispDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+         ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+         ispDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+         StudyIndldeDTO sIndDto = new StudyIndldeDTO();
+         sIndDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
+         List<StudyIndldeDTO> sIndDtoList = new ArrayList<StudyIndldeDTO>();
+         sIndDtoList.add(sIndDto);        
+        when(studyIndldeService.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
+        when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(ispDTO);
+    	try {
+    		sut.validateAbstractionCompletion(spIi);
+    		//fail("Study Protocol Identifier is null");
+    	} catch (PAException e) {
+    		//assertEquals("Study Protocol Identifier is null",  e.getMessage());
+    	}
     }
 
     /**

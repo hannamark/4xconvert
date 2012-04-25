@@ -226,7 +226,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test(expected=PAException.class)
     public void nullParameter7() throws Exception {
-        remoteEjb.updateInterventionalStudyProtocol(null);
+        remoteEjb.updateInterventionalStudyProtocol(null, null);
     }
 
     @Test(expected=PAException.class)
@@ -318,7 +318,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
         saved.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
         saved.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
-        remoteEjb.updateInterventionalStudyProtocol(saved);
+        remoteEjb.updateInterventionalStudyProtocol(saved, null);
         saved =  remoteEjb.getInterventionalStudyProtocol(ii);
         saved.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
         StudyIndldeDTO sIndDto = new StudyIndldeDTO();
@@ -328,7 +328,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         StudyIndldeServiceLocal sIndSvc = mock(StudyIndldeServiceLocal.class);
         when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         bean.setStudyIndldeService(sIndSvc);
-        remoteEjb.updateInterventionalStudyProtocol(saved);
+        remoteEjb.updateInterventionalStudyProtocol(saved, null);
         sIndDto = new StudyIndldeDTO();
         sIndDto.setExemptIndicator(BlConverter.convertToBl(Boolean.FALSE));
         sIndDtoList.add(sIndDto);
@@ -336,13 +336,13 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         when(sIndSvc.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         bean.setStudyIndldeService(sIndSvc);
         try {
-            remoteEjb.updateInterventionalStudyProtocol(saved);
+            remoteEjb.updateInterventionalStudyProtocol(saved, null);
             fail("Unable to set FDARegulatedIndicator to 'No', Please remove IND/IDEs and try again");
         } catch (PAException e) {
             assertEquals("Unable to set FDARegulatedIndicator to 'No',  Please remove IND/IDEs and try again",
                     e.getMessage());
         }
-
+        remoteEjb.updateInterventionalStudyProtocol(saved, "DesignDetails");
     }
 
     @Test
@@ -561,7 +561,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         saved.setAcronym(StConverter.convertToSt("1234"));
 
-        InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved);
+        InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved, null);
 
         assertNotNull(saved);
         assertEquals(saved.getAccrualReportingMethodCode().getCode(), update.getAccrualReportingMethodCode().getCode());
@@ -907,7 +907,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertNotNull(spDto.getSecondaryIdentifiers().getItem().iterator().next().getExtension());
     }
 
-    private static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
+    public static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
         InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
         ispDTO.setAccrualReportingMethodCode(CdConverter.convertStringToCd(AccrualReportingMethodCode.ABBREVIATED.getCode()));
         ispDTO.setAcronym(StConverter.convertToSt("abcd"));

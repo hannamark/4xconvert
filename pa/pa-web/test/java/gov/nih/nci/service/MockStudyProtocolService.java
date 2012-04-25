@@ -220,7 +220,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     */
     @Override
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO ispDTO) throws PAException {
+            InterventionalStudyProtocolDTO ispDTO, String page) throws PAException {
         return null;
     }
 
