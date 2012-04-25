@@ -6,9 +6,18 @@
         <s:actionerror/>
         <s:set name="records" value="records" scope="request"/>
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
-            name="records" requestURI="studyProtocolquery.action" export="false">
+            name="records" requestURI="studyProtocolquery.action" export="true">                           
+            <display:setProperty name="export.xml" value="false"/>
+            <display:setProperty name="export.excel.filename" value="resultsSavedDraftSearch.xls"/>
+            <display:setProperty name="export.excel.include_header" value="true"/>
+            <display:setProperty name="export.csv.filename" value="resultsSavedDraftSearch.csv"/>
+            <display:setProperty name="export.csv.include_header" value="true"/>
+                
             <display:column escapeXml="true" class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"
-                href="studyProtocolview.action" paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable"/>
+                href="studyProtocolview.action" paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable" media="html"/>
+            <display:column class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
+                    <c:out value="${row.nciIdentifier}"/>
+            </display:column>    
             <display:column escapeXml="true" titleKey="studyProtocol.ctepIdentifier" property="ctepId"
                 sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.dcpIdentifier" property="dcpId"
@@ -44,10 +53,10 @@
             </display:column>
             <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor}">
                 <display:column class="title" titleKey="studyProtocol.action" href="studyProtocolview.action" property="action"
-                    paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable"/>
+                    paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable" media="html"/>
             </c:if>
             <c:if test="${sessionScope.isSuAbstractor}">
-                <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable">
+                <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable" media="html">
                 	<s:if test="%{#attr.row.adminCheckout.checkoutBy != null}">
                 		<a href="javascript:void(0)" onclick="adminCheckIn('${row.studyProtocolId}')">Check-In (Admin)</a><br/>
                     </s:if>
@@ -56,7 +65,7 @@
                     </s:if>
                 </display:column>
             </c:if>
-            <display:column titleKey="studyProtocol.viewTSR" href="studyProtocolviewTSR.action" property="viewTSR" />
+            <display:column titleKey="studyProtocol.viewTSR" href="studyProtocolviewTSR.action" property="viewTSR" media="html"/>
         </display:table>
     </s:form>
     <script type="text/javascript">
