@@ -77,7 +77,7 @@ var LabelCounter = 0;
 function parseCharCounts()
 {
 	//Get Everything...
-	var elements = $$('textarea.charcounter');;
+	var elements = $$('.charcounter');;
 	var element = null;	
 	var newlabel = null;
 	
