@@ -146,7 +146,7 @@ public class PopUpAction extends AbstractAccrualAction {
         DiseaseWebDTO newRec = new DiseaseWebDTO();
         newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
         newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-        newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+        newRec.setSdcCode(StConverter.convertToString(disease.getDiseaseCode()));
         newRec.setDisplayName(StConverter.convertToString(disease.getDisplayName()));
         newRec.setType(DiseaseWebDTO.SDC_TYPE);
         return newRec;
@@ -171,7 +171,7 @@ public class PopUpAction extends AbstractAccrualAction {
         DiseaseWebDTO newRec = new DiseaseWebDTO();
         newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
         newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-        newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+        newRec.setIcd9Code(StConverter.convertToString(disease.getDiseaseCode()));
         newRec.setDisplayName(StConverter.convertToString(disease.getPreferredName()));
         newRec.setType(DiseaseWebDTO.ICD9_TYPE);
         return newRec;

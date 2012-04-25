@@ -95,7 +95,8 @@ public class DiseaseWebDTOTest {
     @Before
     public void initDto() {
     	diseaseWebDTO = new DiseaseWebDTO();
-    	diseaseWebDTO.setCode("code");
+    	diseaseWebDTO.setIcd9Code("icd9Code1");
+    	diseaseWebDTO.setSdcCode("sdcCode");
     	diseaseWebDTO.setConceptId("conceptId");
     	diseaseWebDTO.setDiseaseIdentifier("diseaseIdentifier");
     	diseaseWebDTO.setLead("lead");
@@ -106,7 +107,8 @@ public class DiseaseWebDTOTest {
 
    @Test
    public void codePropertyTest() {
-       assertNotNull(diseaseWebDTO.getCode());
+       assertNotNull(diseaseWebDTO.getIcd9Code());
+       assertNotNull(diseaseWebDTO.getSdcCode());
    }
 
    @Test

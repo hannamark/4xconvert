@@ -88,7 +88,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolService;
@@ -154,11 +153,11 @@ public class StudySubjectBeanLocal extends
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
-            FunctionalRoleStatusCode statusCode) throws PAException {
+    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate) 
+         throws PAException {
         try {
             Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class);
-            populateCriteria(assignedIdentifier, studySiteId, birthDate, statusCode, criteria);
+            populateCriteria(assignedIdentifier, studySiteId, birthDate, criteria);
             List<StudySubject> subjects = criteria.list();
             return convertFromBoListToDtoList(subjects);
         } catch (HibernateException e) {
@@ -286,13 +285,9 @@ public class StudySubjectBeanLocal extends
         return resultList;
     }  
 
-    private void populateCriteria(String assignedIdentifier, Long studySiteId, Date birthDate,
-            FunctionalRoleStatusCode statusCode, Criteria criteria) {
+    private void populateCriteria(String assignedIdentifier, Long studySiteId, Date birthDate, Criteria criteria) {
         if (StringUtils.isNotEmpty(assignedIdentifier)) {
             criteria.add(Restrictions.ilike("assignedIdentifier", assignedIdentifier, MatchMode.ANYWHERE));
-        }
-        if (statusCode != null) {
-            criteria.add(Restrictions.eq("statusCode", statusCode));
         }
         if (studySiteId != null) {
             criteria.createCriteria("studySite", "ss").add(Restrictions.eq("ss.id", studySiteId));

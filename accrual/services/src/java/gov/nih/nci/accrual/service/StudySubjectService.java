@@ -82,7 +82,6 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 
 import java.sql.Timestamp;
@@ -109,12 +108,11 @@ public interface StudySubjectService extends BaseAccrualStudyService<StudySubjec
      * @param assignedIdentifier the assigned id of the study subject
      * @param studySiteId the study site id
      * @param birthDate the study subject's birth date in MM/YYYY
-     * @param statusCode the subject's status code
      * @throws PAException on error
      * @return the list of study subjects that match the given parameters
      */
-    List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate, 
-            FunctionalRoleStatusCode statusCode) throws PAException;
+    List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate) 
+          throws PAException;
     
     
     /**

@@ -187,8 +187,8 @@ public class MockStudySubjectBean implements StudySubjectService {
      * {@inheritDoc}
      */
     @Override
-    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
-            FunctionalRoleStatusCode statusCode) throws PAException {
+    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate) 
+    		throws PAException {
         return ssList;
     }
 

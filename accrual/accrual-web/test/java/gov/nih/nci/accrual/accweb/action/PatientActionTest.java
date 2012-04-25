@@ -84,7 +84,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
-
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
@@ -293,7 +292,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         criteria.setAssignedIdentifier("PO PATIENT ID 01");
         criteria.setStudySiteId(Long.valueOf("02"));
         criteria.setBirthDate("7/16/2009");
-        criteria.setStatusCode(ActStatusCode.ACTIVE.getCode());
         action.setCriteria(criteria);
         assertEquals(ActionSupport.SUCCESS, action.execute());
     }

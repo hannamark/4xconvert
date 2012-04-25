@@ -81,19 +81,6 @@ function handleDelete(rowId){
                 cssStyle="width:98%;max-width:128px" />
           </td>
       </tr>
-      <tr>
-          <td class="label">
-           <label for="Record Status">
-              <fmt:message key="patient.statusCode"/>
-          </label>
-          </td>
-          <td colspan="4">
-           <s:select id ="statusCode" name="criteria.statusCode"
-                         headerKey=""
-                         headerValue="--Select--"
-                         list="#{'Pending':'Pending','Active':'Active'}"/>
-          </td>
-      </tr>
     </table>
 
     <div class="actionsrow">
@@ -121,7 +108,6 @@ function handleDelete(rowId){
        </display:column>
        <display:column titleKey="patient.registrationDate" property="registrationDate" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="subject.statusCode" property="statusCode" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.update" headerClass="centered" class="action">
             <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
                 <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />

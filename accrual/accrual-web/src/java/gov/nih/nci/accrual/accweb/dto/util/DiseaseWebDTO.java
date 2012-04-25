@@ -99,7 +99,8 @@ public class DiseaseWebDTO {
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
     private String preferredName;
-    private String code;
+    private String icd9Code;
+    private String sdcCode;
     private String conceptId;
     private String displayName;
     private String lead;
@@ -141,16 +142,28 @@ public class DiseaseWebDTO {
         this.preferredName = preferredName;
     }
     /**
-     * @return the code
+     * @return the icd9Code
      */
-    public String getCode() {
-        return code;
+    public String getIcd9Code() {
+       return icd9Code;
     }
     /**
-     * @param code the code to set
+     * @param icd9Code the icd9Code to set
      */
-    public void setCode(String code) {
-        this.code = code;
+    public void setIcd9Code(String icd9Code) {
+       this.icd9Code = icd9Code;
+    }
+    /**
+     * @return the sdcCode
+     */
+    public String getSdcCode() {
+       return sdcCode;
+    }
+    /**
+     * @param sdcCode the sdcCode to set
+     */
+    public void setSdcCode(String sdcCode) {
+        this.sdcCode = sdcCode;
     }
     /**
      * @return the conceptId

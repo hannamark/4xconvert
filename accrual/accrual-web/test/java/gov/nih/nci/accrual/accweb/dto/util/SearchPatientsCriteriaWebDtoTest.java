@@ -96,15 +96,9 @@ public class SearchPatientsCriteriaWebDtoTest {
     @Before
     public void initDto() {
      searchPatientsCriteriaWebDto = new SearchPatientsCriteriaWebDto();
-     searchPatientsCriteriaWebDto.setStatusCode("statusCode");
      searchPatientsCriteriaWebDto.setAssignedIdentifier("assignedIdentifier");
      searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1978/08"));
      searchPatientsCriteriaWebDto.setStudySiteId(Long.valueOf(1));
-    }
-
-    @Test
-    public void statusCodePropertyTest() {
-      assertNotNull(searchPatientsCriteriaWebDto.getStatusCode());
     }
 
     @Test

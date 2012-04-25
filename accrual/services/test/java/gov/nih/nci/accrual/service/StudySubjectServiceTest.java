@@ -170,20 +170,16 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     @Test
     public void getStudySubjects() throws Exception {
         Date birthDate = AccrualUtil.yearMonthStringToTimestamp("07/1963");
-        List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(0).getId(), birthDate, 
-                FunctionalRoleStatusCode.PENDING);
+        List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(0).getId(), birthDate);
         assertEquals(1, results.size());
         
-        results = bean.getStudySubjects("001", TestSchema.studySites.get(0).getId(), birthDate, 
-                FunctionalRoleStatusCode.PENDING);
+        results = bean.getStudySubjects("001", TestSchema.studySites.get(0).getId(), birthDate);
         assertEquals(1, results.size());
         
-        results = bean.getStudySubjects("002", TestSchema.studySites.get(0).getId(), birthDate, 
-                FunctionalRoleStatusCode.PENDING);
+        results = bean.getStudySubjects("002", TestSchema.studySites.get(0).getId(), birthDate);
         assertEquals(0, results.size());
         
-        results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate, 
-                FunctionalRoleStatusCode.ACTIVE);
+        results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate);
         assertEquals(0, results.size());
     }
     

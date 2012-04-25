@@ -92,7 +92,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
@@ -337,11 +336,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     }
     
     private List<StudySubjectDto> getStudySubjects(Long studySiteId) throws PAException {
-        FunctionalRoleStatusCode statusCode = FunctionalRoleStatusCode.getByCode(getCriteria().getStatusCode());
         Date birthDate = StringUtils.isEmpty(getCriteria().getBirthDate()) 
             ? null : AccrualUtil.yearMonthStringToTimestamp(getCriteria().getBirthDate());
-        return getStudySubjectSvc().getStudySubjects(getCriteria().getAssignedIdentifier(), studySiteId, birthDate, 
-                statusCode);
+        return getStudySubjectSvc().getStudySubjects(getCriteria().getAssignedIdentifier(), studySiteId, birthDate);
     }
     
     private SearchStudySiteResultWebDto getSelectedStudySite(Long studySiteId) {

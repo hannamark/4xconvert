@@ -255,10 +255,10 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         }
         String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
         if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION) {
-            errMsg.append("Patient Disease Meddra/ICD9 Code is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
+            errMsg.append("Patient Disease SDC or ICD9 Code is missing or not recognized for patient ID ")
+            .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
         } else if (checkCodeExist(errMsg, code)) {
-            errMsg.append("Patient Disease Meddra/ICD9 Code is invalid for patient ID ").append(getPatientId(values))
+            errMsg.append("Patient Disease SDC or ICD9 Code is invalid for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
         }
     }

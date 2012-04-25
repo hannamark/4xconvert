@@ -88,7 +88,6 @@ public class SearchPatientsCriteriaWebDto {
     private String assignedIdentifier;
     private Long studySiteId;
     private String birthDate;
-    private String statusCode;
     /**
      * @return the assignedIdentifier
      */
@@ -112,18 +111,6 @@ public class SearchPatientsCriteriaWebDto {
      */
     public void setBirthDate(String birthDate) {
         this.birthDate = AccrualUtil.normalizeYearMonthString(birthDate);
-    }
-    /**
-     * @return the statusCode
-     */
-    public String getStatusCode() {
-        return statusCode;
-    }
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
     }
     /**
      * @return the studySiteId

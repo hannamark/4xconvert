@@ -12,11 +12,11 @@
         </s:if>
         <s:elseif test="%{currentAction == 'update'}">
             <c:set var="topic" scope="request" value="subjects_update"/> 
-            <fmt:message key="patient.retrieve.title" var="pageTitle" />
+            <fmt:message key="patient.update.title" var="pageTitle" />
         </s:elseif>
         <s:elseif test="%{currentAction == 'retrieve'}">
             <c:set var="topic" scope="request" value="subjects_intro"/> 
-            <fmt:message key="patient.update.title" var="pageTitle" />
+            <fmt:message key="patient.retrieve.title" var="pageTitle" />
         </s:elseif>
         <title>${pageTitle}</title>        
         <s:head/>
@@ -267,16 +267,6 @@
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <s:label name="patient.organizationName" cssStyle="font-weight:normal"/>
                             </s:elseif>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="label">
-                            <label>
-                                <fmt:message key="patient.statusCode"/>
-                            </label>
-                        </td>
-                        <td class="value" colspan="4">
-                            <s:label name="patient.statusCode" cssStyle="font-weight:normal"/>
                         </td>
                     </tr>
                 </table>
