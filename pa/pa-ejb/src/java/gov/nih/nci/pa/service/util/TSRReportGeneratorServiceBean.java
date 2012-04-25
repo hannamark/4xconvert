@@ -1057,9 +1057,23 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     for (StudySiteContactDTO spcDto : spcDTOs) {
                         if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDto.getRoleCode().getCode())) {
                             // Set contact info.
-                            String email = PAUtil.getEmail(spcDto.getTelecomAddresses());
-                            String phone = PAUtil.getPhone(spcDto.getTelecomAddresses());
-                            String extn = PAUtil.getPhoneExtension(spcDto.getTelecomAddresses());
+                            
+                            String email = StringUtils.isEmpty(PAUtil
+                                    .getEmail(spcDto.getTelecomAddresses())) ? ""
+                                    : PAUtil.getEmail(spcDto
+                                            .getTelecomAddresses());
+                            
+                            String phone = StringUtils.isEmpty(PAUtil
+                                    .getPhone(spcDto.getTelecomAddresses())) ? ""
+                                    : PAUtil.getPhone(spcDto
+                                            .getTelecomAddresses());
+                            
+                            String extn = StringUtils.isEmpty(PAUtil
+                                    .getPhoneExtension(spcDto
+                                            .getTelecomAddresses())) ? ""
+                                    : PAUtil.getPhoneExtension(spcDto
+                                            .getTelecomAddresses()); 
+                            
                             String contact = null;
 
                             if (spcDto.getClinicalResearchStaffIi() != null) {
