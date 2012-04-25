@@ -187,4 +187,11 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    @Override
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
+            InterventionalStudyProtocolDTO ispDTO, String page)
+            throws PAException {
+        throw new PAException("not supported via the grid service.");
+    }
 }
