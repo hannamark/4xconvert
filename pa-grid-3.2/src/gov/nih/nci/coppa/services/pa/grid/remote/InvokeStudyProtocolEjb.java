@@ -191,4 +191,11 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         throw new PAException("changeOwnership is supported in version 3.4 and onwards.");
         
     }
+
+    @Override
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
+            InterventionalStudyProtocolDTO ispDTO, String page)
+            throws PAException {
+        throw new PAException("not supported via the grid service.");
+    }
 }
