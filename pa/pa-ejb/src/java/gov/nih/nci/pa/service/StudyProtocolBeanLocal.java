@@ -803,6 +803,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return spList.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     private StudyProtocolDTO getStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
         StudySite ss = generateIdentifierAssigner(studyProtocolIi);
 
@@ -812,6 +813,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.add(Restrictions.eq("org.name",
                 ss.getResearchOrganization().getOrganization().getName()));
         criteria.add(Restrictions.eq("ss.localStudyProtocolIdentifier", ss.getLocalStudyProtocolIdentifier()));
+        criteria.add(Restrictions.ne("statusCode", ActStatusCode.INACTIVE));
 
         List<StudyProtocol> results = criteria.list();
         checkResults(results, studyProtocolIi);
