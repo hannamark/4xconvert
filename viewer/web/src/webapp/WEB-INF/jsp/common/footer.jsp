@@ -10,9 +10,9 @@
 	</div>
 	
 	<div id="partnerlogos">				
-		<a href="http://www.cancer.gov"><img src="${imagePath}/footer_nci.gif" width="63" height="31" alt="Logo: National Cancer Institute" /></a>
-		<a href="http://www.dhhs.gov"><img src="${imagePath}/footer_hhs.gif" width="39" height="31" alt="Logo: Department of Health and Human Services" /></a>
-		<a href="http://www.nih.gov"><img src="${imagePath}/footer_nih.gif" width="46" height="31" alt="Logo: National Institutes of Health" /></a>
-		<a href="http://www.usa.gov"><img src="${imagePath}/footer_usagov.gif" width="91" height="31" alt="Logo: USA.gov" /></a>
+		<a href="http://www.cancer.gov" target="_blank"><img src="${imagePath}/footer_nci.gif" width="63" height="31" alt="Logo: National Cancer Institute" /></a>
+		<a href="http://www.dhhs.gov" target="_blank"><img src="${imagePath}/footer_hhs.gif" width="39" height="31" alt="Logo: Department of Health and Human Services" /></a>
+		<a href="http://www.nih.gov" target="_blank"><img src="${imagePath}/footer_nih.gif" width="46" height="31" alt="Logo: National Institutes of Health" /></a>
+		<a href="http://www.usa.gov" target="_blank"><img src="${imagePath}/footer_usagov.gif" width="91" height="31" alt="Logo: USA.gov" /></a>
 	</div>
 </div>

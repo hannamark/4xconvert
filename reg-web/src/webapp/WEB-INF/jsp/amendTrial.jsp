@@ -361,7 +361,7 @@
                 <table class="form">
                     <tr>
                         <td scope="row" class="label">
-                            <a href="http://ClinicalTrials.gov">ClinicalTrials.gov</a> XML required?
+                            <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?
                         </td>
                         <td>
                             <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
