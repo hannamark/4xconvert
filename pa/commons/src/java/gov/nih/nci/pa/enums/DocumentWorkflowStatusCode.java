@@ -160,7 +160,7 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         tmpSet = EnumSet.complementOf(EnumSet.of(REJECTED, ON_HOLD, SUBMISSION_TERMINATED));
         tmp.put(ON_HOLD, Collections.unmodifiableSet(tmpSet));
         
-        tmpSet = EnumSet.complementOf(EnumSet.of(SUBMISSION_TERMINATED));
+        tmpSet = EnumSet.complementOf(EnumSet.of(SUBMISSION_TERMINATED, ON_HOLD));
         tmp.put(SUBMISSION_TERMINATED, Collections.unmodifiableSet(tmpSet));        
         
         TRANSITIONS = Collections.unmodifiableMap(tmp);

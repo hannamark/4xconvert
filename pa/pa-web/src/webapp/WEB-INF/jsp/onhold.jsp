@@ -69,7 +69,7 @@
                 </table>
                 <pa:buttonBar>
                     <pa:displayWhenCheckedOut>
-                        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'On-Hold'}">
+                        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'On-Hold' && sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submission Terminated'}">
                             <pa:button id="addButton" imgClass="add" labelKey="onhold.button.add"/>
                         </c:if>
                     </pa:displayWhenCheckedOut>

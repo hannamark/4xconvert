@@ -273,8 +273,10 @@ implements StudyOnholdServiceLocal {
         if (low == null) {
             throw new PAFieldException(FN_DATE_LOW, "On-hold date is required.");
         }        
-        if (!DateUtils.isSameDay(low, getTodaysDate())) {
-            throw new PAFieldException(FN_DATE_LOW, "On-hold date must be today's date.");
+        if (ISOUtil.isIiNull(dto.getIdentifier())
+                && !DateUtils.isSameDay(low, getTodaysDate())) {
+            throw new PAFieldException(FN_DATE_LOW,
+                    "On-hold date must be today's date.");
         }
         Timestamp now = new Timestamp(getTodaysDate().getTime());
         Timestamp high = IvlConverter.convertTs().convertHigh(dto.getOnholdDate());

@@ -108,11 +108,11 @@ public enum MilestoneCode implements CodedEnum<String> {
     /**
      * Submission Terminated Date.
      */
-    SUBMISSION_TERMINATED("Submission Terminated Date", false, false, true, true),
+    SUBMISSION_TERMINATED("Submission Terminated Date", false, false, false, true),
     /**
      * Submission Reactivated Date.
      */
-    SUBMISSION_REACTIVATED("Submission Reactivated Date", false, false, true, true),
+    SUBMISSION_REACTIVATED("Submission Reactivated Date", false, false, false, true),
     
     /** Administrative processing start. */
     ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, true, true),

@@ -369,9 +369,9 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                 + " on-hold record.";
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, msg);
         
-        // however, SUBMISSION_TERMINATED & SUBMISSION_REACTIVATED can be recorded while On-Hold.
-        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
-        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+        // however, SUBMISSION_TERMINATED & SUBMISSION_REACTIVATED cannot be recorded while On-Hold.
+        checkMilestoneFailure((MilestoneCode.SUBMISSION_TERMINATED));
+        checkMilestoneFailure((MilestoneCode.SUBMISSION_REACTIVATED));
         
         // take off-hold
         List<StudyOnholdDTO> ohList = ohs.getByStudyProtocol(spIi);
@@ -887,10 +887,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         checkCurrentDWS(DocumentWorkflowStatusCode.REJECTED);
         checkMilestoneFailure(
                 MilestoneCode.SUBMISSION_TERMINATED,
-                "The processing status must be 'Submitted', 'Amendment Submitted', 'Accepted', 'Abstracted', " +
-                "'Verification Pending', 'Abstraction Verified Response', 'Abstraction Verified No Response', or " +
-                "'On-Hold' when entering the milestone 'Submission Terminated Date'.  The current processing " +
-                "status is 'Rejected'.");
+                "The processing status must be 'Submitted', 'Amendment Submitted', 'Accepted', 'Abstracted', 'Verification Pending', 'Abstraction Verified Response', 'Abstraction Verified No Response', or 'On-Hold' when entering the milestone 'Submission Terminated Date'.  The current processing status is 'Rejected'.");
         
     }
     
