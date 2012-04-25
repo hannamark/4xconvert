@@ -249,6 +249,7 @@ body {
                 <display:column title="Last Updater Name" property="lastUpdaterDisplayName" sortable="true" headerClass="sortable"/>
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>                               
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" sortable="true" headerClass="sortable"/>     
+                <display:column title="On-Hold Reason" property="onHoldReasons" sortable="true" headerClass="sortable" escapeXml="true"/>
             </display:table>
         </c:otherwise>
     </c:choose>

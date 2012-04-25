@@ -24,7 +24,7 @@
         document.getElementById("leadAndParticipatingOrgId").value="";
         document.getElementById("phaseAdditionalQualifierCode").value="";
         document.getElementById("principalInvestigatorId").value="";
-        document.getElementById("trialCategory").value="";                
+        document.getElementById("trialCategory").value=""; 
     }
     function handleAction(){
          var input = "criteria.myTrialsOnly";
@@ -234,7 +234,21 @@
                 <td>
                    <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                 </td>
-            </tr>
+              </tr>
+              
+              <%-- Initially implemented, but then asked to remove as part of https://tracker.nci.nih.gov/browse/PO-4852.
+                   Keeping the code in case we need to bring back in.
+              <tr>
+                <td scope="row" class="label">
+                    <label for="holdStatus"> <fmt:message key="search.trial.searchOnHold"/></label>
+                </td>
+                <td>
+                    <s:select headerKey="" headerValue="Both" id="holdStatus" name="criteria.holdStatus" 
+                        list="#{'onhold':'On-Hold','notonhold':'Not On-Hold'}"  value="criteria.holdStatus" cssStyle="width:206px" />
+                </td>
+              </tr>
+               --%>
+                           
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">

@@ -348,7 +348,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         queryCriteria.setUserId(loggedInUserId);
         
         queryCriteria.setTrialCategory(criteria.getTrialCategory());
-
+        queryCriteria.setHoldStatus(criteria.getHoldStatus());
         return queryCriteria;
     }
 

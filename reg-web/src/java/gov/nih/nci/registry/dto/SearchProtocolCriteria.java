@@ -23,6 +23,8 @@ public class SearchProtocolCriteria {
     private String principalInvestigatorId;
     private String phaseAdditionalQualifierCode;
     private String trialCategory;
+    private String holdStatus;
+    
     /**
      * @return the identifierType
      */
@@ -189,6 +191,18 @@ public class SearchProtocolCriteria {
      */
     public void setLeadAndParticipatingOrgId(String leadAndParticipatingOrgId) {
         this.leadAndParticipatingOrgId = leadAndParticipatingOrgId;
+    }
+    /**
+     * @return the holdStatus
+     */
+    public String getHoldStatus() {
+        return holdStatus;
+    }
+    /**
+     * @param holdStatus the holdStatus to set
+     */
+    public void setHoldStatus(String holdStatus) {
+        this.holdStatus = holdStatus;
     }    
 
 }
