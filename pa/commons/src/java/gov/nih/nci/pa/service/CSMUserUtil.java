@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -156,4 +157,12 @@ public interface CSMUserUtil {
      * @throws PAException on error
      */
     boolean isUserInGroup(String loginName, String groupName) throws PAException;
+    
+    /**
+     * Retruns a list of groups the user belongs to.
+     * @param loginName the user
+     * @return  list of groups the user belongs to.
+     * @throws PAException exception
+     */
+    List<String> getUserGroups(String loginName) throws PAException;
 }

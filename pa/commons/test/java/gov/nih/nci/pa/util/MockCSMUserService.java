@@ -179,4 +179,12 @@ public class MockCSMUserService implements CSMUserUtil {
     public boolean isUserInGroup(String loginName, String groupName) throws PAException {
         return false;
     }
+
+    @Override
+    public List<String> getUserGroups(String loginName) throws PAException {
+        List<String>  groups = new ArrayList<String>();
+        groups.add("Abstractor");
+        groups.add("SuAbstractor");
+        return groups;
+    }
 }

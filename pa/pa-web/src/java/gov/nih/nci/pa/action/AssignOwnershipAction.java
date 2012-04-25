@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserService;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -118,7 +119,6 @@ public class AssignOwnershipAction extends ActionSupport {
     private List<TrialOwner> users = null;
     private AssignOwnershipSearchCriteria criteria = new AssignOwnershipSearchCriteria();
     private Set<RegistryUser> trialOwners = null;
-
     private RegistryUserService regUserSvc;
     private OrganizationEntityServiceRemote orgEntSvc;
 
@@ -209,13 +209,17 @@ public class AssignOwnershipAction extends ActionSupport {
                 List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
                 TrialOwner owner = null;
                 for (RegistryUser rUsr : regUserList) {
-                    owner = new TrialOwner();
-                    owner.setRegUser(rUsr);
-                    owner.setOwner(PaRegistry.getRegistryUserService().isTrialOwner(rUsr.getId(),
-                            Long.parseLong(spIi.getExtension())));
-                    users.add(owner);
-                }
-            }
+                    String loginName = rUsr.getCsmUser().getLoginName();
+                    if (ActionUtils.checkUserHasReadWritePrivilege(loginName)) {
+                        owner = new TrialOwner();
+                        owner.setRegUser(rUsr);
+                        owner.setOwner(PaRegistry.getRegistryUserService()
+                                .isTrialOwner(rUsr.getId(),
+                                        Long.parseLong(spIi.getExtension())));
+                        users.add(owner);
+                    }
+               }
+           }
         } catch (PAException e) {
             addActionError("Error getting csm users.");
         }

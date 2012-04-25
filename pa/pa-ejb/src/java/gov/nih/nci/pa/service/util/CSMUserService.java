@@ -91,6 +91,7 @@ import gov.nih.nci.security.dao.GroupSearchCriteria;
 import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -288,6 +289,23 @@ public class CSMUserService implements CSMUserUtil {
         }
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getUserGroups(String loginName) throws PAException {
+        List<String> userGroups = new ArrayList<String>();
+        try {
+            User user = getCSMUser(loginName);
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            Set<Group> groups = upManager.getGroups(String.valueOf(user.getUserId()));
+            for (Group group : groups) {
+                userGroups.add(group.getGroupName());
+            }
+        } catch (Exception e) {
+            throw new PAException("CSM Exception while fetching groups for  " + loginName, e);
+        }
+        return userGroups;
+    }    
+
     /**
      * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
      * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
@@ -319,5 +337,6 @@ public class CSMUserService implements CSMUserUtil {
     public static void setInstance(CSMUserUtil service) {
         instance = service;
     }
+
 
 }
