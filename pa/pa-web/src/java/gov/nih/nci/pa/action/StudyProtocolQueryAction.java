@@ -101,13 +101,16 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Comparator;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -124,7 +127,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware, 
                                                             ServletRequestAware {
     private static final long serialVersionUID = -2308994602660261367L;
@@ -233,6 +236,13 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                         criteria.getUniqueCriteriaKey());
             }     
             records = protocolQueryService.getStudyProtocolByCriteria(criteria);
+            if (CollectionUtils.isNotEmpty(records)) {
+                Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
+                    public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
+                        return o1.getNciIdentifier().compareTo(o2.getNciIdentifier());
+                    }
+                });              
+            }
             return SUCCESS;
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
