@@ -203,10 +203,13 @@ public class SessionFixationProtectionLoginModule implements LoginModule {
             HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext(WEB_REQUEST_KEY);
             if (request != null) {
                 HttpSession session = request.getSession(false);
-                boolean alreadyMigrated = Boolean.TRUE.equals(session.getAttribute(MIGRATED_SESSION_KEY));
-                boolean withinEjbInvocationContext = isWithinEjbInvocationContext();
-                if (session != null && !alreadyMigrated && !withinEjbInvocationContext) {
-                    migrateSession(session, request);
+                if (session != null) {
+                    boolean alreadyMigrated = Boolean.TRUE.equals(session
+                            .getAttribute(MIGRATED_SESSION_KEY));
+                    boolean withinEjbInvocationContext = isWithinEjbInvocationContext();
+                    if (!alreadyMigrated && !withinEjbInvocationContext) { // NOPMD
+                        migrateSession(session, request);
+                    }
                 }
             }
             return true;
