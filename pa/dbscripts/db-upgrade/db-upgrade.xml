@@ -896,7 +896,11 @@
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4975.sql"/>
      </changeSet>
      <changeSet id="PO-3400" author="monishd">
-        <comment>Increase size of comment_text column in study_milestone table to 2000 chars</comment>
+        <comment>Increase size of comment_text column in study_milestone table to default chars (1GB)</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-3400.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-4378" author="monishd">
+        <comment>Increase size of keyword_text column in study_protocol table to 4000 chars</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4378.sql"/>
+     </changeSet>          
 </databaseChangeLog>

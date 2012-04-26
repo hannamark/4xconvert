@@ -285,7 +285,7 @@
                         </td>
                         <td class="value">
                             <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"
-                                maxlength="600" cssClass="charcounter" />
+                                maxlength="4000" cssClass="charcounter" />
                         </td>
                     </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
