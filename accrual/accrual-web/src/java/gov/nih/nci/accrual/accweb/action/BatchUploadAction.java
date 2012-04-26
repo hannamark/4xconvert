@@ -103,7 +103,8 @@ public class BatchUploadAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(BatchUploadAction.class);
     private static final List<String> ALLOWED_TYPES = Arrays.asList("text/plain", "application/zip", 
-            "application/x-zip-compressed");
+            "application/x-zip-compressed", "application/binary", "application/x-zip", "application/octet-stream", 
+            "application/x-compress", "application/x-compressed", "multipart/x-zip");
     private File upload;
     private String uploadFileName;
     private String uploadContentType;
