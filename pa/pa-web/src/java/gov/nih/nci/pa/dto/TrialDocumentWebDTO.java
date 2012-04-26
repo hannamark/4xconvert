@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.TsConverter;
 /**
  * 
  * @author Kalpana Guthikonda
@@ -93,6 +94,7 @@ public class TrialDocumentWebDTO {
     private String fileName;
     private String id;
     private String inactiveCommentText;
+    private String dateLastUpdated;
     
     /**
      * @param iso StudyResourcingDTO object
@@ -102,6 +104,7 @@ public class TrialDocumentWebDTO {
         this.typeCode = iso.getTypeCode().getCode();
         this.fileName = iso.getFileName().getValue(); 
         this.id = iso.getIdentifier().getExtension();
+        this.dateLastUpdated = TsConverter.convertToString(iso.getDateLastUpdated());
     }
     
     /** .
@@ -165,5 +168,19 @@ public class TrialDocumentWebDTO {
      */
     public void setInactiveCommentText(String inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
+    }
+
+    /**
+     * @return the dateLastUpdated
+     */
+    public String getDateLastUpdated() {
+        return dateLastUpdated;
+    }
+
+    /**
+     * @param dateLastUpdated the dateLastUpdated to set
+     */
+    public void setDateLastUpdated(String dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
     }
 }

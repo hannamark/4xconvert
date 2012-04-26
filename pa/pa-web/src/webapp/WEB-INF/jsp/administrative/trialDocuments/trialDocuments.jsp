@@ -44,6 +44,7 @@ function callOnloadFunctions(){
 	       <s:a href="%{url}"><s:property value="%{#attr.row.fileName}" /></s:a>
 	    </display:column>
 	    <display:column escapeXml="true" titleKey="trialDocument.type" property="typeCode" sortable="true" headerClass="sortable" />
+	    <display:column escapeXml="true" titleKey="trialDocument.dateLastUpdated" property="dateLastUpdated" sortable="true" headerClass="sortable" />
         <pa:adminAbstractorDisplayWhenCheckedOut>
 	       <display:column title="Edit" class="action">
     		  <s:url id="url" action="trialDocumentedit"><s:param name="id" value="%{#attr.row.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
