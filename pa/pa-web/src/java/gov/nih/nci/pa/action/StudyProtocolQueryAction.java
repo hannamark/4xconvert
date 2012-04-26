@@ -239,7 +239,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             if (CollectionUtils.isNotEmpty(records)) {
                 Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
                     public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
-                        return o1.getNciIdentifier().compareTo(o2.getNciIdentifier());
+                        return o2.getNciIdentifier().compareTo(o1.getNciIdentifier());
                     }
                 });              
             }

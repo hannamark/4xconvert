@@ -130,6 +130,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -157,6 +159,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Bala Nair
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class SearchTrialAction extends ActionSupport implements Preparable, ServletRequestAware {
    
     private static final Logger LOG = Logger
@@ -276,6 +279,13 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }        
         records = protocolQueryService
                 .getStudyProtocolByCriteria(spQueryCriteria);
+        if (CollectionUtils.isNotEmpty(records)) {
+            Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
+                public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
+                    return o2.getNciIdentifier().compareTo(o1.getNciIdentifier());
+                }
+            });              
+        }
         checkToShow();
     }
     
