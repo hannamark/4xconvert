@@ -79,7 +79,7 @@ function handleAction(){
                             <fmt:message key="trialHistory.amendmentNumber"/></label>
                         </td>
                         <td class="value">
-                            <s:textfield  name="trialHistoryWbDto.amendmentNumber" maxlength="10" cssStyle="width:150px"/>
+                            <s:textfield  name="trialHistoryWbDto.amendmentNumber" maxlength="50" cssStyle="width:150px"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialHistoryWbDTO.amendmentNumber</s:param>
