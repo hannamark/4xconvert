@@ -282,7 +282,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         if (CollectionUtils.isNotEmpty(records)) {
             Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
                 public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
-                    return o2.getNciIdentifier().compareTo(o1.getNciIdentifier());
+                    return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
+                            StringUtils.defaultString(o1.getNciIdentifier()));
                 }
             });              
         }

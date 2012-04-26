@@ -199,6 +199,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @return res
      * @throws PAException exception
      */
+    @SuppressWarnings("PMD")
     public String query() throws PAException {
         if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
                 .getSession())) {
@@ -239,7 +240,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             if (CollectionUtils.isNotEmpty(records)) {
                 Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
                     public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
-                        return o2.getNciIdentifier().compareTo(o1.getNciIdentifier());
+                        return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
+                                StringUtils.defaultString(o1.getNciIdentifier()));
                     }
                 });              
             }
