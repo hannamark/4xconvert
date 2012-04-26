@@ -895,4 +895,8 @@
         <comment>Update search results views to add primary completion date column.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4975.sql"/>
      </changeSet>
+     <changeSet id="PO-3400" author="monishd">
+        <comment>Increase size of comment_text column in study_milestone table to 2000 chars</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-3400.sql"/>
+     </changeSet>     
 </databaseChangeLog>
