@@ -399,7 +399,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
             messages.addError("Select Participating Sites from Administrative Data menu.",
-                              "Trial can not have dupicate Treating Site.");
+                              "Trial cannot have duplicate Treating Site.");
         }
     }
 
@@ -909,7 +909,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
             messages.addError("Select Participating Sites from Administrative Data menu.",
-                              "Trial can not have dupicate Treating Site.");
+                              "Trial cannot have duplicate Treating Site.");
         }
 
     }
