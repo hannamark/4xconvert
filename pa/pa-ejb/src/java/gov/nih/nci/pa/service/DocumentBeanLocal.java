@@ -110,6 +110,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -199,7 +200,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 String docPath = PAUtil.getDocumentFilePath(IiConverter.convertToLong(docDTO.getIdentifier()),
                         StConverter.convertToString(docDTO.getFileName()), nciIdentifier);
                 File downloadFile = new File(docPath);
-                docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(FileUtils.openInputStream(downloadFile))));
+                final FileInputStream stream = FileUtils.openInputStream(downloadFile);
+                docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(stream)));
+                IOUtils.closeQuietly(stream);
             } catch (FileNotFoundException fe) {
                 throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
             } catch (IOException io) {
@@ -333,9 +336,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
 
         try {
             File outFile = new File(docPath);
-            if (!outFile.exists()) {
-                FileUtils.writeByteArrayToFile(outFile, docDTO.getText().getData());
-            }
+            FileUtils.writeByteArrayToFile(outFile, docDTO.getText().getData());            
         } catch (IOException e) {
             throw new PAException("Error while attempting to save the file to " + docPath, e);
         }

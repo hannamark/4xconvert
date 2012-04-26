@@ -279,7 +279,11 @@ public class TrialDocumentAction extends AbstractMultiObjectDeleteAction impleme
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(new FileInputStream(upload))));
+             
+             final FileInputStream stream = new FileInputStream(upload);
+             docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(stream)));
+             IOUtils.closeQuietly(stream);
+             
              PaRegistry.getDocumentService().update(docDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              query();
