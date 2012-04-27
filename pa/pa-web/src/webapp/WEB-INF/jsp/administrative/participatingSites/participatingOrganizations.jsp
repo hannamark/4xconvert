@@ -45,7 +45,8 @@ function handleEdit(studyResourcingId){
     <s:actionerror />
     <s:form name="partOrgs">
         <pa:studyUniqueToken/>
-        <h2><fmt:message key="participatingOrganizations.title" /></h2>        
+        <h2><fmt:message key="participatingOrganizations.title" /></h2> 
+        <c:if test="${fn:length(requestScope.organizationList) > 5}">       
 		<div class="actionstoprow">
 		    <del class="btnwrapper">
 		        <ul class="btnrow">
@@ -59,6 +60,7 @@ function handleEdit(studyResourcingId){
 		        </ul>
 		    </del>
 		</div>
+		</c:if>
     <table class="form">
         <tr>
             <td colspan="2">

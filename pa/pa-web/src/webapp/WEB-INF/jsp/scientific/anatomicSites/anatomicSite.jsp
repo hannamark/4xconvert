@@ -39,6 +39,7 @@ function handleCreate(){
     <h2>
         <fmt:message key="anatomicSite.details.title"/>
     </h2>
+    <c:if test="${fn:length(requestScope.anatomicSiteList) > 5}">
     <div class="actionstoprow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
@@ -50,6 +51,7 @@ function handleCreate(){
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
+    </c:if>
     <table class="form">
         <tr>
             <td colspan="2">

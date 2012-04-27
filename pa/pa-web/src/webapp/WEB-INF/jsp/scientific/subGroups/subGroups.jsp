@@ -28,6 +28,7 @@ function callOnloadFunctions(){
         <pa:studyUniqueToken/>
         <s:actionerror/>
     <h2><fmt:message key="subGroups.subtitle" /></h2>
+    <c:if test="${fn:length(requestScope.subGroupsList) > 5}">    
     <div class="actionstoprow">
             <del class="btnwrapper">
                 <ul class="btnrow">
@@ -41,6 +42,7 @@ function callOnloadFunctions(){
                 </ul>
             </del>
     </div>
+    </c:if>
     <s:if test="subGroupsList != null">
     <s:set name="subGroupsList" value="subGroupsList" scope="request"/>
     <display:table name="subGroupsList" id="row" class="data" sort="list"  pagesize="200" requestURI="subGroupsquery.action" export="false">

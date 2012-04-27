@@ -30,7 +30,8 @@
                 <s:token/>
                 <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
-                <h2><fmt:message key="plannedMarker.details.title"/></h2>                
+                <h2><fmt:message key="plannedMarker.details.title"/></h2>
+                <c:if test="${fn:length(requestScope.plannedMarkerList) > 5}">                
                 <div class="actionstoprow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
@@ -49,6 +50,7 @@
                         </ul>
                     </del>
                 </div>
+                </c:if>
                 <table class="form">
                     <tr>
                         <td colspan="2">

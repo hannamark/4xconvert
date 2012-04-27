@@ -52,6 +52,7 @@
                 <h2>
                     <fmt:message key="disease.details.title"/>
                 </h2>
+                <c:if test="${fn:length(requestScope.diseaseList) > 5}">
                 <div class="actionstoprow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
@@ -69,6 +70,7 @@
                         </ul>
                     </del>
                 </div>
+                </c:if>
                 <table class="form">
                     <tr>
                         <td colspan="2">

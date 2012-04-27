@@ -55,6 +55,7 @@ function handleCreateGroup(){
     <s:elseif test="%{currentAction == 'listGroup'}">
         <fmt:message key="arms.obs.details.title" /></s:elseif>
     </h2>
+    <c:if test="${fn:length(requestScope.armList) > 5}">
     <div class="actionstoprow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
@@ -71,6 +72,7 @@ function handleCreateGroup(){
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
+    </c:if>
     <table class="form">
         <tr>
             <td colspan="2"><s:hidden name="cbValue" />

@@ -108,6 +108,7 @@ BubbleTips.activateTipOn("dfn");
         <s:actionerror/>
         <pa:studyUniqueToken/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.title"/></h2>
+    <c:if test="${fn:length(requestScope.eligibilityList) > 5}">
     <div class="actionstoprow">
         <del class="btnwrapper">
             <ul class="btnrow">
@@ -126,7 +127,8 @@ BubbleTips.activateTipOn("dfn");
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </ul>   
         </del>
-    </div> 
+    </div>
+    </c:if> 
     <table class="form">
     <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
         <tr>

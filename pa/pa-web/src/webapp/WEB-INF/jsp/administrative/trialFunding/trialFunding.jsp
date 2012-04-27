@@ -44,6 +44,7 @@ function handleAction(studyResourcingId){
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>
+    <c:if test="${fn:length(requestScope.trialFundingList) > 5}">
     <div class="actionstoprow">
             <del class="btnwrapper">
                 <ul class="btnrow">
@@ -57,6 +58,7 @@ function handleAction(studyResourcingId){
                 </ul>
             </del>
         </div>
+    </c:if>
     <s:if test="trialFundingList != null">
     <s:hidden name="page" />
     <s:hidden name="cbValue" />

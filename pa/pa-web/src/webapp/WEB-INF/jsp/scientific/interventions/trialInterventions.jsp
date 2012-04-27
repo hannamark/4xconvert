@@ -44,6 +44,7 @@ function handleCreate(){
     <s:hidden name="selectedType"/>
     <h2><fmt:message
         key="interventions.details.title" /></h2>
+    <c:if test="${fn:length(requestScope.interventionsList) > 5}">   
     <div class="actionstoprow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>
@@ -55,6 +56,7 @@ function handleCreate(){
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
+    </c:if>
     <table class="form">
         <tr>
             <td colspan="2"><s:hidden name="cbValue" />
