@@ -89,21 +89,20 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(value = {
         OrganizationEntityServiceSearchTest.class,
-        OrganizationEntityServiceTest.class
-        // ,
+        OrganizationEntityServiceTest.class,
         // PersonEntityServiceSearchTest.class,
         // PersonEntityServiceTest.class,
-        // ClinicalResearchStaffCorrelationServiceTest.class,
-        // PatientCorrelationServiceTest.class,
-        // HealthCareFacilityCorrelationServiceTest.class,
-        // HealthCareProviderCorrelationServiceTest.class,
-        // IdentifiedOrganizationCorrelationServiceTest.class,
-        // IdentifiedPersonCorrelationServiceTest.class,
-        // OrganizationalContactCorrelationServiceTest.class,
-        // OversightCommitteeCorrelationServiceTest.class,
-        // ResearchOrganizationCorrelationServiceTest.class,
-        // OrganizationTelecomAddressTest.class,
-        // BusinessServiceTest.class
+         ClinicalResearchStaffCorrelationServiceTest.class,
+         PatientCorrelationServiceTest.class,
+         HealthCareFacilityCorrelationServiceTest.class,
+         HealthCareProviderCorrelationServiceTest.class,
+         IdentifiedOrganizationCorrelationServiceTest.class,
+         IdentifiedPersonCorrelationServiceTest.class,
+         OrganizationalContactCorrelationServiceTest.class,
+         OversightCommitteeCorrelationServiceTest.class,
+         ResearchOrganizationCorrelationServiceTest.class,
+         OrganizationTelecomAddressTest.class,
+         BusinessServiceTest.class
 })
 public class AllApiTests {
 
