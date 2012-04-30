@@ -22,12 +22,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,6 +47,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author asharma
@@ -512,15 +515,22 @@ public class PlannedActivityBeanLocal extends
 
     private PlannedSubstanceAdministrationDTO createOrUpdatePlannedSubstanceAdministration(
         PlannedSubstanceAdministrationDTO dto) throws PAException {
+        
         PlannedSubstanceAdministration bo = null;
         PlannedSubstanceAdministrationDTO resultDto = null;
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
+        Date today = new Date();
+        User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());         
+        
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         bo = converter.convertFromDtoToDomain(dto);
-        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            bo.setDateLastUpdated(new Date());
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {        
+            bo.setUserLastCreated(user);
+            bo.setDateLastCreated(today);            
         }
+        bo.setDateLastUpdated(today);
+        bo.setUserLastUpdated(user);
 
         session.saveOrUpdate(bo);
         resultDto = converter.convertFromDomainToDto(bo);
@@ -532,18 +542,23 @@ public class PlannedActivityBeanLocal extends
         PlannedProcedureDTO resultDto = null;
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
+        Date today = new Date();
+        User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()); 
+        
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             bo = PlannedProcedureConverter.convertFromDTOToDomain(dto);
+            bo.setUserLastCreated(user);
+            bo.setDateLastCreated(today);            
         } else {
             bo = (PlannedProcedure) session.load(PlannedProcedure.class,
                                                  IiConverter.convertToLong(dto.getIdentifier()));
-
             PlannedProcedure delta = PlannedProcedureConverter.convertFromDTOToDomain(dto);
-            bo = delta;
-            bo.setDateLastUpdated(new Date());
+            bo = delta;           
             session.evict(bo);
         }
-
+        bo.setDateLastUpdated(today);
+        bo.setUserLastUpdated(user);
+        
         session.saveOrUpdate(bo);
         resultDto = PlannedProcedureConverter.convertFromDomainToDTO(bo);
         return resultDto;
