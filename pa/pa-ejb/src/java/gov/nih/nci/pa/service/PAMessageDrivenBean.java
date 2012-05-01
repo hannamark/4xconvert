@@ -117,6 +117,8 @@ import org.hibernate.Session;
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "1"),
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "PAApp") })
 public class PAMessageDrivenBean implements MessageListener {
+    private static final String JMS_JBOSS_REDELIVERY_LIMIT = "JMS_JBOSS_REDELIVERY_LIMIT";
+    private static final String JMS_JBOSS_REDELIVERY_COUNT = "JMS_JBOSS_REDELIVERY_COUNT";
     private static final Logger LOG = Logger.getLogger(PAMessageDrivenBean.class);
 
     /**
@@ -124,6 +126,9 @@ public class PAMessageDrivenBean implements MessageListener {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void onMessage(final Message message) {
+        if (!isProcessable(message)) {
+            return;
+        }
         ObjectMessage msg = null;
         Long msgId = null;
         PaHibernateUtil.getHibernateHelper().openAndBindSession();
@@ -181,6 +186,22 @@ public class PAMessageDrivenBean implements MessageListener {
         } finally {
             PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
+    }
+
+    private boolean isProcessable(Message message) {
+        // For some reason PO JBoss ignores RedeliveryLimit attribute set in 
+        // /po-ear/src/main/resources/jboss-service.xml.
+        try {
+            int count = message.getIntProperty(JMS_JBOSS_REDELIVERY_COUNT);
+            int limit = message.getIntProperty(JMS_JBOSS_REDELIVERY_LIMIT);
+            if (count > limit && limit > 0) {
+                LOG.error("The following JMS message from PO has exceeded its redelivery attempts: "
+                        + message);
+                return false;
+            }
+        } catch (Exception e) { // NOPMD
+        }
+        return true;
     }
 
     private Long createAuditMessageLog(Ii identifier) throws PAException {
