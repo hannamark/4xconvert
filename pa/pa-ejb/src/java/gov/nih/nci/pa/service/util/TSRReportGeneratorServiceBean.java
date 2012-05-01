@@ -363,6 +363,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         setInterventions(studyProtocolDto);
         setParticipatingSites(studyProtocolDto, true);
         setPlannedMarkers(studyProtocolDto);
+        setSummary4Information(studyProtocolDto);
     }
 
     private void setNonProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,

@@ -260,6 +260,7 @@ public abstract class AbstractTsrReportGenerator {
         } else {
             addTrialIdentificationTable();
             addGeneralTrialDetailsTable();
+            addSummary4InformationTable();
             addDiseaseConditionTable();
             addInterventionsTable();
             addPlannedMarkers();
