@@ -3,6 +3,28 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
         <script type="text/javascript" src="${scriptPath}/pages/loginValidation.js"></script>
+        
+		<SCRIPT TYPE="text/javascript">
+		        function submitenter(myfield,e) {
+		            var keycode;
+		            if (window.event) {
+		            	keycode = window.event.keyCode;
+		            } else if (e) {
+		            	keycode = e.which;
+		            } else {
+		            	return true;
+		            }
+		            if (keycode == 13) {
+		                if (validate()) {
+	                           myfield.form.submit();
+	                           return false;
+		                }
+		            } else {
+		            	return true;
+		            }
+		        }
+		</SCRIPT>        
+
     </head>
     <body>
         <h1>Login</h1>
@@ -31,7 +53,7 @@
                             <label for="j_password">Password:</label>
                         </td>
                         <td class="value">
-                            <input name="j_password" maxlength="100" size="25" type="password" autocomplete="off"/>
+                            <input name="j_password" maxlength="100" size="25" type="password" autocomplete="off" onKeyPress="return submitenter(this,event)"/>
                         </td>
                     </tr>                
                         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
