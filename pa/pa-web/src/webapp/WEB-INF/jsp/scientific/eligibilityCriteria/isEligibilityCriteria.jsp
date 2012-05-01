@@ -279,7 +279,7 @@ BubbleTips.activateTipOn("dfn");
                   <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.operator"/></label></th>
                   <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.value"/></label></th>
                   <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.unit"/></label></th>
-                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriaDisplayOrder"/></label></th>
+                  
                   <th>Edit</th>
                   <th>Delete</th>
                   </tr>
@@ -310,13 +310,11 @@ BubbleTips.activateTipOn("dfn");
                        </s:elseif>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
-                       </td>
-                       <td class="tdBoxed">
-                          <s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
-                          <s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
-                          <s:textfield  id="eligibilityList_%{#stat.index}_displayOrder" name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
-                         </td>
+                        	<s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
+                        	<s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
+                        	<s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
+                        	<s:hidden  id="eligibilityList_%{#stat.index}_displayOrder" name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />                       
+                       </td>                       
                          <td>
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <s:url id="url" action="eligibilityCriteriaedit">

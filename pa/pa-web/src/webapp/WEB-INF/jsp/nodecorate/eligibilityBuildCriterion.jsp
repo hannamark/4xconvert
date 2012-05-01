@@ -140,7 +140,7 @@
                             <fmt:message key="isdesign.eligibilitycriteria.unit"/>
                      </label>
                    </td>
-                    <td class="value">
+                    <td>
                     <div id="loadUOMDetails">
                         <%@ include file="/WEB-INF/jsp/nodecorate/displayUOM.jsp"%>
                     </div> 
