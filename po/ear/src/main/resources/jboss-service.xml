@@ -29,6 +29,17 @@ PUBLIC "-//JBoss//DTD MBean Service 4.0//EN"
         </depends>
         <depends optional-attribute-name="SecurityManager">jboss.mq:service=POSecurityManager
         </depends>
+  
+        <!-- See PO-4586. Although redelivery limit is specified below, JBoss still attempts to redeliver
+        after the limit's been reached and therefore floods PA.
+        
+        DLQ is apparently also not supported: https://community.jboss.org/thread/49117.
+        At least I can't find a DLQ-related attribute in org.jboss.mq.server.jmx.Topic.
+        We will have to deal with this in PA's MDB instead.
+         -->
+        <attribute name="RedeliveryDelay">2000</attribute>  
+        <attribute name="RedeliveryLimit">5</attribute>   
+              
         <attribute name="SecurityConf">
             <security>
                 <!--
