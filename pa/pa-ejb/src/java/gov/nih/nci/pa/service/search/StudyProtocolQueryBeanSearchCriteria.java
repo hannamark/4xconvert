@@ -669,7 +669,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.REJECTED);
             } else if (!spo.isMyTrialsOnly() && spo.getUserId() != null) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format("%s (sowner.id = :%s or (sowner.id <> :%s and dws.statusCode != :%s))",
+                whereClause.append(String.format(
+                        "%s (sowner.id = :%s or ((sowner.id <> :%s or sowner.id is null) and dws.statusCode != :%s))",
                         operator, STUDY_OWNER_PARAM, STUDY_OWNER_PARAM, STUDY_OWNER_DWS_PARAM));
                 params.put(STUDY_OWNER_PARAM, spo.getUserId());
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.SUBMITTED);
