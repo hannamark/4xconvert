@@ -162,6 +162,11 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
             }
+            String countryCode = AccrualUtil.safeGet(values, PATIENT_COUNTRY_CODE_INDEX);
+            if (!getCountryService().isValidAlpha2(countryCode)) {
+                errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
+                    .append(appendLineNumber(lineNumber)).append('\n');
+            }
             validateGender(values, errMsg, lineNumber);
             validateEthnicity(values, errMsg, lineNumber);
             validateDateOfEntry(values, errMsg, lineNumber);

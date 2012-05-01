@@ -123,4 +123,12 @@ public class MockCountryBean implements CountryService {
     public Country getByCode(String code) throws PAException {
         return rList.get(0);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isValidAlpha2(String alpha2) {
+        return null;
+    }
 }

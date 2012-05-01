@@ -114,4 +114,11 @@ public interface CountryService {
      * @throws PAException on error
      */
     Country getByCode(String code) throws PAException;
+    
+    /**
+     * Returns true if alpha2 is blank or is a valid 2 character ISO country code.
+     * @param alpha2 the code to be tested
+     * @return result
+     */
+    Boolean isValidAlpha2(String alpha2);
 }

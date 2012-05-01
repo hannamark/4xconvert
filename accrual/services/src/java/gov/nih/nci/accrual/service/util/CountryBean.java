@@ -88,6 +88,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,6 +96,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -106,6 +108,9 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class CountryBean implements CountryService {
+
+    private static final List<String> COUNTRY_ALPHA_2 = Collections.synchronizedList(new ArrayList<String>());
+
 
     /**
      * {@inheritDoc}
@@ -148,5 +153,32 @@ public class CountryBean implements CountryService {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(Country.class);
         criteria.add(Restrictions.eq("alpha2", code));
         return (Country) criteria.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isValidAlpha2(String alpha2) {
+        if (StringUtils.isBlank(alpha2)) {
+            return true;
+        }
+        if (alpha2.length() != 2) {
+            return false;
+        }
+        if (!COUNTRY_ALPHA_2.contains(alpha2)) {
+            Country country;
+            try {
+                country = getByCode(alpha2);
+            } catch (PAException e) {
+                country = null;
+            }
+            if (country != null) {
+                COUNTRY_ALPHA_2.add(alpha2);
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 }

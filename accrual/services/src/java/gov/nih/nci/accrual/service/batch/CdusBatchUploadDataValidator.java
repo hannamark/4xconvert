@@ -124,8 +124,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import au.com.bytecode.opencsv.CSVParser;
-
 /**
  * @author Igor Merenko
  */
@@ -154,11 +152,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             //at http://sourceforge.net/tracker/?func=detail&atid=773541&aid=3217444&group_id=148905
             List<String[]> lines = new ArrayList<String[]>();
             LineIterator lineIterator = FileUtils.lineIterator(file);
-            CSVParser parser = new CSVParser();           
             long lineNumber = 0;
             String protocolId = null;
             while (lineIterator.hasNext()) {
-                String[] line = parser.parseLine(StringUtils.strip(lineIterator.nextLine()));
+                String[] line = AccrualUtil.csvParseAndTrim(lineIterator.nextLine());
                 lines.add(line);
                 ++lineNumber;
                 if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX])) {

@@ -137,6 +137,10 @@ public class BaseBatchUploadReader {
     }
     
     /**
+     * patient country code index.
+     */
+    protected static final int PATIENT_COUNTRY_CODE_INDEX = 3;
+    /**
      * patient birthday date index.
      */
     protected static final int PATIENT_BRITH_DATE_INDEX = 4;
@@ -152,7 +156,7 @@ public class BaseBatchUploadReader {
      * patient date of entry index.
      */
     protected static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
-    
+
     /**
      * patient gender.
      */

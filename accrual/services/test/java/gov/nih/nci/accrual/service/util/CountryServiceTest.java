@@ -79,8 +79,10 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.iso21090.Ii;
@@ -140,6 +142,16 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
     public void testGetByCode() throws Exception {
         assertNotNull(bean.getByCode("US"));
         assertNull(bean.getByCode("FO"));
+    }
+
+    @Test
+    public void testIsValidAlpha2() {
+        assertTrue(bean.isValidAlpha2(null));
+        assertTrue(bean.isValidAlpha2(" "));
+        assertFalse(bean.isValidAlpha2("USA"));
+        assertTrue(bean.isValidAlpha2("US"));
+        assertFalse(bean.isValidAlpha2("ZZ"));
+        assertTrue(bean.isValidAlpha2("US"));
     }
 
 }

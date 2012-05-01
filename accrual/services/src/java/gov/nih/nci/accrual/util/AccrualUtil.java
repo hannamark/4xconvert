@@ -89,9 +89,11 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -100,6 +102,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import au.com.bytecode.opencsv.CSVParser;
+
 /**
  *
  * @author Hugh Reinhart
@@ -107,6 +111,8 @@ import org.hibernate.criterion.Restrictions;
  */
 public class AccrualUtil {
     private static final int YR_MO_FORMAT_IDX = 5;
+    private static final CSVParser PARSER = new CSVParser();
+
 
     /**
      * Private class used to decode and normalize date strings.
@@ -269,5 +275,29 @@ public class AccrualUtil {
             return null;
         }
         return StringUtils.trim(list.get(index));
+    }
+
+    /**
+     * Parse a line of csv. Trim all the elements.
+     * @param line the line
+     * @return string array
+     */
+    public static String[] csvParseAndTrim(String line) {
+        String[] arr;
+        try {
+            arr = PARSER.parseLine(StringUtils.trim(line));
+        } catch (IOException e) {
+            arr = null;
+        }
+        if (arr == null) {
+            return null;
+        }
+        List<String> result = new ArrayList<String>();
+        for (String elem : arr) {
+            result.add(elem.trim());
+        }
+        String[] strResult = new String[result.size()];
+        result.toArray(strResult);  
+        return strResult;
     }
 }

@@ -177,4 +177,22 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertEquals("value2", AccrualUtil.safeGet(list, 1));
         assertNull(AccrualUtil.safeGet(list, 2));
     }
+
+    @Test
+    public void csvParseAndTrimTest() {
+        String[] arr = AccrualUtil.csvParseAndTrim("\"12 \",,A,null,\"xyz\"     ");
+        assertEquals("12", arr[0]);
+        assertEquals("", arr[1]);
+        assertEquals("A", arr[2]);
+        assertEquals("null", arr[3]);
+        assertEquals("xyz", arr[4]);
+        assertEquals(5, arr.length);
+        
+        String[] arr2 = AccrualUtil.csvParseAndTrim(null);
+        assertNull(arr2);
+        
+        String[] arr3 = AccrualUtil.csvParseAndTrim("");
+        assertEquals("", arr3[0]);
+        assertEquals(1, arr3.length);
+    }
 }
