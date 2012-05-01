@@ -155,7 +155,7 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
         try {
             spqDto = getStudyProtocolQueryDTO(ii);
         } catch (PAException e1) {
-            xmlFile = new ByteArrayInputStream(convertToXML("No match found based on the NCI that was provided.",
+            xmlFile = new ByteArrayInputStream(convertToXML("No match found based on the NCI ID that was provided.",
                     null).getBytes());
             return "downloadXMLFile";
         }

@@ -149,7 +149,7 @@ public class CTGovXMLActionTest extends AbstractRegWebTest {
 
         String xml = readerToString(new BufferedReader(new InputStreamReader(action.getXmlFile())));
 
-        assertTrue(xml.contains("No match found based on the NCI that was provided."));
+        assertTrue(xml.contains("No match found based on the NCI ID that was provided."));
     }
 
     @Test
