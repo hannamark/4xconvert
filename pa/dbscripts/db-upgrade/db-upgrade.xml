@@ -919,4 +919,8 @@
         <comment>Adding a start date for on-hold notifications.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4924.sql"/>
      </changeSet>
+     <changeSet id="PO-5015" author="krylovd">
+        <comment>Properly retrieve last amender user in rv_search_results view.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5015.sql"/>
+     </changeSet>     
 </databaseChangeLog>

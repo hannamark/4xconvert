@@ -485,7 +485,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setStudyProtocolId(((BigInteger) row[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue());
         dto.setDcpId((String) row[DCP_ID_IDX]);
         dto.setCtepId((String) row[CTEP_ID_IDX]);
-        dto.setAmendmentDate((Date) row[AMENDMENT_DATE]); 
+        final Date amendmentDate = (Date) row[AMENDMENT_DATE];
+        dto.setAmendmentDate(amendmentDate); 
         dto.setUpdatedDate((Date) row[DATE_LAST_UPDATED]);
         
         dto.setPhaseName((String) row[PHASE_CODE]);
@@ -503,11 +504,13 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setResponsiblePartyName(responsibleParty);
         dto.setPrimaryCompletionDate((Date) row[PRIMARY_COMPLETION_DATE_IDX]);
         
-        User updatedUser = new User();
-        updatedUser.setFirstName((String) row[USER_LAST_UPDATED_FIRST_IDX]);
-        updatedUser.setLastName((String) row[USER_LAST_UPDATED_LAST_IDX]);
-        updatedUser.setLoginName((String) row[USER_LAST_UPDATED_LOGIN_IDX]);
-        dto.setLastUpdatedUserDisplayName(CsmUserUtil.getDisplayUsername(updatedUser));
+        if (amendmentDate != null) {
+            User updatedUser = new User();
+            updatedUser.setFirstName((String) row[USER_LAST_UPDATED_FIRST_IDX]);
+            updatedUser.setLastName((String) row[USER_LAST_UPDATED_LAST_IDX]);
+            updatedUser.setLoginName((String) row[USER_LAST_UPDATED_LOGIN_IDX]);
+            dto.setLastUpdatedUserDisplayName(CsmUserUtil.getDisplayUsername(updatedUser));
+        }
     }
 
     private void loadSubmissionType(StudyProtocolQueryDTO dto, Object[] row) {
