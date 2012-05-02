@@ -28,7 +28,15 @@ def sql = """SELECT
                 CASE WHEN NULLIF(int_ru_updater.first_name, '') is not null THEN int_ru_updater.first_name || ' ' || int_ru_updater.last_name
                      WHEN NULLIF(split_part(int_csm_updater.login_name, 'CN=', 2), '') is null THEN int_csm_updater.login_name
                      ELSE split_part(int_csm_updater.login_name, 'CN=', 2)
-                END as int_updater
+                END as int_updater,
+                arm_ru_creator.first_name as arm_creator_first,
+                arm_ru_creator.last_name as arm_creator_last,
+                arm_ru_updater.first_name as arm_updater_first,
+                arm_ru_updater.last_name as arm_updater_last,
+                int_ru_creator.first_name as int_creator_first,
+                int_ru_creator.last_name as int_creator_last,
+                int_ru_updater.first_name as int_updater_first,
+                int_ru_updater.last_name as int_updater_last
                 FROM ARM
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = arm.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'   
@@ -73,6 +81,14 @@ sourceConnection.eachRow(sql) { row ->
 	 	   	   USER_NAME_UPDATED_ARM: row.arm_updater,
 		       USER_NAME_CREATED_INTERVENTION: row.int_creator,
 			   USER_NAME_UPDATED_INTERVENTION: row.int_updater,
+            FIRST_NAME_CREATED_ARM: row.arm_creator_first,
+            LAST_NAME_CREATED_ARM: row.arm_creator_last,
+            FIRST_NAME_UPDATED_ARM: row.arm_updater_first,
+            LAST_NAME_UPDATED_ARM: row.arm_updater_last,
+            FIRST_NAME_CREATED_INTERVENTION: row.int_creator_first,
+            LAST_NAME_CREATED_INTERVENTION: row.int_creator_last,
+            FIRST_NAME_UPDATED_INTERVENTION: row.int_updater_first,
+            LAST_NAME_UPDATED_INTERVENTION: row.int_updater_last,
 			   INTERVENTION_OTHER_NAME: row.altname
     		)
             }

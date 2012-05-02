@@ -63,6 +63,10 @@ CREATE INDEX DW_STUDY_MILESTONE_NAME_IDX on dw_study_milestone(name);
 CREATE INDEX DW_STUDY_MILESTONE_NCI_ID_IDX on dw_study_milestone(nci_id);
 CREATE INDEX DW_STUDY_MILESTONE_USER_CREATED_IDX on dw_study_milestone(user_name_created);
 CREATE INDEX DW_STUDY_MILESTONE_USER_UPDATED_IDX on dw_study_milestone(user_name_last_updated);
+CREATE INDEX DW_STUDY_MILESTONE_FNAME_CREATED_IDX on dw_study_milestone(first_name_created);
+CREATE INDEX DW_STUDY_MILESTONE_LNAME_CREATED_IDX on dw_study_milestone(last_name_created);
+CREATE INDEX DW_STUDY_MILESTONE_FNAME_UPDATED_IDX on dw_study_milestone(first_name_last_updated);
+CREATE INDEX DW_STUDY_MILESTONE_LNAME_UPDATED_IDX on dw_study_milestone(last_name_last_updated);
 
 CREATE INDEX DW_STUDY_ON_HOLD_REASON_DESC_IDX on dw_study_on_hold_status(reason_description);
 CREATE INDEX DW_STUDY_ON_HOLD_REASON_IDX on dw_study_on_hold_status(reason);
@@ -74,6 +78,10 @@ CREATE INDEX DW_STUDY_ON_HOLD_REASON_ID_IDX on dw_study_on_hold_status(internal_
 CREATE INDEX DW_STUDY_ON_HOLD_REASON_NCI_ID_IDX on dw_study_on_hold_status(nci_id);
 CREATE INDEX DW_STUDY_ON_HOLD_REASON_NAME_CREATED_IDX on dw_study_on_hold_status(user_name_created);
 CREATE INDEX DW_STUDY_ON_HOLD_REASON_NAME_UPDATED_IDX on dw_study_on_hold_status(user_name_last_updated);
+CREATE INDEX DW_STUDY_ON_HOLD_REASON_FNAME_CREATED_IDX on dw_study_on_hold_status(first_name_created);
+CREATE INDEX DW_STUDY_ON_HOLD_REASON_LNAME_CREATED_IDX on dw_study_on_hold_status(last_name_created);
+CREATE INDEX DW_STUDY_ON_HOLD_REASON_FNAME_UPDATED_IDX on dw_study_on_hold_status(first_name_last_updated);
+CREATE INDEX DW_STUDY_ON_HOLD_REASON_LNAME_UPDATED_IDX on dw_study_on_hold_status(last_name_last_updated);
 
 CREATE INDEX DW_STUDY_OTHER_IDENTIFIER_IDX on dw_study_other_identifier(name);
 CREATE INDEX DW_STUDY_OTHER_NCI_ID_IDX on dw_study_other_identifier(nci_id);
@@ -113,6 +121,10 @@ CREATE INDEX DW_STUDY_PROCESSING_STATUS_NCI_ID_IDX on dw_study_PROCESSING_STATUS
 CREATE INDEX DW_STUDY_PROCESSING_STATUS_STATUS_IDX on dw_study_PROCESSING_STATUS(status);
 CREATE INDEX DW_STUDY_PROCESSING_STATUS_USER_CREATED_IDX on dw_study_PROCESSING_STATUS(user_name_created);
 CREATE INDEX DW_STUDY_PROCESSING_STATUS_USER_UPDATED_IDX on dw_study_PROCESSING_STATUS(user_name_last_updated);
+CREATE INDEX DW_STUDY_PROCESSING_REASON_FNAME_CREATED_IDX on dw_study_PROCESSING_STATUS(first_name_created);
+CREATE INDEX DW_STUDY_PROCESSING_REASON_LNAME_CREATED_IDX on dw_study_PROCESSING_STATUS(last_name_created);
+CREATE INDEX DW_STUDY_PROCESSING_REASON_FNAME_UPDATED_IDX on dw_study_PROCESSING_STATUS(first_name_last_updated);
+CREATE INDEX DW_STUDY_PROCESSING_REASON_LNAME_UPDATED_IDX on dw_study_PROCESSING_STATUS(last_name_last_updated);
 
 CREATE INDEX DW_STUDY_RECORD_OWNER_CITY_IDX on dw_study_record_owner(address_city);
 CREATE INDEX DW_STUDY_RECORD_OWNER_LINE1_IDX on dw_study_record_owner(address_line);

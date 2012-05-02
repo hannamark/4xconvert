@@ -14,7 +14,11 @@ def sql = """SELECT
                 CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
                      WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
                      ELSE split_part(updater.login_name, 'CN=', 2)
-                END as updater      
+                END as updater,
+                ru_creator.first_name as creator_first,
+                ru_creator.last_name as creator_last,
+                ru_updater.first_name as updater_first,
+                ru_updater.last_name as updater_last
                 FROM STUDY_MILESTONE sm
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sm.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'
@@ -42,7 +46,11 @@ sourceConnection.eachRow(sql) { row ->
             internal_system_id: row.identifier,
             nci_id: row.extension, 
             user_name_created: row.creator,
-            user_name_last_updated: row.updater)
+            user_name_last_updated: row.updater,
+            first_name_created: row.creator_first,
+            last_name_created: row.creator_last,
+            first_name_last_updated: row.updater_first,
+            last_name_last_updated: row.updater_last)
             }
             
             

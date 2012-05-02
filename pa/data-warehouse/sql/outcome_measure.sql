@@ -9,6 +9,10 @@ CREATE TABLE STG_DW_STUDY_OUTCOME_MEASURE (
 	date_created timestamp,
 	date_updated timestamp,
 	username_created character varying (256),
-	username_updated character varying (256)
+	username_updated character varying (256),
+    FIRST_NAME_CREATED character varying(500),
+    LAST_NAME_CREATED character varying(500),
+    FIRST_NAME_LAST_UPDATED character varying(500),
+    LAST_NAME_LAST_UPDATED character varying(500)
     );
 

@@ -16,6 +16,10 @@ def sql = """select
                      WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
                      ELSE split_part(updater.login_name, 'CN=', 2)
                 END as updater,   
+                ru_creator.first_name as creator_first,
+                ru_creator.last_name as creator_last,
+                ru_updater.first_name as updater_first,
+                ru_updater.last_name as updater_last,
 			 nci_id.extension 
 			 from study_outcome_measure out
 			 inner join study_protocol sp on sp.identifier = out.study_protocol_identifier and sp.status_code = 'ACTIVE'
@@ -44,5 +48,9 @@ sourceConnection.eachRow(sql) { row ->
 		date_updated: row.date_last_updated,
 		username_created: row.creator,
 		username_updated: row.updater,
+            first_name_created: row.creator_first,
+            last_name_created: row.creator_last,
+            first_name_last_updated: row.updater_first,
+            last_name_last_updated: row.updater_last,
     	nci_id: row.extension)
 }

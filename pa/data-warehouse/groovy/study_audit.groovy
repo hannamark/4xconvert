@@ -421,3 +421,11 @@ sourceConnection.eachRow(disSql) { row ->
             )
     }
 
+
+def usql = """
+    UPDATE STG_DW_STUDY_AUDIT a
+    SET last_name = (SELECT last_name FROM stg_dw_user b WHERE lower(a.username) = lower(b.login_name)),
+        first_name = (SELECT first_name FROM stg_dw_user b WHERE lower(a.username) = lower(b.login_name))
+    """
+destinationConnection.executeUpdate(usql)
+

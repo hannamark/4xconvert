@@ -9,6 +9,10 @@ CREATE TABLE STG_DW_STUDY_PROCESSING_STATUS (
     NCI_ID character varying(255),
     STATUS character varying(50),
     USER_NAME_CREATED character varying(500),
-    USER_NAME_LAST_UPDATED character varying(500)
+    USER_NAME_LAST_UPDATED character varying(500),
+    FIRST_NAME_CREATED character varying(500),
+    LAST_NAME_CREATED character varying(500),
+    FIRST_NAME_LAST_UPDATED character varying(500),
+    LAST_NAME_LAST_UPDATED character varying(500)
 );
 

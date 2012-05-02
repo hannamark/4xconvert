@@ -29,3 +29,19 @@ sourceConnection.eachRow(sql) { row ->
     	username: row.username
 	)
 }
+
+
+def usql = """
+    UPDATE stg_dw_person_audit a
+    SET last_name = (SELECT last_name FROM stg_dw_user b WHERE lower(a.username) = lower(b.login_name)),
+        first_name = (SELECT first_name FROM stg_dw_user b WHERE lower(a.username) = lower(b.login_name))
+    """
+destinationConnection.executeUpdate(usql)
+
+def pasql = """
+    UPDATE stg_dw_person_audit
+    SET last_name = 'PA', first_name = 'PA'
+    WHERE lower(username) = 'ejbclient'
+    """
+destinationConnection.executeUpdate(pasql)
+

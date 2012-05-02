@@ -5,6 +5,8 @@ CREATE TABLE STG_DW_PERSON_AUDIT (
 	NAME character varying (255),
 	PO_ID integer,
 	DATE timestamp,
-	USERNAME character varying (255)
+	USERNAME character varying (255),
+	FIRST_NAME character varying(255),
+	LAST_NAME character varying(255)
 	)
 	;
