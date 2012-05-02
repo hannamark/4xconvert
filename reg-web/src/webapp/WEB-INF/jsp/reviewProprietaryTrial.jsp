@@ -51,9 +51,18 @@
                     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                     <s:hidden name="pageFrom" id="pageFrom"/>
                     <c:if test="${requestScope.protocolId != null}">
-                        <div class="confirm_msg">
-                            <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
-                        </div>
+                        <c:choose>
+                            <c:when test="${requestScope.partialSubmission == 'submit'}">
+                                <div class="confirm_msg">
+                                    <strong>The trial draft has been successfully saved and assigned the Identifier ${requestScope.protocolId}</strong>
+                                </div>                            
+                            </c:when>
+                            <c:otherwise>
+		                        <div class="confirm_msg">
+		                            <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.protocolId}</strong>
+		                        </div>                            
+                            </c:otherwise>
+                        </c:choose>
                     </c:if>
                     <div id="contentprint">
                         <table class="form">
