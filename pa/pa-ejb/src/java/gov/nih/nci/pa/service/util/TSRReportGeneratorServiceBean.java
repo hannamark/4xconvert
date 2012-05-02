@@ -710,7 +710,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return retVal.toString();
     }
 
-    private void setIndIdes(StudyProtocolDTO studyProtocolDto) throws PAException {
+    private void setIndIdes(StudyProtocolDTO studyProtocolDto) throws PAException { //NOPMD
         List<TSRReportIndIde> indIdes = new ArrayList<TSRReportIndIde>();
 
         List<StudyIndldeDTO> indides = studyIndldeService.getByStudyProtocol(studyProtocolDto.getIdentifier());
@@ -720,10 +720,10 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             indIde.setGrantor(getValue(indDto.getGrantorCode()));
             indIde.setNumber(getValue(indDto.getIndldeNumber()));
             indIde.setHolderType(getValue(indDto.getHolderTypeCode()));
-            if (indDto.getHolderTypeCode() != null
+            if (indDto.getHolderTypeCode() != null  && indDto.getHolderTypeCode().getCode() != null
                     && indDto.getHolderTypeCode().getCode().equals(HolderTypeCode.NIH.getCode())) {
                 indIde.setHolder(getValue(indDto.getNihInstHolderCode()));
-            } else if (indDto.getHolderTypeCode() != null
+            } else if (indDto.getHolderTypeCode() != null && indDto.getHolderTypeCode().getCode() != null
                     && indDto.getHolderTypeCode().getCode().equals(HolderTypeCode.NCI.getCode())) {
                 indIde.setHolder(getValue(indDto.getNciDivProgHolderCode()));
             }
