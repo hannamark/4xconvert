@@ -353,11 +353,15 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         trialHelper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
-            if (rssUserId == null) {
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
-                        "Unable to find ctep-rss user and assign as owner");
-            } else if (trialHelper.shouldRssOwnTrial(studyProtocolIi)) {
-                regUserSvc.assignOwnership(rssUserId, Long.valueOf(studyProtocolIi.getExtension()));
+            if (trialHelper.shouldRssOwnTrial(studyProtocolIi)) {
+                if (rssUserId == null) {
+                    ServletActionContext.getRequest().setAttribute(
+                            Constants.FAILURE_MESSAGE,
+                            "Unable to find ctep-rss user and assign as owner");
+                } else {
+                    regUserSvc.assignOwnership(rssUserId,
+                            Long.valueOf(studyProtocolIi.getExtension()));
+                }
             }
         }
         // put an entry in the session and store StudyProtocolQueryDTO
