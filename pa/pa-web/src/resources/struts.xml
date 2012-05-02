@@ -141,6 +141,10 @@
             <result name="disclaimerAction">disClaimerAction.action</result>
             <result name="duplicateTrialErrorAction">duplicateTrialErrorAction.action</result>
         </global-results>
+        <action name="contact">
+            <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
+            <result>/WEB-INF/jsp/paContact.jsp</result>
+        </action>        
         <action name="disClaimerAction*" class="gov.nih.nci.pa.action.DisclaimerAction" method="{1}">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
