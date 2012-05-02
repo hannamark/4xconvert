@@ -32,6 +32,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -372,21 +373,35 @@ implements StudyOnholdServiceLocal {
                 .getPropertyValue("trial.onhold.deadline"));
         int reminderFreq = Integer.parseInt(lookUpTableServiceRemote
                 .getPropertyValue("trial.onhold.reminder.frequency"));
+        Date startDate = null;
+        try {
+            startDate = DateUtils.parseDate(lookUpTableServiceRemote
+                    .getPropertyValue("trial.onhold.startdate"),
+                    new String[] {PAUtil.DATE_FORMAT });
+        } catch (ParseException e) {
+            throw new PAException(
+                    "Invalid trial.onhold.startdate configuration property.", e);
+        }
         // protection from invalid configuration
         if (deadlineDays <= 0 || reminderFreq <= 0) {
             throw new IllegalArgumentException(
                     "Invalid configuration: trial.onhold.deadline & trial.onhold.reminder.frequency properties");
         }
+        
         Date holdDate = recentHold.getOnholdDate();
-        Date deadline = DateUtils.addDays(holdDate, deadlineDays);
-        Date today = getTodaysDate();
-        if (today.after(deadline)) {
-            terminateSubmission(studyProtocol, recentHold);
-        } else if (isReminderDue(holdDate, reminderFreq)) {
-            List<String> emails = mailManagerSerivceLocal.sendOnHoldReminder(studyProtocol.getId(),
-                    recentHold, deadline);
-            updateOnHoldRecordWithReminder(emails, recentHold, today);
-        }
+        if (DateUtils.isSameDay(holdDate, startDate)
+                || holdDate.after(startDate)) {
+            Date deadline = DateUtils.addDays(holdDate, deadlineDays);
+            Date today = getTodaysDate();
+            if (today.after(deadline)) {
+                terminateSubmission(studyProtocol, recentHold);
+            } else if (isReminderDue(holdDate, reminderFreq)) {
+                List<String> emails = mailManagerSerivceLocal
+                        .sendOnHoldReminder(studyProtocol.getId(), recentHold,
+                                deadline);
+                updateOnHoldRecordWithReminder(emails, recentHold, today);
+            }
+        } 
     }
 
     private void updateOnHoldRecordWithReminder(List<String> emails,
