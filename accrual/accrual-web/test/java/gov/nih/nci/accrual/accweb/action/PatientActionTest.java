@@ -96,10 +96,12 @@ import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -340,5 +342,17 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertEquals(Long.valueOf(1), action.getPatient().getIcd9DiseaseIdentifier());
         assertEquals("preferredName", action.getPatient().getIcd9DiseasePreferredName());
     } 
+
+    @Test
+    public void testCreateWithEmptydata() throws Exception {
+        action.setPatient(patient);
+        assertEquals("detail", action.add());
+        assertTrue(action.hasActionErrors());
+        assertEquals(8, action.getActionErrors().size());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Study Subject ID is required., "
+        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
+        		+ "Country is required., Disease is required., Participating site is required."));
+    }
     
 }

@@ -98,6 +98,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 
+import java.util.HashSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -189,6 +191,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public void addActionErrorIfEmpty(Object value, String errorMsg) {
         if (value instanceof String && StringUtils.isEmpty((String) value)) {
+            addActionError(errorMsg);
+        } else if (value instanceof HashSet && ((HashSet) value).isEmpty()) {
             addActionError(errorMsg);
         } else if (value == null) {
             addActionError(errorMsg);

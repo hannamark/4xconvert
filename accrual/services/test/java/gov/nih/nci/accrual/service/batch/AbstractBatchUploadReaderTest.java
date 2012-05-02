@@ -210,7 +210,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
                 StudyProtocolDTO dto = new StudyProtocolDTO();
-                if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")) {
+                if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")
+                		|| StringUtils.equals(ii.getExtension(), "S0512")) {
                     dto.setIdentifier(abbreviatedIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00002")) {
@@ -316,7 +317,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 sr.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
                 if (StringUtils.equals(preventionIi.getExtension(), ii.getExtension())) {
-                    sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+                    //sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
                 }
                 return sr;
             }

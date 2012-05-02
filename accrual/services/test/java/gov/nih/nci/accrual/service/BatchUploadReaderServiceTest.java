@@ -103,9 +103,13 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -120,6 +124,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author vrushali
@@ -184,6 +190,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         mailService = mock(MailManagerServiceRemote.class);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         
+
+        setStudyResourcingSvc();
+        
         file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
         batchFile = getBatchFile(file);
         results = readerService.validateBatchData(batchFile);
@@ -238,8 +247,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
     @Test
     public void testIsVaildProtocolId() throws PAException, TooManyResultsException, URISyntaxException {
-        StudyProtocolServiceRemote mockSpService = mock(StudyProtocolServiceRemote.class);
-        when(paSvcLocator.getStudyProtocolService()).thenReturn(mockSpService);
+        //StudyProtocolServiceRemote mockSpService = mock(StudyProtocolServiceRemote.class);
+        //when(paSvcLocator.getStudyProtocolService()).thenReturn(mockSpService);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
@@ -369,6 +378,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     
     @Test
     public void accrualCountBatchFileImport() throws Exception {
+    	
+    	setStudyResourcingSvc();
+        
         File file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
@@ -462,6 +474,42 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertTrue(results.get(0).isPassedValidation());
     }
+
+    @Test
+    public void testIndustrialTrialWithpatients() throws Exception {
+        assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
+        setStudyResourcingSvc();
+        File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        String errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "Individual Patients should not be added to Industrial Trials for patient ID 207747 at line 2"));
+        assertTrue(StringUtils.contains(errorMsg, "Individual Patients should not be added to Industrial Trials for patient ID 223694 at line 3"));
+        assertTrue(StringUtils.contains(errorMsg, "Individual Patients should not be added to Industrial Trials for patient ID 210081 at line 73"));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+    }
+
+	private void setStudyResourcingSvc() throws PAException {
+		StudyResourcingServiceRemote sResourcingSvc = mock(StudyResourcingServiceRemote.class);
+        when(sResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenAnswer(new Answer<StudyResourcingDTO>() {
+            public StudyResourcingDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                StudyResourcingDTO sr = new StudyResourcingDTO();
+                sr.setStudyProtocolIdentifier(ii);
+                sr.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
+                if (StringUtils.equals(preventionIi.getExtension(), ii.getExtension())) {
+                    sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+                }
+                return sr;
+            }
+        });
+        when(paSvcLocator.getStudyResourcingService()).thenReturn(sResourcingSvc);
+	}
     
     private BatchFile getBatchFile(File file) {
         BatchFile bf = new BatchFile();

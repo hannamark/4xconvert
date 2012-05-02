@@ -101,6 +101,7 @@ import org.apache.commons.validator.routines.DateValidator;
 /**
  * @author Igor Merenko
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {  
 
     /**
@@ -152,25 +153,43 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
             StudyProtocolDTO sp) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
-            List<String> patientsIdList = new ArrayList<String>();
-            isPatientIdUnique(getPatientId(values), errMsg, lineNumber, patientsIdList);
-            String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);
-            if (StringUtils.isEmpty(pBirthDate)) {
-                errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
+            boolean trialType = true;
+            try {
+            
+                
+                StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
+                    .getSummary4ReportedResourcing(sp.getIdentifier());
+                if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode())
+                        .equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
+                    trialType = false;
+                }
+            } catch (PAException e) {
+                errMsg.append("Unable to determine study type for study with identifier " + sp.getIdentifier() + " \n");
+            }
+            if (trialType) {
+                List<String> patientsIdList = new ArrayList<String>();
+                isPatientIdUnique(getPatientId(values), errMsg, lineNumber, patientsIdList);
+                String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);
+                if (StringUtils.isEmpty(pBirthDate)) {
+                    errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
                     .append(appendLineNumber(lineNumber)).append('\n');
-            } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
-                errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
+                } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
+                    errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
+                }
+                String countryCode = AccrualUtil.safeGet(values, PATIENT_COUNTRY_CODE_INDEX);
+                if (!getCountryService().isValidAlpha2(countryCode)) {
+                    errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
+                        .append(appendLineNumber(lineNumber)).append('\n');
+                }
+                validateGender(values, errMsg, lineNumber);
+                validateEthnicity(values, errMsg, lineNumber);
+                validateDateOfEntry(values, errMsg, lineNumber);
+                validateDiseaseCode(values, errMsg, lineNumber, sp);
+            } else {
+                errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
             }
-            String countryCode = AccrualUtil.safeGet(values, PATIENT_COUNTRY_CODE_INDEX);
-            if (!getCountryService().isValidAlpha2(countryCode)) {
-                errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
-                    .append(appendLineNumber(lineNumber)).append('\n');
-            }
-            validateGender(values, errMsg, lineNumber);
-            validateEthnicity(values, errMsg, lineNumber);
-            validateDateOfEntry(values, errMsg, lineNumber);
-            validateDiseaseCode(values, errMsg, lineNumber, sp);
         }
     }
 
