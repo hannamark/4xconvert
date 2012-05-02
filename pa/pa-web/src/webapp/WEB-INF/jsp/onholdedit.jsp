@@ -78,13 +78,15 @@
                         <s:textfield name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
                         <pa:fieldError fieldName="onhold.dateLow"/>
                     </pa:valueRow>
-                    <pa:valueRow labelKey="onhold.date.high">
-                        <s:textfield name="onhold.dateHigh" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                        <a href="javascript:showCal('Cal2')">
-                            <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                        </a>
-                        <pa:fieldError fieldName="onhold.dateHigh"/>
-                    </pa:valueRow>
+                    <s:if test="%{currentAction != 'create'}">
+	                    <pa:valueRow labelKey="onhold.date.high">
+	                        <s:textfield name="onhold.dateHigh" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+	                        <a href="javascript:showCal('Cal2')">
+	                            <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+	                        </a>
+	                        <pa:fieldError fieldName="onhold.dateHigh"/>
+	                    </pa:valueRow>
+                    </s:if>
                     <s:if test="%{onhold.processingLog!=null && onhold.processingLog!=''}">
 	                    <pa:valueRow labelKey="onhold.processingLog">
 	                        <s:textarea name="onhold.processingLog" rows="5" cssStyle="width:500px;float:left;" 
