@@ -910,5 +910,9 @@
       <changeSet id="PO-4857" author="guptag">
         <comment>Changed email content to caDSR team.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-4857.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-5008" author="krylovd">
+        <comment>Fixing rv_trial_id_nct view to avoid duplicate records.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5008.sql"/>
+     </changeSet>          
 </databaseChangeLog>
