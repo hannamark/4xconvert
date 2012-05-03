@@ -28,3 +28,14 @@ sourceConnectionPa.eachRow(sql) { row ->
 		LAST_NAME: row.last_name
 	)
 }
+
+
+def removeDupsSql = """
+    delete from stg_dw_user aa
+    where csm_user_id not in
+    ( select max(csm_user_id)
+      from stg_dw_user bb
+      where lower(aa.login_name) = lower(bb.login_name)
+    )    
+    """
+destinationConnection.executeUpdate(removeDupsSql)
