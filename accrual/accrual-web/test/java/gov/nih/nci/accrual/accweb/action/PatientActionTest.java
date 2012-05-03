@@ -371,7 +371,16 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
         		"Study Subject ID is required., "
         		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
-        		+ "Country is required., Participating site is required."));        
+        		+ "Country is required., Participating site is required.")); 
+        patient.setStudyProtocolId(2L);
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        assertTrue(action.hasActionErrors());
+        assertEquals(7, action.getActionErrors().size());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Study Subject ID is required., "
+        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
+        		+ "Country is required., Participating site is required."));
     }
     
 }
