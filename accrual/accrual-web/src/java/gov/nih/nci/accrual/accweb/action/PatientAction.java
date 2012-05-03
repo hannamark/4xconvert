@@ -253,13 +253,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String add() throws PAException {
-        boolean checkDisease = true;
-        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
-               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
-        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
-                .equals(PrimaryPurposeCode.PREVENTION)) {
-            checkDisease = false;
-        }
+        boolean checkDisease = checkDiseaseIsNeeded();
         helper.validate(checkDisease);
         getListOfStudySites();
         if (hasActionErrors()) {
@@ -290,13 +284,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String edit() throws PAException {
-        boolean checkDisease = true;
-        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
-               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
-        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
-                .equals(PrimaryPurposeCode.PREVENTION)) {
-            checkDisease = false;
-        }
+        boolean checkDisease = checkDiseaseIsNeeded();
         helper.validate(checkDisease);
         getListOfStudySites();
         if (hasActionErrors()) {
@@ -317,6 +305,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         ssub = getStudySubjectSvc().update(ssub);
         setRegistrationDate(psm);
         return super.edit();
+    }
+
+    private boolean checkDiseaseIsNeeded() throws PAException {
+        boolean checkDisease = true;
+        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
+               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
+        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
+                .equals(PrimaryPurposeCode.PREVENTION)) {
+            checkDisease = false;
+        }
+        return checkDisease;
     }
 
     private void getOrganizationIdentifier() {
