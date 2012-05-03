@@ -116,6 +116,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -794,6 +795,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             spDTO.setSecondaryIdentifiers(new DSet<Ii>());
             spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
             spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+            spDTO.setStatusCode(CdConverter.convertToCd(EntityStatusCode.ACTIVE));
             spList = search(spDTO, limit);
         } catch (TooManyResultsException e) {
             throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
