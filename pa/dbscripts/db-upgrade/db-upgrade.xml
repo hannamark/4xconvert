@@ -922,5 +922,9 @@
      <changeSet id="PO-5015" author="krylovd">
         <comment>Properly retrieve last amender user in rv_search_results view.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5015.sql"/>
-     </changeSet>     
+     </changeSet> 
+     <changeSet id="PO-5006" author="guthikondak">
+        <comment>Updating ICD9_Disease records.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5006.sql"/>
+     </changeSet>
 </databaseChangeLog>

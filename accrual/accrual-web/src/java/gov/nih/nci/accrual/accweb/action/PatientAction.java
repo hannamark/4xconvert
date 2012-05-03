@@ -92,9 +92,11 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -251,7 +253,14 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String add() throws PAException {
-        helper.validate();
+        boolean checkDisease = true;
+        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
+               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
+        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
+                .equals(PrimaryPurposeCode.PREVENTION)) {
+            checkDisease = false;
+        }
+        helper.validate(checkDisease);
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.create();
@@ -281,7 +290,14 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String edit() throws PAException {
-        helper.validate();
+        boolean checkDisease = true;
+        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
+               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
+        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
+                .equals(PrimaryPurposeCode.PREVENTION)) {
+            checkDisease = false;
+        }
+        helper.validate(checkDisease);
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.update();

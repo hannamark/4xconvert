@@ -204,6 +204,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
+    	patient.setStudyProtocolId(1L);
+    	action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
@@ -217,6 +219,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySiteId(Long.valueOf("01"));
         patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");
+        patient.setStudyProtocolId(1L);
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -247,6 +250,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Test
     public void addExceptionTest() throws Exception {
         assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        patient.setStudyProtocolId(1L);
         patient.setBirthDate("7/16/2009");
         patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
         patient.setGenderCode(PatientGenderCode.MALE.getCode());
@@ -312,6 +316,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("1/1/2011");
         patient.setBirthDate("2/1/2011");
+        patient.setStudyProtocolId(1L);
         action.setPatient(patient);
         assertEquals("detail", action.add());
         assertTrue(action.hasActionErrors());
@@ -345,14 +350,24 @@ public class PatientActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void testCreateWithEmptydata() throws Exception {
+    	patient.setStudyProtocolId(1L);
         action.setPatient(patient);
-        assertEquals("detail", action.add());
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
         assertTrue(action.hasActionErrors());
         assertEquals(8, action.getActionErrors().size());
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
         		"Study Subject ID is required., "
         		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
         		+ "Country is required., Disease is required., Participating site is required."));
+        patient.setStudyProtocolId(2L);
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertTrue(action.hasActionErrors());
+        assertEquals(7, action.getActionErrors().size());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Study Subject ID is required., "
+        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
+        		+ "Country is required., Participating site is required."));        
     }
     
 }

@@ -123,9 +123,10 @@ public class PatientHelper {
     
     /**
      * Validate patient action.
+     * @param checkDisease check disease
      */
-    public void validate() {
-        PatientWebDto.validate(action.getPatient(), action);
+    public void validate(boolean checkDisease) {
+        PatientWebDto.validate(action.getPatient(), action, checkDisease);
         if (!action.hasActionErrors()) {
             validateNoPatientDuplicates();
             validateUnitedStatesRules();

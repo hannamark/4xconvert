@@ -84,8 +84,11 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
@@ -122,6 +125,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final StudyResourcingServiceRemote studyResourcingSvc = mock(StudyResourcingServiceRemote.class);
     
     private static Map<Long, SDCDiseaseDTO> dtos;
+    private static Map<Long, StudyProtocolDTO> studyDtos;
 
     static {
         dtos = new HashMap<Long, SDCDiseaseDTO>();
@@ -137,6 +141,16 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
         disease.setDisplayName(StConverter.convertToSt("menu 02"));
         disease.setPreferredName(StConverter.convertToSt("perferredName 02"));
         dtos.put(2L, disease);
+        
+        studyDtos = new HashMap<Long, StudyProtocolDTO>();
+        StudyProtocolDTO dto = new StudyProtocolDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.TREATMENT.getCode()));
+        studyDtos.put(1L, dto);
+        dto = new StudyProtocolDTO();
+        dto.setIdentifier(IiConverter.convertToIi(2L));
+        dto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.PREVENTION.getCode()));
+        studyDtos.put(2L, dto);
     }
     
     /**
@@ -157,7 +171,14 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
         ru.setId(1L);
         when(registryUserService.getUser(any(String.class))).thenReturn(ru);
         when(icd9DiseaseSvc.get(any(Ii.class))).thenReturn(createICD9DiseaseDTO());
-        when(icd9DiseaseSvc.getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());       
+        when(icd9DiseaseSvc.getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());
+        when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+          public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+              Object args[] = invocation.getArguments();
+              Ii ii = (Ii) args[0];              
+              return studyDtos.get(IiConverter.convertToLong(ii));
+          }
+        });
     }
     
     /**

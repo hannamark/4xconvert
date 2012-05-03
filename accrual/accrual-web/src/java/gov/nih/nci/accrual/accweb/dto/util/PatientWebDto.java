@@ -153,8 +153,9 @@ public class PatientWebDto {
      * Perform basic validations.
      * @param dto dto
      * @param action action to add for errors
+     * @param checkDisease  check disease
      */
-    public static void validate(PatientWebDto dto, AbstractAccrualAction action) {
+    public static void validate(PatientWebDto dto, AbstractAccrualAction action, boolean checkDisease) {
         action.clearActionErrors();
         action.addActionErrorIfEmpty(dto, "Error inputing study subject data.");
         if (!action.hasActionErrors()) {
@@ -164,7 +165,9 @@ public class PatientWebDto {
             action.addActionErrorIfEmpty(dto.getRaceCode(), "Race is required.");
             action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
             action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
-            action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+            if (checkDisease) {
+                action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+            }
             action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating site is required.");
         }
         if (!action.hasActionErrors() && StringUtils.isNotEmpty(dto.getRegistrationDate())) {
