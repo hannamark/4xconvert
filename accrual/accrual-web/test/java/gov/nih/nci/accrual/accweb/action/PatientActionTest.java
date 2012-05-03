@@ -227,6 +227,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void editTest() throws Exception {
+    	patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.edit());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
@@ -249,6 +251,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void addExceptionTest() throws Exception {
+    	patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.edit());
         patient.setStudyProtocolId(1L);
         patient.setBirthDate("7/16/2009");
