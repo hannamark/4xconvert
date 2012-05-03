@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -194,6 +195,7 @@ public class ProprietaryTrialManagementBeanTest extends
     private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
+    private final ProtocolQueryServiceLocal protocolQueryServiceLocal = new MockProtocolQueryService();
 
     private Ii spIi;
     private RegistryUser studyOwner;
@@ -265,10 +267,12 @@ public class ProprietaryTrialManagementBeanTest extends
         bean.setStudyProtocolService(studyProtocolService);
         bean.setDocumentService(documentService);
         bean.setStudySiteService(studySiteService);
+        bean.setProtocolQueryServiceLocal(protocolQueryServiceLocal);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         bean.setDocWrkFlowStatusService(documentWrkService);
         bean.setUserServiceLocal(new MockRegistryUserServiceBean());
         bean.setPaServiceUtils(new MockPAServiceUtils());
+        bean.setStudyResourcingServiceLocal(studyResourcingService);
 
         CSMUserService.setInstance(new MockCSMUserService());
         bean.setCsmUserService(CSMUserService.getInstance());
@@ -289,6 +293,9 @@ public class ProprietaryTrialManagementBeanTest extends
 
         StudyInboxServiceBean studyInboxSvc = new StudyInboxServiceBean();
         studyInboxSvc.setDocWrkFlowStatusService(documentWrkService);
+        studyInboxSvc.setProtocolQueryServiceLocal(protocolQueryServiceLocal);
+        studyInboxSvc.setStudyResourcingServiceLocal(studyResourcingService);
+        studyInboxSvc.setStudySiteServiceLocal(studySiteService);
 
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);

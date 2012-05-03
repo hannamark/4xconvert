@@ -79,8 +79,11 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 import java.util.List;
 
@@ -97,9 +100,15 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
      * This method creates a record in the inbox. This method should be called during update workflow.
      * @param documentDTOs list of document Dtos
      * @param studyProtocolIi studyProtocol Identifier
+     * @param originalDTO original protocol before update
+     * @param originalSummary4 originalSummary4
+     * @param originalSites originalSites 
      * @throws PAException on any error
      */
-     void create(List<DocumentDTO> documentDTOs , Ii studyProtocolIi) throws PAException;
+    void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi,
+            StudyProtocolQueryDTO originalDTO,
+            StudyResourcingDTO originalSummary4,
+            List<StudySiteDTO> originalSites) throws PAException;
 
      /**
       * Returns a list of all open inbox entries for a study protocol.

@@ -78,19 +78,25 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -107,6 +113,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -129,6 +137,12 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     private DocumentWorkflowStatusServiceLocal docWrkFlowStatusService;
     @EJB
     private AbstractionCompletionServiceRemote abstractionCompletionService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryServiceLocal;
+    @EJB
+    private StudyResourcingServiceLocal studyResourcingServiceLocal;
+    @EJB
+    private StudySiteServiceLocal studySiteServiceLocal;
 
     /**
      * @param dto dto
@@ -147,19 +161,41 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      * during update workflow.
      * @param documentDTOs list of document Dtos
      * @param studyProtocolIi studyProtocol Identifier
+     * @param originalDTO StudyProtocolDTO
+     * @param originalSummary4 StudyResourcingDTO
+     * @param originalSites originalSites
      * @throws PAException on any error
      */
     @Override
-    public void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi) throws PAException {
+    public void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi,
+            StudyProtocolQueryDTO originalDTO,
+            StudyResourcingDTO originalSummary4,
+            List<StudySiteDTO> originalSites) throws PAException {
         StringBuilder comments = new StringBuilder();
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException(" Study Protocol Identifier cannot be null");
-        }
+        }       
         DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
         if (dws == null) {
             throw new PAException(" Document workflow status is null for StudyProtocol identifier "
                 + studyProtocolIi.getExtension());
         }
+        
+        StudyProtocolQueryDTO updatedDTO = protocolQueryServiceLocal
+                .getTrialSummaryByStudyProtocolId(IiConverter
+                        .convertToLong(studyProtocolIi));
+        StudyResourcingDTO updatedSummary4 = studyResourcingServiceLocal
+                .getSummary4ReportedResourcing(studyProtocolIi);
+        StudySiteDTO srDTO = new StudySiteDTO();
+        srDTO.setFunctionalCode(CdConverter
+                .convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
+                        .getCode()));
+        List<StudySiteDTO> updatedSites = studySiteServiceLocal
+                .getByStudyProtocol(studyProtocolIi, srDTO);
+        
+        comments.append(createComments(originalDTO, updatedDTO));
+        comments.append(createComments(originalSummary4, updatedSummary4));
+        comments.append(createComments(originalSites, updatedSites));
         comments.append(createComments(documentDTOs));
         comments.append(createComments(dws, studyProtocolIi));
         if (comments.length() > 0) {
@@ -169,6 +205,93 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                                                                                   null));
             studyInboxDTO.setComments(StConverter.convertToSt(comments.toString()));
             create(studyInboxDTO);
+        }
+    }
+
+    private StringBuilder createComments(List<StudySiteDTO> originalSites,
+            List<StudySiteDTO> updatedSites) {
+        StringBuilder comments = new StringBuilder();
+        if (CollectionUtils.isNotEmpty(originalSites)
+                && CollectionUtils.isNotEmpty(updatedSites)
+                && originalSites.size() == updatedSites.size()) {
+            for (int i = 0; i < originalSites.size(); i++) {
+                StudySiteDTO original = originalSites.get(i);
+                StudySiteDTO updated = updatedSites.get(i);
+                createComments(original, updated, comments);
+            }
+        }
+        return comments;
+    }
+
+    @SuppressWarnings({ "rawtypes", "PMD.CyclomaticComplexity" })
+    private void createComments(StudySiteDTO original, StudySiteDTO updated,
+            StringBuilder comments) {
+        IvlConverter conv = new IvlConverter(Ts.class);
+        if (!ObjectUtils.equals(original.getLocalStudyProtocolIdentifier(),
+                updated.getLocalStudyProtocolIdentifier())
+                || !ObjectUtils.equals(original.getProgramCodeText(),
+                        updated.getProgramCodeText())
+                || !ObjectUtils.equals(original.getStatusCode(),
+                        updated.getStatusCode())
+                || !ObjectUtils.equals(original.getAccrualDateRange(),
+                        updated.getAccrualDateRange())
+                || !ObjectUtils
+                        .equals(conv.convertHighToString(original
+                                .getStatusDateRange()), conv
+                                .convertHighToString(updated
+                                        .getStatusDateRange()))
+                || !ObjectUtils.equals(
+                        conv.convertLowToString(original.getStatusDateRange()),
+                        conv.convertLowToString(updated.getStatusDateRange()))) {
+            comments.append("Participating Site information was changed. ");
+        }
+    }
+
+    private StringBuilder createComments(StudyProtocolQueryDTO originalDTO,
+            StudyProtocolQueryDTO updatedDTO) {
+        StringBuilder comments = new StringBuilder();
+        if (originalDTO != null && updatedDTO != null) {
+            recordChange(originalDTO.getLeadOrganizationName(),
+                    updatedDTO.getLeadOrganizationName(),
+                    "Lead Organization was changed. ", comments);
+            recordChange(originalDTO.getLocalStudyProtocolIdentifier(),
+                    updatedDTO.getLocalStudyProtocolIdentifier(),
+                    "Lead Organization Trial Identifier was changed. ", comments);
+            recordChange(originalDTO.getNctNumber(),
+                    updatedDTO.getNctNumber(),
+                    "NCT Number was changed. ", comments);
+            recordChange(originalDTO.getOfficialTitle(),
+                    updatedDTO.getOfficialTitle(),
+                    "Title was changed. ", comments);           
+            recordChange(originalDTO.getPrimaryPurpose(),
+                    updatedDTO.getPrimaryPurpose(),
+                    "Primary Purpose was changed. ", comments);           
+            recordChange(originalDTO.getPhaseCode(),
+                    updatedDTO.getPhaseCode(),
+                    "Phase was changed. ", comments);           
+        }
+        return comments;
+    }
+    
+    private StringBuilder createComments(StudyResourcingDTO originalDTO,
+            StudyResourcingDTO updatedDTO) {
+        StringBuilder comments = new StringBuilder();
+        if (originalDTO != null && updatedDTO != null
+                && originalDTO.getOrganizationIdentifier() != null
+                && updatedDTO.getOrganizationIdentifier() != null) {
+            recordChange(
+                    originalDTO.getOrganizationIdentifier().getExtension(),
+                    updatedDTO.getOrganizationIdentifier().getExtension(),
+                    "Summary 4 Funding Sponsor was changed. ", comments);
+        }
+        return comments;
+    } 
+
+    private void recordChange(Object v1, Object v2, String comment,
+            StringBuilder comments) {
+        if (!StringUtils.equals(StringUtils.trim(v1 + ""), // NOPMD
+                StringUtils.trim(v2 + ""))) { // NOPMD
+            comments.append(comment);
         }
     }
 
@@ -242,7 +365,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         StringBuilder comments = new StringBuilder();
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
             for (DocumentDTO doc : documentDTOs) {
-                comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded <br>");
+                comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded. ");
             }
         }
         return comments;
@@ -272,5 +395,50 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     public void setDocWrkFlowStatusService(
             DocumentWorkflowStatusServiceLocal docWrkFlowStatusService) {
         this.docWrkFlowStatusService = docWrkFlowStatusService;
+    }
+    
+
+    /**
+     * @return the protocolQueryServiceLocal
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryServiceLocal() {
+        return protocolQueryServiceLocal;
+    }
+
+    /**
+     * @param protocolQueryServiceLocal the protocolQueryServiceLocal to set
+     */
+    public void setProtocolQueryServiceLocal(
+            ProtocolQueryServiceLocal protocolQueryServiceLocal) {
+        this.protocolQueryServiceLocal = protocolQueryServiceLocal;
+    }
+
+    /**
+     * @return the studyResourcingServiceLocal
+     */
+    public StudyResourcingServiceLocal getStudyResourcingServiceLocal() {
+        return studyResourcingServiceLocal;
+    }
+
+    /**
+     * @param studyResourcingServiceLocal the studyResourcingServiceLocal to set
+     */
+    public void setStudyResourcingServiceLocal(
+            StudyResourcingServiceLocal studyResourcingServiceLocal) {
+        this.studyResourcingServiceLocal = studyResourcingServiceLocal;
+    }
+
+    /**
+     * @return the studySiteServiceLocal
+     */
+    public StudySiteServiceLocal getStudySiteServiceLocal() {
+        return studySiteServiceLocal;
+    }
+
+    /**
+     * @param studySiteServiceLocal the studySiteServiceLocal to set
+     */
+    public void setStudySiteServiceLocal(StudySiteServiceLocal studySiteServiceLocal) {
+        this.studySiteServiceLocal = studySiteServiceLocal;
     }
 }

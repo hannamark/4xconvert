@@ -79,6 +79,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -95,6 +96,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -119,6 +121,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -135,6 +138,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
 
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private static final Logger LOG = Logger.getLogger(ProprietaryTrialManagementBeanLocal.class);
 
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
@@ -154,6 +158,10 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     private StudyMilestoneServicelocal studyMilestoneService;
     @EJB
     private RegistryUserServiceLocal userServiceLocal;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryServiceLocal;    
+    @EJB
+    private StudyResourcingServiceLocal studyResourcingServiceLocal;
     
     private CSMUserUtil csmUserService = new CSMUserService();
 
@@ -187,6 +195,19 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         }
         try {
             StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
+            
+            // The following 3 later are used for change tracking (inbox).
+            StudyProtocolQueryDTO originalDTO = protocolQueryServiceLocal
+                    .getTrialSummaryByStudyProtocolId(IiConverter
+                            .convertToLong(spDto.getIdentifier()));
+            StudyResourcingDTO originalSummary4 = studyResourcingServiceLocal
+                    .getSummary4ReportedResourcing(studyProtocolDTO
+                            .getIdentifier());
+            StudySiteDTO srDTO = new StudySiteDTO();
+            srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+            List<StudySiteDTO> originalSites = studySiteService
+                    .getByStudyProtocol(spDto.getIdentifier(), srDTO);
+            
             final Bl proprietaryTrialIndicator = spDto.getProprietaryTrialIndicator();
             if (Boolean.FALSE.equals(proprietaryTrialIndicator.getValue())) {
                 throw new PAException(
@@ -245,7 +266,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             }
             paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null),
                     studyProtocolDTO.getIdentifier());
-            studyInboxServiceLocal.create(documentDTOs, studyProtocolIi);
+            studyInboxServiceLocal.create(documentDTOs, studyProtocolIi, originalDTO, originalSummary4, originalSites);
             mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
@@ -254,7 +275,6 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             throw new PAException(e);
         }
     }
-
 
     private void removeFromCollectionByID(List<DocumentDTO> documentDTOs,
             Ii identifier) {
@@ -608,5 +628,35 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      */
     public void setCsmUserService(CSMUserUtil userService) {
         this.csmUserService = userService;
+    }
+
+    /**
+     * @return the protocolQueryServiceLocal
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryServiceLocal() {
+        return protocolQueryServiceLocal;
+    }
+
+    /**
+     * @param protocolQueryServiceLocal the protocolQueryServiceLocal to set
+     */
+    public void setProtocolQueryServiceLocal(
+            ProtocolQueryServiceLocal protocolQueryServiceLocal) {
+        this.protocolQueryServiceLocal = protocolQueryServiceLocal;
+    }
+
+    /**
+     * @return the studyResourcingServiceLocal
+     */
+    public StudyResourcingServiceLocal getStudyResourcingServiceLocal() {
+        return studyResourcingServiceLocal;
+    }
+
+    /**
+     * @param studyResourcingServiceLocal the studyResourcingServiceLocal to set
+     */
+    public void setStudyResourcingServiceLocal(
+            StudyResourcingServiceLocal studyResourcingServiceLocal) {
+        this.studyResourcingServiceLocal = studyResourcingServiceLocal;
     }
 }
