@@ -1312,15 +1312,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             XmlGenHelper.appendElement(responsibleParty,
                    XmlGenHelper.createElement("resp_party_type", resPartyType, doc));
         }
-        if (PRINCIPAL_INVESTIGATOR.equals(resPartyType)) {
-            if (resPartyContactName != null) {
-                XmlGenHelper.appendElement(responsibleParty,
-                        XmlGenHelper.createElement("investigator_username", resPartyContactName, doc));
-            }
-            if (resPartyType != null) {
+        if (resPartyType != null && PRINCIPAL_INVESTIGATOR.equals(resPartyType)) {
                 XmlGenHelper.appendElement(responsibleParty,
                         XmlGenHelper.createElement("investigator_title", resPartyType, doc));
-            }
         }
         if (sponsor != null) {
             XmlGenHelper.appendElement(responsibleParty,
