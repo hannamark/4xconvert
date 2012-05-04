@@ -138,6 +138,7 @@ import org.springframework.remoting.RemoteAccessException;
  * @author Kalpana Guthikonda
  * @since 11/12/2008
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
     private static final String STRUCTURED = "Structured";
@@ -698,6 +699,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
      */
     public String create() {
         try {
+            query();
             enforceEligibilityBusinessRules();
             if (hasFieldErrors()) {
                 return ELIGIBILITYADD;
@@ -735,6 +737,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
      */
     public String update() {
         try {
+            query();
             enforceEligibilityBusinessRules();
             if (hasFieldErrors()) {
                 return ELIGIBILITYADD;
@@ -975,9 +978,17 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         if (StringUtils.isNotEmpty(webDTO.getTextDescription())
                 && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
             addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
-        }
-
+        }        
         validateStructuredTypeRules();
+        
+        if (StringUtils.isNotEmpty(webDTO.getTextDescription())
+                && getEligibilityList() != null) {
+            for (ISDesignDetailsWebDTO detailsWebDTO : getEligibilityList()) {
+                if (webDTO.getTextDescription().equals(detailsWebDTO.getTextDescription())) {
+                    addFieldError("webDTO.TextDescription", "Duplicate description");
+                }
+            }
+        }
 
         HashSet<String> order = new HashSet<String>();
         String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
