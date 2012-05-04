@@ -73,111 +73,66 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+*
 */
+
 package gov.nih.nci.accrual.accweb.util;
 
-import static org.mockito.Mockito.mock;
-import gov.nih.nci.accrual.service.PatientService;
-import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
-import gov.nih.nci.accrual.service.batch.BatchFileService;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
-import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Hugh Reinhart
- * @since 7/7/2009
+ * @author Kalpana Guthikonda
  */
-public class MockServiceLocator implements ServiceLocatorAccInterface {
-    private final SearchTrialService searchTrial = new MockSearchTrialBean();
-    private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final CountryService countryService = new MockCountryBean();
-    private final StudySubjectService studySubjectService = new MockStudySubjectBean();
-    private final PatientService patientService = new MockPatientBean();
-    private final PerformedActivityService psmService = new MockPerformedActivityBean();
-    private final POPatientService poPatientService = new MockPaPatientServiceBean();
-    private final CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderService =
-        mock(CdusBatchUploadReaderServiceLocal.class);
-    private final SubjectAccrualCountService subjectAccrualCountService = new MockSubjectAccrualCountService();
-    private final BatchFileService batchFileSvc = mock(BatchFileService.class);
-    private final SubjectAccrualServiceLocal subjectAccrualServiceLocal = mock(SubjectAccrualServiceLocal.class);
-    
-    /**
-     * {@inheritDoc}
-     */
-    public SearchStudySiteService getSearchStudySiteService() {
-        return searchStudySite;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SearchTrialService getSearchTrialService() {
-        return searchTrial;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PatientService getPatientService() {
-        return patientService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public PerformedActivityService getPerformedActivityService() {
-        return psmService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public StudySubjectService getStudySubjectService() {
-        return studySubjectService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public CountryService getCountryService() {
-        return countryService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public POPatientService getPOPatientService() {
-        return poPatientService;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
-       return cdusBatchUploadReaderService;
-    }
+public class MockSubjectAccrualCountService implements SubjectAccrualCountService {
 
-    /**
-     * {@inheritDoc}
-     */
-    public SubjectAccrualCountService getSubjectAccrualCountService() {
-        return subjectAccrualCountService;
+	private static List<StudySiteSubjectAccrualCount> counts;
+	static {
+		counts = new ArrayList<StudySiteSubjectAccrualCount>();
+		StudySiteSubjectAccrualCount accrualCount = new StudySiteSubjectAccrualCount();
+		StudySite site = new StudySite();
+		StudyProtocol sp =  new StudyProtocol();
+		sp.setId(3L);
+		site.setId(1L);
+		site.setStudyProtocol(sp);
+        accrualCount.setStudySite(site);
+        accrualCount.setStudyProtocol(site.getStudyProtocol());
+        counts.add(accrualCount);
+        
+        accrualCount = new StudySiteSubjectAccrualCount();
+		site = new StudySite();
+		sp =  new StudyProtocol();
+		sp.setId(3L);
+		site.setId(2L);
+		site.setStudyProtocol(sp);
+        accrualCount.setStudySite(site);
+        accrualCount.setStudyProtocol(site.getStudyProtocol());
+        counts.add(accrualCount);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public BatchFileService getBatchFileService() {
-        return batchFileSvc;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SubjectAccrualServiceLocal getSubjectAccrualService() {
-        return subjectAccrualServiceLocal;
-    }
-    
-    
+	
+	
+	@Override
+	public List<StudySiteSubjectAccrualCount> getCounts(Ii studyProtocolIi)
+			throws PAException {
+		return counts;
+	}
+
+	@Override
+	public void save(List<StudySiteSubjectAccrualCount> counts)
+			throws PAException {		
+	}
+
+	@Override
+	public StudySiteSubjectAccrualCount getCountByStudySiteId(Ii studySiteIi) {
+		return new StudySiteSubjectAccrualCount();
+	}
+
 }

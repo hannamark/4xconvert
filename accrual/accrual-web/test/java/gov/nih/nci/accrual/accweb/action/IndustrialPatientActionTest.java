@@ -172,6 +172,9 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         sitesToSave.add(1L);
         action.setSubmittedSiteIds(submittedSiteIds);
         action.setSitesToSave(sitesToSave);
+        List<String> submittedCounts = new ArrayList<String>();
+        submittedCounts.add("2");
+        action.setSubmittedCounts(submittedCounts);
         assertEquals("saved", action.update());
     }
 
@@ -181,6 +184,7 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         action.setSitesToSave(new ArrayList<Long>());
         action.update();
         assertEquals("Test message", action.getActionErrors().iterator().next());
+        assertEquals("input", action.update());
     }
 
     @SuppressWarnings("unchecked")

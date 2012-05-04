@@ -175,6 +175,8 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
+            loadSiteSubjectAccrualCount();
+            return "input";
         }
         return "saved";
     }

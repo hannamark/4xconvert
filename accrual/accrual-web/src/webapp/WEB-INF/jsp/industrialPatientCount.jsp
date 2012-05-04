@@ -26,7 +26,12 @@ function setCheckbox(index) {
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator">
         <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
-            <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" />
+        <s:if test="%{#attr.row.studySite.id in sitesToSave}">
+	       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
+	    </s:if>
+	    <s:else>
+	       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
+	    </s:else>       
         </display:column> 
         <display:column titleKey="participatingsite.accrual.count.siteid" headerClass="sortable" headerScope="col" property="siteId"/>
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
