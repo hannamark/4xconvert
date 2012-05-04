@@ -20,7 +20,7 @@
             <ul class="padme10">
                 <li><a href="/registry/registerUser.action">Create an account</a> to register your clinical trials </li>
                 <li><a href="/registry/protected/disClaimerAction.action?actionName=searchTrial.action">Log In</a> to your account and</li>
-                <li>
+                <li style="background-image:none">
                     <menu>
                         <li>Register clinical trials</li>
                         <li>Register multiple trials at one time using a <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="newPage"> batch upload template</a></li>
