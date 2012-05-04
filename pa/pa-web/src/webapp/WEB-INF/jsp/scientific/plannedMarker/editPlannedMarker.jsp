@@ -44,7 +44,7 @@
             }
             
             function cadsrLookup(){
-                showPopWin('${lookupUrl}', 1200, 600, '', 'Marker Search in caDSR');
+                showPopWin('${lookupUrl}', 1000, 600, '', 'Marker Search in caDSR');
             }
             
             function loadDiv(markerId) {
