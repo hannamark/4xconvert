@@ -16,7 +16,7 @@
 	<h1>
 		<fmt:message key="plannedMarker.edit.marker.name" />
 	</h1>
-    <c:set var="topic" scope="request" value="abstractmarkers"/>
+    <c:set var="topic" scope="request" value="biomarkers"/>
 	<s:url id="cancelUrl" namespace="/protected" action="bioMarkers" />
 	<div class="box">
 		<s:set var="submitUrl" value="'bioMarkersupdate'" />
