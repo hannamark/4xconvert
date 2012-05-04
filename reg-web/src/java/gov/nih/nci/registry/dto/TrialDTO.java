@@ -27,7 +27,7 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * Sponsor responsible party type.
      */
-    public static final String RESPONSIBLE_PARTY_TYPE_SPONSOR = "sponsor";
+    public static final String RESPONSIBLE_PARTY_TYPE_SPONSOR = "Sponsor";
 
     private String accrualReportingMethodCode;
     private String piIdentifier;
