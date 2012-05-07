@@ -531,6 +531,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         if (!maskFields) {
             ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, trialDTO.getResponsiblePartyType());
             if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
+                ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, "Sponsor");
                 if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
                     ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
                             trialDTO.getResponsiblePersonName());
