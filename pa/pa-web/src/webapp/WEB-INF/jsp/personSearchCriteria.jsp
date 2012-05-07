@@ -50,6 +50,13 @@
             <s:form id="personSearchForm">        
                 <pa:failureMessage/>
                 <pa:sucessMessage/>
+                
+                <p align="center" class="info">
+                   Enter information for at least one of the criteria and then click Search. 
+                   The maximum number of results returned for any search is 500 records. If necessary, 
+                   limit your search by providing additional search criteria.
+                </p>                
+                
                 <table class="form fluid_width">
                    
                     <tr>
