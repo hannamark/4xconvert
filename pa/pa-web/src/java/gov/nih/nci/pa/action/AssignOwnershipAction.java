@@ -209,14 +209,16 @@ public class AssignOwnershipAction extends ActionSupport {
                 List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
                 TrialOwner owner = null;
                 for (RegistryUser rUsr : regUserList) {
-                    String loginName = rUsr.getCsmUser().getLoginName();
-                    if (ActionUtils.checkUserHasReadWritePrivilege(loginName)) {
-                        owner = new TrialOwner();
-                        owner.setRegUser(rUsr);
-                        owner.setOwner(PaRegistry.getRegistryUserService()
-                                .isTrialOwner(rUsr.getId(),
-                                        Long.parseLong(spIi.getExtension())));
-                        users.add(owner);
+                    if (rUsr.getCsmUser() != null) {
+                        String loginName = rUsr.getCsmUser().getLoginName();
+                        if (ActionUtils.checkUserHasReadWritePrivilege(loginName)) {
+                            owner = new TrialOwner();
+                            owner.setRegUser(rUsr);
+                            owner.setOwner(PaRegistry.getRegistryUserService()
+                                    .isTrialOwner(rUsr.getId(),
+                                            Long.parseLong(spIi.getExtension())));
+                            users.add(owner);
+                        }
                     }
                }
            }
