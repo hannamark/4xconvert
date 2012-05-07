@@ -29,16 +29,19 @@ function checkAll(){
 		    addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
             addOption(document.getElementById('SubCat'),"CBER", "CBER");
 		}
+
 		if (document.getElementById('holderType').value == 'NIH'){
 			showRow(document.getElementById('programcodenihid'));
 			hideRow(document.getElementById('programcodenciid'));
-		}
+			$('programcoderow').show();
+		} else 
 		if (document.getElementById('holderType').value == 'NCI'){
 			hideRow(document.getElementById('programcodenihid'));
 			showRow(document.getElementById('programcodenciid'));
+			$('programcoderow').show();
 		} 
 		else {
-			showRow(document.getElementById('programcodeid'));
+			$('programcoderow').hide();
 		}
 }
 function hideRow(row){			
@@ -62,10 +65,12 @@ if (inputElement.options[inputElement.selectedIndex].value == "NCI-National Canc
 	{
  		document.getElementById('programcodenciid').style.display = '';
  		document.getElementById('programcodenihid').style.display = 'none';
+		$('programcoderow').show();
    	}else
    	{
    		document.getElementById('programcodenciid').style.display = 'none';
  		document.getElementById('programcodenihid').style.display = '';
+		$('programcoderow').show();
    	}
 }
 function getIndIdeRadioValue(size){
@@ -84,15 +89,15 @@ function setProgramCodes(ref){
 		if (ref.value == 'NCI') {
 			document.getElementById('programcodenciid').style.display = '';
 			document.getElementById('programcodenihid').style.display = 'none';
-			document.getElementById('programcodeid').style.display = 'none';
+			$('programcoderow').show();
 		} else if (ref.value == 'NIH') {
 			document.getElementById('programcodenciid').style.display = 'none';
 			document.getElementById('programcodenihid').style.display = '';
-			document.getElementById('programcodeid').style.display = 'none';
+			$('programcoderow').show();
 		} else {
 			document.getElementById('programcodenihid').style.display = 'none';
 			document.getElementById('programcodenciid').style.display = 'none';
-			document.getElementById('programcodeid').style.display = '';
+			$('programcoderow').hide();
 		}
 }
 	
@@ -106,7 +111,7 @@ function resetValues(){
 		document.getElementById('programcodenciselectedvalue').value='';
 		document.getElementById('programcodenihid').style.display = 'none';
 		document.getElementById('programcodenciid').style.display = 'none';
-		document.getElementById('programcodeid').style.display = '';
+		//$('programcoderow').hide();
 		document.forms[0].group4[0].checked = false;
 		document.forms[0].group4[1].checked = true;
 		document.getElementById('expandedStatus').value='';
@@ -239,7 +244,7 @@ function tooltip() {
                          </span>
 						</td>
 					</tr>
-					<tr>
+					<tr id="programcoderow">
 						<td scope="row"  class="label"><label>
 							<fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:<span class="required">*</span></label>
 						</td>

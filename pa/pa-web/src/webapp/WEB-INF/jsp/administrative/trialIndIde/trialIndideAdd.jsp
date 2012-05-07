@@ -42,14 +42,17 @@
                     document.getElementById('programcodenciid').style.display = '';
                     document.getElementById('programcodenihid').style.display = 'none';
                     document.getElementById('programcodeid').style.display = 'none';
+                    $('programcoderow').show();
                 } else if (ref.value == 'NIH') {
                     document.getElementById('programcodenciid').style.display = 'none';
                     document.getElementById('programcodenihid').style.display = '';
                     document.getElementById('programcodeid').style.display = 'none';
+                    $('programcoderow').show();
                 } else {
                     document.getElementById('programcodenihid').style.display = 'none';
                     document.getElementById('programcodenciid').style.display = 'none';
                     document.getElementById('programcodeid').style.display = '';
+                    $('programcoderow').hide();
                 }
             }
             
@@ -166,7 +169,7 @@
                             </span>
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="programcoderow" style="display: none;">
                         <td scope="row"  class="label">
                             <label>
                                 <fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:<span class="required">*</span>
