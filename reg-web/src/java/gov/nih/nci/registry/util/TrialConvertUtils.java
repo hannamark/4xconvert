@@ -595,29 +595,48 @@ public class TrialConvertUtils {
         List<DocumentDTO> docs = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
 
         if (CollectionUtils.isNotEmpty(docList)) {
-            for (TrialDocumentWebDTO newDoc : docList) {
-                DocumentDTO docToUpdate = null;
-                docToUpdate = findDocumentByType(docs, newDoc.getTypeCode());
-                if (docToUpdate != null) {
-                    docToUpdate.setFileName(StConverter.convertToSt(newDoc.getFileName()));
-                    docToUpdate.setText(EdConverter.convertToEd(newDoc.getText()));
-                } else {
-                    docToUpdate = convertTrialDocumentDTOToDocumentDTO(newDoc);
-                }
-                studyDocDTOList.add(docToUpdate);
+            for (TrialDocumentWebDTO newDoc : docList) {                             
+                DocumentDTO docToUpdate = findDocumentById(docs, newDoc.getId());
+                if (docToUpdate == null) {
+                    docToUpdate = findDocumentByType(docs, newDoc.getTypeCode());
+                    if (docToUpdate != null) {
+                        docToUpdate.setFileName(StConverter.convertToSt(newDoc
+                                .getFileName()));
+                        docToUpdate.setText(EdConverter.convertToEd(newDoc
+                                .getText()));
+                    } else {
+                        docToUpdate = convertTrialDocumentDTOToDocumentDTO(newDoc);
+                    }
+                    studyDocDTOList.add(docToUpdate);
+                }                
             }
         }
         return studyDocDTOList;
     }
 
-    private DocumentDTO findDocumentByType(List<DocumentDTO> docs, String typeCode) {
+    private DocumentDTO findDocumentByType(List<DocumentDTO> docs,
+            String typeCode) {
         for (DocumentDTO doc : docs) {
-            if (typeCode.equals(CdConverter.convertCdToString(doc.getTypeCode()))
-                    && !DocumentTypeCode.OTHER.getCode().equals(CdConverter.convertCdToString(doc.getTypeCode()))) {
+            if (typeCode
+                    .equals(CdConverter.convertCdToString(doc.getTypeCode()))
+                    && !DocumentTypeCode.OTHER.getCode().equals(
+                            CdConverter.convertCdToString(doc.getTypeCode()))) {
                 return doc;
             }
         }
-       return null;
+        return null;
+    }
+
+    private DocumentDTO findDocumentById(List<DocumentDTO> docs, String id) {
+        for (DocumentDTO doc : docs) {
+            if (StringUtils.isNotBlank(id)
+                    && !ISOUtil.isIiNull(doc.getIdentifier())
+                    && id.equals(doc.getIdentifier().getExtension())) {
+                return doc;
+            }
+
+        }
+        return null;
     }
 
    /**

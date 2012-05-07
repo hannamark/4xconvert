@@ -188,6 +188,7 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateRegulatoryInformationSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateParticipatingSitesSection.jsp" %>      
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateCollaboratorsSection.jsp" %>   
+                    <%@ include file="/WEB-INF/jsp/nodecorate/updateTrialDocumentsSection.jsp" %>
                 </table>     
                               
                 <div id="uploadDocDiv">

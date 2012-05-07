@@ -29,6 +29,7 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
+import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -101,6 +102,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
+    
+    private List<TrialDocumentWebDTO> existingDocuments = new ArrayList<TrialDocumentWebDTO>();
 
     private String programcodenciselectedvalue;
     private String programcodenihselectedvalue;
@@ -141,6 +144,9 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             TrialSessionUtil.addSessionAttributesForUpdate(trialDTO);
             setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+            
+            existingDocuments = trialUtil.getTrialDocuments(trialDTO);
+            
             setPageFrom("updateTrial");
         } catch (Exception e) {
             LOG.error("Exception occured while querying trial " + e);
@@ -287,13 +293,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * Edit the trial.
      *
      * @return s
+     * @throws PAException PAException
      */
-    public String edit() {
+    public String edit() throws PAException {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession(trialDTO);
         synchActionWithDTO();
         trialUtil.populateRegulatoryList(trialDTO);
+        existingDocuments = trialUtil.getTrialDocuments(trialDTO);
         TrialSessionUtil.addSessionAttributes(trialDTO);
         return "edit";
     }
@@ -968,6 +976,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public void setTrialRegistrationService(TrialRegistrationServiceLocal trialRegistrationService) {
         this.trialRegistrationService = trialRegistrationService;
+    }
+
+    /**
+     * @return the existingDocuments
+     */
+    public List<TrialDocumentWebDTO> getExistingDocuments() {
+        return existingDocuments;
     }
 
 }

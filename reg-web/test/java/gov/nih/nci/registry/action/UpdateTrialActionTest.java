@@ -159,7 +159,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         assertEquals("redirect_to_search", action.cancel());
     }
     @Test
-    public void testEdit() {
+    public void testEdit() throws PAException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         TrialDTO tDto = getMockTrialDTO();

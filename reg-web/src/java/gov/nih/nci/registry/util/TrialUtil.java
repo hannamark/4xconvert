@@ -708,6 +708,16 @@ public class TrialUtil extends TrialConvertUtils {
                 || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
             populateRegulatoryList((TrialDTO) trialDTO);
         }
+        populateStageTrialDocuments(trialDTO);
+        return trialDTO;
+    }
+
+    /**
+     * @param trialDTO BaseTrialDTO
+     * @throws PAException PAException
+     */
+    public void populateStageTrialDocuments(BaseTrialDTO trialDTO)
+            throws PAException {
         // populate doc
         List<DocumentDTO> docDTOs = PaRegistry.getStudyProtocolStageService().getDocumentsByStudyProtocolStage(
                 IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
@@ -716,9 +726,30 @@ public class TrialUtil extends TrialConvertUtils {
             webDocList.add(new TrialDocumentWebDTO(docDTO));
         }
         trialDTO.setDocDtos(webDocList);
-        return trialDTO;
     }
 
+    /**
+     * @param trialDTO
+     *            BaseTrialDTO
+     * @throws PAException
+     *             PAException
+     * @return List<TrialDocumentWebDTO>
+     */
+    @SuppressWarnings("deprecation")
+    public List<TrialDocumentWebDTO> getTrialDocuments(BaseTrialDTO trialDTO)
+            throws PAException {
+        // populate doc
+        List<DocumentDTO> docDTOs = PaRegistry.getDocumentService()
+                .getDocumentsByStudyProtocol(
+                        IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+        List<TrialDocumentWebDTO> webDocList = new ArrayList<TrialDocumentWebDTO>();
+        for (DocumentDTO docDTO : docDTOs) {
+            webDocList.add(new TrialDocumentWebDTO(docDTO));
+        }
+        return webDocList;
+    }
+    
+    
     /**
      * @param trialDTO dto
      * @return dto

@@ -471,7 +471,9 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             servletResponse.setContentLength(docDTO.getText().getData().length);
             servletResponse.setHeader("Cache-Control", "cache");
             servletResponse.setHeader("Pragma", "cache");
-            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + docDTO.getFileName().getValue());
+            servletResponse.setHeader("Content-Disposition",
+                    "attachment; filename=\"" + docDTO.getFileName().getValue()
+                            + "\"");
 
             ByteArrayInputStream bis = new ByteArrayInputStream(docDTO.getText().getData());
             ServletOutputStream out = servletResponse.getOutputStream();
