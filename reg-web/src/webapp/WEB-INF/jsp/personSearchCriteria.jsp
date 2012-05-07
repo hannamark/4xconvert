@@ -151,7 +151,7 @@
                 </display:column>		        
 		        <display:column escapeXml="true" title="City" property="city" sortable="true"/>
 		        <display:column escapeXml="true" title="State" property="state" sortable="true"/>
-		        <display:column escapeXml="true" title="Status" property="status" sortable="true"/>
+		        
 		    </display:table>		
 		</s:if>        
         </div>        

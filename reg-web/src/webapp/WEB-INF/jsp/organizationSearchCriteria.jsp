@@ -175,7 +175,7 @@
 		        <display:column escapeXml="true" title="State" property="state" headerClass="sortable"  sortable="true"/>
 		        <display:column escapeXml="true" title="Country" property="country" headerClass="sortable"  sortable="true"/>
 		        <display:column escapeXml="true" title="Zip" property="zip" headerClass="sortable"  sortable="true"/>
-		        <display:column escapeXml="true" title="Status" property="status" headerClass="sortable"  sortable="true"/>
+		        
 		    </display:table>		
 		</s:if>        
         </div>        
