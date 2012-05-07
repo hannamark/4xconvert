@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
@@ -89,6 +91,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -98,6 +101,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -116,6 +120,9 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubjectAccrualCountBean implements SubjectAccrualCountService {
+
+    @EJB
+    private SearchTrialService searchTrialService;
 
     /**
      * {@inheritDoc}
@@ -155,7 +162,6 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             }
             resultList.add(accrualCount);
         }
-
         return resultList;
     }
     
@@ -216,26 +222,28 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
     private void assertAccrualAccess(List<StudySiteSubjectAccrualCount> counts) throws PAException {
         for (StudySiteSubjectAccrualCount count : counts) {
             if (count.getAccrualCount() != null) {
-                assertAccrualAccess(count.getStudySite());
+                assertIndustrialAccrualAccess(count.getStudySite());
             }
         }
     }
 
-    private void assertAccrualAccess(StudySite site) throws PAException {
-        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService()
-                .getUser(CaseSensitiveUsernameHolder.getUser());
-        try {
-            String hql = "from StudySite ss join ss.studySiteAccrualAccess ssas where ss.id = :studySiteId"
-                    + " and ssas.registryUser.id = :registerUserId";
-            Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
-            query.setParameter("studySiteId", site.getId());
-            query.setParameter("registerUserId", user.getId());
-            if (query.uniqueResult() == null) {
-                throw new PAException("User (" + user.getId() + ") doesn't have accrual access to site ("
-                        + site.getId() + ")");
-            }
-        } catch (HibernateException e) {
-            throw new PAException("Hibernate exception in getByStudyProtocol().", e);
+    private void assertIndustrialAccrualAccess(StudySite site) throws PAException {
+        SearchTrialResultDto trialSummary = searchTrialService.getTrialSummaryByStudyProtocolIi(IiConverter
+                .convertToStudyProtocolIi(site.getStudyProtocol().getId()));
+        if (!BlConverter.convertToBool(trialSummary.getIndustrial())) {
+            throw new PAException("The participating site (" + site.getId() 
+                    + ") does not belong to an Industrial trial.");
         }
+        if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToStudySiteIi(site.getId()))) {
+            throw new PAException("User (" + CaseSensitiveUsernameHolder.getUser() 
+                    + ") doesn't have accrual access to site (" + site.getId() + ")");
+        }
+    }
+
+    /**
+     * @param searchTrialService the searchTrialService to set
+     */
+    public void setSearchTrialService(SearchTrialService searchTrialService) {
+        this.searchTrialService = searchTrialService;
     }
 }

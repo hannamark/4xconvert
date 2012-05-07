@@ -86,6 +86,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.PatientBeanLocal;
 import gov.nih.nci.accrual.service.PerformedActivityBean;
 import gov.nih.nci.accrual.service.StudySubjectBean;
@@ -100,7 +101,6 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
-import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
@@ -250,6 +250,14 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return result;
             }
         });
+        when(searchTrialSvc.getTrialSummaryByStudyProtocolIi(any(Ii.class))).thenAnswer(new Answer<SearchTrialResultDto>() {
+            public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
+                SearchTrialResultDto result = new SearchTrialResultDto();
+                result.setIndustrial(BlConverter.convertToBl(true));
+                return result;
+            }
+            
+        });
         readerService.setSearchTrialService(searchTrialSvc);
         cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
 
@@ -280,8 +288,9 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
         
+        SubjectAccrualCountBean accrualCountSvc = new SubjectAccrualCountBean();
+        accrualCountSvc.setSearchTrialService(searchTrialSvc);
         SubjectAccrualBeanLocal subjectAccrualSvc = new SubjectAccrualBeanLocal();
-        SubjectAccrualCountService accrualCountSvc = new SubjectAccrualCountBean();
         subjectAccrualSvc.setBatchFileService(new BatchFileServiceBeanLocal());
         subjectAccrualSvc.setCountryService(countryService);
         subjectAccrualSvc.setPatientService(patientBean);

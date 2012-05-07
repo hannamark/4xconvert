@@ -81,23 +81,28 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package gov.nih.nci.accrual.service.util;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -115,15 +120,23 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author moweis
  *
  */
 public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectAccrualCountService>  {
-    private SubjectAccrualCountService bean;
-    private StudySiteSubjectAccrualCount accrualCount;
+    private SubjectAccrualCountBean bean;
+    private SearchTrialService searchTrialSvc;
     private ServiceLocatorPaInterface paSvcLocator;
+    private Ii testStudyIi;
+    private Ii testSiteIi;
+    private StudyProtocol testStudy;
+    private StudySite testSite;
+    private StudySiteAccrualAccess testAccess;
+
     @Rule public ExpectedException thrown = ExpectedException.none(); 
 
     @Override
@@ -131,6 +144,16 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     public void instantiateServiceBean() throws Exception {
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         bean = new SubjectAccrualCountBean();
+        searchTrialSvc = mock(SearchTrialService.class);
+        when(searchTrialSvc.getTrialSummaryByStudyProtocolIi(any(Ii.class))).thenAnswer(new Answer<SearchTrialResultDto>() {
+            public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
+                SearchTrialResultDto result = new SearchTrialResultDto();
+                result.setIndustrial(BlConverter.convertToBl(true));
+                return result;
+            }
+            
+        });
+        bean.setSearchTrialService(searchTrialSvc);
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
         when(registryUserService.getUser(anyString())).thenReturn(TestSchema.registryUsers.get(1));
@@ -142,21 +165,20 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     }
     
     private void setup() {
-        accrualCount = new StudySiteSubjectAccrualCount();
-        accrualCount.setStudySite(TestSchema.studySites.get(1));
-        accrualCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
-        accrualCount.setDateLastUpdated(new Date());
-        accrualCount.setAccrualCount(10);
-        TestSchema.addUpdObject(accrualCount);
+        testStudy = TestSchema.studyProtocols.get(0);
+        testSite = TestSchema.studySites.get(1);
+        testStudyIi = IiConverter.convertToStudyProtocolIi(testStudy.getId());
+        testSiteIi = IiConverter.convertToStudySiteIi(testSite.getId());
+        testAccess = TestSchema.studySiteAccrualAccess.get(6);
+        TestSchema.addUpdObject(getSssa(10));
     }
 
     @Test
     public void testGetCounts() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(IiConverter.convertToIi(TestSchema
-                .studyProtocols.get(0).getId()));
+        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
         assertEquals(1, accrualCounts.size());
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
-            if (accrualCount.getStudySite().getId().equals(TestSchema.studySites.get(1).getId())) {
+            if (accrualCount.getStudySite().getId().equals(testSite.getId())) {
                 assertEquals((Integer) 10, accrualCount.getAccrualCount());
             } else {
                 assertNull(accrualCount.getAccrualCount());
@@ -167,7 +189,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     @Test
     public void testGetCountByStudySite() throws PAException {
         StudySiteSubjectAccrualCount accrualCount = 
-                bean.getCountByStudySiteId(IiConverter.convertToIi(TestSchema.studySites.get(1).getId()));
+                bean.getCountByStudySiteId(testSiteIi);
         assertNotNull(accrualCount);
         assertEquals((Integer) 10, accrualCount.getAccrualCount());
     }
@@ -198,15 +220,15 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
 
     @Test
     public void testSave() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
-        accrualCount.setAccrualCount(1);        
-        accrualCounts.add(accrualCount);
+        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
+        assertEquals(1, accrualCounts.size());
+        accrualCounts.get(0).setAccrualCount(1);
         bean.save(accrualCounts);
         PaHibernateUtil.getCurrentSession().flush();
         
-        accrualCounts = bean.getCounts(IiConverter.convertToIi(1L));
+        accrualCounts = bean.getCounts(testStudyIi);
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
-            if (accrualCount.getStudySite().getId().equals(TestSchema.studySites.get(1).getId())) {
+            if (accrualCount.getStudySite().getId().equals(testSite.getId())) {
                 assertNotNull(accrualCount.getDateLastUpdated());
                 assertEquals((Integer) 1, accrualCount.getAccrualCount());
             }
@@ -215,28 +237,31 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     
     @Test
     public void testSaveNewDay() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
+        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
+        assertEquals(1, accrualCounts.size());
+        assertEquals((Integer) 10, accrualCounts.get(0).getAccrualCount());
 
-        StudySiteSubjectAccrualCount accrualCount = new StudySiteSubjectAccrualCount();
-        accrualCount.setStudySite(TestSchema.studySites.get(1));
-        accrualCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
-        accrualCount.setAccrualCount(20);
+        StudySiteSubjectAccrualCount accrualCount = getSssa(20);
         accrualCount.setDateLastUpdated(DateUtils.addDays(new Date(), -5));
         TestSchema.addUpdObject(accrualCount);
         PaHibernateUtil.getCurrentSession().flush();
-        PaHibernateUtil.getCurrentSession().evict(accrualCount);
-        
-        accrualCount.setAccrualCount(25);
+        PaHibernateUtil.getCurrentSession().clear();
+        accrualCounts = bean.getCounts(testStudyIi);
+        assertEquals(1, accrualCounts.size());
+        // still returns original value (most recent)
+        assertEquals((Integer) 10, accrualCounts.get(0).getAccrualCount());
+
+        accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
+        accrualCount = getSssa(25);
+        accrualCount.setDateLastUpdated(DateUtils.addDays(new Date(), -10));
         accrualCounts.add(accrualCount);
-        
         bean.save(accrualCounts);
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
-        accrualCounts = bean.getCounts(IiConverter.convertToIi(1L));        
+        accrualCounts = bean.getCounts(testStudyIi);        
         assertTrue(CollectionUtils.isNotEmpty(accrualCounts));
         Hibernate.initialize(accrualCounts.get(0).getStudySite().getAccrualCounts()) ;
-        assertEquals(3, accrualCounts.get(0).getStudySite().getAccrualCounts().size());
         List<Integer> expectedCounts = new ArrayList<Integer>(Arrays.asList(10,20,25));
         
         for (StudySiteSubjectAccrualCount count : accrualCounts.get(0).getStudySite().getAccrualCounts()) {
@@ -244,42 +269,58 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
             int i = expectedCounts.indexOf(count.getAccrualCount());            
             expectedCounts.remove(i);            
         }
-        assertTrue(CollectionUtils.isEmpty(expectedCounts));
+        assertEquals("[]", expectedCounts.toString());
     }
-    
-    
-    @Test
-    public void testSaveInvalidAccess() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
-        accrualCount.setAccrualCount(1);
-        StudySite site = new StudySite();
-        site.setId(999L);
-        accrualCount.setStudySite(site);
-        accrualCounts.add(accrualCount);
-        
 
-        
+    @Test
+    public void testSaveInvalidAccessInactive() throws PAException {
+        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
+        StudySiteSubjectAccrualCount accrualCount = getSssa(1);
+        accrualCounts.add(accrualCount);
+        testAccess.setStatusCode(ActiveInactiveCode.INACTIVE);
+        TestSchema.addUpdObject(testAccess);
+
         thrown.expect(PAException.class);
-        thrown.expectMessage("User (" + TestSchema.registryUsers.get(1).getId() + ") doesn't have accrual access to site (999)");
+        thrown.expectMessage("User (curator) doesn't have accrual access to site (3)");
         bean.save(accrualCounts);
     }
-    
+
+    @Test
+    public void testSaveInvalidAccessNotIndustrial() throws PAException {
+        when(searchTrialSvc.getTrialSummaryByStudyProtocolIi(any(Ii.class))).thenAnswer(new Answer<SearchTrialResultDto>() {
+            public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
+                SearchTrialResultDto result = new SearchTrialResultDto();
+                result.setIndustrial(BlConverter.convertToBl(false));
+                return result;
+            }
+            
+        });
+
+        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
+        accrualCounts.add( getSssa(1));
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("The participating site (3) does not belong to an Industrial trial.");
+        bean.save(accrualCounts);
+    }
+
     @Test
     public void testSaveInvalidAccessRollbackAll() throws PAException {
         List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
-        StudySiteSubjectAccrualCount validCount = accrualCount;
-        validCount.setAccrualCount(1);
+        StudySiteSubjectAccrualCount validCount = getSssa(1);
         accrualCounts.add(validCount);
-        
-        StudySiteSubjectAccrualCount invalidCount = new StudySiteSubjectAccrualCount();
-        StudySite site = new StudySite();
-        site.setId(999L);
-        invalidCount.setStudySite(site);
-        invalidCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
-        invalidCount.setAccrualCount(10);
+
+        StudySiteSubjectAccrualCount invalidCount = getSssa(10);
+        invalidCount.setStudySite(TestSchema.studySites.get(6));
+        invalidCount.setStudyProtocol(TestSchema.studyProtocols.get(2));
         accrualCounts.add(invalidCount);
 
-        assertInvalidAccess(accrualCounts);
+        try {
+            bean.save(accrualCounts);
+            fail();
+        } catch (PAException e) {
+            // expected behavior
+        }
 
         PaHibernateUtil.getCurrentSession().clear();
         assertValidCountRolledback(validCount);
@@ -294,13 +335,13 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
             }
         }
     }
-
-    private void assertInvalidAccess(List<StudySiteSubjectAccrualCount> accrualCounts) {
-        try {
-            bean.save(accrualCounts);
-            fail();
-        } catch (PAException e) {
-            
-        }
+    
+    private StudySiteSubjectAccrualCount getSssa(Integer count) {
+        StudySiteSubjectAccrualCount result = new StudySiteSubjectAccrualCount();
+        result.setStudySite(testSite);
+        result.setStudyProtocol(testStudy);
+        result.setDateLastUpdated(new Date());
+        result.setAccrualCount(count);
+        return result;
     }
 }
