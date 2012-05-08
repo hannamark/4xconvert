@@ -482,6 +482,7 @@
             <xs:sequence>
                 <xs:group ref="person_name_group" />
                 <xs:group minOccurs="0" ref="id_group"/>
+                <xs:element minOccurs="0" ref="address" />
                 <xs:group minOccurs="0" ref="telecom_group"/>
                 <xs:element minOccurs="0" ref="role" />
             </xs:sequence>
