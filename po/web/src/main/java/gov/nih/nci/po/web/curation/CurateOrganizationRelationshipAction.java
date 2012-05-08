@@ -152,6 +152,15 @@ public class CurateOrganizationRelationshipAction extends ActionSupport implemen
      */
     @Validations(customValidators = @CustomValidator(type = "hibernate", fieldName = "orgRelationship"))
     public String update() {
+        
+        if (getOrgRelationship().getEndDate().after(
+                getNewOrgRelationship().getStartDate())) {
+            addFieldError("newOrgRelationship.startDate",
+                    "Start date for new relationship is before end date of old relationship.");
+            setPassedValidation(false);
+            return SUCCESS; 
+        }
+        
         PoRegistry.getOrganizationRelationshipService().updateEntity(getOrgRelationship());
         OrganizationRelationship related =
             PoRegistry.getOrganizationRelationshipService().getActiveOrganizationRelationship(

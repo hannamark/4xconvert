@@ -14,35 +14,31 @@
         </s:elseif>
 
         <script type="text/javascript" language="javascript">
-            function handleSubmission(event) {
-                var params = $('organizationRelationshipForm').serialize(true);
-                var options = {
-                    onComplete: function(transport) {
-                                    if ($('passedValidation').value != 'false') {
-                                        window.top.reloadFamilyOrgRelationship();
-                                    } else {
-                                        bindListeners();
-                                    }
-                                }
-                };
-                var div = $('wrapper');
-                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-                var aj = callAjaxPost(div, '${submitUrl}', params, options);
+        
+            function handleSubmission(){
+            	$('organizationRelationshipForm').submit();
             }
-
+        
             function handleCancel(event) {
                 window.top.hidePopWin(false);
             }
 
             function bindListeners() {
-            	jQuery('#add_relationship_button').bind('click', handleSubmission);
                 jQuery('#cancel_button').bind('click', handleCancel);
             }
 
-            jQuery(bindListeners);    
+            jQuery(bindListeners);
+            
+            Event.observe(window, "load", function () {
+                if ($('passedValidation').value != 'false') {
+                    window.top.reloadFamilyOrgRelationship();
+                }                  
+           });
         </script>
     </head>
     <body> 
+        <div class="po_wrapper" id="loadingDiv">
+        </div>
         <div class="po_wrapper" id="wrapper">
             <div class="po_inner">
                 <h2><fmt:message key="organizationRelationship.popup.header"/></h2>
@@ -111,14 +107,14 @@
                                     </po:field>
                                 </po:inputRowElement>
                             </po:inputRow>
+                            
+	                        <div class="btnwrapper" style="margin-bottom:20px;">
+	                            <po:buttonRow>
+	                                <po:button href="javascript://nop/" id="add_relationship_button" style="add" textKey="organizationRelationship.popup.button.addRelationship" onclick="handleSubmission();"  />
+	                                <po:button href="javascript://nop/" id="cancel_button" style="cancel" textKey="button.cancel"/>
+	                            </po:buttonRow>
+	                        </div>                                
                         </s:form>
-                        
-                        <div class="btnwrapper" style="margin-bottom:20px;">
-                            <po:buttonRow>
-                                <po:button href="javascript://nop/" id="add_relationship_button" style="search" textKey="organizationRelationship.popup.button.addRelationship"  />
-                                <po:button href="javascript://nop/" id="cancel_button" style="cancel" textKey="button.cancel"/>
-                            </po:buttonRow>
-                        </div>
                     </div>
                 </div>
             </div>
