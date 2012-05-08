@@ -82,7 +82,6 @@ import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 
 import org.apache.commons.lang.StringUtils;
@@ -161,7 +160,7 @@ public class MilestoneWebDTO {
      * @param comment the comment to set
      */
     public void setComment(String comment) {
-        this.comment = StringUtils.left(comment, PAAttributeMaxLen.LONG_TEXT_LENGTH);
+        this.comment = StringUtils.trim(comment);
     }
 
     /**
