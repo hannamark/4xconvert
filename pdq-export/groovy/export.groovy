@@ -500,19 +500,15 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 if (row.prim_crs_id != null && crsMap.get(row.prim_crs_id.toLong()) != null) {
                     xml.contact {
                         def crsRow = crsMap.get(row.prim_crs_id.toLong())
-                        crsDetail(xml, crsRow)              
-                        xml.phone(row.prim_phone)
-                        xml.email(row.prim_email)
+                        crsDetail(xml, crsRow)
+                        addressAndPhoneDetail(xml, crsRow)
                     }
                 }
                 if (row.inv_crs_id != null && crsMap.get(row.inv_crs_id.toLong()) != null) {
                      xml.investigator {
                          def crsRow = crsMap.get(row.inv_crs_id.toLong())
                          crsDetail(xml, crsRow)
-                         if (row.inv_phone != null)
-                             xml.phone(row.inv_phone)
-                         if (row.inv_email != null) 
-                             xml.email(row.inv_email)
+                         addressAndPhoneDetail(xml, crsRow)
                          xml.role("Principal Investigator")
                      }   
                 }
