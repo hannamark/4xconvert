@@ -92,7 +92,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
@@ -166,6 +165,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     private SubjectAccrualCountService accCountSvc;
     private StudySiteServiceRemote studySiteSvc;
     private StudySite participatingSite;
+    private StudySite labSite;
     
     @Before
     public void setUp() throws Exception {
@@ -175,6 +175,12 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         participatingSite.setStudyProtocol(TestSchema.studyProtocols.get(0));
         participatingSite.setHealthCareFacility(TestSchema.healthCareFacilities.get(2));
         TestSchema.addUpdObject(participatingSite);
+        
+        labSite = new StudySite();
+        labSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        labSite.setFunctionalCode(StudySiteFunctionalCode.LABORATORY);
+        labSite.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.addUpdObject(labSite);
         
         RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
         when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
@@ -349,17 +355,19 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     }
     
     @Test 
-    public void updateSubjectAccrualIiFailureNull() throws PAException {
+    public void updateSubjectAccrualCountIiFailureNull() throws PAException {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Study Site Ii must be valid.");
+        thrown.expectMessage("The treating site that is having an accrual count added to it does not exist.");
         bean.updateSubjectAccrualCount(null, IntConverter.convertToInt(100));
     }
     
     @Test 
-    public void updateSubjectAccrualIiFailureNone() throws PAException {
+    public void updateSubjectAccrualCountIiFailureNone() throws PAException {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Study Site Ii must be valid.");
-        bean.updateSubjectAccrualCount(new Ii(), IntConverter.convertToInt(100));
+        thrown.expectMessage("The treating site that is having an accrual count added to it does not exist.");
+        Ii ii = IiConverter.convertToStudySiteIi(labSite.getId());
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(labSite));        
+        bean.updateSubjectAccrualCount(ii, IntConverter.convertToInt(100));
     }
    
     @Test 

@@ -91,13 +91,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import java.sql.Timestamp;
@@ -113,6 +117,8 @@ import org.junit.Test;
  */
 public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
 
+    StudySiteDTO studySiteDto;
+
     @Before
     public void setup() throws PAException {
         TestSchema.primeData();
@@ -121,6 +127,11 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
         when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
         when(svcLocal.getRegistryUserService()).thenReturn(regSvc);
+
+        studySiteDto = new StudySiteDTO();
+        StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(studySiteDto);
+        when(svcLocal.getStudySiteService()).thenReturn(studySiteSvc);
         PaServiceLocator.getInstance().setServiceLocator(svcLocal);
     }
     
@@ -162,9 +173,23 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         
         assertFalse(AccrualUtil.isUserAllowedAccrualAccess(
                 IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
-        
     }
-    
+
+    @Test
+    public void isValidTreatingSite() throws Exception {
+        assertFalse(AccrualUtil.isValidTreatingSite(null));
+
+        Ii ii = IiConverter.convertToStudySiteIi(null);
+        assertFalse(AccrualUtil.isValidTreatingSite(ii));
+
+        ii = IiConverter.convertToStudySiteIi(1L);
+        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        assertTrue(AccrualUtil.isValidTreatingSite(ii));
+
+        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        assertFalse(AccrualUtil.isValidTreatingSite(ii));
+    }
+
     @Test 
     public void safeGetTest() {
         assertNull(AccrualUtil.safeGet(null, 1));

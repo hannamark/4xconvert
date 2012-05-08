@@ -84,8 +84,12 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -262,6 +266,25 @@ public class AccrualUtil {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Checks that a given study site id is valid and associated with a treating site.
+     * @param studySiteIi the study site identifier
+     * @return boolean
+     * @throws PAException on error
+     */
+    public static boolean isValidTreatingSite(Ii studySiteIi) throws PAException {
+        if (ISOUtil.isIiNull(studySiteIi)) {
+            return false;
+        }
+        StudySiteDTO dto = PaServiceLocator.getInstance().getStudySiteService().get(studySiteIi);
+        if (dto == null) {
+            return false;
+        }
+        StudySiteFunctionalCode code = CdConverter.convertCdToEnum(StudySiteFunctionalCode.class,
+                dto.getFunctionalCode());
+        return code == StudySiteFunctionalCode.TREATING_SITE;
     }
 
     /**

@@ -353,8 +353,9 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     @Override
     public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException {
-        if (ISOUtil.isIiNull(participatingSiteIi)) {
-            throw new PAException("Study Site Ii must be valid.");
+        if (!AccrualUtil.isValidTreatingSite(participatingSiteIi)) {
+            throw new PAException(
+                    "The treating site that is having an accrual count added to it does not exist.");
         }
         if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi)) {
             throw new PAException("User does not have accrual access to site.");
