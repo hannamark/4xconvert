@@ -82,24 +82,31 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -177,7 +184,86 @@ public class SubjectAccrualValidatorTest {
         bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);        
         
     }
-    
+
+    @Test
+    public void validateRaces() throws Exception {
+        SubjectAccrualDTO subject = createSubjectAccrualDTO();
+        StringBuffer errors = new StringBuffer();
+        bean.validateRaces(subject, errors);
+        assertEquals("Race is a required field.\n", errors.toString());
+
+        DSet<Cd> races = new DSet<Cd>();
+        Set<Cd> raceSet = new HashSet<Cd>();
+        races.setItem(raceSet);
+        subject.setRace(races);
+        errors = new StringBuffer();
+        bean.validateRaces(subject, errors);
+        assertEquals("Race is a required field.\n", errors.toString());
+
+        raceSet.add(CdConverter.convertStringToCd("Asian"));
+        errors = new StringBuffer();
+        bean.validateRaces(subject, errors);
+        assertTrue(errors.length() == 0);
+
+        raceSet.clear();
+        raceSet.add(CdConverter.convertStringToCd("05"));
+        raceSet.add(CdConverter.convertStringToCd("01"));
+        bean.validateRaces(subject, errors);
+        assertTrue(errors.length() == 0);
+        
+        raceSet.clear();
+        raceSet.add(CdConverter.convertStringToCd("A"));
+        bean.validateRaces(subject, errors);
+        assertEquals("A is not a valid value for Race Code.\n", errors.toString());
+    }
+
+    @Test
+    public void validateGenderAndEthnicity() throws Exception {
+        SubjectAccrualDTO subject = createSubjectAccrualDTO();
+        StringBuffer errors = new StringBuffer();
+        bean.validateGenderAndEthnicity(subject, errors);
+        assertEquals("Gender is a required field.\n" 
+                + "Ethnicity is a required field.\n", errors.toString());
+        
+        subject.setGender(CdConverter.convertStringToCd("Male"));
+        subject.setEthnicity(CdConverter.convertStringToCd("Unknown"));
+        errors = new StringBuffer();
+        bean.validateGenderAndEthnicity(subject, errors);
+        assertTrue(errors.length() == 0);
+
+        subject.setGender(CdConverter.convertStringToCd("1"));
+        subject.setEthnicity(CdConverter.convertStringToCd("9"));
+        bean.validateGenderAndEthnicity(subject, errors);
+        assertTrue(errors.length() == 0);
+
+        subject.setGender(CdConverter.convertStringToCd("A"));
+        subject.setEthnicity(CdConverter.convertStringToCd("B"));
+        bean.validateGenderAndEthnicity(subject, errors);
+        assertEquals("A is not a valid value for Gender.\nB is not a valid value for Ethnicity.\n", errors.toString());
+    }
+
+    @Test
+    public void validateDatesAndPaymentMethod() throws Exception {
+        SubjectAccrualDTO subject = createSubjectAccrualDTO();
+        StringBuffer errors = new StringBuffer();
+        bean.validateDatesAndPaymentMethod(subject, errors);
+        assertEquals("Birth Date is a required field.\nRegistration Date is a required field.\n", errors.toString());
+
+        subject.setBirthDate(TsConverter.convertToTs(new Date()));
+        subject.setRegistrationDate(TsConverter.convertToTs(new Date()));
+        errors = new StringBuffer();
+        bean.validateDatesAndPaymentMethod(subject, errors);
+        assertEquals("", errors.toString());
+
+        subject.setPaymentMethod(CdConverter.convertStringToCd("6A"));
+        bean.validateDatesAndPaymentMethod(subject, errors);
+        assertEquals("", errors.toString());
+        
+        subject.setPaymentMethod(CdConverter.convertStringToCd("A"));
+        bean.validateDatesAndPaymentMethod(subject, errors);
+        assertEquals("A is not a valid value for Payment Method Code.\n", errors.toString());
+    }
+
     private StudySubjectDto createStudySubjectDto() {
         StudySubjectDto result = new StudySubjectDto();
         St assignedIdentifier = new St();
@@ -200,8 +286,8 @@ public class SubjectAccrualValidatorTest {
         identifier.setExtension("111");
         identifier.setRoot("root");
         result.setIdentifier(identifier);
+        result.setParticipatingSiteIdentifier(IiConverter.convertToStudySiteIi(1L));
         return result;
         
     }
-
-}
+ }

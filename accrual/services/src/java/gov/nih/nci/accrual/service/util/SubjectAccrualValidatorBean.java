@@ -84,12 +84,15 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
+import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
+import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
+import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -129,6 +132,9 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
      */
     @Override
     public void validate(List<SubjectAccrualDTO> subjects) throws PAException {
+        if (subjects == null) {
+            return;
+        }
         for (int i = 0; i < subjects.size(); i++) {
             validateRequiredFields(subjects.get(i), i);
             validateNoStudySubjectDuplicates(subjects.get(i), i);
@@ -142,13 +148,24 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         }
         validateDatesAndPaymentMethod(subjectAccrual, errors);
         validateGenderAndEthnicity(subjectAccrual, errors);
-        if (subjectAccrual.getRace() == null || CollectionUtils.isEmpty(subjectAccrual.getRace().getItem())) {
-            errors.append(String.format(REQUIRED_MSG, "Race"));
-        }
+        validateRaces(subjectAccrual, errors);
         validateCountry(subjectAccrual, errors);
         validateDiseaseAndParticipatingSite(subjectAccrual, errors);
         if (errors.length() != 0) {
             throw new IndexedInputValidationException(errors.toString(), index);
+        }
+    }
+
+    void validateRaces(SubjectAccrualDTO subjectAccrual, StringBuffer errors) {
+        if (subjectAccrual.getRace() == null || CollectionUtils.isEmpty(subjectAccrual.getRace().getItem())) {
+            errors.append(String.format(REQUIRED_MSG, "Race"));
+        } else {
+            for (Cd cd : subjectAccrual.getRace().getItem()) {
+                String code = CdConverter.convertCdToString(cd);
+                if (CDUSPatientRaceCode.getByCode(code) == null) {
+                    errors.append(String.format(INVALID_VALUE, code, "Race Code"));
+                }
+            }
         }
     }
 
@@ -183,7 +200,7 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
                                                                              .getStatusCode()));
     }
 
-    private void validateDatesAndPaymentMethod(SubjectAccrualDTO dto, StringBuffer errMsg) {
+    void validateDatesAndPaymentMethod(SubjectAccrualDTO dto, StringBuffer errMsg) {
         if (ISOUtil.isTsNull(dto.getBirthDate())) {
             errMsg.append(String.format(REQUIRED_MSG, "Birth Date"));
         }
@@ -191,7 +208,7 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
             errMsg.append(String.format(REQUIRED_MSG, "Registration Date"));
         }
         String code = CdConverter.convertCdToString(dto.getPaymentMethod());
-        if (code != null && PaymentMethodCode.getByCode(code) == null) {
+        if (code != null && CDUSPaymentMethodCode.getByCode(code) == null) {
             errMsg.append(String.format(INVALID_VALUE, code, "Payment Method Code"));
         }
     }
@@ -207,17 +224,17 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         }
     }
 
-    private void validateGenderAndEthnicity(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) {
+    void validateGenderAndEthnicity(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) {
         String gender = CdConverter.convertCdToString(subjectAccrual.getGender());
         if (StringUtils.isEmpty(gender)) {
             errMsg.append(String.format(REQUIRED_MSG, "Gender"));
-        } else if (PatientGenderCode.getByCode(gender) == null) {
+        } else if (CDUSPatientGenderCode.getByCode(gender) == null) {
             errMsg.append(String.format(INVALID_VALUE, gender, "Gender"));
         }
         String ethnicity = CdConverter.convertCdToString(subjectAccrual.getEthnicity());
         if (StringUtils.isEmpty(ethnicity)) {
             errMsg.append(String.format(REQUIRED_MSG, "Ethnicity"));
-        } else if (PatientGenderCode.getByCode(gender) == null) {
+        } else if (CDUSPatientEthnicityCode.getByCode(ethnicity) == null) {
             errMsg.append(String.format(INVALID_VALUE, ethnicity, "Ethnicity"));
         }
     }

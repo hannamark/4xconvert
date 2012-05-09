@@ -262,6 +262,26 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
         validateSubjectAccrualDTO(dto, results.get(0));
     }
+
+    @Test
+    public void manageSubjectAccrualsUsingCDUSCodes() throws Exception {
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
+        assertTrue(results.isEmpty());
+        
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+        dto.setEthnicity(CdConverter.convertStringToCd("2")); // not hispanic
+        dto.setGender(CdConverter.convertStringToCd("1")); // male
+        dto.setPaymentMethod(CdConverter.convertStringToCd("4")); // medicaid
+        dto.setRace(DSetConverter.convertCdListToDSet(Arrays.asList(CdConverter.convertStringToCd("06")))); // amer. indian
+        results = bean.manageSubjectAccruals(Arrays.asList(dto));
+        assertEquals(1, results.size());
+        assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
+        SubjectAccrualDTO testDto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+        validateSubjectAccrualDTO(testDto, results.get(0));
+    }
     
     @Test
     public void manageSubjectAccrualRequiredValidation() throws Exception {

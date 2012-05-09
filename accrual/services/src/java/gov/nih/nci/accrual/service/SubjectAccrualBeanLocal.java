@@ -88,6 +88,10 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
+import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
+import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
+import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
@@ -100,6 +104,8 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
@@ -129,6 +135,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -219,15 +226,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjects) throws PAException {
         subjectAccrualValidator.validate(subjects);
         List<SubjectAccrualDTO> results = new ArrayList<SubjectAccrualDTO>();
-        for (SubjectAccrualDTO subject : subjects) {
-            if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
-                throw new PAException("User does not have accrual access to site " 
-                        + subject.getParticipatingSiteIdentifier().getExtension());
-            }
-            if (ISOUtil.isIiNull(subject.getIdentifier())) {
-                results.add(create(subject));
-            } else {
-                results.add(update(subject));
+        if (subjects != null) {
+            for (SubjectAccrualDTO subject : subjects) {
+                if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
+                    throw new PAException("User does not have accrual access to site " 
+                            + subject.getParticipatingSiteIdentifier().getExtension());
+                }
+                if (ISOUtil.isIiNull(subject.getIdentifier())) {
+                    results.add(create(subject));
+                } else {
+                    results.add(update(subject));
+                }
             }
         }
         return results;
@@ -294,10 +303,20 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private PatientDto populatePatientDTO(SubjectAccrualDTO dto, PatientDto patientDTO) throws PAException {
         Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
         patientDTO.setBirthDate(dto.getBirthDate());
-        patientDTO.setCountryIdentifier(IiConverter.convertToIi(country.getId()));
-        patientDTO.setEthnicCode(dto.getEthnicity());
-        patientDTO.setGenderCode(dto.getGender());
-        patientDTO.setRaceCode(dto.getRace());
+        patientDTO.setCountryIdentifier(IiConverter.convertToCountryIi(country.getId()));
+        patientDTO.setEthnicCode(CdConverter.convertToCd(
+                CDUSPatientEthnicityCode.getByCode(CdConverter.convertCdToString(dto.getEthnicity()))));
+        patientDTO.setGenderCode(CdConverter.convertToCd(
+                CDUSPatientGenderCode.getByCode(CdConverter.convertCdToString(dto.getGender()))));
+        DSet<Cd> races = new DSet<Cd>();
+        races.setItem(new HashSet<Cd>());
+        if (dto.getRace() != null && dto.getRace().getItem() != null) {
+            for (Cd cd : dto.getRace().getItem()) {
+                races.getItem().add(CdConverter.convertToCd(
+                        CDUSPatientRaceCode.getByCode(CdConverter.convertCdToString(cd))));
+            }
+        }
+        patientDTO.setRaceCode(races);
         patientDTO.setZip(dto.getZipCode());
         return patientDTO;
     }
@@ -305,7 +324,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO) 
         throws PAException {
         studySubjectDTO.setAssignedIdentifier(dto.getAssignedIdentifier());
-        studySubjectDTO.setPaymentMethodCode(dto.getPaymentMethod());
+        studySubjectDTO.setPaymentMethodCode(CdConverter.convertToCd(
+                CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
         studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
         studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         if (dto.getDiseaseIdentifier() != null) {
