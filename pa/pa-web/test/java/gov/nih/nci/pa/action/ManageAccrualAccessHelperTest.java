@@ -82,6 +82,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -99,6 +100,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
 
 
 /**
@@ -163,20 +165,14 @@ public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
         webDto.setStatusCode("ACTIVE");
         webDto.setRegistryUserId(1L);
         webDto.setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
-        Map<Long, String> treatingSiteMap = new HashMap<Long, String>();
-
-        treatingSiteMap.put(-1L, "All Sites");
-        treatingSiteMap.put(1L, "Treating Site 1");
-        treatingSiteMap.put(2L, "Treating Site 2");
-        when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
         List<StudySiteAccrualAccessDTO> ssAccAccessDtos = new ArrayList<StudySiteAccrualAccessDTO>();
-        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setIdentifier(IiConverter.convertToIi(1L));
-        dto.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
-        dto.setStudySiteIdentifier(IiConverter.convertToIi(1L));
-        dto.setStatusCode(CdConverter.convertStringToCd("INACTIVE"));
-        ssAccAccessDtos.add(dto);
-        when(ssAccSvc.getByStudySite(any(Long.class))).thenReturn(ssAccAccessDtos);
+		StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
+		dto.setIdentifier(IiConverter.convertToIi(1L));
+		dto.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
+		dto.setStudySiteIdentifier(IiConverter.convertToIi(1L));
+		dto.setStatusCode(CdConverter.convertStringToCd("INACTIVE"));
+		ssAccAccessDtos.add(dto);
+        when(ssAccSvc.getByStudySite(1L)).thenReturn(ssAccAccessDtos); 
         accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap());
 
     }

@@ -88,7 +88,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 
 import java.util.List;
@@ -124,21 +123,21 @@ public class ManageAccrualAccessHelper {
     public void addMultipleTreatingSitesAccess(StudySiteAccrualAccessWebDTO webDto,
             Map<Long, String> sites) throws PAException {
         for (Long key : sites.keySet()) {
-            if (ALL_TREATING_SITES_ID.equals(key)) {
+           if (ALL_TREATING_SITES_ID.equals(key)) {
                 continue;
             }
             webDto.setStudySiteId(key);
-            try {
+            List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessService.getByStudySite(webDto.getStudySiteId());
+            if (ssDtos == null || ssDtos.isEmpty()) {
                 addTreatingSiteAccess(webDto);
-            } catch (PADuplicateException dupE) {
-                updateExistingSiteAccessDuringMultiSiteAdd(webDto);
-            }
+            } else {
+                updateExistingSiteAccessDuringMultiSiteAdd(webDto, ssDtos);
+           }
         }
     }
 
-    private void updateExistingSiteAccessDuringMultiSiteAdd(StudySiteAccrualAccessWebDTO webDto)
-    throws PAException {
-        List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessService.getByStudySite(webDto.getStudySiteId());
+    private void updateExistingSiteAccessDuringMultiSiteAdd(StudySiteAccrualAccessWebDTO webDto, 
+         List<StudySiteAccrualAccessDTO> ssDtos) throws PAException {
         for (StudySiteAccrualAccessDTO oldDto : ssDtos) {
             if (StringUtils.equals(oldDto.getStudySiteIdentifier().getExtension(), webDto.getStudySiteId().toString())
                  && StringUtils.equals(oldDto.getRegistryUserIdentifier()
