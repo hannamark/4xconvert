@@ -129,6 +129,7 @@ public class ManageAccrualAccessHelper {
             webDto.setStudySiteId(key);
             List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessService.getByStudySite(webDto.getStudySiteId());
             if (ssDtos == null || ssDtos.isEmpty()) {
+                webDto.setIdentifier(null);
                 addTreatingSiteAccess(webDto);
             } else {
                 updateExistingSiteAccessDuringMultiSiteAdd(webDto, ssDtos);
