@@ -20,9 +20,11 @@ def sql = """select
 			 fax.value as faxnumber,	 
 			 phone.value as phone,
 			 tty.value as tty,
-			 url.value as url
+			 url.value as url,
+			 org.name as organization
 			 from Person per
 			 join clinicalresearchstaff crs on crs.person_id = per.id
+			 join organization org on crs.organization_id = org.id
 			 join address add on add.id = per.postal_address_id
 			 left outer join identifiedperson ctepid on ctepid.player_id = per.id and ctepid.assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier'
 			 left outer join country on country.id = add.country_id
@@ -66,7 +68,8 @@ sourceConnection.eachRow(sql) { row ->
  	 	fax: row.faxnumber,
  	 	phone: row.phone,
  	 	tty: row.tty,
- 	 	role_name: "Clinical Research Staff"
+ 	 	role_name: "Clinical Research Staff",
+ 	 	organization_name: row.organization
 	)
 }
 
@@ -90,9 +93,11 @@ sql = """select
 			 fax.value as faxnumber,	 
 			 phone.value as phone,
 			 tty.value as tty,
-			 url.value as url
+			 url.value as url,
+			 org.name as organization
 			 from Person per
 			 join healthcareprovider hcp on hcp.person_id = per.id
+			 join organization org on hcp.organization_id = org.id
 			 join address add on add.id = per.postal_address_id
 			 left outer join identifiedperson ctepid on ctepid.player_id = per.id and ctepid.assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Identifier'
 			 left outer join country on country.id = add.country_id
@@ -129,7 +134,8 @@ sourceConnection.eachRow(sql) { row ->
  	 	fax: row.faxnumber,
  	 	phone: row.phone,
  	 	tty: row.tty,
- 	 	role_name: "Healthcare Facility"
+ 	 	role_name: "Healthcare Provider",
+ 	 	organization_name: row.organization
 	)
 }
 

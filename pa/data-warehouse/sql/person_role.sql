@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS STG_DW_PERSON_ROLE;
 
 CREATE TABLE STG_DW_PERSON_ROLE (
 	ROLE_NAME character varying (50),
+	ORGANIZATION_NAME character varying (160),
 	ADDRESS_LINE_1 character varying (254),
 	ADDRESS_LINE_2 character varying (254),
 	POSTAL_CODE character varying (30),
