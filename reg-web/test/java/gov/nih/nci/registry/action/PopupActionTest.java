@@ -423,6 +423,54 @@ public class PopupActionTest extends AbstractRegWebTest {
     }
 
     @Test
+    public void testCreatePersonInvalidPhones() throws PAException {
+        popUpAction = new PopupAction();
+        popUpAction.setFirstName("FirstName");
+        popUpAction.setLastName("lastName");
+        popUpAction.setEmail("org@org.com");
+        popUpAction.setCountry("GBR");
+        popUpAction.setPhone("[]");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains("The phone number is invalid"));
+
+        popUpAction.clearErrors();
+        popUpAction.setPhone(null);
+        popUpAction.setFax("[]");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains("The fax number is invalid"));
+
+        popUpAction.clearErrors();
+        popUpAction.setFax(null);
+        popUpAction.setTty("[]");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains("The TTY number is invalid"));
+
+        popUpAction.clearErrors();
+        popUpAction.setCountry("USA");
+        popUpAction.setTty(null);
+        popUpAction.setPhone("111-111-1111ext123");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains(
+                "Valid USA/Canada phone numbers must match ###-###-####x#*, e.g. 555-555-5555 or 555-555-5555x123"));
+
+        popUpAction.clearErrors();
+        popUpAction.setCountry("USA");
+        popUpAction.setPhone(null);
+        popUpAction.setFax("111-111-1111ext123");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains(
+                "Valid USA/Canada fax numbers must match ###-###-####x#*, e.g. 555-555-5555 or 555-555-5555x123"));
+
+        popUpAction.clearErrors();
+        popUpAction.setCountry("USA");
+        popUpAction.setFax(null);
+        popUpAction.setTty("[]");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains(
+                "Valid USA/Canada TTY numbers must match ###-###-####x#*, e.g. 555-555-5555 or 555-555-5555x123"));
+    }
+
+    @Test
     public void testCreatePerson_USA() throws PAException{
         popUpAction = new PopupAction();
         popUpAction.setFirstName("FirstName");

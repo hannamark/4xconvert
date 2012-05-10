@@ -455,28 +455,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (StringUtils.isNotBlank(url) && !PAUtil.isCompleteURL(url)) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
-
-        String phoneNumer = getPhoneNumber();
-        String faxNumber = getFax();
-        String ttyNumber = getTty();
-
-        String badPhoneMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
-                + "555-555-5555 or 555-555-5555x123";
-        if (StringUtils.isNotBlank(phoneNumer) && usaOrCanada
-                && !PAUtil.isUsOrCanadaPhoneNumber(phoneNumer)) {
-            addActionError(String.format(badPhoneMsg, "phone"));
-        }
-
-        if (StringUtils.isNotBlank(faxNumber) && usaOrCanada
-                && !PAUtil.isUsOrCanadaPhoneNumber(faxNumber)) {
-            addActionError(String.format(badPhoneMsg, "fax"));
-        }
-
-        if (StringUtils.isNotBlank(ttyNumber) && usaOrCanada
-                && !PAUtil.isUsOrCanadaPhoneNumber(ttyNumber)) {
-            addActionError(String.format(badPhoneMsg, "TTY"));
-        }
-
+        validatePhoneNumber(getPhoneNumber(), "phone", getCountryName());
+        validatePhoneNumber(getFax(), "fax", getCountryName());
+        validatePhoneNumber(getTty(), "TTY", getCountryName());
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -495,19 +476,19 @@ public class PopupAction extends ActionSupport implements Preparable {
         DSet<Tel> telco = new DSet<Tel>();
         telco.setItem(new HashSet<Tel>());
         try {
-            if (phoneNumer != null && phoneNumer.length() > 0) {
+            if (getPhoneNumber() != null && getPhoneNumber().length() > 0) {
                 Tel t = new Tel();
-                t.setValue(new URI("tel", phoneNumer, null));
+                t.setValue(new URI("tel", getPhoneNumber(), null));
                 telco.getItem().add(t);
             }
-            if (faxNumber != null && faxNumber.length() > 0) {
+            if (getFax() != null && getFax().length() > 0) {
                 Tel f = new Tel();
-                f.setValue(new URI("x-text-fax", faxNumber, null));
+                f.setValue(new URI("x-text-fax", getFax(), null));
                 telco.getItem().add(f);
             }
-            if (ttyNumber != null && ttyNumber.length() > 0) {
+            if (getTty() != null && getTty().length() > 0) {
                 Tel tt = new Tel();
-                tt.setValue(new URI("x-text-tel", ttyNumber, null));
+                tt.setValue(new URI("x-text-tel", getTty(), null));
                 telco.getItem().add(tt);
             }
             if (url != null && url.length() > 0) {
@@ -593,6 +574,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
+        validatePhoneNumber(getPhone(), "phone", getCountry());
+        validatePhoneNumber(getFax(), "fax", getCountry());
+        validatePhoneNumber(getTty(), "TTY", getCountry());
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -665,6 +649,24 @@ public class PopupAction extends ActionSupport implements Preparable {
             handleExceptions(e.getMessage(), PERS_CREATE_RESPONSE);
         }
         return PERS_CREATE_RESPONSE;
+    }
+
+    private void validatePhoneNumber(String number, String type, String cnt) {
+        if (StringUtils.isBlank(number)) {
+            return;
+        }
+        final boolean usaOrCanada = cnt != null
+                && (cnt.equalsIgnoreCase("USA") || cnt.equalsIgnoreCase("CAN"));
+        String badUsaMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
+                + "555-555-5555 or 555-555-5555x123";
+        String badOtherMsg = "The %s number is invalid";
+        if (!PAUtil.isValidPhone(number)) {
+            addActionError(String.format(usaOrCanada ? badUsaMsg : badOtherMsg, type));
+        } else {
+            if (usaOrCanada && !PAUtil.isUsOrCanadaPhoneNumber(number)) {
+                addActionError(String.format(badUsaMsg, type));
+            }
+        }
     }
 
     private String handleExceptions(String message, String returnString) {
