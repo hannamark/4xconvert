@@ -149,7 +149,7 @@
                     <s:select
                         id = "identifierType"
                         headerKey="All"
-                        headerValue="All"
+                        headerValue="--Select--"
                         name="criteria.identifierType"
                         list="#{'NCI':'NCI','NCT':'NCT (Exact Match)','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}"
                         value="criteria.identifierType"
@@ -225,14 +225,14 @@
                         listKey="id"
                         listValue="fullName"
                         headerKey=""
-                        headerValue="All"
+                        headerValue="--Select--"
                         value="criteria.principalInvestigatorId" />
                 </td>
                 <td scope="row" class="label">
                     <label for="trialCategory"> <fmt:message key="search.trial.trialCategorySearch"/></label>
                 </td>
                 <td>
-                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="--Select--" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                 </td>
               </tr>
               
