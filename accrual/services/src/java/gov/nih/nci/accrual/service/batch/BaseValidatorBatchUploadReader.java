@@ -150,21 +150,23 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      * @param sp study protocol
      */
+    @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts" })
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
             StudyProtocolDTO sp) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
-            boolean trialType = true;
-            try {
-            
-                
-                StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
-                    .getSummary4ReportedResourcing(sp.getIdentifier());
-                if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode())
-                        .equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
-                    trialType = false;
+            boolean trialType = true;            
+            if (sp != null) {
+                try {
+                    StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
+                            .getSummary4ReportedResourcing(sp.getIdentifier());
+                    if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode())
+                            .equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
+                        trialType = false;
+                    }
+                } catch (PAException e) {
+                    errMsg.append("Unable to determine study type for study with identifier " 
+                            + sp.getIdentifier() + " \n");
                 }
-            } catch (PAException e) {
-                errMsg.append("Unable to determine study type for study with identifier " + sp.getIdentifier() + " \n");
             }
             if (trialType) {
                 List<String> patientsIdList = new ArrayList<String>();
