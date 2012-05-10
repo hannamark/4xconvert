@@ -164,7 +164,7 @@
                             <label for="holdStatus"> <fmt:message key="studyProtocol.searchOnHold"/></label>
                         </td>
                         <td>
-                            <s:select headerKey="" headerValue="Both" id="holdStatus" name="criteria.holdStatus" 
+                            <s:select headerKey="" headerValue="All" id="holdStatus" name="criteria.holdStatus" 
                                 list="#{'onhold':'On-Hold','notonhold':'Not On-Hold'}"  value="criteria.holdStatus" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
@@ -187,7 +187,7 @@
                             <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>
                         </td>
                         <td>
-                           <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
+                           <s:select headerKey="" headerValue="All" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                         </td>
                     </tr>
                     <tr>
@@ -203,7 +203,7 @@
                             <label for="ctepDcpCategory"><fmt:message key="studyProtocol.ctepDcpCategory"/></label>
                         </td>
                         <td>
-                            <s:select headerKey="" headerValue="All Trials" id="ctepDcpCategory" name="criteria.ctepDcpCategory" 
+                            <s:select headerKey="" headerValue="All" id="ctepDcpCategory" name="criteria.ctepDcpCategory" 
                                 list="#{'ctepdcp':'CTEP and DCP PIO Trials Only','ctep':'CTEP PIO Trials Only','dcp':'DCP PIO Trials Only'}"  
                                 value="criteria.ctepDcpCategory" cssStyle="width:206px" />                        
                         </td>                                            
