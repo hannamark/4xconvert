@@ -188,7 +188,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         }
     }
 
-    @Override
+    //CHECKSTYLE:OFF
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO, String page)
             throws PAException {
