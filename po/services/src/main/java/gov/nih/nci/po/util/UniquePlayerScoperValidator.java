@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -72,6 +73,8 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
         return (match == null || match.getId().equals(input.getId()));
     }
 
+    
+    @SuppressWarnings("unchecked")
     private AbstractPersonRole findMatches(AbstractPersonRole apr) {
         Session s = null;
         try {
@@ -81,7 +84,13 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
             LogicalExpression scoperPlayerComposite = Restrictions.and(Restrictions.eq("player", apr.getPlayer()),
                     Restrictions.eq("scoper", apr.getScoper()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), scoperPlayerComposite));
-            return (AbstractPersonRole) c.uniqueResult();
+            List<AbstractPersonRole> results = c.list();
+            // PO-5038: I had to switch from c.uniqueResult() to c.results() in order to avoid the Oops
+            // page in case of duplicate CRS records in the database, as described in PO-5038.
+            // This change makes this logic a bit less fragile and more resilient as far as handling
+            // bad data is concerned. 
+            return results.isEmpty() ? null : (AbstractPersonRole) results
+                    .get(0);            
         } finally {
             if (s != null) {
                 s.close();
