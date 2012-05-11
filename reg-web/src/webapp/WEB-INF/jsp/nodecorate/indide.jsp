@@ -213,7 +213,7 @@
             <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_grantor">IND/IDE Grantor</reg-web:displayTooltip></th>
             <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_holder_type">IND/IDE Holder Type</reg-web:displayTooltip></th>
             <th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">NIH Institution, NCI Division/Program Code (if applicable)</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access</reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access?</reg-web:displayTooltip></th>
             <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status">Expanded Access Type (if applicable)</reg-web:displayTooltip></th>
             <th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator">Exempt? (if applicable)</reg-web:displayTooltip></th>
             <th></th>

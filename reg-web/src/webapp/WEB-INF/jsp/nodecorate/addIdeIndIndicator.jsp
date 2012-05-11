@@ -8,7 +8,7 @@
 		<display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>
 		<display:column title="Holder" property="holderType"  headerClass="sortable"/>
 		<display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
-		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
+		<display:column title="Expanded Access?" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
 		<display:column title="Exempt?" property="exemptIndicator"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
@@ -30,7 +30,7 @@
 		<display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>
 		<display:column title="Holder" property="holderType"  headerClass="sortable"/>
 		<display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
-		<display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
+		<display:column title="Expanded Access?" property="expandedAccess"  headerClass="sortable"/>
 		<display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
 		<display:column title="Exempt?" property="exemptIndicator"  headerClass="sortable"/>
 		<display:column title="Action" class="action" sortable="false">
@@ -53,7 +53,7 @@
         <display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>
         <display:column title="Holder" property="holderType"  headerClass="sortable"/>
         <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable"/>
-        <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable"/>
+        <display:column title="Expanded Access?" property="expandedAccess"  headerClass="sortable"/>
         <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable"/>
         <display:column title="Exempt?" property="exemptIndicator"  headerClass="sortable"/>
     </display:table>

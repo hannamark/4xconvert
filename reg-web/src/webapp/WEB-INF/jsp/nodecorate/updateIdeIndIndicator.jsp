@@ -9,7 +9,7 @@
                 <th>IND/IDE Grantor</th>
                 <th>IND/IDE Holder Type</th>
                 <th>NIH Institution, NCI Division/Program Code (if applicable)</th>
-                <th>Expanded Access</th>
+                <th>Expanded Access ?</th>
                 <th>Expanded Access Type (if applicable)</th>
                 <th>Exempt? (if applicable)</th>
                 <th></th>

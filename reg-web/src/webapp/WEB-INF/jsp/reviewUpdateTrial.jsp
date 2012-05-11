@@ -164,7 +164,7 @@
                                 <display:column escapeXml="true" title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
                                 <display:column escapeXml="true" title="NIH Inst Holder Code" property="nihInstHolder"  headerClass="sortable"  style="width:75px"/>
                                 <display:column escapeXml="true" title="NCI Div Prog Holder Code" property="nciDivProgHolder" headerClass="sortable"  style="width:75px"/>
-                                <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
+                                <display:column title="Expanded Access?" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
                                 <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px"/>
                                 <display:column title="Exempt?" property="exemptIndicator"  headerClass="sortable" style="width:75px"/>
                             </display:table>
@@ -179,7 +179,7 @@
                                 <display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable" style="width:75px"/>
                                 <display:column escapeXml="true" title="Holder" property="holderType"  headerClass="sortable" style="width:75px"/>
                                 <display:column escapeXml="true" title="Program Code" property="programCode"  headerClass="sortable" style="width:75px"/>
-                                <display:column title="Expanded Access" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
+                                <display:column title="Expanded Access?" property="expandedAccess"  headerClass="sortable" style="width:75px"/>
                                 <display:column title="Expanded Access Type" property="expandedAccessType"  headerClass="sortable" style="width:75px" />
                                 <display:column title="Exempt?" property="exemptIndicator"  headerClass="sortable" style="width:75px"/>
                             </display:table>
