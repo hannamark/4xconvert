@@ -11,6 +11,7 @@
         <script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <script type="text/javascript">
             var bla = <s:property value="trialDTO.participatingSitesList.size"/>;
@@ -140,8 +141,8 @@
                     </reg-web:valueRow>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
                     <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_trialTitle" labelKey="submit.trial.title" required="true">
-                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" />
-                        <span class="info">Max 4000 characters</span>
+                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
+                        
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.officialTitle</s:param>

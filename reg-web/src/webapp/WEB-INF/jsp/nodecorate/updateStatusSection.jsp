@@ -21,9 +21,9 @@
 
 <reg-web:valueRow labelFor="trialDTO_reason" labelKey="update.trial.trialStatusReason">
     <s:textarea id="trialDTO_reason" name="trialDTO.reason" cols="50" rows="2" maxlength="160"
-     onKeyDown="countLeft('trialDTO_reason','trialDTO_reason_left',160);" 
-     onKeyUp="countLeft('trialDTO_reason','trialDTO_reason_left',160);"/> 
-    <input readonly type="text" id="trialDTO_reason_left" size=3 maxlength=3 value="160"/> <span class="info">characters left</span></br>
+        cssClass="charcounter"
+    /> 
+    </br>
     <span class="info">Required for Administratively Complete, Withdrawn and Temporarily Closed statuses only</span>
     <span class="formErrorMsg">
         <s:fielderror>

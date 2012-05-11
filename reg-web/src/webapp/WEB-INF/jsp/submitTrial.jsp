@@ -10,6 +10,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
@@ -395,8 +396,8 @@
                     </tr>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
                     <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_trialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
-                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" />
-                        <span class="info">Max 4000 characters</span>
+                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
+                       
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.officialTitle</s:param>

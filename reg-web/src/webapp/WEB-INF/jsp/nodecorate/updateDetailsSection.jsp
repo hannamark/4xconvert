@@ -22,7 +22,7 @@
     </td>
     <td>
         <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cssClass="readonly" readonly="true" cols="75" rows="4" />
-        <span class="info">Max 4000 characters</span>
+        
     </td>
 </tr>
 <tr>

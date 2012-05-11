@@ -12,8 +12,8 @@
         </label>
     </td>
     <td>
-        <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cols="75" rows="4" />
-        <span class="info">Max 4000 characters</span>
+        <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cols="75" rows="4" 
+            maxlength="4000" cssClass="charcounter"/>       
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>trialDTO.officialTitle</s:param>
