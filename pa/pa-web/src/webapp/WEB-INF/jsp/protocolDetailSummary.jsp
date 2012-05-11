@@ -59,7 +59,7 @@
 	    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
             <div class="row">
                 <span class="label"><fmt:message key="studyProtocol.amendmentDate"/>:</span>
-                <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.amendmentDate }" dateStyle="short"/></span>
+                <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.amendmentDate }" pattern="MM/dd/yyyy"/></span>
             </div>
         </c:if>
 	</div>
@@ -73,7 +73,7 @@
         <c:if test="${sessionScope.trialSummary.studyStatusDate != null}">
             <div class="row">
                 <span class="label"><fmt:message key="studyProtocol.studyStatusDate"/>:</span>
-                <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.studyStatusDate }" dateStyle="short"/></span>
+                <span class="value"><fmt:formatDate value="${sessionScope.trialSummary.studyStatusDate }" pattern="MM/dd/yyyy"/></span>
             </div>
         </c:if>
 		<div class="row">
