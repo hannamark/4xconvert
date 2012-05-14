@@ -87,7 +87,6 @@ import gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 
 /**
@@ -132,8 +131,11 @@ public final class DuplicateParticipatingSiteTransformer
         }
         DuplicateParticipatingSiteFault xml =
             CoppaFaultHelper.toFault(new DuplicateParticipatingSiteFault(), input);
-        xml.setTrialId(IITransformer.INSTANCE.toXml(input.getTrialIi()));
-        xml.setHcfId(IITransformer.INSTANCE.toXml(input.getHcfIi()));
+        // See bug PO-5043. Due to a Globus bug, Axis gets upset when a fault that extends
+        // WSRF's BaseFault refers to non-XML Schema types.
+        
+        //xml.setTrialId(IITransformer.INSTANCE.toXml(input.getTrialIi()));
+        //xml.setHcfId(IITransformer.INSTANCE.toXml(input.getHcfIi()));
         return xml;
     }
 
