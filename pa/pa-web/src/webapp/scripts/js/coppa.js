@@ -49,9 +49,9 @@ function toggleDeleteCheckboxes() {
         	el.checked = deleteAllToggled;
         }
     });
-	if ($('multiDeleteBtnText')!=null) {
-		$('multiDeleteBtnText').innerHTML = deleteAllToggled?'Deselect All':'Select All';
-	}
+    $$('[name="multiDeleteBtnText"]').each(function(n) {
+        n.innerHTML = deleteAllToggled?'Deselect All':'Select All';
+    });
 }
 
 
