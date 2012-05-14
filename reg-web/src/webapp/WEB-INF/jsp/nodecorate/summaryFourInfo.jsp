@@ -1,9 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
           <!--  summary4 information -->
-          <tr>
-                <th colspan="2">Summary 4 Information (for trials at NCI-designated cancer centers)</th>
-          </tr>
+          <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
           <tr>
                 <td colspan="2" class="space">&nbsp;</td>
           </tr>
