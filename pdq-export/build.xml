@@ -6,12 +6,12 @@
 	
 	<property file="${basedir}/local.properties" />
 	<property file="${basedir}/build.properties"/>
-	<echoproperties destfile="${basedir}/resolved.build.properties"/>
-	
-    <property name="archives.dir" value="${basedir}/archives" />
+	<echoproperties destfile="${basedir}/resolved.build.properties"/>	
     <property name="temp.dir" value="${basedir}/temp" />
+	
+	<delete dir="${temp.dir}" failonerror="false" quiet="true"/>
 	<mkdir dir="${temp.dir}"/>
-	<mkdir dir="${archives.dir}"/>
+	<mkdir dir="${output.dir}"/>
 	
     <path id="pdqexport.classpath">
         <fileset dir="${basedir}/lib">
@@ -21,12 +21,11 @@
     
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="pdqexport.classpath"/>
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="pdqexport.classpath" name="groovy"/> 
-    
-	
+    	
     <target name="gen" description="Generates the Export">
-        <echo message = "Generating PDQ Trial Export ...."/>
+        <echo message = "Generating PDQ Trial Export..."/>
         <groovy src="groovy/export.groovy"/>
-    	<zip destfile="${archives.dir}/CTRP-TRIALS-${TODAY}.zip" basedir="${temp.dir}"/>
+    	<zip destfile="${output.dir}/CTRP-TRIALS-${TODAY}.zip" basedir="${temp.dir}"/>
     	<delete quiet="true" file="${basedir}/resolved.build.properties"/>
     	<delete dir="${temp.dir}"/>
     </target>
