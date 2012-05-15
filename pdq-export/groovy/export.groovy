@@ -1,3 +1,5 @@
+
+
 import groovy.sql.Sql
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
@@ -275,7 +277,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         xml.sponsors {
             xml.lead_sponsor {
                 def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-                xml.name(roRow.orgname)
+                xml.name(changeSponsorNameIfNeeded(roRow.orgname))
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
                 addressAndPhoneDetail(xml, roRow)
@@ -541,6 +543,10 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row) {
         xml.fax(row.faxnumber)
     }
     xml.email(row.email)
+}
+
+String changeSponsorNameIfNeeded(orgName) {
+    return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName 
 }
 
 println "Generated $nbOfTrials files"
