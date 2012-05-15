@@ -531,7 +531,10 @@ public class StudyOverallStatusBeanLocal extends
         }
 
         // Constraint/Rule:29 Trial Start Date must be same/smaller than Primary Completion Date.
-        if (!unknownPrimaryCompletionDate && dates.getPrimaryCompletionDate().before(dates.getStartDate())) {
+        if (!unknownPrimaryCompletionDate
+                && dates.getPrimaryCompletionDate() != null
+                && dates.getPrimaryCompletionDate()
+                        .before(dates.getStartDate())) {
             errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");
         }
 

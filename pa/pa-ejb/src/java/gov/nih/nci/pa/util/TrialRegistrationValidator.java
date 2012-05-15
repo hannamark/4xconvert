@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -297,9 +298,21 @@ public class TrialRegistrationValidator {
         if (ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
             errorMsg.append("Trial Start Date Type cannot be null. ");
             valid = false;
-        }
+        } else
+        if (ActualAnticipatedTypeCode.getByCode(studyProtocolDTO
+                .getStartDateTypeCode().getCode()) == null) {
+            errorMsg.append("Trial Start Date Type is invalid: "
+                    + "valid values are Actual, Anticipated (case-sensitive). ");
+            valid = false;
+        }      
         if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
             errorMsg.append("Primary Completion Date Type cannot be null. ");
+            valid = false;
+        } else
+        if (ActualAnticipatedTypeCode.getByCode(studyProtocolDTO
+                .getPrimaryCompletionDateTypeCode().getCode()) == null) {
+            errorMsg.append("Primary Completion Date Type is invalid: "
+                    + "valid values are Actual, Anticipated (case-sensitive). ");
             valid = false;
         }
         if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
