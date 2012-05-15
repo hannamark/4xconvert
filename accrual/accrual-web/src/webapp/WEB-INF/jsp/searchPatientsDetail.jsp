@@ -5,6 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <c:url value="/protected/popup.action" var="lookupUrl" />
+    <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
     <head>
         <s:if test="%{currentAction == 'create'}">
             <c:set var="topic" scope="request" value="subjects_adding"/> 
@@ -32,7 +33,7 @@
             setFormat("mm/dd/yyyy");
             
             function handleCancelAction() {
-                submitForm("patients.action");
+            	submitForm("patients.action" + '<%=urlParams%>');
             }
             
             function handleAddAction() {
@@ -40,7 +41,7 @@
             }
             
             function handleEditAction() {
-                submitForm("patientsedit.action");
+            	submitForm("patientsedit.action" + '<%=urlParams%>');
             }
             
             function submitForm(action) {
