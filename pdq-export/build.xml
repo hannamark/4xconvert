@@ -4,6 +4,7 @@
         <format property="TODAY" pattern="MM-dd-yyyy-HHmm" locale="US"/>
     </tstamp>   
 	
+	<property file="${basedir}/local.properties" />
 	<property file="${basedir}/build.properties"/>
 	<echoproperties destfile="${basedir}/resolved.build.properties"/>
 	
