@@ -163,7 +163,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private static final Logger LOG = Logger.getLogger(ParticipatingOrganizationsAction.class);
     
     private static final String PRIMARY_CONTACT_DISPLAY_FMT = "[%s - %s]";
-    private static final String INVESTIGATOR_DISPLAY_FMT = "[%s - %s, %s]<br>";
+    private static final String INVESTIGATOR_DISPLAY_FMT = "[%s - %s, %s]%s";
     private static final String REC_STATUS_DATE = "recStatusDate";
     private static final String EDIT_ORG_NAME = "editOrg.name";
     private static final String ACT_FACILITY_SAVE = "facilitySave";
@@ -609,7 +609,9 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             String fullName = StringUtils.defaultString(pi.getFullName());
             String roleName = getCode(pi.getRoleName());
             String status = getCode(pi.getStatusCode());
-            invList.append(String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status));
+            String comma = investigators.indexOf(pi) == investigators.size() - 1 ? ""
+                    : ", ";
+            invList.append(String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status, comma));
         }
     }
 
