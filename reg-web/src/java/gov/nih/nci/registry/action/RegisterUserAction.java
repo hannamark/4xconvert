@@ -427,6 +427,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         }
         CSMUserService.getInstance().updateCSMUser(registryUser, userWebDTO.getUsername(), null);
         registryUserService.updateUser(registryUser);
+        ServletActionContext.getRequest().setAttribute("userName", CsmUserUtil.getGridIdentityUsername(loginName));
         return redirectPage;
     }
     
