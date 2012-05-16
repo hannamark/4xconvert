@@ -971,6 +971,13 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     }
 
     private void enforceEligibilityBusinessRules() throws PAException {
+        if (StringUtils.isEmpty(webDTO.getDisplayOrder())) {
+            if (eligibilityList == null) {
+                webDTO.setDisplayOrder("1");
+            } else {
+                webDTO.setDisplayOrder(eligibilityList.size() + 1 + "");
+            }
+        } 
         String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
         if (ruleError.length() > 0) {
             addFieldError("webDTO.displayOrder", ruleError);
@@ -984,7 +991,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         if (StringUtils.isNotEmpty(webDTO.getTextDescription())
                 && getEligibilityList() != null) {
             for (ISDesignDetailsWebDTO detailsWebDTO : getEligibilityList()) {
-                if (webDTO.getTextDescription().equals(detailsWebDTO.getTextDescription())) {
+                if (webDTO.getTextDescription().equals(detailsWebDTO.getTextDescription()) && webDTO.getId() != null 
+                        && !detailsWebDTO.getId().equals(webDTO.getId())) {
                     addFieldError("webDTO.TextDescription", "Duplicate description");
                 }
             }

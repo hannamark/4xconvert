@@ -233,22 +233,12 @@
                                 <s:fielderror>
                                     <s:param>webDTO.structuredType</s:param>
                                </s:fielderror>
-                            </span>
+                            </span>                      
+                            <s:hidden name="webDTO.displayOrder" />
+                            <s:hidden name="webDTO.id" />
+
                         </td>
-                    </tr> 
-                    <tr>
-                        <td scope="row"  class="label"><label>
-                            <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriaDisplayOrder"/><span class="required">*</span></label>
-                        </td>
-                        <td class="value">
-                            <s:textfield name="webDTO.displayOrder" maxlength="3" cssStyle="width:150px" />
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                    <s:param>webDTO.displayOrder</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>           
+                    </tr>                               
                 </table>
                 <div id="eligibility.build.criterion">
                         <jsp:include page="/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp" />
