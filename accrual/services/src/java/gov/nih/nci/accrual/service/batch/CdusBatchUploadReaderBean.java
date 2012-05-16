@@ -89,6 +89,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
@@ -164,6 +165,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<BatchImportResults> importBatchData(BatchFile batchFile) throws PAException {
+        CaseSensitiveUsernameHolder.setUser(batchFile.getUserLastCreated().getLoginName());
         List<BatchValidationResults> validationResults = validateBatchData(batchFile);
         for (BatchValidationResults validationResult : validationResults) {
             if (!validationResult.isPassedValidation()) {
@@ -334,7 +336,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         StringBuffer confirmation = new StringBuffer();
         for (BatchImportResults result : importResults) {
             if (result.getTotalImports() > 0) {
-                confirmation.append(String.format("Sucessfully imported %s patients from %s.\n", 
+                confirmation.append(String.format("Sucessfully imported %s patients/accrual counts from %s.\n", 
                         result.getTotalImports(), result.getFileName()));
             }
         }

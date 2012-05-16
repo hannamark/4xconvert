@@ -935,4 +935,8 @@
         <comment>Update email text.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5026.sql"/>
      </changeSet>
+     <changeSet id="PO-5055" author="Hugh">
+        <comment>Add unique constraint to study_subject_accrual_count.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5055.sql"/>
+     </changeSet>
 </databaseChangeLog>
