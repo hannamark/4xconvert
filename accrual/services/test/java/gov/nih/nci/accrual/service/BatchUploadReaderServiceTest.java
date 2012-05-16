@@ -515,6 +515,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         BatchFile bf = new BatchFile();
         bf.setFileLocation(file.getAbsolutePath());
         bf.setSubmitter(TestSchema.registryUsers.get(0));
+        bf.setUserLastCreated(TestSchema.registryUsers.get(0).getCsmUser());
         return bf;
     }
 }
