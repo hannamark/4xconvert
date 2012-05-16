@@ -31,7 +31,7 @@
                 document.getElementById("firstName").value="";
                 document.getElementById("lastName").value="";
                 document.getElementById("emailAddress").value="";
-                searchForUsers();
+                document.forms[0].elements["criteria.affiliatedOrgName"].value="";
             }
 
             function assignOwner(userId) {
