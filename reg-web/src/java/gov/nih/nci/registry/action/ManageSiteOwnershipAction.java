@@ -211,5 +211,11 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
     public void setTrialUtil(TrialUtil trialUtil) {
         this.trialUtil = trialUtil;
     }
+    
+    @Override
+    public String unassignOwnership() throws PAException {
+        super.unassignOwnership();
+        return search();
+    }
 
 }
