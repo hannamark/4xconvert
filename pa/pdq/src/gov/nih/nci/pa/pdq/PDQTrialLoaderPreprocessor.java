@@ -181,6 +181,7 @@ public class PDQTrialLoaderPreprocessor {
         changeLeadOrgId(document);
         changeMaxAge(document);
         addDefaultArm(document);
+        checkOutcomeMeasure(document);
 
         // Do following 3 in this order.
         defaultStartDate(document);
@@ -202,7 +203,23 @@ public class PDQTrialLoaderPreprocessor {
         osw.close();
     }
 
-    private void processPrimaryPurposeCode(Document document) {
+    private void checkOutcomeMeasure(Document document) {    	
+    	for (Element primaryOutcome : (List<Element>) document.getRootElement().getChildren("primary_outcome")) {
+    		appendOutcomeMeasure(primaryOutcome);
+        }    	
+    	for (Element secondaryOutcome : (List<Element>) document.getRootElement().getChildren("secondary_outcome")) {
+    		appendOutcomeMeasure(secondaryOutcome);
+        }	
+	}
+
+	private void appendOutcomeMeasure(Element primaryOutcome) {
+		Element outcomeMeasure = primaryOutcome.getChild("outcome_measure");
+		if (outcomeMeasure != null && outcomeMeasure.getText() != null && outcomeMeasure.getText().length() > 250) {
+			outcomeMeasure.setText(outcomeMeasure.getText().substring(0, 250) + "....");
+		}
+	}
+
+	private void processPrimaryPurposeCode(Document document) {
         Element studyDesign = document.getRootElement().getChild("study_design");
         addMissingPrimaryPurposeCode(studyDesign);
         replaceInvalidPrimaryPurposeCode(studyDesign);
@@ -280,8 +297,10 @@ public class PDQTrialLoaderPreprocessor {
 
     private void replaceAnticipatedDate(Document document) {
         Element startDate = document.getRootElement().getChild("start_date");
+        Element primaryComplDate = document.getRootElement().getChild("primary_compl_date");
         if (startDate != null && "Anticipated".equalsIgnoreCase(startDate.getAttribute("date_type").getValue())) {
             startDate.setText(DEFAULT_FUTURE_DATE);
+            primaryComplDate.setText(DEFAULT_FUTURE_DATE);
         }
     }
 
