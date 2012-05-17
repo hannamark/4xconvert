@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserService;
-import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -209,19 +208,14 @@ public class AssignOwnershipAction extends ActionSupport {
                 List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
                 TrialOwner owner = null;
                 for (RegistryUser rUsr : regUserList) {
-                    if (rUsr.getCsmUser() != null) {
-                        String loginName = rUsr.getCsmUser().getLoginName();
-                        if (ActionUtils.checkUserHasReadWritePrivilege(loginName)) {
-                            owner = new TrialOwner();
-                            owner.setRegUser(rUsr);
-                            owner.setOwner(PaRegistry.getRegistryUserService()
-                                    .isTrialOwner(rUsr.getId(),
-                                            Long.parseLong(spIi.getExtension())));
-                            users.add(owner);
-                        }
-                    }
-               }
-           }
+                    owner = new TrialOwner();
+                    owner.setRegUser(rUsr);
+                    owner.setOwner(PaRegistry.getRegistryUserService()
+                            .isTrialOwner(rUsr.getId(),
+                                    Long.parseLong(spIi.getExtension())));
+                    users.add(owner);
+                }
+            }
         } catch (PAException e) {
             addActionError("Error getting csm users.");
         }
@@ -302,7 +296,7 @@ public class AssignOwnershipAction extends ActionSupport {
      * @param svc The service to set.
      */
     public void setOrgEntitySvc(OrganizationEntityServiceRemote svc) {
-        this.orgEntSvc = svc;
+        orgEntSvc = svc;
     }
 
     /**
