@@ -47,6 +47,8 @@ def collabTrialsSQL = """
         sp.scientific_description as detailed_description,
         sp.official_title,
         respPartyCrs.assigned_identifier as respPartyCrsId,
+        respPartySc.email as prim_phone,
+        respPartySc.telephone as prim_email,
         ra_country.name || ' : ' || ra.authority_name as reg_authority,
         CASE 
             WHEN sos.status_code = 'APPROVED' then 'Approved'
@@ -155,6 +157,7 @@ def collabTrialsSQL = """
             and sponsorSs.research_organization_identifier in ($ctepRoId, $dcpRoId)
      join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
         and dws.status_code in ('ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
+        and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
      inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sp.identifier
         and nci_id.root = '2.16.840.1.113883.3.26.4.3'
      left outer join study_site ctepSs on ctepSs.study_protocol_identifier = sp.identifier and ctepSs.functional_code = 'IDENTIFIER_ASSIGNER'
@@ -251,7 +254,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             xml.name(roRow.orgname)
             xml.po_id(roRow.org_poid)
             xml.ctep_id(roRow.ctep_id)
-            addressAndPhoneDetail(xml, roRow)
+            addressAndPhoneDetail(xml, roRow, null)
 		
 		}
         
@@ -263,7 +266,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     def sum4Org = orgsMap.get(spRow.sum4OrgId.toLong())
                     xml.name(sum4Org.name)
                     xml.po_id(sum4Org.org_poid)
-                    addressAndPhoneDetail(xml, sum4Org)
+                    addressAndPhoneDetail(xml, sum4Org, null)
                 }
             }
         }
@@ -280,14 +283,14 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 xml.name(changeSponsorNameIfNeeded(roRow.orgname))
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
-                addressAndPhoneDetail(xml, roRow)
+                addressAndPhoneDetail(xml, roRow, null)
             }
             xml.resp_party {
                 xml.resp_party_person {
                     if (spRow.respPartyCrsId != null) {
                         def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
                         crsDetail(xml, crsRow)
-                        addressAndPhoneDetail(xml, crsRow)
+                        addressAndPhoneDetail(xml, crsRow, spRow)
                     }
                 }
                 xml.resp_party_organization {
@@ -296,7 +299,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                         xml.name(roRow.orgname)
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
-                        addressAndPhoneDetail(xml, roRow)
+                        addressAndPhoneDetail(xml, roRow, null)
                     }
                 }
             }
@@ -306,7 +309,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     xml.name(collabRow.name)
                     xml.po_id(collabRow.org_poid)
                     xml.ctep_id(roRow.ctep_id)
-                    addressAndPhoneDetail(xml, roRow)
+                    addressAndPhoneDetail(xml, roRow, null)
                 }                   
             }
         } // end sponsors
@@ -478,14 +481,14 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         xml.overall_official {
             def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
             crsDetail(xml, crsRow)
-            addressAndPhoneDetail(xml, crsRow) 
+            addressAndPhoneDetail(xml, crsRow, null) 
             xml.role("Principal Investigator")
             xml.affiliation {
                 def roRow = rosMap.get(spRow.leadRoId.toLong())
                 xml.name(roRow.orgname)
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
-                addressAndPhoneDetail(xml, roRow)
+                addressAndPhoneDetail(xml, roRow, null)
             }
         }
     
@@ -496,21 +499,21 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     xml.name(row.name)
                     xml.po_id(row.org_poid)
                     xml.ctep_id(hcfRow.ctep_id)
-                    addressAndPhoneDetail(xml, hcfRow)
+                    addressAndPhoneDetail(xml, hcfRow, null)
 				}
                 xml.status(row.status)
                 if (row.prim_crs_id != null && crsMap.get(row.prim_crs_id.toLong()) != null) {
                     xml.contact {
                         def crsRow = crsMap.get(row.prim_crs_id.toLong())
                         crsDetail(xml, crsRow)
-                        addressAndPhoneDetail(xml, crsRow)
+                        addressAndPhoneDetail(xml, crsRow, row)
                     }
                 }
                 if (row.inv_crs_id != null && crsMap.get(row.inv_crs_id.toLong()) != null) {
                      xml.investigator {
                          def crsRow = crsMap.get(row.inv_crs_id.toLong())
                          crsDetail(xml, crsRow)
-                         addressAndPhoneDetail(xml, crsRow)
+                         addressAndPhoneDetail(xml, crsRow, null)
                          xml.role("Principal Investigator")
                      }   
                 }
@@ -518,6 +521,8 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
 		}  // end part sites
         xml.verification_date(spRow.verification_date)      
 	}
+    writer.flush();
+    writer.close();
 }
 
 void crsDetail(MarkupBuilder xml, Object crsRow) {
@@ -530,7 +535,7 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
         xml.ctep_id(crsRow.ctep_id)
 }
 
-void addressAndPhoneDetail(MarkupBuilder xml, Object row) {  
+void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow) {  
     xml.address {
         xml.street(row.streetaddressline)
         xml.city(row.cityormunicipality)
@@ -538,11 +543,14 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row) {
         xml.zip(row.postalcode)
         xml.country(row.country_name)
     }
-    xml.phone(row.phone)
+    
+    xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:""))
+    
     if (row.faxnumber != null) {
-        xml.fax(row.faxnumber)
+        xml.fax(""/**row.faxnumber**/)
     }
-    xml.email(row.email)
+    
+    xml.email((spRow!=null && spRow.prim_email!=null?spRow.prim_email:""))
 }
 
 String changeSponsorNameIfNeeded(orgName) {
