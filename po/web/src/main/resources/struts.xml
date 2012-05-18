@@ -64,6 +64,9 @@
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>                
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">add,edit</param>
                 </interceptor-ref>
            </interceptor-stack>
 
@@ -312,12 +315,18 @@
         <!-- Family -> Edit/Create -->
         <action name="family/curate/*" class="gov.nih.nci.po.web.curation.CurateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">submit</param>
+            </interceptor-ref>
             <result name="success">/WEB-INF/jsp/curate/family/family.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/family.jsp</result>
             <result name="list">/protected/search/family/list.action</result>
         </action>
         <action name="family/create/*" class="gov.nih.nci.po.web.create.CreateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">save</param>
+            </interceptor-ref>
             <result name="success" type="redirectAction">family/curate/start?family.id=${familyId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/family.jsp</result>
         </action>
@@ -329,12 +338,18 @@
         <!-- Family Organization Relationship (Family Perspective) -> Create/Edit -->
         <action name="family/organization/relationship/curate/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">submit</param>
+            </interceptor-ref>
             <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
             <result name="parent" type="redirectAction">family/curate/start?family.id=${familyOrgRelationship.family.id}</result>
         </action>
         <action name="family/organization/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result name="success" type="redirectAction">family/organization/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationshipId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
         </action>
@@ -347,12 +362,18 @@
         <!-- Family Organization Relationship (Organization Perspective) -> Create/Edit -->
         <action name="organization/family/relationship/curate/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">submit</param>
+            </interceptor-ref>
             <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
             <result name="parent" type="redirectAction">roles/organizational/familyRelationships/start?organization=${familyOrgRelationship.organization.id}</result>
         </action>
         <action name="organization/family/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result name="success" type="redirectAction">organization/family/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationshipId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
         </action>
@@ -365,12 +386,18 @@
         <!--  Organization Relationship Edit -->
         <action name="popup/organization/relationship/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">update</param>
+            </interceptor-ref>
             <result name="input">/WEB-INF/jsp/curate/family/changeOrganizationRelationship.jsp</result>
             <result name="success">/WEB-INF/jsp/curate/family/changeOrganizationRelationship.jsp</result>
         </action>
         
         <action name="popup/organization/relationship/create/*" class="gov.nih.nci.po.web.create.CreateOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result name="input">/WEB-INF/jsp/curate/family/changeOrganizationRelationship.jsp</result>
             <result name="success">/WEB-INF/jsp/curate/family/changeOrganizationRelationship.jsp</result>
         </action>
@@ -388,6 +415,9 @@
         </action>
         <action name="organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">curate</param>
+            </interceptor-ref>
             <exception-mapping result="curateError" exception="gov.nih.nci.po.service.CurateEntityValidationException"/>
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="curateError" type="redirectAction">organization/curate/curate/error?organization.id=${organizationId}&amp;duplicateOf.id=${duplicateOfId}</result>
@@ -405,6 +435,9 @@
         <!-- Person -> Edit/Curate -->
         <action name="person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">curate</param>
+            </interceptor-ref>
             <result name="curate">/WEB-INF/jsp/curate/person/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
             <result name="success" type="redirectAction">
@@ -497,6 +530,9 @@
         <!-- Organization -> Create -->
         <action name="create/organization/*" class="gov.nih.nci.po.web.create.CreateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result name="input">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="success" type="redirectAction">organization/curate/start?organization.id=${organizationId}</result>
         </action>
@@ -504,6 +540,9 @@
         <!-- Person -> Create -->
         <action name="create/person/*" class="gov.nih.nci.po.web.create.CreatePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result name="input">/WEB-INF/jsp/curate/person/curate.jsp</result>
             <result name="success" type="redirectAction">person/curate/start?person.id=${personId}</result>
         </action>

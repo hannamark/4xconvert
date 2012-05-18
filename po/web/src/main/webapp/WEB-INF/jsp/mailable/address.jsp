@@ -45,6 +45,7 @@
             id="postalAddressForm" 
             onsubmit="return true;">
          <s:actionerror/> 
+         <s:token/>
          <s:hidden key="rootKey"/>
          <s:hidden key="address.id"/>
          <s:hidden key="index"/>

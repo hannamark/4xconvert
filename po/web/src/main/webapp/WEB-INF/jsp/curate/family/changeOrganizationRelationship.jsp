@@ -46,6 +46,7 @@
                     <div class="po_form">
                         <s:actionerror/>
                         <s:form action="%{formAction}" id="organizationRelationshipForm" theme="simple">
+                            <s:token/>
                             <s:hidden name="rootKey" id="rootKey"/>
                             <s:hidden name="passedValidation" id="passedValidation"/>
                             <s:hidden name="newOrgRelationship.family.id"/>

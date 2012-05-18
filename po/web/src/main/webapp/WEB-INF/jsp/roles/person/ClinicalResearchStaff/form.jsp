@@ -52,6 +52,7 @@
             <div class="box_white">
                 <s:actionerror/>
                 <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:token/>
                 <s:hidden key="cr"/>
                 <s:hidden key="person"/>
                 <s:hidden key="rootKey"/>

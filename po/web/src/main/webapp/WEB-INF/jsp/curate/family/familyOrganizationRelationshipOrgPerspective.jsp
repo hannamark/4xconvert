@@ -54,6 +54,7 @@
         <div class="box_outer">
             <div class="box_white">
                  <s:form action="%{formAction}" id="familyOrgRelationshipForm" theme="simple">
+                    <s:token/>
                     <input id="enableEnterSubmit" type="submit"/>
                     <s:hidden key="rootKey" id="rootKey"/>
                     <s:hidden key="familyOrgRelationship.id" id="familyOrgRelationship.id"/>

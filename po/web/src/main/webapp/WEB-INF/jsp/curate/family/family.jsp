@@ -35,6 +35,7 @@
        <s:set name="formAction" value="'family/curate/submit.action'"/>
     </s:else>
     <s:form action="%{formAction}" id="familyEntityForm">
+        <s:token/>
         <div class="box_white">
         <s:if test="isCreate">
             <s:hidden id="familyEntityForm.family.statusCode" key="family.statusCode"/>

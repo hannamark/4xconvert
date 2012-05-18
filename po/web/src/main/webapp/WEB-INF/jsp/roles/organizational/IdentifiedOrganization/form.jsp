@@ -51,6 +51,7 @@
             <div class="box_white">
                 <s:actionerror/>
                 <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:token/>
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
                 <s:if test="%{isNotCreate}"><s:hidden key="role.id" /></s:if>

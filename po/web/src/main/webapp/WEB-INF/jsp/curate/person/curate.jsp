@@ -48,6 +48,7 @@
        <s:set name="formAction" value="'person/curate/curate.action'"/>
     </s:else>
     <s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.person.comments').value = $F('curateEntityForm.person.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.person.statusCode', document.forms.curateEntityForm);">
+        <s:token/>
         <input id="enableEnterSubmit" type="submit"/>
         <s:hidden key="rootKey"/>
         <s:hidden key="cr.id"/>
