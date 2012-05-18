@@ -83,11 +83,11 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -1212,6 +1212,60 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         assertEquals(2, studyProtocolDTO.getSecondaryIdentifiers().getItem().size());
     }
+    
+    @Test
+    public void amendTrialTestAmendingUser() throws Exception {
+        
+        Ii ii = registerTrial();
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        St userCreated = studyProtocolDTO.getUserLastCreated();
+        PaHibernateUtil.getCurrentSession().createSQLQuery(
+                "update study_protocol set user_last_created_id=null where identifier="
+                        + studyProtocolDTO.getIdentifier().getExtension());
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertEquals(2, studyProtocolDTO.getSecondaryIdentifiers().getItem().size());
+        assertEquals(userCreated, studyProtocolDTO.getUserLastCreated());
+    }
+    
 
     @Test
     public void amendTrialTestMissingConditionallyRequiredDocs() throws Exception {

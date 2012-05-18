@@ -142,6 +142,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TrialInboxCommentsGenerator;
 import gov.nih.nci.pa.util.TrialRegistrationValidator;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -262,6 +263,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
             Ii spIi = studyProtocolDTO.getIdentifier();
+            St amender = studyProtocolDTO.getUserLastCreated();
             StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
             if (studyRegAuthDTO != null) {
                 studyRegAuthDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
@@ -297,10 +299,28 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             studyOverallStatusService.create(overallStatusDTO);
             saveDocuments(documentDTOs, spIi);
+            saveAmenderInfo(studyProtocolDTO, amender);
             sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>());
             return studyProtocolDTO.getIdentifier();
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
+        }
+    }
+
+    private void saveAmenderInfo(StudyProtocolDTO studyProtocolDTO, St amender)
+            throws PAException {
+        if (!ISOUtil.isStNull(amender)) {
+            Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO
+                    .getIdentifier());
+            User user = CSMUserService.getInstance().getCSMUser(
+                    amender.getValue());
+            if (user == null) {
+                throw new PAException(
+                        "Unable to find the amending user's account record.");
+            }
+            String sql = "UPDATE study_protocol SET user_last_created_id = "
+                    + user.getUserId() + " WHERE identifier=" + studyProtocolId;
+            getPAServiceUtils().executeSql(sql);
         }
     }
 
