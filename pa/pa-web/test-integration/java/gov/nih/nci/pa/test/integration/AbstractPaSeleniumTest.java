@@ -176,7 +176,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("id=studyStatusCode"));
         assertTrue(selenium.isElementPresent("id=documentWorkflowStatusCode"));
         assertTrue(selenium.isElementPresent("id=studyMilestone"));
-        assertTrue(selenium.isElementPresent("id=searchOnHold"));
+        assertTrue(selenium.isElementPresent("id=holdStatus"));
         assertTrue(selenium.isElementPresent("id=studyLockedBy"));
         assertTrue(selenium.isElementPresent("id=submissionType"));
         assertTrue(selenium.isElementPresent("id=trialCategory"));
