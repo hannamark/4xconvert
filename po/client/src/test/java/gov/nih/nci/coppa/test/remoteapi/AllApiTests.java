@@ -90,8 +90,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(value = {
         OrganizationEntityServiceSearchTest.class,
         OrganizationEntityServiceTest.class,
-        // PersonEntityServiceSearchTest.class,
-        // PersonEntityServiceTest.class,
+        PersonEntityServiceSearchTest.class,
+        PersonEntityServiceTest.class,
          ClinicalResearchStaffCorrelationServiceTest.class,
          PatientCorrelationServiceTest.class,
          HealthCareFacilityCorrelationServiceTest.class,
