@@ -139,6 +139,7 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -175,6 +176,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
 * service bean for generating ct.gov.xml.
@@ -685,14 +688,15 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
         addGrantInfo(spDTO, doc, idInfo);
 
-        RegistryUser registryUser = getRegistryUserService()
-                .getUser(StConverter.convertToString(spDTO.getUserLastCreated()));
-        String prsOrgName = "replace with PRS Organization Name you log in with";
-        if (StringUtils.isNotEmpty(registryUser.getPrsOrgName())) {
-            prsOrgName = registryUser.getPrsOrgName();
-        }
+        User user = CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser());
+        RegistryUser registryUser = user != null ? getRegistryUserService()
+                .getUser(user.getLoginName()) : null;
+        String prsOrgName = registryUser != null
+                && StringUtils.isNotEmpty(registryUser.getPrsOrgName()) ? registryUser
+                .getPrsOrgName()
+                : "replace with PRS Organization Name you log in with";
         XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElementWithTextblock("org_name", prsOrgName, doc));
-
         XmlGenHelper.appendElement(root, idInfo);
 
     }
