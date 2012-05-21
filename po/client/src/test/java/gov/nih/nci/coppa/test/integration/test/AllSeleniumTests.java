@@ -87,8 +87,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { DummyTest.class,
-        LoginTest.class })
+@SuiteClasses(value = { DummyTest.class })
+// LoginTest.class })
 // ContactFormattingTest.class,
 // CreateOrganizationTest.class,
 // CreatePersonTest.class,
