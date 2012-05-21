@@ -171,6 +171,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -189,6 +190,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGeneratorServiceBean
     implements CTGovXmlGeneratorServiceLocal {
 
+    private static final String PRS_PLACEHOLDER = "replace with PRS Organization Name you log in with";
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBeanLocal.class);
     private static final String YYYYMMDD = "yyyy-MM-dd";
     private static final String YYYYMM = "yyyy-MM";
@@ -202,12 +204,22 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     static {
         createCtGovValues();
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public String generateCTGovXml(Ii studyProtocolIi) throws PAException {
+        return generateCTGovXml(studyProtocolIi,
+                new CTGovXmlGeneratorOptions[0]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String generateCTGovXml(Ii studyProtocolIi,
+            CTGovXmlGeneratorOptions... options) throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException("Study Protocol Identifier is null");
         }
@@ -219,7 +231,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             Document doc = docBuilder.newDocument();
             Element root = doc.createElement("clinical_study");
             doc.appendChild(root);
-            createIdInfo(spDTO, doc, root);
+            createIdInfo(spDTO, doc, root, options);
             addStudyOwnersInfo(spDTO, doc, root);
             addLeadOrgInfo(spDTO, doc, root);
             addNciSpecificInfo(spDTO, doc, root);
@@ -662,7 +674,8 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         return result;
     }
 
-    private void createIdInfo(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {
+    private void createIdInfo(StudyProtocolDTO spDTO, Document doc, Element root, CTGovXmlGeneratorOptions[] options) 
+            throws PAException {
         Element idInfo = doc.createElement("id_info");
 
         StudySiteDTO spartDTO = new StudySiteDTO();
@@ -688,14 +701,27 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
         addGrantInfo(spDTO, doc, idInfo);
 
-        User user = CSMUserService.getInstance().getCSMUser(
-                UsernameHolder.getUser());
-        RegistryUser registryUser = user != null ? getRegistryUserService()
-                .getUser(user.getLoginName()) : null;
-        String prsOrgName = registryUser != null
-                && StringUtils.isNotEmpty(registryUser.getPrsOrgName()) ? registryUser
-                .getPrsOrgName()
-                : "replace with PRS Organization Name you log in with";
+        String prsOrgName = "";        
+        if (ArrayUtils.contains(options,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)) {
+            RegistryUser registryUser = getRegistryUserService().getUser(
+                    StConverter.convertToString(spDTO.getUserLastCreated()));
+            prsOrgName = PRS_PLACEHOLDER;
+            if (registryUser != null
+                    && StringUtils.isNotEmpty(registryUser.getPrsOrgName())) {
+                prsOrgName = registryUser.getPrsOrgName();
+            }
+        } else {
+            User user = CSMUserService.getInstance().getCSMUser(
+                    UsernameHolder.getUser());
+            RegistryUser registryUser = user != null ? getRegistryUserService()
+                    .getUser(user.getLoginName()) : null;
+            prsOrgName = registryUser != null
+                    && StringUtils.isNotEmpty(registryUser.getPrsOrgName()) ? registryUser
+                    .getPrsOrgName()
+                    : PRS_PLACEHOLDER;
+        }
+        
         XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElementWithTextblock("org_name", prsOrgName, doc));
         XmlGenHelper.appendElement(root, idInfo);
 

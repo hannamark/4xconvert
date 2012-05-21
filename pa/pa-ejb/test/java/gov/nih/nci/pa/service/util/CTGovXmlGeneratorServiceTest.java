@@ -178,6 +178,12 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
        assertTrue(st.contains("<clinical_study>"));
        assertTrue(st.contains("<is_section_801>"));
        assertTrue(st.contains("<id_type>Registry Identifier</id_type>"));
+       
+       st = getBean().generateCTGovXml(spId,CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
+       assertTrue(st.contains("<clinical_study>"));
+       assertTrue(st.contains("<is_section_801>"));
+       assertTrue(st.contains("<id_type>Registry Identifier</id_type>"));
+       
     }
 
     @Test

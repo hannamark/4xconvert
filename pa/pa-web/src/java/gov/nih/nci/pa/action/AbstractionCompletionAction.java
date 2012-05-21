@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
@@ -160,8 +161,9 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
             if (pId == null) {
                 return DISPLAY_XML;
             }
-            String xmlData =
-                    ctGovXmlGeneratorService.generateCTGovXml(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+            String xmlData = ctGovXmlGeneratorService.generateCTGovXml(
+                    IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
             servletResponse.setContentType("application/xml");
             servletResponse.setCharacterEncoding("UTF-8");
             servletResponse.setContentLength(xmlData.getBytes("UTF-8").length);

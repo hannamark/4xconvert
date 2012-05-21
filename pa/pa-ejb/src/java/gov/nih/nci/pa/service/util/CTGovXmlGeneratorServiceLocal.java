@@ -97,5 +97,17 @@ public interface CTGovXmlGeneratorServiceLocal {
      * @throws PAException on error
      */
     String generateCTGovXml(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * @param studyProtocolIi
+     *            Ii of studyprotocol
+     * @param options
+     *            CTGovXmlGeneratorOptions
+     * @return String xml string
+     * @throws PAException
+     *             on error
+     */
+    String generateCTGovXml(Ii studyProtocolIi,
+            CTGovXmlGeneratorOptions... options) throws PAException;
 
 }
