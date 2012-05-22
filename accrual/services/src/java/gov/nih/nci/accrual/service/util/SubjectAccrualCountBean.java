@@ -211,7 +211,7 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         SearchTrialResultDto trialSummary = searchTrialService.getTrialSummaryByStudyProtocolIi(IiConverter
                 .convertToStudyProtocolIi(site.getStudyProtocol().getId()));
         if (!BlConverter.convertToBool(trialSummary.getIndustrial())) {
-            throw new PAException("The participating site (" + site.getId() 
+            throw new PAException("Action can not be performed as the participating site (" + site.getId() 
                     + ") does not belong to an Industrial trial.");
         }
         if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToStudySiteIi(site.getId()))) {

@@ -300,7 +300,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         accrualCounts.add( getSssa(1));
 
         thrown.expect(PAException.class);
-        thrown.expectMessage("The participating site (3) does not belong to an Industrial trial.");
+        thrown.expectMessage("Action can not be performed as the participating site (3) does not belong to an Industrial trial.");
         bean.save(accrualCounts);
     }
 
