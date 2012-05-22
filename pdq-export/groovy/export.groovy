@@ -49,6 +49,8 @@ def collabTrialsSQL = """
         respPartyCrs.assigned_identifier as respPartyCrsId,
         respPartySc.email as prim_phone,
         respPartySc.telephone as prim_email,
+        respPartySponsorContact.telephone as respPartySponsorPhone,
+        respPartySponsorContact.email as respPartySponsorEmail,
         ra_country.name || ' : ' || ra.authority_name as reg_authority,
         CASE 
             WHEN sos.status_code = 'APPROVED' then 'Approved'
@@ -173,6 +175,9 @@ def collabTrialsSQL = """
      left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier
      join research_organization sponsorRo on sponsorRo.identifier = sponsorSs.research_organization_identifier
      left outer join study_contact as respPartySc on respPartySc.study_protocol_identifier = sp.identifier and respPartySc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR'
+     left outer join study_site_contact respPartySponsorContact on 
+        respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier) 
+        and respPartySponsorContact.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
      left outer join clinical_research_staff respPartyCrs on respPartyCrs.identifier = respPartySc.clinical_research_staff_identifier
      left outer join study_regulatory_authority sra on sra.study_protocol_identifier = sp.identifier
      left outer join regulatory_authority ra on ra.identifier = sra.regulatory_authority_identifier
@@ -299,7 +304,9 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                         xml.name(roRow.orgname)
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
-                        addressAndPhoneDetail(xml, roRow, null, true)
+                        def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
+                        addressAndPhoneDetail(xml, roRow, 
+                            sponsorContactInfo, true)
                     }
                 }
             }
