@@ -69,6 +69,9 @@
                 selectbox.options.add(optn);
             }    
             function SelectSubCat(i) {
+            	if (!i.checked) {
+            		return;
+            	}
                 removeAllOptions(document.getElementById('SubCat'));
                 addOption(document.getElementById('SubCat'), "", "-Select-", "");    
                 if (i.value == 'IND') {
@@ -80,6 +83,35 @@
                     addOption(document.getElementById('SubCat'),"CBER", "CBER");
                 }
             }
+            
+            function selectGrantor(grantor) {
+            	if (grantor!='') {
+            	   var list = $('SubCat');
+            	   Form.Element.setValue(list, grantor);
+            	}
+            }
+            
+            function handleExpandedAccessIndicator() {
+            	if ($('group4true').checked) {
+            		$('expandedStatus').disabled = false;            		            		
+            	}
+                if ($('group4false').checked) {
+                	$('expandedStatus').value = '';
+                	$('expandedStatus').disabled = true;           
+                }
+                if (!($('group4true').checked || $('group4false').checked)) {
+                	$('group4false').checked = true;
+                }
+            }
+            
+            Event.observe(window,"load", function(e) {
+            	SelectSubCat($('group3IND'));	
+            	SelectSubCat($('group3IDE'));
+            	selectGrantor('<s:property value="studyIndldeWebDTO.grantor"/>');
+            	setProgramCodes($('holderType'));
+            	handleExpandedAccessIndicator();
+            });
+            
         </script>
     </head>
     <body>
@@ -111,9 +143,8 @@
                                 <fmt:message key="trialIndide.indldeType"/>:<span class="required">*</span>
                             </label>
                         </td>
-                        <td class="value">                            
-                            <input type="radio" id="group3" name="studyIndldeWebDTO.indldeType" value="IND" onclick="SelectSubCat(this);" />IND<br/>
-                            <input type="radio" id="group3" name="studyIndldeWebDTO.indldeType" value="IDE" onclick="SelectSubCat(this);" />IDE
+                        <td class="value">  
+                            <s:radio name="studyIndldeWebDTO.indldeType" id="group3" list="#{'IND':'IND', 'IDE':'IDE'}" onclick="SelectSubCat(this);"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                     <s:param>studyIndldeWebDTO.indldeType</s:param>
@@ -128,7 +159,7 @@
                             </label>
                         </td>
                         <td class="value">
-                            <input id="indidenumber" name="studyIndldeWebDTO.indldeNumber"  type="text" size="10" /> 
+                            <s:textfield id="indidenumber" name="studyIndldeWebDTO.indldeNumber" size="10"/>                             
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                     <s:param>studyIndldeWebDTO.indldeNumber</s:param>
@@ -200,8 +231,7 @@
                             </label>
                         </td>
                         <td class="value">
-                            <input type="radio" name="studyIndldeWebDTO.expandedAccessIndicator" id="group4" value="true" onclick="document.getElementById('expandedStatus').disabled=false;document.getElementById('addbtn').disabled=true;"  /> Yes<br />
-                            <input type="radio" name="studyIndldeWebDTO.expandedAccessIndicator" id="group4" value="false" checked="checked" onclick="document.getElementById('expandedStatus').value='';document.getElementById('expandedStatus').disabled=true;" /> No
+                            <s:radio name="studyIndldeWebDTO.expandedAccessIndicator" id="group4" list="#{'true':'Yes', 'false':'No'}" onclick="handleExpandedAccessIndicator();"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                     <s:param>studyIndldeWebDTO.expandedAccessIndicator</s:param>

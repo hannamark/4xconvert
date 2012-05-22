@@ -204,11 +204,14 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                 Constants.STUDY_PROTOCOL_II);
         studyIndldeDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase("Yes")) {
-          studyIndldeWebDTO.setExpandedAccessIndicator("true");
+        if (studyIndldeWebDTO.getExpandedAccessIndicator().equalsIgnoreCase(
+                "Yes")
+                || studyIndldeWebDTO.getExpandedAccessIndicator()
+                        .equalsIgnoreCase("true")) {
+            studyIndldeWebDTO.setExpandedAccessIndicator("true");
         } else {
-          studyIndldeWebDTO.setExpandedAccessIndicator("false");
-          studyIndldeWebDTO.setExpandedAccessStatus(null);
+            studyIndldeWebDTO.setExpandedAccessIndicator("false");
+            studyIndldeWebDTO.setExpandedAccessStatus(null);
         }
         studyIndldeDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.valueOf(
             studyIndldeWebDTO.getExpandedAccessIndicator())));
