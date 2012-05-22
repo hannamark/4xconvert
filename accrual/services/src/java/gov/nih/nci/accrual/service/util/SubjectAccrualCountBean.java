@@ -107,7 +107,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -191,32 +190,13 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
 
     private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) {
         StudySiteSubjectAccrualCount countToSave = newCount;
-        Date currentDay = new Date();
         if (newCount.getId() != null) {
-            if (DateUtils.isSameDay(currentDay, countToSave.getDateLastUpdated())) {
-                countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
+            countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
                     .load(StudySiteSubjectAccrualCount.class, newCount.getId());
-
-                countToSave.setAccrualCount(newCount.getAccrualCount());
-            } else {
-                countToSave = createNewStudySiteSubjectAccrualCount(countToSave);
-            }
+            countToSave.setAccrualCount(newCount.getAccrualCount());
         }
-
-        countToSave.setDateLastUpdated(currentDay);
+        countToSave.setDateLastUpdated(new Date());
         PaHibernateUtil.getCurrentSession().saveOrUpdate(countToSave);
-    }
-    
-    private StudySiteSubjectAccrualCount createNewStudySiteSubjectAccrualCount(StudySiteSubjectAccrualCount old) {
-        StudySiteSubjectAccrualCount result = new StudySiteSubjectAccrualCount();
-        result.setAccrualCount(old.getAccrualCount());
-        result.setDateLastCreated(old.getDateLastCreated());
-        result.setDateLastUpdated(old.getDateLastUpdated());
-        result.setStudyProtocol(old.getStudyProtocol());
-        result.setStudySite(old.getStudySite());
-        result.setUserLastCreated(old.getUserLastCreated());
-        result.setUserLastUpdated(old.getUserLastUpdated());
-        return result;
     }
 
     private void assertAccrualAccess(List<StudySiteSubjectAccrualCount> counts) throws PAException {
