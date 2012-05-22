@@ -415,6 +415,9 @@
         </action>
         <action name="organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">curate</param>
+            </interceptor-ref>
             <exception-mapping result="curateError" exception="gov.nih.nci.po.service.CurateEntityValidationException"/>
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="curateError" type="redirectAction">organization/curate/curate/error?organization.id=${organizationId}&amp;duplicateOf.id=${duplicateOfId}</result>
@@ -432,6 +435,9 @@
         <!-- Person -> Edit/Curate -->
         <action name="person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">curate</param>
+            </interceptor-ref>
             <result name="curate">/WEB-INF/jsp/curate/person/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
             <result name="success" type="redirectAction">
