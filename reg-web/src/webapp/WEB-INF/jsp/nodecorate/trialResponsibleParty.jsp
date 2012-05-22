@@ -48,9 +48,13 @@
             </td>
         </tr>
         <tr id="rpgcid">
-            <td scope="row" class="label"><label for="submitTrial_resPartyGenericContact"><fmt:message
+            <td scope="row" class="label">
+            <reg-web:displayTooltip tooltip="tooltip.responsible_party_general_contact">
+                <label for="submitTrial_resPartyGenericContact"><fmt:message
                         key="submit.trial.responsiblePartyGenericContact" />
-            </label></td>
+                </label>
+            </reg-web:displayTooltip>    
+            </td>
             <td class="value">
                 <div id="loadResponsiblePartyGenericContactField">
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp"%>
@@ -77,7 +81,9 @@
             </tr>
             <tr id="rpgcid"  style="display:none">
                     <td scope="row" class="label">
+                    <reg-web:displayTooltip tooltip="tooltip.responsible_party_general_contact">
                         <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label>
+                    </reg-web:displayTooltip>    
                     </td>
                     <td class="value">
                         <div id="loadResponsiblePartyGenericContactField">

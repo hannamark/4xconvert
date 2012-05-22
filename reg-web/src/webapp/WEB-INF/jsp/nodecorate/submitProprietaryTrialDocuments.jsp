@@ -18,9 +18,11 @@
   </tr>
   <tr>
     <td scope="row" class="label">
+    <reg-web:displayTooltip tooltip="tooltip.abbreviated_trial_template">
       <label for="submitTrial_protocolDoc">
         <fmt:message key="submit.proprietary.trial.protocolDocument"/>
       </label>
+    </reg-web:displayTooltip>
     </td>
     <td class="value">
       <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">

@@ -245,7 +245,7 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true">
+                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true" tooltip="tooltip.trial_id">
                         <s:textfield name="trialDTO.leadOrgTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -253,12 +253,12 @@
                             </s:fielderror>
                         </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="submit.proprietary.trial.siteOrganization" required="true">
+                    <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="submit.proprietary.trial.siteOrganization" required="true" tooltip="tooltip.submitting_organization_name">
                         <div id="loadSiteOrgField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSiteOrganization.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.proprietary.trial.siteidentifier" required="true">
+                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.proprietary.trial.siteidentifier" required="true" tooltip="tooltip.submitting_organization_local_trial_identifier">
                         <s:textfield name="trialDTO.localSiteIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -296,7 +296,7 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phase.jsp" %>
                     <!-- include po person jsp -->
-                    <reg-web:valueRow labelFor="submitTrial_poLeadPiFullName" labelKey="submit.proprietary.trial.siteInvestigator" required="true" tooltip="tooltip.pi">
+                    <reg-web:valueRow labelFor="submitTrial_poLeadPiFullName" labelKey="submit.proprietary.trial.siteInvestigator" required="true" tooltip="tooltip.site_pi">
                         <div id="loadPersField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSitePrincipalInvestigator.jsp" %>
                         </div>
@@ -324,7 +324,7 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="siteProgramCode" labelKey="submit.proprietary.trial.sitePrgCode" tooltip="tooltip.summary_4_program_code">
+                    <reg-web:valueRow labelFor="siteProgramCode" labelKey="submit.proprietary.trial.sitePrgCode" tooltip="tooltip.summary_4_site_program_code">
                         <s:textfield name="trialDTO.siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -337,7 +337,7 @@
                     <table class="form">
                         <reg-web:titleRow titleKey="submit.proprietary.trial.statusDate"/>
                         <reg-web:spaceRow/>
-                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusCode" labelKey="submit.trial.siteRecruitmentStatus" required="true">
+                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusCode" labelKey="submit.trial.siteRecruitmentStatus" required="true" tooltip="tooltip.site_recruitment_status">
                             <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                             <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#recruitmentStatusValues" value="trialDTO.siteStatusCode" />
                             <span class="formErrorMsg">
@@ -346,7 +346,7 @@
                                 </s:fielderror>
                             </span>
                         </reg-web:valueRow>
-                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusDate" labelKey="submit.trial.siteRecruitmentStatusDate" required="true">
+                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusDate" labelKey="submit.trial.siteRecruitmentStatusDate" required="true" tooltip="tooltip.site_recruitment_status_date">
                             <s:textfield name="trialDTO.siteStatusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal1')">
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
@@ -357,7 +357,7 @@
                                 </s:fielderror>
                             </span>
                         </reg-web:valueRow>
-                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_startDate" labelKey="submit.proprietary.trial.dateOpenedforAccrual">
+                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_startDate" labelKey="submit.proprietary.trial.dateOpenedforAccrual" tooltip="tooltip.date_opened_for_accrual">
                             <s:textfield name="trialDTO.dateOpenedforAccrual" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal2')">
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
@@ -368,7 +368,7 @@
                                 </s:fielderror>
                             </span>
                         </reg-web:valueRow>
-                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_dateClosedforAccrual" labelKey="submit.proprietary.trial.dateClosedforAccrual">
+                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_dateClosedforAccrual" labelKey="submit.proprietary.trial.dateClosedforAccrual" tooltip="tooltip.date_closed_for_accrual">
                             <s:textfield name="trialDTO.dateClosedforAccrual" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal3')">
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
