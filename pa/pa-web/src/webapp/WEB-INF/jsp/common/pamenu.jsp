@@ -4,7 +4,7 @@
     <li class="stdnav">
         <div><fmt:message key="pamenu.abstraction"/></div>
         <ul>
-            <li><a href="javascript:void(0);"><fmt:message key="pamenu.abstraction.search"/></a></li>
+            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.abstraction.search"/></a></li>
             <li class="stdsub">
                 <ul>
 		            <pa:menuLink href="${pageContext.request.contextPath}/protected/studyProtocolexecute.action" id="trialSearchMenuOption" labelKey="pamenu.abstraction.search.trials" selected="${requestScope.topic == 'searchtrial'}"/>
