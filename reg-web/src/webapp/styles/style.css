@@ -633,3 +633,7 @@ BODY.addsite {
 .popupwin * td.value, .popupwin * td.label {
     padding: 2px 2px 2px 2px !important;
 }
+
+.fakelink {
+    cursor: text !important;
+}

@@ -38,7 +38,7 @@ function selectTrialType(){
                                        <li><a id="registerTrialMenuOption" href="javascript:void(0)" onclick="selectTrialType();" >Register Trial</a></li>
                                     </c:otherwise>
                                 </c:choose>
-                                <li><a href="javascript:void(0)">Search</a></li>
+                                <li><a href="javascript:void(0)" class="fakelink">Search</a></li>
 					            <li class="stdsub">
 					                <ul>
 	                                    <c:choose>                                
