@@ -91,7 +91,7 @@
                     <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
-                    <param name="includeMethods">showMyAccount</param>
+                    <param name="includeMethods">createAccount,updateAccount</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>

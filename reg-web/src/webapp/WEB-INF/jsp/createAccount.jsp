@@ -19,6 +19,7 @@
             </p>
             <s:form name="myAccount" method="POST" action="registerUsercreateAccount">
                 <s:actionerror />
+                <s:token/>
                 <s:hidden name="userWebDTO.username" />
                 <table class="form">
                     <tbody>
