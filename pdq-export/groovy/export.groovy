@@ -51,6 +51,7 @@ def collabTrialsSQL = """
         respPartySc.telephone as prim_email,
         respPartySponsorContact.telephone as respPartySponsorPhone,
         respPartySponsorContact.email as respPartySponsorEmail,
+        respPartySponsorContact.identifier as respPartySponsorIdentifier,
         ra_country.name || ' : ' || ra.authority_name as reg_authority,
         CASE 
             WHEN sos.status_code = 'APPROVED' then 'Approved'
@@ -299,9 +300,9 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     }
                 }
                 xml.resp_party_organization {
-                    if (spRow.leadRoId != null) {
-                        def roRow = rosMap.get(spRow.leadRoId.toLong())
-                        xml.name(roRow.orgname)
+                    if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
+                        def roRow = rosMap.get(spRow.sponsorRoId.toLong())
+                        xml.name(changeSponsorNameIfNeeded(roRow.orgname))
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
                         def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
