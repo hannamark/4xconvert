@@ -53,7 +53,7 @@ import org.jdom.Element;
  * @author vrushali
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
 
     private static final Logger LOG = Logger.getLogger(PDQAbstractionXMLParser.class);
@@ -205,8 +205,12 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         Map<PoDto, String> contactMap = new HashMap<PoDto, String>();
         if (contactElmt.getChild("first_name") != null) {
             PersonDTO contactDTO = new PersonDTO();
+            String middleName = getText(contactElmt, "middle_name");
+            if (middleName != null && middleName.indexOf('.') != -1) {
+                middleName = middleName.substring(0, middleName.indexOf('.'));
+            }
             contactDTO.setName(EnPnConverter.convertToEnPn(
-                    getText(contactElmt, "first_name"), getText(contactElmt, "middle_name"),
+                    getText(contactElmt, "first_name"), middleName,
                     getText(contactElmt, "last_name"), null, null));
             String phone = getText(contactElmt, "phone");
             try {

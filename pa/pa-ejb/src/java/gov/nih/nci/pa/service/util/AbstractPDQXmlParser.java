@@ -187,7 +187,7 @@ public abstract class AbstractPDQXmlParser {
         if (parent == null) {
             return null;
         }
-        return StringUtils.isEmpty(parent.getChildText(name)) ? null : parent.getChildText(name);
+        return StringUtils.isEmpty(parent.getChildText(name)) ? null : parent.getChildText(name).trim();
     }
 
     /**
