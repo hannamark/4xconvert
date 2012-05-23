@@ -55,8 +55,8 @@
                         <s:set name="abstractionList" value="abstractionList" scope="request"/>
                         <display:table name="abstractionList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
                             <display:column escapeXml="true" title="Type" property="errorType"  sortable="true" headerClass="sortable" />
-                            <display:column escapeXml="true" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
-                            <display:column escapeXml="true" title="Comment" property="comment" sortable="true" headerClass="sortable" />
+                            <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
+                            <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
                         </display:table>
                     </s:if>
                     <div class="actionsrow">
