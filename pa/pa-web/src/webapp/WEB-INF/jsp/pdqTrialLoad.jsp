@@ -7,6 +7,7 @@
  <body>
    <s:actionerror/>
    <s:actionmessage/>
+   <pa:sucessMessage />
     <s:form action="pdqTrialLoad" method="POST" enctype="multipart/form-data">
         <tr>
             <td colspan="2">

@@ -85,6 +85,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -171,7 +172,7 @@ public class PDQTrialLoadAction extends ActionSupport {
             addActionError("Unable to write report file before sending to user.");
             LOG.error(e.getMessage(), e);
         }
-
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, getText("pdq.upload.success"));
         return SUCCESS;
     }
 
