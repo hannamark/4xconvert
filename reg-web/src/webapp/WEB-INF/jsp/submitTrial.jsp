@@ -76,7 +76,11 @@
             
             function lookup4loadresponsiblepartygenericcontact() {
                 var orgid = $('trialDTO.sponsorIdentifier').value;
-                showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+                if (orgid) {
+                    showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
+                } else {
+                    alert('Must select the Sponsor organization before selecting a Generic Contact.');
+                }
             }
             
             function lookup4loadSummary4Sponsor() {
