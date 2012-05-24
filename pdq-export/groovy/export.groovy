@@ -111,9 +111,9 @@ def collabTrialsSQL = """
         END as design_configuration_code,
         sp.number_of_intervention_groups,
         CASE 
-            WHEN sp.max_target_accrual_num is null then 0
-            ELSE sp.max_target_accrual_num
-        END as max_target_accrual_num,
+            WHEN sp.min_target_accrual_num is null then 0
+            ELSE sp.min_target_accrual_num
+        END as min_target_accrual_num,
         ov_off_crs.assigned_identifier as ovOffCrsId,
         subm_ru.prs_org_name,
         CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
@@ -398,7 +398,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             }
         }
 
-        xml.enrollment(spRow.max_target_accrual_num)
+        xml.enrollment(spRow.min_target_accrual_num)
         xml.enrollment_type("anticipated")     
         
         // try to be cheap and steal a few cycles by running 1 query instead of 3.
