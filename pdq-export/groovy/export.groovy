@@ -260,7 +260,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             xml.name(roRow.orgname)
             xml.po_id(roRow.org_poid)
             xml.ctep_id(roRow.ctep_id)
-            addressAndPhoneDetail(xml, roRow, null,true)
+            addressAndPhoneDetail(xml, roRow, null,false)
 		
 		}
         
@@ -272,7 +272,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     def sum4Org = orgsMap.get(spRow.sum4OrgId.toLong())
                     xml.name(sum4Org.name)
                     xml.po_id(sum4Org.org_poid)
-                    addressAndPhoneDetail(xml, sum4Org, null, true)
+                    addressAndPhoneDetail(xml, sum4Org, null, false)
                 }
             }
         }
@@ -289,7 +289,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 xml.name(changeSponsorNameIfNeeded(roRow.orgname))
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
-                addressAndPhoneDetail(xml, roRow, null, true)
+                addressAndPhoneDetail(xml, roRow, null, false)
             }
             xml.resp_party {
                 xml.resp_party_person {
@@ -317,7 +317,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     xml.name(collabRow.name)
                     xml.po_id(collabRow.org_poid)
                     xml.ctep_id(roRow.ctep_id)
-                    addressAndPhoneDetail(xml, roRow, null, true)
+                    addressAndPhoneDetail(xml, roRow, null, false)
                 }                   
             }
         } // end sponsors
@@ -489,14 +489,14 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         xml.overall_official {
             def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
             crsDetail(xml, crsRow)
-            addressAndPhoneDetail(xml, crsRow, null, true) 
+            addressAndPhoneDetail(xml, crsRow, null, false) 
             xml.role("Principal Investigator")
             xml.affiliation {
                 def roRow = rosMap.get(spRow.leadRoId.toLong())
                 xml.name(roRow.orgname)
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
-                addressAndPhoneDetail(xml, roRow, null, true)
+                addressAndPhoneDetail(xml, roRow, null, false)
             }
         }
     
@@ -521,7 +521,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                      xml.investigator {
                          def crsRow = crsMap.get(row.inv_crs_id.toLong())
                          crsDetail(xml, crsRow)
-                         addressAndPhoneDetail(xml, crsRow, null, true)
+                         addressAndPhoneDetail(xml, crsRow, null, false)
                          xml.role("Principal Investigator")
                      }   
                 }
