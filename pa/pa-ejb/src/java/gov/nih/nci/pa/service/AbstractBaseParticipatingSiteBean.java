@@ -102,7 +102,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -321,12 +323,18 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
         }
         hcfDTO.setIdentifier(null);
         hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(poOrgIi.getExtension()));
-        try {
+        List<HealthCareFacilityDTO> hcfDTOs =
+            PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
+        if (CollectionUtils.isEmpty(hcfDTOs)) {
+            try {
                 return PoRegistry.getHealthCareFacilityCorrelationService().createCorrelation(hcfDTO);
-        } catch (EntityValidationException e) {
+            } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during create HealthCareFacility " , e);
-        } catch (CurationException e) {
+            } catch (CurationException e) {
                 throw new PAException("CurationException during create HealthCareFacility " , e);
+            }
+        } else {
+            return DSetConverter.convertToIi(hcfDTOs.get(0).getIdentifier());
         }
 
     }

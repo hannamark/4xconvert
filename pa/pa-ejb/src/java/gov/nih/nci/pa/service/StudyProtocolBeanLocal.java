@@ -92,7 +92,6 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -397,7 +396,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             hqls.add(delete + StudySite.class.getName() + whereClause);
             hqls.add(delete + StudyContact.class.getName() + whereClause);
             hqls.add(delete + StudyResourcing.class.getName() + whereClause);
-            hqls.add(delete + PlannedActivity.class.getName() + whereClause);
             hqls.add(delete + Arm.class.getName() + whereClause);
             hqls.add(delete + StudyDisease.class.getName() + whereClause);
             hqls.add(delete + StudyMilestone.class.getName() + whereClause);
@@ -421,6 +419,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     + spId).executeUpdate();
             session.createSQLQuery("DELETE from study_owner where study_id = " + spId).executeUpdate();
             session.createSQLQuery("DELETE from study_anatomic_site where study_protocol_identifier = "
+                    + spId).executeUpdate();
+            session.createSQLQuery("DELETE from planned_activity where study_protocol_identifier = "
                     + spId).executeUpdate();
 
             for (String hql : hqls) {
