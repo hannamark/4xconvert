@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
@@ -773,10 +774,24 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
 
         String result = bean.createDescriptionTextString(text);
 
-        String expected = "     text\n";
+        String expected = "  - text\n";
         assertEquals(expected, result);
 
     }
+    
+    @Test
+    public void applyPrsFormattingFixes() {
+        assertNull(bean.applyPrsFormattingFixes(null));
+        assertEquals("  * Level 1 \r\n  ** Level2",
+                bean.applyPrsFormattingFixes("* Level 1 \r\n** Level2"));
+        assertEquals("  * Level 1", bean.applyPrsFormattingFixes("- Level 1"));
+        assertEquals("  * Level 1", bean.applyPrsFormattingFixes(" - Level 1"));
+        assertEquals("  * abc", bean.applyPrsFormattingFixes(" * abc"));
+        assertEquals("  * abc", bean.applyPrsFormattingFixes(" - abc"));
+        assertEquals(
+                "Test:\r  * Level 1\r  * Level2\r  ** Level3",
+                bean.applyPrsFormattingFixes("Test:\r- Level 1\r* Level2\r ** Level3"));
+    }  
 
     @Test
     public void createValueUnitOperatorString() {

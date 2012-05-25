@@ -170,6 +170,11 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      */
     public static final String DASH = "- ";
     
+    /**
+     * Bullet Level 1.
+     */
+    public static final String BULLET_L1 = "  " + DASH;
+    
     private static final String PO_ID = "po_id";
     private static final String CTEP_ID = "ctep_id";
     

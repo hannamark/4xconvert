@@ -975,12 +975,26 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      */
     String createDescriptionTextString(String text) {
         StringBuilder str = new StringBuilder();
-        str.append(XmlGenHelper.TAB);
-        str.append(text);
+        str.append(XmlGenHelper.BULLET_L1);
+        str.append(applyPrsFormattingFixes(text));
         str.append('\n');
         return str.toString();
     }
 
+    /**
+     * Apply some formatting fixes to achieve a better display in PRS.
+     * @param text
+     * @return
+     */
+    String applyPrsFormattingFixes(String text) { // NOPMD 
+        if (text != null) {
+            text = text.replaceAll("(?m)^ \\*", "  *");
+            text = text.replaceAll("(?m)^\\*", "  *");
+            text = text.replaceAll("(?m)^ \\-\\s", "  * ");
+            text = text.replaceAll("(?m)^\\-\\s", "  * ");
+        }
+        return text;
+    }
 
     /**
      * @param criterionName criterionName
