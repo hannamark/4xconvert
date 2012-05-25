@@ -1365,9 +1365,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 .convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
         String sponsorName = sponsor.getName();
-        if (PAConstants.DCP_ORG_NAME.equals(sponsorName) || PAConstants.CTEP_ORG_NAME.equals(sponsorName)) {
-            sponsorName = PAConstants.NCI_ORG_NAME;
-        }
         XmlGenHelper.appendElement(lead,
                 XmlGenHelper.createElement("agency", StringUtils.substring(sponsorName, 0,
                 PAAttributeMaxLen.LEN_160), doc));

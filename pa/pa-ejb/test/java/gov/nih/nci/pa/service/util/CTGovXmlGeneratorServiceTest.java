@@ -158,13 +158,13 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     @Test
     public void testCreateLeadSponsorDCP() throws PAException, ParserConfigurationException {
         org.setName(PAConstants.DCP_ORG_NAME);
-        assertCreatedLeadSponsorName(PAConstants.NCI_ORG_NAME);
+        assertCreatedLeadSponsorName(PAConstants.DCP_ORG_NAME);
     }
 
     @Test
     public void testCreateLeadSponsorCTEP() throws PAException, ParserConfigurationException {
         org.setName(PAConstants.CTEP_ORG_NAME);
-        assertCreatedLeadSponsorName(PAConstants.NCI_ORG_NAME);
+        assertCreatedLeadSponsorName(PAConstants.CTEP_ORG_NAME);
     }
 
     @Test(expected=PAException.class)
