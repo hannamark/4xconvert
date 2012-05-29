@@ -51,6 +51,8 @@ def collabTrialsSQL = """
         respPartySc.telephone as prim_phone,
         respPartySponsorContact.telephone as respPartySponsorPhone,
         respPartySponsorContact.email as respPartySponsorEmail,
+        central_contact.email as centralContactEmail,
+        central_contact.telephone as centralContactPhone,
         respPartySponsorContact.identifier as respPartySponsorIdentifier,
         ra_country.name || ' : ' || ra.authority_name as reg_authority,
         CASE 
@@ -115,6 +117,7 @@ def collabTrialsSQL = """
             ELSE sp.min_target_accrual_num
         END as min_target_accrual_num,
         ov_off_crs.assigned_identifier as ovOffCrsId,
+        central_contact_crs.assigned_identifier as centralContactCrsId,
         subm_ru.prs_org_name,
         CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
                 ELSE 'Complete'
@@ -187,6 +190,8 @@ def collabTrialsSQL = """
          and (sos.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier))
      left outer join study_contact ov_off on ov_off.study_protocol_identifier = sp.identifier and ov_off.role_code = 'STUDY_PRINCIPAL_INVESTIGATOR'
      left outer join clinical_research_staff ov_off_crs on ov_off_crs.identifier = ov_off.clinical_research_staff_identifier
+     left outer join study_contact central_contact on central_contact.study_protocol_identifier = sp.identifier and central_contact.role_code = 'CENTRAL_CONTACT'
+     left outer join clinical_research_staff central_contact_crs on central_contact_crs.identifier = central_contact.clinical_research_staff_identifier
      left outer join csm_user subm_csm on subm_csm.user_id = sp.user_last_created_id
      left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
@@ -497,6 +502,15 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 xml.po_id(roRow.org_poid)
                 xml.ctep_id(roRow.ctep_id)
                 addressAndPhoneDetail(xml, roRow, null, false)
+            }
+        }
+        
+        xml.overall_contact {
+            if (spRow.centralContactCrsId!=null) {
+                def crsRow = crsMap.get(spRow.centralContactCrsId.toLong())
+                crsDetail(xml, crsRow)
+                def centralContactInfo = ['prim_phone':spRow.centralContactPhone,'prim_email':spRow.centralContactEmail]
+                addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)                
             }
         }
     
