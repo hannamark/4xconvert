@@ -381,7 +381,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void deleteStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null.");

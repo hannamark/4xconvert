@@ -423,7 +423,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     @SuppressWarnings("PMD.ExcessiveParameterList")
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Ii createCompleteInterventionalStudyProtocol(
             StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO,
@@ -459,7 +459,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             "PMD.CyclomaticComplexity" })    
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
