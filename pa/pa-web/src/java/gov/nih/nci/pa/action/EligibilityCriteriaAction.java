@@ -344,7 +344,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
      * @return the classified cd es display tag
      */
     public String getClassifiedCDEsDisplayTag() {
-        this.getClassifiedCDEs();
+        getClassifiedCDEs();
         return "cdeDisplayTag";
     }
 
@@ -620,6 +620,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         private static Comparator<ISDesignDetailsWebDTO> iSDesignDetailsWebDTOComparator 
             = new Comparator<ISDesignDetailsWebDTO>() {
         
+            @Override
             public int compare(ISDesignDetailsWebDTO dto1, ISDesignDetailsWebDTO dto2) {       
                 Integer displayOrder1 = Integer.valueOf(dto1.getDisplayOrder());
                 Integer displayOrder2 = Integer.valueOf(dto2.getDisplayOrder());
@@ -924,27 +925,27 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         if (StringUtils.isEmpty(eligibleGenderCode)) {
             addFieldError("eligibleGenderCode", getText("error.eligibleGenderCode"));
         }
-        if (StringUtils.isEmpty(this.maximumValue)) {
+        if (StringUtils.isEmpty(maximumValue)) {
             addFieldError("maximumValue", getText("error.maximumValue"));
         }
-        if (!NumberUtils.isNumber(this.maximumValue)) {
+        if (!NumberUtils.isNumber(maximumValue)) {
             addFieldError("maximumValue", getText("error.numeric"));
         }
-        if (StringUtils.isEmpty(this.minValueUnit)) {
+        if (StringUtils.isEmpty(minValueUnit)) {
             addFieldError("minValueUnit", getText("error.valueUnit"));
         }
-        if (StringUtils.isEmpty(this.maxValueUnit)) {
+        if (StringUtils.isEmpty(maxValueUnit)) {
             addFieldError("maxValueUnit", getText("error.valueUnit"));
         }
         String strMinVal = "minimumValue";
-        if (StringUtils.isEmpty(this.minimumValue)) {
+        if (StringUtils.isEmpty(minimumValue)) {
             addFieldError(strMinVal, getText("error.minimumValue"));
         }
-        if (!NumberUtils.isNumber(this.minimumValue)) {
+        if (!NumberUtils.isNumber(minimumValue)) {
             addFieldError(strMinVal, getText("error.numeric"));
         }
         if (StringUtils.isNotEmpty(minValueUnit) && StringUtils.isNotEmpty(maxValueUnit)
-                && NumberUtils.isNumber(this.minimumValue) && NumberUtils.isNumber(this.maximumValue)) {
+                && NumberUtils.isNumber(minimumValue) && NumberUtils.isNumber(maximumValue)) {
             double minVal = Double.parseDouble(minimumValue);
             double maxVal = Double.parseDouble(maximumValue);
             if (minValueUnit.equalsIgnoreCase(maxValueUnit) && minVal > maxVal) {
@@ -991,8 +992,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         if (StringUtils.isNotEmpty(webDTO.getTextDescription())
                 && getEligibilityList() != null) {
             for (ISDesignDetailsWebDTO detailsWebDTO : getEligibilityList()) {
-                if (webDTO.getTextDescription().equals(detailsWebDTO.getTextDescription()) && webDTO.getId() != null 
-                        && !detailsWebDTO.getId().equals(webDTO.getId())) {
+                if (webDTO.getTextDescription().equals(detailsWebDTO.getTextDescription())
+                        && !StringUtils.equals(webDTO.getId(), detailsWebDTO.getId())) {
                     addFieldError("webDTO.TextDescription", "Duplicate description");
                 }
             }
@@ -1331,7 +1332,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
      * @param result CaDSRWebDTO
      */
     public void setCadsrResult(List<CaDSRWebDTO> result) {
-        this.cadsrResult = result;
+        cadsrResult = result;
     }
 
     /**
