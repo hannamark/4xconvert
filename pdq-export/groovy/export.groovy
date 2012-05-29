@@ -568,8 +568,8 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
     
     xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
     
-    if (row.faxnumber != null) {
-        xml.fax(suppressPhoneAndEmail?"":row.faxnumber)
+    if (row.faxnumber != null && !suppressPhoneAndEmail) {
+        xml.fax(row.faxnumber)
     }
     
     xml.email((spRow!=null && spRow.prim_email!=null?spRow.prim_email:(suppressPhoneAndEmail?"":row.email)))
