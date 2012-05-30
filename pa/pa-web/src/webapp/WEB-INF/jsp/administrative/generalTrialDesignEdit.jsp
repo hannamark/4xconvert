@@ -21,7 +21,9 @@
         <script type="text/javascript" language="javascript">
             var orgid;
             var persid;
-            var selectedName;
+            var contactMail;
+            var contactPhone;
+            var selectedName;    
 
             // this function is called from body onload in main.jsp (decorator)
             function callOnloadFunctions() {
@@ -51,6 +53,8 @@
             function setpersid(persIdentifier,name,email,phone) {
                 persid = persIdentifier;
                 selectedName = name;
+                contactMail = email;
+                contactPhone = phone;
             }
 
             function tooltip() {
@@ -81,6 +85,8 @@
                $('gtdDTO.centralContactName').value = '';
                $('gtdDTO.centralContactTitle').value = selectedName;
                $('gtdDTO.centralContactIdentifier').value =  persid;
+               $("gtdDTO.centralContactEmail").value = contactMail;
+               $("gtdDTO.centralContactPhone").value = contactPhone;
             }
 
             function loadDiv(orgid) {
