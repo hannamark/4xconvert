@@ -16,7 +16,7 @@
 <div class="summarybox">
 	<div class="summarytitle">
 		<span class="value"><strong> <c:out value="${sessionScope.trialSummary.nciIdentifier }"/></strong>:
-		    <c:out value="${sessionScope.trialSummary.officialTitle }"/>
+		    <c:out value="${func:abbreviate(sessionScope.trialSummary.officialTitle, 200)}"/>
 		</span>
 	</div>
 	<div class="float33_first">

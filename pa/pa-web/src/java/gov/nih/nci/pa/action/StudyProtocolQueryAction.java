@@ -95,15 +95,14 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -293,8 +292,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
-            studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
-                                                                          PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
+            studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
             HttpSession session = ServletActionContext.getRequest().getSession();
             session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
