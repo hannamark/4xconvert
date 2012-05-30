@@ -64,7 +64,7 @@
     function displayOrg(){
         var input="criteria.organizationType";
         var inputElement = document.forms[0].elements[input];
-	        if (inputElement.options[inputElement.selectedIndex].value == "Either or Both") {
+	        if (inputElement.options[inputElement.selectedIndex].value == "Both") {
 	            document.getElementById("Lead").style.display = "none";
 	            document.getElementById("Site").style.display = "none";
 	            document.getElementById("LeadOrSite").style.display = "";
@@ -179,7 +179,7 @@
                     <label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
                 </td>
                 <td>
-                    <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Either or Both':'Either or Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
+                    <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
                 </td>
                 <td scope="row" class="label">
                     <label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
