@@ -1045,9 +1045,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
             messages.addError(SELECT_TRIAL_DETAILS,
                               "Official Title must be Entered");
-        } else if (PAUtil.isGreaterThan(studyProtocolDTO.getOfficialTitle(), PAAttributeMaxLen.LEN_600)) {
+        } else if (PAUtil.isGreaterThan(studyProtocolDTO.getOfficialTitle(), PAAttributeMaxLen.LEN_4000)) {
             messages.addError(SELECT_TRIAL_DETAILS,
-                              "Official Title cannot be more than 600 chracters ");
+                              "Official Title cannot be more than 4000 chracters ");
         }
         if (PAUtil.isGreaterThan(studyProtocolDTO.getAcronym(), PAAttributeMaxLen.ACRONYM)) {
             messages.addError(SELECT_TRIAL_DETAILS,
@@ -1059,7 +1059,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         if (PAUtil.isGreaterThan(studyProtocolDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD)) {
             messages.addError(SELECT_TRIAL_DETAILS,
-                              "Keywords must not be more than 160 characters ");
+                              "Keywords must not be more than 4000 characters ");
         }
     }
 

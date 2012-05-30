@@ -91,7 +91,7 @@ package gov.nih.nci.pa.util;
 public class PAAttributeMaxLen {
 
     /** max lengtH for keyword. **/
-    public static final  int KEYWORD = 160;
+    public static final  int KEYWORD = 4000;
     /** max lengtH for middle name. **/
     public static final int MIDDLE_NAME = 10;
     /** max display lengtH for official tile. **/
@@ -141,5 +141,9 @@ public class PAAttributeMaxLen {
     public static final int SPGP_LEN_200 = 200;
     /*** length -1. **/
     public static final int LEN_MIN_1 = -1;
+    /**
+     * 4000.
+     */
+    public static final int LEN_4000 = 4000;
 
 }
