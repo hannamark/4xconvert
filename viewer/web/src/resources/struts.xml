@@ -51,7 +51,7 @@
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
-                    <param name="excludeMethods">loadLeadOrganizations</param>
+                    <param name="excludeMethods">loadLeadOrganizations,loadOrganizations</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>
