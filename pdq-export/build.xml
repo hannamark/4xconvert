@@ -1,7 +1,7 @@
 <project name="pdq-export" default="gen" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
    <tstamp>
-        <format property="TODAY" pattern="MM-dd-yyyy-HHmm" locale="US"/>
+        <format property="TODAY" pattern="yyyy-MM-dd" locale="US"/>
     </tstamp>   
 	
 	<property file="${basedir}/local.properties" />
