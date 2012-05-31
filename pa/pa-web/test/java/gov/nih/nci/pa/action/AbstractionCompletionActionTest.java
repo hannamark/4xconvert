@@ -16,6 +16,7 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
@@ -140,12 +141,15 @@ public class AbstractionCompletionActionTest {
         sut.setServletResponse(ServletActionContext.getResponse());
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         when(ctGovXmlGeneratorService.generateCTGovXml(spIi)).thenReturn("xmlData");
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenReturn("xmlData");
         String result = sut.generateXML();
         assertEquals("none", result);
         HttpServletResponse response = ServletActionContext.getResponse();
         assertEquals("Wrong content type", "application/xml", response.getContentType());
         assertEquals("", "UTF-8", response.getCharacterEncoding());
-        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi);
+        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
     }
 
     /**
@@ -160,9 +164,12 @@ public class AbstractionCompletionActionTest {
         sut.setServletResponse(ServletActionContext.getResponse());
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         when(ctGovXmlGeneratorService.generateCTGovXml(spIi)).thenThrow(new NullPointerException());
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenThrow(new NullPointerException());
         String result = sut.generateXML();
         assertEquals("displayXML", result);
-        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi);
+        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
     }
 
     /**

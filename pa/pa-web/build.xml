@@ -541,7 +541,8 @@
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
+                    <exclude name="**/AbstractM*Test.java"/>
+                    <exclude name="**/AbstractPa*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
