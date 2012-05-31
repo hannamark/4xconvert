@@ -192,17 +192,19 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      * @throws PAException exception
      */
     public String update() throws PAException {
-            PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
-            .get(IiConverter.convertToIi(getPlannedMarker().getId()));
+            PlannedMarkerDTO marker = plannedMarkerService.get(IiConverter.convertToIi(getPlannedMarker().getId()));
             PlannedMarkerWebDTO webDTO = populateWebDTO(marker);
             
             List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkersWithName(
                     StConverter.convertToString(marker.getLongName()));
             for (PlannedMarkerDTO markerDTO : markerDTOs) {
-                markerDTO.setLongName(StConverter.convertToSt(plannedMarker.getMeaning()));
+                markerDTO.setLongName(StConverter.convertToSt(plannedMarker.getName()));
                 markerDTO.setName(StConverter.convertToSt(plannedMarker.getName()));
                 markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                 plannedMarkerService.update(markerDTO);
+                if (markerDTO.getIdentifier().getExtension().equals(marker.getIdentifier().getExtension())) {
+                    marker = markerDTO;
+                }
             }           
             try {                                
                 PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(

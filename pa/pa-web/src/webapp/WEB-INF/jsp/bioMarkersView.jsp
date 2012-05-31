@@ -33,7 +33,7 @@
 							value="plannedMarkerList" scope="request" /> <display:table
 							name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
 							class="data" sort="list" pagesize="200"
-							requestURI="plannedMarker.action">
+							requestURI="bioMarkersexecute.action">
 							<display:column escapeXml="true" property="nciIdentifier"
 								sortable="false" titleKey="plannedMarker.protocolId"
 								headerClass="sortable" />

@@ -42,10 +42,10 @@
 											<fmt:message key="plannedMarker.name" />:</s:label><span
 										class="required">*</span></td>
 									<td class="value" style="width: 250px"><s:textfield
-											name="plannedMarker.meaning" id="meaning" maxlength="200"
+											name="plannedMarker.name" id="name" maxlength="200"
 											size="200" cssStyle="width:250px" /> <span
 										class="formErrorMsg"> <s:fielderror>
-												<s:param>plannedMarker.meaning</s:param>
+												<s:param>plannedMarker.name</s:param>
 											</s:fielderror> </span></td>
 								</tr>
 							</table>
