@@ -200,8 +200,9 @@ public class RegistryUtil {
    */
   public static boolean setFailureMessage(Exception e) {
        if (e != null && e.getMessage() != null) {
-           String exceptionStr = e.getLocalizedMessage().
-               substring(e.getLocalizedMessage().indexOf(":") + 1);
+           final String msg = e.getLocalizedMessage();
+           String exceptionStr = !msg.startsWith(VALIDATION_EXCEPTION_STRING) ? msg
+                    .substring(msg.indexOf(':') + 1) : msg;
            ServletActionContext.getRequest().setAttribute("failureMessage", removeExceptionFromErrMsg(exceptionStr));
            return true;
        }
