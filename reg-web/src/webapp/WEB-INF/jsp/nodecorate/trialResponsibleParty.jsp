@@ -23,7 +23,7 @@
                     </reg-web:displayTooltip>
                 </td>
                 <td>
-                <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'PI':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+                <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'PI':'PI', 'Sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
                  <span class="formErrorMsg">
                      <s:fielderror>
                          <s:param>trialDTO.responsiblePartyType</s:param>
