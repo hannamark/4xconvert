@@ -98,3 +98,19 @@ function displayCharCounts(element, event)
 
 //Go find our textareas with maxlengths and handle them when we load!
 Event.observe(window, "load", parseCharCounts);
+
+
+// Utility functions.
+function extractPhoneNumberNoExt(phone) {
+	return phone!=null?phone.gsub(/(ext.*|x.*)$/i,'').strip():'';
+}
+
+function extractPhoneNumberExt(phone) {
+	if (phone!=null) {
+		var ext = phone.gsub(/^(.*extn|.*ext|.*x)/i,'');
+		if (ext!=phone) {
+			return ext.strip();
+		}
+	}
+	return '';
+}

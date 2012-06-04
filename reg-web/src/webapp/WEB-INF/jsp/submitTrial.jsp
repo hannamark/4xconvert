@@ -123,7 +123,8 @@
                 $('trialDTO.responsiblePersonIdentifier').value = '';
                 $('trialDTO.responsibleGenericContactName').value = chosenname;
                 $("trialDTO.contactEmail").value = contactMail;
-                $("trialDTO.contactPhone").value = contactPhone;
+                $("trialDTO.contactPhone").value = extractPhoneNumberNoExt(contactPhone);
+                $("trialDTO.contactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
                 $('lookupbtn4RP').disabled = "";
                 $('trialDTO.responsiblePersonName').value = '';
             }
