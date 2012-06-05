@@ -319,6 +319,7 @@
                             <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
                         </div>
                     </c:if>
+                    <c:if test="${pageContext.request.method=='GET' && fn:contains(header['Referer'],'/searchTrialquery.action')}">
                     <div class="actionsrow">
                         <del class="btnwrapper">
                             <ul class="btnrow">
@@ -326,6 +327,7 @@
                             </ul>
                         </del>
                     </div>
+                    </c:if>
                 </s:form>
             </div>
         </div>
