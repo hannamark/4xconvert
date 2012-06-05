@@ -14,8 +14,7 @@
             }
             
             function handleBackAction(){
-             document.forms[0].action = "searchTrial.action";
-             document.forms[0].submit();
+            	window.history.back();        
             }
         </script>
     </head>
@@ -323,7 +322,7 @@
                     <div class="actionsrow">
                         <del class="btnwrapper">
                             <ul class="btnrow">
-                                <li><a href="javascript:void(0)" class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleBackAction();this.blur();"><span class="btn_img"><span class="back">Back to Search Results</span></span></a></li>
                             </ul>
                         </del>
                     </div>
