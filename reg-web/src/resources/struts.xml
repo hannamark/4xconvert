@@ -96,7 +96,7 @@
             </interceptor-stack>
         </interceptors>
         
-        <default-interceptor-ref name="methodValidationStack"/>
+        <default-interceptor-ref name="noDisclaimerDefaultInterceptor"/>
         
         <global-results>
             <result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
@@ -104,11 +104,9 @@
         </global-results>
         
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/index.jsp</result>
         </action>
         <action name="registerUser*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/registerUser.jsp</result>
             <result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
             <result name="createAccount">/WEB-INF/jsp/createAccount.jsp</result>
@@ -121,28 +119,23 @@
         </action>
         
         <action name="searchUser*" class="gov.nih.nci.registry.action.SearchUserAction" method="{1}">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/searchUserForm.jsp</result>
             <result name="confirmation">WEB-INF/jsp/registerUserConfirmation.jsp</result>
         </action>
         
         <action name="login">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/login.jsp</result>
         </action>
         
         <action name="home">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/registryHome.jsp</result>
         </action>
         
         <action name="contact">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/registryContact.jsp</result>
         </action>
         
         <action name="ajaxUsers*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result name="viewAdminUser">/WEB-INF/jsp/nodecorate/viewadminUsers.jsp</result>
             <result name="loadAdminList">/WEB-INF/jsp/nodecorate/adminUsers.jsp</result>
         </action>
@@ -182,6 +175,9 @@
     </package>
     
     <package name="protected" namespace="/protected" extends="global">
+
+        <default-interceptor-ref name="methodValidationStack"/>
+
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>
             <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
