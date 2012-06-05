@@ -317,7 +317,7 @@ public class IiConverter {
     public static final String CTEP_ORG_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.2";
 
     /** The CTEP Organization identifier name. */
-    public static final String CTEP_ORG_IDENTIFIER_NAME = "CTEP Person identifier";
+    public static final String CTEP_ORG_IDENTIFIER_NAME = "CTEP Organization identifier";
 
     /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
     public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
