@@ -193,6 +193,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String ERRORS = "${errors}";
     private static final int SMTP_TIMEOUT = 120000;
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
+    private static final int ERROR_MSG_LENGTH = 12;
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -529,7 +530,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                             StringUtils.join(unmatchedEmails,
                                                     "\r\n")));
         } else {
-            mailBody = mailBody.replace(ERRORS, "");
+            //To remove the empty bullet
+            String beforeErrSubString = mailBody.substring(0, mailBody.lastIndexOf("* ${errors}"));
+            String afterErrSubString = mailBody.substring(mailBody.lastIndexOf("* ${errors}") + ERROR_MSG_LENGTH);
+            mailBody = beforeErrSubString + afterErrSubString;
         }
 
         mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());

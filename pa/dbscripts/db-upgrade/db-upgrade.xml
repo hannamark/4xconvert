@@ -947,4 +947,8 @@
         <comment>Update marker request email content.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5124.sql"/>
      </changeSet>
+     <changeSet id="PO-5140" author="Kalpana">
+        <comment>Update email content to have period after ncictro@mail.nih.gov.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5140.sql"/>
+     </changeSet>
 </databaseChangeLog>
