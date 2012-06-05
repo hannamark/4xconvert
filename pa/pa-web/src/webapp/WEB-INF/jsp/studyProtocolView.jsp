@@ -150,6 +150,15 @@
                         </del>
                     </div>
                 </s:if>
+                <c:if test="${pageContext.request.method=='GET' && fn:contains(header['Referer'],'/studyProtocolquery.action')}">
+	                <div class="actionsrow" style="border: none;">
+	                  <del class="btnwrapper">
+	                      <ul class="btnrow">
+	                          <li><a href="javascript:void(0)" class="btn" onclick="window.history.back();"><span class="btn_img"><span class="back">Back to Search Results</span></span></a></li>
+	                      </ul>
+	                  </del>
+	                 </div>     
+                 </c:if>           
             </s:form>
         </div>
     </body>
