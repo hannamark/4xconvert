@@ -951,4 +951,8 @@
         <comment>Update email content to have period after ncictro@mail.nih.gov.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5140.sql"/>
      </changeSet>
+     <changeSet id="PO-2490" author="Hugh">
+        <comment>Additional columns for tracking checkout history.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-2490.sql"/>
+     </changeSet>
 </databaseChangeLog>

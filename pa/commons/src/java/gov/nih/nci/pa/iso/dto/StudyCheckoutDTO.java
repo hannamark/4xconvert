@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 
 /**
  * The Class StudyCheckoutDTO.
@@ -92,11 +93,37 @@ public class StudyCheckoutDTO extends StudyDTO {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -3330234611494500532L;
     
+    /** Date that trial was checked out. */
+    private Ts checkOutDate;
+
     /** The checkout type code. */
     private Cd checkOutTypeCode;
     
     /** The user identifier. */
     private St userIdentifier;
+
+    /** Date that trial was checked out. */
+    private Ts checkInDate;
+
+    /** The checkout type code. */
+    private St checkInComment;
+
+    /** The user identifier. */
+    private St checkInUserIdentifier;
+
+    /**
+     * @return the checkOutDate
+     */
+    public Ts getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    /**
+     * @param checkOutDate the checkOutDate to set
+     */
+    public void setCheckOutDate(Ts checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
 
     /**
      * @return the checkOutTypeCode
@@ -128,5 +155,47 @@ public class StudyCheckoutDTO extends StudyDTO {
      */
     public void setUserIdentifier(St userIdentifier) {
         this.userIdentifier = userIdentifier;
+    }
+
+    /**
+     * @return the checkInDate
+     */
+    public Ts getCheckInDate() {
+        return checkInDate;
+    }
+
+    /**
+     * @param checkInDate the checkInDate to set
+     */
+    public void setCheckInDate(Ts checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+
+    /**
+     * @return the checkInComment
+     */
+    public St getCheckInComment() {
+        return checkInComment;
+    }
+
+    /**
+     * @param checkInComment the checkInComment to set
+     */
+    public void setCheckInComment(St checkInComment) {
+        this.checkInComment = checkInComment;
+    }
+
+    /**
+     * @return the checkInUserIdentifier
+     */
+    public St getCheckInUserIdentifier() {
+        return checkInUserIdentifier;
+    }
+
+    /**
+     * @param checkInUserIdentifier the checkInUserIdentifier to set
+     */
+    public void setCheckInUserIdentifier(St checkInUserIdentifier) {
+        this.checkInUserIdentifier = checkInUserIdentifier;
     }
 }

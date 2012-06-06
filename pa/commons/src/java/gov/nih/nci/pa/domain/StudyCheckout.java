@@ -81,6 +81,8 @@ package gov.nih.nci.pa.domain;
 import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.util.CommonsConstant;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -109,10 +111,34 @@ public class StudyCheckout extends AbstractStudyEntity implements Auditable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1234509870L;
 
+    /** The date on which the trial was checked out. */
+    private Timestamp checkOutDate;
     /** The checkout type. */
     private CheckOutType checkOutType;
-    /** The user identifier. */
+    /** The identifier for user who checked out. */
     private String userIdentifier;
+    /** The date on which the trial was checked in. */
+    private Timestamp checkInDate;
+    /** Check in comment. */
+    private String checkInComment;
+    /** The identifier for user who checked in. */
+    private String checkInUserIdentifier;
+
+    /**
+     * @return the checkOutDate
+     */
+    @Column(name = "CHECKOUT_DATE")
+    @NotNull
+    public Timestamp getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    /**
+     * @param checkOutDate the checkOutDate to set
+     */
+    public void setCheckOutDate(Timestamp checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
 
     /**
      * @return the checkOutType
@@ -138,6 +164,7 @@ public class StudyCheckout extends AbstractStudyEntity implements Auditable {
      * @return the user identifier
      */
     @Column(name = "USER_IDENTIFIER")
+    @NotNull
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
     public String getUserIdentifier() {
         return userIdentifier;
@@ -150,5 +177,52 @@ public class StudyCheckout extends AbstractStudyEntity implements Auditable {
      */
     public void setUserIdentifier(String userIdentifier) {
         this.userIdentifier = userIdentifier;
+    }
+
+    /**
+     * @return the checkInDate
+     */
+    @Column(name = "CHECKIN_DATE")
+    public Timestamp getCheckInDate() {
+        return checkInDate;
+    }
+
+    /**
+     * @param checkInDate the checkInDate to set
+     */
+    public void setCheckInDate(Timestamp checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+
+    /**
+     * @return the checkInComment
+     */
+    @Column(name = "CHECKIN_COMMENT")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getCheckInComment() {
+        return checkInComment;
+    }
+
+    /**
+     * @param checkInComment the checkInComment to set
+     */
+    public void setCheckInComment(String checkInComment) {
+        this.checkInComment = checkInComment;
+    }
+
+    /**
+     * @return the checkInUserIdentifier
+     */
+    @Column(name = "CHECKIN_USER_IDENTIFIER")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getCheckInUserIdentifier() {
+        return checkInUserIdentifier;
+    }
+
+    /**
+     * @param checkInUserIdentifier the checkInUserIdentifier to set
+     */
+    public void setCheckInUserIdentifier(String checkInUserIdentifier) {
+        this.checkInUserIdentifier = checkInUserIdentifier;
     }
 }

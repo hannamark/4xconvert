@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -102,6 +103,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -238,6 +240,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             records = protocolQueryService.getStudyProtocolByCriteria(criteria);
             if (CollectionUtils.isNotEmpty(records)) {
                 Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
+                    @Override
                     public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
                         return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
                                 StringUtils.defaultString(o1.getNciIdentifier()));
@@ -470,6 +473,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             if (canCheckOut) {
                 StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
                 scoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spqDTO.getStudyProtocolId()));
+                scoDTO.setCheckOutDate(TsConverter.convertToTs(new Date()));
                 scoDTO.setCheckOutTypeCode(CdConverter.convertStringToCd(checkOutType.getCode()));
                 scoDTO.setUserIdentifier(StConverter.convertToSt(UsernameHolder.getUser()));
                 studyCheckoutService.create(scoDTO);
@@ -575,7 +579,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     @Override
     public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
+        servletResponse = response;
     }
 
     /**
@@ -622,6 +626,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
 
     @Override
     public void setServletRequest(HttpServletRequest request) {
-        this.httpServletRequest = request;
+        httpServletRequest = request;
     }
 }
