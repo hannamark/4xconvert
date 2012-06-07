@@ -607,12 +607,14 @@ public class TestSchema {
         scheckout.setStudyProtocol(sp);
         scheckout.setCheckOutType(CheckOutType.ADMINISTRATIVE);
         scheckout.setUserIdentifier("Abstractor");
+        scheckout.setCheckOutDate(new Timestamp((new Date()).getTime()));
         addUpdObject(scheckout);
 
         scheckout = new StudyCheckout();
         scheckout.setStudyProtocol(sp);
         scheckout.setCheckOutType(CheckOutType.SCIENTIFIC);
         scheckout.setUserIdentifier("Abstractor");
+        scheckout.setCheckOutDate(new Timestamp((new Date()).getTime()));
         addUpdObject(scheckout);
 
         PlannedSubstanceAdministration psa = new PlannedSubstanceAdministration();

@@ -746,6 +746,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         }
         if (adminCheckout) {
             StudyCheckout co = new StudyCheckout();
+            co.setCheckOutDate(new Timestamp((new Date()).getTime()));
             co.setCheckOutType(CheckOutType.ADMINISTRATIVE);
             co.setUserIdentifier("user");
             co.setStudyProtocol(sp);
@@ -754,6 +755,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         }
         if (scientificCheckout) {
             StudyCheckout co = new StudyCheckout();
+            co.setCheckOutDate(new Timestamp((new Date()).getTime()));
             co.setCheckOutType(CheckOutType.SCIENTIFIC);
             co.setUserIdentifier("user");
             co.setStudyProtocol(sp);
