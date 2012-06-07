@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 
 import javax.ejb.Local;
@@ -88,5 +91,20 @@ import javax.ejb.Local;
  */
 @Local
 public interface StudyCheckoutServiceLocal extends StudyPaService<StudyCheckoutDTO> {
-   
+    /**
+    * @param studyProtocolIi index of the study protocol being checked out
+    * @param type the type of checkout (admin or scientific)
+    * @param user login credential of user checking in
+    * @throws PAException exception
+    */
+    void checkOut(Ii studyProtocolIi, Cd type, St user) throws PAException;
+
+    /**
+    * @param studyProtocolIi index of the study protocol being checked out
+    * @param type the type of checkout (admin or scientific)
+    * @param user login credential of user checking in
+    * @param comment check-in comment
+    * @throws PAException exception
+    */
+    void checkIn(Ii studyProtocolIi, Cd type, St user, St comment) throws PAException;
 }

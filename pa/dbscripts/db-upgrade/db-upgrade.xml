@@ -959,4 +959,8 @@
         <comment>Add display_order to study_outcome_measure</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-3402.sql"/>
      </changeSet>
+     <changeSet id="PO-2490-2" author="Hugh">
+        <comment>Update views to ignore prior checkouts.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-2490-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

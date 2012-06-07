@@ -78,10 +78,20 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudyCheckout;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.iso.convert.StudyCheckoutConverter;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -98,4 +108,71 @@ import javax.interceptor.Interceptors;
 public class StudyCheckoutServiceBean
 extends AbstractStudyIsoService<StudyCheckoutDTO, StudyCheckout, StudyCheckoutConverter>
 implements StudyCheckoutServiceLocal {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkOut(Ii studyProtocolIi, Cd type, St user) throws PAException {
+        CheckOutType cotype = CdConverter.convertCdToEnum(CheckOutType.class, type);
+        List<StudyCheckoutDTO> coList = getByStudyProtocol(studyProtocolIi);
+        for (StudyCheckoutDTO co : coList) {
+            if (!ISOUtil.isTsNull(co.getCheckInDate())) {
+                continue;
+            }
+            if (cotype == CdConverter.convertCdToEnum(CheckOutType.class, co.getCheckOutTypeCode())) {
+                throw new PAException("Study already checked out.");
+            }
+        }
+        StudyCheckoutDTO dto = new StudyCheckoutDTO();
+        dto.setCheckOutDate(TsConverter.convertToTs(new Date()));
+        dto.setCheckOutTypeCode(type);
+        dto.setUserIdentifier(user);
+        dto.setStudyProtocolIdentifier(studyProtocolIi);
+        super.create(dto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void checkIn(Ii studyProtocolIi, Cd type, St user, St comment) throws PAException {
+        CheckOutType cotype = CdConverter.convertCdToEnum(CheckOutType.class, type);
+        List<StudyCheckoutDTO> coList = getByStudyProtocol(studyProtocolIi);
+        for (StudyCheckoutDTO co : coList) {
+            if (!ISOUtil.isTsNull(co.getCheckInDate())) {
+                continue;
+            }
+            if (cotype == CdConverter.convertCdToEnum(CheckOutType.class, co.getCheckOutTypeCode())) {
+                co.setCheckInComment(comment);
+                co.setCheckInDate(TsConverter.convertToTs(new Date()));
+                co.setCheckInUserIdentifier(user);
+                super.update(co);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Ii ii) throws PAException {
+        throw new PAException("Deletes should be done using the checkIn() method.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyCheckoutDTO create(StudyCheckoutDTO dto) throws PAException {
+        throw new PAException("Creates should be done using the checkOut() method.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyCheckoutDTO update(StudyCheckoutDTO dto) throws PAException {
+        throw new PAException("Updates disabled. Use checkIn() and checkOut().");
+    }
 }

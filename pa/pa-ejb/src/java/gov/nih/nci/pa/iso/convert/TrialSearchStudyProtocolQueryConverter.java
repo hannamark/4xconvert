@@ -182,6 +182,9 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
     private void setCheckout(StudyProtocolQueryDTO studyProtocolDto, StudyProtocol studyProtocol) {
         if (CollectionUtils.isNotEmpty(studyProtocol.getStudyCheckout())) {
             for (StudyCheckout studyCheckout : studyProtocol.getStudyCheckout()) {
+                if (studyCheckout.getCheckInDate() != null) {
+                    continue;
+                }
                 switch (studyCheckout.getCheckOutType()) {
                 case ADMINISTRATIVE:
                     studyProtocolDto.getAdminCheckout().setCheckoutBy(studyCheckout.getUserIdentifier());

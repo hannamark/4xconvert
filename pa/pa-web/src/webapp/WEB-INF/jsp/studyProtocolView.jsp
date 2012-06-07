@@ -20,6 +20,13 @@
             function handleAction(action) {
                 var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
                 var form = document.forms[0];
+                if ((action == 'adminCheckIn') || (action == 'scientificCheckIn')){
+                    var comment=prompt("Enter check-in comment:","");
+                    if (comment==null){
+                        return;
+                    }
+                    form.elements["checkInReason"].value = comment.substr(0,200);
+                }
                 form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
                 form.submit();
             }
@@ -33,6 +40,7 @@
             <pa:sucessMessage/>
             <s:form>
                 <s:token/>
+                <s:hidden name="checkInReason"/>
                 <s:actionerror/>
                 <h2>Trial Identification</h2>
                 <table class="form">

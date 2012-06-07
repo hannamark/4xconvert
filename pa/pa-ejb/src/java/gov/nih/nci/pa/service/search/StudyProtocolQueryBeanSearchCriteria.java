@@ -141,7 +141,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
     @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty, JOIN_CLAUSE,
-                getSession(), new StudyProtocolHelper(getCriteria(), this.spo));
+                getSession(), new StudyProtocolHelper(getCriteria(), spo));
     }
 
     /**
@@ -150,7 +150,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
     @Override
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
-                leftJoinClause + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(getCriteria(), this.spo));
+                leftJoinClause + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(getCriteria(), spo));
     }
     
     /**
@@ -165,7 +165,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         return SearchableUtils.getQueryBySearchableFields(getCriteria(),
                 attributes, isCountOnly, orderByProperty, "", leftJoinClause
                         + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(
-                        getCriteria(), this.spo));
+                        getCriteria(), spo));
     } 
 
     /**
@@ -347,15 +347,15 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + SearchableUtils.ROOT_OBJ_ALIAS + ".id and sslo.functionalCode = :"
                     + LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM);
 
-            if (StringUtils.isNotBlank(this.spo.getCountryName())) {
+            if (StringUtils.isNotBlank(spo.getCountryName())) {
                 whereClause.append(" and  sslo.researchOrganization.organization.countryName = :" + COUNTRY_NAME_PARAM);
             }
 
-            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {
+            if (CollectionUtils.isNotEmpty(spo.getStates())) {
                 whereClause.append(" and  sslo.researchOrganization.organization.state in (:" + STATES_PARAM + ")");
             }
 
-            if (StringUtils.isNotBlank(this.spo.getCity())) {
+            if (StringUtils.isNotBlank(spo.getCity())) {
                 whereClause.append(" and  sslo.researchOrganization.organization.city like :" + CITY_PARAM);
             }
 
@@ -367,15 +367,15 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     + SearchableUtils.ROOT_OBJ_ALIAS + ".id and sslh.functionalCode = :"
                     + PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM);
 
-            if (StringUtils.isNotBlank(this.spo.getCountryName())) {
+            if (StringUtils.isNotBlank(spo.getCountryName())) {
                 whereClause.append(" and sslh.healthCareFacility.organization.countryName = :" + COUNTRY_NAME_PARAM);
             }
 
-            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {
+            if (CollectionUtils.isNotEmpty(spo.getStates())) {
                 whereClause.append(" and sslh.healthCareFacility.organization.state in (:" + STATES_PARAM + ")");
             }
 
-            if (StringUtils.isNotBlank(this.spo.getCity())) {
+            if (StringUtils.isNotBlank(spo.getCity())) {
                 whereClause.append(" and sslh.healthCareFacility.organization.city like :" + CITY_PARAM);
             }
 
@@ -385,16 +385,16 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private void setLocationParams(Map<String, Object> params) {
             params.put(LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
             params.put(PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.TREATING_SITE);
-            if (StringUtils.isNotBlank(this.spo.getCountryName())) {              
-                params.put(COUNTRY_NAME_PARAM, this.spo.getCountryName());
+            if (StringUtils.isNotBlank(spo.getCountryName())) {              
+                params.put(COUNTRY_NAME_PARAM, spo.getCountryName());
             }
 
-            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {              
-                params.put(STATES_PARAM, this.spo.getStates());
+            if (CollectionUtils.isNotEmpty(spo.getStates())) {              
+                params.put(STATES_PARAM, spo.getStates());
             }
             
-            if (StringUtils.isNotBlank(this.spo.getCity())) {                
-                params.put(CITY_PARAM, "%" + this.spo.getCity() + "%");
+            if (StringUtils.isNotBlank(spo.getCity())) {                
+                params.put(CITY_PARAM, "%" + spo.getCity() + "%");
             }
         }
 
@@ -435,7 +435,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             if (spo.isLockedTrials()) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
-                        + "userIdentifier = :%s ) > 0", operator, SearchableUtils.ROOT_OBJ_ALIAS, CHECKOUT_PARAM));
+                        + "userIdentifier = :%s and checkInDate is null) > 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS, CHECKOUT_PARAM));
                 params.put(CHECKOUT_PARAM, spo.getLockedUser());
             }
 

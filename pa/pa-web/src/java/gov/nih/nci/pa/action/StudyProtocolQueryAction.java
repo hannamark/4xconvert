@@ -83,11 +83,9 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
-import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -103,7 +101,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -145,6 +142,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private HttpServletResponse servletResponse;
     private HttpServletRequest httpServletRequest;
     private List<String> checkoutCommands;
+    private String checkInReason;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
    
     private String identifier;
@@ -466,20 +464,11 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     
     private String checkOut(CheckOutType checkOutType) throws PAException {
         try {
-            StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            boolean canCheckOut = (checkOutType == CheckOutType.ADMINISTRATIVE)
-                    ? spqDTO.getAdminCheckout().getCheckoutBy() == null : spqDTO
-                            .getScientificCheckout().getCheckoutBy() == null;
-            if (canCheckOut) {
-                StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
-                scoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spqDTO.getStudyProtocolId()));
-                scoDTO.setCheckOutDate(TsConverter.convertToTs(new Date()));
-                scoDTO.setCheckOutTypeCode(CdConverter.convertStringToCd(checkOutType.getCode()));
-                scoDTO.setUserIdentifier(StConverter.convertToSt(UsernameHolder.getUser()));
-                studyCheckoutService.create(scoDTO);
+            studyCheckoutService.checkOut(IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    CdConverter.convertToCd(checkOutType),
+                    StConverter.convertToSt(UsernameHolder.getUser()));
                 String msg = getText("studyProtocol.trial.checkOut." + checkOutType.name());
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
-            }
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -506,21 +495,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
 
     private String checkIn(CheckOutType checkOutType) throws PAException {
         try {
-            StudyProtocolQueryDTO spqDTO = protocolQueryService
-                    .getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? (spqDTO
-                    .getAdminCheckout() != null ? spqDTO.getAdminCheckout()
-                    .getCheckoutId() : null)
-                    : (spqDTO.getScientificCheckout() != null ? spqDTO
-                            .getScientificCheckout().getCheckoutId() : null);
-            if (checkoutId != null) {
-                studyCheckoutService
-                        .delete(IiConverter.convertToIi(checkoutId));
-                String msg = getText("studyProtocol.trial.checkIn."
-                        + checkOutType.name());
-                ServletActionContext.getRequest().setAttribute(
-                        Constants.SUCCESS_MESSAGE, msg);
-            }
+            studyCheckoutService.checkIn(IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    CdConverter.convertToCd(checkOutType),
+                    StConverter.convertToSt(UsernameHolder.getUser()),
+                    StConverter.convertToSt(getCheckInReason()));
+            String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -594,6 +574,20 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     public void setCheckoutCommands(List<String> checkoutCommands) {
         this.checkoutCommands = checkoutCommands;
+    }
+
+    /**
+     * @return the checkInReason
+     */
+    public String getCheckInReason() {
+        return checkInReason;
+    }
+
+    /**
+     * @param checkInReason the checkInReason to set
+     */
+    public void setCheckInReason(String checkInReason) {
+        this.checkInReason = checkInReason;
     }
 
     /**
