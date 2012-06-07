@@ -14,7 +14,14 @@
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     setFocusToFirstControl();
-    checkAll();         
+    checkAll();
+    
+    var grantor = "${studyIndldeWebDTO.grantor}";
+    if (grantor!='') {
+        var list = $('SubCat');
+        Form.Element.setValue(list, grantor);
+    }    
+    
 }
 function checkAll(){
 		if (document.getElementById('group4').value == 'Yes'){
@@ -218,11 +225,7 @@ function tooltip() {
 							<fmt:message key="trialIndide.grantor"/>:<span class="required">*</span></label>
 						</td>
 						<td class="value">
-							<s:if test="%{studyIndldeWebDTO.grantor == 'IND'}">
-								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:150px"></SELECT>
-							</s:if><s:else>
-								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDRH':'CDRH', 'CBER':'CBER'}" cssStyle="width:150px"></SELECT>
-							</s:else>
+							<select id="SubCat" name="studyIndldeWebDTO.grantor"  style="width:150px"></select>							
 							<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>studyIndldeWebDTO.grantor</s:param>
