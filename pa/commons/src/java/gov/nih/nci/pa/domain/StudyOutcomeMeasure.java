@@ -105,6 +105,7 @@ public class StudyOutcomeMeasure extends AbstractEntity implements Auditable {
     private Boolean primaryIndicator;
     private Boolean safetyIndicator;
     private StudyProtocol studyProtocol;
+    private Integer displayOrder;
 
     /**
      * @return name
@@ -186,5 +187,20 @@ public class StudyOutcomeMeasure extends AbstractEntity implements Auditable {
      */
     public void setStudyProtocol(StudyProtocol studyProtocol) {
         this.studyProtocol = studyProtocol;
+    }
+    
+    
+    /**
+     * @return the displayOrder
+     */
+    @Column(name = "DISPLAY_ORDER")
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

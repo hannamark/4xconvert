@@ -11,12 +11,16 @@ import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Vrushali
@@ -331,6 +335,19 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         action.setCaregiver("FALSE");
         action.setSubject("FALSE");
         assertEquals("details",action.update());
+
+    }
+    
+    @Test
+    public void testOutcomeOrder() throws PAException {
+        StudyOutcomeMeasureServiceLocal mock = mock(StudyOutcomeMeasureServiceLocal.class);
+        action.setStudyOutcomeMeasureService(mock);
+        action.setOrderString("3;2;1");
+        getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
+                IiConverter.convertToIi(1L));
+        action.outcomeOrder();
+        verify(mock).reorderOutcomes(IiConverter.convertToIi(1L),
+                Arrays.asList(new String[] { "3", "2", "1" }));
 
     }
 }

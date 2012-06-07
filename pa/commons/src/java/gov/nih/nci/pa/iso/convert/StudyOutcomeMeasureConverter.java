@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.Date;
@@ -108,6 +109,7 @@ public class StudyOutcomeMeasureConverter extends
         somDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(som.getStudyProtocol().getId()));
         somDTO.setPrimaryIndicator(BlConverter.convertToBl(som.getPrimaryIndicator()));
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
+        somDTO.setDisplayOrder(IntConverter.convertToInt(som.getDisplayOrder()));
         somDTO.setDescription(StConverter.convertToSt(som.getDescription()));
         return somDTO;
     }
@@ -139,6 +141,7 @@ public class StudyOutcomeMeasureConverter extends
         som.setTimeFrame(StConverter.convertToString(somDTO.getTimeFrame()));
         som.setPrimaryIndicator(BlConverter.convertToBoolean(somDTO.getPrimaryIndicator()));
         som.setSafetyIndicator(BlConverter.convertToBoolean(somDTO.getSafetyIndicator()));
+        som.setDisplayOrder(IntConverter.convertToInteger(somDTO.getDisplayOrder()));
     }
 
 }

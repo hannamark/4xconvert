@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 public class StudyOutcomeMeasureConverterTest extends AbstractConverterTest<StudyOutcomeMeasureConverter, StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
@@ -99,6 +100,7 @@ public class StudyOutcomeMeasureConverterTest extends AbstractConverterTest<Stud
         bo.setName("BoName");
         bo.setStudyProtocol(getStudyProtocol());
         bo.setPrimaryIndicator(Boolean.TRUE);
+        bo.setDisplayOrder(10);
         return bo;
     }
 
@@ -108,6 +110,7 @@ public class StudyOutcomeMeasureConverterTest extends AbstractConverterTest<Stud
         assertEquals("DtoName", bo.getName());
         assertTrue(bo.getPrimaryIndicator());
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+        assertEquals(10, bo.getDisplayOrder().intValue());
     }
 
     @Override
@@ -117,6 +120,7 @@ public class StudyOutcomeMeasureConverterTest extends AbstractConverterTest<Stud
         assertTrue(dto.getPrimaryIndicator().getValue());
         assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         assertEquals("2.16.840.1.113883.3.26.4.3.1", dto.getIdentifier().getRoot());
+        assertEquals(10, IntConverter.convertToInteger(dto.getDisplayOrder()).intValue());
     }
 
     @Override
@@ -126,6 +130,7 @@ public class StudyOutcomeMeasureConverterTest extends AbstractConverterTest<Stud
         dto.setName(StConverter.convertToSt("DtoName"));
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        dto.setDisplayOrder(IntConverter.convertToInt(10));
         return dto;
     }
 }

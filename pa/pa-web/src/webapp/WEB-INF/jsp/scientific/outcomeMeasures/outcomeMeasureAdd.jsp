@@ -56,6 +56,7 @@ BubbleTips.activateTipOn("dfn");
     <h2><fmt:message key="osdesign.outcome.subtitle"/></h2>
     <s:hidden name="page"/>
     <s:hidden name="id" />
+    <s:hidden name="webDTO.outcomeMeasure.displayOrder" />
     <table class="form">
     			<tr>
 					<td scope="row"  class="label"><label>

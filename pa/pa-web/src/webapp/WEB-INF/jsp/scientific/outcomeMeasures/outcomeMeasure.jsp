@@ -13,6 +13,52 @@
      <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose>
 </title>
 	<s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.tablednd.js"/>"></script>
+    <script type="text/javascript">
+         Event.observe(window, "load", function() {
+            jQuery('#row').tableDnD({
+                onDragClass: "myDragClass",
+                onDrop: function(table, draggedRow) {                	
+                    var rows = table.tBodies[0].rows;
+                    var orderString = '';
+                    for (var i=0; i<rows.length; i++) {
+                        var row = rows[i]; 
+                        var outcomeID = row.id.substring(6);
+                        orderString = orderString + outcomeID + ';';
+                        $(row).className = (i % 2 == 0?'odd':'even');
+                    }
+                    $('ajaxIndicator').show();
+                    $('orderSaveConfirmation').hide(); 
+                    $('orderSaveError').hide(); 
+                    var ajaxReq = new Ajax.Request('interventionalStudyDesignoutcomeOrder.action', {
+                        method: 'post',
+                        parameters: 'orderString='+orderString,
+                        onSuccess: function(transport) {
+                        	$('ajaxIndicator').hide();
+                        	$('orderSaveConfirmation').show();
+                        },
+                        onFailure: function(transport) {
+                        	$('ajaxIndicator').hide();   
+                        	$('orderSaveError').show();
+                        },
+                        onException: function(requesterObj, exceptionObj) {
+                            ajaxReq.options.onFailure(null);
+                        },
+                        on0: function(transport) {
+                            ajaxReq.options.onFailure(transport);
+                        }
+                    });                    
+                }
+            });            
+        });
+    </script>
+    <style type="text/css">        
+        tr.myDragClass td {
+            color: yellow;
+            background-color: #A8B8CE;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <SCRIPT LANGUAGE="JavaScript">
@@ -21,8 +67,6 @@
         // there are no onload functions to call for this jsp
         // leave this function to prevent 'error on page'
     }
-    
-        
     
 </SCRIPT>
 
@@ -37,6 +81,16 @@
   <div class="box">
   <pa:sucessMessage/>
   <pa:failureMessage/>
+  
+  <div id="ajaxIndicator" class="info" style="display: none;">
+        <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="osdesign.outcome.order.saving"/>
+  </div>
+  <div class="confirm_msg" style="display: none;" id="orderSaveConfirmation">
+      <strong>Message.</strong>&nbsp;<fmt:message key="osdesign.outcome.order.saved"/>
+  </div>
+  <div class="error_msg" style="display: none;" id="orderSaveError">
+      <strong>Message.</strong>&nbsp;<fmt:message key="osdesign.outcome.order.error"/>
+  </div>    
     <s:form>
         <s:actionerror/>
         <pa:studyUniqueToken/>
@@ -60,27 +114,37 @@
     <s:hidden name="page" />
     <s:hidden name="id" />
 	<s:set name="outcomeList" value="outcomeList" scope="request"/>
-	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200" requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" sortable="true" headerClass="sortable">
+	
+	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200"
+	   decorator="gov.nih.nci.pa.decorator.OutcomeMeasureTableDecorator" 
+	   requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" sortable="true" headerClass="sortable nodnd">
             <pa:displayBoolean value="${row.outcomeMeasure.primaryIndicator}"/>
         </display:column>
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.name" property="outcomeMeasure.name" sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="outcomeMeasure.timeFrame"  sortable="true" headerClass="sortable" />
-        <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="outcomeMeasure.description"  sortable="true" headerClass="sortable" />
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" sortable="true" headerClass="sortable">
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.name" property="outcomeMeasure.name" sortable="true" headerClass="sortable nodnd" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="outcomeMeasure.timeFrame"  sortable="true" headerClass="sortable nodnd" />
+        <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="outcomeMeasure.description"  sortable="true" headerClass="sortable nodnd" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" sortable="true" headerClass="sortable nodnd">
             <pa:displayBoolean value="${row.outcomeMeasure.safetyIndicator}"/>
         </display:column>
         <pa:scientificAbstractorDisplayWhenCheckedOut>
-            <display:column title="Edit" class="action">
+            <display:column title="Edit" class="action nodnd" headerClass="nodnd">
                 <s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
             </display:column>
-            <display:column title="Delete" class="action">
+            <display:column title="Delete" class="action nodnd" headerClass="nodnd">
                 <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.outcomeMeasure.id}" value="%{#attr.row.outcomeMeasure.id in objectsToDelete}"/>
             </display:column>
-        </pa:scientificAbstractorDisplayWhenCheckedOut>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>        
 	</display:table>
   </s:if>
+  
+    <s:if test="outcomeList.size > 1">
+       <p class="info" align="center">
+           You can re-order outcomes by dragging and dropping individual table rows.       
+       </p>       
+    </s:if>  
+  
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">

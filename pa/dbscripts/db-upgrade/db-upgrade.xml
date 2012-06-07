@@ -955,4 +955,8 @@
         <comment>Additional columns for tracking checkout history.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-2490.sql"/>
      </changeSet>
+     <changeSet id="PO-3402" author="krylovd">
+        <comment>Add display_order to study_outcome_measure</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-3402.sql"/>
+     </changeSet>
 </databaseChangeLog>

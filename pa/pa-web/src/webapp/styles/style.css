@@ -599,3 +599,11 @@ UL#maintabs LI A:focus
 .fakelink {
 	cursor: text !important;
 }
+
+.nodnd {
+	cursor: default !important;
+}
+
+.nodisplay {
+	display: none !important;
+}

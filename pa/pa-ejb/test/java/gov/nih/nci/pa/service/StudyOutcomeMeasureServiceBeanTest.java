@@ -83,6 +83,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -93,6 +95,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -133,6 +136,68 @@ public class StudyOutcomeMeasureServiceBeanTest extends AbstractHibernateTestCas
 
          remoteEjb.delete(dto.getIdentifier());
     }
+    
+    @Test
+    public void getByStudyProtocol() throws Exception {
+
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(new Long(pid.getExtension()));
+
+        StudyOutcomeMeasure som1 = new StudyOutcomeMeasure();
+        som1.setName("StudyOutcomeMeasure-First");
+        som1.setStudyProtocol(sp);
+        som1.setPrimaryIndicator(Boolean.TRUE);
+        som1.setDisplayOrder(1);
+        TestSchema.addUpdObject(som1);
+        StudyOutcomeMeasure som2 = new StudyOutcomeMeasure();
+        som2.setName("StudyOutcomeMeasure-Sec");
+        som2.setStudyProtocol(sp);
+        som2.setPrimaryIndicator(Boolean.TRUE);
+        som2.setDisplayOrder(0);
+        TestSchema.addUpdObject(som2);
+
+        List<StudyOutcomeMeasureDTO> list = remoteEjb.getByStudyProtocol(pid);
+        assertEquals(som2.getId() + "", list.get(1).getIdentifier()
+                .getExtension());
+        assertEquals(som1.getId() + "", list.get(2).getIdentifier()
+                .getExtension());
+        assertNull(list.get(0).getDisplayOrder().getValue());
+
+        remoteEjb.delete(list.get(1).getIdentifier());
+        remoteEjb.delete(list.get(2).getIdentifier());
+    }
+    
+    @Test
+    public void reorderOutcomes() throws Exception {
+
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(new Long(pid.getExtension()));
+
+        StudyOutcomeMeasure som1 = new StudyOutcomeMeasure();
+        som1.setName("StudyOutcomeMeasure1");
+        som1.setStudyProtocol(sp);
+        som1.setPrimaryIndicator(Boolean.TRUE);
+        TestSchema.addUpdObject(som1);
+        StudyOutcomeMeasure som2 = new StudyOutcomeMeasure();
+        som2.setName("StudyOutcomeMeasure2");
+        som2.setStudyProtocol(sp);
+        som2.setPrimaryIndicator(Boolean.TRUE);
+        TestSchema.addUpdObject(som2);
+
+        List<String> ids = Arrays.asList(new String[] {
+                som2.getId().toString(), som1.getId().toString() });
+        remoteEjb.reorderOutcomes(pid, ids);
+
+        List<StudyOutcomeMeasureDTO> list = remoteEjb.getByStudyProtocol(pid);
+        assertEquals(som2.getId() + "", list.get(1).getIdentifier()
+                .getExtension());
+        assertEquals(som1.getId() + "", list.get(2).getIdentifier()
+                .getExtension());
+        assertNull(list.get(0).getDisplayOrder().getValue());
+
+        remoteEjb.delete(list.get(1).getIdentifier());
+        remoteEjb.delete(list.get(2).getIdentifier());
+    }    
 
     @Test
     public void create() throws Exception {

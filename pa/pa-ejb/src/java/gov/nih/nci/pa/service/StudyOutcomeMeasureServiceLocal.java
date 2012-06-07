@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 
 import javax.ejb.Local;
@@ -92,5 +95,21 @@ import javax.ejb.Local;
 
 @Local
 public interface StudyOutcomeMeasureServiceLocal extends StudyPaService<StudyOutcomeMeasureDTO> {
+
+    /**
+     * Assigns a specific ordering to the study's outcomes.
+     * 
+     * @param studyProtocolIi
+     *            studyProtocolIi
+     * @param ids
+     *            IDs of the study's outcomes. Outcomes will be ordered
+     *            according to the order of elements in this {@link List}.
+     *            Outcomes that exist but are not in this list will receive null
+     *            ordering.
+     * @throws PAException
+     *             PAException
+     */
+    void reorderOutcomes(Ii studyProtocolIi, List<String> ids)
+            throws PAException;
 
 }

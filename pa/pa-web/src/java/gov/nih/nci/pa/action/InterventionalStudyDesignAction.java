@@ -101,11 +101,13 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -140,6 +142,8 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
     private List<ISDesignDetailsWebDTO> outcomeList;
     private Long id = null;
     private String page;
+    private String orderString;
+    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
 
     /**
      * @return res
@@ -469,6 +473,8 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             studyOutcomeMeasure.setPrimaryIndicator(BlConverter.convertToBl(webOutcomeMeasure.getPrimaryIndicator()));
             studyOutcomeMeasure.setSafetyIndicator(BlConverter.convertToBl(webOutcomeMeasure.getSafetyIndicator()));
             studyOutcomeMeasure.setTimeFrame(StConverter.convertToSt(webOutcomeMeasure.getTimeFrame()));
+            studyOutcomeMeasure.setDisplayOrder(IntConverter
+                    .convertToInt(webOutcomeMeasure.getDisplayOrder()));
             PaRegistry.getStudyOutcomeMeasurService().update(studyOutcomeMeasure);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             outcomeQuery();
@@ -513,6 +519,21 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         return outcomeQuery();
     }
     
+    /**
+     * Save new outcome order.
+     * 
+     * @return result
+     * @throws PAException PAException
+     */
+    public String outcomeOrder() throws PAException {
+        List<String> ids = Arrays.asList(getOrderString().split(";"));
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        studyOutcomeMeasureService.reorderOutcomes(
+                studyProtocolIi, ids);
+        return null;
+    }
+    
     @Override
     public void deleteObject(Long objectId) throws PAException {
         PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToStudyOutcomeMeasureIi(objectId));      
@@ -527,6 +548,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             webdto.getOutcomeMeasure().setTimeFrame(StConverter.convertToString(dto.getTimeFrame()));
             webdto.getOutcomeMeasure().setSafetyIndicator(BlConverter.convertToBoolean(dto.getSafetyIndicator()));
             webdto.getOutcomeMeasure().setId(IiConverter.convertToLong(dto.getIdentifier()).toString());
+            webdto.getOutcomeMeasure().setDisplayOrder(IntConverter.convertToInteger(dto.getDisplayOrder()));
         }
         return webdto;
     }
@@ -688,5 +710,28 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             this.webDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(this.webDTO.getPrimaryPurposeCode()));
         }
+        studyOutcomeMeasureService = PaRegistry.getStudyOutcomeMeasurService();
+    }
+
+    /**
+     * @return the orderString
+     */
+    public String getOrderString() {
+        return orderString;
+    }
+
+    /**
+     * @param orderString the orderString to set
+     */
+    public void setOrderString(String orderString) {
+        this.orderString = orderString;
+    }
+
+    /**
+     * @param studyOutcomeMeasureService the studyOutcomeMeasureService to set
+     */
+    public void setStudyOutcomeMeasureService(
+            StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
+        this.studyOutcomeMeasureService = studyOutcomeMeasureService;
     }
 }
