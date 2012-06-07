@@ -131,7 +131,7 @@ public class MockPAServiceUtils extends PAServiceUtils {
      * {@inheritDoc}
      */
     @Override
-    public void handleUpdatedTrialDocuments(Ii oldAssignedId, Ii newAssignedId) throws PAException, IOException {
+    public void handleUpdatedTrialDocuments(Ii oldAssignedId) throws PAException, IOException {
         //Intentionally left empty.
     }
 }

@@ -172,7 +172,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -184,7 +183,6 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1960,27 +1958,16 @@ public class PAServiceUtils {
     }
 
     /**
-     * Moves trial documents from one trial with an assigned identifier (i.e NCI-2011-00001) to another trial with
-     * another assigned identifier(i.e. NCI-2011-00001).
+     * Cleans an existing trial folder.
      * @param destinationId the assigned id of the trial that will be the final location for the trial documents
-     * @param sourceId the assigned id of the trial for the newly created documents that need to be moved
      * @throws PAException on error
      * @throws IOException on file manipulation error
      */
-      public void handleUpdatedTrialDocuments(Ii destinationId, Ii sourceId) throws PAException, IOException {
+      public void handleUpdatedTrialDocuments(Ii destinationId) throws PAException, IOException {
           String docPath = PaEarPropertyReader.getDocUploadPath();
-          File sourceDir  = new File(docPath + File.separator + sourceId.getExtension());
           File destination  = new File(docPath + File.separator + destinationId.getExtension());
 
           //First clean out the destination directory.
           FileUtils.cleanDirectory(destination);
-
-          //Then move the files to the destination directory.
-          Collection<File> filesToMove = FileUtils.listFiles(sourceDir, FileFilterUtils.trueFileFilter(), null);
-          for (File file : filesToMove) {
-              FileUtils.moveFileToDirectory(file, destination, false);
-          }
-          //Finally delete the now empty source directory.
-          FileUtils.deleteQuietly(sourceDir);
       }
 }

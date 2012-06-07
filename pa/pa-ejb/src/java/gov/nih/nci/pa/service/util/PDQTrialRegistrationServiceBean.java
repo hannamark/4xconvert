@@ -84,6 +84,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -125,6 +126,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -208,7 +210,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      */
     private Ii registerTrial(PDQRegistrationXMLParser parser, String userName) throws PAException, IOException {
         return PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
-                getStudyProtocol(parser.getStudyProtocolDTO(), userName),
+                getStudyProtocol(parser.getStudyProtocolDTO(), userName, null),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
                 getDocumentDtos(parser.getUrl()), findOrCreateEntity(parser.getLeadOrganizationDTO()),
@@ -247,10 +249,13 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
 
         //Delete the old trial
         PaRegistry.getStudyProtocolService().deleteStudyProtocol(studyProtocolIi);
-
+        
+        //Clean the existing trial doc folder
+        getPaServiceUtils().handleUpdatedTrialDocuments(nciId);
+        
         //Then create the new trial
         Ii newSpId = PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
-                getStudyProtocol(parser.getStudyProtocolDTO(), userName),
+                getStudyProtocol(parser.getStudyProtocolDTO(), userName, nciId),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
                 allDocuments,
@@ -264,15 +269,6 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 BlConverter.convertToBl(Boolean.TRUE));
 
-        //Update the NCI ID to be the old one.
-        spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(newSpId);
-        Ii newAssignedId = PAUtil.getAssignedIdentifier(spDTO);
-        spDTO.getSecondaryIdentifiers().getItem().remove(newAssignedId);
-        spDTO.getSecondaryIdentifiers().getItem().add(nciId);
-        PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-
-        //Finally move the trial documents to the correct directory and remove the unused document directory.
-        getPaServiceUtils().handleUpdatedTrialDocuments(nciId, newAssignedId);
         return newSpId;
     }
 
@@ -326,11 +322,17 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
 
     /**
      * @param studyProtocolDTO
+     * @param nciId 
      * @return
      */
-    private StudyProtocolDTO getStudyProtocol(StudyProtocolDTO studyProtocolDTO, String userName) {
+    private StudyProtocolDTO getStudyProtocol(StudyProtocolDTO studyProtocolDTO, String userName, Ii nciId) {
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        if (nciId != null) {
+            studyProtocolDTO.setSecondaryIdentifiers(new DSet<Ii>());
+            studyProtocolDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
+            studyProtocolDTO.getSecondaryIdentifiers().getItem().add(nciId);
+        }
         return studyProtocolDTO;
     }
 
