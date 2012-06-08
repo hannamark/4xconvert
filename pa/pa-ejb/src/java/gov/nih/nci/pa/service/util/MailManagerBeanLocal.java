@@ -811,8 +811,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + question
                 + "'\n\n"
                 + "Please contact "
-                + csmUser.getFirstName() + " " + csmUser.getLastName()
-                + " from the caDSR team.\n\n"
+                + "the caDSR team.\n\n"
                 + "Thank you\n"
                 + "NCI Clinical Trials Reporting Program"; 
 
