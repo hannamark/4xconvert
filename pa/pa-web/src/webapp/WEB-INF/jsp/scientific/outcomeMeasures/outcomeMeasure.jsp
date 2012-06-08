@@ -14,6 +14,7 @@
 </title>
 	<s:head />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.tablednd.js"/>"></script>
+    <pa:scientificAbstractorDisplayWhenCheckedOut>
     <script type="text/javascript">
          Event.observe(window, "load", function() {
             jQuery('#row').tableDnD({
@@ -52,6 +53,7 @@
             });            
         });
     </script>
+    </pa:scientificAbstractorDisplayWhenCheckedOut>
     <style type="text/css">        
         tr.myDragClass td {
             color: yellow;
@@ -139,11 +141,13 @@
 	</display:table>
   </s:if>
   
-    <s:if test="outcomeList.size > 1">
-       <p class="info" align="center">
-           You can re-order outcomes by dragging and dropping individual table rows.       
-       </p>       
-    </s:if>  
+    <pa:scientificAbstractorDisplayWhenCheckedOut>  
+	    <s:if test="outcomeList.size > 1">
+	       <p class="info" align="center">
+	           You can re-order outcomes by dragging and dropping individual table rows.       
+	       </p>       
+	    </s:if>  
+    </pa:scientificAbstractorDisplayWhenCheckedOut>
   
 		<div class="actionsrow">
 			<del class="btnwrapper">
