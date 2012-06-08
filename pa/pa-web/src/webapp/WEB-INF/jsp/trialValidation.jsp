@@ -157,6 +157,7 @@
                 <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
                 <s:hidden name="gtdDTO.ctepIdentifier"  id="gtdDTO.ctepIdentifier"/>
                 <s:hidden name="gtdDTO.dcpIdentifier" id ="gtdDTO.dcpIdentifier"/>
+                <s:hidden name="gtdDTO.keywordText" id ="gtdDTO.keywordText"/>
                 <h2><fmt:message key="trialValidation.trialDetails" /></h2>
                 <table class="form">
                     <pa:valueRow labelKey="studyProtocol.nciIdentifier">
