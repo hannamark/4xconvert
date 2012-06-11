@@ -87,6 +87,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
@@ -606,7 +607,68 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         
         bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
     }
+    
+    @Test
+    public void testsendMarkerAcceptanceMailToCDEUserNameNull()
+            throws PAException {
+        String nciIdentifier = "nciIdentifier";
+        String from = "from@example.com";
+        User csmUser = createUser("LoginName", "", "");
+        TestSchema.addUpdObject(csmUser);
+        RegistryUser user = new RegistryUser();
+        user.setLastName("LastName");
+        user.setFirstName("FirstName");
+        user.setEmailAddress(email1);
+        user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
+        TestSchema.addUpdObject(user);
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
 
+        bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+    }
+
+    @Test
+    public void testsendMarkerAcceptanceMailToCDERegUserNameNull()
+            throws PAException {
+        String nciIdentifier = "nciIdentifier";
+        String from = "from@example.com";
+        User csmUser = createUser("LoginName", "", "");
+        TestSchema.addUpdObject(csmUser);
+        RegistryUser user = new RegistryUser();
+        user.setLastName("");
+        user.setFirstName("");
+        user.setEmailAddress(email1);
+        user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
+        TestSchema.addUpdObject(user);
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+
+        bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+    }
+
+    @Test
+    public void testsendMarkerAcceptanceMailToCDEException() throws PAException {
+        String nciIdentifier = "nciIdentifier";
+        String from = "from@example.com";
+        
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("abc"));
+        try {
+            bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+            fail("An error occured while sending a acceptance email for a CDE");
+        } catch (Exception e) {
+            
+        }
+        
+    }
     @Test
     public void testsendMarkerQuestionToCTROMail() throws PAException{
         String nciIdentifier = "nciIdentifier";
@@ -620,7 +682,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                     
         bean.sendMarkerQuestionToCTROMail(nciIdentifier, to, dto, question);
     }
-    
+
     private StudyProtocol createProprietaryStudyProtocolObj() {
         StudyProtocol sp = new StudyProtocol();
         Timestamp now = new Timestamp(new Date().getTime());

@@ -752,11 +752,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     public void sendMarkerAcceptanceMailToCDE(String nciIdentifier, 
             String from, PlannedMarkerDTO marker) throws PAException {
         try {            
             String userId = StConverter.convertToString(marker.getUserLastCreated());
             User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
+            RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
             boolean foundInHugo = StringUtils.isNotEmpty(CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
             String hugoCode = "N/A";
             if (foundInHugo) {
@@ -764,23 +766,34 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
             Date date = new Date();
-
-            String body = "Dear caDSR," + "\n\n"
+            StringBuilder bodyB = new StringBuilder();
+            bodyB.append("Dear caDSR," + "\n\n"
             + "This is just to notify you that a marker '" 
             + StConverter.convertToString(marker.getName())
             + ",HUGO code:"
             + hugoCode
-            + "' has been accepted in the CTRP Protocol Abstraction " 
-            + "by "
-            + csmUser.getFirstName() + " " + csmUser.getLastName()
-            + " at " 
+            + "' has been accepted in the CTRP Protocol Abstraction "); 
+            if (StringUtils.isBlank(csmUser.getFirstName()) && StringUtils.isBlank(csmUser.getLastName())) {
+                if (registryUser != null) {
+                    if (StringUtils.isBlank(registryUser.getFirstName()) 
+                            && StringUtils.isBlank(registryUser.getLastName())) {
+                        bodyB = bodyB.append("");
+                    } else {
+                       bodyB = bodyB.append("by " + registryUser.getFirstName() 
+                               + " " + registryUser.getLastName());  
+                    }     
+                }  
+            } else {
+                bodyB = bodyB.append("by " + csmUser.getFirstName() + " " + csmUser.getLastName());
+            }
+            bodyB.append(" on " 
             + dateFormat.format(date)
             + ". However, this marker may still need to be added into the caDSR repository."
             + "\n\n"
             + "Thank you"
             + "\n"
-            + "NCI Clinical Trials Reporting Program";          
-
+            + "NCI Clinical Trials Reporting Program");
+            String body = String.valueOf(bodyB);
             String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
@@ -790,16 +803,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
     }
-    
     /**
      * {@inheritDoc}
      */
     @Override
     public void sendMarkerQuestionToCTROMail(String nciIdentifier, 
             String to, PlannedMarkerDTO marker, String question) throws PAException {
-        try {    
-            String userId = StConverter.convertToString(marker.getUserLastCreated());
-            User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));            
+        try {               
             String body = "Dear CTRO,"
                 + "\n\n"
                 + "A new marker request has been submitted to caDSR for trial "
