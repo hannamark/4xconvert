@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 
@@ -139,6 +140,7 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
     
     /**
      * Start a thread to process batch files.
+     * @param batchFile the batchFile
      */
-    void processBatchFiles();
+    void processBatchFiles(BatchFile batchFile);
 }

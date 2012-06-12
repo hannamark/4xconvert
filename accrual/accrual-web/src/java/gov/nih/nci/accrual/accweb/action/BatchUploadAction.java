@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.accrual.accweb.action;
 
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
@@ -139,10 +138,7 @@ public class BatchUploadAction extends AbstractAccrualAction {
      */
     private void handleBatchFile(File file) throws IOException, PAException {
         BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
-        List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
-        getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
-        getBatchFileSvc().update(batchFile);
-        getSubjectAccrualSvc().processBatchFiles();
+        getSubjectAccrualSvc().processBatchFiles(batchFile);
     }
     
     /**

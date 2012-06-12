@@ -172,9 +172,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         List<BatchValidationResults> validationResults = validateBatchData(batchFile);
         for (BatchValidationResults validationResult : validationResults) {
             if (!validationResult.isPassedValidation()) {
+                sendValidationErrorEmail(validationResults, batchFile);
                 return new ArrayList<BatchImportResults>();
             }
         }
+        batchFile.setPassedValidation(true);
         //Only import the data if all files have passed validation
         return importBatchData(validationResults, batchFile.getSubmitter());
     }

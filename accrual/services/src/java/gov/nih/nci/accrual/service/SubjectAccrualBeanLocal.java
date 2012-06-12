@@ -93,13 +93,10 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualValidator;
-import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -162,6 +159,7 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
 
@@ -186,10 +184,15 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * Class used to run separate thread for processing batch submissions.
      */
     private class BatchFileProcessor implements Runnable {
+        private final BatchFile batchFile;
+        public BatchFileProcessor(BatchFile batchFile) {
+            this.batchFile = batchFile;
+        }
+        
         @Override
         public void run() {
             try {
-                batchUploadProcessingTaskService.processBatchUploads();
+                batchUploadProcessingTaskService.processBatchUploads(batchFile);
             } catch (Exception e) {
                 LOG.error(e);
             }
@@ -200,11 +203,16 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * Class used to manage batch processing thread.
      */
     private class BatchThreadManager implements Runnable {
+        private final BatchFile batchFile;
+        public BatchThreadManager(BatchFile batchFile) {
+            this.batchFile = batchFile;
+        }
+        
         @Override
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(new BatchFileProcessor()).get(2, TimeUnit.HOURS);
+                executor.submit(new BatchFileProcessor(batchFile)).get(2, TimeUnit.HOURS);
             } catch (Exception e) {
                 LOG.error("Forcing shutdown of batch file processing thread.");
                 executor.shutdownNow();
@@ -428,14 +436,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         BatchFile batch = new BatchFile();
         batch.setSubmitter(submitter);
         batch.setFileLocation(filePath);
-        batch.setPassedValidation(validateBatchFile(batch));
+        batch.setPassedValidation(false);
         getBatchFileService().save(batch);
-        processBatchFiles();
+        processBatchFiles(batch);
     }
 
     @Override
-    public void processBatchFiles() {
-        Thread batchThread = new Thread(new BatchThreadManager());
+    public void processBatchFiles(BatchFile batchFile) {
+        Thread batchThread = new Thread(new BatchThreadManager(batchFile));
         batchThread.start();
     }
     
@@ -464,26 +472,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private RegistryUser getBatchSubmitter() throws PAException {
         return PaServiceLocator.getInstance().getRegistryUserService().getUser(AccrualCsmUtil.getInstance()
                 .getCSMUser(CaseSensitiveUsernameHolder.getUser()).getLoginName());
-    }
-
-    /**
-     * Validates the given file, returning true is validation has passed, false otherwise.
-     * @param file the file to validate
-     * @return true if validation succeeded, false otherwise
-     * @throws PAException on error
-     */
-    private boolean validateBatchFile(BatchFile file) throws PAException {
-        CdusBatchUploadReaderServiceLocal cdusSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-        List<BatchValidationResults> validationResults = cdusSvc.validateBatchData(file);
-        boolean passed = true;
-        for (BatchValidationResults result : validationResults) {
-            if (!result.isPassedValidation()) {
-                cdusSvc.sendValidationErrorEmail(validationResults, file);
-                passed = false;
-                break;
-            }
-        }
-        return passed;
     }
 
     /**

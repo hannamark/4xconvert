@@ -148,6 +148,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.criterion.Order;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -448,13 +449,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         batchData.setData(FileUtils.readFileToByteArray(file));
         
         bean.submitBatchData(batchData);
+        List<BatchFile> batchFiles = 
+                PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class).addOrder(Order.asc("id")).list();
         
-        List<BatchFile> readyForProcessing = bean.getBatchFileService().getBatchFilesAvailableForProcessing();
-        assertFalse(readyForProcessing.isEmpty());
-        assertEquals(1, readyForProcessing.size());
+        assertFalse(batchFiles.isEmpty());
+        assertEquals(1, batchFiles.size());
         
-        BatchFile bf = readyForProcessing.get(0);
-        assertTrue(bf.isPassedValidation());
+        BatchFile bf = batchFiles.get(0);
+        assertFalse(bf.isPassedValidation());
         assertFalse(bf.isProcessed());
         assertNotNull(bf.getFileLocation());
         FileUtils.deleteQuietly(new File(bf.getFileLocation()));

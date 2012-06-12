@@ -164,8 +164,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
 
     @Test
     public void testBatchUploadProcessingTask() throws Exception {
-        bean.processBatchUploads();
-        @SuppressWarnings("unchecked")
+    	@SuppressWarnings("unchecked")
         List<BatchFile> batchFiles = 
             PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class).addOrder(Order.asc("id")).list();
         assertFalse(batchFiles.isEmpty());
@@ -176,6 +175,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
             String filePath = directory + "accrual_batch_" + (i + 1) + ".txt";
             File f1 = new File(batchFile.getFileLocation());
             File f2 = new File(filePath);
+            bean.processBatchUploads(batchFile);
             assertEquals(f1.getCanonicalPath(), f2.getCanonicalPath());
         }
     }

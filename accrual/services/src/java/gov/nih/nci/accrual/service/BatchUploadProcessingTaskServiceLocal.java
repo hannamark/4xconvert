@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Local;
@@ -95,8 +96,9 @@ public interface BatchUploadProcessingTaskServiceLocal {
     
     /**
      * Performs the task of retrieving the accrual batch uploads, processing and then deleting them.
+     * @param batchFile the batchFile
      * @throws PAException on error
      */
-    void processBatchUploads() throws PAException;
+    void processBatchUploads(BatchFile batchFile) throws PAException;
 
 }

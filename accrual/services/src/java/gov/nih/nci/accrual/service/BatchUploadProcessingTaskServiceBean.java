@@ -118,13 +118,9 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
     /**
      * {@inheritDoc}
      */
-    public synchronized void processBatchUploads() throws PAException {
+    public synchronized void processBatchUploads(BatchFile batchFile) throws PAException {
         CdusBatchUploadReaderServiceLocal batchUploadService = 
             AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-
-        List<BatchFile> filesToProcess = batchFileSvc.getBatchFilesAvailableForProcessing();
-        LOG.info("Performing accrual batch processing on " + filesToProcess.size() +  " files.");
-        for (BatchFile batchFile : filesToProcess) {
             //Process it, sending email as necessary.
             LOG.info("Processing batch upload: " + batchFile.getFileLocation());
             batchFile.setProcessed(true);
@@ -136,7 +132,6 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
             } catch (Exception e) {
                 LOG.error("Error processing " + batchFile.getFileLocation(), e);
             }
-        }
     }
 
     /**
