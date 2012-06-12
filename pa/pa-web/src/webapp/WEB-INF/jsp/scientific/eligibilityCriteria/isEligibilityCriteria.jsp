@@ -118,7 +118,7 @@ BubbleTips.activateTipOn("dfn");
                         <li><s:a href="javascript:void(0)" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
                     </s:if>
                     <s:if test="list != null">
-                        <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
+                        <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Another Criterion</span></span></s:a></li>
                     </s:if>
                     <s:if test="%{eligibilityList != null && !eligibilityList.isEmpty()}">
                         <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete Other Criterion</span></span></s:a></li>
@@ -352,7 +352,7 @@ BubbleTips.activateTipOn("dfn");
                         <li><s:a href="javascript:void(0)" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
                     </s:if>
                     <s:if test="list != null">
-                        <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
+                        <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Another Criterion</span></span></s:a></li>
                     </s:if>
                     <s:if test="%{eligibilityList != null && !eligibilityList.isEmpty()}">
                         <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected criteria from the study. Cancel to abort.', 'eligibilityCriteriadelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete Other Criterion</span></span></s:a></li>
