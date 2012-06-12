@@ -266,7 +266,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(24, importResults.get(0).getTotalImports());
@@ -278,9 +279,10 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         batchFile = getBatchFile(file);
-        importResults = readerService.importBatchData(getBatchFile(file));
+        validationResults = readerService.validateBatchData(batchFile);
+        importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
-        assertEquals(0, importResults.size());
+        assertEquals(1, importResults.size());
         //verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
@@ -290,7 +292,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
@@ -306,7 +309,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
@@ -323,7 +327,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         
         assertEquals(24, importResults.get(0).getTotalImports());
@@ -348,13 +353,14 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
         assertEquals(72, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         
-        importResults = readerService.importBatchData(batchFile);
+        importResults = readerService.importBatchData(batchFile, validationResults);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
@@ -367,7 +373,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         
         File file = new File(this.getClass().getResource("/cdus-abbreviated-with-crf-values.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
@@ -383,7 +390,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         
         File file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals("accrual-count-batch-file.txt", importResults.get(0).getFileName());

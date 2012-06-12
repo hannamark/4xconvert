@@ -147,7 +147,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
         BatchImportResults importResults = new BatchImportResults();
         importResults.setTotalImports(100);
         when(readerService.validateBatchData(any(BatchFile.class))).thenReturn(new ArrayList<BatchValidationResults>());
-        when(readerService.importBatchData(any(BatchFile.class))).thenReturn(Arrays.asList(importResults));
+        when(readerService.importBatchData(any(BatchFile.class), any(List.class))).thenReturn(Arrays.asList(importResults));
         ServiceLocatorAccInterface svcLocator = mock(ServiceLocatorAccInterface.class);
         when(svcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         AccrualServiceLocator.getInstance().setServiceLocator(svcLocator);

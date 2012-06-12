@@ -105,10 +105,12 @@ public interface CdusBatchUploadReaderServiceLocal {
     /**
      * Validates and imports the csv files.
      * @param batchFile batch file to read
+     * @param validationResults results
      * @return the import results
      * @throws PAException on error
      */
-    List<BatchImportResults> importBatchData(BatchFile batchFile) throws PAException;
+    List<BatchImportResults> importBatchData(BatchFile batchFile, List<BatchValidationResults> validationResults) 
+        throws PAException;
     
     /**
      * Sends the validation error email.

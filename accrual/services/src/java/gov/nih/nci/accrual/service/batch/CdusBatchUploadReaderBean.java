@@ -124,7 +124,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jboss.annotation.ejb.TransactionTimeout;
 
 /**
  * This class read CSV file and validates the input.
@@ -143,7 +142,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private SubjectAccrualServiceLocal subjectAccrualService;
     
     private static final int RESULTS_LEN = 1000;
-    private static final int TRANS_TIMEOUT = 3600;
 
     /**
      * {@inheritDoc}
@@ -166,17 +164,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @TransactionTimeout(TRANS_TIMEOUT)
-    public List<BatchImportResults> importBatchData(BatchFile batchFile) throws PAException {
+    public List<BatchImportResults> importBatchData(BatchFile batchFile, 
+            List<BatchValidationResults> validationResults) throws PAException {
         CaseSensitiveUsernameHolder.setUser(batchFile.getUserLastCreated().getLoginName());
-        List<BatchValidationResults> validationResults = validateBatchData(batchFile);
-        for (BatchValidationResults validationResult : validationResults) {
-            if (!validationResult.isPassedValidation()) {
-                sendValidationErrorEmail(validationResults, batchFile);
-                return new ArrayList<BatchImportResults>();
-            }
-        }
-        batchFile.setPassedValidation(true);
         //Only import the data if all files have passed validation
         return importBatchData(validationResults, batchFile.getSubmitter());
     }
