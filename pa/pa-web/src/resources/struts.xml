@@ -275,6 +275,10 @@
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/auditTrail.jsp</result>
         </action>
+        <action name="checkOutHistory" class="gov.nih.nci.pa.action.CheckOutHistoryAction">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <result>/WEB-INF/jsp/checkOutHistory.jsp</result>
+        </action>
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

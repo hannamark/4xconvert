@@ -113,7 +113,7 @@ implements StudyCheckoutServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public void checkOut(Ii studyProtocolIi, Cd type, St user) throws PAException {
+    public synchronized void checkOut(Ii studyProtocolIi, Cd type, St user) throws PAException {
         CheckOutType cotype = CdConverter.convertCdToEnum(CheckOutType.class, type);
         List<StudyCheckoutDTO> coList = getByStudyProtocol(studyProtocolIi);
         for (StudyCheckoutDTO co : coList) {
