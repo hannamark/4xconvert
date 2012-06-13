@@ -7,8 +7,6 @@
 <head>
 <title><fmt:message key="participatingOrganizations.collaborators.title" /></title>
 <s:head />
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
 
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">

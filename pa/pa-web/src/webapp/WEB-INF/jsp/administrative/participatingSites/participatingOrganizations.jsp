@@ -9,7 +9,6 @@
 <s:head />
 <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/scriptaculous.js"/>"></script>
 
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();

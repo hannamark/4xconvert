@@ -7,9 +7,6 @@
 <head>
 <title><fmt:message key="interventions.details.title" /></title>
 <s:head />
-<script type="text/javascript"
-    src='<c:url value="/scripts/js/scriptaculous.js"/>'></script>
-
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 // this function is called from body onload in main.jsp (decorator)

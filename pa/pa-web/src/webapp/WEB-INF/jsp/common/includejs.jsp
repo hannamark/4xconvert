@@ -20,7 +20,6 @@
 
 <script type="text/javascript" src="${scriptPath}/js/Help.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
-<script type="text/javascript" src="${scriptPath}/js/scriptaculous.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/coppa.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>

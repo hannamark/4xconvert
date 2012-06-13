@@ -8,7 +8,6 @@
         <title><fmt:message key="participatingOrganizations.subtitle" /></title>
         <s:head/>
         <script type="text/javascript" src="scripts/js/prototype.js"></script>
-        <script type="text/javascript" src="scripts/js/scriptaculous.js"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
