@@ -137,7 +137,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -212,7 +211,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(new BatchFileProcessor(batchFile)).get(2, TimeUnit.HOURS);
+                executor.submit(new BatchFileProcessor(batchFile));
             } catch (Exception e) {
                 LOG.error("Forcing shutdown of batch file processing thread.");
                 executor.shutdownNow();
