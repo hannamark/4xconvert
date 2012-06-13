@@ -78,6 +78,7 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -129,6 +130,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private String phone;
     private String siteRecruitmentStatus;
     private Long registryUserId;
+    private final Map<Long, RegistryUser> registryUserMap = new HashMap<Long, RegistryUser>();
+    private final Map<Ii, StudySiteAccrualStatusDTO> ssAccrualStatusMap = new HashMap<Ii, StudySiteAccrualStatusDTO>();
 
     /**
      * {@inheritDoc}
@@ -376,7 +379,11 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         webDTO.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
         webDTO.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
         try {
-            RegistryUser ru = registryUserService.getUserById(webDTO.getRegistryUserId());
+            RegistryUser ru = registryUserMap.get(webDTO.getRegistryUserId());
+            if (ru == null) {
+                ru = registryUserService.getUserById(webDTO.getRegistryUserId());
+                registryUserMap.put(webDTO.getRegistryUserId(), ru);
+            }
             webDTO.setEmailAddress(ru.getEmailAddress());
             webDTO.setPhoneNumber(ru.getPhone());
             webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(ru.getCsmUser().getLoginName()));
@@ -385,8 +392,12 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         }
 
         try {
-            StudySiteAccrualStatusDTO siteStatus = accrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto
-                .getStudySiteIdentifier());
+            StudySiteAccrualStatusDTO siteStatus = ssAccrualStatusMap.get((dto.getStudySiteIdentifier()));
+            if (siteStatus == null) {
+                siteStatus = accrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto
+                        .getStudySiteIdentifier());
+                ssAccrualStatusMap.put(dto.getStudySiteIdentifier(), siteStatus);
+            }
             webDTO.setSiteRecruitmentStatus(CdConverter.convertCdToString(siteStatus.getStatusCode()));
             webDTO.setSiteName(getSites().get(webDTO.getStudySiteId()));
         } catch (Exception e) {
