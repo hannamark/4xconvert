@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.services.correlation;
 
+import java.util.List;
+
 import gov.nih.nci.services.CorrelationService;
 
 import javax.ejb.Remote;
@@ -91,5 +93,12 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface IdentifiedOrganizationCorrelationServiceRemote extends CorrelationService<IdentifiedOrganizationDTO> {
-
+    
+    /**
+     * Create a list based on playerIds.
+     *
+     * @param pids pids
+     * @return List list
+     */
+    List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIdsWithoutLimit(Long[] pids);
 }

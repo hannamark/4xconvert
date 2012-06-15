@@ -82,13 +82,17 @@
  */
 package gov.nih.nci.services.correlation;
 
+import java.util.List;
+
 import gov.nih.nci.po.data.bo.AbstractIdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.IdentifiedOrganizationCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 
 import javax.ejb.EJB;
@@ -97,6 +101,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.Query;
 import org.jboss.annotation.security.SecurityDomain;
 
 import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
@@ -170,5 +175,17 @@ public class IdentifiedOrganizationCorrelationServiceBean
     @Override
     IdentifiedOrganizationCR newCR(IdentifiedOrganization t) {
         return new IdentifiedOrganizationCR(t);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIdsWithoutLimit(Long[] pids) {
+        Query q = PoHibernateUtil.getCurrentSession().createQuery("from IdentifiedOrganization"
+                + " obj where obj.status != :roleStatus AND obj.player.id in (:ids_list)");
+        q.setParameter("roleStatus", RoleStatus.NULLIFIED);
+        q.setParameterList("ids_list", pids);
+        return PoXsnapshotHelper.createSnapshotList(q.list());
     }
 }
