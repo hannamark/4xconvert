@@ -6,6 +6,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -15,6 +16,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +117,26 @@ public class MockPoOrganizationEntityService implements
             }
         }
         return matchingDtosList ;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrganizationDTO> search(OrganizationDTO arg0, EnOn arg1, LimitOffset arg2)
+            throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrganizationDTO> search(OrganizationSearchCriteriaDTO arg0, LimitOffset arg1)
+            throws TooManyResultsException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
