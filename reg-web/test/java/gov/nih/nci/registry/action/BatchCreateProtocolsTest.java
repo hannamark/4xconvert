@@ -5,6 +5,8 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 
@@ -175,16 +177,16 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto = getBatchDto();
           dto.setSubmissionType("U");
           dto.setNciTrialIdentifier("NCI-2009-00001");
-          dto.setSponsorContactType("Generic");
-          dto.setResponsibleGenericContactName("responsibleGenericContactName");
-          dto.setSponsorContactPhone("sponsorContactPhone");
+          List<Ii> otherIdentifiers = new ArrayList<Ii>();
+          otherIdentifiers.add(IiConverter.convertToOtherIdentifierIi("OTHER_ID_1"));
+          otherIdentifiers.add(IiConverter.convertToOtherIdentifierIi("OTHER_ID_2"));
+          dto.setOtherTrialIdentifiers(otherIdentifiers);
           dtoList.add(dto);
           dto = getBatchDto();
           dto.setSubmissionType("U");
           dto.setNciTrialIdentifier("NCI-2009-00004");
           dtoList.add(dto);
           Map<String,String> map = trial.createProtocols(dtoList, f.getParent()+ File.separator, "testUserName");
-          //Map<String,String> map = trial.createProtocols(dtoList, "C:\\NCI\\Projects\\COPPA\\code\\reg-web\\test\\resources"+ File.separator, "testUserName");
           assertNotNull(map);
       }
 }
