@@ -43,7 +43,7 @@
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="org.springframework"    name="spring"                  rev="2.0.5"           conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="(,3.8]"             conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.8.1-SNAPSHOT"  conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.7"           conf="compile->master"/>
 
     <!-- test -->

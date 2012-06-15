@@ -48,7 +48,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.3-SNAPSHOT"  conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.3-SNAPSHOT" conf="compile->default"/>
 
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="(,3.8]"             conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.8.1-SNAPSHOT"  conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
     <dependency org="xerces"                 name="xercesImpl"              rev="2.6.0"           conf="compile->master"/>
 
