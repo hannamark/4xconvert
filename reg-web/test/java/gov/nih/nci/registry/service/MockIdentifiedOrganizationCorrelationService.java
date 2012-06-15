@@ -37,6 +37,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#createCorrelation(gov.nih.nci.services.PoDto)
      */
+    @Override
     public Ii createCorrelation(IdentifiedOrganizationDTO arg0)
             throws EntityValidationException {
         // TODO Auto-generated method stub
@@ -46,6 +47,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#getCorrelation(gov.nih.nci.iso21090.Ii)
      */
+    @Override
     public IdentifiedOrganizationDTO getCorrelation(Ii arg0)
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
@@ -55,6 +57,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#getCorrelations(gov.nih.nci.iso21090.Ii[])
      */
+    @Override
     public List<IdentifiedOrganizationDTO> getCorrelations(Ii[] arg0)
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
@@ -64,6 +67,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#search(gov.nih.nci.services.PoDto)
      */
+    @Override
     public List<IdentifiedOrganizationDTO> search(IdentifiedOrganizationDTO arg0) {
         List<IdentifiedOrganizationDTO> matchingDto = new ArrayList<IdentifiedOrganizationDTO>();
         for(IdentifiedOrganizationDTO dto:orgList){
@@ -77,6 +81,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#updateCorrelation(gov.nih.nci.services.PoDto)
      */
+    @Override
     public void updateCorrelation(IdentifiedOrganizationDTO arg0)
             throws EntityValidationException {
         // TODO Auto-generated method stub
@@ -86,6 +91,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#updateCorrelationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
      */
+    @Override
     public void updateCorrelationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {
         // TODO Auto-generated method stub
@@ -95,11 +101,13 @@ public class MockIdentifiedOrganizationCorrelationService implements
     /* (non-Javadoc)
      * @see gov.nih.nci.services.CorrelationService#validate(gov.nih.nci.services.PoDto)
      */
+    @Override
     public Map<String, String[]> validate(IdentifiedOrganizationDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public List<IdentifiedOrganizationDTO> search(
             IdentifiedOrganizationDTO arg0, LimitOffset arg1)
             throws TooManyResultsException {
@@ -107,10 +115,17 @@ public class MockIdentifiedOrganizationCorrelationService implements
         return null;
     }
 
+    @Override
     public List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return new ArrayList<IdentifiedOrganizationDTO>();
+    }
+
+    @Override
+    public List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIdsWithoutLimit(Long[] arg0) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
