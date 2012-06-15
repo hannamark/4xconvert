@@ -123,31 +123,27 @@ public class ManageAccrualAccessHelper {
     public void addMultipleTreatingSitesAccess(StudySiteAccrualAccessWebDTO webDto,
             Map<Long, String> sites) throws PAException {
         for (Long key : sites.keySet()) {
-           if (ALL_TREATING_SITES_ID.equals(key)) {
+            if (ALL_TREATING_SITES_ID.equals(key)) {
                 continue;
             }
             webDto.setStudySiteId(key);
             List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessService.getByStudySite(webDto.getStudySiteId());
-            if (ssDtos == null || ssDtos.isEmpty()) {
+            boolean bUpdated = false;
+            if (ssDtos != null) {
+                for (StudySiteAccrualAccessDTO oldDto : ssDtos) {
+                    if (StringUtils.equals(IiConverter.convertToString(oldDto.getRegistryUserIdentifier()), webDto
+                            .getRegistryUserId().toString())) {
+                        webDto.setIdentifier(IiConverter.convertToLong(oldDto.getIdentifier()));
+                        updateTreatingSiteAccess(webDto);
+                        bUpdated = true;
+                    }
+                }
+            }
+            if (!bUpdated) {
                 webDto.setIdentifier(null);
                 addTreatingSiteAccess(webDto);
-            } else {
-                updateExistingSiteAccessDuringMultiSiteAdd(webDto, ssDtos);
-           }
-        }
-    }
-
-    private void updateExistingSiteAccessDuringMultiSiteAdd(StudySiteAccrualAccessWebDTO webDto, 
-         List<StudySiteAccrualAccessDTO> ssDtos) throws PAException {
-        for (StudySiteAccrualAccessDTO oldDto : ssDtos) {
-            if (StringUtils.equals(oldDto.getStudySiteIdentifier().getExtension(), webDto.getStudySiteId().toString())
-                 && StringUtils.equals(oldDto.getRegistryUserIdentifier()
-                         .getExtension(), webDto.getRegistryUserId().toString())) {
-                webDto.setIdentifier(Long.parseLong(oldDto.getIdentifier().getExtension()));
-                updateTreatingSiteAccess(webDto);
             }
         }
-
     }
 
     /**

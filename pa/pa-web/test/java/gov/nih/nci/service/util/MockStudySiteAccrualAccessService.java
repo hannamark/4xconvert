@@ -212,6 +212,12 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
      */
     @Override
     public List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException {
-        return CONVERTER.convertFromDomainToDtos(list);
+        List<StudySiteAccrualAccess> result = new ArrayList<StudySiteAccrualAccess>();
+        for (StudySiteAccrualAccess item : list) {
+            if (item.getStudySite().getId().equals(studySiteId)) {
+                result.add(item);
+            }
+        }
+        return CONVERTER.convertFromDomainToDtos(result);
     }
 }
