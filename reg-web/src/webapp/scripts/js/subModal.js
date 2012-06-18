@@ -26,7 +26,9 @@ var gDefaultPage = contextPath + "/images/loading.gif";
 var gCloseGif    = contextPath + "/images/close.gif";
 var gHideSelects = false;
 var gReturnVal = null;
-
+var gPopupInner = null;
+var fixedWidth = 0;
+var fixedHeight = 0;
 var gTabIndexes = new Array();
 // Pre-defined list of tags we want to disable/enable tabbing into
 var gTabbableTags = new Array("A","BUTTON","TEXTAREA","INPUT","IFRAME");    
@@ -64,7 +66,7 @@ function initPopUp() {
     gPopupMask = document.getElementById("popupMask");
     gPopupContainer = document.getElementById("popupContainer");
     gPopFrame = document.getElementById("popupFrame");  
-    
+    gPopupInner = document.getElementById("popupInner");
     // check to see if this is IE version 6 or lower. hide select boxes if so
     // maybe they'll fix this in version 7?
     var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
@@ -92,6 +94,7 @@ function initPopUp() {
             }
         }
     }
+    
 }
 //addEvent(window, "load", initPopUp);
 
@@ -111,7 +114,8 @@ function showPopWin(url, width, height, returnFunc, title) {
     gPopupContainer.style.display = "block";
     // calculate where to place the window on screen
     centerPopWin(width, height);
-    
+    fixedWidth = width;
+    fixedHeight = height;
     var titleBarHeight = parseInt(document.getElementById("popupTitleBar").offsetHeight, 10);
 
 
@@ -137,6 +141,17 @@ function showPopWin(url, width, height, returnFunc, title) {
         document.getElementById("popupTitle").innerHTML = title;
         window.setTimeout("setPopTitle();", 600);
     }
+         // Introduced resizable functionality on Popup.
+    jQuery.noConflict();
+    jQuery('#popupInner').draggable().resizable();
+    jQuery.noConflict();
+    jQuery(document).ready(function() {        
+        jQuery('#popupInner').live('resize',function(){       
+        jQuery('#popupFrame').width(jQuery('#popupInner').width());       
+        jQuery('#popupFrame').height(jQuery('#popupInner').height());
+        });
+     });
+
 }
 
 //
@@ -202,6 +217,14 @@ function setMaskSize() {
     gPopupMask.style.width = popWidth + "px";
 }
 
+//The popup must reset itself to its original size, whenever it is closed and reopened.
+function resetSize(){
+     gPopFrame.style.width = (fixedWidth) + "px";
+     gPopFrame.style.height = (fixedHeight) + "px";
+     gPopupInner.style.width = (fixedWidth) + "px";
+     gPopupInner.style.height = (fixedHeight) + "px";
+}
+
 /**
  * @argument callReturnFunc - bool - determines if we call the return function specified
  * @argument returnVal - anything - return value 
@@ -227,6 +250,7 @@ function hidePopWin(callReturnFunc) {
     if (gHideSelects == true) {
         displaySelectBoxes();
     }
+    resetSize();
 }
 
 /**

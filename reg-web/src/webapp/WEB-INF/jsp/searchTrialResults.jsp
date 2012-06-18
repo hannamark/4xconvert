@@ -1,8 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <head>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.1.js"/>"></script>
 <script type="text/javascript">
-$(document).ready(function () {	
+jQuery(document).ready(function () {	
 	
 	jQuery('#nav li').hover(
 		function () {

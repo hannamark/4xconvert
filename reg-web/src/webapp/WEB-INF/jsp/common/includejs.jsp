@@ -1,4 +1,5 @@
 <script type="text/javascript" src="${scriptPath}/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript">
  jQuery.noConflict();
  var registryApp = {
@@ -21,3 +22,5 @@
 <script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
