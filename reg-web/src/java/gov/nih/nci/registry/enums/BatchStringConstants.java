@@ -95,246 +95,246 @@ import gov.nih.nci.pa.enums.CodedEnum;
 public enum BatchStringConstants implements CodedEnum<String> {
 
     /** */
-    UNIQUE_TRIAL_IDENTIFIER("Unique Trial Identifier", "setUniqueTrialId"),
+    UNIQUE_TRIAL_IDENTIFIER("UNIQUE TRIAL IDENTIFIER", "setUniqueTrialId"),
     /** */
-    SUBMISSION_TYPE("Submission Type", "setSubmissionType"),
+    SUBMISSION_TYPE("SUBMISSION TYPE", "setSubmissionType"),
     /** */
-    NCI_TRIAL_IDENTIFIER("NCI Trial Identifier", "setNciTrialIdentifier"),
+    NCI_TRIAL_IDENTIFIER("NCI TRIAL IDENTIFIER", "setNciTrialIdentifier"),
     /** */
-    CTGOV_XML_INDICATOR("ClinicalTrials.gov XML Required?", "setCtGovXmlIndicator"),
+    CTGOV_XML_INDICATOR("CLINICALTRIALS.GOV XML REQUIRED?", "setCtGovXmlIndicator"),
     /** */
-    AMENDMENT_NUMBER("Amendment Number", "setAmendmentNumber"),
+    AMENDMENT_NUMBER("AMENDMENT NUMBER", "setAmendmentNumber"),
     /** */
-    AMENDMENT_DATE("Amendment Date", "setAmendmentDate"),
+    AMENDMENT_DATE("AMENDMENT DATE", "setAmendmentDate"),
     /** */
-    LEAD_ORGANIZATION_TRIAL_IDENTIFIER("Lead Organization Trial Identifier", "setLocalProtocolIdentifier"),
+    LEAD_ORGANIZATION_TRIAL_IDENTIFIER("LEAD ORGANIZATION TRIAL IDENTIFIER", "setLocalProtocolIdentifier"),
     /** */
     NCT_NUMBER("NCT", "setNctNumber"),
     /** */
-    OTHER_TRIAL_IDENTIFIER("Other Trial Identifier", "setOtherTrialIdentifiers"),
+    OTHER_TRIAL_IDENTIFIER("OTHER TRIAL IDENTIFIER", "setOtherTrialIdentifiers"),
     /** */
-    TITLE("Title", "setTitle"),
+    TITLE("TITLE", "setTitle"),
     /** */
-    TRIAL_TYPE("Trial Type", "setTrialType"),
+    TRIAL_TYPE("TRIAL TYPE", "setTrialType"),
     /** */
-    PRIMARY_PURPOSE("Primary Purpose", "setPrimaryPurpose"),
+    PRIMARY_PURPOSE("PRIMARY PURPOSE", "setPrimaryPurpose"),
     /** */
-    PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER("[Primary Purpose] Additional Qualifier",
+    PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER("[PRIMARY PURPOSE] ADDITIONAL QUALIFIER",
             "setPrimaryPurposeAdditionalQualifierCode"),
     /** */
-    PRIMARY_PURPOSE_OTHER_TEXT("[Primary Purpose] Other Text", "setPrimaryPurposeOtherText"),
+    PRIMARY_PURPOSE_OTHER_TEXT("[PRIMARY PURPOSE] OTHER TEXT", "setPrimaryPurposeOtherText"),
     /** */
-    PHASE("Phase", "setPhase"),
+    PHASE("PHASE", "setPhase"),
     /** */
-    PHASE_ADDITIONAL_QUALIFIER("Pilot Trial?", "setPhaseAdditionalQualifierCode"),
+    PHASE_ADDITIONAL_QUALIFIER("PILOT TRIAL?", "setPhaseAdditionalQualifierCode"),
     /** */
-    SPONSOR_ORG_NAME("[Sponsor] Organization Name", "setSponsorOrgName"),
+    SPONSOR_ORG_NAME("[SPONSOR] ORGANIZATION NAME", "setSponsorOrgName"),
     /** */
-    SPONSOR_CETP_ORG_NO("[Sponsor] Organization PO-ID", "setSponsorPOId"),
+    SPONSOR_CETP_ORG_NO("[SPONSOR] ORGANIZATION PO-ID", "setSponsorPOId"),
     /** */
-    SPONSOR_STREET_ADDRESS("[Sponsor] Street Address", "setSponsorStreetAddress"),
+    SPONSOR_STREET_ADDRESS("[SPONSOR] STREET ADDRESS", "setSponsorStreetAddress"),
     /** */
-    SPONSOR_CITY("[Sponsor] City", "setSponsorCity"),
+    SPONSOR_CITY("[SPONSOR] CITY", "setSponsorCity"),
     /** */
-    SPONSOR_STATE("[Sponsor] State/Province", "setSponsorState"),
+    SPONSOR_STATE("[SPONSOR] STATE/PROVINCE", "setSponsorState"),
     /** */
-    SPONSOR_ZIP("[Sponsor] Zip/Postal code", "setSponsorZip"),
+    SPONSOR_ZIP("[SPONSOR] ZIP/POSTAL CODE", "setSponsorZip"),
     /** */
-    SPONSOR_COUNTRY("[Sponsor] Country", "setSponsorCountry"),
+    SPONSOR_COUNTRY("[SPONSOR] COUNTRY", "setSponsorCountry"),
     /** */
-    SPONSOR_EMAIL("[Sponsor] Email Address", "setSponsorEmail"),
+    SPONSOR_EMAIL("[SPONSOR] EMAIL ADDRESS", "setSponsorEmail"),
     /** */
-    SPONSOR_PHONE("[Sponsor] Phone", "setSponsorPhone"),
+    SPONSOR_PHONE("[SPONSOR] PHONE", "setSponsorPhone"),
     /** */
-    SPONSOR_TTY("[Sponsor] TTY", "setSponsorTTY"),
+    SPONSOR_TTY("[SPONSOR] TTY", "setSponsorTTY"),
     /** */
-    SPONSOR_FAX("[Sponsor] FAX", "setSponsorFax"),
+    SPONSOR_FAX("[SPONSOR] FAX", "setSponsorFax"),
     /** */
-    SPONSOR_URL("[Sponsor] URL", "setSponsorURL"),
+    SPONSOR_URL("[SPONSOR] URL", "setSponsorURL"),
     /** */
-    RESPONSIBLE_PARTY("Responsible Party", "setResponsibleParty"),
+    RESPONSIBLE_PARTY("RESPONSIBLE PARTY", "setResponsibleParty"),
     /** */
-    SPONSOR_CONTACT_TYPE("Sponsor Contact Type", "setSponsorContactType"),
+    SPONSOR_CONTACT_TYPE("SPONSOR CONTACT TYPE", "setSponsorContactType"),
     /** */
-    SPONSOR_CONTACT_TITLE("[Sponsor Contact] Title", "setResponsibleGenericContactName"),
+    SPONSOR_CONTACT_TITLE("[SPONSOR CONTACT] TITLE", "setResponsibleGenericContactName"),
     /** */
-    SPONSOR_CONTACT_FIRST_NAME("[Sponsor Contact] First Name", "setSponsorContactFName"),
+    SPONSOR_CONTACT_FIRST_NAME("[SPONSOR CONTACT] FIRST NAME", "setSponsorContactFName"),
     /** */
-    SPONSOR_CONTACT_MIDDLE_NAME("[Sponsor Contact] Middle Name", "setSponsorContactMName"),
+    SPONSOR_CONTACT_MIDDLE_NAME("[SPONSOR CONTACT] MIDDLE NAME", "setSponsorContactMName"),
     /** */
-    SPONSOR_CONTACT_LAST_NAME("[Sponsor Contact] Last Name", "setSponsorContactLName"),
+    SPONSOR_CONTACT_LAST_NAME("[SPONSOR CONTACT] LAST NAME", "setSponsorContactLName"),
     /** */
-    SPONSOR_CONTACT_PERSON_ID("[Sponsor Contact] Person PO-ID", "setSponsorContactPOId"),
+    SPONSOR_CONTACT_PERSON_ID("[SPONSOR CONTACT] PERSON PO-ID", "setSponsorContactPOId"),
     /** */
-    SPONSOR_CONTACT_STREET_ADDRESS("[Sponsor Contact] Street Address", "setSponsorContactStreetAddress"),
+    SPONSOR_CONTACT_STREET_ADDRESS("[SPONSOR CONTACT] STREET ADDRESS", "setSponsorContactStreetAddress"),
     /** */
-    SPONSOR_CONTACT_CITY("[Sponsor Contact] City", "setSponsorContactCity"),
+    SPONSOR_CONTACT_CITY("[SPONSOR CONTACT] CITY", "setSponsorContactCity"),
     /** */
-    SPONSOR_CONTACT_STATE("[Sponsor Contact] State/Province", "setSponsorContactState"),
+    SPONSOR_CONTACT_STATE("[SPONSOR CONTACT] STATE/PROVINCE", "setSponsorContactState"),
     /** */
-    SPONSOR_CONTACT_ZIP("[Sponsor Contact] Zip/Postal code", "setSponsorContactZip"),
+    SPONSOR_CONTACT_ZIP("[SPONSOR CONTACT] ZIP/POSTAL CODE", "setSponsorContactZip"),
     /** */
-    SPONSOR_CONTACT_COUNTRY("[Sponsor Contact] Country", "setSponsorContactCountry"),
+    SPONSOR_CONTACT_COUNTRY("[SPONSOR CONTACT] COUNTRY", "setSponsorContactCountry"),
     /** */
-    SPONSOR_CONTACT_EMAIL_ID("[Sponsor Contact] Email Address", "setSponsorContactEmail"),
+    SPONSOR_CONTACT_EMAIL_ID("[SPONSOR CONTACT] EMAIL ADDRESS", "setSponsorContactEmail"),
     /** */
-    SPONSOR_CONTACT_PHONE("[Sponsor Contact] Phone", "setSponsorContactPhone"),
+    SPONSOR_CONTACT_PHONE("[SPONSOR CONTACT] PHONE", "setSponsorContactPhone"),
     /** */
-    SPONSOR_CONTACT_TTY("[Sponsor Contact] TTY", "setSponsorContactTTY"),
+    SPONSOR_CONTACT_TTY("[SPONSOR CONTACT] TTY", "setSponsorContactTTY"),
     /** */
-    SPONSOR_CONTACT_FAX("[Sponsor Contact] FAX", "setSponsorContactFax"),
+    SPONSOR_CONTACT_FAX("[SPONSOR CONTACT] FAX", "setSponsorContactFax"),
     /** */
-    SPONSOR_CONTACT_URL("[Sponsor Contact] URL", "setSponsorContactUrl"),
+    SPONSOR_CONTACT_URL("[SPONSOR CONTACT] URL", "setSponsorContactUrl"),
     /** */
-    LEAD_ORG_NAME("[Lead Organization] Name", "setLeadOrgName"),
+    LEAD_ORG_NAME("[LEAD ORGANIZATION] NAME", "setLeadOrgName"),
     /** */
-    LEAD_ORG_PO_ID("[Lead Organization] Organization PO-ID", "setLeadOrgPOId"),
+    LEAD_ORG_PO_ID("[LEAD ORGANIZATION] ORGANIZATION PO-ID", "setLeadOrgPOId"),
     /** */
-    LEAD_ORG_STREET_ADDRESS("[Lead Organization] Street Address", "setLeadOrgStreetAddress"),
+    LEAD_ORG_STREET_ADDRESS("[LEAD ORGANIZATION] STREET ADDRESS", "setLeadOrgStreetAddress"),
     /** */
-    LEAD_ORG_CITY("[Lead Organization] City", "setLeadOrgCity"),
+    LEAD_ORG_CITY("[LEAD ORGANIZATION] CITY", "setLeadOrgCity"),
     /** */
-    LEAD_ORG_STATE("[Lead Organization] State/Province", "setLeadOrgState"),
+    LEAD_ORG_STATE("[LEAD ORGANIZATION] STATE/PROVINCE", "setLeadOrgState"),
     /** */
-    LEAD_ORG_ZIP("[Lead Organization] Zip/Postal code", "setLeadOrgZip"),
+    LEAD_ORG_ZIP("[LEAD ORGANIZATION] ZIP/POSTAL CODE", "setLeadOrgZip"),
     /** */
-    LEAD_ORG_COUNTRY("[Lead Organization] Country", "setLeadOrgCountry"),
+    LEAD_ORG_COUNTRY("[LEAD ORGANIZATION] COUNTRY", "setLeadOrgCountry"),
     /** */
-    LEAD_ORG_EMAIL("[Lead Organization] Email Address", "setLeadOrgEmail"),
+    LEAD_ORG_EMAIL("[LEAD ORGANIZATION] EMAIL ADDRESS", "setLeadOrgEmail"),
     /** */
-    LEAD_ORG_PHONE("[Lead Organization] Phone", "setLeadOrgPhone"),
+    LEAD_ORG_PHONE("[LEAD ORGANIZATION] PHONE", "setLeadOrgPhone"),
     /** */
-    LEAD_ORG_TTY("[Lead Organization] TTY", "setLeadOrgTTY"),
+    LEAD_ORG_TTY("[LEAD ORGANIZATION] TTY", "setLeadOrgTTY"),
     /** */
-    LEAD_ORG_FAX("[Lead Organization] FAX", "setLeadOrgFax"),
+    LEAD_ORG_FAX("[LEAD ORGANIZATION] FAX", "setLeadOrgFax"),
     /** */
-    LEAD_ORG_URL("[Lead Organization] URL", "setLeadOrgUrl"),
+    LEAD_ORG_URL("[LEAD ORGANIZATION] URL", "setLeadOrgUrl"),
     /** */
-    LEAD_ORG_TYPE("[Lead Organization] Organization Type", "setLeadOrgType"),
+    LEAD_ORG_TYPE("[LEAD ORGANIZATION] ORGANIZATION TYPE", "setLeadOrgType"),
     /** */
-    PI_FIRST_NAME("[Principal Investigator] First Name", "setPiFirstName"),
+    PI_FIRST_NAME("[PRINCIPAL INVESTIGATOR] FIRST NAME", "setPiFirstName"),
     /** */
-    PI_MIDDLE_NAME("[Principal Investigator] Middle Name", "setPiMiddleName"),
+    PI_MIDDLE_NAME("[PRINCIPAL INVESTIGATOR] MIDDLE NAME", "setPiMiddleName"),
     /** */
-    PI_LAST_NAME("[Principal Investigator] Last Name", "setPiLastName"),
+    PI_LAST_NAME("[PRINCIPAL INVESTIGATOR] LAST NAME", "setPiLastName"),
     /** */
-    PI_PERSON_PERSON_PO_ID("[Principal Investigator] Person PO-ID", "setPiPOId"),
+    PI_PERSON_PERSON_PO_ID("[PRINCIPAL INVESTIGATOR] PERSON PO-ID", "setPiPOId"),
     /** */
-    PI_STREET_ADDRESS("[Principal Investigator] Street Address", "setPiStreetAddress"),
+    PI_STREET_ADDRESS("[PRINCIPAL INVESTIGATOR] STREET ADDRESS", "setPiStreetAddress"),
     /** */
-    PI_CITY("[Principal Investigator] City", "setPiCity"),
+    PI_CITY("[PRINCIPAL INVESTIGATOR] CITY", "setPiCity"),
     /** */
-    PI_STATE("[Principal Investigator] State/Province", "setPiState"),
+    PI_STATE("[PRINCIPAL INVESTIGATOR] STATE/PROVINCE", "setPiState"),
     /** */
-    PI_ZIP("[Principal Investigator] Zip/Postal code", "setPiZip"),
+    PI_ZIP("[PRINCIPAL INVESTIGATOR] ZIP/POSTAL CODE", "setPiZip"),
     /** */
-    PI_COUNTRY("[Principal Investigator] Country", "setPiCountry"),
+    PI_COUNTRY("[PRINCIPAL INVESTIGATOR] COUNTRY", "setPiCountry"),
     /** */
-    PI_EMAIL("[Principal Investigator] Email Address", "setPiEmail"),
+    PI_EMAIL("[PRINCIPAL INVESTIGATOR] EMAIL ADDRESS", "setPiEmail"),
     /** */
-    PI_PHONE("[Principal Investigator] Phone", "setPiPhone"),
+    PI_PHONE("[PRINCIPAL INVESTIGATOR] PHONE", "setPiPhone"),
     /** */
-    PI_TTY("[Principal Investigator] TTY", "setPiTTY"),
+    PI_TTY("[PRINCIPAL INVESTIGATOR] TTY", "setPiTTY"),
     /** */
-    PI_FAX("[Principal Investigator] FAX", "setPiFax"),
+    PI_FAX("[PRINCIPAL INVESTIGATOR] FAX", "setPiFax"),
     /** */
-    PI_URL("[Principal Investigator] URL", "setPiUrl"),
+    PI_URL("[PRINCIPAL INVESTIGATOR] URL", "setPiUrl"),
     /** */
-    S4_FUND_CAT("Summary 4 Funding Category", "setSumm4FundingCat"),
+    S4_FUND_CAT("SUMMARY 4 FUNDING CATEGORY", "setSumm4FundingCat"),
     /** */
-    S4_FUND_ORG_NAME("[Summary 4 Funding Sponsor/Source] Organization Name", "setSumm4OrgName"),
+    S4_FUND_ORG_NAME("[SUMMARY 4 FUNDING SPONSOR/SOURCE] ORGANIZATION NAME", "setSumm4OrgName"),
     /** */
-    S4_FUND_ORG_ORG_PO_ID("[Summary 4 Funding Sponsor/Source] Organization PO-ID", "setSumm4OrgPOId"),
+    S4_FUND_ORG_ORG_PO_ID("[SUMMARY 4 FUNDING SPONSOR/SOURCE] ORGANIZATION PO-ID", "setSumm4OrgPOId"),
     /** */
-    S4_FUND_ORG_STREET_ADDRESS("[Summary 4 Funding Sponsor/Source] Street Address", "setSumm4OrgStreetAddress"),
+    S4_FUND_ORG_STREET_ADDRESS("[SUMMARY 4 FUNDING SPONSOR/SOURCE] STREET ADDRESS", "setSumm4OrgStreetAddress"),
     /** */
-    S4_FUND_CITY("[Summary 4 Funding Sponsor/Source] City", "setSumm4City"),
+    S4_FUND_CITY("[SUMMARY 4 FUNDING SPONSOR/SOURCE] CITY", "setSumm4City"),
     /** */
-    S4_FUND_STATE("[Summary 4 Funding Sponsor/Source] State/Province", "setSumm4State"),
+    S4_FUND_STATE("[SUMMARY 4 FUNDING SPONSOR/SOURCE] STATE/PROVINCE", "setSumm4State"),
     /** */
-    S4_FUND_ZIP("[Summary 4 Funding Sponsor/Source] Zip/Postal code", "setSumm4Zip"),
+    S4_FUND_ZIP("[SUMMARY 4 FUNDING SPONSOR/SOURCE] ZIP/POSTAL CODE", "setSumm4Zip"),
     /** */
-    S4_FUND_COUNTRY("[Summary 4 Funding Sponsor/Source ] Country", "setSumm4Country"),
+    S4_FUND_COUNTRY("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] COUNTRY", "setSumm4Country"),
     /** */
-    S4_FUND_EMAIL("[Summary 4 Funding Sponsor/Source ] Email Address", "setSumm4Email"),
+    S4_FUND_EMAIL("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] EMAIL ADDRESS", "setSumm4Email"),
     /** */
-    S4_FUND_PHONE("[Summary 4 Funding Sponsor/Source ] Phone", "setSumm4Phone"),
+    S4_FUND_PHONE("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] PHONE", "setSumm4Phone"),
     /** */
-    S4_FUND_TTY("[Summary 4 Funding Sponsor/Source ] TTY", "setSumm4TTY"),
+    S4_FUND_TTY("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] TTY", "setSumm4TTY"),
     /** */
-    S4_FUND_FAX("[Summary 4 Funding Sponsor/Source ] FAX", "setSumm4Fax"),
+    S4_FUND_FAX("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] FAX", "setSumm4Fax"),
     /** */
-    S4_FUND_URL("[Summary 4 Funding Sponsor/Source ] URL", "setSumm4Url"),
+    S4_FUND_URL("[SUMMARY 4 FUNDING SPONSOR/SOURCE ] URL", "setSumm4Url"),
     /** */
-    S4_PRG_CODE_TEXT("Program Code", "setProgramCodeText"),
+    S4_PRG_CODE_TEXT("PROGRAM CODE", "setProgramCodeText"),
     /** */
-    NIH_GRANT_FUND_MC("[NIH Grant] Funding Mechanism", "setNihGrantFundingMechanism"),
+    NIH_GRANT_FUND_MC("[NIH GRANT] FUNDING MECHANISM", "setNihGrantFundingMechanism"),
     /** */
-    NIH_GRANT_INSTITUTE_CODE("[NIH Grant] Institute Code", "setNihGrantInstituteCode"),
+    NIH_GRANT_INSTITUTE_CODE("[NIH GRANT] INSTITUTE CODE", "setNihGrantInstituteCode"),
     /** */
-    NIH_GRANT_SR_NO("[NIH Grant] Serial Number", "setNihGrantSrNumber"),
+    NIH_GRANT_SR_NO("[NIH GRANT] SERIAL NUMBER", "setNihGrantSrNumber"),
     /** */
-    NIH_GRANT_NCI_DIV_CODE("[NIH Grant] NCI Division/Program Code", "setNihGrantNCIDivisionCode"),
+    NIH_GRANT_NCI_DIV_CODE("[NIH GRANT] NCI DIVISION/PROGRAM CODE", "setNihGrantNCIDivisionCode"),
     /** */
-    CURRENT_TRIAL_STATUS("Current Trial Status", "setCurrentTrialStatus"),
+    CURRENT_TRIAL_STATUS("CURRENT TRIAL STATUS", "setCurrentTrialStatus"),
     /** */
-    REASON_FOR_STUDY_STOPPED("Why Study Stopped?", "setReasonForStudyStopped"),
+    REASON_FOR_STUDY_STOPPED("WHY STUDY STOPPED?", "setReasonForStudyStopped"),
     /** */
-    CURRENT_TRIAL_STATUS_DATE("Current Trial Status Date", "setCurrentTrialStatusDate"),
+    CURRENT_TRIAL_STATUS_DATE("CURRENT TRIAL STATUS DATE", "setCurrentTrialStatusDate"),
     /** */
-    STUDY_START_DATE("Study Start Date", "setStudyStartDate"),
+    STUDY_START_DATE("STUDY START DATE", "setStudyStartDate"),
     /** */
-    STUDY_START_DATE_TYPE("Study Start Date Type", "setStudyStartDateType"),
+    STUDY_START_DATE_TYPE("STUDY START DATE TYPE", "setStudyStartDateType"),
     /** */
-    PRIMARY_COMP_DATE("Primary Completion Date", "setPrimaryCompletionDate"),
+    PRIMARY_COMP_DATE("PRIMARY COMPLETION DATE", "setPrimaryCompletionDate"),
     /** */
-    PRIMARY_COMP_DATE_TYPE("Primary Completion Date Type", "setPrimaryCompletionDateType"),
+    PRIMARY_COMP_DATE_TYPE("PRIMARY COMPLETION DATE TYPE", "setPrimaryCompletionDateType"),
     /** */
-    IND_TYPE("IND/IDE Type", "setIndType"),
+    IND_TYPE("IND/IDE TYPE", "setIndType"),
     /** */
-    IND_NUMBER("IND/IDE Number", "setIndNumber"),
+    IND_NUMBER("IND/IDE NUMBER", "setIndNumber"),
     /** */
-    IND_GRANTOR("IND/IDE Grantor", "setIndGrantor"),
+    IND_GRANTOR("IND/IDE GRANTOR", "setIndGrantor"),
     /** */
-    IND_HOLDER_TYPE("IND/IDE Holder Type", "setIndHolderType"),
+    IND_HOLDER_TYPE("IND/IDE HOLDER TYPE", "setIndHolderType"),
     /** */
-    IND_NIH_INSTITUTION("[IND/IDE] NIH Institution", "setIndNIHInstitution"),
+    IND_NIH_INSTITUTION("[IND/IDE] NIH INSTITUTION", "setIndNIHInstitution"),
     /** */
-    IND_NCI_DIV_CODE("[IND/IDE] NCI Division /Program", "setIndNCIDivision"),
+    IND_NCI_DIV_CODE("[IND/IDE] NCI DIVISION /PROGRAM", "setIndNCIDivision"),
     /** */
-    IND_HAS_EXPANDED_ACCESS("[IND/IDE] Has Expanded Access?", "setIndHasExpandedAccess"),
+    IND_HAS_EXPANDED_ACCESS("[IND/IDE] HAS EXPANDED ACCESS?", "setIndHasExpandedAccess"),
     /** */
-    IND_EXPANED_ACCESS_STATUS("[IND/IDE] Expanded Access Status", "setIndExpandedAccessStatus"),
+    IND_EXPANED_ACCESS_STATUS("[IND/IDE] EXPANDED ACCESS STATUS", "setIndExpandedAccessStatus"),
     /** */
-    IND_EXEMPT_INDICATOR("[IND/IDE] Exempt Indicator", "setExemptIndicator"),
+    IND_EXEMPT_INDICATOR("[IND/IDE] EXEMPT INDICATOR", "setExemptIndicator"),
     /** */
-    OVERSIGHT_AUTHORITY_COUNTRY("Oversight Authority Country", "setOversightAuthorityCountry"),
+    OVERSIGHT_AUTHORITY_COUNTRY("OVERSIGHT AUTHORITY COUNTRY", "setOversightAuthorityCountry"),
     /** */
-    OVERSIGHT_AUTHORITY_ORG_NAME("Oversight Authority Organization Name", "setOversightOrgName"),
+    OVERSIGHT_AUTHORITY_ORG_NAME("OVERSIGHT AUTHORITY ORGANIZATION NAME", "setOversightOrgName"),
     /** */
-    FDA_REGULATORY_INFORMATION_INDICATOR("FDA Regulatory Information Indicator", 
+    FDA_REGULATORY_INFORMATION_INDICATOR("FDA REGULATORY INFORMATION INDICATOR", 
                                          "setFdaRegulatoryInformationIndicator"),
     /** */
-    SECTION_801_INDICATOR("Section 801 Indicator", "setSection801Indicator"),
+    SECTION_801_INDICATOR("SECTION 801 INDICATOR", "setSection801Indicator"),
     /** */
-    DELAYED_POSTING_INDICATOR("Delayed Posting Indicator", "setDelayedPostingIndicator"),
+    DELAYED_POSTING_INDICATOR("DELAYED POSTING INDICATOR", "setDelayedPostingIndicator"),
     /** */
-    DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR("Data Monitoring Committee Appointed Indicator",
+    DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR("DATA MONITORING COMMITTEE APPOINTED INDICATOR",
             "setDataMonitoringCommitteeAppointedIndicator"),
     /** */
-    PROTOCOL_DOC_FILE_NAME("Protocol Document File Name", "setProtcolDocumentFileName"),
+    PROTOCOL_DOC_FILE_NAME("PROTOCOL DOCUMENT FILE NAME", "setProtcolDocumentFileName"),
     /** */
-    IRB_APPROVAL_DOC_FILE_NAME("IRB Approval Document File Name", "setIrbApprovalDocumentFileName"),
+    IRB_APPROVAL_DOC_FILE_NAME("IRB APPROVAL DOCUMENT FILE NAME", "setIrbApprovalDocumentFileName"),
     /** */
-    PARTICIPATIING_SITE_DOC_FILE_NAME("Participating Sites Document File Name", "setParticipatinSiteDocumentFileName"),
+    PARTICIPATIING_SITE_DOC_FILE_NAME("PARTICIPATING SITES DOCUMENT FILE NAME", "setParticipatinSiteDocumentFileName"),
     /** */
-    INFORMED_CONSENT_DOC_FILE_NAME("Informed Consent Document File Name", "setInformedConsentDocumentFileName"),
+    INFORMED_CONSENT_DOC_FILE_NAME("INFORMED CONSENT DOCUMENT FILE NAME", "setInformedConsentDocumentFileName"),
     /** */
-    OTHER_TRIAL_DOC_FILE_NAME("Other Trial Related Document File Name", "setOtherTrialRelDocumentFileName"),
+    OTHER_TRIAL_DOC_FILE_NAME("OTHER TRIAL RELATED DOCUMENT FILE NAME", "setOtherTrialRelDocumentFileName"),
     /** */
-    CHANGE_MEMO_DOC_FILE_NAME("Change Memo Document Name", "setChangeRequestDocFileName"),
+    CHANGE_MEMO_DOC_FILE_NAME("CHANGE MEMO DOCUMENT NAME", "setChangeRequestDocFileName"),
     /** */
-    PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME("Protocol Highlight Document Name", "setProtocolHighlightDocFileName");
+    PROTOCOL_HIGHLIGHTED_DOC_FILE_NAME("PROTOCOL HIGHLIGHT DOCUMENT NAME", "setProtocolHighlightDocFileName");
 
     private String code;
     private String methodName;

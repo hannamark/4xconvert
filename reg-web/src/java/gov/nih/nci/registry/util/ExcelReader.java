@@ -172,7 +172,7 @@ public class ExcelReader {
                 String cellValue = null;
                 if (cell != null) {
                     cellValue = getCellValue(cell);
-                    headerMap.put(c, cellValue);
+                    headerMap.put(c, (cellValue == null) ? cellValue : cellValue.toUpperCase(Locale.US));
                 }
             }
         }
