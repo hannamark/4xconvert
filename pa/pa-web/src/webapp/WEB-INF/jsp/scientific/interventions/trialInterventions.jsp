@@ -7,6 +7,56 @@
 <head>
 <title><fmt:message key="interventions.details.title" /></title>
 <s:head />
+
+<pa:scientificAbstractorDisplayWhenCheckedOut>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.tablednd.js"/>"></script>
+    <script type="text/javascript">
+         Event.observe(window, "load", function() {
+            jQuery('#row').tableDnD({
+                onDragClass: "myDragClass",
+                onDrop: function(table, draggedRow) {                   
+                    var rows = table.tBodies[0].rows;
+                    var orderString = '';
+                    for (var i=0; i<rows.length; i++) {
+                        var row = rows[i]; 
+                        var outcomeID = row.id.substring(6);
+                        orderString = orderString + outcomeID + ';';
+                        $(row).className = (i % 2 == 0?'odd':'even');
+                    }
+                    $('ajaxIndicator').show();
+                    $('orderSaveConfirmation').hide(); 
+                    $('orderSaveError').hide(); 
+                    var ajaxReq = new Ajax.Request('trialInterventionsorder.action', {
+                        method: 'post',
+                        parameters: 'orderString='+orderString,
+                        onSuccess: function(transport) {
+                            $('ajaxIndicator').hide();
+                            $('orderSaveConfirmation').show();
+                        },
+                        onFailure: function(transport) {
+                            $('ajaxIndicator').hide();   
+                            $('orderSaveError').show();
+                        },
+                        onException: function(requesterObj, exceptionObj) {
+                            ajaxReq.options.onFailure(null);
+                        },
+                        on0: function(transport) {
+                            ajaxReq.options.onFailure(transport);
+                        }
+                    });                    
+                }
+            });            
+        });
+    </script>
+    <style type="text/css">        
+        tr.myDragClass td {
+            color: yellow;
+            background-color: #A8B8CE;
+            font-weight: bold;
+        }
+    </style>
+    </pa:scientificAbstractorDisplayWhenCheckedOut>
+    
 </head>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 // this function is called from body onload in main.jsp (decorator)
@@ -35,6 +85,17 @@ function handleCreate(){
     test="hasActionErrors()">
     <div class="error_msg"><s:actionerror /></div>
 </s:if> 
+
+  <div id="ajaxIndicator" class="info" style="display: none;">
+        <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="interventions.order.saving"/>
+  </div>
+  <div class="confirm_msg" style="display: none;" id="orderSaveConfirmation">
+      <strong>Message.</strong>&nbsp;<fmt:message key="interventions.order.saved"/>
+  </div>
+  <div class="error_msg" style="display: none;" id="orderSaveError">
+      <strong>Message.</strong>&nbsp;<fmt:message key="interventions.order.error"/>
+  </div> 
+  
 <s:form name="interventionForm">
     <pa:studyUniqueToken/>
     <s:hidden name="selectedRowIdentifier"/>
@@ -59,18 +120,19 @@ function handleCreate(){
             <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="interventionsList" value="interventionsList" scope="request"/>
             <display:table name="interventionsList" id="row" class="data" sort="list" pagesize="200"
+                    decorator="gov.nih.nci.pa.decorator.InterventionTableDecorator"
                     requestURI="trialInterventions.action" export="false">
-                <display:column escapeXml="true" property="name" sortable="true" titleKey="interventions.name" headerClass="sortable"  />
-                <display:column escapeXml="true" property="otherNames" sortable="true" titleKey="interventions.otherNames" headerClass="sortable" />
-                <display:column escapeXml="true" property="description" sortable="true" titleKey="interventions.description" headerClass="sortable" />
-                <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable"  />
+                <display:column escapeXml="true" property="name" sortable="true" titleKey="interventions.name" headerClass="sortable nodnd"  />
+                <display:column escapeXml="true" property="otherNames" sortable="true" titleKey="interventions.otherNames" headerClass="sortable nodnd" />
+                <display:column escapeXml="true" property="description" sortable="true" titleKey="interventions.description" headerClass="sortable nodnd" />
+                <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable nodnd"  />
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
-                    <display:column titleKey="interventions.edit" headerClass="centered" class="action">
+                    <display:column titleKey="interventions.edit" headerClass="centered nodnd" class="action nodnd">
                         <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
                             <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                         </s:a>
                     </display:column>
-                    <display:column titleKey="interventions.delete" headerClass="centered" class="action">
+                    <display:column titleKey="interventions.delete" headerClass="centered nodnd" class="action nodnd">
                         <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.plannedActivityIdentifier}" value="%{#attr.row.plannedActivityIdentifier in objectsToDelete}"/>
                     </display:column>
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
@@ -78,6 +140,15 @@ function handleCreate(){
            </td>
         </tr>
     </table>
+    
+    <pa:scientificAbstractorDisplayWhenCheckedOut>
+	    <s:if test="interventionsList.size > 1">
+	       <p class="info" align="center">
+	           You can re-order interventions by dragging and dropping individual table rows.       
+	       </p>       
+	    </s:if> 
+    </pa:scientificAbstractorDisplayWhenCheckedOut>
+    
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
         <pa:scientificAbstractorDisplayWhenCheckedOut>

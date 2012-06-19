@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -133,6 +134,7 @@ public class PlannedSubstanceAdministrationConverter
         psaDTO.setDoseDuration(doseDuration);
         psaDTO.setApproachSiteCode(CdConverter.convertStringToCd(psa.getApproachSiteCode()));
         psaDTO.setTargetSiteCode(CdConverter.convertStringToCd(psa.getTargetSiteCode()));
+        psaDTO.setDisplayOrder(IntConverter.convertToInt(psa.getDisplayOrder()));
         return psaDTO;
     }
 
@@ -164,6 +166,7 @@ public class PlannedSubstanceAdministrationConverter
         if (!ISOUtil.isCdNull(psaDTO.getDoseFrequencyCode())) {
             psa.setDoseFrequencyCode(CdConverter.convertCdToString(psaDTO.getDoseFrequencyCode()));
         }
+        psa.setDisplayOrder(IntConverter.convertToInteger(psaDTO.getDisplayOrder()));
         convertOtherInfo(psaDTO, psa);
         convertDose(psaDTO, psa);
         convertDoseDuration(psaDTO, psa);

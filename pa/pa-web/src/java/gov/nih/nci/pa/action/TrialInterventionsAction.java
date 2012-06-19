@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
 import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
@@ -111,6 +112,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -169,6 +171,9 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
 
     // PLANNED PROCEDURE Attributes
     private String procedureName;
+    
+    private String orderString;
+    private Integer displayOrder;
 
     /**
      * {@inheritDoc}
@@ -230,14 +235,20 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             if (isSubstance()) {
                 PlannedSubstanceAdministrationDTO plannedDto = generateSubstanceIsoDto();
                 plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                plannedDto.setDisplayOrder(IntConverter
+                        .convertToInt(getDisplayOrder()));
                 plannedActivityService.updatePlannedSubstanceAdministration(plannedDto);
             } else if (isProcedure()) {
                 PlannedProcedureDTO plannedDto = generateProcedureIsoDto();
                 plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                plannedDto.setDisplayOrder(IntConverter
+                        .convertToInt(getDisplayOrder()));                
                 plannedActivityService.updatePlannedProcedure(plannedDto);
             } else {
                 PlannedActivityDTO pa = generateIsoDto();
                 pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                pa.setDisplayOrder(IntConverter
+                        .convertToInt(getDisplayOrder()));                
                 plannedActivityService.update(pa);
             }
         } catch (PAException e) {
@@ -246,6 +257,20 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         }
         return super.update();
     }
+    
+    /**
+     * Save new intervention order.
+     * 
+     * @return result
+     * @throws PAException
+     *             PAException
+     */
+    public String order() throws PAException {
+        List<String> ids = Arrays.asList(getOrderString().split(";"));
+        Ii studyProtocolIi = getSpIi();
+        plannedActivityService.reorderInterventions(studyProtocolIi, ids);
+        return null;
+    }   
 
     /**
      * @return result
@@ -338,6 +363,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             setInterventionName(i.getName());
             setInterventionDescription(i.getDescription());
             setInterventionOtherNames(i.getOtherNames());
+            setDisplayOrder(i.getDisplayOrder());
         }
     }
 
@@ -952,6 +978,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         webDto.setName(StConverter.convertToString(i.getName()));
         webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
         webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
+        webDto.setDisplayOrder(IntConverter.convertToInteger(pa.getDisplayOrder()));
         return webDto;
     }
 
@@ -967,6 +994,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
         webDto.setProcedureName(!ISOUtil.isCdNull(pa.getMethodCode()) ? pa.getMethodCode().getCode() : "");
         webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+        webDto.setDisplayOrder(IntConverter.convertToInteger(pa.getDisplayOrder()));
         return webDto;
     }
 
@@ -1010,6 +1038,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             webDto.setApproachSite(!ISOUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode()
                     : "");
             webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+            webDto.setDisplayOrder(IntConverter.convertToInteger(pa.getDisplayOrder()));
         }
         return webDto;
     }
@@ -1077,6 +1106,34 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     @Override
     public void deleteObject(Long objectId) throws PAException {
         plannedActivityService.delete(IiConverter.convertToIi(objectId));
+    }
+
+    /**
+     * @return the orderString
+     */
+    public String getOrderString() {
+        return orderString;
+    }
+
+    /**
+     * @param orderString the orderString to set
+     */
+    public void setOrderString(String orderString) {
+        this.orderString = orderString;
+    }
+
+    /**
+     * @return the displayOrder
+     */
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
 

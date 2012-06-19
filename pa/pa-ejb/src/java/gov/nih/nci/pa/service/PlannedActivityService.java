@@ -244,4 +244,20 @@ public interface PlannedActivityService  extends StudyPaService<PlannedActivityD
      * @throws PAException the PA exception
      */
     Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException;
+    
+    /**
+     * Assigns a specific ordering to the study's interventions.
+     * 
+     * @param studyProtocolIi
+     *            studyProtocolIi
+     * @param ids
+     *            IDs of the study's interventions. Interventions will be ordered
+     *            according to the order of elements in this {@link List}.
+     *            Interventions that exist but are not in this list will receive null
+     *            ordering.
+     * @throws PAException
+     *             PAException
+     */
+    void reorderInterventions(Ii studyProtocolIi, List<String> ids)
+            throws PAException;
 }

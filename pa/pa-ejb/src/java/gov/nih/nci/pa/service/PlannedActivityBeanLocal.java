@@ -19,6 +19,7 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
@@ -32,6 +33,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -104,8 +106,11 @@ public class PlannedActivityBeanLocal extends
         arm.setId(IiConverter.convertToLong(ii));
         criteria.getArms().add(arm);
 
-        PageSortParams<PlannedActivity> params = new PageSortParams<PlannedActivity>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                PlannedActivitySortCriterion.PLANNED_ACTIVITY_ID, false);
+        PageSortParams<PlannedActivity> params = new PageSortParams<PlannedActivity>(
+                PAConstants.MAX_SEARCH_RESULTS, 0, Arrays.asList(
+                        PlannedActivitySortCriterion.DISPLAY_ORDER,
+                        PlannedActivitySortCriterion.PLANNED_ACTIVITY_ID),
+                false);
         List<PlannedActivity> results = search(new AnnotatedBeanSearchCriteria<PlannedActivity>(criteria), params);
         return convertFromDomainToDTOs(results);
     }
@@ -725,4 +730,24 @@ public class PlannedActivityBeanLocal extends
         this.interventionSrv = interventionSrv;
     }
 
+    @Override
+    protected String getQueryOrderClause() {
+        return " order by alias.displayOrder, alias.id";
+    }
+
+    @Override
+    public void reorderInterventions(Ii studyProtocolIi, List<String> ids)
+            throws PAException {
+        List<PlannedActivityDTO> interventions = getByStudyProtocol(studyProtocolIi);
+        for (PlannedActivityDTO intervention : interventions) {
+            if (PAUtil.isTypeIntervention(intervention.getCategoryCode())) {
+                String id = intervention.getIdentifier().getExtension();
+                intervention.setDisplayOrder(ids.contains(id) ? IntConverter
+                        .convertToInt(ids.indexOf(id)) : IntConverter
+                        .convertToInt((Integer) null));
+                super.update(intervention);
+            }
+        }
+    }
+    
 }

@@ -94,7 +94,7 @@ public enum PlannedActivitySortCriterion implements SortCriterion<PlannedActivit
     /**
      * Sort by planned activity id.
      */
-    PLANNED_ACTIVITY_ID("id", null);
+    PLANNED_ACTIVITY_ID("id", null), DISPLAY_ORDER("displayOrder", null);
 
 
     private final String orderField;

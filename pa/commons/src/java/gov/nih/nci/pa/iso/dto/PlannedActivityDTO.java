@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 
 /**
@@ -98,6 +99,8 @@ public class PlannedActivityDTO extends StudyDTO {
     private Cd subcategoryCode;
     private St textDescription; 
     private St userLastCreated;
+    private Int displayOrder;
+    
     /**
      * @return the categoryCode
      */
@@ -173,5 +176,17 @@ public class PlannedActivityDTO extends StudyDTO {
         this.userLastCreated = userLastCreated;
     }
 
-    
+    /**
+     * @return the displayOrder
+     */
+    public Int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Int displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 }

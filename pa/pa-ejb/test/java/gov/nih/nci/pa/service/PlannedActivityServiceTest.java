@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -101,6 +102,7 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -194,6 +196,54 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
         dtoList = remoteEjb.getByStudyProtocol(spIi);
         assertEquals(originalCount - 1, dtoList.size());
     }
+    
+    @Test
+    public void reorderTest() throws Exception {
+        List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
+        int originalCount = dtoList.size();
+        
+        PlannedActivityDTO dto1 = new PlannedActivityDTO();
+        dto1.setStudyProtocolIdentifier(spIi);
+        dto1.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto1.setInterventionIdentifier(null);
+        dto1.setLeadProductIndicator(null);
+        dto1.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.BEHAVIORAL));
+        dto1.setInterventionIdentifier(IiConverter.convertToIi(TestSchema.interventionIds.get(0)));
+        dto1.setDisplayOrder(IntConverter.convertToInt(2));
+        dto1 = remoteEjb.create(dto1);
+        
+        PlannedActivityDTO dto2 = new PlannedActivityDTO();
+        dto2.setStudyProtocolIdentifier(spIi);
+        dto2.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
+        dto2.setInterventionIdentifier(null);
+        dto2.setLeadProductIndicator(null);
+        dto2.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.BIOLOGICAL_VACCINE));
+        dto2.setInterventionIdentifier(IiConverter.convertToIi(TestSchema.interventionIds.get(0)));
+        dto2.setDisplayOrder(IntConverter.convertToInt(0));
+        dto2 = remoteEjb.create(dto2);
+        
+        dtoList = remoteEjb.getByStudyProtocol(spIi);
+        assertEquals(originalCount + 2, dtoList.size());
+        assertEquals(dto2.getIdentifier().getExtension(),
+                dtoList.get(dtoList.size() - 2).getIdentifier().getExtension());
+        assertEquals(dto1.getIdentifier().getExtension(),
+                dtoList.get(dtoList.size() - 1).getIdentifier().getExtension());
+
+        remoteEjb.reorderInterventions(
+                spIi,
+                Arrays.asList(new String[] {
+                        dto1.getIdentifier().getExtension(),
+                        dto2.getIdentifier().getExtension() }));
+
+        dtoList = remoteEjb.getByStudyProtocol(spIi);
+        assertEquals(originalCount + 2, dtoList.size());
+        assertEquals(dto1.getIdentifier().getExtension(),
+                dtoList.get(dtoList.size() - 2).getIdentifier().getExtension());
+        assertEquals(dto2.getIdentifier().getExtension(),
+                dtoList.get(dtoList.size() - 1).getIdentifier().getExtension());
+        
+    }
+    
 
     @Test
     public void getPlannedEligibilityCriterion() throws Exception {

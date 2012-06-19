@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
@@ -136,6 +137,7 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
         }
         dto.setSubcategoryCode(CdConverter.convertStringToCd(bo.getSubcategoryCode()));
         dto.setTextDescription(StConverter.convertToSt(bo.getTextDescription()));
+        dto.setDisplayOrder(IntConverter.convertToInt(bo.getDisplayOrder()));
         return dto;
     }
 
@@ -163,5 +165,6 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
+        bo.setDisplayOrder(IntConverter.convertToInteger(dto.getDisplayOrder()));
     }
 }

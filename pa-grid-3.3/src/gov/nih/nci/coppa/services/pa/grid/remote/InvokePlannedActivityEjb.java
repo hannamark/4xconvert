@@ -213,5 +213,11 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    public void reorderInterventions(Ii studyProtocolIi, List<String> ids)
+            throws PAException {
+        throw new PAException("Not supported.");
+    }
 }

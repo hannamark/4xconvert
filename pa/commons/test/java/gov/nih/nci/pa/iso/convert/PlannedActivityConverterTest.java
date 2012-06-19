@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 
 public class PlannedActivityConverterTest extends
         AbstractConverterTest<PlannedActivityConverter, PlannedActivityDTO, PlannedActivity> {
@@ -103,6 +104,7 @@ public class PlannedActivityConverterTest extends
         bo.setLeadProductIndicator(Boolean.TRUE);
         bo.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
         bo.setStudyProtocol(getStudyProtocol());
+        bo.setDisplayOrder(10);
         return bo;
     }
 
@@ -113,6 +115,7 @@ public class PlannedActivityConverterTest extends
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
         assertEquals(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode(), bo.getSubcategoryCode());
         assertEquals(ActivityCategoryCode.INTERVENTION, bo.getCategoryCode());
+        assertEquals(10, bo.getDisplayOrder().intValue());
     }
 
     @Override
@@ -123,6 +126,7 @@ public class PlannedActivityConverterTest extends
         assertEquals(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode(), dto.getSubcategoryCode().getCode());
         assertEquals(ActivityCategoryCode.INTERVENTION.getCode(), dto.getCategoryCode().getCode());
         assertEquals("2.16.840.1.113883.3.26.4.3.6", dto.getIdentifier().getRoot());
+        assertEquals(10, IntConverter.convertToInteger(dto.getDisplayOrder()).intValue());
     }
 
     @Override
@@ -133,6 +137,7 @@ public class PlannedActivityConverterTest extends
         dto.setLeadProductIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DIETARY_SUPPLEMENT));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        dto.setDisplayOrder(IntConverter.convertToInt(10));
         return dto;
     }
 

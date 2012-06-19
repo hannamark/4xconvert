@@ -112,6 +112,7 @@ public class PlannedActivity extends Activity {
 
     private Boolean leadProductIndicator;
     private Intervention intervention;
+    private Integer displayOrder;
 
     private Collection<Arm> arms = new ArrayList<Arm>();
     /**
@@ -156,5 +157,19 @@ public class PlannedActivity extends Activity {
      */
     public void setArms(Collection<Arm> arms) {
         this.arms = arms;
+    }    
+    
+    /**
+     * @return the displayOrder
+     */
+    @Column(name = "DISPLAY_ORDER")
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }    
 }

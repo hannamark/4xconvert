@@ -399,5 +399,11 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    public void reorderInterventions(Ii studyProtocolIi, List<String> ids)
+            throws PAException {
+        throw new PAException("Not supported.");
+    }
 }

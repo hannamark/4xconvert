@@ -116,6 +116,7 @@ public class InterventionWebDTO {
 
     //PLANNED PROCEDURE Attributes
     private String procedureName;
+    private Integer displayOrder;
 
 
 
@@ -419,5 +420,17 @@ public class InterventionWebDTO {
      public void setDoseFrequencyCode(String doseFrequencyCode) {
        this.doseFrequencyCode = doseFrequencyCode;
      }
+    /**
+     * @return the displayOrder
+     */
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+    /**
+     * @param displayOrder the displayOrder to set
+     */
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 
 }

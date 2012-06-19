@@ -225,4 +225,11 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
     public List<PlannedActivityDTO> getAll() throws PAException {
         return null;
     }
+    /**
+     * {@inheritDoc}
+     */
+    public void reorderInterventions(Ii studyProtocolIi, List<String> ids)
+            throws PAException {
+        throw new PAException("Not supported.");
+    }
 }

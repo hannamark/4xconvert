@@ -7,12 +7,17 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+
+import java.util.Arrays;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.mockito.Mockito.*;
 
 public class TrialInterventionTest extends AbstractPaActionTest {
 
@@ -414,5 +419,20 @@ public class TrialInterventionTest extends AbstractPaActionTest {
     @Test
     public void testCreate() throws PAException {
         assertEquals("edit",trialIntervention.create());
+    }
+    
+    @Test
+    public void testInterventionsReorder() throws PAException {
+        PlannedActivityServiceLocal mock = mock(PlannedActivityServiceLocal.class);
+        TrialInterventionsAction action = new TrialInterventionsAction();
+        action.setPlannedActivityService(mock);
+        action.setOrderString("3;2;1");
+        action.setSpIi(IiConverter.convertToIi(1L));
+        getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
+                IiConverter.convertToIi(1L));
+        action.order();
+        verify(mock).reorderInterventions(IiConverter.convertToIi(1L),
+                Arrays.asList(new String[] { "3", "2", "1" }));
+
     }
 }

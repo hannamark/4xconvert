@@ -24,6 +24,7 @@
 <s:hidden name="selectedRowIdentifier"/>
 <s:hidden name="interventionIdentifier"/>
 <s:hidden name="selectedType"/>
+<s:hidden name="displayOrder"/>
 <table class="form">
     <tr>
         <td class="label">
