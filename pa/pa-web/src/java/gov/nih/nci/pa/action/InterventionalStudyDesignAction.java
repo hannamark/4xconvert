@@ -452,6 +452,19 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
         return OUTCOMEADD;
     }
+    
+    /**
+     * @return result
+     */
+    public String outcomeCopy() {
+        outcomeedit();
+        setId(null);
+        if (webDTO != null && webDTO.getOutcomeMeasure() != null) {
+            webDTO.getOutcomeMeasure().setId(null);            
+        }
+        return OUTCOMEADD;
+    }
+    
 
     /**
      * @return result

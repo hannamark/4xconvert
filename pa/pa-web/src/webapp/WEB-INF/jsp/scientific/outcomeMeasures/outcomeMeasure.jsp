@@ -134,6 +134,10 @@
                 <s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
             </display:column>
+            <display:column title="Copy" class="action nodnd" headerClass="nodnd">
+                <s:url id="url" action="interventionalStudyDesignoutcomeCopy"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Add'}"/></s:url>
+                <s:a href="%{url}"><img src="<c:url value='/images/ico_copy.gif'/>" alt="Copy" width="16" height="16"/></s:a>
+            </display:column>            
             <display:column title="Delete" class="action nodnd" headerClass="nodnd">
                 <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.outcomeMeasure.id}" value="%{#attr.row.outcomeMeasure.id in objectsToDelete}"/>
             </display:column>
