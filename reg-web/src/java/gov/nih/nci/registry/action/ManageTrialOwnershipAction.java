@@ -157,5 +157,11 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     public String unassignSuccessMsg() {
         return getText("managetrialownership.unassign.success");
     }
+    
+    @Override
+    public String assignOwnership() throws PAException {
+        super.assignOwnership();
+        return search();
+    }
 
 }
