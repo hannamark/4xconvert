@@ -232,7 +232,9 @@
                     <label for="trialCategory"> <fmt:message key="search.trial.trialCategorySearch"/></label>
                 </td>
                 <td>
-                   <s:select headerKey="" headerValue="--Select--" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
+                   <s:select headerKey="" headerValue="--Select--" id="trialCategory" name="criteria.trialCategory" 
+                    list="#{'p':'Abbreviated','n':'Complete', 'b':'Both'}"  value="criteria.trialCategory" 
+                        cssStyle="width:206px" />
                 </td>
               </tr>
               
