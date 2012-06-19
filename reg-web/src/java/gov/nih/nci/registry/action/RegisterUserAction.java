@@ -110,6 +110,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -215,6 +216,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         BeanUtils.copyProperties(registryUser, registryUserWebDTO);
         registryUser.setId(null);
         registryUser.setCsmUser(null);
+        Calendar curCalendar = Calendar.getInstance();
+        registryUser.setDateLastCreated(curCalendar.getTime());
         if (registryUserWebDTO.isRequestAdminAccess()) {
             registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
         } else {

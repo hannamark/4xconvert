@@ -11,6 +11,7 @@
                  href="inboxProcessingviewPendingUserAdmin.action" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="pending.userLastName" maxLength= "200" property="lastName" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="pending.affiliateOrg" maxLength= "200" property="affiliateOrg" sortable="true" headerClass="sortable"/>
+            <display:column escapeXml="true" titleKey="pending.dateLastCreated" maxLength= "200" property="dateLastCreated" sortable="true" headerClass="sortable"/>
         </display:table>
     </s:form>
 </s:if>
