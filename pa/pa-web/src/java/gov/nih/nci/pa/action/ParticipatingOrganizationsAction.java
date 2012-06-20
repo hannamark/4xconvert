@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -120,6 +121,7 @@ import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -183,6 +185,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private OrganizationalContactCorrelationServiceRemote organizationalContactCorrelationService;
     private OrganizationEntityServiceRemote organizationEntityService;
     private PAHealthCareProviderRemote paHealthCareProviderService;
+    private ParticipatingOrgServiceLocal participatingOrgService;
     private ParticipatingSiteServiceLocal participatingSiteService;
     private PersonEntityServiceRemote personEntityService;
     private StudyProtocolServiceLocal studyProtocolService;
@@ -225,6 +228,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         organizationalContactCorrelationService = PoRegistry.getOrganizationalContactCorrelationService();
         organizationEntityService = PoRegistry.getOrganizationEntityService();
         paHealthCareProviderService = PaRegistry.getPAHealthCareProviderService();
+        participatingOrgService = PaRegistry.getParticipatingOrgService();
         participatingSiteService = PaRegistry.getParticipatingSiteService();
         personEntityService = PoRegistry.getPersonEntityService();
         studyProtocolService =  PaRegistry.getStudyProtocolService();
@@ -432,8 +436,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
 
     private void handleSetMethodForEdit(StudySiteDTO spDto, StudySiteAccrualStatusDTO status) {
         if (status != null) {
-            this.setRecStatus(status.getStatusCode().getCode());
-            this.setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
+            setRecStatus(status.getStatusCode().getCode());
+            setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
         }
         if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) == null) {
             setTargetAccrualNumber(null);
@@ -527,30 +531,24 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private void loadForm() throws PAException {
         loadProprietaryIndicator();
         organizationList = new ArrayList<PaOrganizationDTO>();
-        StudySiteDTO srDTO = new StudySiteDTO();
-        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
-                        .getCode()));
-        for (StudySiteDTO studySiteDTO : studySiteService.getByStudyProtocol(spIi, srDTO)) {
-            Organization orgBo = correlationUtils.getPAOrganizationByIi(studySiteDTO.getHealthcareFacilityIi());
+        List<ParticipatingOrgDTO> orgList = participatingOrgService.getTreatingSites(IiConverter.convertToLong(spIi));
+        for (ParticipatingOrgDTO dto : orgList) {
             PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
-            orgWebDTO.setId(IiConverter.convertToString(studySiteDTO.getIdentifier()));
-            orgWebDTO.setName(orgBo.getName());
-            orgWebDTO.setNciNumber(orgBo.getIdentifier());
-            convertAccrualStatus(studySiteDTO, orgWebDTO);
-            final Integer targetAccrualNum = IntConverter.convertToInteger(studySiteDTO.getTargetAccrualNumber());
-            if (targetAccrualNum == null) {
-                orgWebDTO.setTargetAccrualNumber(null);
-            } else {
-                orgWebDTO.setTargetAccrualNumber(targetAccrualNum.toString());
-            }
-            // setStatusCode(sp.getStatusCode().getCode());
-            orgWebDTO.setStatus(studySiteDTO.getStatusCode().getCode());
-            orgWebDTO.setProgramCode(StConverter.convertToString(studySiteDTO.getProgramCodeText()));
-            final Long studySiteId = Long.valueOf(studySiteDTO.getIdentifier().getExtension().toString());
-            orgWebDTO.setInvestigator(convertInvestigators(studySiteId));
+            orgWebDTO.setId(dto.getStudySiteId().toString());
+            orgWebDTO.setName(dto.getName());
+            orgWebDTO.setNciNumber(dto.getPoId());
+            orgWebDTO.setRecruitmentStatus(dto.getRecruitmentStatus() == null ? "unknown" : dto.getRecruitmentStatus()
+                    .getCode());
+            orgWebDTO.setRecruitmentStatusDate(dto.getRecruitmentStatusDate() == null ? "unknown" : PAUtil
+                    .normalizeDateString(dto.getRecruitmentStatusDate().toString()));
+            orgWebDTO.setTargetAccrualNumber(dto.getTargetAccrualNumber() == null ? null : dto.getTargetAccrualNumber()
+                    .toString());
+            orgWebDTO.setStatus(dto.getStatusCode().getCode());
+            orgWebDTO.setProgramCode(dto.getProgramCodeText());
+            orgWebDTO.setInvestigator(convertInvestigators(dto.getStudySiteId()));
 
             List<PaPersonDTO> primaryContacts = paHealthCareProviderService
-                .getPersonsByStudySiteId(studySiteId, StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
+                    .getPersonsByStudySiteId(dto.getStudySiteId(), StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
             StringBuffer primaryContactDisplay = new StringBuffer();
             for (PaPersonDTO primaryContact : primaryContacts) {
                 String fullName = StringUtils.defaultString(primaryContact.getFullName());
@@ -559,7 +557,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             }
             //check if primary contact is title
             if (primaryContacts.isEmpty()) {
-                StudySiteContactDTO siteConDto = getPrimaryContact(studySiteDTO.getIdentifier());
+                StudySiteContactDTO siteConDto =
+                        getPrimaryContact(IiConverter.convertToStudySiteIi(dto.getStudySiteId()));
                 if (!ISOUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
                     try {
                         PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
@@ -577,19 +576,6 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             }
             orgWebDTO.setPrimarycontact(primaryContactDisplay.toString());
             organizationList.add(orgWebDTO);
-        }
-    }
-
-    private void convertAccrualStatus(StudySiteDTO sp, PaOrganizationDTO orgWebDTO) throws PAException {
-        StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(sp
-            .getIdentifier());
-        if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
-            orgWebDTO.setRecruitmentStatus("unknown");
-            orgWebDTO.setRecruitmentStatusDate("unknown");
-        } else {
-            orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssas.getStatusCode()));
-            orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter
-                .convertToTimestamp(ssas.getStatusDate()).toString()));
         }
     }
 
@@ -1330,8 +1316,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteAccrualStatusIi(
                     studySiteIdentifier));
             if (status != null) {
-                this.setRecStatus(status.getStatusCode().getCode());
-                this.setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
+                setRecStatus(status.getStatusCode().getCode());
+                setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
             }
         } catch (PAException e) {
             LOG.equals(e);

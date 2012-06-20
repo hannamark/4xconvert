@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -90,13 +91,14 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class StudySiteAccrualStatusServiceBeanTest extends AbstractHibernateTestCase {
 
-  private StudySiteAccrualStatusServiceLocal remoteEjb = new StudySiteAccrualStatusBeanLocal();;
+  private final StudySiteAccrualStatusServiceLocal remoteEjb = new StudySiteAccrualStatusBeanLocal();;
   Ii studySiteId;
   @Before
   public void setUp() throws Exception {
@@ -138,4 +140,12 @@ public class StudySiteAccrualStatusServiceBeanTest extends AbstractHibernateTest
     remoteEjb.createStudySiteAccrualStatus(dto);
     assertEquals(dto.getStudySiteIi(), studySiteId);
   }
+
+    @Test
+    public void getCurrentStudySiteAccrualStatus() throws Exception {
+        Long id = IiConverter.convertToLong(studySiteId);
+        Long[] ids = { id };
+        Map<Long, StudySiteAccrualStatus> rslt = remoteEjb.getCurrentStudySiteAccrualStatus(ids);
+        assertNotNull(rslt.get(id));
+    }
 }

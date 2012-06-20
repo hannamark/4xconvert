@@ -63,6 +63,7 @@ import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -94,6 +95,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolServiceLocal getStudyProtocolService() {
         return studyProtocolService;
     }
@@ -101,6 +103,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         return null;
     }
@@ -108,6 +111,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteServiceLocal getStudySiteService() {
         return studySiteService;
     }
@@ -115,6 +119,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * @return StudySiteAccrualStatusServiceRemote
      */
+    @Override
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         return studySiteAccrualStatusService;
     }
@@ -122,6 +127,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public InterventionServiceLocal getInterventionService() {
         return null;
     }
@@ -129,6 +135,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedActivityServiceLocal getPlannedActivityService() {
         return null;
     }
@@ -136,6 +143,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
         return null;
     }
@@ -143,6 +151,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOnholdServiceLocal getStudyOnholdService() {
       return null;
     }
@@ -150,6 +159,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PAOrganizationServiceRemote getPAOrganizationService() {
         return null;
     }
@@ -157,20 +167,23 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
-   public PAPersonServiceRemote getPAPersonService() {
+   @Override
+public PAPersonServiceRemote getPAPersonService() {
        return null;
    }
 
    /**
     * {@inheritDoc}
     */
-   public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
+   @Override
+public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         return null;
     }
 
    /**
     * {@inheritDoc}
     */
+    @Override
     public StudyResourcingServiceLocal getStudyResoucringService() {
         return null;
     }
@@ -178,6 +191,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         return null;
     }
@@ -192,12 +206,14 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public LookUpTableServiceRemote getLookUpTableService() {
         return lookUpService;
     }
     /**
      * {@inheritDoc}
      */
+    @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return null;
     }
@@ -205,6 +221,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public DocumentServiceLocal getDocumentService() {
         return null;
     }
@@ -219,6 +236,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteContactServiceLocal getStudySiteContactService() {
         return studySiteContactService;
     }
@@ -233,6 +251,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PAHealthCareProviderRemote getPAHealthCareProviderService() {
         return paHealthCareProvider;
     }
@@ -268,6 +287,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ArmServiceLocal getArmService() {
         return null;
     }
@@ -275,6 +295,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyIndldeServiceLocal getStudyIndldeService() {
         return null;
     }
@@ -282,6 +303,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService() {
          return null;
     }
@@ -289,6 +311,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
        return null;
     }
@@ -296,6 +319,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
         return null;
     }
@@ -303,6 +327,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return null;
     }
@@ -310,6 +335,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseParentServiceRemote getDiseaseParentService() {
          return null;
     }
@@ -317,6 +343,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseServiceLocal getDiseaseService() {
          return null;
     }
@@ -324,6 +351,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyDiseaseServiceLocal getStudyDiseaseService() {
          return null;
     }
@@ -331,6 +359,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyContactServiceLocal getStudyContactService() {
          return null;
     }
@@ -346,6 +375,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyMilestoneServicelocal getStudyMilestoneService() {
         return null;
     }
@@ -353,6 +383,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
        return null;
     }
@@ -360,6 +391,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUserServiceLocal getRegistryUserService() {
         return null;
     }
@@ -367,6 +399,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MailManagerServiceLocal getMailManagerService() {
         return null;
     }
@@ -381,6 +414,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyObjectiveServiceLocal getStudyObjectiveService() {
         return null;
     }
@@ -395,6 +429,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StratumGroupServiceLocal getStratumGroupService() {
         return null;
     }
@@ -402,6 +437,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
         return null;
     }
@@ -409,6 +445,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return null;
     }
@@ -416,6 +453,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return ocsr;
     }
@@ -423,6 +461,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
         return null;
     }
@@ -430,6 +469,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyInboxServiceLocal getStudyInboxService() {
         return null;
     }
@@ -437,6 +477,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
         return null;
     }
@@ -444,6 +485,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
         return null;
     }
@@ -451,10 +493,12 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
         return null;
     }
 
+    @Override
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
         return null;
     }
@@ -462,6 +506,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
         return null;
     }
@@ -469,6 +514,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return null;
     }
@@ -476,6 +522,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public GridAccountServiceRemote getGridAccountService() {
         return null;
     }
@@ -483,6 +530,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return null;
     }
@@ -490,6 +538,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return null;
     }
@@ -497,6 +546,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
         // TODO Auto-generated method stub
         return null;
@@ -505,6 +555,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return null;
     }
@@ -512,6 +563,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
         // TODO Auto-generated method stub
         return null;
@@ -520,6 +572,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
         // TODO Auto-generated method stub
         return null;
@@ -528,6 +581,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         // TODO Auto-generated method stub
         return null;
@@ -536,6 +590,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
         return null;
     }
@@ -543,6 +598,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AuditTrailServiceLocal getAuditTrailService() {
         return null;
     }
@@ -552,6 +608,15 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
      */
     @Override
     public PDQTrialUploadService getPDQTrialUploadService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        // TODO Auto-generated method stub
         return null;
     }   
     

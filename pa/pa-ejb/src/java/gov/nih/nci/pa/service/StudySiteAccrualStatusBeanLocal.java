@@ -20,13 +20,17 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -144,7 +148,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
-        List<StudySiteAccrualStatusDTO> ssasList = this.getStudySiteAccrualStatusByStudySite(studySiteIi);
+        List<StudySiteAccrualStatusDTO> ssasList = getStudySiteAccrualStatusByStudySite(studySiteIi);
         StudySiteAccrualStatusDTO result = null;
         if (!ssasList.isEmpty()) {
             result = ssasList.get(ssasList.size() - 1);
@@ -152,4 +156,25 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, StudySiteAccrualStatus> getCurrentStudySiteAccrualStatus(Long[] ids) throws PAException {
+        Map<Long, StudySiteAccrualStatus> result = new HashMap<Long, StudySiteAccrualStatus>();
+        try {
+            Query qry = PaHibernateUtil.getCurrentSession().createQuery(
+                    "from StudySiteAccrualStatus ssas join fetch ssas.studySite ss "
+                            + " where ss.id in (:ids) order by ssas.id");
+            qry.setParameterList("ids", ids);
+            @SuppressWarnings("unchecked")
+            List<StudySiteAccrualStatus> queryList = qry.list();
+            for (StudySiteAccrualStatus row : queryList) {
+                result.put(row.getStudySite().getId(), row);
+            }
+        } catch (HibernateException e) {
+            throw new PAException(e);
+        }
+        return result;
+    }
 }

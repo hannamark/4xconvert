@@ -128,6 +128,7 @@ import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -439,5 +440,10 @@ public interface ServiceLocator {
     * @return the PDQ trial upload service
     */
    PDQTrialUploadService  getPDQTrialUploadService();
+
+    /**
+     * @return the participating org service
+     */
+    ParticipatingOrgServiceLocal getParticipatingOrgService();
 }
 

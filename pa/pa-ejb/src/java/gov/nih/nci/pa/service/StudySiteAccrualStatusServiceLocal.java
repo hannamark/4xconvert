@@ -79,17 +79,22 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+
+import java.util.Map;
+
 import javax.ejb.Local;
 
 /**
  * @author Hugh Reinhart
  * @since 09/26/2008
- * 
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 @Local
 public interface StudySiteAccrualStatusServiceLocal extends StudySiteAccrualStatusService {
-
+    /**
+     * @param ids study site ids
+     * @return map study site id to studySiteAccrualStatus
+     * @throws PAException exception
+     */
+    Map<Long, StudySiteAccrualStatus> getCurrentStudySiteAccrualStatus(Long[] ids) throws PAException;
 }

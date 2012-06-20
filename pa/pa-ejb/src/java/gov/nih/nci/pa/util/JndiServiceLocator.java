@@ -128,6 +128,7 @@ import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -146,6 +147,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return pdq trial registration bean.
      */
+    @Override
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         return (PDQTrialRegistrationServiceBeanRemote) JNDIUtil.lookupPa("/pa/PDQTrialRegistrationServiceBean/remote");
     }
@@ -153,6 +155,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return pdq trial abstraction bean.
      */
+    @Override
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
         return (PDQTrialAbstractionServiceBeanRemote) JNDIUtil.lookupPa("/pa/PDQTrialAbstractionServiceBean/remote");
     }
@@ -160,6 +163,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
      */
+    @Override
     public StudyProtocolServiceLocal getStudyProtocolService() {
         return (StudyProtocolServiceLocal) JNDIUtil.lookupPa("/pa/StudyProtocolBeanLocal/local");
     }
@@ -167,6 +171,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PAOrganizationServiceRemote remote interface
      */
+    @Override
     public PAOrganizationServiceRemote getPAOrganizationService() {
         return (PAOrganizationServiceRemote) JNDIUtil.lookupPa("/pa/PAOrganizationServiceBean/remote");
     }
@@ -174,6 +179,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PAPersonService
      */
+    @Override
     public PAPersonServiceRemote getPAPersonService() {
         return (PAPersonServiceRemote) JNDIUtil.lookupPa("/pa/PAPersonServiceBean/remote");
     }
@@ -181,6 +187,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return RegulatoryInformationServiceRemote
      */
+    @Override
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         return (RegulatoryInformationServiceRemote) JNDIUtil.lookupPa("/pa/RegulatoryInformationBean/remote");
     }
@@ -189,6 +196,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return StudyIndldeServiceLocal
      *
      */
+    @Override
     public StudyIndldeServiceLocal getStudyIndldeService() {
         return (StudyIndldeServiceLocal) JNDIUtil.lookupPa("/pa/StudyIndldeBeanLocal/local");
     }
@@ -197,6 +205,7 @@ public class JndiServiceLocator implements ServiceLocator {
      * @return DocumentWorkflowStatusServiceLocal
      *
      */
+    @Override
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
         return (DocumentWorkflowStatusServiceLocal) JNDIUtil.lookupPa("/pa/DocumentWorkflowStatusBeanLocal/local");
     }
@@ -204,6 +213,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyOverallStatusServiceLocal
      */
+    @Override
     public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         return (StudyOverallStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudyOverallStatusBeanLocal/local");
     }
@@ -211,6 +221,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyResourcingServiceLocal
      */
+    @Override
     public StudyResourcingServiceLocal getStudyResoucringService() {
         return (StudyResourcingServiceLocal) JNDIUtil.lookupPa("/pa/StudyResourcingBeanLocal/local");
     }
@@ -218,6 +229,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyResourcingServiceLocal
      */
+    @Override
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         return (StudyRegulatoryAuthorityServiceLocal) JNDIUtil.lookupPa("/pa/StudyRegulatoryAuthorityBeanLocal/local");
     }
@@ -225,6 +237,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return LookUpTableServiceRemote
      */
+    @Override
     public LookUpTableServiceRemote getLookUpTableService() {
         return (LookUpTableServiceRemote) JNDIUtil.lookupPa("/pa/LookUpTableServiceBean/remote");
     }
@@ -232,6 +245,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return ProtocolQueryServiceRemote
      */
+    @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return (ProtocolQueryServiceLocal) JNDIUtil.lookupPa("/pa/ProtocolQueryServiceBean/local");
     }
@@ -239,6 +253,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteServiceLocal
      */
+    @Override
     public StudySiteServiceLocal getStudySiteService() {
         return (StudySiteServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteBeanLocal/local");
     }
@@ -246,6 +261,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteAccrualStatusServiceLocal
      */
+    @Override
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         return (StudySiteAccrualStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteAccrualStatusBeanLocal/local");
     }
@@ -253,6 +269,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return DocumentServiceLocal
      */
+    @Override
     public DocumentServiceLocal getDocumentService() {
         return (DocumentServiceLocal) JNDIUtil.lookupPa("/pa/DocumentBeanLocal/local");
     }
@@ -260,6 +277,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StratumGroupServiceLocal
      */
+    @Override
     public StratumGroupServiceLocal getStratumGroupService() {
         return (StratumGroupServiceLocal) JNDIUtil.lookupPa("/pa/StratumGroupBeanLocal/local");
     }
@@ -267,6 +285,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PAHealthCareProviderRemote
      */
+    @Override
     public PAHealthCareProviderRemote getPAHealthCareProviderService() {
         return (PAHealthCareProviderRemote) JNDIUtil.lookupPa("/pa/PAHealthCareProviderServiceBean/remote");
     }
@@ -274,6 +293,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteService
      */
+    @Override
     public StudySiteContactServiceLocal getStudySiteContactService() {
         return (StudySiteContactServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteContactBeanLocal/local");
     }
@@ -281,6 +301,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return InterventionAlternateNameServiceRemote
      */
+    @Override
     public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
         return (InterventionAlternateNameServiceRemote) JNDIUtil
             .lookupPa("/pa/InterventionAlternateNameServiceBean/remote");
@@ -289,6 +310,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return InterventionServiceLocal
      */
+    @Override
     public InterventionServiceLocal getInterventionService() {
         return (InterventionServiceLocal) JNDIUtil.lookupPa("/pa/InterventionBeanLocal/local");
     }
@@ -296,6 +318,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PlannedActivityServiceLocal
      */
+    @Override
     public PlannedActivityServiceLocal getPlannedActivityService() {
         return (PlannedActivityServiceLocal) JNDIUtil.lookupPa("/pa/PlannedActivityBeanLocal/local");
     }
@@ -303,6 +326,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return OutcomeMeasureServiceLocal
      */
+    @Override
     public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
         return (StudyOutcomeMeasureServiceLocal) JNDIUtil.lookupPa("/pa/StudyOutcomeMeasureBeanLocal/local");
     }
@@ -310,6 +334,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return ArmServcieLocal
      */
+    @Override
     public ArmServiceLocal getArmService() {
         return (ArmServiceLocal) JNDIUtil.lookupPa("/pa/ArmBeanLocal/local");
     }
@@ -317,6 +342,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService() {
         return (CTGovXmlGeneratorServiceLocal) JNDIUtil.lookupPa("/pa/CTGovXmlGeneratorServiceBeanLocal/local");
     }
@@ -324,6 +350,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return (PDQXmlGeneratorServiceRemote) JNDIUtil.lookupPa("/pa/PDQXmlGeneratorServiceBean/remote");
     }
@@ -331,6 +358,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
         return (AbstractionCompletionServiceRemote) JNDIUtil.lookupPa("/pa/AbstractionCompletionServiceBean/remote");
     }
@@ -338,6 +366,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PDQDiseaseAlternameService
      */
+    @Override
     public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return (PDQDiseaseAlternameServiceLocal) JNDIUtil.lookupPa("/pa/PDQDiseaseAlternameBeanLocal/local");
     }
@@ -345,6 +374,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PDQDiseaseParentService
      */
+    @Override
     public PDQDiseaseParentServiceRemote getDiseaseParentService() {
         return (PDQDiseaseParentServiceRemote) JNDIUtil.lookupPa("/pa/PDQDiseaseParentServiceBean/remote");
     }
@@ -352,6 +382,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return PDQDiseaseService
      */
+    @Override
     public PDQDiseaseServiceLocal getDiseaseService() {
         return (PDQDiseaseServiceLocal) JNDIUtil.lookupPa("/pa/PDQDiseaseBeanLocal/local");
     }
@@ -359,6 +390,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyDiseaseServiceLocal
      */
+    @Override
     public StudyDiseaseServiceLocal getStudyDiseaseService() {
         return (StudyDiseaseServiceLocal) JNDIUtil.lookupPa("/pa/StudyDiseaseBeanLocal/local");
     }
@@ -366,6 +398,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyContactServiceLocal
      */
+    @Override
     public StudyContactServiceLocal getStudyContactService() {
         return (StudyContactServiceLocal) JNDIUtil.lookupPa("/pa/StudyContactBeanLocal/local");
     }
@@ -373,6 +406,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyMilestoneServiceLocal
      */
+    @Override
     public StudyMilestoneServicelocal getStudyMilestoneService() {
         return (StudyMilestoneServicelocal) JNDIUtil.lookupPa("/pa/StudyMilestoneBeanLocal/local");
     }
@@ -380,6 +414,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return RegistryUserServiceLocal
      */
+    @Override
     public RegistryUserServiceLocal getRegistryUserService() {
         return (RegistryUserServiceLocal) JNDIUtil.lookupPa("/pa/RegistryUserBeanLocal/local");
     }
@@ -387,6 +422,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return GridAccountServiceRemote
      */
+    @Override
     public GridAccountServiceRemote getGridAccountService() {
         return (GridAccountServiceRemote) JNDIUtil.lookupPa("/pa/GridAccountServiceBean/remote");
     }
@@ -394,6 +430,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return (TSRReportGeneratorServiceRemote) JNDIUtil.lookupPa("/pa/TSRReportGeneratorServiceBean/remote");
     }
@@ -401,6 +438,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyOnholdServiceLocal
      */
+    @Override
     public StudyOnholdServiceLocal getStudyOnholdService() {
         return (StudyOnholdServiceLocal) JNDIUtil.lookupPa("/pa/StudyOnholdBeanLocal/local");
     }
@@ -408,6 +446,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return MailManagerServiceLocal
      */
+    @Override
     public MailManagerServiceLocal getMailManagerService() {
         return (MailManagerServiceLocal) JNDIUtil.lookupPa("/pa/MailManagerBeanLocal/local");
     }
@@ -415,6 +454,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyObjectiveServiceLocal
      */
+    @Override
     public StudyObjectiveServiceLocal getStudyObjectiveService() {
         return (StudyObjectiveServiceLocal) JNDIUtil.lookupPa("/pa/StudyObjectiveBeanLocal/local");
     }
@@ -422,6 +462,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyRecruitmentStatusService
      */
+    @Override
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
         return (StudyRecruitmentStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudyRecruitmentStatusBeanLocal/local");
     }
@@ -429,6 +470,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudyMilestoneService
      */
+    @Override
     public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
         return (StudyMilestoneTasksServiceLocal) JNDIUtil.lookupPa("/pa/StudyMilestoneTasksServiceBean/local");
     }
@@ -436,6 +478,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return OrganizationCorrelationServiceRemote
      */
+    @Override
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return (OrganizationCorrelationServiceRemote)
             JNDIUtil.lookupPa("/pa/OrganizationCorrelationServiceBean/remote");
@@ -444,6 +487,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return (StudySiteAccrualAccessServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteAccrualAccessServiceBean/local");
     }
@@ -451,6 +495,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
         return (TrialRegistrationServiceLocal) JNDIUtil.lookupPa("/pa/TrialRegistrationBeanLocal/local");
     }
@@ -458,6 +503,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyInboxServiceLocal getStudyInboxService() {
         return (StudyInboxServiceLocal) JNDIUtil.lookupPa("/pa/StudyInboxServiceBean/local");
     }
@@ -465,6 +511,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return StudySiteOverallStatusServiceLocal
      */
+    @Override
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
         return (StudySiteOverallStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteOverallStatusServiceBean/local");
     }
@@ -472,6 +519,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
         return (StudyCheckoutServiceLocal) JNDIUtil.lookupPa("/pa/StudyCheckoutServiceBean/local");
     }
@@ -479,6 +527,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
         return (PlannedSubstanceAdministrationServiceRemote) JNDIUtil
             .lookupPa("/pa/PlannedSubstanceAdministrationServiceBean/remote");
@@ -487,6 +536,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return protocol service
      */
+    @Override
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
         return (StudyRelationshipServiceLocal) JNDIUtil.lookupPa("pa/StudyRelationshipBeanLocal/local");
     }
@@ -494,6 +544,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return service for partial save
      */
+    @Override
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return (StudyProtocolStageServiceLocal) JNDIUtil.lookupPa("/pa/StudyProtocolStageBeanLocal/local");
     }
@@ -501,6 +552,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * @return service for ProprietaryTrial
      */
+    @Override
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return (ProprietaryTrialManagementServiceLocal)
             JNDIUtil.lookupPa("/pa/ProprietaryTrialManagementBeanLocal/local");
@@ -509,6 +561,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return (ParticipatingSiteServiceLocal) JNDIUtil.lookupPa("/pa/ParticipatingSiteBeanLocal/local");
     }
@@ -516,6 +569,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
        return (PDQUpdateGeneratorTaskServiceLocal) JNDIUtil.lookupPa("/pa/PDQUpdateGeneratorTaskServiceBean/local");
     }
@@ -523,6 +577,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
         return (PlannedMarkerServiceLocal) JNDIUtil.lookupPa("/pa/PlannedMarkerServiceBean/local");
     }
@@ -530,6 +585,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AuditTrailServiceLocal getAuditTrailService() {
         return (AuditTrailServiceLocal) JNDIUtil.lookupPa("/pa/AuditTrailServiceBean/local");
     }
@@ -541,6 +597,12 @@ public class JndiServiceLocator implements ServiceLocator {
     public PDQTrialUploadService getPDQTrialUploadService() {
         return (PDQTrialUploadService) JNDIUtil.lookupPa("/pa/PDQTrialUploadBean/remote");
     }
-    
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        return (ParticipatingOrgServiceLocal) JNDIUtil.lookupPa("/pa/ParticipatingOrgServiceBean/local");
+    }
 }

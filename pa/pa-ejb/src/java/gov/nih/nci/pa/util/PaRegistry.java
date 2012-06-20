@@ -119,15 +119,16 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
-import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceCachingDecorator;
-import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceCachingDecorator;
+import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -149,7 +150,7 @@ public final class PaRegistry {
      * Constructor for the singleton instance.
      */
     private PaRegistry() {
-        this.serviceLocator = new JndiServiceLocator();
+        serviceLocator = new JndiServiceLocator();
     }
 
     /**
@@ -208,7 +209,7 @@ public final class PaRegistry {
      * @return the serviceLocator
      */
     public ServiceLocator getServiceLocator() {
-        return this.serviceLocator;
+        return serviceLocator;
     }
 
     /**
@@ -625,6 +626,11 @@ public final class PaRegistry {
     public static PDQTrialUploadService getPDQTrialUploadService() {
         return getInstance().getServiceLocator().getPDQTrialUploadService();
     }
-    
-    
+
+    /**
+     * @return the participating org service
+     */
+    public static ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        return getInstance().getServiceLocator().getParticipatingOrgService();
+    }
 }
