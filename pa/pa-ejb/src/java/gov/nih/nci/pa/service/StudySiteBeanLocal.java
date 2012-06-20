@@ -8,6 +8,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -298,11 +299,28 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 // When update check if the record is same if not then throw ex
                 if ((dto.getIdentifier() == null)
                     || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
-                        throw new PAValidationException("Duplicate Trial Submission: A trial exists in the system with "
-                                + "the same " + getIdentifierName(sp));
+                    throw new PAValidationException(
+                            "Duplicate Trial Submission: A trial exists in the system with "
+                                    + "the same " + getIdentifierName(sp)
+                                    + ". The other trial's NCI ID is "
+                                    + getOtherTrialID(sp));
                 }
             }
         }
+    }
+
+    private String getOtherTrialID(StudySite ss) {
+        try {
+            StudyProtocol sp = ss.getStudyProtocol();
+            for (Ii id : sp.getOtherIdentifiers()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(id.getRoot())) {
+                    return id.getExtension();
+                }
+            }
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+        return "";
     }
 
     private String getIdentifierName(StudySite sp) {
