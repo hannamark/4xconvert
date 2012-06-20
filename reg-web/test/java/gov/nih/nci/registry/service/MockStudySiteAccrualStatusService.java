@@ -16,6 +16,7 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
@@ -39,6 +40,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#createStudySiteAccrualStatus(gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO)
      */
+    @Override
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(
             StudySiteAccrualStatusDTO dto) throws PAException {
         // TODO Auto-generated method stub
@@ -48,6 +50,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getCurrentStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.Ii)
      */
+    @Override
     public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(
             Ii studySiteIi) throws PAException {
         StudySiteAccrualStatusDTO  returnDto = new StudySiteAccrualStatusDTO();
@@ -63,6 +66,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatus(gov.nih.nci.iso21090.Ii)
      */
+    @Override
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii)
             throws PAException {
         // TODO Auto-generated method stub
@@ -72,6 +76,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getStudySiteAccrualStatusByStudySite(gov.nih.nci.iso21090.Ii)
      */
+    @Override
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(
             Ii studySiteIi) throws PAException {
         // TODO Auto-generated method stub
@@ -81,8 +86,18 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#updateStudySiteAccrualStatus(gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO)
      */
+    @Override
     public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(
             StudySiteAccrualStatusDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, StudySiteAccrualStatus> getCurrentStudySiteAccrualStatus(Long[] ids) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

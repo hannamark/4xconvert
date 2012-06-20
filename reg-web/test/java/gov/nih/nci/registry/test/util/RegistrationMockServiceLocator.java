@@ -83,6 +83,7 @@ import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -778,6 +779,15 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     @Override
     public AuditTrailServiceLocal getAuditTrailService() {
         return mock(AuditTrailServiceLocal.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
