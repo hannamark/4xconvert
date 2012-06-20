@@ -79,8 +79,8 @@ package gov.nih.nci.pa.pdq;
 import gov.nih.nci.pa.pdq.dml.DiseaseScript;
 import gov.nih.nci.pa.pdq.dml.InterventionScript;
 import gov.nih.nci.pa.pdq.xml.Interpret;
-import gov.nih.nci.pa.pdq.xml.PDQProcessor;
 import gov.nih.nci.pa.pdq.xml.PDQIntervention;
+import gov.nih.nci.pa.pdq.xml.PDQProcessor;
 import gov.nih.nci.pa.pdq.xml.Rule;
 import gov.nih.nci.pa.pdq.xml.XMLFileParser;
 
@@ -93,7 +93,6 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
  * @author Hugh Reinhart
@@ -117,6 +116,7 @@ public class Loader {
         final File dir = new File(PDQConstants.DIRECTORY_NAME);
 
         final String[] children = dir.list(new FilenameFilter() {
+            @Override
             public boolean accept(final File dir, final String name) {
                 return !name.endsWith(".svn");
             }
@@ -130,7 +130,7 @@ public class Loader {
                 Document doc;
                 doc = XMLFileParser.getParser().parseFile(PDQConstants.DIRECTORY_NAME + "/"+ filename);
                 try {
-                    final Rule rule = Interpret.getInterpreter().process(doc);
+                    final Rule rule = Interpret.getInterpreter().process(doc, filename);
                     if (rule == null) {
                         LOG.error("Null RULE: " + filename);
                     }

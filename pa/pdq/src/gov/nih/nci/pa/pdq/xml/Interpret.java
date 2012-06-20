@@ -83,8 +83,8 @@ import java.util.ArrayList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -97,7 +97,7 @@ public class Interpret {
     private static Interpret interpreter = new Interpret();
     public static Interpret getInterpreter() { return interpreter; }
 
-    public Rule process(final Document doc) throws PDQException {
+    public Rule process(final Document doc, String filename) throws PDQException {
         Rule result = null;
         final ArrayList<String> semanticList = new ArrayList<String>();
 
@@ -117,16 +117,17 @@ public class Interpret {
         }
 
         if (StringUtils.isEmpty(term) && semanticList.isEmpty()) {
-            throw new PDQException("Invalid PDQ file.  Neither 'TermTypeName' nor 'SemanticType' found.  ");
-        }
-        if (Rule.TERM_TYPE_SEMANTIC.equals(term) && Rule.diseaseList.contains(preferredName)) {
-            result = Rule.RULE1;
-        }
-        if (Rule.TERM_TYPE_SEMANTIC.equals(term) && !Rule.diseaseList.contains(preferredName)) {
-            result = Rule.RULE2;
-        }
-        if (Rule.TERM_TYPE_OBSOLETE.equals(term)) {
-            result = Rule.RULE3;
+            LOG.error("Invalid PDQ file " + filename + ". Neither 'TermTypeName' nor 'SemanticType' found.");
+        } else {
+            if (Rule.TERM_TYPE_SEMANTIC.equals(term) && Rule.diseaseList.contains(preferredName)) {
+                result = Rule.RULE1;
+            }
+            if (Rule.TERM_TYPE_SEMANTIC.equals(term) && !Rule.diseaseList.contains(preferredName)) {
+                result = Rule.RULE2;
+            }
+            if (Rule.TERM_TYPE_OBSOLETE.equals(term)) {
+                result = Rule.RULE3;
+            }
         }
         if (result == null) {
             if (semanticList.isEmpty()) {
