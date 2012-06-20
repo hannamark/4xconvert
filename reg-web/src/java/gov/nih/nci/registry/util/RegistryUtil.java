@@ -13,6 +13,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class RegistryUtil {
     private static final String VALIDATION_EXCEPTION_STRING = "Validation Exception";
     private static final String PA_EXCEPTION_STRING = "gov.nih.nci.pa.service.PAException:";
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
+    private static final String[] VALID_DATE_FORMATS = {"MM/dd/yyyy", "MM-dd-yyyy", "yyyy/MM/dd", "yyyy-MM-dd"};    
 
     /**
      * check if the email address is valid.
@@ -216,5 +218,23 @@ public class RegistryUtil {
   public static String removeExceptionFromErrMsg(String errMsg) {
      String removePAException = StringUtils.remove(errMsg, PA_EXCEPTION_STRING);
      return  StringUtils.remove(removePAException, VALIDATION_EXCEPTION_STRING).trim();
+  }
+  
+  /**
+   * This method takes in a date string and checks if it is in one of the 4 formats allowed. 
+   * MM/dd/yyyy, MM-dd-yyyy, yyyy/MM/dd, yyyy-MM-dd
+   * @param s date string to be validated.
+   * @return true or false
+   */
+  public static boolean isDateValid(String s) {
+      SimpleDateFormat sdf = null;
+      for (String eachDateFormat : VALID_DATE_FORMATS) {
+          sdf = new SimpleDateFormat(eachDateFormat, Locale.US);
+          sdf.setLenient(false);
+          if (sdf.parse(s, new ParsePosition(0)) != null) {
+              return true;
+          }
+      }
+      return false;
   }
 }

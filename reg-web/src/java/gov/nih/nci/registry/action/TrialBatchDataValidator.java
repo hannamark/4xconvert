@@ -27,6 +27,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
+import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -404,43 +405,44 @@ public class TrialBatchDataValidator {
         StringBuffer fieldErr = new StringBuffer();
         if (null != TrialStatusReasonCode.getByCode(batchDto.getCurrentTrialStatus())
                 && StringUtils.isEmpty(batchDto.getReasonForStudyStopped())) {
-                fieldErr.append("Why Study Stopped is required.");
+                fieldErr.append("Why Study Stopped is required.\n");
         }
 
         //check the trial type it shld be either Interventional or Observational
         if (null == StudyTypeCode.getByCode(batchDto.getTrialType())) {
-            fieldErr.append("Please enter valid value for Trial Type.");
+            fieldErr.append("Please enter valid value for Trial Type.\n");
         }
         //check phase
         if (null ==  PhaseCode.getByCode(batchDto.getPhase())) {
-            fieldErr.append("Please enter valid value for Phase Code.");
+            fieldErr.append("Please enter valid value for Phase Code.\n");
         }
         //check Primary Purpose
         if (null == PrimaryPurposeCode.getByCode(batchDto.getPrimaryPurpose())) {
-            fieldErr.append("Please enter valid value for Primary Purpose.");
+            fieldErr.append("Please enter valid value for Primary Purpose.\n");
         }
         if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getPrimaryCompletionDateType())) {
-            fieldErr.append("Please enter valid value for Primary Completion Date Type.");
+            fieldErr.append("Please enter valid value for Primary Completion Date Type.\n");
         }
         if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getStudyStartDateType())) {
-            fieldErr.append("Please enter valid value for Study Start Date Type.");
+            fieldErr.append("Please enter valid value for Study Start Date Type.\n");
         }
         //check is valid Date
         if (StringUtils.isNotEmpty(batchDto.getCurrentTrialStatusDate())
-                && !PAUtil.isValidDate(batchDto.getCurrentTrialStatusDate())) {
-            fieldErr.append("Please enter valid value for Current Trial Status Date.");
+                && !RegistryUtil.isDateValid(batchDto.getCurrentTrialStatusDate())) {
+            fieldErr.append("Please enter valid value for Current Trial Status Date.\n");
         }
         //current status date
         //trial start date
         if (StringUtils.isNotEmpty(batchDto.getStudyStartDate())
-                && !PAUtil.isValidDate(batchDto.getStudyStartDate())) {
-            fieldErr.append("Please enter valid value for Study Start Date.");
+                && !RegistryUtil.isDateValid(batchDto.getStudyStartDate())) {
+            fieldErr.append("Please enter valid value for Study Start Date.\n");
         }
         //primaryCompletion date
         if (StringUtils.isNotEmpty(batchDto.getPrimaryCompletionDate())
-                && !PAUtil.isValidDate(batchDto.getPrimaryCompletionDate())) {
-            fieldErr.append("Please enter valid value for Primary Completion Date.");
+                && !RegistryUtil.isDateValid(batchDto.getPrimaryCompletionDate())) {
+            fieldErr.append("Please enter valid value for Primary Completion Date.\n");
         }
+
         return fieldErr;
     }
     /**
@@ -766,6 +768,9 @@ public class TrialBatchDataValidator {
             if (StringUtils.isEmpty(batchDto.getAmendmentDate())) {
                 fieldErr.append("Amendment Date is required. \n");
             } else {
+                if (!RegistryUtil.isDateValid(batchDto.getAmendmentDate())) {
+                    fieldErr.append("Please enter valid value for Amendment Date. \n");
+                }
                 Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
                 if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(batchDto.getAmendmentDate()))) {
                     fieldErr.append("Amendment Date cannot be in the future.\n");

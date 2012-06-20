@@ -38,4 +38,22 @@ public class RegistryUtilTest extends AbstractRegWebTest {
             "gov.nih.nci.pa.service.PAException: Validation Exception Please enter valid value for " +
             "Summary 4 Sponsor Category."),"Please enter valid value for Summary 4 Sponsor Category.");
     }
+    
+    @Test
+    public void testIsDateValid() {
+        assertFalse(RegistryUtil.isDateValid("01012011"));
+        assertTrue(RegistryUtil.isDateValid("01/01/2011"));
+        assertTrue(RegistryUtil.isDateValid("01-01-2011"));
+        assertTrue(RegistryUtil.isDateValid("2011-12-30"));
+        assertTrue(RegistryUtil.isDateValid("2012/12/31"));
+        assertFalse(RegistryUtil.isDateValid("01-01-"));
+        assertFalse(RegistryUtil.isDateValid("01"));
+        assertFalse(RegistryUtil.isDateValid("abababcd"));
+        assertTrue(RegistryUtil.isDateValid("2011/12/31"));
+        assertFalse(RegistryUtil.isDateValid("2011/31/12"));
+        assertFalse(RegistryUtil.isDateValid("20113112"));
+        assertFalse(RegistryUtil.isDateValid("12312012"));
+        assertTrue(RegistryUtil.isDateValid("12-31-2012"));
+        assertTrue(RegistryUtil.isDateValid("12/31/2012"));
+    }
 }
