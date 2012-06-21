@@ -74,7 +74,7 @@
                             <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>
                         </s:else>
                     </pa:valueRow>
-                    <pa:valueRow labelKey="onhold.date.low" required="true">
+                    <pa:valueRow labelKey="onhold.date.low">
                         <s:textfield name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
                         <pa:fieldError fieldName="onhold.dateLow"/>
                     </pa:valueRow>
