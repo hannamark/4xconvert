@@ -110,11 +110,12 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param values values
      * @param errMsg if any
      * @param lineNumber line Number
+     * @param sp studyprotocol
      */
-    protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+    protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber,
+            StudyProtocolDTO sp) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             String protocolId = AccrualUtil.safeGet(values, ACCRUAL_COUNT_STUDY_INDEX);
-            StudyProtocolDTO sp = getStudyProtocol(protocolId);
             validateStudyType(errMsg, protocolId, sp);
             String accrualStudySite = AccrualUtil.safeGet(values, ACCRUAL_STUDY_SITE_INDEX);
             if (StringUtils.isEmpty(accrualStudySite)) {

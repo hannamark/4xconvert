@@ -96,9 +96,9 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -106,10 +106,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.Map;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -118,7 +117,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -131,17 +129,23 @@ import org.apache.log4j.Logger;
 @Local(CdusBatchUploadDataValidatorLocal.class)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
+                    "PMD.AvoidDeeplyNestedIfStmts" })
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
     private RegistryUser ru;
+    private StudyProtocolDTO sp;
+    private final Map<String, String> listOfPoIds = new HashMap<String, String>();
+    private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
+    private static final int TIME_SECONDS = 1000;
     /**
      * {@inheritDoc}
      */
     @Override
     public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
+        long startTime = System.currentTimeMillis();        
         ru = user;
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
@@ -160,6 +164,35 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 ++lineNumber;
                 if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX])) {
                     protocolId = line[1];
+                    sp = getStudyProtocol(protocolId);
+                    if (sp != null) {
+                        try {
+                            List<Long> ids = new ArrayList<Long>();
+                            List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
+                                    .search(sp.getIdentifier(), IiConverter.convertToIi(ru.getId()));
+                            for (SearchStudySiteResultDto iso : isoStudySiteList) {
+                                listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
+                                        IiConverter.convertToString(iso.getStudySiteIi()));
+                            }
+                            for (Map.Entry<String, String> entry : listOfPoIds.entrySet()) {
+                                ids.add(IiConverter.convertToLong(IiConverter.convertToPoOrganizationIi(
+                                        entry.getKey())));
+                            }
+                            
+                            List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                                    .getIdentifiedOrganizationCorrelationService()
+                                    .getCorrelationsByPlayerIdsWithoutLimit(ids.toArray(
+                                        new Long[ids.size()])); // NOPMD
+                            for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
+                                if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO.getAssignedId().getRoot())) {
+                                    listOfCtepIds.put(idOrgDTO.getAssignedId().getExtension(), 
+                                            idOrgDTO.getPlayerIdentifier().getExtension());
+                                }
+                            }
+                        } catch (PAException e) {
+                            LOG.error("Error loading study sites for a trial in validateBatchData.", e);
+                        }
+                    }
                 }                
                 errMsg.append(validateBatchData(line, lineNumber, protocolId));
             }
@@ -178,29 +211,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             results.setErrors(new StringBuilder(errMsg.toString().trim()));
             LOG.error("error reading the file " + file.getName(), e);
         }
-        return results;
-    }
-   
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<BatchValidationResults> validateArchiveBatchData(File archiveFile, RegistryUser user) {
-        List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
-        try {
-            ZipFile zip = new ZipFile(archiveFile, ZipFile.OPEN_READ);
-            Enumeration<? extends ZipEntry> files = zip.entries();
-            while (files.hasMoreElements()) {
-                ZipEntry entry = files.nextElement();
-                File file = File.createTempFile(StringUtils.substringBefore(entry.getName(), "."), ".txt");
-                IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(file));
-                BatchValidationResults result = validateSingleBatchData(file, user);
-                result.setFileName(entry.getName());
-                results.add(result);
-            }
-        } catch (Exception e) {
-            LOG.error("Error validating archive of batch files.", e);
-        }
+        LOG.info("Time to validate a single Batch File data: " 
+                + (System.currentTimeMillis() - startTime) / TIME_SECONDS + " seconds");
         return results;
     }
 
@@ -226,10 +238,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, getStudyProtocol(expectedProtocolId));
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
-        validateAccrualCount(key, values, errMsg, lineNumber);
+        validateAccrualCount(key, values, errMsg, lineNumber, sp);
         return errMsg.toString();
     }
     
@@ -278,6 +290,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
         String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
                 + registeringInstitutionID + "\n";
+        if (listOfPoIds.containsKey(registeringInstitutionID) || listOfCtepIds.containsKey(registeringInstitutionID)) {
+            return true;
+        }
         try {
             if (StringUtils.isNumeric(registeringInstitutionID)) {
                 OrganizationDTO poOrganization = PoRegistry.getOrganizationEntityService()
@@ -293,8 +308,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             LOG.debug(e.getMessage());
         }
         try {
-            getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
-            return true;
+            Ii identifier = getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
+            if (identifier != null && identifier.getExtension() != null) {
+                return true;
+            }
         } catch (PAException e) {
             LOG.debug(e.getMessage());
         }
@@ -331,28 +348,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private void validatePatientTreatingSite(String regInstID, StringBuffer errMsg, List<String> values, 
             long lineNumber) {
-        Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
-        if (!isValidTreatingSite(studySiteOrgIi, values)) {
-            addUpPatientRegisteringInstitutionCode(values, errMsg, lineNumber);           
-        }        
-    }
-    
-    private boolean isValidTreatingSite(Ii studySiteOrgIi, List<String> values) {
-        StudyProtocolDTO spDto = getStudyProtocol(AccrualUtil.safeGet(values, 
-                BatchFileIndex.COLLECTION_PROTOCOL_INDEX));
-        if (spDto == null) {
-            return false;
+        if (listOfPoIds.containsKey(regInstID) || listOfCtepIds.containsKey(regInstID)) {
+            return;           
         }
-        
-        try {
-            if (ISOUtil.isIiNull(studySiteOrgIi)            
-                || getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi) == null) {
-                return false;
-            }
-        } catch (PAException e) {
-            return false;
-        }
-        return true;
+        addUpPatientRegisteringInstitutionCode(values, errMsg, lineNumber);
     }
     
     /**
@@ -364,30 +363,33 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, List<String> values, 
             long lineNumber) {
-        Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
-        if (!isValidTreatingSite(studySiteOrgIi, values)) {
-            addAccrualSiteValidationError(values, errMsg, lineNumber);  
+        if (listOfPoIds.containsKey(regInstID)  || listOfCtepIds.containsKey(regInstID)) {
+            assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, errMsg, lineNumber);
             return;
-        }  
-        StudyProtocolDTO spDto = getStudyProtocol(AccrualUtil.safeGet(values, 
-                BatchFileIndex.COLLECTION_PROTOCOL_INDEX));
-        assertUserAllowedSiteAccess(spDto.getIdentifier(), studySiteOrgIi, regInstID, errMsg, lineNumber);
+        }
+        addAccrualSiteValidationError(values, errMsg, lineNumber);
     }
     
     /**
      * Assert batch submitter has accrual access to sites.
      * @param studyProtocolIi the study protocol ii
-     * @param studySiteOrgIi site ii
      * @param regInstID site ID provided in file.
      * @param errMsg msg buffer
      * @param lineNumber location of input
      */
-    protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, Ii studySiteOrgIi, String regInstID, 
+    protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, String regInstID, 
             StringBuffer errMsg, long lineNumber) {
         try {
-            SearchStudySiteResultDto ss = 
-                getSearchStudySiteService().getStudySiteByOrg(studyProtocolIi, studySiteOrgIi);
-            if (!AccrualUtil.isUserAllowedAccrualAccess(ss.getStudySiteIi(), ru)) {
+            String studySiteIi  = null;
+            String poId = null;
+            studySiteIi = listOfPoIds.get(regInstID);
+            if (studySiteIi == null) {
+                poId = listOfCtepIds.get(regInstID);
+            }
+            if (StringUtils.isNotEmpty(poId)) {
+                studySiteIi = listOfPoIds.get(poId);
+            }
+            if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
                 addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
             }
         } catch (PAException e) {
@@ -445,7 +447,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @param protocolId the study protocol id
      */
     private void validateProtocolStatus(String key, StringBuffer errMsg, long lineNumber, String protocolId) {
-        StudyProtocolDTO sp = getStudyProtocol(protocolId);
         if (sp == null) {
             errMsg.append(key).append(appendLineNumber(lineNumber)).append(protocolId)
             .append(" is not a valid NCI or CTEP/DCP identifier.\n");

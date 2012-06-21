@@ -113,6 +113,7 @@ import au.com.bytecode.opencsv.CSVParser;
  * @author Hugh Reinhart
  * @since 07/27/2009
  */
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class AccrualUtil {
     private static final int YR_MO_FORMAT_IDX = 5;
     private static final CSVParser PARSER = new CSVParser();

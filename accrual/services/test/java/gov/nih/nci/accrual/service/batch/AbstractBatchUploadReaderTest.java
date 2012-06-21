@@ -178,6 +178,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
     protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     protected MailManagerServiceRemote mailService;
+    protected BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
     
     @Before
     public void setUpReader() throws Exception {
@@ -193,6 +194,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         readerService.setCountryService(countryService);
         readerService.setStudySubjectService(studySubjectService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
+        readerService.setBatchFileSvc(batchFileSvc);
         cdusBatchUploadDataValidator.setCountryService(countryService);
         cdusBatchUploadDataValidator.setStudySubjectService(studySubjectService);    
         cdusBatchUploadDataValidator.setPerformedActivityService(new PerformedActivityBean());
@@ -368,6 +370,21 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return new ArrayList<IdentifiedOrganizationDTO>();
             }
         });
+        
+        when(identifiedOrgCorrelationSvc.getCorrelationsByPlayerIdsWithoutLimit(any(Long[].class)))
+        .thenAnswer(new  Answer<List<IdentifiedOrganizationDTO>>() {
+            public List<IdentifiedOrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                List<IdentifiedOrganizationDTO> ctepList = new ArrayList<IdentifiedOrganizationDTO>();
+                IdentifiedOrganizationDTO result = new IdentifiedOrganizationDTO();
+            	result.setAssignedId(new Ii());
+            	result.getAssignedId().setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+            	result.getAssignedId().setExtension("CTEP");
+                result.setPlayerIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                ctepList.add(result);
+                return ctepList;
+            }
+        });
 
         OrganizationEntityServiceRemote orgSvc = mock(OrganizationEntityServiceRemote.class);
         when(orgSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
@@ -394,7 +411,26 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
             mock(HealthCareFacilityCorrelationServiceRemote.class);
         when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
-            .thenReturn(createListOfHealthCareFacilityDTO());
+        .thenAnswer(new Answer<List<HealthCareFacilityDTO>>() {
+            public List<HealthCareFacilityDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                HealthCareFacilityDTO hcf = (HealthCareFacilityDTO) args[0];
+                List<HealthCareFacilityDTO> list = new ArrayList<HealthCareFacilityDTO>();
+                HealthCareFacilityDTO dto = new HealthCareFacilityDTO();       
+                DSet<Ii> dset = new DSet<Ii>();
+                Ii ii = new Ii();
+                ii.setRoot(DSetConverter.BASE_ROOT);
+                if (StringUtils.equals(DSetConverter.getFirstInDSet(hcf.getIdentifier()).getExtension(), "NCI-CTRP")) {
+                	ii.setExtension("NCI-CTRP");
+                }
+                Set<Ii> iis = new HashSet<Ii>();
+                iis.add(ii);
+                dset.setItem(iis);
+                dto.setIdentifier(dset);
+                list.add(dto);
+                return list;
+            }
+        });
 
         PatientCorrelationServiceRemote poPatientSvc = mock(PatientCorrelationServiceRemote.class);
 
@@ -419,19 +455,5 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
         when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
         when(poServiceLoc.getHealthCareFacilityCorrelationService()).thenReturn(healthCareFacilityCorrelationService);
-    }
-    
-    protected List<HealthCareFacilityDTO> createListOfHealthCareFacilityDTO() {
-        List<HealthCareFacilityDTO> list = new ArrayList<HealthCareFacilityDTO>();
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();       
-        DSet<Ii> dset = new DSet<Ii>();
-        Ii ii = new Ii();
-        ii.setRoot(DSetConverter.BASE_ROOT);
-        Set<Ii> iis = new HashSet<Ii>();
-        iis.add(ii);
-        dset.setItem(iis);
-        dto.setIdentifier(dset);
-        list.add(dto);
-        return list;
     }
 }

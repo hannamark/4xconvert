@@ -83,15 +83,11 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.service.batch.BatchFileService;
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -124,27 +120,12 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
             AccrualServiceLocator.getInstance().getBatchUploadReaderService();
             //Process it, sending email as necessary.
             LOG.info("Processing batch upload: " + batchFile.getFileLocation());
-            boolean valid = true;
             try {
-                List<BatchValidationResults> validationResults = batchUploadService.validateBatchData(batchFile);
-                for (BatchValidationResults validationResult : validationResults) {
-                    if (!validationResult.isPassedValidation()) {
-                        batchUploadService.sendValidationErrorEmail(validationResults, batchFile);
-                        valid = false;
-                        break;
-                    }
-                }
-                if (valid) {
-                    batchFile.setPassedValidation(true);
-                    batchFile.setProcessed(true);
-                    batchFileSvc.update(batchFile);
-                    List<BatchImportResults> importResults = batchUploadService.importBatchData(
-                            batchFile, validationResults);
-                    batchUploadService.sendConfirmationEmail(importResults, batchFile);
-                    batchFileSvc.update(batchFile);
-                }
+                batchUploadService.validateBatchData(batchFile);
             } catch (Exception e) {
                 LOG.error("Error processing " + batchFile.getFileLocation(), e);
+                batchFile.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
+                batchFileSvc.update(batchFile);
             }
     }
 

@@ -137,6 +137,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -202,6 +203,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * Class used to manage batch processing thread.
      */
     private class BatchThreadManager implements Runnable {
+        private static final int THREAD_TIMEOUT = 24;
         private final BatchFile batchFile;
         public BatchThreadManager(BatchFile batchFile) {
             this.batchFile = batchFile;
@@ -211,7 +213,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(new BatchFileProcessor(batchFile));
+                executor.submit(new BatchFileProcessor(batchFile)).get(THREAD_TIMEOUT, TimeUnit.HOURS);
             } catch (Exception e) {
                 LOG.error("Forcing shutdown of batch file processing thread.");
                 executor.shutdownNow();
@@ -253,6 +255,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot create a subject accrual with an identifier set. Please use update().");
@@ -284,6 +287,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot update a subject accrual without an identifier set. Please use create().");

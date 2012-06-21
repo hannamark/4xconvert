@@ -90,6 +90,7 @@ package gov.nih.nci.accrual.service.batch;
 public class BatchImportResults {
     private int totalImports = 0;
     private String fileName;
+    private StringBuilder errors;
 
     /**
      * @return the totalImports
@@ -117,6 +118,20 @@ public class BatchImportResults {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+    
+    /**
+     * @return the errors
+     */
+    public StringBuilder getErrors() {
+        return errors;
+    }
+    
+    /**
+     * @param errors the errors to set
+     */
+    public void setErrors(StringBuilder errors) {
+        this.errors = errors;
     }
 
 }
