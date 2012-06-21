@@ -137,10 +137,12 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
                 userId, tId);
         if (assign && !isOwner) {
             PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+            PaRegistry.getMailManagerService().sendTrialOwnershipAddEmail(userId, tId);
         }
 
         if (!assign && isOwner) {
             PaRegistry.getRegistryUserService().removeOwnership(userId, tId);
+            PaRegistry.getMailManagerService().sendTrialOwnershipRemoveEmail(userId, tId);
         }
     }
 
