@@ -127,6 +127,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -170,6 +172,7 @@ import org.xml.sax.SAXException;
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
+    private static final String USER_NAME = "${name}";
     private static final String SEND_MAIL_ERROR = "Send Mail error";
     private static final String DEADLINE = "${Deadline}";
     private static final String HOLD_REASON = "${HoldReason}";
@@ -194,6 +197,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final int SMTP_TIMEOUT = 120000;
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
     private static final int ERROR_MSG_LENGTH = 12;
+    private static final String SIR_OR_MADAM = "Sir or Madam";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -209,6 +213,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private DocumentWorkflowStatusServiceLocal docWrkflStatusSrv;
     @EJB
     private StudySiteServiceLocal studySiteService;
+    
+    private final ExecutorService mailDeliveryExecutor = Executors
+            .newSingleThreadExecutor();
 
     /**
      * {@inheritDoc}
@@ -389,14 +396,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
         try {
             String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
-            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments);
+            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments, false);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
 
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     private void sendMailWithAttachment(String mailTo, String mailFrom, String subject, String mailBody,
-            File[] attachments) {
+            File[] attachments, boolean async) {
         try {
             // Define Message
             MimeMessage message = prepareMessage(mailTo, mailFrom, subject);
@@ -416,10 +424,28 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             message.setContent(multipart);
             // Send Message
-            Transport.send(message);
+            if (!async) {
+                Transport.send(message);
+            } else {
+                invokeTransportAsync(message);
+            }
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
+    }
+
+    
+    private void invokeTransportAsync(final MimeMessage message) {
+        mailDeliveryExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Transport.send(message);
+                } catch (Exception e) {
+                    LOG.error(SEND_MAIL_ERROR, e);
+                }
+            }
+        });
     }
 
     /**
@@ -742,7 +768,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
             subject = subject.replace("${trialIdentifier}", spDTO.getNciIdentifier());
             subject = subject.replace("${markerName}", StConverter.convertToString(marker.getName()));
-            sendMailWithAttachment(toAddress, from, subject, body, null);
+            sendMailWithAttachment(toAddress, from, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
         }
@@ -798,7 +824,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
-            sendMailWithAttachment(toAddress, from, subject, body, null);
+            sendMailWithAttachment(toAddress, from, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -830,7 +856,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + StConverter.convertToString(marker.getName()) 
                 + " Request for Trial " 
                 + nciIdentifier;
-            sendMailWithAttachment(to, fromAddress, subject, body, null);
+            sendMailWithAttachment(to, fromAddress, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -1172,5 +1198,79 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             throw new PAException("Error preparing MIME message.", e);
         }
         return result;
+    }
+
+    @Override
+    public void sendTrialOwnershipAddEmail(Long userID, Long trialID)
+            throws PAException {
+        
+        String mailBody = lookUpTableService
+                .getPropertyValue("trial.ownership.add.email.body");
+        String mailSubject = lookUpTableService
+                .getPropertyValue("trial.ownership.add.email.subject");
+
+        sendTrialOwnershipChangeEmail(userID, trialID, mailBody, mailSubject);
+    }
+
+    /**
+     * @param userID
+     * @param trialID
+     * @param mailBody
+     * @param mailSubject
+     * @throws PAException
+     */
+    private void sendTrialOwnershipChangeEmail(Long userID, Long trialID,
+            String mailBody, String mailSubject) throws PAException { // NOPMD
+        RegistryUser user = registryUserService.getUserById(userID);
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(trialID);
+
+        mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO
+                .getNciIdentifier().toString());
+        mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO
+                .getLocalStudyProtocolIdentifier().toString());
+
+        mailBody = mailBody.replace(USER_NAME, getFullUserName(user));
+        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle()
+                .toString());
+        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO
+                .getNciIdentifier().toString());
+        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO
+                .getLocalStudyProtocolIdentifier().toString());
+        
+        try {
+            String mailFrom = lookUpTableService
+                    .getPropertyValue("fromaddress");
+            sendMailWithAttachment(user.getEmailAddress(), mailFrom,
+                    mailSubject, mailBody, new File[0], true);
+        } catch (Exception e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    private String getFullUserName(RegistryUser user) {
+        final String fullName = StringUtils.defaultString(user.getFirstName())
+                + " " + StringUtils.defaultString(user.getLastName());
+        if (StringUtils.isBlank(fullName)) {
+            return SIR_OR_MADAM;
+        } else {
+            return fullName.trim();
+        }
+    }
+
+    @Override
+    public void sendTrialOwnershipRemoveEmail(Long userID, Long trialID)
+            throws PAException {
+        String mailBody = lookUpTableService
+                .getPropertyValue("trial.ownership.remove.email.body");
+        String mailSubject = lookUpTableService
+                .getPropertyValue("trial.ownership.remove.email.subject");
+
+        sendTrialOwnershipChangeEmail(userID, trialID, mailBody, mailSubject);
     }
 }

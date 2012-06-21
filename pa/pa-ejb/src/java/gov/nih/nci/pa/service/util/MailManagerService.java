@@ -280,5 +280,36 @@ public interface MailManagerService {
      * @throws PAException PAException
      */
     void sendSubmissionTerminationEmail(Long studyProtocolId) throws PAException;
+    
+    /**
+     * When the CTRO adds an owner to a trial, the system must automatically
+     * send a welcome email message to that owner informing him/her of this
+     * action.
+     * 
+     * @param userID
+     *            userID
+     * @param trialID
+     *            trialID
+     * @throws PAException
+     *             PAException
+     */
+    void sendTrialOwnershipAddEmail(Long userID, Long trialID)
+            throws PAException;
+    
+    /**
+     * When the CTRO adds an owner to a trial, the system must automatically
+     * send a welcome email message to that owner informing him/her of this
+     * action. A similar email must be generated when someone was deleted as an owner.
+     * 
+     * @param userID
+     *            userID
+     * @param trialID
+     *            trialID
+     * @throws PAException
+     *             PAException
+     */
+    void sendTrialOwnershipRemoveEmail(Long userID, Long trialID)
+            throws PAException;
+    
 
 }

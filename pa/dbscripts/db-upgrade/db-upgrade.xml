@@ -966,5 +966,9 @@
      <changeSet id="PO-5096" author="krylovd">
         <comment>Add display_order to planned_activity</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5096.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-3490" author="krylovd">
+        <comment>Add new email template</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-3490.sql"/>
+     </changeSet>
 </databaseChangeLog>
