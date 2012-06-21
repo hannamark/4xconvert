@@ -146,6 +146,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -219,6 +223,18 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private String statusCode;
     private List<StudyOverallStatusWebDTO> overallStatusList;
 
+    // Cache for org list
+    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static final String CACHE_KEY = "PARTICIPATING_ORG_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 10;
+    private static final long CACHE_TIME = 120;
+    static {
+        Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+        CACHE_MANAGER.removeCache(CACHE_KEY);
+        CACHE_MANAGER.addCache(cache);
+    }
+
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException on error
@@ -238,6 +254,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
+        setProprietaryTrialIndicator(spDTO.isProprietaryTrial() ? "true" : "false");
     }
 
     /**
@@ -264,6 +281,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException exception
      */
     public String create() throws PAException {
+        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         loadForm();
         setNewParticipation(true);
@@ -463,6 +481,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException  exception
      */
     public String edit() throws PAException {
+        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
         setCurrentAction("edit");
         StudySiteDTO spDto = studySiteService.get(IiConverter.convertToIi(cbValue));
         editOrg = correlationUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
@@ -506,6 +525,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException  exception
      */
     public String delete() throws PAException {
+        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
         clearErrorsAndMessages();
         try {
             deleteSelectedObjects();
@@ -528,8 +548,13 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         studySiteService.delete(IiConverter.convertToIi(objectId));
     }
 
+    @SuppressWarnings("unchecked")
     private void loadForm() throws PAException {
-        loadProprietaryIndicator();
+        Element cachedOrgList = CACHE_MANAGER.getCache(CACHE_KEY).get(spIi);
+        if (cachedOrgList != null) {
+            setOrganizationList((List<PaOrganizationDTO>) cachedOrgList.getObjectValue());
+            return;
+        }
         organizationList = new ArrayList<PaOrganizationDTO>();
         List<ParticipatingOrgDTO> orgList = participatingOrgService.getTreatingSites(IiConverter.convertToLong(spIi));
         for (ParticipatingOrgDTO dto : orgList) {
@@ -577,6 +602,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             orgWebDTO.setPrimarycontact(primaryContactDisplay.toString());
             organizationList.add(orgWebDTO);
         }
+        Element element = new Element(spIi, organizationList);
+        CACHE_MANAGER.getCache(CACHE_KEY).put(element);
     }
 
     private String convertInvestigators(final Long studySiteId) throws PAException {
@@ -615,24 +642,10 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     }
 
     /**
-     * @throws PAException
-     */
-    private void loadProprietaryIndicator() throws PAException {
-        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
-        if (!ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
-                && studyProtocolDTO.getProprietaryTrialIndicator().getValue()) {
-            setProprietaryTrialIndicator("true");
-        } else {
-            setProprietaryTrialIndicator("false");
-        }
-    }
-
-    /**
      * @return the organizationList
      * @throws PAException on error.
      */
     public String displayOrg() throws PAException {
-        loadProprietaryIndicator();
         //gov.nih.nci.pa.dto.OrganizationDTO paOrgDTO = new gov.nih.nci.pa.dto.OrganizationDTO();
         PaOrganizationDTO paOrgDTO = new PaOrganizationDTO();
         clearErrorsAndMessages();
@@ -1327,16 +1340,9 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      return "proprietaryEdit";
     }
     /**
-     *
      * @return s
      */
     public String proprietaryCreate() {
-        try {
-            loadProprietaryIndicator();
-        } catch (PAException e) {
-            LOG.error(e);
-            addActionError(e.getMessage());
-        }
         return "proprietaryCreate";
     }
     /**
