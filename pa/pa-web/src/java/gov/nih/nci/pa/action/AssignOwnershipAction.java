@@ -185,9 +185,11 @@ public class AssignOwnershipAction extends ActionSupport {
     private String changeOwnershipHelper(boolean assign, Long userId, Long trialId) throws PAException {
        if (assign) {
            PaRegistry.getRegistryUserService().assignOwnership(userId, trialId);
+           PaRegistry.getMailManagerService().sendTrialOwnershipAddEmail(userId, trialId);
            return getText("assignOwnership.assign.success");
        }
        PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
+       PaRegistry.getMailManagerService().sendTrialOwnershipRemoveEmail(userId, trialId);
        return getText("assignOwnership.remove.success");
     }
 
