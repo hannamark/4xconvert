@@ -170,6 +170,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
     public String removeOwnership() throws PAException {
         try {
             PaRegistry.getRegistryUserService().removeOwnership(userId, trialId);
+            PaRegistry.getMailManagerService().sendTrialOwnershipRemoveEmail(userId, trialId);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, "Trial ownership successfully removed");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
