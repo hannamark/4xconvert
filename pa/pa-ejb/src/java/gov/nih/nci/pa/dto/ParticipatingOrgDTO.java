@@ -5,6 +5,7 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author Hugh Reinhart
@@ -22,6 +23,9 @@ public class ParticipatingOrgDTO implements Serializable {
     private Timestamp recruitmentStatusDate;
     private Integer targetAccrualNumber;
     private String programCodeText;
+    private List<PaPersonDTO> primaryContacts;
+    private List<PaPersonDTO> principalInvestigators;
+    private List<PaPersonDTO> subInvestigators;
 
     /**
      * @return the studySiteId
@@ -133,5 +137,47 @@ public class ParticipatingOrgDTO implements Serializable {
      */
     public void setProgramCodeText(String programCodeText) {
         this.programCodeText = programCodeText;
+    }
+
+    /**
+     * @return the primaryContacts
+     */
+    public List<PaPersonDTO> getPrimaryContacts() {
+        return primaryContacts;
+    }
+
+    /**
+     * @param primaryContacts the primaryContacts to set
+     */
+    public void setPrimaryContacts(List<PaPersonDTO> primaryContacts) {
+        this.primaryContacts = primaryContacts;
+    }
+
+    /**
+     * @return the principalInvestigators
+     */
+    public List<PaPersonDTO> getPrincipalInvestigators() {
+        return principalInvestigators;
+    }
+
+    /**
+     * @param principalInvestigators the principalInvestigators to set
+     */
+    public void setPrincipalInvestigators(List<PaPersonDTO> principalInvestigators) {
+        this.principalInvestigators = principalInvestigators;
+    }
+
+    /**
+     * @return the subInvestigators
+     */
+    public List<PaPersonDTO> getSubInvestigators() {
+        return subInvestigators;
+    }
+
+    /**
+     * @param subInvestigators the subInvestigators to set
+     */
+    public void setSubInvestigators(List<PaPersonDTO> subInvestigators) {
+        this.subInvestigators = subInvestigators;
     }
 }

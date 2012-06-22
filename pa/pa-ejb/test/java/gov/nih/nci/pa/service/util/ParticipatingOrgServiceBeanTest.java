@@ -78,142 +78,101 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.Person;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.PaPersonDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Harsha
- * @since 10/09/2008 
+ * @author Hugh Reinhart
+ * @since Jun 20, 2012
  */
-@Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
-    private static final int THREE = 3;
-    private static final String PERSON_BY_STUDY_SITE_ID_QUERY = "select sp, spc, hcp, p from StudySite as sp  "
-            + " join sp.studySiteContacts as spc join spc.clinicalResearchStaff as hcp "
-            + " join hcp.person as p where sp.id in (:ids) and spc.roleCode = :roleCode";
+public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
 
-    private static final String IDENTIFIER_BY_SPC_ID_QUERY = "select spc, hcp from StudySiteContact as spc"
-            + " join spc.clinicalResearchStaff as hcp"
-            + " where spc.id = :id and spc.roleCode <> :roleCode";
+    private ParticipatingOrgServiceBean bean;
+    private StudySiteAccrualStatusServiceLocal ssas;
+    private PAHealthCareProviderRemote paHcp;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
-        if (id == null) {
-            return new ArrayList<PaPersonDTO>();
-        }
-        Long[] ids = new Long[1];
-        ids[0] = id;
-        List<PaPersonDTO> result = getPersonsByStudySiteId(ids, roleCd).get(id);
-        return result == null ? new ArrayList<PaPersonDTO>() : result;
+    @Before
+    public void setup() throws Exception {
+        bean = new ParticipatingOrgServiceBean();
+        ssas = mock(StudySiteAccrualStatusServiceLocal.class);
+        when(ssas.getCurrentStudySiteAccrualStatus(any(Long[].class))).thenReturn(
+                new HashMap<Long, StudySiteAccrualStatus>());
+        paHcp = mock(PAHealthCareProviderRemote.class);
+        when(paHcp.getPersonsByStudySiteId(any(Long[].class), any(String.class))).thenReturn(
+                new HashMap<Long, List<PaPersonDTO>>());
+        bean.setStudySiteAccrualStatusService(ssas);
+        bean.setPaHealthCareProviderService(paHcp);
     }
 
-    private Map<Long, List<PaPersonDTO>> createPersonWebDTO(List<Object> queryList) {
-        Map<Long, List<PaPersonDTO>> retList = new HashMap<Long, List<PaPersonDTO>>();
-        PaPersonDTO personWebDTO;
-        Object[] searchResult = null;
-        for (int i = 0; i < queryList.size(); i++) {
-            searchResult = (Object[]) queryList.get(i);
-            if (searchResult == null) {
-                break;
-            }
-            Long studySiteId = ((StudySite) searchResult[0]).getId();
-            if (retList.get(studySiteId) == null) {
-                retList.put(studySiteId, new ArrayList<PaPersonDTO>());
-            }
-            personWebDTO = new PaPersonDTO();
-            personWebDTO.setFirstName(((Person) searchResult[THREE]).getFirstName());
-            personWebDTO.setLastName(((Person) searchResult[THREE]).getLastName());
-            personWebDTO.setMiddleName(((Person) searchResult[THREE]).getMiddleName());
-            personWebDTO.setId(((StudySiteContact) searchResult[1]).getId());
-            personWebDTO.setRoleName((((StudySiteContact) searchResult[1]).getRoleCode()));
-            personWebDTO.setTelephone((((StudySiteContact) searchResult[1]).getPhone()));
-            personWebDTO.setEmail((((StudySiteContact) searchResult[1]).getEmail()));
-            personWebDTO.setSelectedPersId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
-            personWebDTO.setPaPersonId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
-            personWebDTO.setStatusCode((((StudySiteContact) searchResult[1]).getStatusCode()));
-            retList.get(studySiteId).add(personWebDTO);
-        }
-        return retList;
+    @Test
+    public void getTreatingSitesNoData() throws Exception {
+        List<ParticipatingOrgDTO> rList = bean.getTreatingSites(-1L);
+        assertTrue(rList.isEmpty());
+        rList = bean.getTreatingSites(null);
+        assertTrue(rList.isEmpty());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public PaPersonDTO getIdentifierBySPCId(Long id) throws PAException {
-        // HealthCareProvider
-        ClinicalResearchStaff careProvider = null;
-        PaPersonDTO personWebDTO = new PaPersonDTO();
-        Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery(IDENTIFIER_BY_SPC_ID_QUERY);
-        query.setLong("id", id);
-        query.setString("roleCode", "STUDY_PRIMARY_CONTACT");
-        for (Object[] searchResult : (List<Object[]>) query.list()) {
-            if (searchResult == null) {
-                return null;
-            }
-            careProvider = ((ClinicalResearchStaff) searchResult[1]);
-            personWebDTO.setFirstName(careProvider.getPerson().getFirstName());
-            personWebDTO.setLastName(careProvider.getPerson().getLastName());
-            personWebDTO.setMiddleName(careProvider.getPerson().getMiddleName());
-            personWebDTO.setSelectedPersId(Long.valueOf(careProvider.getPerson().getIdentifier()));
-            personWebDTO.setPaPersonId(careProvider.getPerson().getId());
-            break;
-        }
-        return personWebDTO;
-    }
+    @Test
+    public void getTreatingSites() throws Exception {
+        TestSchema.primeData();
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        Long ssId = TestSchema.studySiteIds.get(0);
+        Map<Long, StudySiteAccrualStatus> rMap = new HashMap<Long, StudySiteAccrualStatus>();
+        StudySiteAccrualStatus r = new StudySiteAccrualStatus();
+        StudySite ss = new StudySite();
+        ss.setId(ssId);
+        r.setStudySite(ss);
+        r.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        r.setStatusDate(new Timestamp((new Date()).getTime()));
+        rMap.put(ssId, r);
+        when(ssas.getCurrentStudySiteAccrualStatus(any(Long[].class))).thenReturn(rMap);
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Map<Long, List<PaPersonDTO>> getPersonsByStudySiteId(Long[] ids, String roleCd) throws PAException {
-        if (ArrayUtils.isEmpty(ids)) {
-            return new HashMap<Long, List<PaPersonDTO>>();
-        }
-        Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery(PERSON_BY_STUDY_SITE_ID_QUERY);
-        query.setParameterList("ids", ids);
-        query.setString("roleCode", roleCd);
-        List<Object> rslt;
-        try {
-            rslt = query.list();
-        } catch (HibernateException e) {
-            throw new PAException(e);
-        }
-        return createPersonWebDTO(rslt);
+        Map<Long, List<PaPersonDTO>> pimap = new HashMap<Long, List<PaPersonDTO>>();
+        List<PaPersonDTO> pis = new ArrayList<PaPersonDTO>();
+        pis.add(new PaPersonDTO());
+        pimap.put(ssId, pis);
+        when(paHcp.getPersonsByStudySiteId(any(Long[].class),
+                eq(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName()))).thenReturn(pimap);
+
+        List<ParticipatingOrgDTO> rList = bean.getTreatingSites(spId);
+        assertEquals(1, rList.size());
+
+        StudySite hdbSs = (StudySite) PaHibernateUtil.getCurrentSession().get(StudySite.class, ssId);
+        assertEquals(hdbSs.getId(), rList.get(0).getStudySiteId());
+        assertEquals(hdbSs.getStatusCode(), rList.get(0).getStatusCode());
+        assertEquals(hdbSs.getTargetAccrualNumber(), rList.get(0).getTargetAccrualNumber());
+        assertEquals(hdbSs.getProgramCodeText(), rList.get(0).getProgramCodeText());
+        assertEquals(hdbSs.getHealthCareFacility().getOrganization().getName(), rList.get(0).getName());
+        assertEquals(hdbSs.getHealthCareFacility().getOrganization().getIdentifier(), rList.get(0).getPoId());
+        assertEquals(r.getStatusCode(), rList.get(0).getRecruitmentStatus());
+        assertEquals(r.getStatusDate(), rList.get(0).getRecruitmentStatusDate());
+        assertEquals(0, rList.get(0).getPrimaryContacts().size());
+        assertEquals(1, rList.get(0).getPrincipalInvestigators().size());
+        assertEquals(0, rList.get(0).getSubInvestigators().size());
     }
 
 }

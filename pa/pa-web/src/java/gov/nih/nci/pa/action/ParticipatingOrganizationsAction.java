@@ -570,10 +570,9 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                     .toString());
             orgWebDTO.setStatus(dto.getStatusCode().getCode());
             orgWebDTO.setProgramCode(dto.getProgramCodeText());
-            orgWebDTO.setInvestigator(convertInvestigators(dto.getStudySiteId()));
+            orgWebDTO.setInvestigator(convertInvestigators(dto.getPrincipalInvestigators(), dto.getSubInvestigators()));
 
-            List<PaPersonDTO> primaryContacts = paHealthCareProviderService
-                    .getPersonsByStudySiteId(dto.getStudySiteId(), StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
+            List<PaPersonDTO> primaryContacts = dto.getPrimaryContacts();
             StringBuffer primaryContactDisplay = new StringBuffer();
             for (PaPersonDTO primaryContact : primaryContacts) {
                 String fullName = StringUtils.defaultString(primaryContact.getFullName());
@@ -606,14 +605,10 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         CACHE_MANAGER.getCache(CACHE_KEY).put(element);
     }
 
-    private String convertInvestigators(final Long studySiteId) throws PAException {
+    private String convertInvestigators(List<PaPersonDTO> pis, List<PaPersonDTO> sis) throws PAException {
         StringBuffer invList = new StringBuffer();
-        List<PaPersonDTO> principalInvestigators = paHealthCareProviderService
-            .getPersonsByStudySiteId(studySiteId, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
-        getInvestigatorDisplayString(invList, principalInvestigators);
-        List<PaPersonDTO> sublInvestigators = paHealthCareProviderService
-            .getPersonsByStudySiteId(studySiteId, StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
-        getInvestigatorDisplayString(invList, sublInvestigators);
+        getInvestigatorDisplayString(invList, pis);
+        getInvestigatorDisplayString(invList, sis);
         return invList.toString();
     }
 

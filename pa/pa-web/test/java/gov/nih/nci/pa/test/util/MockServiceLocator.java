@@ -886,10 +886,18 @@ public class MockServiceLocator implements ServiceLocator {
         r1.setStatusCode(FunctionalRoleStatusCode.PENDING);
         r1.setStudySiteId(1L);
         r1.setTargetAccrualNumber(100);
+        List<PaPersonDTO> personList = new ArrayList<PaPersonDTO>();
+        personList.add(new PaPersonDTO());
+        r1.setPrimaryContacts(personList);
+        r1.setPrincipalInvestigators(personList);
+        r1.setSubInvestigators(personList);
         rList.add(r1);
         ParticipatingOrgDTO r2 = new ParticipatingOrgDTO();
         r2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         r2.setStudySiteId(2L);
+        r2.setPrimaryContacts(new ArrayList<PaPersonDTO>());
+        r2.setPrincipalInvestigators(new ArrayList<PaPersonDTO>());
+        r2.setSubInvestigators(new ArrayList<PaPersonDTO>());
         rList.add(r2);
         try {
             when(svc.getTreatingSites(any(Long.class))).thenReturn(rList);

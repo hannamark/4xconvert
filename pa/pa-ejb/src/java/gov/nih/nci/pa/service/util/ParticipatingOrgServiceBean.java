@@ -2,7 +2,9 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -32,6 +34,8 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
 
     @EJB
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    @EJB
+    private PAHealthCareProviderRemote paHealthCareProviderService;
 
     private static final String HQL =
             "select ss, org.name, org.identifier "
@@ -53,6 +57,9 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
     @SuppressWarnings("unchecked")
     @Override
     public List<ParticipatingOrgDTO> getTreatingSites(Long studyProtocolId) throws PAException {
+        if (studyProtocolId == null) {
+            return new ArrayList<ParticipatingOrgDTO>();
+        }
         List<ParticipatingOrgDTO> result = new ArrayList<ParticipatingOrgDTO>();
         List<Long> studySiteIds = new ArrayList<Long>();
         try {
@@ -75,15 +82,27 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
         } catch (Exception e) {
             throw new PAException(e);
         }
+        Long[] ssIdArray = studySiteIds.toArray(new Long[studySiteIds.size()]);
         Map<Long, StudySiteAccrualStatus> siteStatuses =
-                studySiteAccrualStatusService.getCurrentStudySiteAccrualStatus((studySiteIds
-                        .toArray(new Long[studySiteIds.size()])));
+                studySiteAccrualStatusService.getCurrentStudySiteAccrualStatus(ssIdArray);
+        Map<Long, List<PaPersonDTO>> pcs =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
+        Map<Long, List<PaPersonDTO>> pis =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+        Map<Long, List<PaPersonDTO>> sis =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
         for (ParticipatingOrgDTO org : result) {
             StudySiteAccrualStatus ssas = siteStatuses.get(org.getStudySiteId());
             if (ssas != null) {
                 org.setRecruitmentStatus(ssas.getStatusCode());
                 org.setRecruitmentStatusDate(ssas.getStatusDate());
             }
+            org.setPrimaryContacts(getPeople(pcs.get(org.getStudySiteId())));
+            org.setPrincipalInvestigators(getPeople(pis.get(org.getStudySiteId())));
+            org.setSubInvestigators(getPeople(sis.get(org.getStudySiteId())));
         }
         return result;
     }
@@ -94,5 +113,15 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
     public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
         this.studySiteAccrualStatusService = studySiteAccrualStatusService;
     }
-    
+
+    /**
+     * @param paHealthCareProviderService the paHealthCareProviderService to set
+     */
+    public void setPaHealthCareProviderService(PAHealthCareProviderRemote paHealthCareProviderService) {
+        this.paHealthCareProviderService = paHealthCareProviderService;
+    }
+
+    private List<PaPersonDTO> getPeople(List<PaPersonDTO> people) {
+        return people == null ? new ArrayList<PaPersonDTO>() : people;
+    }
 }

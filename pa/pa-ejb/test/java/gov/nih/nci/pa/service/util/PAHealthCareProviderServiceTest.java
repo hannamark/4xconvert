@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -105,8 +106,8 @@ import org.junit.Test;
  */
 public class PAHealthCareProviderServiceTest extends AbstractHibernateTestCase {
 
-    private PAHealthCareProviderServiceBean bean = new PAHealthCareProviderServiceBean();
-    private PAHealthCareProviderRemote remoteEjb = bean;
+    private final PAHealthCareProviderServiceBean bean = new PAHealthCareProviderServiceBean();
+    private final PAHealthCareProviderRemote remoteEjb = bean;
     private Long ssId = null;
 
     @Before
@@ -135,6 +136,14 @@ public class PAHealthCareProviderServiceTest extends AbstractHibernateTestCase {
         spcc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         TestSchema.addUpdObject(spcc);
     }
+
+    @Test
+    public void getPersonsByStudyParticpationIdNoDataTest() throws Exception {
+        assertTrue(remoteEjb.getPersonsByStudySiteId((Long) null, "SUBMITTER").isEmpty());
+        assertEquals(0, remoteEjb.getPersonsByStudySiteId((Long[]) null, "SUBMITTER").size());
+        assertEquals(0, remoteEjb.getPersonsByStudySiteId(new Long[0], "SUBMITTER").size());
+    }
+
     @Test
     public void getPersonsByStudyParticpationIdTest() throws Exception {
         List<PaPersonDTO> data = remoteEjb.getPersonsByStudySiteId(Long.valueOf(1),

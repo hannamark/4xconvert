@@ -84,6 +84,7 @@ import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 
@@ -106,8 +107,16 @@ public interface PAHealthCareProviderRemote {
      * @throws PAException on error
      */
     List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException;
-    
-   
+
+    /**
+     * 
+     * @param ids to search
+     * @param roleCd to search
+     * @return Lists of personWebDTO
+     * @throws PAException on error
+     */
+    Map<Long, List<PaPersonDTO>> getPersonsByStudySiteId(Long[] ids, String roleCd) throws PAException;
+
     /**
      *  
      * @param id the study participation id
