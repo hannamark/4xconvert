@@ -338,7 +338,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         studySubjectDTO.setPaymentMethodCode(CdConverter.convertToCd(
                 CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
         studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
-        studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
         if (dto.getDiseaseIdentifier() != null) {
             if (PaServiceLocator.getInstance().getDiseaseService().get(dto.getDiseaseIdentifier()) != null) {
                 studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());

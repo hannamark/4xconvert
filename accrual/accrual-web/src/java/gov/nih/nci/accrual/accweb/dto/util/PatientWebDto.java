@@ -187,14 +187,14 @@ public class PatientWebDto {
     }
 
     /**
-     * Constructor for new records status is always pending.
+     * Constructor for new records status is always active.
      * @param studyProtocolIi study protocol id
      * @param unitedStatesId country id of the United States
      */
     public PatientWebDto(Ii studyProtocolIi, Long unitedStatesId) {
         studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
         countryIdentifier = unitedStatesId;
-        statusCode = FunctionalRoleStatusCode.PENDING.getCode();
+        statusCode = FunctionalRoleStatusCode.ACTIVE.getCode();
     }
 
     /**
@@ -266,7 +266,7 @@ public class PatientWebDto {
         pat.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.getByCode(getEthnicCode())));
         pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
         pat.setRaceCode(DSetEnumConverter.convertSetToDSet(getRaceCode()));
-        pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));
         pat.setAssignedIdentifier(IiConverter.convertToIi(getPoIdentifier()));

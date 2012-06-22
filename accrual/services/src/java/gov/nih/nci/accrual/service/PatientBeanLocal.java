@@ -249,7 +249,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
         //PO generated Player identifier
         bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
         updatePOPatientDetails(dto);
-        bo.setStatusCode(StructuralRoleStatusCode.PENDING);
+        bo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         return bo;
     }

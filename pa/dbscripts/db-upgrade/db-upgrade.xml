@@ -971,4 +971,8 @@
         <comment>Add new email template</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-3490.sql"/>
      </changeSet>
+     <changeSet id="PO-5119" author="Hugh">
+        <comment>Change patients to active status.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5119.sql"/>
+     </changeSet>
 </databaseChangeLog>
