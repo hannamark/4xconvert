@@ -236,4 +236,17 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         return getUserById(userId);
     }
 
+    
+    public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
+            throws PAException {    
+        return false;
+    }
+
+    
+    public void setEmailNotificationsPreference(Long userId, Long trialId,
+            boolean enableEmails) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

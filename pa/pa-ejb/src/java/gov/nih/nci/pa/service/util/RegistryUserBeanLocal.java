@@ -112,6 +112,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -121,6 +122,7 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;
@@ -608,6 +610,42 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             throw new PAException(cse);
         }
         return registryUser;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
+            throws PAException {
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            SQLQuery query = session
+                    .createSQLQuery("select enable_emails from study_owner where study_id="
+                            + trialId + " and user_id=" + userId);
+            List<Boolean> results = query.list();
+            if (!results.isEmpty()) {
+                return results.get(0);
+            }
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
+        return true;
+    }
+
+    @Override
+    public void setEmailNotificationsPreference(Long userId, Long trialId,
+            boolean enableEmails) throws PAException {
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            SQLQuery query = session
+                    .createSQLQuery("update study_owner set enable_emails="
+                            + enableEmails + " where study_id=" + trialId
+                            + " and user_id=" + userId);
+            if (query.executeUpdate() < 1) {
+                throw new PAException("Missing study_owner record.");
+            }
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
     }
 
 }

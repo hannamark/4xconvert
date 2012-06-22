@@ -149,6 +149,12 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         CSMUserService.setInstance(csmSvc);
 
         paHibernateHelper = PaHibernateUtil.getHibernateHelper();
+        
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
+                .executeUpdate();      
     }
 
     @Test
@@ -431,6 +437,55 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertNotNull("No result returned", loginNames);
         assertEquals("Wrong result size", 1, loginNames.size());
         assertEquals("Wrong name returned", "randomUserTest", loginNames.get(0).getCsmUser().getLoginName());
+    }
+    
+    @Test
+    public void isEmailNotificationsEnabled() throws PAException {
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        assertTrue(remoteEjb.isTrialOwner(userId, spId));
+
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update study_owner set enable_emails=false"
+                                + " where study_id=" + spId + " and user_id="
+                                + userId).executeUpdate();
+        assertFalse(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update study_owner set enable_emails=true"
+                                + " where study_id=" + spId + " and user_id="
+                                + userId).executeUpdate();
+        assertTrue(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+
+    }
+    
+    @Test
+    public void setEmailNotificationsPreference() throws PAException {
+        Long spId = TestRegistryUserSchema.studyProtocolId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignOwnership(userId, spId);
+        assertTrue(remoteEjb.isTrialOwner(userId, spId));
+
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update study_owner set enable_emails=false"
+                                + " where study_id=" + spId + " and user_id="
+                                + userId).executeUpdate();
+        assertFalse(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+        remoteEjb.setEmailNotificationsPreference(userId, spId, true);
+        assertTrue(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+        assertTrue(PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "select enable_emails from study_owner"
+                                + " where study_id=" + spId + " and user_id="
+                                + userId).list().get(0).equals(Boolean.TRUE));
     }
 
 }

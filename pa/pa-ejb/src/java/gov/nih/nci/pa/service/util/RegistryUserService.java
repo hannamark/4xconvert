@@ -264,4 +264,28 @@ public interface RegistryUserService {
      * @throws PAException PAException
      */
     RegistryUser getPartialUserById(Long userId) throws PAException;
+
+    /**
+     * Determines whether email notifications for the given trial ownership are enabled.
+     * @param userId userId
+     * @param trialId trialId
+     * @return isEmailNotificationsEnabled
+     * @exception PAException PAException
+     */
+    boolean isEmailNotificationsEnabled(Long userId, Long trialId) throws PAException;
+    
+    /**
+     * Sets email notifications preference for the given trial ownership record.
+     * 
+     * @param userId
+     *            userId
+     * @param trialId
+     *            trialId
+     * @param enableEmails
+     *            enableEmails
+     * @exception PAException
+     *                PAException
+     */
+    void setEmailNotificationsPreference(Long userId, Long trialId,
+            boolean enableEmails) throws PAException;   
 }

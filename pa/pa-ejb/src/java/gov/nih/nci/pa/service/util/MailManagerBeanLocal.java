@@ -151,6 +151,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -170,6 +171,7 @@ import org.xml.sax.SAXException;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(PaHibernateSessionInterceptor.class)
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     private static final String USER_NAME = "${name}";
@@ -937,16 +939,34 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         return new ArrayList<String>(emails);
     }
 
-    private Set<RegistryUser> getStudyOwners(StudyProtocolQueryDTO spDTO) throws PAException {
+    private Set<RegistryUser> getStudyOwners(final StudyProtocolQueryDTO spDTO)
+            throws PAException {
         Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
         try {
-            StudyProtocol studyProtocol = (StudyProtocol) PaHibernateUtil.getCurrentSession()
-                .get(StudyProtocol.class, spDTO.getStudyProtocolId());
+            StudyProtocol studyProtocol = (StudyProtocol) PaHibernateUtil
+                    .getCurrentSession().get(StudyProtocol.class,
+                            spDTO.getStudyProtocolId());
             if (studyProtocol != null) {
-                studyOwners = studyProtocol.getStudyOwners();
+                studyOwners.addAll(studyProtocol.getStudyOwners());
             }
+
+            CollectionUtils.filter(studyOwners, new Predicate() {
+                @Override
+                public boolean evaluate(Object obj) {
+                    RegistryUser user = (RegistryUser) obj;
+                    try {
+                        return registryUserService.isEmailNotificationsEnabled(
+                                user.getId(), spDTO.getStudyProtocolId());
+                    } catch (PAException e) {
+                        LOG.error(e, e);
+                        return true;
+                    }
+                }
+            });
         } catch (Exception e) {
-            throw new PAException("Error retrieving Study Protocol with Identifier = " + spDTO.getStudyProtocolId(), e);
+            throw new PAException(
+                    "Error retrieving Study Protocol with Identifier = "
+                            + spDTO.getStudyProtocolId(), e);
         }
         return studyOwners;
     }
@@ -1221,6 +1241,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     private void sendTrialOwnershipChangeEmail(Long userID, Long trialID,
             String mailBody, String mailSubject) throws PAException { // NOPMD
+        
+        if (!registryUserService.isEmailNotificationsEnabled(userID, trialID)) {
+            return;
+        }
+        
         RegistryUser user = registryUserService.getUserById(userID);
         StudyProtocolQueryDTO spDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(trialID);

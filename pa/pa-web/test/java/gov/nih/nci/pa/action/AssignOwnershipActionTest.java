@@ -90,7 +90,7 @@ public class AssignOwnershipActionTest extends AbstractPaActionTest {
         getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,ii);
         assertEquals("success",action.view());
 
-        assertEquals("LAST NAME", action.getTrialOwners().iterator().next().getLastName());
+        assertEquals("LAST NAME", action.getTrialOwners().iterator().next().getRegUser().getLastName());
 
     }
     @Test

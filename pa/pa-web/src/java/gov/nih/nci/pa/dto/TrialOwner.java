@@ -12,6 +12,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 public class TrialOwner {
     private RegistryUser regUser;
     private boolean owner;
+    private boolean enableEmails;
     /**
      * @param regUser the regUser to set
      */
@@ -35,5 +36,17 @@ public class TrialOwner {
      */
     public boolean isOwner() {
         return owner;
+    }
+    /**
+     * @return the enableEmails
+     */
+    public boolean isEnableEmails() {
+        return enableEmails;
+    }
+    /**
+     * @param enableEmails the enableEmails to set
+     */
+    public void setEnableEmails(boolean enableEmails) {
+        this.enableEmails = enableEmails;
     }
 }

@@ -101,7 +101,6 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -117,9 +116,10 @@ public class AssignOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<TrialOwner> users = null;
     private AssignOwnershipSearchCriteria criteria = new AssignOwnershipSearchCriteria();
-    private Set<RegistryUser> trialOwners = null;
+    private List<TrialOwner> trialOwners = null;
     private RegistryUserService regUserSvc;
     private OrganizationEntityServiceRemote orgEntSvc;
+    private boolean enableEmails;
 
     /**
      * @return string
@@ -127,8 +127,15 @@ public class AssignOwnershipAction extends ActionSupport {
     public String view() {
         Long id = IiConverter.convertToLong((Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II));
-        try {
-            trialOwners = getRegistryUserService().getAllTrialOwners(id);
+        try {            
+            trialOwners = new ArrayList<TrialOwner>();
+            for (RegistryUser regUser : getRegistryUserService().getAllTrialOwners(id)) {
+                TrialOwner owner = new TrialOwner();
+                owner.setRegUser(regUser);  
+                owner.setEnableEmails(getRegistryUserService()
+                        .isEmailNotificationsEnabled(regUser.getId(), id));
+                trialOwners.add(owner);
+            }            
         } catch (PAException e) {
             addActionError("Unable to lookup trial owners for study protocol " + id);
         }
@@ -152,6 +159,28 @@ public class AssignOwnershipAction extends ActionSupport {
      public String save() {
          return changeOwnership(true);
     }
+     
+    /**
+     * 
+     * @return string
+     * @throws PAException PAException
+     * 
+     */
+    public String saveEmailPreference() throws PAException {
+        Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
+        PaRegistry.getRegistryUserService().setEmailNotificationsPreference(
+                Long.parseLong(getUserId()), IiConverter.convertToLong(spIi),
+                enableEmails);
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    private String getUserId() {
+        return ServletActionContext.getRequest().getParameter("userId");
+    }     
 
     /**
     * Remove owner of trial.
@@ -162,7 +191,7 @@ public class AssignOwnershipAction extends ActionSupport {
     }
 
     private String changeOwnership(boolean assign) {
-        String userId = ServletActionContext.getRequest().getParameter("userId");
+        String userId = getUserId();
         Ii spIi = (Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II);
         String successMessage = null;
@@ -275,7 +304,7 @@ public class AssignOwnershipAction extends ActionSupport {
     /**
      * @return the trial owners
      */
-    public Set<RegistryUser> getTrialOwners() {
+    public List<TrialOwner> getTrialOwners() {
         return trialOwners;
     }
 
@@ -307,6 +336,20 @@ public class AssignOwnershipAction extends ActionSupport {
      */
     public void setRegistryUserService(RegistryUserService svc) {
         regUserSvc = svc;
+    }
+
+    /**
+     * @return the enableEmails
+     */
+    public boolean isEnableEmails() {
+        return enableEmails;
+    }
+
+    /**
+     * @param enableEmails the enableEmails to set
+     */
+    public void setEnableEmails(boolean enableEmails) {
+        this.enableEmails = enableEmails;
     }
 
 }

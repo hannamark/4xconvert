@@ -58,6 +58,31 @@
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
+            
+            function setEmailNotificationsPreference(userId, enableEmails) {
+                $('ajaxIndicator').show();
+                $('orderSaveConfirmation').hide(); 
+                $('orderSaveError').hide(); 
+
+                var ajaxReq = new Ajax.Request('assignOwnershipsaveEmailPreference.action', {
+                    method: 'post',
+                    parameters: 'userId='+userId+'&enableEmails='+enableEmails,
+                    onSuccess: function(transport) {
+                        $('ajaxIndicator').hide();
+                        $('orderSaveConfirmation').show();
+                    },
+                    onFailure: function(transport) {
+                        $('ajaxIndicator').hide();   
+                        $('orderSaveError').show();
+                    },
+                    onException: function(requesterObj, exceptionObj) {
+                        ajaxReq.options.onFailure(null);
+                    },
+                    on0: function(transport) {
+                        ajaxReq.options.onFailure(transport);
+                    }
+                });
+            }         
 
         </script>
     </head>
@@ -68,25 +93,47 @@
             
         <s:set name="trialOwners" value="trialOwners" scope="request"/>
         <s:label key="trialOwners.title"/>
+        
+        
         <div class="box">
+
+          <div id="ajaxIndicator" class="info" style="display: none;">
+                <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="assignOwnership.saving"/>
+          </div>
+          <div class="confirm_msg" style="display: none;" id="orderSaveConfirmation">
+              <strong>Message.</strong>&nbsp;<fmt:message key="assignOwnership.saved"/>
+          </div>
+          <div class="error_msg" style="display: none;" id="orderSaveError">
+              <strong>Message.</strong>&nbsp;<fmt:message key="assignOwnership.error"/>
+          </div>         
+
+        
             <display:table class="data" pagesize="10" id="row" name="trialOwners" requestURI="assignOwnershipsearch.action" export="false">
                 <display:column titleKey="pending.userFirstName" sortable="true" headerClass="sortable">
-                    <c:out value="${row.firstName}"/> 
-                    <c:out value="${row.lastName}"/>
+                    <c:out value="${row.regUser.firstName}"/> 
+                    <c:out value="${row.regUser.lastName}"/>
                 </display:column>
                 <display:column titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
-                    <a href="<c:out value="${row.emailAddress}"/>"><c:out value="${row.emailAddress}"/></a>
+                    <a href="<c:out value="${row.regUser.emailAddress}"/>"><c:out value="${row.regUser.emailAddress}"/></a>
                 </display:column>
-                <display:column titleKey="user.phone" property="phone" sortable="true" headerClass="sortable" />       
+                <display:column titleKey="user.phone" property="regUser.phone" sortable="true" headerClass="sortable" />       
                 <display:column titleKey="user.address" sortable="true" headerClass="sortable" >
-                    <c:out value="${row.addressLine}"/><br/>
-                    <c:out value="${row.city}"/>
-                    <c:out value="${row.state}"/>
-                    <c:out value="${row.postalCode}"/>
-                </display:column>
-                <pa:displayWhenCheckedOut>       
+                    <c:out value="${row.regUser.addressLine}"/><br/>
+                    <c:out value="${row.regUser.city}"/>
+                    <c:out value="${row.regUser.state}"/>
+                    <c:out value="${row.regUser.postalCode}"/>
+                </display:column>                
+                <pa:displayWhenCheckedOut>
+                    <display:column class="title" titleKey="assignOwnership.emailNotifications">
+                        <input type="checkbox" id="email_pref_chk_${row.regUser.id}"
+                            onclick="setEmailNotificationsPreference(${row.regUser.id}, this.checked);"
+                            <c:if test="${row.enableEmails}">
+                            checked="checked"
+                            </c:if>
+                        >
+                    </display:column>                       
 	                <display:column class="title" titleKey="studyProtocol.action">
-	                    <a href="javascript:void(0)" onclick="removeOwner('${row.id}');">Remove Ownership</a>
+	                    <a href="javascript:void(0)" onclick="removeOwner('${row.regUser.id}');">Remove Ownership</a>
 	                </display:column>
                 </pa:displayWhenCheckedOut>              
             </display:table>

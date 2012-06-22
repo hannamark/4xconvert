@@ -11,6 +11,7 @@ import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -187,7 +188,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      */
     @Override
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
-        return null;
+        return new HashSet();
     }
 
     /**
@@ -226,5 +227,18 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
 
     public RegistryUser getPartialUserById(Long userId) throws PAException {
         return getUserById(userId);
+    }
+
+    
+    public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
+            throws PAException {
+        return false;
+    }
+
+    
+    public void setEmailNotificationsPreference(Long userId, Long trialId,
+            boolean enableEmails) throws PAException {
+    
+        
     }
 }
