@@ -41,6 +41,17 @@
                 return false;
             }
             
+            function updateEmailPref(trialId) {
+                var  url = '/registry/protected/${actionName}updateEmailPref.action';
+                var params = {
+                    selected: $("chkEmail" + trialId).checked ? "true" : "false",
+                    trialId: trialId
+                };
+                var aj = callAjaxPost(null, url, params);
+                return false;
+            }
+            
+            
             function check(field)
             {
                 if (!checked) {
@@ -154,6 +165,19 @@
                                     </c:otherwise>
                                 </c:choose>
                             </display:column>
+                            <c:if test="${enableEmailPrefs=='true'}">
+                                <display:column titleKey="managetrialownership.trials.emails" headerClass="sortable">
+	                                <c:set var="chkEmailTrialId" value="chkEmail${studyProtocolRow.studyProtocol.id}" />
+	                                <c:choose>
+	                                    <c:when test="${studyProtocolRow.emailSelected}">
+	                                        <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" checked="checked" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
+	                                    </c:when>
+	                                    <c:otherwise>
+	                                        <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
+	                                    </c:otherwise>
+	                                </c:choose>
+                                </display:column>                            
+                            </c:if>
                         </display:table>
                     </td>
                     <td scope="row" class="label">&nbsp;</td>

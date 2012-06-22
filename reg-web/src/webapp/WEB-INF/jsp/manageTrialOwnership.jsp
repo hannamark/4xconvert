@@ -3,4 +3,5 @@
 <c:set scope="request" var="actionName">manageTrialOwnership</c:set>
 <c:set scope="request" var="topicValue">manageownership</c:set>
 <c:set scope="request" var="pageHeaderKey">managetrialownership.page.header</c:set>
+<c:set scope="request" var="enableEmailPrefs">true</c:set>
 <jsp:include page="/WEB-INF/jsp/manageOwnership.jsp"/>

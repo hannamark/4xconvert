@@ -143,20 +143,9 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
         return trials;
     }
 
-    /**
-     * Updates ownership.
-     * 
-     * @param userId
-     *            userId
-     * @param trialID
-     *            tId
-     * @param assign
-     *            assign
-     * @throws PAException
-     *             PAException
-     */
+  
     @Override
-    public void updateOwnership(Long userId, Long trialID, boolean assign)
+    public void updateOwnership(Long userId, Long trialID, boolean assign, boolean enableEmails)
             throws PAException {        
         RegistryUser loggedInUser = getRegistryUser();        
         final Long orgId = loggedInUser.getAffiliatedOrganizationId();

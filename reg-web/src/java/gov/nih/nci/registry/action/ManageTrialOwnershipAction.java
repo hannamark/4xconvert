@@ -117,26 +117,18 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         return trials;
     }
 
-    /**
-     * Updates ownership.
-     * 
-     * @param userId
-     *            userId
-     * @param tId
-     *            tId
-     * @param assign
-     *            assign
-     * @throws PAException
-     *             PAException
-     */
+  
     @Override
-    public void updateOwnership(Long userId, Long tId, boolean assign)
+    public void updateOwnership(Long userId, Long tId, boolean assign, boolean enableEmails)
             throws PAException {
         // check if currently owner or not.
         boolean isOwner = PaRegistry.getRegistryUserService().isTrialOwner(
                 userId, tId);
-        if (assign && !isOwner) {
-            PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+        if (assign) {
+            if (!isOwner) {
+                PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+            }
+            PaRegistry.getRegistryUserService().setEmailNotificationsPreference(userId, tId, enableEmails);
         }
 
         if (!assign && isOwner) {

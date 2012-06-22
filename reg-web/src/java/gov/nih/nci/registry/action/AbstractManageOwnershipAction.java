@@ -27,6 +27,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings({  "PMD.TooManyMethods" })
 public abstract class AbstractManageOwnershipAction extends ActionSupport {
 
+    private static final String CHECKED_VALUE = "checked";
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger
             .getLogger(AbstractManageOwnershipAction.class);
@@ -277,7 +278,34 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             
             for (String id : idsList) {
                 updateSelectedField(Long.valueOf(id));
-                ServletActionContext.getRequest().getSession().setAttribute("checked", checked);                
+                updateEmailPreference(Long.valueOf(id));
+                ServletActionContext.getRequest().getSession().setAttribute(CHECKED_VALUE, checked);                
+            }
+        }
+    }
+    
+    /**
+     * Sets email preference.
+     * 
+     * @throws PAException
+     *             the pa exception
+     */
+    public void updateEmailPref() throws PAException {
+        if (trialId != null) {
+            updateEmailPreference(trialId);
+        }
+    }    
+
+    @SuppressWarnings("unchecked")
+    private void updateEmailPreference(Long tId) {
+        studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
+                .getRequest()
+                .getSession()
+                .getAttribute(
+                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
+        for (SelectedStudyProtocol selSP : studyProtocols) {
+            if (tId.equals(selSP.getStudyProtocol().getId())) {
+                selSP.setEmailSelected(selected);
             }
         }
     }
@@ -315,8 +343,8 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 .getSession()
                 .getAttribute(
                         AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
-        if (ServletActionContext.getRequest().getSession().getAttribute("checked") != null) {
-            checked = (Boolean) ServletActionContext.getRequest().getSession().getAttribute("checked"); 
+        if (ServletActionContext.getRequest().getSession().getAttribute(CHECKED_VALUE) != null) {
+            checked = (Boolean) ServletActionContext.getRequest().getSession().getAttribute(CHECKED_VALUE); 
         }
         return VIEW_RESULTS;
     }
@@ -336,7 +364,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             if (!selectedUserIds.isEmpty() && !selectedTrialIds.isEmpty()) {
                 for (Long userId : selectedUserIds) {
                     for (Long tId : selectedTrialIds) {
-                        updateOwnership(userId, tId, true);
+                        updateOwnership(userId, tId, true, isEmailNotificationsEnabled(tId));
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
@@ -354,6 +382,21 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             throw new PAException(e);
         }
         return view();
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean isEmailNotificationsEnabled(Long tId) {
+        studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
+                .getRequest()
+                .getSession()
+                .getAttribute(
+                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
+        for (SelectedStudyProtocol sp : studyProtocols) {
+            if (sp.getStudyProtocol().getId().equals(tId)) {
+                return sp.isEmailSelected();
+            }
+        }
+        return false;
     }
 
     /**
@@ -381,7 +424,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             if (!selectedUserIds.isEmpty() && !selectedTrialIds.isEmpty()) {
                 for (Long userId : selectedUserIds) {
                     for (Long tId : selectedTrialIds) {
-                        updateOwnership(userId, tId, false);
+                        updateOwnership(userId, tId, false, false);
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
@@ -411,11 +454,13 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      *            tId
      * @param assign
      *            assign
+     * @param enableEmailNotifications enableEmailNotifications
      * @throws PAException
      *             PAException
      */
     public abstract void updateOwnership(Long registryUserID, Long trialID,
-            boolean assign) throws PAException;
+            boolean assign, boolean enableEmailNotifications)
+            throws PAException;
 
     @SuppressWarnings("unchecked")
     private List<Long> getSelectedUserIds() {

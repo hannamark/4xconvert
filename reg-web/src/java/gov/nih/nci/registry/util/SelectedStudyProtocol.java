@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 public class SelectedStudyProtocol {
     private StudyProtocol studyProtocol;
     private boolean selected;
+    private boolean emailSelected;
     private String nciIdentifier;
     private String leadOrgId;
     /**
@@ -142,5 +143,17 @@ public class SelectedStudyProtocol {
      */
     public String getLeadOrgId() {
         return leadOrgId;
+    }
+    /**
+     * @return the emailSelected
+     */
+    public boolean isEmailSelected() {
+        return emailSelected;
+    }
+    /**
+     * @param emailSelected the emailSelected to set
+     */
+    public void setEmailSelected(boolean emailSelected) {
+        this.emailSelected = emailSelected;
     }
 }
