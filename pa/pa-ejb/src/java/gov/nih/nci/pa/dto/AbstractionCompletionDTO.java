@@ -91,11 +91,34 @@ public class AbstractionCompletionDTO {
      * type for warning messages.
      */
     public static final String WARNING_TYPE = "Warning";
-
+    
+    /**
+     * The ErrorMessageTypeEnum enumeration.
+     */      
+    public enum ErrorMessageTypeEnum {
+        /** Administrative Error section. */
+        ADMIN,
+        /** Scientific Error section. */
+        SCIENTIFIC;
+    }
     private String errorCode;
     private String errorDescription;
     private String errorType;
-    private String comment;
+    private String comment;   
+    private ErrorMessageTypeEnum errorMessageType;
+    
+    /**
+     * @return errorMessageType
+     */
+    public ErrorMessageTypeEnum getErrorMessageType() {
+        return errorMessageType;
+    }
+    /**
+     * @param errorMessageType errorMessageType
+     */
+    public void setErrorMessageType(ErrorMessageTypeEnum errorMessageType) {
+        this.errorMessageType = errorMessageType;
+    }
 
     /**
      * @return errorCode

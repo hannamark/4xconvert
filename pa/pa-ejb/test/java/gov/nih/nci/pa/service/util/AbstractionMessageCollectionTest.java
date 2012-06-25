@@ -84,8 +84,8 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 
 import java.util.List;
 
@@ -95,14 +95,14 @@ import org.junit.Test;
  * @author Michael Visee
  */
 public class AbstractionMessageCollectionTest {
-    
+
     private static final String COMMENT1 = "comment1";
     private static final String COMMENT2 = "comment2";
     private static final String DESC1 = "desc1";
     private static final String DESC2 = "desc2";
     private static final String ERROR = "Error";
     private static final String WARNING = "Warning";
-    
+
     /**
      * test the addWarning, addError, getMessage scenario.
      */
@@ -110,15 +110,26 @@ public class AbstractionMessageCollectionTest {
     public void testGetMessages() {
         AbstractionMessageCollection messages = new AbstractionMessageCollection();
         messages.addWarning(COMMENT1, DESC1);
-        messages.addError(COMMENT2, DESC2);
+        messages.addError(COMMENT2, DESC2, ErrorMessageTypeEnum.ADMIN);
         List<AbstractionCompletionDTO> result = messages.getMessages();
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 2, result.size());
-        assertMessage(result.get(0), ERROR, COMMENT2, DESC2);
-        assertMessage(result.get(1), WARNING, COMMENT1, DESC1);
+        assertErrorMessage(result.get(0), ERROR, COMMENT2, DESC2,
+                ErrorMessageTypeEnum.ADMIN);
+        assertWarningMessage(result.get(1), WARNING, COMMENT1, DESC1);
     }
 
-    private void assertMessage(AbstractionCompletionDTO message, String type, String comment, String description) {
+    private void assertErrorMessage(AbstractionCompletionDTO message,
+            String type, String comment, String description,
+            ErrorMessageTypeEnum messageType) {
+        assertEquals("Wrong type of message", type, message.getErrorType());
+        assertEquals("Wrong comment", comment, message.getComment());
+        assertEquals("Wrong description", description, message.getErrorDescription());
+        assertEquals("ADMIN", messageType, ErrorMessageTypeEnum.ADMIN);
+    }
+
+    private void assertWarningMessage(AbstractionCompletionDTO message,
+            String type, String comment, String description) {
         assertEquals("Wrong type of message", type, message.getErrorType());
         assertEquals("Wrong comment", comment, message.getComment());
         assertEquals("Wrong description", description, message.getErrorDescription());

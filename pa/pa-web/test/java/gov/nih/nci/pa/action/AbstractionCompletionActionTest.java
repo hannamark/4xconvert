@@ -260,4 +260,27 @@ public class AbstractionCompletionActionTest {
         list.add(dto);
         return list;
     }
+    
+    /**
+     * Creates an abstraction list with warnings.
+     */
+    @Test
+    public void testgetWarnings() {
+        sut = createAbstractionCompletionAction();
+        sut.setAbstractionList(createAbstractionList("warning"));
+        List<AbstractionCompletionDTO> absWarnings = sut.getWarnings();
+        assertTrue("true", absWarnings.size()>0);
+    }
+    
+    
+    /**
+     * Test the getWarnings method .
+     */
+    @Test
+    public void testgetNoWarnings() {
+        sut = createAbstractionCompletionAction();
+        sut.setAbstractionList(createAbstractionList("error"));
+        List<AbstractionCompletionDTO> absWarnings = sut.getWarnings();
+        assertFalse("true", absWarnings.size()>0);
+    }
 }

@@ -100,12 +100,15 @@ public class AbstractionMessageCollection {
      * Add an error to this message collection.
      * @param comment The error comment
      * @param errorDescription The error description
+     * @param messageTpe The ErrorMessageType Enum
      */
-    public void addError(String comment, String errorDescription) {
+    public void addError(String comment, String errorDescription, 
+            AbstractionCompletionDTO.ErrorMessageTypeEnum messageTpe) {
         AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
         dto.setErrorType(AbstractionCompletionDTO.ERROR_TYPE);
         dto.setComment(comment);
         dto.setErrorDescription(errorDescription);
+        dto.setErrorMessageType(messageTpe);
         errors.add(dto);
     }
 

@@ -43,22 +43,49 @@
                 <s:form name="aForm">
                     <s:actionerror/>
                     <pa:studyUniqueToken/>
-                    <h2>
-                        <s:if test="%{abstractionError==true}">
-                            Abstraction validation failed. Please check error(s).
-                        </s:if>
-                        <s:if test="%{abstractionError==false}">
-                            Abstraction is valid.
-                        </s:if>
-                    </h2>
-                    <s:if test="abstractionList != null">
-                        <s:set name="abstractionList" value="abstractionList" scope="request"/>
-                        <display:table name="abstractionList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
-                            <display:column escapeXml="true" title="Type" property="errorType"  sortable="true" headerClass="sortable" />
-                            <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
-                            <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
-                        </display:table>
+                   <s:if test="%{absAdminError==true}">
+                            <h2>
+                                Abstraction validation failed. Please check Admin Data Menu error(s).
+                            </h2>
+                        <s:if test="abstractionAdminList != null">
+                            <s:set name="abstractionAdminList" value="abstractionAdminList" scope="request"/>
+                            <display:table name="abstractionAdminList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
+                            </display:table>
+                        </s:if>   
                     </s:if>
+                   
+                    <s:if test="%{absScientificError==true}">
+                       <h2>
+                           Abstraction validation failed. Please check Scientific Data Menu error(s).
+                       </h2>
+                        <s:if test="abstractionScientificList != null">
+                            <s:set name="abstractionScientificList" value="abstractionScientificList" scope="request"/>
+                            <display:table name="abstractionScientificList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
+                            </display:table>
+                        </s:if>   
+                    </s:if>
+                     
+                    <s:if test="absWarningList != null and absWarningList.size > 0"> 
+                        <h2>                           
+                            Abstraction Validation Warning(s).
+                        </h2>                    
+                         <s:if test="absWarningList != null">                                              
+                            <s:set name="absWarningList" value="absWarningList" scope="request"/>          
+                            <display:table name="absWarningList" id="row" class="data" sort="list"  pagesize="30" requestURI="abstractionCompletionquery.action" export="false">                   
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
+                                <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
+                            </display:table>   
+                        </s:if> 
+                    </s:if>
+                  <s:if test="%{abstractionError==false}">
+                    <h2>
+                        Abstraction is valid.
+                    </h2>
+                  </s:if>
                     <div class="actionsrow">
                         <del class="btnwrapper">
                             <ul class="btnrow">

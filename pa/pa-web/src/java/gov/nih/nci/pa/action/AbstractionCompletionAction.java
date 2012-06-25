@@ -80,6 +80,7 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
@@ -87,15 +88,13 @@ import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
-
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -122,7 +121,13 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
 
     private List<AbstractionCompletionDTO> abstractionList;
+    private List<AbstractionCompletionDTO> abstractionAdminList;
+    private List<AbstractionCompletionDTO> abstractionScientificList;
+    private List<AbstractionCompletionDTO> absWarningList;
     private boolean abstractionError;
+    private boolean absAdminError;
+    private boolean absScientificError;
+
     private Long studyProtocolId;
     private HttpServletResponse servletResponse;
 
@@ -144,7 +149,22 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
             HttpSession session = ServletActionContext.getRequest().getSession();
             Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
             abstractionList = abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
+            abstractionAdminList = new ArrayList<AbstractionCompletionDTO>();
+            abstractionScientificList = new ArrayList<AbstractionCompletionDTO>();
+            absWarningList = getWarnings();
             abstractionError = errorExists();
+                for (AbstractionCompletionDTO abs : abstractionList) {
+                    if (abs.getErrorType().equalsIgnoreCase("error")) {
+                        if (abs.getErrorMessageType().equals(ErrorMessageTypeEnum.ADMIN)) {
+                            abstractionAdminList.add(abs);
+                            absAdminError = true;
+                        } else if (abs.getErrorMessageType().equals(ErrorMessageTypeEnum.SCIENTIFIC)) {
+                            abstractionScientificList.add(abs);
+                            absScientificError = true;
+                        }  
+                    }
+                }
+            
         } catch (Exception e) {
             LOG.error(ABSTRACTION_ERROR, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, ABSTRACTION_ERROR + e);
@@ -152,7 +172,9 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
         return SUCCESS;
     }
 
-     /**
+
+
+    /**
      * @return res
      */
     public String generateXML() {
@@ -240,6 +262,20 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
         }
         return errorExist;
     }
+    /**
+     * 
+     * @return absWarnings with list of warnings.
+     */
+    List<AbstractionCompletionDTO> getWarnings() {
+        List<AbstractionCompletionDTO> absWarnings = new ArrayList<AbstractionCompletionDTO>();
+        for (AbstractionCompletionDTO absDto : abstractionList) {
+            if (absDto.getErrorType().equalsIgnoreCase("warning")) {
+                absWarnings.add(absDto);
+            }
+        }
+        return absWarnings;      
+    }
+    
 
     /**
      *
@@ -308,6 +344,72 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
-
+    
+    /**
+     * @return abstractionAdminList
+     */
+    public List<AbstractionCompletionDTO> getAbstractionAdminList() {
+        return abstractionAdminList;
+    }
+    /**
+     * @param abstractionAdminList abstractionAdminList
+     */
+    public void setAbstractionAdminList(
+            List<AbstractionCompletionDTO> abstractionAdminList) {
+        this.abstractionAdminList = abstractionAdminList;
+    }
+    /**
+     * @return abstractionScientificList
+     */
+    public List<AbstractionCompletionDTO> getAbstractionScientificList() {
+        return abstractionScientificList;
+    }
+    /**
+     * @param abstractionScientificList abstractionScientificList
+     */
+    public void setAbstractionScientificList(
+            List<AbstractionCompletionDTO> abstractionScientificList) {
+        this.abstractionScientificList = abstractionScientificList;
+    }
+    /**
+    *
+    * @return absAdminError absAdminError
+    */
+    public boolean isAbsAdminError() {
+        return absAdminError;
+    }
+    /**
+    *
+    * @param absAdminError absAdminError
+    */
+    public void setAbsAdminError(boolean absAdminError) {
+        this.absAdminError = absAdminError;
+    }
+    /**
+    *
+    * @return absScientificError absScientificError
+    */
+    public boolean isAbsScientificError() {
+        return absScientificError;
+    }
+    /**
+    *
+    * @param absScientificError absScientificError
+    */  
+    public void setAbsScientificError(boolean absScientificError) {
+        this.absScientificError = absScientificError;
+    }
+    /**
+     * @return absWarningList
+     */
+    public List<AbstractionCompletionDTO> getAbsWarningList() {
+        return absWarningList;
+    }
+    /**
+     * @param absWarningList absWarningList
+     */
+    public void setAbsWarningList(List<AbstractionCompletionDTO> absWarningList) {
+        this.absWarningList = absWarningList;
+    }
 }
 
