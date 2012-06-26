@@ -21,11 +21,14 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +50,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
     private static final Set<Integer> AUSTRALIA_STATE_LENGTHS = new HashSet<Integer>(Arrays.asList(2, 3));
 
     private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
-    private final PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
-    private String ctepId;
+    private final OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
     private String familyName;
     private String fax;
     private String orgName;
@@ -191,17 +193,28 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
     }
 
     @SuppressWarnings("unchecked")
-    private String processDisplayOrganizations(String retvalue) {
+    private String processDisplayOrganizations(String retvalue) { // NOPMD
+        
+        if (isSearchCriteriaNotSet()) {
+            String message = "Please enter at least one search criteria";
+            orgs = null;
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
+            return retvalue;
+        }
+        
         try {
             getCountriesList();
-            orgSearchCriteria.setName(orgName);
-            orgSearchCriteria.setFamilyName(familyName);
-            orgSearchCriteria.setCity(getCityName());
-            orgSearchCriteria.setCountry(getCountryName());
-            orgSearchCriteria.setZip(getZipCode());
-            orgSearchCriteria.setState(getStateName());
-            orgSearchCriteria.setCtepId(getCtepId());
-            List<OrganizationDTO> orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+            criteria.setName(getOrgName());
+            criteria.setFamilyName(getFamilyName());
+            criteria.setCity(getCityName());
+            criteria.setCountry(getCountryName());
+            criteria.setZip(getZipCode());
+            criteria.setState(getStateName());
+            criteria.setCtepId(getCtepId());
+            criteria.setIdentifier(getPoId());
+            
+            List<OrganizationDTO> orgList = PADomainUtils.searchPoOrganizations(getCriteria());
+            
             Set<Ii> famOrgRelIiList = new HashSet<Ii>();
             for (OrganizationDTO dto : orgList) {
                 if (CollectionUtils.isNotEmpty(dto.getFamilyOrganizationRelationships().getItem())) {
@@ -214,11 +227,26 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
                 paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
                 orgs.add(paDTO);
             }
+            PADomainUtils.addOrganizationCtepIDs(orgs);
+            Collections.sort(orgs, new Comparator<PaOrganizationDTO>() {
+                @Override
+                public int compare(PaOrganizationDTO o1, PaOrganizationDTO o2) {
+                    return StringUtils.defaultString(o1.getName()).compareTo(
+                            StringUtils.defaultString(o2.getName()));
+                }
+            });
             return retvalue;
         } catch (Exception e) {
             return ERROR;
         }
     }
+    
+    private boolean isSearchCriteriaNotSet() {
+        return StringUtils.isBlank(getOrgName()) && StringUtils.isBlank(getFamilyName())
+                && StringUtils.isBlank(getCityName()) && StringUtils.isBlank(getZipCode())
+                && StringUtils.isBlank(getStateName()) && StringUtils.isBlank(getPoId())
+                && StringUtils.isBlank(getCtepId()) && StringUtils.isBlank(getCountryName());
+    }    
 
     @SuppressWarnings("unchecked")
     private void convertPoOrganizationDTO(OrganizationDTO poOrg, Map<Ii, FamilyDTO> familyMap) {
@@ -238,6 +266,8 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
     }
 
     
+    
+    
 
     /**
      * @return the orgs
@@ -251,20 +281,6 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
      */
     public void setOrgs(List<PaOrganizationDTO> orgs) {
         this.orgs = orgs;
-    }
-
-    /**
-     * @return the ctepId
-     */
-    public String getCtepId() {
-        return ctepId;
-    }
-
-    /**
-     * @param ctepId the ctepId to set
-     */
-    public void setCtepId(String ctepId) {
-        this.ctepId = ctepId;
     }
 
     /**
@@ -349,5 +365,12 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    /**
+     * @return the criteria
+     */
+    public OrganizationSearchCriteriaDTO getCriteria() {
+        return criteria;
     }
 }

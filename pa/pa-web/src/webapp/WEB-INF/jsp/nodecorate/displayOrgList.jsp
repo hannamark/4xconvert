@@ -8,6 +8,7 @@
         <display:setProperty name="basic.msg.empty_list"
             value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column escapeXml="true" title="PO-ID" property="id" headerClass="sortable" />
+        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
         <display:column title="Organization Name" headerClass="sortable">
             <c:out value="${row.name}"/>
         </display:column>

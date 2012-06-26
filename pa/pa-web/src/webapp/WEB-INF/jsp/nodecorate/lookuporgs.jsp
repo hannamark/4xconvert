@@ -50,6 +50,7 @@
             }
 
             function loadDiv() {
+            	resetUnusedSearchCriteria();
                 var url = '/pa/protected/popupOrgdisplayOrgList.action';
                 var params = {
                     orgName: $('orgNameSearch').value,
@@ -58,12 +59,35 @@
                     cityName: $('orgCitySearch').value,
                     zipCode: $('orgZipSearch').value,
                     stateName: $('orgStateSearch').value,
-                    ctepId: $('orgCtepIdSearch').value
+                    ctepId: $('orgCtepIdSearch').value,
+                    poId: $('orgPoIdSearch').value
                 };
                 var div = $('getOrgs');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
                 return false;
+            }
+            
+            function resetUnusedSearchCriteria() {
+                var orgCtepid = $('orgCtepIdSearch').value;
+                var orgPoid = $('orgPoIdSearch').value;
+                if(orgPoid.length > 0){
+                    $("orgNameSearch").value = '';
+                    $("orgFamilyNameSearch").value = '';
+                    $("orgCitySearch").value = '';
+                    $("orgStateSearch").value = '';
+                    $("orgCountrySearch").value = '';
+                    $("orgZipSearch").value = '';
+                    $('orgCtepIdSearch').value = '';
+                }
+                if(orgPoid.length == 0 && orgCtepid.length > 0){
+                    $("orgNameSearch").value = '';
+                    $("orgFamilyNameSearch").value = '';
+                    $("orgCitySearch").value = '';
+                    $("orgStateSearch").value = '';
+                    $("orgCountrySearch").value = '';
+                    $("orgZipSearch").value = '';
+                }
             }
             
             function formReset() {
@@ -75,11 +99,17 @@
                 $("orgCountrySearch").value = 'USA';
                 $("orgZipSearch").value = '';
                 $('orgCtepIdSearch').value = '';
+                $('orgPoIdSearch').value = '';
+                
             }
             
         </script>
     
     </head> 
+	<p align="center" class="info">
+	    Type a string of characters in any of the text fields in the upper frame OR
+	    enter PO ID or CTEP Identifier in the lower frame.
+	</p>    
     <body>
         <div class="box">
         <s:form id="poOrganizations" name="poOrganizations" >
@@ -113,7 +143,7 @@
                     </td>
                     <td>
                         <s:select id="orgCountrySearch" name="countryName" list="countryList"  
-                                  listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
+                                  listKey="alpha3" listValue="name" headerKey="" headerValue="" cssStyle="width:206px" />
                     </td>
                 </tr>
                 <tr>
@@ -130,13 +160,12 @@
                          <s:textfield id="orgZipSearch" name="zipCode" maxlength="75" size="20"/>
                     </td>    
                 </tr>
+                <tr><td colspan="6"> <hr></td> </tr>
                 <tr>
-                     <td scope="row" class="label">
-                        <label for="state"><fmt:message key="popUpOrg.ctepId"/></label>
-                    </td>
-                    <td colspan="3">
-                         <s:textfield id="orgCtepIdSearch" name="ctepId" maxlength="75" size="20"/>
-                    </td>    
+                    <td scope="row" class="label"><label for="poId"><fmt:message key="organization.search.poID"/></label></td>
+                    <td><s:textfield id="orgPoIdSearch" name="poId" maxlength="10" cssStyle="width:294px"  /></td>                
+                    <td scope="row" class="label"><label for="ctepId"><fmt:message key="popUpOrg.ctepId"/></label></td>
+                    <td><s:textfield id="orgCtepIdSearch" name="ctepId" maxlength="75" cssStyle="width:294px"  /></td>    
                 </tr>
               </table>
               <div class="actionsrow">
