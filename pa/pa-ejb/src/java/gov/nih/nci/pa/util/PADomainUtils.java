@@ -948,7 +948,7 @@ public class PADomainUtils {
      * @param personDto person to search
      * @return list of persondtos
      * @throws PAException exception condition
-     * @throws TooManyResultsException eception condition
+     * @throws TooManyResultsException exception condition
      * @throws NullifiedRoleException exception condition
      */
     public static List<PaPersonDTO> searchPoPersons(PersonDTO personDto)
@@ -968,7 +968,7 @@ public class PADomainUtils {
     
     /**
      * @param persons
-     * @return
+     * @return 
      */
     private static List<PaPersonDTO> convertToEnhancedPersonDTO(
             List<PaPersonDTO> persons) {
@@ -984,7 +984,7 @@ public class PADomainUtils {
      * 
      * @param paPersons
      *            List<PaOrganizationDTO>
-     * @throws NullifiedRoleException 
+     * @throws NullifiedRoleException exception condition.
      */
     public static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
             throws NullifiedRoleException {
