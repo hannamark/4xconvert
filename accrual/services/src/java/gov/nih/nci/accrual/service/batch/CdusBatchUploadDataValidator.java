@@ -130,7 +130,7 @@ import org.apache.log4j.Logger;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
-                    "PMD.AvoidDeeplyNestedIfStmts" })
+                    "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar" })
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
@@ -163,9 +163,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 lines.add(line);
                 ++lineNumber;
                 if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX])) {
-                    protocolId = line[1];
+                    protocolId = line[1]; 
+                    results.setNciIdentifier(protocolId);
                     sp = getStudyProtocol(protocolId);
                     if (sp != null) {
+                        Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
+                        results.setNciIdentifier(ii.getExtension());
                         try {
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
@@ -179,14 +182,16 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                                         entry.getKey())));
                             }
                             
-                            List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                                    .getIdentifiedOrganizationCorrelationService()
-                                    .getCorrelationsByPlayerIdsWithoutLimit(ids.toArray(
-                                        new Long[ids.size()])); // NOPMD
-                            for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
+                            if (!ids.isEmpty()) {
+                                List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                                        .getIdentifiedOrganizationCorrelationService()
+                                        .getCorrelationsByPlayerIdsWithoutLimit(ids.toArray(
+                                                new Long[ids.size()])); // NOPMD
+                                for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
                                 if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO.getAssignedId().getRoot())) {
-                                    listOfCtepIds.put(idOrgDTO.getAssignedId().getExtension(), 
+                                        listOfCtepIds.put(idOrgDTO.getAssignedId().getExtension(), 
                                             idOrgDTO.getPlayerIdentifier().getExtension());
+                                    }
                                 }
                             }
                         } catch (PAException e) {
@@ -258,7 +263,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
             if (StringUtils.isEmpty(registeringInstitutionID)) {
                 errMsg.append("Patient Registering Institution Code is missing for patient ID ")
-                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
             } else {
                 if (!isCorrectOrganizationId(registeringInstitutionID, errMsg)) {
                     return;
@@ -400,21 +405,21 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private void addUpPatientRegisteringInstitutionCode(List<String> values, StringBuffer errMsg, 
             long lineNumber) {
         errMsg.append("Patient Registering Institution Code is invalid for patient ID ").append(getPatientId(values))
-        .append(appendLineNumber(lineNumber)).append('\n');
+        .append(appendLineNumber(lineNumber)).append("\n");
     }
     
     private void addAccrualAccessBySiteError(String studySiteID, StringBuffer errMsg, 
             long lineNumber) {
         errMsg.append("User " + ru.getFirstName() + " " + ru.getLastName() 
                 + " does not have accrual access to Study Site ID " + studySiteID)
-        .append(appendLineNumber(lineNumber)).append('\n');
+        .append(appendLineNumber(lineNumber)).append("\n");
     }
     
     private void addAccrualSiteValidationError(List<String> values, StringBuffer errMsg, 
             long lineNumber) {
         errMsg.append("Accrual study site ").append(getAccrualCountStudySiteId(values))
         .append(" is not valid")
-        .append(appendLineNumber(lineNumber)).append('\n');
+        .append(appendLineNumber(lineNumber)).append("\n");
     }
 
     /**
@@ -456,7 +461,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         } else if (!hasAccrualAccess(sp.getIdentifier())) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
             .append(CsmUserUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
-            .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId);
+            .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId)
+            .append(" \n");
         }
     }
     

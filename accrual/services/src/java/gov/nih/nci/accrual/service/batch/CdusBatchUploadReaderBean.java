@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
@@ -102,6 +103,7 @@ import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -114,10 +116,12 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -132,6 +136,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 
@@ -157,6 +162,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     
     private static final int RESULTS_LEN = 1000;
     private final Map<String, SubjectAccrualDTO> listOfStudySubjects = new HashMap<String, SubjectAccrualDTO>();
+    private static final String DATE_PATTERN = "MM/dd/yyyy";
+    private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
 
     /**
      * {@inheritDoc}
@@ -184,7 +191,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     validateAndProcessData(batchFile, singleRS);
                 }
             } else {
-                results.add(cdusBatchUploadDataValidator.validateSingleBatchData(file, batchFile.getSubmitter()));
+                BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(file, 
+                        batchFile.getSubmitter());
+                result.setFileName(AccrualUtil.getFileNameWithoutRandomNumbers(result.getFileName()));
+                results.add(result);
                 validateAndProcessData(batchFile, results);
             }
             if (zip != null) {
@@ -263,6 +273,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         
         String studyProtocolId = studyLine[1];
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
+        Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
+        importResults.setNciIdentifier(ii.getExtension());
 
         List<StudySubject> result = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class)
                 .createCriteria("studyProtocol", "sp").add(Restrictions.eq("sp.id", 
@@ -376,18 +388,35 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (CollectionUtils.isEmpty(validationResults)) {
             return;
         }
+        String subj = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.subject");
+        String body = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.body");
+        String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
+        body = body.replace("${SubmitterName}", regUserName);
+        body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer errorReport = new StringBuffer();
         for (BatchValidationResults result : validationResults) {
             if (!result.isPassedValidation()) {
                 errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
                         result.getErrors()));
+                String errors = result.getErrors().toString();
+                int count = 1;
+                StringBuffer numberedErrors = new StringBuffer();
+                StringTokenizer st1 = new StringTokenizer(errors, "\n");
+                while (st1.hasMoreTokens()) {
+                    numberedErrors.append(count).append(".\t").append(st1.nextToken()).append(" \n");
+                    count++;
+                }
+                body = body.replace("${fileName}", result.getFileName());
+                body = body.replace("${errors}", numberedErrors.toString());
+                body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+                subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
             }
         }
         if (StringUtils.isBlank(errorReport.toString())) {
             batchFile.setPassedValidation(true);
         }
         batchFile.setResults(StringUtils.substring(errorReport.toString(), 0, RESULTS_LEN));
-        sendEmail(batchFile.getSubmitter().getEmailAddress(), "Accrual Error Report", errorReport);
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
     }
     
     /**
@@ -398,25 +427,41 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (CollectionUtils.isEmpty(importResults)) {
             return;
         }
+        String subject = PaServiceLocator.getInstance().getLookUpTableService()
+                .getPropertyValue("accrual.confirmation.subject");
+        String body = PaServiceLocator.getInstance().getLookUpTableService()
+                .getPropertyValue("accrual.confirmation.body");
+        String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
+        body = body.replace("${SubmitterName}", regUserName);
+        body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer confirmation = new StringBuffer();
         for (BatchImportResults result : importResults) {
             if (result.getTotalImports() > 0) {
                 confirmation.append(String.format("Sucessfully imported %s patients/accrual counts from %s.\n", 
                         result.getTotalImports(), result.getFileName()));
-            }
-            if (result.getErrors() != null && !StringUtils.isBlank(result.getErrors().toString())) {
-                confirmation.append(result.getErrors().toString());
+                body = body.replace("${fileName}", result.getFileName());
+                body = body.replace("${count}", String.valueOf(result.getTotalImports()));
+                body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+                subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
             }
         }
         batchFile.setResults(StringUtils.substring(confirmation.toString(), 0, RESULTS_LEN));
-        sendEmail(batchFile.getSubmitter().getEmailAddress(), "Accrual Confirmation Report", confirmation);
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);
     }
     
-    private void sendEmail(String to, String subject, StringBuffer msg) {
-        if (StringUtils.isNotBlank(msg.toString())) {
-            PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg.toString(), 
+    private void sendEmail(String to, String subject, String msg) {
+        if (StringUtils.isNotBlank(msg)) {
+            PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg, 
                     null);
         }
+    }
+
+    /**
+     * Gets the current date properly formatted.
+     * @return The current date properly formatted.
+     */
+    String getFormatedCurrentDate() {
+        return DateFormatUtils.format(new Date(), DATE_PATTERN);
     }
 
     /**

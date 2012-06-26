@@ -261,7 +261,7 @@ public class BaseBatchUploadReader {
         } catch (PAException e) {
             LOG.error("Error retrieving disease." , e);
             errMsg.append("Unable to load the meddra diease with code ")
-                .append(meddraCode).append(" from the database.");
+                .append(meddraCode).append(" from the database.\n");
         }
         return disease;
     }
@@ -279,7 +279,7 @@ public class BaseBatchUploadReader {
         } catch (PAException e) {
             LOG.error("Error retrieving ICD9 disease." , e);
             errMsg.append("Unable to load the ICD9 diease with code ")
-                .append(code).append(" from the database.");
+                .append(code).append(" from the database.\n");
         }
         return disease;
     }

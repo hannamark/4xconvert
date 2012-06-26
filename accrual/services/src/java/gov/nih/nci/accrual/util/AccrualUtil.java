@@ -324,4 +324,13 @@ public class AccrualUtil {
         result.toArray(strResult);  
         return strResult;
     }
+
+    /**
+     * Gets the file name without random numbers.
+     * @param fileNameWithRN the filename with random numbers
+     * @return string filename
+     */    
+    public static String getFileNameWithoutRandomNumbers(String fileNameWithRN) {
+        return fileNameWithRN.replaceFirst("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}-", "");
+    }
 }

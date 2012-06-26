@@ -978,5 +978,9 @@
      <changeSet id="PO-2884" author="krylovd">
         <comment>Add new column to study_owner to indicate email preference: enable_emails.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-2884.sql"/>
+     </changeSet>
+     <changeSet id="PO-5102" author="Kalpana">
+        <comment>Added Accrual Email Subject and Body</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5102.sql"/>
      </changeSet>     
 </databaseChangeLog>

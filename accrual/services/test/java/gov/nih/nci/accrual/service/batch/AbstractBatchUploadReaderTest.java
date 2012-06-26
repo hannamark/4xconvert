@@ -133,6 +133,7 @@ import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.po.data.CurationException;
@@ -179,6 +180,14 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     protected MailManagerServiceRemote mailService;
     protected BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
+    private static final String ERROR_SUBJECT_KEY = "accrual.error.subject";
+    private static final String ERROR_SUBJECT_VALUE = "accrual.error.subject- ${nciTrialIdentifier}";
+    private static final String ERROR_BODY_KEY = "accrual.error.body";
+    private static final String ERROR_BODY_VALUE = "accrual.error.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, ${errors}.";
+    private static final String CONFIRMATION_SUBJECT_KEY = "accrual.confirmation.subject";
+    private static final String CONFIRMATION_SUBJECT_VALUE = "accrual.confirmation.subject- ${nciTrialIdentifier}";
+    private static final String CONFIRMATION_BODY_KEY = "accrual.confirmation.body";
+    private static final String CONFIRMATION_BODY_VALUE = "accrual.confirmation.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, ${errors}, ${count}.";
     
     @Before
     public void setUpReader() throws Exception {
@@ -212,20 +221,36 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
                 StudyProtocolDTO dto = new StudyProtocolDTO();
+                Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+                Ii spSecId = new Ii();
+                spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+                
                 if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")
                 		|| StringUtils.equals(ii.getExtension(), "S0512")) {
                     dto.setIdentifier(abbreviatedIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                    spSecId.setExtension("NCI-2009-00001");
+                    secondaryIdentifiers.add(spSecId);
+                    dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00002")) {
                     dto.setIdentifier(inactiveIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+                    spSecId.setExtension("NCI-2009-00002");
+                    secondaryIdentifiers.add(spSecId);
+                    dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2010-00003")) {
                     dto.setIdentifier(completeIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                    spSecId.setExtension("NCI-2010-00003");
+                    secondaryIdentifiers.add(spSecId);
+                    dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00003")) {
                     dto.setIdentifier(preventionIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                     dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+                    spSecId.setExtension("NCI-2009-00003");
+                    secondaryIdentifiers.add(spSecId);
+                    dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
                 } else {
                     dto = null;
                 }
@@ -342,6 +367,12 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
         when(paSvcLocator.getStudyResourcingService()).thenReturn(studyResourcingSvc);
+        LookUpTableServiceRemote lookuptableSvc = mock(LookUpTableServiceRemote.class);
+        when(paSvcLocator.getLookUpTableService()).thenReturn(lookuptableSvc);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_SUBJECT_KEY)).thenReturn(ERROR_SUBJECT_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_BODY_KEY)).thenReturn(ERROR_BODY_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_SUBJECT_KEY)).thenReturn(CONFIRMATION_SUBJECT_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_BODY_KEY)).thenReturn(CONFIRMATION_BODY_VALUE);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
         

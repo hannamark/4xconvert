@@ -98,6 +98,7 @@ import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
@@ -123,6 +124,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
     private final StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
     private final StudyResourcingServiceRemote studyResourcingSvc = mock(StudyResourcingServiceRemote.class);
+    private final LookUpTableServiceRemote lookUpTableSvc = mock(LookUpTableServiceRemote.class);
     
     private static Map<Long, SDCDiseaseDTO> dtos;
     private static Map<Long, StudyProtocolDTO> studyDtos;
@@ -250,5 +252,10 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
      */
     public StudyResourcingServiceRemote getStudyResourcingService() {
         return studyResourcingSvc;
-    }    
+    }
+
+	@Override
+	public LookUpTableServiceRemote getLookUpTableService() {
+		return lookUpTableSvc;
+	}    
 }

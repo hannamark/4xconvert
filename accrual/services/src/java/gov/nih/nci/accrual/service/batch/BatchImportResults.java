@@ -91,6 +91,7 @@ public class BatchImportResults {
     private int totalImports = 0;
     private String fileName;
     private StringBuilder errors;
+    private String nciIdentifier;
 
     /**
      * @return the totalImports
@@ -132,6 +133,20 @@ public class BatchImportResults {
      */
     public void setErrors(StringBuilder errors) {
         this.errors = errors;
+    }
+
+    /**
+     * @return the nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+
+    /**
+     * @param nciIdentifier the nciIdentifier to set
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
     }
 
 }

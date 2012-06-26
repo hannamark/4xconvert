@@ -151,7 +151,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     public void completeBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        
+
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
@@ -170,7 +171,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
     @Test
@@ -183,7 +184,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
     
     @Test
@@ -216,7 +217,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
     @Test
@@ -229,7 +230,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
     
     @Test
@@ -242,7 +243,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
     
     @Test
@@ -263,7 +264,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
             assertTrue(StringUtils.isEmpty(result.getErrors().toString()));
             assertFalse(result.getValidatedLines().isEmpty());
         }
-        verify(mailService, times(3)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(4)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
     @Test
@@ -304,7 +305,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         importResults = readerService.importBatchData(batchFile, validationResults);
         readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
-        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        verify(mailService, times(2)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
     @Test

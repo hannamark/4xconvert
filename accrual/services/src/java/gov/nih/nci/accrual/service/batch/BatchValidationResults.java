@@ -95,7 +95,8 @@ public class BatchValidationResults {
     private boolean passedValidation = false;
     private List<String[]> validatedLines = new ArrayList<String[]>();
     private String fileName;
-    
+    private String nciIdentifier;
+
     /**
      * @return the errors
      */
@@ -150,5 +151,19 @@ public class BatchValidationResults {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    /**
+     * @return the nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+
+    /**
+     * @param nciIdentifier the nciIdentifier to set
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
     }
 }
