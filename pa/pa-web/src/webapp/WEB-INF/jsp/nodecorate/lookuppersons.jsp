@@ -19,6 +19,9 @@
             }
         
             function loadDiv() {
+            	
+            	clearUnusedSearchCriteria();
+            	
                 var url = '/pa/protected/popupdisplayPersonsList.action';
                 var params = {
                     firstName: $("personFirstName").value,
@@ -26,12 +29,34 @@
                     countryName: $("personCountry").value,
                     cityName: $("personCity").value,
                     zipCode: $("personZip").value,
-                    stateName: $("personState").value
+                    stateName: $("personState").value,
+                    poId: $("poID").value,
+                    ctepId: $("ctepID").value
                 };
                 var div = $('getPersons');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
                 return false;
+            }
+            
+            function clearUnusedSearchCriteria(){
+            	var poid = $("poID").value;
+            	var ctepid = $("ctepID").value;
+            	if(poid.length > 0){
+            		$("ctepID").value = '';
+            		$("personFirstName").value = '';
+            		$("personLastName").value = '';
+            		$("personCity").value = '';
+                    $("personState").value = '';
+                    $("personZip").value = '';
+            	}
+            	if(poid.length == 0 && ctepid.length > 0){
+                    $("personFirstName").value = '';
+                    $("personLastName").value = '';
+                    $("personCity").value = '';
+                    $("personState").value = '';
+                    $("personZip").value = '';
+            	}
             }
         
             function formReset(){
@@ -42,10 +67,16 @@
                 $("personCountry").value = 'USA';
                 $("personState").value = '';
                 $("personZip").value = '';
+                $("poID").value = '';
+                $("ctepID").value = '';
             }
         </script>
     
     </head>
+<p align="center" class="info">
+    Type a string of characters in any of the text fields in the upper frame OR
+    enter PO ID or CTEP Identifier in the lower frame.
+</p>    
     <body>
         <div class="box">
             <s:form id="poOrganizations" name="poOrganizations" >
@@ -72,6 +103,14 @@
                         <td scope="row" class="label"><label for="zip"><fmt:message key="popUpPerson.zip" /></label></td>
                         <td><s:textfield id="personZip" name="perSearchCriteria.zip"  maxlength="200" size="100"  cssStyle="width:200px" /></td>
                     </tr>
+                    <tr><td colspan="6"> <hr></td> </tr>
+                    <tr>
+                        <td  scope="row" class="label"><label for="poID"><fmt:message key="person.search.poID"/></label></td>
+                        <td><s:textfield id="poID" name="criteria.id" maxlength="10" cssStyle="width:294px"  /></td>
+                        <td  scope="row" class="label"><label for="ctepID"><fmt:message key="person.search.ctepID"/></label></td>
+                        <td><s:textfield id="ctepID" name="criteria.ctepId" maxlength="75" cssStyle="width:294px"  /></td>
+                    </tr>
+                    
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">

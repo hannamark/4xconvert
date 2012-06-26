@@ -17,7 +17,10 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public abstract class AbstractPopUpPoAction extends ActionSupport {
     private static final long serialVersionUID = 1779207439808550008L;
-
+    
+    private String poId;
+    private String ctepId;
+    
     private List<Country> countryList = new ArrayList<Country>();
     private String cityName;
     private String countryName;
@@ -148,5 +151,33 @@ public abstract class AbstractPopUpPoAction extends ActionSupport {
      */
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    /**
+     * @return the poId
+     */
+    public String getPoId() {
+        return poId;
+    }
+
+    /**
+     * @param poId the poId to set
+     */
+    public void setPoId(String poId) {
+        this.poId = poId;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
     }
 }

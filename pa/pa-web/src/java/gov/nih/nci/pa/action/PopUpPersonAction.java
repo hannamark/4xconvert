@@ -78,18 +78,20 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
-import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -105,6 +107,7 @@ public class PopUpPersonAction extends AbstractPopUpPoAction {
     private static final long serialVersionUID = 4960297232842560635L;
 
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
+    private final PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
     private final PaPersonDTO perSearchCriteria = new PaPersonDTO();
     private String firstName;
     private String lastName;
@@ -178,43 +181,57 @@ public class PopUpPersonAction extends AbstractPopUpPoAction {
     }
 
     private String processDisplayPersons(String retvalue) {
-        if (isPersonSearchCriteriaSet()) {
+        if (isSearchCriteriaNotSet()) {
             String message = "Please enter at least one search criteria";
             persons = null;
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return retvalue;
         }
-        // Set the values; so paging will retain them
-        perSearchCriteria.setFirstName(getFirstName());
-        perSearchCriteria.setLastName(getLastName());
-        perSearchCriteria.setCity(getCityName());
-        perSearchCriteria.setState(getStateName());
-        perSearchCriteria.setCountry(getCountryName());
-        perSearchCriteria.setZip(getZipCode());
-        //
-        PersonDTO p = new PersonDTO();
-        p.setName(EnPnConverter.convertToEnPn(getFirstName(), null, getLastName(), null, null));
-        p.setPostalAddress(AddressConverterUtil.create(null, null, getCityName(), getStateName(), getZipCode(),
-                getCountryName()));
+        
         try {
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            List<PersonDTO> persList = new ArrayList<PersonDTO>();
-            persList = PoRegistry.getPersonEntityService().search(p, limit);
-            for (PersonDTO dto : persList) {
-                persons.add(PADomainUtils.convertToPaPersonDTO(dto));
+            if (StringUtils.isNotBlank(getPoId()) || StringUtils.isNotBlank(getCtepId())) {
+                criteria.setId(getPoId());
+                criteria.setCtepId(getCtepId());
+                persons = PADomainUtils.searchPoPersons(getCriteria());
+            } else {
+                perSearchCriteria.setFirstName(getFirstName());
+                perSearchCriteria.setLastName(getLastName());
+                perSearchCriteria.setCity(getCityName());
+                perSearchCriteria.setState(getStateName());
+                perSearchCriteria.setCountry(getCountryName());
+                perSearchCriteria.setZip(getZipCode());
+                PersonDTO p = new PersonDTO();
+                p.setName(EnPnConverter.convertToEnPn(getFirstName(), null, getLastName(), null, null));
+                p.setPostalAddress(AddressConverterUtil.create(null, null, getCityName(), getStateName(), getZipCode(),
+                        getCountryName()));
+                persons = PADomainUtils.searchPoPersons(p);
             }
+        } catch (NullifiedRoleException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         } catch (TooManyResultsException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-            return retvalue;
+        }
+        if (persons != null && !persons.isEmpty()) {
+            Collections.sort(persons, new Comparator<PaPersonDTO>() {
+                @Override
+                public int compare(PaPersonDTO o1, PaPersonDTO o2) {
+                    return StringUtils
+                            .defaultString(o1.getLastName())
+                            .compareTo(
+                                    StringUtils.defaultString(o2.getLastName()));
+                }
+            });
         }
         return retvalue;
     }
 
-    private boolean isPersonSearchCriteriaSet() {
+    private boolean isSearchCriteriaNotSet() {
         return StringUtils.isBlank(getFirstName()) && StringUtils.isBlank(getLastName())
-                && StringUtils.isBlank(getCountryName())
                 && StringUtils.isBlank(getCityName()) && StringUtils.isBlank(getZipCode())
-                && StringUtils.isBlank(getStateName());
+                && StringUtils.isBlank(getStateName()) && StringUtils.isBlank(getPoId())
+                && StringUtils.isBlank(getCtepId());
     }
 
     /**
@@ -257,5 +274,12 @@ public class PopUpPersonAction extends AbstractPopUpPoAction {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+    
+    /**
+     * @return the criteria
+     */
+    public PersonSearchCriteriaDTO getCriteria() {
+        return criteria;
     }
 }

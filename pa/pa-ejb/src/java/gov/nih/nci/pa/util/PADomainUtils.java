@@ -942,6 +942,30 @@ public class PADomainUtils {
         return convertToEnhancedPersonDTO(paPersonDTOs);
     }
     
+    
+    /**
+     * 
+     * @param personDto person to search
+     * @return list of persondtos
+     * @throws PAException exception condition
+     * @throws TooManyResultsException eception condition
+     * @throws NullifiedRoleException exception condition
+     */
+    public static List<PaPersonDTO> searchPoPersons(PersonDTO personDto)
+            throws PAException, TooManyResultsException, NullifiedRoleException {
+
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<PersonDTO> personDTOs = PoRegistry.getPersonEntityService()
+                .search(personDto, limit);
+        List<PaPersonDTO> paPersonDTOs = new ArrayList<PaPersonDTO>();
+        for (PersonDTO dto : personDTOs) {
+            paPersonDTOs.add(convertToPaPersonDTO(dto));
+        }
+        addPersonCtepIDs(paPersonDTOs);        
+        return convertToEnhancedPersonDTO(paPersonDTOs);
+    }    
+    
+    
     /**
      * @param persons
      * @return
@@ -962,7 +986,7 @@ public class PADomainUtils {
      *            List<PaOrganizationDTO>
      * @throws NullifiedRoleException 
      */
-    private static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
+    public static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
             throws NullifiedRoleException {
         if (CollectionUtils.isEmpty(paPersons)) {
             return;

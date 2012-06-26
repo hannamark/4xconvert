@@ -329,6 +329,21 @@ public class PADomainUtilsTest {
         assertEquals(3L, list.get(0).getId().longValue());
         assertEquals("4648", list.get(0).getCtepId());
         
-    }      
+    }
     
+    @Test
+    public void testSearchPoPersonsUsingPersonDTO() throws NullifiedRoleException, NullifiedEntityException, TooManyResultsException, PAException {
+        PersonDTO p = new PersonDTO();
+        p.setName(EnPnConverter.convertToEnPn("firstName", null, "lastName", null, null));
+        List<PaPersonDTO> list = PADomainUtils.searchPoPersons(p);
+        assertEquals(1, list.size());
+        
+        p.setName(EnPnConverter.convertToEnPn("OtherName", null, null, null, null));
+        list = PADomainUtils.searchPoPersons(p);
+        assertEquals(2, list.size());
+        
+        p.setName(EnPnConverter.convertToEnPn("NoName", null, "MyName", null, null));
+        list = PADomainUtils.searchPoPersons(p);
+        assertEquals(0, list.size());
+    }    
 }
