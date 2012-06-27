@@ -26,6 +26,15 @@
     </function>
     
     <function>
+        <description>Capitalizes a String changing the first letter to title case as per Character.toTitleCase(char). No other letters are changed.</description>
+        <name>capitalize</name>
+        <function-class>org.apache.commons.lang.StringUtils</function-class>
+        <function-signature>java.lang.String capitalize(java.lang.String)</function-signature>
+        <example>'${func:capitalize(string)}'</example>
+    </function>
+    
+    
+    <function>
         <description>Concatenates Strings using a separator</description>
         <name>join</name>
         <function-class>org.apache.commons.lang.StringUtils</function-class>

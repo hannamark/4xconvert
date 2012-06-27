@@ -164,7 +164,7 @@
                                         <c:out value="${trialDTO.sponsorName}"/>
                                     </reg-web:valueRow>
                                     <reg-web:valueRow labelKey="view.trial.respParty">
-                                        <c:out value="${trialDTO.responsiblePartyType}"/>
+                                        <c:out value="${func:capitalize(trialDTO.responsiblePartyType)}"/>
                                     </reg-web:valueRow>
                                     <c:if test="${fn:trim(trialDTO.responsiblePersonName) != ''}">
                                         <reg-web:valueRow labelKey="view.trial.respPartyContact">
