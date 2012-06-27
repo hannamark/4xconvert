@@ -77,7 +77,7 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
@@ -116,7 +116,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private SearchTrialService searchTrialSvc;
     private SearchStudySiteService searchStudySiteSvc;
     private StudySubjectService studySubjectSvc;
-    private PatientService patientSvc;
+    private PatientServiceLocal patientSvc;
     private PerformedActivityService performedActivitySvc;
     private CountryService countrySvc;
     private SDCDiseaseServiceRemote sdcDiseaseSvc;
@@ -223,7 +223,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /**
      * @return the patientSvc
      */
-    public PatientService getPatientSvc() {
+    public PatientServiceLocal getPatientSvc() {
         return patientSvc;
     }
 

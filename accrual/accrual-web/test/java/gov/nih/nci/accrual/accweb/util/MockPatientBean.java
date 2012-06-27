@@ -80,7 +80,7 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -95,13 +95,18 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Hugh Reinhart
  * @since Sep 26, 2009
  */
-public class MockPatientBean implements PatientService {
+public class MockPatientBean implements PatientServiceLocal {
     private static Long seq = 1L;
     private static List<PatientDto> pList;
     static {
@@ -152,6 +157,18 @@ public class MockPatientBean implements PatientService {
             }
         }
         return dto;
+    }
+
+    @Override
+    public Map<Long, PatientDto> get(Long[] ids) throws PAException {
+        Map<Long, PatientDto> result = new HashMap<Long, PatientDto>();
+        Set<Long> idSet = new HashSet<Long>(Arrays.asList(ids));
+        for (PatientDto dto : pList) {
+            if (idSet.contains(IiConverter.convertToLong(dto.getIdentifier()))) {
+                result.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
+            }
+        }
+        return result;
     }
 
 }

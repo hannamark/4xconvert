@@ -110,15 +110,18 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -131,7 +134,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -153,7 +158,7 @@ import org.hibernate.criterion.Restrictions;
 
 /**
  * Implementation of the subject accrual service.
- * 
+ *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
@@ -174,12 +179,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     @EJB
     private SubjectAccrualCountService subjectAccrualCountSvc;
     @EJB
-    private BatchFileService batchFileService;    
-    @EJB 
+    private BatchFileService batchFileService;
+    @EJB
     private SubjectAccrualValidator subjectAccrualValidator;
     @EJB
     private BatchUploadProcessingTaskServiceLocal batchUploadProcessingTaskService;
-    
+
     /**
      * Class used to run separate thread for processing batch submissions.
      */
@@ -188,7 +193,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         public BatchFileProcessor(BatchFile batchFile) {
             this.batchFile = batchFile;
         }
-        
+
         @Override
         public void run() {
             try {
@@ -198,7 +203,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             }
         }
     }
-    
+
     /**
      * Class used to manage batch processing thread.
      */
@@ -208,7 +213,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         public BatchThreadManager(BatchFile batchFile) {
             this.batchFile = batchFile;
         }
-        
+
         @Override
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -223,10 +228,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     /**
      * The 1st 4 bytes of a byte of a file that indicates a zip file. Used to determine if the information
-     * passed in to the submitBatchData method is a zip file. 
+     * passed in to the submitBatchData method is a zip file.
      */
     private static final int ZIP_FILE_SIGNATURE = 0x504b0304;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -238,7 +243,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (subjects != null) {
             for (SubjectAccrualDTO subject : subjects) {
                 if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
-                    throw new PAException("User does not have accrual access to site " 
+                    throw new PAException("User does not have accrual access to site "
                             + subject.getParticipatingSiteIdentifier().getExtension());
                 }
                 if (ISOUtil.isIiNull(subject.getIdentifier())) {
@@ -260,7 +265,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot create a subject accrual with an identifier set. Please use update().");
         }
-        StudySiteDTO participatingSite = 
+        StudySiteDTO participatingSite =
             PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
 
         PatientDto patient = populatePatientDTO(dto, new PatientDto());
@@ -278,7 +283,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         getPerformedActivityService().createPerformedSubjectMilestone(psm);
 
-        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
                 IiConverter.convertToLong(studySubject.getIdentifier()));
         return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
     }
@@ -292,7 +297,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot update a subject accrual without an identifier set. Please use create().");
         }
-        StudySiteDTO participatingSite = 
+        StudySiteDTO participatingSite =
             PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
 
         StudySubjectDto studySubject = getStudySubjectService().get(dto.getIdentifier());
@@ -306,7 +311,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         psm.setRegistrationDate(dto.getRegistrationDate());
         getPerformedActivityService().updatePerformedSubjectMilestone(psm);
 
-        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
                 IiConverter.convertToLong(studySubject.getIdentifier()));
         return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
     }
@@ -332,13 +337,15 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return patientDTO;
     }
 
-    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO) 
+    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO)
         throws PAException {
         studySubjectDTO.setAssignedIdentifier(dto.getAssignedIdentifier());
         studySubjectDTO.setPaymentMethodCode(CdConverter.convertToCd(
                 CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
         studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
         studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
+        studySubjectDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), 
+                null));
         if (dto.getDiseaseIdentifier() != null) {
             if (PaServiceLocator.getInstance().getDiseaseService().get(dto.getDiseaseIdentifier()) != null) {
                 studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());
@@ -364,18 +371,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (ISOUtil.isIiNull(subjectAccrualIi)) {
             throw new PAException("Study Subject Ii must be valid.");
         }
-        StudySubject studySubject = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+        StudySubject studySubject = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
                 IiConverter.convertToLong(subjectAccrualIi));
         if (studySubject == null) {
-            throw new PAException("A Study Subject with id " + subjectAccrualIi.getExtension() 
+            throw new PAException("A Study Subject with id " + subjectAccrualIi.getExtension()
                     + " does not exist.");
         }
         if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter
                     .convertToStudySiteIi(studySubject.getStudySite().getId()))) {
             throw new PAException("User does not have accrual access to site.");
         }
-
-        getStudySubjectService().delete(subjectAccrualIi);
+        nullifyStudySubject(studySubject);
     }
 
     /**
@@ -434,7 +440,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         String filePath = generateFileLocation(batchFile);
         RegistryUser submitter = getBatchSubmitter();
         writeBatchFileToFilesystem(batchFile, filePath);
-        
+
         BatchFile batch = new BatchFile();
         batch.setSubmitter(submitter);
         batch.setFileLocation(filePath);
@@ -448,7 +454,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         Thread batchThread = new Thread(new BatchThreadManager(batchFile));
         batchThread.start();
     }
-    
+
 
     private void writeBatchFileToFilesystem(Ed batchFile, String filePath) throws PAException {
         try {
@@ -461,10 +467,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     private String generateFileLocation(Ed batchFile) throws PAException {
         try {
-            DataInputStream in = 
+            DataInputStream in =
                 new DataInputStream(new BufferedInputStream(new ByteArrayInputStream(batchFile.getData())));
             String extension = in.readInt() == ZIP_FILE_SIGNATURE ? ".zip" : ".txt";
-            return PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() + "-batchFile" 
+            return PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() + "-batchFile"
                 + extension;
         } catch (IOException e) {
             throw new PAException("Unable to determine whether batch is an archive or a single file.", e);
@@ -504,7 +510,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             .add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyIdentifier)));
         List<StudySubject> subjects = crit.list();
         for (StudySubject ss : subjects) {
-            session.delete(ss);
+            nullifyStudySubject(ss);
         }
     }
 
@@ -519,7 +525,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySubjectIi)));
         List<StudySubject> subjects = crit.list();
         for (StudySubject ss : subjects) {
-            session.delete(ss);
+            nullifyStudySubject(ss);
         }
     }
 
@@ -534,6 +540,16 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         }
         return result;
+    }
+
+    private void nullifyStudySubject(StudySubject ss) {
+        ss.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
+        ss.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        Patient patient = ss.getPatient();
+        patient.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+        patient.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        PaHibernateUtil.getCurrentSession().merge(ss);
+        PaHibernateUtil.getCurrentSession().merge(patient);
     }
 
     /**

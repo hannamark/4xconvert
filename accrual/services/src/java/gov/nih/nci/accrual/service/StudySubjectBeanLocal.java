@@ -88,6 +88,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolService;
@@ -295,6 +296,7 @@ public class StudySubjectBeanLocal extends
         if (birthDate != null) {
             criteria.createCriteria("patient", "p").add(Restrictions.eq("p.birthDate", birthDate));
         }
+        criteria.add(Restrictions.eq("statusCode", FunctionalRoleStatusCode.ACTIVE));
     }
     
     /**

@@ -86,7 +86,6 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -122,6 +121,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
@@ -345,9 +345,13 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         
         bean.deleteSubjectAccrual(ssDto.getIdentifier());
         PaHibernateUtil.getCurrentSession().flush();
-        assertNull(bean.getStudySubjectService().get(ssDto.getIdentifier()));
-        assertNull(bean.getPatientService().get(pDto.getIdentifier()));
-        assertEquals(0, bean.getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(ssDto.getIdentifier()).size());
+        StudySubjectDto ssdto = bean.getStudySubjectService().get(ssDto.getIdentifier());
+        assertNotNull(ssdto);
+        assertEquals(FunctionalRoleStatusCode.NULLIFIED.getCode(), ssdto.getStatusCode().getCode());
+        PatientDto pdto = bean.getPatientService().get(pDto.getIdentifier());
+        assertNotNull(pdto);
+        assertEquals(StructuralRoleStatusCode.NULLIFIED.getCode(), pdto.getStatusCode().getCode());
+        assertEquals(1, bean.getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(ssDto.getIdentifier()).size());
     }
     
     private StudySite createAccessibleStudySite() {
@@ -520,7 +524,11 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         
         bean.deleteByStudyIdentifier(studyProtocolIi);
         results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        assertEquals(0, results.size());
+        assertEquals(3, results.size());
+        for (SubjectAccrualDTO sa : results) {
+            StudySubjectDto ssdto = studySubjectService.get(sa.getIdentifier());
+            assertEquals(FunctionalRoleStatusCode.NULLIFIED.getCode(), ssdto.getStatusCode().getCode());
+        }
     }
     
     @Test
@@ -549,7 +557,11 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         
         bean.deleteByStudySiteIdentifier(studySiteIi);
         results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        assertEquals(0, results.size());
+        assertEquals(3, results.size());
+        for (SubjectAccrualDTO sa : results) {
+            StudySubjectDto ssdto = studySubjectService.get(sa.getIdentifier());
+            assertEquals(FunctionalRoleStatusCode.NULLIFIED.getCode(), ssdto.getStatusCode().getCode());
+        }
     }     
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {

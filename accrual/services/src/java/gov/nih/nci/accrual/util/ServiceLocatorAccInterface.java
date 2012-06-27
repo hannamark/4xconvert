@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
@@ -106,7 +106,7 @@ public interface ServiceLocatorAccInterface {
     /**
      * @return Patient correlation service
      */
-    PatientService getPatientService();
+    PatientServiceLocal getPatientService();
     /**
      * @return StudySubject domain service
      */

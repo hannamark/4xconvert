@@ -595,7 +595,7 @@ public class TestSchema {
         subj.setPatient(patients.get(0));
         subj.setAssignedIdentifier("001");
         subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
-        subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
@@ -605,7 +605,7 @@ public class TestSchema {
         subj = new StudySubject();
         subj.setPatient(patients.get(1));
         subj.setAssignedIdentifier("002");
-        subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));

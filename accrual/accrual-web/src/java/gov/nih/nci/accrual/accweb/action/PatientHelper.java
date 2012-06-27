@@ -99,6 +99,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -195,8 +196,13 @@ public class PatientHelper {
      */
     public List<PatientWebDto> convertToWebDTOs(List<StudySubjectDto> dtos, String orgName) throws PAException {
         List<PatientWebDto> results = new ArrayList<PatientWebDto>();
+        List<Long> patientIds = new ArrayList<Long>();
         for (StudySubjectDto dto : dtos) {
-            PatientDto pat = action.getPatientSvc().get(dto.getPatientIdentifier());
+            patientIds.add(IiConverter.convertToLong(dto.getPatientIdentifier()));
+        }
+        Map<Long, PatientDto> patientMap = action.getPatientSvc().get(patientIds.toArray(new Long[patientIds.size()]));
+        for (StudySubjectDto dto : dtos) {
+            PatientDto pat = patientMap.get(IiConverter.convertToLong(dto.getPatientIdentifier()));
             SDCDiseaseDTO disease = getSDCDisease(dto);
             ICD9DiseaseDTO icd9Disease = null;
 

@@ -77,7 +77,7 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import static org.mockito.Mockito.mock;
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
@@ -99,7 +99,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
     private final CountryService countryService = new MockCountryBean();
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
-    private final PatientService patientService = new MockPatientBean();
+    private final PatientServiceLocal patientService = new MockPatientBean();
     private final PerformedActivityService psmService = new MockPerformedActivityBean();
     private final POPatientService poPatientService = new MockPaPatientServiceBean();
     private final CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderService =
@@ -123,7 +123,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PatientService getPatientService() {
+    public PatientServiceLocal getPatientService() {
         return patientService;
     }
     /**

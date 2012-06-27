@@ -96,6 +96,9 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -103,8 +106,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -223,5 +228,34 @@ public class PatientBeanLocal implements PatientServiceLocal {
         bo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, PatientDto> get(Long[] ids) throws PAException {
+        HashMap<Long, PatientDto> result = new HashMap<Long, PatientDto>();
+        if (ArrayUtils.isEmpty(ids)) {
+            return result;
+        }
+        Session session = null;
+        try {
+            session = PaHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "from Patient p "
+                       + "where p.id in (:ids) ";
+            query = session.createQuery(hql);
+            query.setParameterList("ids", ids);
+            @SuppressWarnings("unchecked")
+            List<Object> queryList = query.list();
+            for (Object item : queryList) {
+                Patient patient = (Patient) item;
+                result.put(patient.getId(), Converters.get(PatientConverter.class).convertFromDomainToDto(patient));
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in get().", hbe);
+        }
+        return result;
     }
 }

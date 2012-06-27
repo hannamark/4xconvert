@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
@@ -112,8 +112,8 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/local");
+    public PatientServiceLocal getPatientService() {
+        return (PatientServiceLocal) JNDIUtil.lookup("accrual/PatientBeanLocal/local");
     }
 
     /**

@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.service.PatientService;
+import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
@@ -143,7 +143,7 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    public PatientService getPatientService() {
+    public PatientServiceLocal getPatientService() {
         return serviceLocator.getPatientService();
     }
 

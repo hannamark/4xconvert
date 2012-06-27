@@ -237,7 +237,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         PatientDto dto = new PatientDto();
 
         try {
-            bean.get(null);
+            bean.get((Ii) null);
             fail();
         } catch (PAException ex) {
             // expected
