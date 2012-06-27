@@ -22,22 +22,46 @@
             }
             
             function loadDiv() {
+            	clearUnusedSearchCriteria();
                 var url = '/registry/protected/popupdisplayPersonsList.action';
                 var params = {
                     city: $("city").value,
                     country: $("country").value,
-                    ctepId: $('poOrganizations').ctepId.value,
+                    ctepId: $("perCtepIdSearch").value,
                     email: $("email").value,
                     firstName: $("firstName").value,
                     lastName: $("lastName").value,
                     state: $("state").value,
-                    zip: $("zip").value
+                    zip: $("zip").value,
+                    poId: $("perPOIdSearch").value
                 };
                 var div = $('getPersons');          
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
                 var aj = callAjaxPost(div, url, params);
             }
             
+            function clearUnusedSearchCriteria(){
+                var poid = $("perPOIdSearch").value;
+                var ctepid = $("perCtepIdSearch").value;
+                if(poid.length > 0){
+                    $("perCtepIdSearch").value = '';
+                    $("firstName").value = '';
+                    $("lastName").value = '';
+                    $("city").value = '';
+                    $("state").value = '';
+                    $("zip").value = '';
+                    $("email").value = '';
+                }
+                if(poid.length == 0 && ctepid.length > 0){
+                    $("firstName").value = '';
+                    $("lastName").value = '';
+                    $("city").value = '';
+                    $("state").value = '';
+                    $("zip").value = '';
+                    $("email").value = '';
+                }
+            }            
+
             function setSearchFormVisible() {
                 $("searchPersJsp").style.display="";
                 $("createPersJsp").style.display="none";

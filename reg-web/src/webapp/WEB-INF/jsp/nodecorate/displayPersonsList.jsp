@@ -6,9 +6,11 @@
                    sort="list" pagesize="10" uid="row"  name="persons" export="false" requestURI="popupdisplayPersonsListDisplayTag.action">
         <display:setProperty name="basic.msg.empty_list" value="No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
         <display:column escapeXml="true" title="First Name" property="firstName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Middle Name" property="middleName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Last Name" property="lastName"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+        <display:column escapeXml="true" title="Email" property="email"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Address" property="address"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column title="Action" class="action" sortable="false"  headerScope="col">
             <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')">

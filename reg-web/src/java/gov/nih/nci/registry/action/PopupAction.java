@@ -78,8 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
@@ -94,22 +92,23 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -150,6 +149,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     
     private OrgSearchCriteria createOrg = new OrgSearchCriteria();
     private PaPersonDTO personDTO = new PaPersonDTO();
+    private final PersonSearchCriteriaDTO personSearchCriteria = new PersonSearchCriteriaDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
     private static final int AUS_STATE_CODE_LEN = 3;
 
@@ -252,59 +252,43 @@ public class PopupAction extends ActionSupport implements Preparable {
         return "displayPasswordReset";
     }
 
-    private String populatePersons(boolean pagination) throws PAException {
+    private String populatePersons(boolean pagination) throws PAException { // NOPMD
         final HttpServletRequest request = ServletActionContext.getRequest();
+        if (isPersonCriterionEmpty()) {
+            String message = "Please enter at least one search criteria";
+            persons = null;
+            addActionError(message);
+            request.setAttribute(FAILURE_MSG_ATTR, message);
+            return SUCCESS;
+        }
         try {
-            if (isPersonCriterionEmpty()) {
-                String message = "Please enter at least one search criteria";
-                persons = null;
-                addActionError(message);
-                request.setAttribute(FAILURE_MSG_ATTR, message);
-                return SUCCESS;
-            }
-            // set the values in the DTO
-            personDTO.setFirstName(firstName);
-            personDTO.setLastName(lastName);
-            personDTO.setEmail(email);
-            personDTO.setCountry(country);
-            personDTO.setCity(city);
-            personDTO.setState(state);
-            PersonDTO p = new PersonDTO();
-
-            if (email != null && email.length() > 0) {
-                DSet<Tel> list = new DSet<Tel>();
-                list.setItem(new HashSet<Tel>());
-                TelEmail telemail = new TelEmail();
-                telemail.setValue(new URI("mailto:" + email));
-                list.getItem().add(telemail);
-                p.setTelecomAddress(list);
-            }
-            p.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, country));
-            //
-            List<PersonDTO> poPersonList = new ArrayList<PersonDTO>();
-
-            if (ctepId != null && ctepId.length() > 0) {
-                IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctepId));
-                List<IdentifiedPersonDTO> retResultList = PoRegistry.getIdentifiedPersonEntityService()
-                                                                    .search(identifiedPersonDTO);
-                if (CollectionUtils.isNotEmpty(retResultList)) {
-                    p.setIdentifier(retResultList.get(0).getPlayerIdentifier());
-                }
+            if (StringUtils.isNotBlank(getPoId()) || StringUtils.isNotBlank(getCtepId())) {
+                personSearchCriteria.setId(getPoId());
+                personSearchCriteria.setCtepId(getCtepId());
+                persons = PADomainUtils.searchPoPersons(getPersonSearchCriteria());
             } else {
-                p.setName(RemoteApiUtil.convertToEnPn(firstName, null, lastName, null, null));
-            }
-            if (p.getIdentifier() != null || p.getName() != null) {
-                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                try {
-                    poPersonList = PoRegistry.getPersonEntityService().search(p, limit);
-                } catch (TooManyResultsException e) {
-                    throw new PAException(e);
+                PersonDTO p = new PersonDTO();
+                p.setName(EnPnConverter.convertToEnPn(getFirstName(), null, getLastName(), null, null));
+                p.setPostalAddress(AddressConverterUtil.create(null, null, getCityName(), getStateName(), getZipCode(),
+                        getCountryName()));
+                if (StringUtils.isNotBlank(getEmail())) {
+                    List<String> emailList = new ArrayList<String>();
+                    emailList.add(getEmail());
+                    p.setTelecomAddress(DSetConverter.convertListToDSet(emailList, "EMAIL", p.getTelecomAddress()));
                 }
+                persons = PADomainUtils.searchPoPersons(p);
             }
-            for (PersonDTO poPersonDTO : poPersonList) {
-                persons.add(PADomainUtils.convertToPaPersonDTO(poPersonDTO));
-            }
+            if (persons != null && !persons.isEmpty()) {
+                Collections.sort(persons, new Comparator<PaPersonDTO>() {
+                    @Override
+                    public int compare(PaPersonDTO o1, PaPersonDTO o2) {
+                        return StringUtils
+                                .defaultString(o1.getLastName())
+                                .compareTo(
+                                        StringUtils.defaultString(o2.getLastName()));
+                    }
+                });
+            }            
         } catch (Exception e) {
             persons = null;
             LOG.error("Error occured while searching PO Persons " + e.getMessage(), e);
@@ -316,7 +300,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private boolean isPersonCriterionEmpty() {
         return StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
                 && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
-                && StringUtils.isEmpty(state) && StringUtils.isEmpty(country);
+                && StringUtils.isEmpty(state)  && StringUtils.isEmpty(poId);
     }
 
     /**
@@ -1155,5 +1139,12 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public void setPaOrgs(List<PaOrganizationDTO> paOrgs) {
         this.paOrgs = paOrgs;
+    }
+
+    /**
+     * @return the personSearchCriteria
+     */
+    public PersonSearchCriteriaDTO getPersonSearchCriteria() {
+        return personSearchCriteria;
     }
 }
