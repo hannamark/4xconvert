@@ -9,11 +9,14 @@ function formReset(){
     document.getElementById("orgCountrySearch").value = 'USA';
     document.getElementById("orgZipSearch").value = '';
     document.getElementById("orgCtepIdSearch").value = '';
+    document.getElementById("orgPOIdSearch").value = '';
 }
 </SCRIPT>
 </head>
-<p align="center" class="info">Type a string of characters in any of the text fields in the upper frame or in CTEP
-Identifier field in the lower frame. <br>
+    <p align="center" class="info">
+        Type a string of characters in any of the text fields in the upper frame OR
+        enter PO ID or CTEP Identifier in the lower frame.
+    </p> 
 Please do not use wildcard characters.<br>
 </p>
 <table class="form">
@@ -35,7 +38,7 @@ Please do not use wildcard characters.<br>
         <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgCountry"> <fmt:message
             key="popUpOrg.country" /></label></td>
         <td colspan="3"><s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"
-            listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:270px" />
+            listKey="alpha3" listValue="name" headerKey="" headerValue="" cssStyle="width:270px" />
         </td>
     </tr>
     <tr>
@@ -61,7 +64,9 @@ Please do not use wildcard characters.<br>
         </td>
     </tr>
     <tr>
-        <td><label for="poOrganizations_orgSearchCriteria_ctepId">CTEP Identifier :</label></td>
+        <td><label for="poOrganizations_orgSearchCriteria_poId">PO ID (Exact Match)</label></td>
+        <td><s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssStyle="width:200px" /></td>
+        <td><label for="poOrganizations_orgSearchCriteria_ctepId">CTEP Identifier</label></td>
         <td><s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100"
             cssStyle="width:200px" /></td>
     </tr>

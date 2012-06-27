@@ -105,15 +105,17 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -140,9 +142,12 @@ public class PopupAction extends ActionSupport implements Preparable {
     private static final String FAILURE_MSG_ATTR = "failureMessage";
     private static final String ORGS_RESULT = "orgs";
     private List<Country> countryList = new ArrayList<Country>();
+    private List<PaOrganizationDTO> paOrgs = new ArrayList<PaOrganizationDTO>();
     private List<SearchOrgResultDisplay> orgs = new ArrayList<SearchOrgResultDisplay>();
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
-    private OrgSearchCriteria orgSearchCriteria = new OrgSearchCriteria();
+    
+    private final OrganizationSearchCriteriaDTO orgSearchCriteria = new OrganizationSearchCriteriaDTO();
+    
     private OrgSearchCriteria createOrg = new OrgSearchCriteria();
     private PaPersonDTO personDTO = new PaPersonDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
@@ -150,7 +155,9 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private static final Logger LOG  = Logger.getLogger(PopupAction.class);
 
-
+    private String poId;
+    private String ctepId;
+    
     //Person attributes
     private String firstName;
     private String lastName;
@@ -159,7 +166,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String city;
     private String state;
     private String zip;
-    private String ctepId;
+    
     private String streetAddr;
     private String preFix;
     private String suffix;
@@ -175,7 +182,6 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String cityName;
     private String stateName;
     private String zipCode;
-    private String ctepid;
 
     private String phoneNumber;
     private String tty;
@@ -320,7 +326,8 @@ public class PopupAction extends ActionSupport implements Preparable {
         return populateOrgs(true);
     }
 
-    private String populateOrgs(boolean pagination) {
+    @SuppressWarnings("unchecked")
+    private String populateOrgs(boolean pagination) { // NOPMD
         try {
             if (isOrgCriterionEmpty()) {
                 String message = "Please enter at least one search criteria";
@@ -329,25 +336,42 @@ public class PopupAction extends ActionSupport implements Preparable {
                 ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
                 return pagination ? ORGS_RESULT : SUCCESS;
             }
+            
+            orgSearchCriteria.setName(getOrgName());
+            orgSearchCriteria.setFamilyName(getFamilyName());
+            orgSearchCriteria.setCity(getCityName());
+            orgSearchCriteria.setCountry(getCountryName());
+            orgSearchCriteria.setState(getStateName());
+            orgSearchCriteria.setZip(getZipCode());
+            orgSearchCriteria.setCtepId(getCtepId());
+            orgSearchCriteria.setIdentifier(getPoId());
+            
+            List<OrganizationDTO> orgList = PADomainUtils.searchPoOrganizations(getOrgSearchCriteria());
 
-            if (StringUtils.isEmpty(countryName) && StringUtils.isEmpty(ctepid)) {
-                String message = "Please select a country";
-                orgs = null;
-                addActionError(message);
-                ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
-                return pagination ? ORGS_RESULT : SUCCESS;
+            Set<Ii> famOrgRelIiList = new HashSet<Ii>();
+            for (OrganizationDTO dto : orgList) {
+                if (CollectionUtils.isNotEmpty(dto.getFamilyOrganizationRelationships().getItem())) {
+                    famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
+                }
             }
-            if (pagination) {
-                orgSearchCriteria.setOrgName(orgName);
-                orgSearchCriteria.setFamilyName(familyName);
-                orgSearchCriteria.setOrgCity(cityName);
-                orgSearchCriteria.setOrgCountry(countryName);
-                orgSearchCriteria.setOrgZip(zipCode);
-                orgSearchCriteria.setOrgState(stateName);
+            
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
+            for (OrganizationDTO dto : orgList) {
+                PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());
+                paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
+                paOrgs.add(paDTO);
             }
-            List<OrganizationDTO> orgSearchResults = performOrgSearch();
-            Map<Ii, FamilyDTO> familyMap =  getFamilyDTOs(orgSearchResults);
-            convertPoOrganizationDTO(orgSearchResults, familyMap);
+            
+            PADomainUtils.addOrganizationCtepIDs(paOrgs);
+            
+            Collections.sort(paOrgs, new Comparator<PaOrganizationDTO>() {
+                @Override
+                public int compare(PaOrganizationDTO o1, PaOrganizationDTO o2) {
+                    return StringUtils.defaultString(o1.getName()).compareTo(
+                            StringUtils.defaultString(o2.getName()));
+                }
+            });
+            
             return pagination ? ORGS_RESULT : SUCCESS;
         } catch (Exception e) {
             orgs = null;
@@ -356,36 +380,9 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
     }
 
-    private List<OrganizationDTO> performOrgSearch()
-            throws TooManyResultsException, NullifiedRoleException,
-            NullifiedEntityException, PAException {
-        PaOrganizationDTO criteria = new PaOrganizationDTO();
-        criteria.setName(orgName);
-        criteria.setFamilyName(familyName);
-        criteria.setCity(cityName);
-        criteria.setCountry(countryName);
-        criteria.setZip(zipCode);
-        criteria.setState(stateName);
-        criteria.setCtepId(ctepId);
-        return PADomainUtils.orgSearchByNameAddressCtepId(criteria);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<Ii, FamilyDTO> getFamilyDTOs(List<OrganizationDTO> orgList) {
-        if (CollectionUtils.isEmpty(orgList)) {
-            return null;
-        }
-        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
-        for (OrganizationDTO dto : orgList) {
-            famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
-        }
-        return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
-    }
-
-
     private boolean isOrgCriterionEmpty() {
         return StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
-                && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid)
+                && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(getCtepId()) && StringUtils.isEmpty(getPoId()) 
                 && StringUtils.isEmpty(familyName);
     }
 
@@ -747,20 +744,6 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @return the orgSearchCriteria
-     */
-    public OrgSearchCriteria getOrgSearchCriteria() {
-        return orgSearchCriteria;
-    }
-
-    /**
-     * @param orgSearchCriteria the orgSearchCriteria to set
-     */
-    public void setOrgSearchCriteria(OrgSearchCriteria orgSearchCriteria) {
-        this.orgSearchCriteria = orgSearchCriteria;
-    }
-
-    /**
      * @return the createOrg
      */
     public OrgSearchCriteria getCreateOrg() {
@@ -1000,20 +983,6 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @return ctrpid
-     */
-    public String getCtepid() {
-        return ctepid;
-    }
-
-    /**
-     * @param ctepid the ctrep id
-     */
-    public void setCtepid(String ctepid) {
-        this.ctepid = ctepid;
-    }
-
-    /**
      * @return org street address
      */
     public String getOrgStAddress() {
@@ -1151,5 +1120,40 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * @return the poId
+     */
+    public String getPoId() {
+        return poId;
+    }
+
+    /**
+     * @param poId the poId to set
+     */
+    public void setPoId(String poId) {
+        this.poId = poId;
+    }
+
+    /**
+     * @return the orgSearchCriteria
+     */
+    public OrganizationSearchCriteriaDTO getOrgSearchCriteria() {
+        return orgSearchCriteria;
+    }
+
+    /**
+     * @return the paOrgs
+     */
+    public List<PaOrganizationDTO> getPaOrgs() {
+        return paOrgs;
+    }
+
+    /**
+     * @param paOrgs the paOrgs to set
+     */
+    public void setPaOrgs(List<PaOrganizationDTO> paOrgs) {
+        this.paOrgs = paOrgs;
     }
 }

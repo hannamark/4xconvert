@@ -1,11 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
-<s:if test="orgs != null">
-    <s:set name="orgs" value="orgs" scope="request"/>
+<s:if test="paOrgs != null">
+    <s:set name="paOrgs" value="paOrgs" scope="request"/>
     <display:table class="data" summary="This table contains Organization search results. Please use column headers to sort results"  
-                   sort="list" pagesize="10" uid="row" name="orgs" export="false" requestURI="popupdisplayOrgListDisplayTag.action">
+                   sort="list" pagesize="10" uid="row" name="paOrgs" export="false" requestURI="popupdisplayOrgListDisplayTag.action">
         <display:setProperty name="basic.msg.empty_list" value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
         <display:column escapeXml="true" title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="false" title="Family Name" sortable="false">
             <c:forEach items="${row.families}" var="family">

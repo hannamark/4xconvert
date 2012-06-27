@@ -99,30 +99,6 @@ public class PopupActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testDisplayOrgListWithCountryEmpty(){
-        popUpAction = new PopupAction();
-        popUpAction.setOrgName("OrgName");
-        popUpAction.setCityName("rock");
-        popUpAction.setStateName("md");
-        popUpAction.setZipCode("342");
-        assertEquals("success", popUpAction.displayOrgList());
-        assertEquals(1,popUpAction.getActionErrors().size());
-        assertTrue(popUpAction.getActionErrors().contains("Please select a country"));
-    }
-
-    @Test
-    public void testDisplayOrgListDisplayTagWithCountryEmpty(){
-        popUpAction = new PopupAction();
-        popUpAction.setOrgName("OrgName");
-        popUpAction.setCityName("rock");
-        popUpAction.setStateName("md");
-        popUpAction.setZipCode("342");
-        assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
-        assertEquals(1,popUpAction.getActionErrors().size());
-        assertTrue(popUpAction.getActionErrors().contains("Please select a country"));
-    }
-
-    @Test
     public void testDisplayOrgListDisplayTagException(){
         popUpAction = new PopupAction();
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
@@ -159,14 +135,6 @@ public class PopupActionTest extends AbstractRegWebTest {
         assertNotNull(popUpAction.getPersons());
         popUpAction.setPersons(null);
         assertNull(popUpAction.getPersons());
-    }
-
-    @Test
-    public void testOrgSearchCriteriaProperty(){
-        popUpAction = new PopupAction();
-        assertNotNull(popUpAction.getOrgSearchCriteria());
-        popUpAction.setOrgSearchCriteria(null);
-        assertNull(popUpAction.getOrgSearchCriteria());
     }
 
     @Test
@@ -547,7 +515,7 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setOrgName("OrgName");
         popUpAction.setCountryName("USA");
         popUpAction.setEmail("em@mail.com");
-        popUpAction.setCtepid("1");
+        popUpAction.setCtepId("1");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }
 
@@ -568,21 +536,16 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setOrgName("OrgName");
         popUpAction.setEmail("em@mail.com");
         popUpAction.setCountryName("USA");
-        popUpAction.setCtepid("2");
+        popUpAction.setCtepId("2");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }
 
     @Test
     public void testDisplayOrgList2() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("OrgName");
-        popUpAction.setEmail("em@mail.com");
-        popUpAction.setCountryName("USA");
+        popUpAction.setPoId("4648");
         assertEquals("success", popUpAction.displayOrgList());
-        assertNotNull(popUpAction.getOrgs());
-        popUpAction.setCtepId("1");
-        assertEquals("success", popUpAction.displayOrgList());
-        assertEquals(2, popUpAction.getOrgs().size());
+        assertEquals(1, popUpAction.getPaOrgs().size());
      }
 
     @Test
