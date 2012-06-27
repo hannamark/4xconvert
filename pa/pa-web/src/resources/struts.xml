@@ -239,6 +239,16 @@
         <action name="ajaxStudyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>
         </action>
+        
+        <action name="registeredUserDetails*" class="gov.nih.nci.pa.action.RegisteredUserDetailsAction" method="{1}">
+            <interceptor-ref name="scopedModelDriven">
+                <param name="scope">session</param>
+            </interceptor-ref>        
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            
+            <result name="error">/WEB-INF/jsp/registeredUserDetails.jsp</result>
+            <result name="success">/WEB-INF/jsp/registeredUserDetails.jsp</result>
+        </action>
+                
         <action name="home">
             <result>studyProtocolshowCriteria.action</result>
         </action>

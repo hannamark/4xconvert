@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -219,5 +220,12 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
             }
         }
         return CONVERTER.convertFromDomainToDtos(result);
+    }
+
+    @Override
+    public List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
+            RegistryUser user) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

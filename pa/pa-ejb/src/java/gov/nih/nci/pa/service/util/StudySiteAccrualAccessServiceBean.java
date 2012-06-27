@@ -81,6 +81,8 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
@@ -97,6 +99,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -111,6 +114,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 /**
@@ -354,5 +358,49 @@ public class StudySiteAccrualAccessServiceBean
      */
     public static void setLastUpdate(Timestamp lastUpdate) {
         StudySiteAccrualAccessServiceBean.lastUpdate = lastUpdate;
+    }
+
+    // CHECKSTYLE:OFF
+    @Override
+    public List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
+            RegistryUser user) throws PAException {
+        List<AccrualSubmissionAccessDTO> list = new ArrayList<AccrualSubmissionAccessDTO>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select sp.id as trialId, sp.officialTitle as trialTitle, "
+                + "ss.healthCareFacility.organization.name as participatingSiteOrgName, "
+                + "ss.healthCareFacility.organization.identifier as participatingSitePoOrgId "                
+                + "from StudyProtocol sp "
+                + "inner join sp.studySites ss "
+                + "inner join ss.studySiteAccrualAccess ssaa "
+                + "where ssaa.registryUser.id = :userId and ssaa.statusCode = :status "
+                + "and ss.functionalCode = :fcode";
+        Query query = session.createQuery(hql);
+        query.setParameter("userId", user.getId());
+        query.setParameter("status", ActiveInactiveCode.ACTIVE);
+        query.setParameter("fcode", StudySiteFunctionalCode.TREATING_SITE);
+        for (Object row : query.list()) {
+            Object[] objArr = (Object[]) row;            
+            AccrualSubmissionAccessDTO dto = new AccrualSubmissionAccessDTO();
+            dto.setTrialId((Long) objArr[0]);
+            dto.setTrialTitle((String) objArr[1]);            
+            dto.setParticipatingSiteOrgName((String) objArr[2]);
+            dto.setParticipatingSitePoOrgId((String) objArr[3]);            
+            dto.setTrialNciId(getTrialNciId((Long) objArr[0]));            
+            list.add(dto);            
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String getTrialNciId(Long id) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select extension from study_otheridentifiers where study_protocol_id="
+                        + id
+                        + " and root='"
+                        + IiConverter.STUDY_PROTOCOL_ROOT
+                        + "'");
+        List<String> list = query.list();
+        return list.isEmpty() ? "" : list.get(0);
     }
 }

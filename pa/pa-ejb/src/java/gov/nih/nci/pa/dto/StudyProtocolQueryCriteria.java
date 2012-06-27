@@ -172,6 +172,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     
     private String familyId = "0";
     private String participatingSiteFamilyId = "0";
+    private String submitter;
     
     /**
      * @return the inBoxProcessing
@@ -951,7 +952,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(states).append(", summary4AnatomicSites=")
                 .append(summary4AnatomicSites).append(", familyId=")
                 .append(familyId).append(", participatingSiteFamilyId=")
-                .append(participatingSiteFamilyId).append("]");
+                .append(participatingSiteFamilyId).append(", submitter=")
+                .append(submitter).append("]");
         return builder.toString();
     }
 
@@ -995,6 +997,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setAnyTypeIdentifier(String anyTypeIdentifier) {
         this.anyTypeIdentifier = anyTypeIdentifier;
+    }
+
+    /**
+     * @return the submitter
+     */
+    public String getSubmitter() {
+        return submitter;
+    }
+
+    /**
+     * @param submitter the submitter to set
+     */
+    public void setSubmitter(String submitter) {
+        this.submitter = submitter;
     }    
     
 }

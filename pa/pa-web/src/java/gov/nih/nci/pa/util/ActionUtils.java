@@ -3,14 +3,19 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Various utility methods shared by action classes.
@@ -56,6 +61,31 @@ public final class ActionUtils {
                 || userGroups.contains(Constants.SUABSTRACTOR)
                 || userGroups.contains(Constants.ADMIN_ABSTRACTOR) 
                 || userGroups.contains(Constants.SCIENTIFIC_ABSTRACTOR)); 
-    }    
+    }   
+    
+    /**
+     * Self-descriptive. The method will sort the passed-in {@link List} (without creating a new one) and will return
+     * the same for convenience of invocation chaining. 
+     * 
+     * @param records
+     *            records
+     * @return List<StudyProtocolQueryDTO>
+     */
+    public static List<StudyProtocolQueryDTO> sortTrialsByNciId(List<StudyProtocolQueryDTO> records) {
+        if (CollectionUtils.isNotEmpty(records)) {
+            Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
+                @Override
+                public int compare(StudyProtocolQueryDTO o1,
+                        StudyProtocolQueryDTO o2) {
+                    return StringUtils.defaultString(o2.getNciIdentifier())
+                            .compareTo(
+                                    StringUtils.defaultString(o1
+                                            .getNciIdentifier()));
+                }
+            });
+        }
+        return records;
+    }
+    
 
 }

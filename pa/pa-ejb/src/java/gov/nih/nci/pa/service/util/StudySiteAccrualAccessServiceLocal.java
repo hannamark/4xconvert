@@ -79,6 +79,8 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.PAException;
@@ -121,4 +123,13 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      * @throws PAException exception
      */
     List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException;
+    
+    /**
+     * Returns all trials and participating sites to which the User can submit accrual data.
+     * @param user user
+     * @return List<AccrualSubmissionAccessDTO>
+     * @throws PAException PAException
+     */
+    List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
+            RegistryUser user) throws PAException;
 }

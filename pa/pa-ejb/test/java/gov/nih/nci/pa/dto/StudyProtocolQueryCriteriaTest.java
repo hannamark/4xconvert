@@ -595,7 +595,15 @@ public class StudyProtocolQueryCriteriaTest {
         PropertyUtils.setSimpleProperty(c2, "anyTypeIdentifier", "TEST STRING");
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+        
+        PropertyUtils.setSimpleProperty(c1, "submitter", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "submitter", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());        
+        
 
     }
     

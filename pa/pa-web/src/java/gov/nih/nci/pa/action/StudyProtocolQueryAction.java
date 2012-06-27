@@ -99,8 +99,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -108,7 +106,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -236,15 +233,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                         criteria.getUniqueCriteriaKey());
             }     
             records = protocolQueryService.getStudyProtocolByCriteria(criteria);
-            if (CollectionUtils.isNotEmpty(records)) {
-                Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
-                    @Override
-                    public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
-                        return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
-                                StringUtils.defaultString(o1.getNciIdentifier()));
-                    }
-                });              
-            }
+            ActionUtils.sortTrialsByNciId(records);
             return SUCCESS;
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());

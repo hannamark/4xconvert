@@ -83,9 +83,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -217,4 +218,23 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
     public void testGetTreatingSites() throws PAException {
         assertNotNull(bean.getTreatingSites(TestSchema.studyProtocolIds.get(0)));
     }
+    
+    @Test
+    public void getAccrualSubmissionAccess() throws Exception {
+        create();
+        StudySiteAccrualAccessDTO r = bean.get(identifier);
+        assertEquals(REGISTRY_USER_IDENTIFIER, r.getRegistryUserIdentifier());
+        RegistryUser user = new RegistryUser();
+        user.setId(TestSchema.registryUserIds.get(0));
+        List<AccrualSubmissionAccessDTO> list = bean
+                .getAccrualSubmissionAccess(user);
+        assertEquals(1, list.size());
+        AccrualSubmissionAccessDTO dto = list.get(0);
+        assertEquals("Mayo University", dto.getParticipatingSiteOrgName());
+        assertEquals("1", dto.getParticipatingSitePoOrgId());
+        assertEquals(new Long(1), dto.getTrialId());
+        assertEquals("NCI-2009-00001", dto.getTrialNciId());
+        assertEquals("cancer for THOLA", dto.getTrialTitle());
+    }
+    
 }

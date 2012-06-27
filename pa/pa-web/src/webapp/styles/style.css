@@ -582,6 +582,28 @@ UL#maintabs LI A:focus
 .actionstoprow
 { margin-top:20px; padding:5px 5px 5px 5px; clear:both; text-decoration:none; text-align:center; border-bottom:1px dotted #aeaeae}
 
+/* Registered user details */
+
+.accrual_trial_head {
+     white-space: nowrap;
+     font-weight: bold;	
+     padding-top: 10px;
+}
+
+.accrual_site {
+	white-space: nowrap;
+	padding: 5px 5px 0px 50px;
+}
+
+.fixedTopHeader {
+	
+}
+
+.scrollable_info_pane {
+	  height: 600px;	  
+      overflow: auto;
+      overflow-x: hidden;	  	  	  
+}
 
 /* Misc */
 .fluid_width {
@@ -606,4 +628,8 @@ UL#maintabs LI A:focus
 
 .nodisplay {
 	display: none !important;
+}
+
+.toggler {
+	cursor: pointer !important;
 }

@@ -12,6 +12,7 @@
                     <pa:menuLink href="${pageContext.request.contextPath}/protected/organizationsSearchexecute.action" id="organizationSearchMenuOption" labelKey="pamenu.abstraction.search.organizations" selected="${requestScope.topic == 'searchorganization'}"/>
 	            </ul>            
             </li>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'registeredUserDetails'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxprocess' || requestScope.topic == 'inboxaccess'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>            
             <c:if test="${pageContext.request.remoteUser != null}">

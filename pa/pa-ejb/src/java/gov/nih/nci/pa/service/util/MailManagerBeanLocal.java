@@ -782,7 +782,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @Override
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     public void sendMarkerAcceptanceMailToCDE(String nciIdentifier, 
-            String from, PlannedMarkerDTO marker) throws PAException {
+            String from, PlannedMarkerDTO marker) throws PAException { //NOPMD
         try {            
             String userId = StConverter.convertToString(marker.getUserLastCreated());
             User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
