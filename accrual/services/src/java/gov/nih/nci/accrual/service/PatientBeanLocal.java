@@ -80,44 +80,24 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
-import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-import gov.nih.nci.accrual.util.PoRegistry;
-import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.enums.PatientEthnicityCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -137,10 +117,6 @@ import org.hibernate.Session;
 public class PatientBeanLocal implements PatientServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(PatientBeanLocal.class);
-    @EJB
-    private CountryService countryService;
-    @EJB
-    private POPatientService patientCorrelationSvc;
 
     /**
      * {@inheritDoc}
@@ -243,114 +219,9 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     private Patient convertDtoToDomain(PatientDto dto) throws PAException {
-        updatePOPatientCorrelation(dto);
         Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-        bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-        //PO generated Player identifier
-        bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
-        updatePOPatientDetails(dto);
         bo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         return bo;
-    }
-
-    private void updatePOPatientDetails(PatientDto dto) {
-        PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
-        PersonDTO poPersonDTO = new PersonDTO();
-        try {
-            Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
-            poPersonDTO = peService.getPerson(personID);
-        } catch (NullifiedEntityException e) {
-            LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
-        }
-        poPersonDTO = mergePOPatientDetails(dto, poPersonDTO);
-        try {
-            peService.updatePerson(poPersonDTO);
-        } catch (EntityValidationException e) {
-            LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
-        }
-    }
-    
-    private PersonDTO mergePOPatientDetails(PatientDto dto, PersonDTO poPersonDTO) {
-        poPersonDTO.setBirthDate(dto.getBirthDate());
-        Set<String> personRaces = new HashSet<String>();
-        for (String raceCode : DSetEnumConverter.convertDSetToSet(dto.getRaceCode())) {
-            PatientRaceCode race = PatientRaceCode.getByCode(raceCode);
-            if (race != null) {
-                personRaces.add(race.getPersonRace());
-            }
-        }
-        poPersonDTO.setRaceCode(DSetEnumConverter.convertSetToDSet(personRaces));
-        PatientGenderCode gender = CdConverter.convertCdToEnum(PatientGenderCode.class, dto.getGenderCode());
-        if (gender != null) {
-            poPersonDTO.setSexCode(CdConverter.convertStringToCd(gender.getPersonSex()));
-        }
-        Set<String> personEthnicities = new HashSet<String>();
-        PatientEthnicityCode ethnicity = CdConverter.convertCdToEnum(PatientEthnicityCode.class, dto.getEthnicCode());
-        if (ethnicity != null) {
-            personEthnicities.add(ethnicity.getPersonEthnicGroup());
-        }
-        poPersonDTO.setEthnicGroupCode(DSetEnumConverter.convertSetToDSet(personEthnicities));
-        return poPersonDTO;
-    }
-    
-    private void updatePOPatientCorrelation(PatientDto dto) throws PAException {
-        POPatientDTO popDTO = new POPatientDTO();
-        Ii scoper = IiConverter.convertToPoOrganizationIi(
-                IiConverter.convertToString(dto.getOrganizationIdentifier()));
-        scoper.setReliability(IdentifierReliability.ISS);
-        popDTO.setScoperIdentifier(scoper);
-
-        Country country = countryService.getCountry(dto.getCountryIdentifier());
-        String zip = ISOUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
-
-        Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
-        DSet<Ad> address = new DSet<Ad>();
-        address.setItem(Collections.singleton(ad));
-        popDTO.setPostalAddress(address);      
-
-        POPatientDTO poPatientDTO = null;
-            if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
-                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPoPatientIi(
-                    IiConverter.convertToLong(dto.getAssignedIdentifier())));
-                poPatientDTO.setScoperIdentifier(scoper);
-                poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
-                popDTO = patientCorrelationSvc.update(poPatientDTO);
-            } else {
-                popDTO = patientCorrelationSvc.create(popDTO);
-            }
-        dto.setAssignedIdentifier(popDTO.getIdentifier());
-        dto.setPersonIdentifier(popDTO.getPlayerIdentifier());
-    }
-
-    /**
-     * @param countryService the countryService to set
-     */
-    public void setCountryService(CountryService countryService) {
-        this.countryService = countryService;
-    }
-
-    /**
-     * @param patientCorrelationSvc the patientCorrelationSvc to set
-     */
-    public void setPatientCorrelationSvc(POPatientService patientCorrelationSvc) {
-        this.patientCorrelationSvc = patientCorrelationSvc;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void nullifyPOPatient(Ii ii) throws PAException {
-        Patient pat = (Patient) PaHibernateUtil.getCurrentSession()
-            .load(Patient.class, Long.parseLong(ii.getExtension()));
-        try {
-            PoRegistry.getPatientCorrelationService().updateCorrelationStatus(IiConverter
-                    .convertToPoPatientIi(Long.parseLong(pat.getIdentifier())), 
-                    CdConverter.convertToCd(StructuralRoleStatusCode.NULLIFIED));
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        }
-        
     }
 }

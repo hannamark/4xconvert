@@ -85,7 +85,6 @@ import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
@@ -108,10 +107,6 @@ public interface ServiceLocatorAccInterface {
      * @return Patient correlation service
      */
     PatientService getPatientService();
-    /**
-     * @return Patient correlation service
-     */
-    POPatientService getPOPatientService();
     /**
      * @return StudySubject domain service
      */

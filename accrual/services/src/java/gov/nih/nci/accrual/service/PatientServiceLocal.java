@@ -79,9 +79,6 @@
 package gov.nih.nci.accrual.service;
 
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.service.PAException;
-
 import javax.ejb.Local;
 
 /**
@@ -90,11 +87,4 @@ import javax.ejb.Local;
  */
 @Local
 public interface PatientServiceLocal extends PatientService {
-    /**
-     * Nullified status on PO Patient.
-     * PO coprrelation.
-     * @param ii patient id.
-     * @throws PAException on error.
-     */
-    void nullifyPOPatient(Ii ii) throws PAException;
 }

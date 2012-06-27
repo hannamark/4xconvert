@@ -116,8 +116,6 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setZip(StConverter.convertToSt(bo.getZip()));
-        dto.setAssignedIdentifier(IiConverter.convertToIi(bo.getIdentifier()));
-        dto.setPersonIdentifier(IiConverter.convertToIi(bo.getPersonIdentifier()));
         return dto;
     }
 

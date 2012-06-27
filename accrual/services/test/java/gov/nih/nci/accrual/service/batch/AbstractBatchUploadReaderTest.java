@@ -96,7 +96,6 @@ import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
-import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -210,8 +209,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         readerService.setCdusBatchUploadDataValidator(cdusBatchUploadDataValidator);
        
         PatientBeanLocal patientBean = new PatientBeanLocal();
-        patientBean.setCountryService(countryService);
-        patientBean.setPatientCorrelationSvc(new POPatientBean());
         cdusBatchUploadDataValidator.setPatientService(patientBean);
         readerService.setPatientService(patientBean);
 

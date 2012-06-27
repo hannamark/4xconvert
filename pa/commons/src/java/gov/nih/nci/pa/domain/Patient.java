@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 
 import java.sql.Timestamp;
 
@@ -93,6 +94,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 14, 2009
@@ -100,16 +103,17 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name = "patient")
-public class Patient extends StructuralRole {
+public class Patient extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 2013257396600913947L;
     private String raceCode;  // csv PatientRaceCode
     private PatientGenderCode sexCode;
     private PatientEthnicityCode ethnicCode;
     private Timestamp birthDate;
-    private String personIdentifier;
     private Country country;
     private String zip;
+    private StructuralRoleStatusCode  statusCode;
+    private Timestamp statusDateRangeLow;
 
     /**
      * @return the country
@@ -196,17 +200,36 @@ public class Patient extends StructuralRole {
         this.birthDate = birthDate;
     }
     /**
-     * @return the personIdentifier
+     *
+     * @return statusCode
      */
-    @Column(name = "PERSON_ASSIGNED_IDENTIFIER")
-    public String getPersonIdentifier() {
-        return personIdentifier;
+    @Column(name = "STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public StructuralRoleStatusCode getStatusCode() {
+        return statusCode;
     }
     /**
-     * @param personIdentifier the personIdentifier to set
+     *
+     * @param statusCode statusCode
      */
-    public void setPersonIdentifier(String personIdentifier) {
-        this.personIdentifier = personIdentifier;
+    public void setStatusCode(StructuralRoleStatusCode statusCode) {
+        this.statusCode = statusCode;
+    }
+    /**
+     *
+     * @return statusDateRangeLow
+     */
+    @Column(name = "STATUS_DATE_RANGE_LOW")
+    public Timestamp getStatusDateRangeLow() {
+        return statusDateRangeLow;
+    }
+    /**
+     *
+     * @param statusDateRangeLow  statusDateRangeLow
+     */
+    public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
+        this.statusDateRangeLow = statusDateRangeLow;
     }
 
 }

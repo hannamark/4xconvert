@@ -196,8 +196,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         when(poPatientSvc.get(any(Ii.class))).thenReturn(patientDTO);
         
         PatientBeanLocal patientService = new PatientBeanLocal();
-        patientService.setCountryService(new CountryBean());
-        patientService.setPatientCorrelationSvc(poPatientSvc);
         
         PerformedActivityBean performedActivitySvc = new PerformedActivityBean();
         accCountSvc = mock(SubjectAccrualCountService.class);

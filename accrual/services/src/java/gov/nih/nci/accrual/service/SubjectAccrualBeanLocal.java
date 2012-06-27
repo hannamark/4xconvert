@@ -375,7 +375,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             throw new PAException("User does not have accrual access to site.");
         }
 
-        getPatientService().nullifyPOPatient(IiConverter.convertToIi(studySubject.getPatient().getId()));
         getStudySubjectService().delete(subjectAccrualIi);
     }
 
@@ -505,7 +504,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             .add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyIdentifier)));
         List<StudySubject> subjects = crit.list();
         for (StudySubject ss : subjects) {
-            getPatientService().nullifyPOPatient(IiConverter.convertToIi(ss.getPatient().getId()));
             session.delete(ss);
         }
     }
@@ -521,7 +519,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySubjectIi)));
         List<StudySubject> subjects = crit.list();
         for (StudySubject ss : subjects) {
-            getPatientService().nullifyPOPatient(IiConverter.convertToIi(ss.getPatient().getId()));
             session.delete(ss);
         }
     }

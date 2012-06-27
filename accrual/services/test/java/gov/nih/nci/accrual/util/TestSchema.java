@@ -533,8 +533,6 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
-        p.setIdentifier("1");
-        p.setPersonIdentifier("1");
         p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -547,8 +545,6 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
-        p.setIdentifier("2");
-        p.setPersonIdentifier("2");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -561,8 +557,6 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
-        p.setIdentifier("3");
-        p.setPersonIdentifier("3");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -575,8 +569,6 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
-        p.setIdentifier("4");
-        p.setPersonIdentifier("4");
         p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -589,8 +581,6 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
-        p.setIdentifier("5");
-        p.setPersonIdentifier("5");
         p.setRaceCode(PatientRaceCode.UNKNOWN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
