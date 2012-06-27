@@ -826,6 +826,17 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
+            if (StringUtils.isBlank(from) && registryUser == null) {
+                from = lookUpTableService.getPropertyValue("fromaddress");
+            } else if (registryUser != null) {
+                if (StringUtils.isBlank(registryUser.getEmailAddress())) {
+                        from = lookUpTableService.getPropertyValue("fromaddress");
+                 } else {
+                        from = registryUser.getEmailAddress();  
+                 }
+            }
+                
+            
             sendMailWithAttachment(toAddress, from, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
