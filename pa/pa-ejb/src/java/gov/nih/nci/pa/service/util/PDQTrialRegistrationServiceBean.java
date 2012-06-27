@@ -84,7 +84,6 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -126,7 +125,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -329,8 +327,6 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
         if (nciId != null) {
-            studyProtocolDTO.setSecondaryIdentifiers(new DSet<Ii>());
-            studyProtocolDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
             studyProtocolDTO.getSecondaryIdentifiers().getItem().add(nciId);
         }
         return studyProtocolDTO;
