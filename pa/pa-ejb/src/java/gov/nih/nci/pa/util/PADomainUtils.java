@@ -986,7 +986,7 @@ public class PADomainUtils {
      *            List<PaOrganizationDTO>
      * @throws NullifiedRoleException exception condition.
      */
-    public static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
+    private static void addPersonCtepIDs(List<PaPersonDTO> paPersons) // NOPMD
             throws NullifiedRoleException {
         if (CollectionUtils.isEmpty(paPersons)) {
             return;

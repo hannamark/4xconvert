@@ -50,7 +50,7 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
         popUpAction.setStateName("TX");
         assertEquals("success", popUpAction.displayOrgList());
         assertNotNull(popUpAction.getOrgs());
-        assertEquals(5, popUpAction.getOrgs().size());
+        assertEquals(1, popUpAction.getOrgs().size());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
         popUpAction.setStateName("TX");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
         assertNotNull(popUpAction.getOrgs());
-        assertEquals(5, popUpAction.getOrgs().size());
+        assertEquals(1, popUpAction.getOrgs().size());
     }
 
     @Test
