@@ -30,6 +30,7 @@
             }
             
         	function loadDiv() {
+        		resetUnusedSearchCriteria();
         		var url = '/registry/orgPopdisplayOrgList.action';
                 var params = {
                     cityName: $("orgCitySearch").value,
@@ -37,12 +38,36 @@
                     ctepId: $("orgCtepIdSearch").value,
                     orgName: $("orgNameSearch").value,
                     stateName: $("orgStateSearch").value,
-                    zipCode: $("orgZipSearch").value
+                    zipCode: $("orgZipSearch").value,
+                    poId: $("orgPOIdSearch").value
                 };
         	    var div = $('getOrgs');   	   
         	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="./images/loading.gif"/>&nbsp;Loading...</div>';
         	    var aj = callAjaxPost(div, url, params);
         	}
+        	
+            function resetUnusedSearchCriteria() {
+                var orgCtepid = $('orgCtepIdSearch').value;
+                var orgPoid = $('orgPOIdSearch').value;
+                if(orgPoid.length > 0){
+                    $("orgNameSearch").value = '';
+                    $("orgFamilyNameSearch").value = '';
+                    $("orgCitySearch").value = '';
+                    $("orgStateSearch").value = '';
+                    $("orgCountrySearch").value = '';
+                    $("orgZipSearch").value = '';
+                    $('orgCtepIdSearch').value = '';
+                }
+                if(orgPoid.length == 0 && orgCtepid.length > 0){
+                    $("orgNameSearch").value = '';
+                    $("orgFamilyNameSearch").value = '';
+                    $("orgCitySearch").value = '';
+                    $("orgStateSearch").value = '';
+                    $("orgCountrySearch").value = '';
+                    $("orgZipSearch").value = '';
+                }
+            }        	
+        	
         </script>
     </head> 
     <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">

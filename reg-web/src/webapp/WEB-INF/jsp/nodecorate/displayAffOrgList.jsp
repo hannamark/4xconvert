@@ -1,18 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
 
-<s:if test="orgs != null">
-    <s:set name="orgs" value="orgs" scope="request"/>
+<s:if test="paOrgs != null">
+    <s:set name="paOrgs" value="paOrgs" scope="request"/>
     <display:table class="data" summary="This table contains Organization search results. Please use column headers to sort results"  
-                   sort="list" pagesize="10" uid="row" name="orgs" export="false" requestURI="orgPopdisplayOrgListDisplayTag.action">
-        <display:setProperty name="basic.empty.showtable" value="true" />
-        <display:setProperty name="paging.banner.no_items_found">
-            <div class="pagingtop"><span class="pagebanner">No Organizations found. Please verify search criteria and/or broaden your search by removing one/more search criteria.</span>
-        </display:setProperty>
-        <display:setProperty name="paging.banner.onepage">
-            <span class="pagelinks"></span></div>
-        </display:setProperty>
+                   sort="list" pagesize="10" uid="row" name="paOrgs" export="false" requestURI="orgPopdisplayOrgListDisplayTag.action">
+        <display:setProperty name="basic.msg.empty_list" value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
         <display:column escapeXml="true" title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="City" property="city"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="State" property="state"  sortable="true"  headerClass="sortable"  headerScope="col"/>

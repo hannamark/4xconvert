@@ -25,7 +25,7 @@
     }
     
     function lookupAffiliateOrg() {
-       showPopWin('${lookupOrgUrl}', 900, 400, loadAffliatedOrgDiv, 'Select Affiliated Organization');
+    	showPopup('${lookupOrgUrl}', loadAffliatedOrgDiv, 'Select Affiliated Organization');
     }
     
     function loadAffliatedOrgDiv() {
