@@ -750,7 +750,7 @@ public class PAServiceUtils {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
                 StudyIndldeDTO sp = studyIndldeDTOs.get(i);
                 isIndIdeUpdated(errorMsg, sp);
-                for (int j = ++i; j < studyIndldeDTOs.size(); j++) {
+                for (int j = i + 1; j < studyIndldeDTOs.size(); j++) {
                     StudyIndldeDTO newType = studyIndldeDTOs.get(j);
                     if (isIndIdeDuplicate(sp, newType)) {
                         errorMsg.append("Duplicates IND/IDEs are not allowed.");
