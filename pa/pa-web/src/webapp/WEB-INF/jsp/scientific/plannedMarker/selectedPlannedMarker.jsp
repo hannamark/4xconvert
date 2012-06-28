@@ -4,6 +4,7 @@
     <s:hidden name="currentAction" />
     <s:hidden name="plannedMarker.id" />
     <s:hidden id="foundInHugo" name="plannedMarker.foundInHugo" />
+    <s:hidden id="saveReset" name="saveReset"/>
     <tr>
         <td class="label">
             <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.name" />:</s:label><span class="required">*</span>
@@ -109,6 +110,17 @@
                 </s:fielderror>
             </span>
         </td>
+        <s:if test="%{plannedMarker.id == null}">      
+        <td class="value">
+            <ul style="margin-top: -6px;">
+                <li style="padding-left: 0">
+                    <s:a href="javascript:void(0)" cssClass="btn" id="addVariation" onclick="addVariation('true');">
+                        <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span></span>
+                    </s:a>
+                </li>
+            </ul>
+        </td>
+        </s:if>
     </tr>
     <tr id="assayPurposeOtherTextRow" style="display: none;">
         <td class="label">

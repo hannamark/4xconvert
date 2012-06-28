@@ -162,7 +162,33 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.add());
     }
+    
+    @Test
+    public void testAddSave() throws PAException {
+        plannedMarkerAction.add();
+        plannedMarkerAction.setSaveReset(true);
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        plannedMarkerAction.clearErrorsAndMessages();
+        PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
+        webDTO.setName("Marker #1");
+        webDTO.setAssayType("Other");
+        webDTO.setAssayUse("Correlative");
+        webDTO.setAssayPurpose("Other");
+        webDTO.setTissueSpecimenType("Serum");
+        webDTO.setTissueCollectionMethod("Unspecified");
 
+        plannedMarkerAction.setPlannedMarker(webDTO);
+
+        plannedMarkerAction.add();
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertEquals("edit", plannedMarkerAction.add());
+        plannedMarkerAction.clearErrorsAndMessages();
+        webDTO.setAssayTypeOtherText("More Text");
+        webDTO.setAssayPurposeOtherText("More Text");
+        plannedMarkerAction.setPlannedMarker(webDTO);
+        assertEquals("list", plannedMarkerAction.add());
+
+    }
     @Test
     public void testEdit() throws PAException {
         plannedMarkerAction.setSelectedRowIdentifier("1");

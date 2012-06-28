@@ -47,6 +47,10 @@
                 showPopWin('${lookupUrl}', 1000, 600, '', 'Marker Search in caDSR');
             }
             
+            function addVariation(status){               
+                $('saveReset').value=status;
+                document.forms[0].submit();
+            }
             function loadDiv(markerId) {
                 window.top.hidePopWin(true);
                 var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action';

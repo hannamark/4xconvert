@@ -123,7 +123,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
-
+    private boolean saveReset = false;
     /**
      * {@inheritDoc}
      */
@@ -159,9 +159,14 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             }
         }
         if (hasActionErrors() || hasFieldErrors()) {
+            saveReset = false;
             return super.create();
         }
-        return super.add();
+        if (saveReset) {
+            return save();
+        } else {
+            return super.add();
+        }
     }
 
     /**
@@ -259,6 +264,18 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     protected void loadEditForm() throws PAException {
+        if (saveReset) {
+            PlannedMarkerDTO markerDTO = populateDTO(true);
+            markerDTO.setAssayTypeCode(null);
+            markerDTO.setAssayPurposeCode(null);
+            markerDTO.setAssayUseCode(null);
+            markerDTO.setTissueSpecimenTypeCode(null);
+            markerDTO.setTissueCollectionMethodCode(null);
+            markerDTO.setAssayPurposeOtherText(null);
+            markerDTO.setAssayTypeOtherText(null);
+            plannedMarker = populateWebDTO(markerDTO);
+            saveReset = false;
+        }
         if (plannedMarker != null && plannedMarker.getId() != null) {
             PlannedMarkerDTO markerDTO = plannedMarkerService.get(IiConverter.convertToIi(plannedMarker.getId()));
             plannedMarker = populateWebDTO(markerDTO);
@@ -417,6 +434,20 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     @Override
     public void deleteObject(Long objectId) throws PAException {
         plannedMarkerService.delete(IiConverter.convertToIi(objectId));
+    }
+    /**
+     * @return the saveReset
+     */
+    public boolean isSaveReset() {
+        return saveReset;
+    }
+
+    /**
+     * @param saveReset
+     *            the saveReset to set
+     */
+    public void setSaveReset(boolean saveReset) {
+        this.saveReset = saveReset;
     }
 
 }

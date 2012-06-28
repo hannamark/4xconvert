@@ -108,6 +108,7 @@ public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAc
     protected static final String CA_CREATE = "create";
     /** String value for currentAction property when doing an edit. */
     protected static final String CA_EDIT = "edit";
+    
 
     private String currentAction;
     /** Bean to store row from displaytag table. */
@@ -161,6 +162,16 @@ public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAc
         loadEditForm();
         return AR_EDIT;
     }
+    /**
+     * Call the edit jsp in "save and Variation" mode.
+     * @return action result
+     * @throws PAException exception
+     */
+    public String save() throws PAException {
+        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+        loadEditForm();
+        return AR_EDIT;
+    }
 
     /**
      * Add a new record to database (needs to be overridden). Returns to list jsp.
@@ -171,7 +182,7 @@ public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAc
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         return execute();
     }
-
+   
     /**
      * Update a record in the database (needs to be overridden). Returns to list jsp.
      * @return result
@@ -257,5 +268,4 @@ public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAc
     public void setSpIi(Ii spIi) {
         this.spIi = spIi;
     }
-
 }
