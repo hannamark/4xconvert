@@ -162,6 +162,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             saveReset = false;
             return super.create();
         }
+        return currentActionType();
+    }
+    
+    private String currentActionType() throws PAException {
         if (saveReset) {
             return save();
         } else {
