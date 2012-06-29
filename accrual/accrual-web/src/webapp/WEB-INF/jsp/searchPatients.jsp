@@ -3,6 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:set var="topic" scope="request" value="subjects_intro"/>
 <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
@@ -10,6 +11,7 @@
     <title><fmt:message key="patient.search.title"/></title>
     <s:head/>
 <script LANGUAGE="JavaScript">
+var urlParameters = '<%=StringEscapeUtils.escapeJavaScript(urlParams)%>';
 function handleSearch(){
     document.forms[0].action="patients.action";
     document.forms[0].submit();
@@ -20,19 +22,19 @@ function handleCreate(){
 }
 function handleRetrieve(rowId){
     document.forms[0].selectedRowIdentifier.value = rowId;
-    document.forms[0].action="patientsretrieve.action" + '<%=urlParams%>';
+    document.forms[0].action="patientsretrieve.action" + urlParameters;
     document.forms[0].submit();
 }
 function handleUpdate(rowId){
     document.forms[0].selectedRowIdentifier.value = rowId;
-    document.forms[0].action="patientsupdate.action" + '<%=urlParams%>';
+    document.forms[0].action="patientsupdate.action" + urlParameters;
     document.forms[0].submit();
 }
 function handleDelete(rowId){
     input_box=confirm("Click OK to remove the subject from the study.  Cancel to abort.");
     if (input_box==true){
         document.forms[0].selectedRowIdentifier.value = rowId;
-        document.forms[0].action="patientsdelete.action" + '<%=urlParams%>';
+        document.forms[0].action="patientsdelete.action" + urlParameters;
         document.forms[0].submit();
     }
 }

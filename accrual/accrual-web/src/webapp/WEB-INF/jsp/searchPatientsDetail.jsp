@@ -3,6 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <c:url value="/protected/popup.action" var="lookupUrl" />
     <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
@@ -30,10 +31,11 @@
         <script type="text/javascript" language="javascript">
             addCalendar("Cal1", "Select Date", "patient.registrationDate", "detailForm");
             setWidth(90, 1, 15, 1);
-            setFormat("mm/dd/yyyy");
+            setFormat("mm/dd/yyyy");   
             
+            var urlParameters = '<%=StringEscapeUtils.escapeJavaScript(urlParams)%>';
             function handleCancelAction() {
-            	submitForm("patients.action" + '<%=urlParams%>');
+                submitForm("patients.action" + urlParameters);
             }
             
             function handleAddAction() {
@@ -41,7 +43,7 @@
             }
             
             function handleEditAction() {
-            	submitForm("patientsedit.action" + '<%=urlParams%>');
+                submitForm("patientsedit.action" + urlParameters);
             }
             
             function submitForm(action) {
