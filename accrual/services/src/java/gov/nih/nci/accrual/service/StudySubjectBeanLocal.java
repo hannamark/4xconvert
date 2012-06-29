@@ -124,16 +124,14 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings("unchecked")
 public class StudySubjectBeanLocal extends
         AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements
         StudySubjectServiceLocal {
-    
-    private static final String UNCHECKED = "unchecked";
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -156,7 +154,6 @@ public class StudySubjectBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate) 
          throws PAException {
@@ -219,7 +216,6 @@ public class StudySubjectBeanLocal extends
 
     }
 
-    @SuppressWarnings(UNCHECKED)
     List<StudySubject> searchStudySubject(Long studyIdentifier, Long participatingSiteIdentifier,
             Timestamp startDate, Timestamp endDate, LimitOffset pagingParams) throws PAException {
 
@@ -367,7 +363,6 @@ public class StudySubjectBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
     @Override
     public StudySubject get(Long id) throws PAException {
         if (id == null) {
@@ -395,7 +390,6 @@ public class StudySubjectBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException {
         if (criteria == null || CollectionUtils.isEmpty(criteria.getStudySiteIds())) {
