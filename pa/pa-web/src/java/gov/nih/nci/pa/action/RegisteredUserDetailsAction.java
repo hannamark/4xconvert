@@ -183,8 +183,12 @@ public class RegisteredUserDetailsAction extends ActionSupport implements
         Collections.sort(users, new Comparator<RegistryUser>() {
             @Override
             public int compare(RegistryUser u1, RegistryUser u2) {
-                return StringUtils.defaultString(u1.getLastName()).compareTo(
-                        StringUtils.defaultString(u2.getLastName()));
+                return StringUtils
+                        .defaultString(u1.getLastName())
+                        .toUpperCase()
+                        .compareTo(
+                                StringUtils.defaultString(u2.getLastName())
+                                        .toUpperCase());
             }
         });
         return users;

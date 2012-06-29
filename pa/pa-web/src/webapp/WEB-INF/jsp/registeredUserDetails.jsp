@@ -9,6 +9,7 @@
         <s:head/>
         <script type="text/javascript" language="javascript">
             function handleAction() {
+            	 displayWaitPanel();
                  $('registeredUserDetailsForm').action="registeredUserDetailsquery.action";
                  $('registeredUserDetailsForm').submit();
             }
@@ -77,7 +78,7 @@
                         <td>
                             <s:select name="selectedUserId" id="selectedUserId" cssStyle="width:300px;"
                                 onchange="handleAction();"
-                                list="model.userList" listKey="id" listValue="%{lastName + ', ' +  firstName}"
+                                list="model.userList" listKey="id" listValue="%{@org.apache.commons.lang.StringUtils@capitalize(lastName) + ', ' +  @org.apache.commons.lang.StringUtils@capitalize(firstName)}"
                                 headerKey="" headerValue="" value="model.user.id" />
                         </td>
                     </tr>
@@ -128,6 +129,11 @@
                             <td class="value">                                
                                 <c:out value="${model.user.prsOrgName}"/>                                          
                             </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <hr/>
+                            </td>
                         </tr>                              
                     </c:if>
                 </table>
@@ -159,7 +165,7 @@
                             class="toggler" id="toggler_${trial.trialId}">&ndash;</span>
                         <a class="title" title="<fmt:message key="registeredUserDetails.protLinkTip"/>" 
                             href="studyProtocolview.action?studyProtocolId=${trial.trialId}"><c:out value="${trial.trialNciId}"></c:out></a>                        
-                        <c:out value="${trial.trialTitle}"></c:out>
+                        <span class="trial_title"><c:out value="${trial.trialTitle}"></c:out></span>
                     </div>
                     <div id="sites_${trial.trialId}">
 	                    <c:forEach items="${trial.participatingSites}" var="site">

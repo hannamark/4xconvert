@@ -590,13 +590,22 @@ UL#maintabs LI A:focus
      padding-top: 10px;
 }
 
+.accrual_trial_head span.trial_title {
+     white-space: nowrap;
+     font-weight: normal;
+}
+
 .accrual_site {
 	white-space: nowrap;
 	padding: 5px 5px 0px 50px;
 }
 
-.fixedTopHeader {
-	
+.fixedTopHeader * TD.value {
+	padding-top: 5px !important;
+}
+
+.fixedTopHeader * HR {
+    height: 1px;
 }
 
 .scrollable_info_pane {
@@ -632,4 +641,26 @@ UL#maintabs LI A:focus
 
 .toggler {
 	cursor: pointer !important;
+}
+
+#progress_indicator_panel {
+	text-align: center;
+	font-weight: bold;
+	font-size: 110%;
+	padding: 5px 5px 5px 5px;
+    border-color: #808080;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    width: 240px !important;
+    height: 60px !important;
+    background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;
+    z-index: 100;
+    white-space: nowrap !important;
+    -moz-box-shadow: 10px 10px 5px #888;
+    -webkit-box-shadow: 10px 10px 5px #888;
+    box-shadow: 10px 10px 5px #888;    
+}
+
+#progress_indicator_panel div {
+	padding: 2px 2px 2px 2px;
 }

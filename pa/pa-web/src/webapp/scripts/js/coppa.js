@@ -156,3 +156,25 @@ function displayCharCounts(element, event)
 
 //Go find our textareas with maxlengths and handle them when we load!
 Event.observe(window, "load", parseCharCounts);
+
+function displayWaitPanel() {	
+	// retrieve required dimensions	
+	var eltDims     = $('progress_indicator_panel').getDimensions();
+	var browserDims = $(document).viewport.getDimensions();
+	 
+	// calculate the center of the page using the browser and element dimensions
+	var y  = (browserDims.height - eltDims.height) / 2;
+	var x = (browserDims.width - eltDims.width) / 2;	
+	
+	$('progress_indicator_panel').absolutize();	
+	$('progress_indicator_panel').style.left = x + 'px';
+	$('progress_indicator_panel').style.top = y + 'px';
+	$('progress_indicator_panel').show();
+}
+
+Event.observe(window, "load", function() {
+	var rudMenuLink = $('registeredUserDetailsMenuOption');
+	if (rudMenuLink!=null) {
+		Event.observe(rudMenuLink, "click", displayWaitPanel);
+	}
+});
