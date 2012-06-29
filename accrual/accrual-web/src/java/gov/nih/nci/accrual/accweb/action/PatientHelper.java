@@ -83,23 +83,16 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -185,49 +178,5 @@ public class PatientHelper {
             action.addActionError("Gender must not be " + action.getPatient().getGenderCode()
                     + " for subjects in this study.");
         }
-    }
-    
-    /**
-     * Convert dtos to web dtos.
-     * @param dtos dtos to convert
-     * @param orgName organization name
-     * @return converted web dtos
-     * @throws PAException in case of error
-     */
-    public List<PatientWebDto> convertToWebDTOs(List<StudySubjectDto> dtos, String orgName) throws PAException {
-        List<PatientWebDto> results = new ArrayList<PatientWebDto>();
-        List<Long> patientIds = new ArrayList<Long>();
-        for (StudySubjectDto dto : dtos) {
-            patientIds.add(IiConverter.convertToLong(dto.getPatientIdentifier()));
-        }
-        Map<Long, PatientDto> patientMap = action.getPatientSvc().get(patientIds.toArray(new Long[patientIds.size()]));
-        for (StudySubjectDto dto : dtos) {
-            PatientDto pat = patientMap.get(IiConverter.convertToLong(dto.getPatientIdentifier()));
-            SDCDiseaseDTO disease = getSDCDisease(dto);
-            ICD9DiseaseDTO icd9Disease = null;
-
-            if (disease == null) {
-                icd9Disease = getICD9Disease(dto);
-            }
-
-            PerformedSubjectMilestoneDto psmDto = action.getRegistrationDate(dto);
-            results
-                .add(new PatientWebDto(pat, dto, orgName, psmDto, action.getListOfCountries(), disease, icd9Disease));
-        }
-        return results;
-    }
-
-    private ICD9DiseaseDTO getICD9Disease(StudySubjectDto dto) throws PAException {
-        if (ISOUtil.isIiNull(dto.getIcd9DiseaseIdentifier())) {
-            return null;
-        }
-        return action.getIcd9DiseaseSvc().get(dto.getIcd9DiseaseIdentifier());
-    }
-
-    private SDCDiseaseDTO getSDCDisease(StudySubjectDto dto) throws PAException {
-        if (ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
-            return null;
-        }
-        return action.getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
     }
 }

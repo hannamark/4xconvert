@@ -102,8 +102,6 @@ public class PatientDto extends BaseDTO {
     private Cd statusCode;
     private Ts statusDateRangeLow;
     private Ii organizationIdentifier;
-    private Ii assignedIdentifier;
-    private Ii personIdentifier;
 
     /**
      * @return the raceCode
@@ -216,37 +214,5 @@ public class PatientDto extends BaseDTO {
      */
       public void setOrganizationIdentifier(Ii organizationIdentifier) {
         this.organizationIdentifier = organizationIdentifier;
-    }
-    
-    /**
-     * Gets the assigned identifier.
-     * @return the assigned identifier
-     */
-    public Ii getAssignedIdentifier() {
-        return assignedIdentifier;
-    }
-    
-    /**
-     * Sets the assigned identifier.
-     * @param assignedIdentifier the new assigned identifier
-     */
-    public void setAssignedIdentifier(Ii assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
-    }
-    
-    /**
-     * Gets the person identifier.
-     * @return the person identifier
-     */
-    public Ii getPersonIdentifier() {
-        return personIdentifier;
-    }
-    
-    /**
-     * Sets the person identifier.
-     * @param personIdentifier the new person identifier
-     */
-    public void setPersonIdentifier(Ii personIdentifier) {
-        this.personIdentifier = personIdentifier;
     }
 }

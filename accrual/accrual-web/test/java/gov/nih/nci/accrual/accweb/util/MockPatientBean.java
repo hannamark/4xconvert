@@ -95,12 +95,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Hugh Reinhart
@@ -158,17 +153,4 @@ public class MockPatientBean implements PatientServiceLocal {
         }
         return dto;
     }
-
-    @Override
-    public Map<Long, PatientDto> get(Long[] ids) throws PAException {
-        Map<Long, PatientDto> result = new HashMap<Long, PatientDto>();
-        Set<Long> idSet = new HashSet<Long>(Arrays.asList(ids));
-        for (PatientDto dto : pList) {
-            if (idSet.contains(IiConverter.convertToLong(dto.getIdentifier()))) {
-                result.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
-            }
-        }
-        return result;
-    }
-
 }

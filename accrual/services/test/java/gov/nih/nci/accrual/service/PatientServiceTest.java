@@ -226,8 +226,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         PatientDto dto = bean.get(IiConverter.convertToIi(TestSchema.patients.get(0).getId()));
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.ASIAN.getName()));
         dto.setCountryIdentifier(countryIi);
-        dto.setAssignedIdentifier(IiConverter.convertToIi("1"));
-        dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         PatientDto r = bean.update(dto);
         assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
     }

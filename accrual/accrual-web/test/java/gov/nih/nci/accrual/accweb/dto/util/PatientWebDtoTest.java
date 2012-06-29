@@ -81,8 +81,30 @@ package gov.nih.nci.accrual.accweb.dto.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.ICD9Disease;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.PerformedProcedure;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.SDCDisease;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.util.PAUtil;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -106,13 +128,113 @@ public class PatientWebDtoTest {
         patientWebDto.setPatientId(Long.valueOf(1));
         patientWebDto.setPaymentMethodCode("paymentMethodCode");
         patientWebDto.setPerformedSubjectMilestoneId(Long.valueOf(1));
-        patientWebDto.setPoIdentifier(Long.valueOf(1));
         patientWebDto.setRegistrationDate("1/1/2009");
         patientWebDto.setStatusCode("statusCode");
         patientWebDto.setStudyProtocolId(Long.valueOf(1));
         patientWebDto.setStudySiteId(Long.valueOf(1));
         patientWebDto.setStudySubjectId(Long.valueOf(1));
         patientWebDto.setZip("zip");
+    }
+    
+    @Test
+    public void constructorTest() {
+        // minimal data
+        StudySubject ss = new StudySubject();
+        ss.setId(123L);
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(3212L);
+        ss.setStudyProtocol(sp);
+        StudySite ssite = new StudySite();
+        ssite.setId(942387L);
+        ss.setStudySite(ssite);
+        ss.setAssignedIdentifier("slkdfj");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        Patient p = new Patient();
+        Country country = new Country();
+        country.setId(1423L);
+        country.setName("fdsjklfsdjkljk");
+        p.setCountry(country);
+        ss.setPatient(p);
+        PatientWebDto r = new PatientWebDto(ss);
+        assertEquals(r.getAssignedIdentifier(), ss.getAssignedIdentifier());
+        assertEquals(r.getBirthDate(), null);
+        assertEquals(r.getCountryIdentifier(), country.getId());
+        assertEquals(r.getCountryName(), country.getName());
+        assertEquals(r.getDiseaseIdentifier(), null);
+        assertEquals(r.getDiseasePreferredName(), null);
+        assertEquals(r.getEthnicCode(), null);
+        assertEquals(r.getGenderCode(), null);
+        assertEquals(r.getIcd9DiseaseIdentifier(), null);
+        assertEquals(r.getIcd9DiseasePreferredName(), null);
+        assertEquals(r.getIdentifier(), ss.getId().toString());
+        assertEquals(r.getOrganizationName(), null);
+        assertEquals(r.getPaymentMethodCode(), null);
+        assertEquals(r.getPerformedSubjectMilestoneId(), null);
+        assertTrue(r.getRaceCode().isEmpty());
+        assertEquals(r.getRegistrationDate(), null);
+        assertEquals(r.getSdcDiseaseIdentifier(), null);
+        assertEquals(r.getSdcDiseasePreferredName(), null);
+        assertEquals(r.getStatusCode(), ss.getStatusCode().getCode());
+        assertEquals(r.getStudyProtocolId(), sp.getId());
+        assertEquals(r.getStudySiteId(), ssite.getId());
+        assertEquals(r.getStudySubjectId(), ss.getId());
+        assertEquals(r.getZip(), null);
+
+        // full data ICD9
+        p.setBirthDate(new Timestamp(new Date().getTime()));
+        ICD9Disease icd9 = new ICD9Disease();
+        icd9.setId(87987L);
+        icd9.setName("adfasdf");
+        icd9.setDiseaseCode("jklfds");
+        ss.setIcd9disease(icd9);
+        p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
+        p.setSexCode(PatientGenderCode.FEMALE);
+        HealthCareFacility hcf = new HealthCareFacility();
+        Organization org = new Organization();
+        org.setName("lkjdsflfjd");
+        hcf.setOrganization(org);
+        ssite.setHealthCareFacility(hcf);
+        ss.setPaymentMethodCode(PaymentMethodCode.MEDICAID);
+        List<PerformedActivity> paList = new ArrayList<PerformedActivity>();
+        paList.add(new PerformedProcedure());
+        PerformedSubjectMilestone psm = new PerformedSubjectMilestone();
+        psm.setId(54798L);
+        paList.add(psm);
+        ss.setPerformedActivities(paList);
+        p.setRaceCode("White,Asian");
+        p.setZip("12345");
+        
+        r = new PatientWebDto(ss);
+        
+        assertEquals(r.getBirthDate(), AccrualUtil.normalizeYearMonthString(p.getBirthDate().toString()));
+        assertEquals(r.getDiseaseIdentifier(), icd9.getId());
+        assertEquals(r.getDiseasePreferredName(), icd9.getPreferredName());
+        assertEquals(r.getEthnicCode(), p.getEthnicCode().getCode());
+        assertEquals(r.getGenderCode(), p.getSexCode().getCode());
+        assertEquals(r.getIcd9DiseaseIdentifier(), icd9.getId());
+        assertEquals(r.getIcd9DiseasePreferredName(),icd9.getPreferredName());
+        assertEquals(r.getOrganizationName(), org.getName());
+        assertEquals(r.getPaymentMethodCode(), ss.getPaymentMethodCode().getCode());
+        assertEquals(r.getPerformedSubjectMilestoneId(), psm.getId());
+        assertEquals(r.getRaceCode().toString(), "[White, Asian]");
+        assertEquals(r.getRegistrationDate(), null);
+        assertEquals(r.getSdcDiseaseIdentifier(), null);
+        assertEquals(r.getSdcDiseasePreferredName(), null);
+        assertEquals(r.getZip(), p.getZip());
+
+        // full data SDC
+        psm.setRegistrationDate(new Timestamp(new Date().getTime()));
+        ss.setIcd9disease(null);
+        SDCDisease sdc = new SDCDisease();
+        sdc.setId(89759L);
+        sdc.setPreferredName("fdasklj;");
+        ss.setDisease(sdc);
+        
+        r = new PatientWebDto(ss);
+        
+        assertEquals(r.getRegistrationDate(), PAUtil.normalizeDateString(psm.getRegistrationDate().toString()));
+        assertEquals(r.getSdcDiseaseIdentifier(), sdc.getId());
+        assertEquals(r.getSdcDiseasePreferredName(), sdc.getPreferredName());
     }
 
     @Test
@@ -158,11 +280,6 @@ public class PatientWebDtoTest {
     @Test
     public void performedSubjectMilestoneIdPropertyTest() {
         assertNotNull(patientWebDto.getPerformedSubjectMilestoneId());
-    }
-
-    @Test
-    public void poIdentifierPropertyTest() {
-        assertNotNull(patientWebDto.getPoIdentifier());
     }
 
     @Test

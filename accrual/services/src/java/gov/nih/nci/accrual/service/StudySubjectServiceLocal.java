@@ -78,6 +78,12 @@
 */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.service.PAException;
+
+import java.util.List;
+
 import javax.ejb.Local;
 
 /**
@@ -86,4 +92,19 @@ import javax.ejb.Local;
  */
 @Local
 public interface StudySubjectServiceLocal extends StudySubjectService {
+    
+    /**
+     * @param id index of StudySubject
+     * @return StudySubject object
+     * @throws PAException exception
+     */
+    StudySubject get(Long id) throws PAException;
+
+    /**
+     * Quick search returning all the StudySubject data for a given set of studySites.
+     * @param criteria criteria
+     * @return result list (empty list if none found)
+     * @throws PAException exception
+     */
+    List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException;
 }

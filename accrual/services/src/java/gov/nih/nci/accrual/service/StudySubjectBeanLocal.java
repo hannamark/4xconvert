@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
@@ -107,6 +108,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -125,11 +127,13 @@ import org.hibernate.criterion.Restrictions;
 public class StudySubjectBeanLocal extends
         AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements
         StudySubjectServiceLocal {
+    
+    private static final String UNCHECKED = "unchecked";
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -152,7 +156,7 @@ public class StudySubjectBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate) 
          throws PAException {
@@ -215,7 +219,7 @@ public class StudySubjectBeanLocal extends
 
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     List<StudySubject> searchStudySubject(Long studyIdentifier, Long participatingSiteIdentifier,
             Timestamp startDate, Timestamp endDate, LimitOffset pagingParams) throws PAException {
 
@@ -358,5 +362,87 @@ public class StudySubjectBeanLocal extends
             return pagingParams;
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings(UNCHECKED)
+    @Override
+    public StudySubject get(Long id) throws PAException {
+        if (id == null) {
+            throw new PAException("Called get() with id == null.");
+        }
+        StudySubject result = null;
+        Session session = null;
+        try {
+            session = PaHibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer("select ssub from StudySubject ssub "
+                    + "left outer join fetch ssub.performedActivities "
+                    + "where ssub.id = :studySubjectId ");
+            Query query = session.createQuery(hql.toString());
+            query.setParameter("studySubjectId", id);
+            List<StudySubject> qList = query.list();
+            if (CollectionUtils.isNotEmpty(qList)) {
+                result = qList.get(0);
+            }
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in get().", hbe);
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings(UNCHECKED)
+    @Override
+    public List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException {
+        if (criteria == null || CollectionUtils.isEmpty(criteria.getStudySiteIds())) {
+            return new ArrayList<StudySubject>();
+        }
+        List<StudySubject> result = null;
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer("select ssub from StudySubject ssub "
+                    + "join fetch ssub.studySite ssite "
+                    + "left outer join fetch ssub.performedActivities "
+                    + "join fetch ssub.patient pat ");
+            hql.append(getSearchWhereClause(criteria));
+            hql.append("order by ssub.id ");
+            Query query = session.createQuery(hql.toString());
+            setSearchQueryParameters(query, criteria);
+            result = query.list();
+        } catch (Exception e) {
+            throw new PAException("Exception in search().", e);
+        }
+        return result;
+    }
+
+    private String getSearchWhereClause(SearchSSPCriteriaDto criteria) {
+        StringBuffer result = new StringBuffer("where ssite.id in (:studySiteIds) ");
+        if (!StringUtils.isEmpty(criteria.getStudySubjectAssignedIdentifier())) {
+            result.append("and upper(ssub.assignedIdentifier) like upper(:assignedId) ");
+        }
+        if (criteria.getStudySubjectStatusCode() != null) {
+            result.append("and ssub.statusCode = :statusCode ");
+        }
+        if (criteria.getPatientBirthDate() != null) {
+            result.append("and pat.birthDate = :birthDate ");
+        }
+        return result.toString();
+    }
+    
+    private void setSearchQueryParameters(Query query, SearchSSPCriteriaDto criteria) {
+        query.setParameterList("studySiteIds", criteria.getStudySiteIds());
+        if (!StringUtils.isEmpty(criteria.getStudySubjectAssignedIdentifier())) {
+            query.setParameter("assignedId", "%" + criteria.getStudySubjectAssignedIdentifier().trim() + "%");
+        }
+        if (criteria.getStudySubjectStatusCode() != null) {
+            query.setParameter("statusCode", criteria.getStudySubjectStatusCode());
+        }
+        if (criteria.getPatientBirthDate() != null) {
+            query.setParameter("birthDate", criteria.getPatientBirthDate());
+        }
     }
 }

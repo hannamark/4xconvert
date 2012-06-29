@@ -79,12 +79,15 @@
 
 package gov.nih.nci.accrual.accweb.util;
 
+import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -101,7 +104,7 @@ import java.util.List;
  * @author Hugh Reinhart
  * @since Sep 26, 2009
  */
-public class MockStudySubjectBean implements StudySubjectService {
+public class MockStudySubjectBean implements StudySubjectServiceLocal {
 
     Long seq = 1L;
     List<StudySubjectDto> ssList;
@@ -119,6 +122,8 @@ public class MockStudySubjectBean implements StudySubjectService {
         dto.setStatusDateRange(new Ivl<Ts>());
         ssList.add(dto);
     }
+    StudySubjectConverter conv = new StudySubjectConverter();
+
     /**
      * {@inheritDoc}
      */
@@ -199,6 +204,30 @@ public class MockStudySubjectBean implements StudySubjectService {
     public List<StudySubjectDto> search(Long studyIdentifier, Long participatingSiteIdentifier, Timestamp startDate,
                                         Timestamp endDate, LimitOffset pagingParams) throws PAException {
        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException {
+        List<StudySubject> result = new ArrayList<StudySubject>();
+        for (StudySubjectDto ssDto : ssList) {
+            result.add(conv.convertFromDtoToDomain(ssDto));
+        }
+        return result;
+    }
+
+    @Override
+    public StudySubject get(Long id) throws PAException {
+        StudySubject result = null;
+        for (StudySubjectDto ssDto : ssList) {
+            StudySubject ss = conv.convertFromDtoToDomain(ssDto);
+            if(id.equals(ss.getId())) {
+                result = ss;
+            }
+        }
+        return result;
     }
     
     

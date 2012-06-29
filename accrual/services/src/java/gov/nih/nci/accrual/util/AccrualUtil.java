@@ -228,7 +228,8 @@ public class AccrualUtil {
      * @return timestamp
      */
     public static Timestamp yearMonthStringToTimestamp(String dateString) {
-        return new Timestamp(yearMonthStringToDate(dateString).getTime());
+        Date dt = yearMonthStringToDate(dateString);
+        return dt == null ? null : new Timestamp(yearMonthStringToDate(dateString).getTime());
     }
     
     /**

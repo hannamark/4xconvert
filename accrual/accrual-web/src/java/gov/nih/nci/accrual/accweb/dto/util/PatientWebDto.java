@@ -84,14 +84,15 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -124,7 +125,6 @@ public class PatientWebDto {
     private String zip;
     private Long countryIdentifier;
     private String countryName;
-    private Long poIdentifier;
 
     // from StudySubjectDto
     private Long studySubjectId;
@@ -198,60 +198,71 @@ public class PatientWebDto {
     }
 
     /**
-     * Construct using iso dto's from service tier.
-     * @param pIsoDto patient iso dto
-     * @param ssIsoDto study subject iso dto
-     * @param orgName organization name
-     * @param psm registration date
-     * @param listOfCountries country list
-     * @param dIsoDto disease ISO DTO
-     * @param icd9DiseaseDto icd9disease ISO DTO
+     * Construct from StudySubject.
+     * @param ss StudySubject object
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, PerformedSubjectMilestoneDto psm,
-            List<Country> listOfCountries, SDCDiseaseDTO dIsoDto, ICD9DiseaseDTO icd9DiseaseDto) {
-        setPatientData(pIsoDto, listOfCountries);
+    public PatientWebDto(StudySubject ss) {
+        loadPatientData(ss.getPatient());
 
-        if (ssIsoDto != null) {
-            studySubjectId = IiConverter.convertToLong(ssIsoDto.getIdentifier());
-            studyProtocolId = IiConverter.convertToLong(ssIsoDto.getStudyProtocolIdentifier());
-            studySiteId = IiConverter.convertToLong(ssIsoDto.getStudySiteIdentifier());
-            identifier = IiConverter.convertToString(ssIsoDto.getIdentifier());
-            paymentMethodCode = CdConverter.convertCdToString(ssIsoDto.getPaymentMethodCode());
-            assignedIdentifier = StConverter.convertToString(ssIsoDto.getAssignedIdentifier());
-            statusCode = CdConverter.convertCdToString(ssIsoDto.getStatusCode());
+        studySubjectId = ss.getId();
+        studyProtocolId = ss.getStudyProtocol().getId();
+        studySiteId = ss.getStudySite().getId();
+        identifier = ss.getId().toString();
+        paymentMethodCode = ss.getPaymentMethodCode() == null ? null : ss.getPaymentMethodCode().getCode();
+        assignedIdentifier = ss.getAssignedIdentifier();
+        statusCode = ss.getStatusCode().getCode();
+
+        if (ss.getStudySite().getHealthCareFacility() != null) {
+            organizationName = ss.getStudySite().getHealthCareFacility().getOrganization().getName();
         }
 
-        organizationName = orgName;
+        loadPerformedActivitiesData(ss.getPerformedActivities());
 
-        if (psm != null) {
-            performedSubjectMilestoneId = IiConverter.convertToLong(psm.getIdentifier());
-            registrationDate = TsConverter.convertToString(psm.getRegistrationDate());
+        if (ss.getDisease() != null) {
+            sdcDiseasePreferredName = ss.getDisease().getPreferredName();
+            sdcDiseaseIdentifier = ss.getDisease().getId();
+        } else if (ss.getIcd9disease() != null) {
+            icd9DiseasePreferredName = ss.getIcd9disease().getPreferredName();
+            icd9DiseaseIdentifier = ss.getIcd9disease().getId();
         }
-
-        if (dIsoDto != null) {
-            sdcDiseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
-            sdcDiseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
-        } else if (icd9DiseaseDto != null) {
-            icd9DiseasePreferredName = StConverter.convertToString(icd9DiseaseDto.getPreferredName());
-            icd9DiseaseIdentifier = IiConverter.convertToLong(icd9DiseaseDto.getIdentifier());
+    }
+    
+    private void loadPatientData(Patient p) {
+        patientId = p.getId();
+        loadRaces(p.getRaceCode());
+        genderCode = p.getSexCode() == null ? null : p.getSexCode().getCode();
+        ethnicCode = p.getEthnicCode() == null ? null : p.getEthnicCode().getCode();
+        birthDate = p.getBirthDate() == null ? null 
+                : AccrualUtil.normalizeYearMonthString(p.getBirthDate().toString());
+        countryIdentifier = p.getCountry().getId();
+        countryName = p.getCountry().getName();
+        zip = p.getZip();
+    }
+    
+    private void loadRaces(String races) {
+        raceCode = new HashSet<String>();
+        if (StringUtils.isNotBlank(races)) {
+            String[] tokens = races.split("[,]");
+            for (String token : tokens) {
+                if (StringUtils.isBlank(token)) {
+                    continue;
+                }
+                String txt = token.trim();
+                raceCode.add(txt);
+            }
         }
     }
 
-    private void setPatientData(PatientDto pIsoDto, List<Country> listOfCountries) {
-        if (pIsoDto != null) {
-            patientId = IiConverter.convertToLong(pIsoDto.getIdentifier());
-            raceCode = DSetEnumConverter.convertDSetToSet(pIsoDto.getRaceCode());
-            genderCode = CdConverter.convertCdToString(pIsoDto.getGenderCode());
-            ethnicCode = CdConverter.convertCdToString(pIsoDto.getEthnicCode());
-            birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
-            countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
-            for (Country c : listOfCountries) {
-                if (c.getId().equals(countryIdentifier)) {
-                    countryName = c.getName();
+    private void loadPerformedActivitiesData(List<PerformedActivity> performedActivities) {
+        if (performedActivities != null) {
+            for (PerformedActivity pa : performedActivities) {
+                if (pa instanceof PerformedSubjectMilestone) {
+                    PerformedSubjectMilestone psm = (PerformedSubjectMilestone) pa;
+                    performedSubjectMilestoneId = psm.getId();
+                    registrationDate = psm.getRegistrationDate() == null ? null 
+                            : PAUtil.normalizeDateString(psm.getRegistrationDate().toString());
                 }
             }
-            zip = StConverter.convertToString(pIsoDto.getZip());
-            poIdentifier = IiConverter.convertToLong(pIsoDto.getAssignedIdentifier());
         }
     }
 
@@ -269,7 +280,6 @@ public class PatientWebDto {
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
         pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));
-        pat.setAssignedIdentifier(IiConverter.convertToIi(getPoIdentifier()));
         return pat;
     }
 
@@ -393,6 +403,12 @@ public class PatientWebDto {
         return organizationName;
     }
    /**
+     * @param organizationName the organizationName to set
+     */
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+    /**
      * @return the identifier
      */
     public String getIdentifier() {
@@ -539,22 +555,6 @@ public class PatientWebDto {
     public Long getDiseaseIdentifier() {
         return sdcDiseaseIdentifier != null ? sdcDiseaseIdentifier : icd9DiseaseIdentifier;
     }    
-
-    /**
-     * Gets the po identifier.
-     * @return the po identifier
-     */
-    public Long getPoIdentifier() {
-        return poIdentifier;
-    }
-
-    /**
-     * Sets the po identifier.
-     * @param poIdentifier the new po identifier
-     */
-    public void setPoIdentifier(Long poIdentifier) {
-        this.poIdentifier = poIdentifier;
-    }
 
     /**
      * @return the sdcDiseasePreferredName

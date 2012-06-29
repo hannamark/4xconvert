@@ -81,6 +81,7 @@ import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
@@ -90,8 +91,12 @@ import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.PerformedActivity;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -103,11 +108,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -187,19 +194,11 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     @Override
     public String retrieve() {
         try {
-            patient = null;
-            getListOfStudySites();
-            loadDisplayList();
-            for (PatientWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
-                    patient = pat;
-                }
-            }
+            loadPatient(getSelectedRowIdentifier());
             if (patient != null) {
                 patient.setRaceCode(getParsedCode(patient.getRaceCode()));
                 patient.setEthnicCode(getParsedCode(patient.getEthnicCode()));
-            }
-            if (patient == null) {
+            } else {
                 addActionError("Error retrieving study subject info.");
                 return execute();
             }
@@ -215,22 +214,15 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String update() {
-        patient = null;
         try {
-            getListOfStudySites();
-            loadDisplayList();
-            for (PatientWebDto pat : getDisplayTagList()) {
-                if (pat.getIdentifier().equals(getSelectedRowIdentifier())) {
-                    patient = pat;
-                }
+            loadPatient(getSelectedRowIdentifier());
+            if (patient == null) {
+                addActionError("Error retrieving study subject info for update.");
+                return execute();
             }
         } catch (Exception e) {
             patient = null;
             LOG.error("Error in PatientAction.update().", e);
-        }
-        if (patient == null) {
-            addActionError("Error retrieving study subject info for update.");
-            return execute();
         }
         return super.update();
     }
@@ -307,6 +299,16 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         return super.edit();
     }
 
+    private void loadPatient(String id) throws PAException {
+        if (id == null) {
+            patient = null;
+            return;
+        }
+        StudySubject ss = getStudySubjectSvc().get(Long.valueOf(id));
+        ss.getPerformedActivities();
+        patient = new PatientWebDto(ss);
+    }
+
     private boolean checkDiseaseIsNeeded() throws PAException {
         boolean checkDisease = true;
         StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
@@ -334,26 +336,43 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     @Override
     public void loadDisplayList() {
         setDisplayTagList(new ArrayList<PatientWebDto>());
+        Map<Long, String> ssidToOrgNameMap = new HashMap<Long, String>();
         try {
+            SearchSSPCriteriaDto searchCriteria = new SearchSSPCriteriaDto();
+            searchCriteria.setPatientBirthDate(AccrualUtil.yearMonthStringToTimestamp(getCriteria().getBirthDate()));
+            searchCriteria.setStudySubjectAssignedIdentifier(getCriteria().getAssignedIdentifier());
+            searchCriteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.ACTIVE);
             if (getCriteria().getStudySiteId() != null) {
+                searchCriteria.getStudySiteIds().add(getCriteria().getStudySiteId());
                 SearchStudySiteResultWebDto selectedSite = getSelectedStudySite(getCriteria().getStudySiteId());
-                getDisplayTagList().addAll(helper.convertToWebDTOs(getStudySubjects(getCriteria().getStudySiteId()), 
-                        selectedSite.getOrgName()));
+                ssidToOrgNameMap.put(getCriteria().getStudySiteId(), selectedSite.getOrgName());
             } else {
                 for (SearchStudySiteResultWebDto ss : getListOfStudySites()) {
-                   getDisplayTagList().addAll(helper.convertToWebDTOs(getStudySubjects(Long.valueOf(ss.getSsIi())), 
-                           ss.getOrgName()));
+                    searchCriteria.getStudySiteIds().add(Long.valueOf(ss.getSsIi()));
+                    ssidToOrgNameMap.put(Long.valueOf(ss.getSsIi()), ss.getOrgName());
                 }
             }
+            List<StudySubject> sspr = getStudySubjectSvc().search(searchCriteria);
+            addItemsToList(sspr, ssidToOrgNameMap);
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
     }
     
-    private List<StudySubjectDto> getStudySubjects(Long studySiteId) throws PAException {
-        Date birthDate = StringUtils.isEmpty(getCriteria().getBirthDate()) 
-            ? null : AccrualUtil.yearMonthStringToTimestamp(getCriteria().getBirthDate());
-        return getStudySubjectSvc().getStudySubjects(getCriteria().getAssignedIdentifier(), studySiteId, birthDate);
+    private void addItemsToList(List<StudySubject> sspr,  Map<Long, String> ssidToOrgNameMap) throws PAException {
+        for (StudySubject ss : sspr) {
+            PatientWebDto webDto = new PatientWebDto();
+            webDto.setIdentifier(ss.getId().toString());
+            webDto.setAssignedIdentifier(ss.getAssignedIdentifier());
+            for (PerformedActivity pa : ss.getPerformedActivities()) {
+                if (pa instanceof PerformedSubjectMilestone) {
+                    PerformedSubjectMilestone psm = (PerformedSubjectMilestone) pa;
+                    webDto.setRegistrationDate(PAUtil.normalizeDateString(psm.getRegistrationDate().toString()));
+                }
+            }
+            webDto.setOrganizationName(ssidToOrgNameMap.get(ss.getStudySite().getId()));
+            getDisplayTagList().add(webDto);
+        }
     }
     
     private SearchStudySiteResultWebDto getSelectedStudySite(Long studySiteId) {

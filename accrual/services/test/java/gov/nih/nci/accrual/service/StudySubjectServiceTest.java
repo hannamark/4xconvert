@@ -82,12 +82,14 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -121,7 +123,7 @@ import org.mockito.InOrder;
  * @author Hugh Reinhart
  * @since Aug 29, 2009
  */
-public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectService> {
+public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectServiceLocal> {
 
     @Override
     @Before
@@ -130,7 +132,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     }
 
     @Test
-    public void get() throws Exception {
+    public void getIso() throws Exception {
         StudySubjectDto dto = bean.get(IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId()));
         assertNotNull(dto);
         try {
@@ -139,6 +141,15 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
             // expected behavior
         }
     }
+
+    @Test
+    public void getBo() throws Exception {
+        StudySubject bo = bean.get(TestSchema.studySubjects.get(0).getId());
+        assertNotNull(bo);
+        bo = bean.get(-1L);
+        assertNull(bo);
+    }
+
     @Test
     public void create() throws Exception {
         StudySubjectDto dto = new StudySubjectDto();
@@ -234,9 +245,9 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         }        
         CollectionUtils.isEqualCollection(expectedList, actualList);        
     }
-    
+
     @Test
-    public void search() throws PAException {
+    public void searchIso() throws PAException {
         StudySubjectBean bean = mock(StudySubjectBean.class);
 
         Long studyIdentifier = 2L;
@@ -265,9 +276,44 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         inOrder.verify(bean).getUserId();
         inOrder.verify(bean).calculateAccessibleStudySubjects(studySubjects, userId);
         inOrder.verify(bean).convertFromBoListToDtoList(studySubjects);
-
     }
-    
+
+
+    @Test
+    public void searchBo() throws PAException {
+        List<StudySubject> boList = bean.search(null);
+        assertTrue(boList.isEmpty());
+        SearchSSPCriteriaDto criteria = new SearchSSPCriteriaDto();
+        boList = bean.search(criteria);
+        assertTrue(boList.isEmpty());        
+        criteria.setStudySiteIds(new ArrayList<Long>());
+        criteria.getStudySiteIds().add(-1L);
+        boList = bean.search(criteria);
+        assertTrue(boList.isEmpty());
+        criteria.getStudySiteIds().add(TestSchema.studySubjects.get(0).getStudySite().getId());
+        assertEquals(2, criteria.getStudySiteIds().size());
+        boList = bean.search(criteria);
+        assertEquals(2, boList.size());
+        criteria.setStudySubjectAssignedIdentifier("xyzzy");
+        boList = bean.search(criteria);
+        assertTrue(boList.isEmpty());
+        criteria.setStudySubjectAssignedIdentifier(TestSchema.studySubjects.get(0).getAssignedIdentifier());
+        boList = bean.search(criteria);
+        assertEquals(1, boList.size());
+        criteria.setPatientBirthDate(new Timestamp(new Date().getTime()));
+        boList = bean.search(criteria);
+        assertTrue(boList.isEmpty());
+        criteria.setPatientBirthDate(TestSchema.patients.get(0).getBirthDate());
+        boList = bean.search(criteria);
+        assertEquals(1, boList.size());
+        criteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.SUSPENDED);
+        boList = bean.search(criteria);
+        assertTrue(boList.isEmpty());
+        criteria.setStudySubjectStatusCode(TestSchema.studySubjects.get(0).getStatusCode());
+        boList = bean.search(criteria);
+        assertEquals(1, boList.size());
+    }
+
     private List<StudySubject> createStudySubjectsForUserSearch() {
         List<StudySubject> result = new ArrayList<StudySubject>();
         result.add(createStudySubjectForUserSearch(1L,1L) );
@@ -328,7 +374,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         }
 
         try {
-            bean.get(null);
+            bean.get((Ii) null);
             fail();
         } catch (PAException ex) {
             // expected

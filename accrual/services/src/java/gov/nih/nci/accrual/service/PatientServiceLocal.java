@@ -79,11 +79,6 @@
 package gov.nih.nci.accrual.service;
 
 
-import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.pa.service.PAException;
-
-import java.util.Map;
-
 import javax.ejb.Local;
 
 /**
@@ -92,10 +87,4 @@ import javax.ejb.Local;
  */
 @Local
 public interface PatientServiceLocal extends PatientService {
-    /**
-     * @param ids patient ids
-     * @return map of patient id to Patient
-     * @throws PAException exception
-     */
-    Map<Long, PatientDto> get(Long[] ids) throws PAException;
 }

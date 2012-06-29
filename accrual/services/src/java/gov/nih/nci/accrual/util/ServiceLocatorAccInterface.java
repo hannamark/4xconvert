@@ -80,7 +80,7 @@ package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
-import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
@@ -110,7 +110,7 @@ public interface ServiceLocatorAccInterface {
     /**
      * @return StudySubject domain service
      */
-    StudySubjectService getStudySubjectService();
+    StudySubjectServiceLocal getStudySubjectService();
     /**
      * @return PerformedActivityService domain service
      */
