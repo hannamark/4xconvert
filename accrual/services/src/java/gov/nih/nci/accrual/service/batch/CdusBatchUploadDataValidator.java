@@ -83,17 +83,24 @@
 package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -130,7 +137,7 @@ import org.apache.log4j.Logger;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
-                    "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar" })
+                    "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar", "PMD.NPathComplexity" })
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
@@ -139,6 +146,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private StudyProtocolDTO sp;
     private final Map<String, String> listOfPoIds = new HashMap<String, String>();
     private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
+    private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     /**
      * {@inheritDoc}
@@ -194,6 +202,16 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                                     }
                                 }
                             }
+                            List<PlannedEligibilityCriterionDTO> pecList = PaServiceLocator.getInstance()
+                                    .getPlannedActivityService()
+                                    .getPlannedEligibilityCriterionByStudyProtocol(sp.getIdentifier());
+                                for (PlannedEligibilityCriterionDTO pec : pecList) {
+                                    if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
+                                            StConverter.convertToString(pec.getCriterionName()))) {
+                                        genderCriterion = PatientGenderCode.getByCode(
+                                                CdConverter.convertCdToString(pec.getEligibleGenderCode()));
+                                    }
+                                }
                         } catch (PAException e) {
                             LOG.error("Error loading study sites for a trial in validateBatchData.", e);
                         }
@@ -203,6 +221,23 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             }
             if (StringUtils.isEmpty(protocolId)) {
                 errMsg.append("No Study Protocol Identifier could be found in the given file.");
+            }
+            if (StringUtils.isEmpty(errMsg.toString().trim())) {
+            Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
+            List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
+            for (String[] p : patientLines) {
+                List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
+                boolean containsUnique = false;
+                for (String raceCode : CDUSPatientRaceCode.getCodesByCdusCodes(races)) {
+                    if (PatientRaceCode.getByCode(raceCode).isUnique()) {
+                        containsUnique = true;
+                    }
+                }
+                if (CDUSPatientRaceCode.getCodesByCdusCodes(races).size() > 1 && containsUnique) {
+                    errMsg.append("No multiple selection when race code is Not Reported or Unknown for patient ID ")
+                    .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
+                }
+              }
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
@@ -243,7 +278,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp);
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccrualCount(key, values, errMsg, lineNumber, sp);

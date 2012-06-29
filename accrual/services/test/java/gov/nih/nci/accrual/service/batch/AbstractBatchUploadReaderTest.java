@@ -113,10 +113,12 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -127,7 +129,9 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -370,6 +374,16 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_BODY_KEY)).thenReturn(ERROR_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_SUBJECT_KEY)).thenReturn(CONFIRMATION_SUBJECT_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_BODY_KEY)).thenReturn(CONFIRMATION_BODY_VALUE);
+        
+        PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
+        when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
+        PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        List<PlannedEligibilityCriterionDTO> pecList = new ArrayList<PlannedEligibilityCriterionDTO>();
+        dto.setCriterionName(StConverter.convertToSt(PaServiceLocator.ELIG_CRITERION_NAME_GENDER));
+        dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.UNKNOWN));
+        pecList.add(dto);
+        when(paSvcLocator.getPlannedActivityService().getPlannedEligibilityCriterionByStudyProtocol(completeIi))
+        		.thenReturn(pecList);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
         

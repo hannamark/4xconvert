@@ -103,12 +103,16 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -132,20 +136,47 @@ import org.mockito.stubbing.Answer;
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
     
 	@Test
-	public void junitCoverage() throws URISyntaxException, PAException {
-		File file = new File(this.getClass().getResource("/junit_coverage.txt").toURI());
+	public void junitCoverage() throws URISyntaxException, PAException {      
+		File file = new File(this.getClass().getResource("/patientRaceCodeValidation.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
-        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "No multiple selection when race code is Not Reported or Unknown for patient ID 200708"));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+
+		PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
+		when(plannedActivitySvc.getPlannedEligibilityCriterionByStudyProtocol(any(Ii.class)))
+        .thenAnswer(new Answer<List<PlannedEligibilityCriterionDTO>>() {
+            public List<PlannedEligibilityCriterionDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+                List<PlannedEligibilityCriterionDTO> pecList = new ArrayList<PlannedEligibilityCriterionDTO>();
+                dto.setCriterionName(StConverter.convertToSt(PaServiceLocator.ELIG_CRITERION_NAME_GENDER));
+                dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
+                pecList.add(dto);
+                return pecList;
+            }
+        });
+        when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
+        
+        file = new File(this.getClass().getResource("/junit_coverage.txt").toURI());
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        errorMsg = results.get(0).getErrors().toString();
+        System.out.println("errorMsg: "+errorMsg);
         assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 21"));
         assertTrue(StringUtils.contains(errorMsg, "PATIENTS at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));
-        assertTrue(results.get(0).getValidatedLines().isEmpty());
-	}
-	
+        assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 207747 at line 2"));
+        assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 208847 at line 3"));
+        assertTrue(results.get(0).getValidatedLines().isEmpty()); 
+	}	
 	
     @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {

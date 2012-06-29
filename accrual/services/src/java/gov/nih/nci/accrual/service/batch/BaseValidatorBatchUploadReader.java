@@ -82,12 +82,12 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 
@@ -131,10 +131,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
     private void validateStudyType(StringBuffer errMsg, String protocolId, StudyProtocolDTO sp) {
         if (sp != null) {
             try {
-                StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
-                    .getSummary4ReportedResourcing(sp.getIdentifier());
-                if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode()) 
-                        != SummaryFourFundingCategoryCode.INDUSTRIAL) {
+                SummaryFourFundingCategoryCode studyType = getSummaryFourFundingCategory(sp);
+                if (!studyType.equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
                     errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
                 }
             } catch (PAException e) {
@@ -150,18 +148,17 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      * @param sp study protocol
+     * @param genderCriterion gender
      */
-    @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts" })
+    @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
-            StudyProtocolDTO sp) {
+            StudyProtocolDTO sp, PatientGenderCode genderCriterion) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean trialType = true;            
             if (sp != null) {
                 try {
-                    StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
-                            .getSummary4ReportedResourcing(sp.getIdentifier());
-                    if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode())
-                            .equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
+                    SummaryFourFundingCategoryCode studyType = getSummaryFourFundingCategory(sp);
+                    if (studyType.equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
                         trialType = false;
                     }
                 } catch (PAException e) {
@@ -185,7 +182,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                     errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
                         .append(appendLineNumber(lineNumber)).append("\n");
                 }
-                validateGender(values, errMsg, lineNumber);
+                validateGender(values, errMsg, lineNumber, genderCriterion);
                 validateEthnicity(values, errMsg, lineNumber);
                 validateDateOfEntry(values, errMsg, lineNumber);
                 validateDiseaseCode(values, errMsg, lineNumber, sp);
@@ -256,13 +253,20 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber, 
+            PatientGenderCode genderCriterion) {
         String genderCode = AccrualUtil.safeGet(values, PATIENT_GENDER_CODE_INDEX);
         if (StringUtils.isEmpty(genderCode)) {
             errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append("\n");
         } else if (!PATIENT_GENDER.contains(genderCode.trim())) {
             errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
+                .append(appendLineNumber(lineNumber)).append("\n");
+        } else if (PatientGenderCode.FEMALE.equals(genderCriterion)
+                && CDUSPatientGenderCode.getByCode(genderCode).getCode().equals(PatientGenderCode.MALE.getCode())
+            || PatientGenderCode.MALE.equals(genderCriterion)
+                && CDUSPatientGenderCode.getByCode(genderCode).getCode().equals(PatientGenderCode.FEMALE.getCode())) {
+            errMsg.append("Gender must not be " + genderCode + " for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append("\n");
         }
     }
