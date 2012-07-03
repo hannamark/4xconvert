@@ -1,11 +1,14 @@
 package gov.nih.nci.registry.action;
  
-import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation; 
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
+
+import java.util.ArrayList;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
@@ -59,5 +62,34 @@ public class DisplayTrialOwnershipActionTest extends AbstractRegWebTest{
         assertNotNull(action.getTrialOwnershipInfo());
         action.setTrialOwnershipInfo(null);
         assertNull(action.getTrialOwnershipInfo());
+        
+        assertFalse(action.isEnableEmails());
+        action.setEnableEmails(true);
+        assertTrue(action.isEnableEmails());
+        
     }
+	
+	@Test
+    public void saveEmailPreference() throws PAException {
+        action = new DisplayTrialOwnershipAction();
+        action.setUserId(1L);
+        action.setTrialId(1L);
+        action.setEnableEmails(true);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        request.setRemoteUser("RegUser");
+        ServletActionContext.setServletContext(new MockServletContext());
+        ServletActionContext.setRequest(request);
+        
+        final ArrayList list = new ArrayList();
+        final DisplayTrialOwnershipInformation webDTO = new DisplayTrialOwnershipInformation();
+        webDTO.setUserId("1");
+        webDTO.setTrialId("1");
+        list.add(webDTO);
+        session.setAttribute("trialInfoList", list);
+        
+        action.saveEmailPreference();
+    }	
+	
 }

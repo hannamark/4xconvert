@@ -111,6 +111,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
     private static final String FAILURE_MSG = "failureMessage";
     private Long userId;
     private Long trialId;
+    private boolean enableEmails;
 
     /**
      * @return the userId
@@ -148,6 +149,28 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
     public String search() throws PAException {
         performSearch();
         return VIEW_RESULTS;
+    }
+    
+    /**
+     * saveEmailPreference.
+     * 
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("unchecked")
+    public void saveEmailPreference() throws PAException {
+        PaRegistry.getRegistryUserService().setEmailNotificationsPreference(
+                userId, trialId, enableEmails);
+        List<DisplayTrialOwnershipInformation> list = (List<DisplayTrialOwnershipInformation>) ServletActionContext
+                .getRequest().getSession()
+                .getAttribute(DisplayTrialOwnershipAction.TRIAL_INFO);
+        if (list != null) {
+            for (DisplayTrialOwnershipInformation webDTO : list) {
+                if (userId.toString().equals(webDTO.getUserId())
+                        && trialId.toString().equals(webDTO.getTrialId())) {
+                    webDTO.setEmailsEnabled(enableEmails);
+                }
+            }
+        }
     }
 
     /**
@@ -219,6 +242,20 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
      */
     public void setCriteria(DisplayTrialOwnershipInformation criteria) {
         this.criteria = criteria;
+    }
+
+    /**
+     * @return the enableEmails
+     */
+    public boolean isEnableEmails() {
+        return enableEmails;
+    }
+
+    /**
+     * @param enableEmails the enableEmails to set
+     */
+    public void setEnableEmails(boolean enableEmails) {
+        this.enableEmails = enableEmails;
     }
 
 }

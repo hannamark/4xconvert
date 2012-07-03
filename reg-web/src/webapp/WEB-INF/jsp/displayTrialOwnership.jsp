@@ -31,6 +31,36 @@ function viewPagination() {
     document.getElementById('viewAll').style.display='none';
 }
 
+function setEmailNotificationsPreference(userId, trialId, enableEmails) {
+    $('ajaxIndicator').show();
+    $('prefSaveConfirmation').hide(); 
+    $('prefSaveError').hide(); 
+
+    var ajaxReq = new Ajax.Request('displayTrialOwnershipsaveEmailPreference.action', {
+        method: 'post',
+        parameters: 'userId='+userId+'&enableEmails='+enableEmails+'&trialId='+trialId,
+        onSuccess: function(transport) {
+            $('ajaxIndicator').hide();
+            $('prefSaveConfirmation').show();
+        },
+        onFailure: function(transport) {
+            $('ajaxIndicator').hide();   
+            $('prefSaveError').show();
+        },
+        onException: function(requesterObj, exceptionObj) {
+            ajaxReq.options.onFailure(null);
+        },
+        on0: function(transport) {
+            ajaxReq.options.onFailure(transport);
+        }
+    });
+    
+    $(document.formDisplayTrialOwnership).getElements().each(function(el) {
+    	if (el.name=='enableEmailNotifications_'+userId+'_'+trialId) {
+    		el.setValue(enableEmails);
+    	}    	
+    });
+}       
 
 </SCRIPT>
 <body>
@@ -40,6 +70,18 @@ function viewPagination() {
 <div class="box" id="filters">
     <reg-web:failureMessage/>
     <reg-web:sucessMessage/>
+    
+          <div id="ajaxIndicator" class="info" style="display: none;">
+                <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="displaytrialownership.saving"/>
+          </div>
+          <div class="confirm_msg" style="display: none;" id="prefSaveConfirmation">
+              <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.saved"/>
+          </div>
+          <div class="error_msg" style="display: none;" id="prefSaveError">
+              <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.error"/>
+          </div>         
+    
+    
     <s:form name="formDisplayTrialOwnership" action="displayTrialOwnershipview.action">
         <table class="form">
             <tr>
@@ -97,6 +139,11 @@ function viewPagination() {
             <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.emails" headerScope="col">
+                <s:select name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
+                    onchange="setEmailNotificationsPreference(%{#attr.row.userId}, %{#attr.row.trialId}, $F(this));"
+                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/>
+            </display:column>
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
                     <c:param name="userId" value="${row.userId}" />
@@ -118,6 +165,11 @@ function viewPagination() {
             <display:column escapeXml="true" titleKey="displaytrialownership.results.email" property="emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="displaytrialownership.results.emails" headerScope="col">
+                <s:select name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
+                    onchange="setEmailNotificationsPreference(%{#attr.row.userId}, %{#attr.row.trialId}, $F(this));"
+                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/>
+            </display:column>            
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
                     <c:param name="userId" value="${row.userId}" />
