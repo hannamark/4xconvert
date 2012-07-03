@@ -104,7 +104,11 @@ public class StudyMilestoneDTO extends StudyDTO {
     private Ts milestoneDate;
     private St creator;
     private Ts creationDate;
+    private Ts dateLastUpdated;
     private Cd rejectionReasonCode;
+    private Long userLastCreated;
+    private Long userLastUpdated;
+    
     
     /**
      * @return the commentText
@@ -190,6 +194,48 @@ public class StudyMilestoneDTO extends StudyDTO {
         this.rejectionReasonCode = rejectionReasonCode;
     }  
     
+    /**
+     * @return the dateLastUpdated
+     */
+    public Ts getDateLastUpdated() {
+        return dateLastUpdated;
+    }
+
+    /**
+     * @param dateLastUpdated the dateLastUpdated to set
+     */
+    public void setDateLastUpdated(Ts dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
+    }
+
+    /**
+     * @return the userLastCreated
+     */
+    public Long getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(Long userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+
+    /**
+     * @return the userLastUpdated
+     */
+    public Long getUserLastUpdated() {
+        return userLastUpdated;
+    }
+
+    /**
+     * @param userLastUpdated the userLastUpdated to set
+     */
+    public void setUserLastUpdated(Long userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
+
     /**
      * @return Comment Text. returns null if CommentText is blank
      */

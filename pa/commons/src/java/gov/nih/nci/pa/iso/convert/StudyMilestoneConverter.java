@@ -96,7 +96,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
  * @since 01/14/2009
  */
 public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO, StudyMilestone> {
-
+    
     /**
      * {@inheritDoc}
      */
@@ -109,13 +109,21 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         dto.setRejectionReasonCode(CdConverter.convertToCd(bo.getRejectionReasonCode()));
         dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
-        User user = bo.getUserLastCreated();
-        if (user != null) {
-            dto.setCreator(StConverter.convertToSt(CsmUserUtil.getDisplayUsername(user)));
+        User userLastCreated = bo.getUserLastCreated();
+        if (userLastCreated != null) {
+            dto.setCreator(StConverter.convertToSt(CsmUserUtil.getDisplayUsername(userLastCreated)));
+            dto.setUserLastCreated(userLastCreated.getUserId());
         }
         if (bo.getDateLastCreated() != null) {
             dto.setCreationDate(TsConverter.convertToTs(bo.getDateLastCreated()));
         }
+        User userLastUpdated = bo.getUserLastUpdated();
+        if (userLastUpdated != null) {
+            dto.setUserLastUpdated(userLastUpdated.getUserId());
+        }
+        if (bo.getDateLastUpdated() != null) {
+            dto.setDateLastUpdated(TsConverter.convertToTs(bo.getDateLastUpdated()));
+        }        
         return dto;
     }
 
@@ -140,13 +148,30 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
             spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
             bo.setStudyProtocol(spBo);
         }
-
         bo.setCommentText(StConverter.convertToString(dto.getCommentText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setMilestoneCode(MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode())));
         bo.setRejectionReasonCode(RejectionReasonCode.getByCode(CdConverter.convertCdToString(dto
             .getRejectionReasonCode())));
         bo.setMilestoneDate(TsConverter.convertToTimestamp(dto.getMilestoneDate()));
-    }
+          
+        if (dto.getCreationDate() != null) {
+            bo.setDateLastCreated(TsConverter.convertToTimestamp(dto.getCreationDate()));
+        }
+        if (dto.getDateLastUpdated() != null) {
+            bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getDateLastUpdated()));
+        }
+        
+        if (dto.getUserLastCreated() != null) {
+            User userLastCreated = new User();
+            userLastCreated.setUserId(dto.getUserLastCreated());
+            bo.setUserLastCreated(userLastCreated);
+        }
+        if (dto.getUserLastUpdated() != null) {
+            User userLastUpdated = new User();
+            userLastUpdated.setUserId(dto.getUserLastUpdated());
+            bo.setUserLastUpdated(userLastUpdated);
+        }
 
+    }
 }

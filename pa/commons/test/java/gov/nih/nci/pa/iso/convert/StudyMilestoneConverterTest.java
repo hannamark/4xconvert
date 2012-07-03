@@ -83,8 +83,8 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
@@ -194,4 +194,43 @@ public class StudyMilestoneConverterTest extends AbstractConverterTest<StudyMile
         assertNull(dto.getCreationDate());
     }
 
+    @Test
+    public void testconvertFromDomainToDto() throws PAException {
+        User userLastUpdated = new User();
+        userLastUpdated.setFirstName(USER_FIRST_NAME + "update");
+        userLastUpdated.setLastName(USER_LAST_NAME + "up");
+        StudyMilestone bo = makeBo();
+        bo.setUserLastUpdated(userLastUpdated);
+        bo.getUserLastCreated().setUserId(new Long(123));
+        bo.getUserLastUpdated().setUserId(new Long(234));
+        StudyMilestoneConverter converter = new StudyMilestoneConverter();
+        StudyMilestoneDTO dto = converter.convertFromDomainToDto(bo);
+        assertNotNull(dto.getUserLastCreated());
+        assertNotNull(dto.getUserLastUpdated());
+        assertEquals(new Long(123), dto.getUserLastCreated());
+        assertEquals(new Long(234), dto.getUserLastUpdated());
+    }
+    
+    @Test
+    public void testconvertFromDtoToDomain() throws PAException {
+        User userLastUpdated = new User();
+        userLastUpdated.setFirstName(USER_FIRST_NAME + "fn");
+        userLastUpdated.setLastName(USER_LAST_NAME + "ln");
+        StudyMilestone bo = makeBo();
+        bo.setUserLastUpdated(userLastUpdated);
+        bo.getUserLastCreated().setUserId(new Long(123));
+        bo.getUserLastUpdated().setUserId(new Long(234));
+        StudyMilestoneConverter converter = new StudyMilestoneConverter();
+        StudyMilestoneDTO dto = converter.convertFromDomainToDto(bo);
+        assertNotNull(dto.getUserLastCreated());
+        assertNotNull(dto.getUserLastUpdated());
+        assertEquals(new Long(123), dto.getUserLastCreated());
+        assertEquals(new Long(234), dto.getUserLastUpdated());
+        bo = converter.convertFromDtoToDomain(dto);
+        assertNotNull(dto.getUserLastCreated());
+        assertNotNull(dto.getUserLastUpdated());
+        assertEquals(new Long(123), bo.getUserLastCreated().getUserId());
+        assertEquals(new Long(234), bo.getUserLastUpdated().getUserId());
+    }
+    
 }
