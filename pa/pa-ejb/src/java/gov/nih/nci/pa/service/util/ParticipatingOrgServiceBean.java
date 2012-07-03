@@ -85,29 +85,33 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
         }
         if (CollectionUtils.isNotEmpty(studySiteIds)) {
             Long[] ssIdArray = studySiteIds.toArray(new Long[studySiteIds.size()]);
-            Map<Long, StudySiteAccrualStatus> siteStatuses =
-                    studySiteAccrualStatusService.getCurrentStudySiteAccrualStatus(ssIdArray);
-            Map<Long, List<PaPersonDTO>> pcs =
-                    paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
-                            StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
-            Map<Long, List<PaPersonDTO>> pis =
-                    paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
-                            StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
-            Map<Long, List<PaPersonDTO>> sis =
-                    paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
-                            StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
-            for (ParticipatingOrgDTO org : result) {
-                StudySiteAccrualStatus ssas = siteStatuses.get(org.getStudySiteId());
-                if (ssas != null) {
-                    org.setRecruitmentStatus(ssas.getStatusCode());
-                    org.setRecruitmentStatusDate(ssas.getStatusDate());
-                }
-                org.setPrimaryContacts(getPeople(pcs.get(org.getStudySiteId())));
-                org.setPrincipalInvestigators(getPeople(pis.get(org.getStudySiteId())));
-                org.setSubInvestigators(getPeople(sis.get(org.getStudySiteId())));
-            }
+            addAccrualAndPersonData(result, ssIdArray);
         }
         return result;
+    }
+
+    private void addAccrualAndPersonData(List<ParticipatingOrgDTO> poList, Long[] ssIdArray) throws PAException {
+        Map<Long, StudySiteAccrualStatus> siteStatuses =
+                studySiteAccrualStatusService.getCurrentStudySiteAccrualStatus(ssIdArray);
+        Map<Long, List<PaPersonDTO>> pcs =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.PRIMARY_CONTACT.getName());
+        Map<Long, List<PaPersonDTO>> pis =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+        Map<Long, List<PaPersonDTO>> sis =
+                paHealthCareProviderService.getPersonsByStudySiteId(ssIdArray,
+                        StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
+        for (ParticipatingOrgDTO org : poList) {
+            StudySiteAccrualStatus ssas = siteStatuses.get(org.getStudySiteId());
+            if (ssas != null) {
+                org.setRecruitmentStatus(ssas.getStatusCode());
+                org.setRecruitmentStatusDate(ssas.getStatusDate());
+            }
+            org.setPrimaryContacts(getPeople(pcs.get(org.getStudySiteId())));
+            org.setPrincipalInvestigators(getPeople(pis.get(org.getStudySiteId())));
+            org.setSubInvestigators(getPeople(sis.get(org.getStudySiteId())));
+        }
     }
 
     /**
