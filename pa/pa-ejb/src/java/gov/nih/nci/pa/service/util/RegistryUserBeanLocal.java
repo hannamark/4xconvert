@@ -96,9 +96,12 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -116,6 +119,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+
 /**
  * @author aevansel@5amsolutions.com
  */
@@ -124,6 +128,7 @@ import org.hibernate.criterion.Restrictions;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
+    private static final String UNCHECKED = "unchecked";
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;
     private static final int INDEX_FIRST_NAME = 1;
@@ -247,7 +252,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         if (userType == null) {
             throw new PAException("UserOrgType cannot be null.");
@@ -287,7 +292,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException on error
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
@@ -319,8 +324,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException on error.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
+    @SuppressWarnings(UNCHECKED)
+    public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation // NOPMD
             trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
         StringBuffer hql = new StringBuffer();
@@ -348,6 +353,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             hql.append(criteriaClause);
         }
 
+        Map<Long, List<Long>> emailEnabledTrialOwnershipMap = getEmailEnabledTrialOwnershipMap();
+        
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
         for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
@@ -361,10 +368,39 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             trialInfo.setNciIdentifier(ObjectUtils.toString(row[INDEX_NCI_IDENTIFIER]));
             trialInfo.setAffiliatedOrgId(ObjectUtils.toString(row[INDEX_ORG_ID]));
             trialInfo.setLeadOrgId(ObjectUtils.toString(row[INDEX_LEAD_ID]));
+            trialInfo.setEmailsEnabled(emailEnabledTrialOwnershipMap
+                    .get(row[INDEX_USER_ID]) != null
+                    && emailEnabledTrialOwnershipMap.get(row[INDEX_USER_ID])
+                            .contains(row[INDEX_TRIAL_ID]));
             lst.add(trialInfo);
         }
 
         return lst;
+    }
+    
+    @SuppressWarnings(UNCHECKED)
+    private Map<Long, List<Long>> getEmailEnabledTrialOwnershipMap()
+            throws PAException {
+        Map<Long, List<Long>> map = new HashMap<Long, List<Long>>();
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            SQLQuery query = session
+                    .createSQLQuery("select study_id, user_id from study_owner where enable_emails=true");
+            List<Object[]> list = query.list();
+            for (Object[] row : list) {
+                Long studyId = ((BigInteger) row[0]).longValue();
+                Long userId = ((BigInteger) row[1]).longValue();
+                List<Long> studyList = map.get(userId);
+                if (studyList == null) {
+                    studyList = new ArrayList<Long>();
+                    map.put(userId, studyList);
+                }
+                studyList.add(studyId);
+            }
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
+        return map;
     }
 
     private String getTrialOwnershipInformationSearchCriteria(DisplayTrialOwnershipInformation criteria) {
@@ -519,7 +555,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     //CHECKSTYLE:ON
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(SEARCH_USER_BY_EMAIL_QUERY);
@@ -612,7 +648,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return registryUser;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
             throws PAException {

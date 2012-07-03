@@ -99,6 +99,7 @@ public class DisplayTrialOwnershipInformation implements Serializable {
     private String nciIdentifier;
     private String affiliatedOrgId;
     private String leadOrgId;
+    private boolean emailsEnabled;
     private static final long serialVersionUID = 1L;
 
     /**
@@ -211,6 +212,20 @@ public class DisplayTrialOwnershipInformation implements Serializable {
      */
     public String getLeadOrgId() {
         return leadOrgId;
+    }
+
+    /**
+     * @return the emailsEnabled
+     */
+    public boolean isEmailsEnabled() {
+        return emailsEnabled;
+    }
+
+    /**
+     * @param emailsEnabled the emailsEnabled to set
+     */
+    public void setEmailsEnabled(boolean emailsEnabled) {
+        this.emailsEnabled = emailsEnabled;
     }
 
 }

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 
@@ -105,6 +106,12 @@ public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
+                .executeUpdate();     
+
     }
 
 
