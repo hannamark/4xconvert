@@ -460,10 +460,12 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+      
         StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
@@ -478,6 +480,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         dto.setStatusDate(null);
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        dto.setReasonText(StConverter.convertToSt("Trial with Reason Text"));
         dto.setIdentifier(null);
         try {
             bean.create(dto);

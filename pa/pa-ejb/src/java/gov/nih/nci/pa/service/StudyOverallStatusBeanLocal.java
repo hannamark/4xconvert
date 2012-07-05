@@ -143,6 +143,7 @@ public class StudyOverallStatusBeanLocal extends
      */
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
     public StudyOverallStatusDTO create(StudyOverallStatusDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
@@ -150,7 +151,18 @@ public class StudyOverallStatusBeanLocal extends
         Session session = PaHibernateUtil.getCurrentSession();
         // enforce business rules
         StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
-        if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
+        String currentText = null;
+        if (oldStatus != null && oldStatus.getReasonText() != null) {
+            currentText = oldStatus.getReasonText().getValue();
+        }
+        String newText = null;
+        if (dto.getReasonText() != null) {
+            newText = dto.getReasonText().getValue();
+        }
+        boolean statusTextChanged = 
+                (currentText == null) ? (newText != null) : !currentText.equals(newText);
+        if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier()) 
+                && !statusTextChanged) {
             //this means no change in update
             return oldStatus;
         }
@@ -319,10 +331,11 @@ public class StudyOverallStatusBeanLocal extends
         DateMidnight currentStatusDate = TsConverter.convertToDateMidnight(currentDBdto.getStatusDate());
         StudyStatusCode newStatusCode = StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
         DateMidnight newStatusDate = TsConverter.convertToDateMidnight(newStatusDto.getStatusDate());
+ 
         boolean codeChanged =
                 (newStatusCode == null) ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
         boolean statusDateChanged =
-                (currentStatusDate == null) ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);
+                (currentStatusDate == null) ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);       
         if (!codeChanged && !statusDateChanged) {
             statusOrDateChanged = false;
         }
