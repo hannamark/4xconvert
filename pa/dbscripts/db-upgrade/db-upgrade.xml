@@ -990,5 +990,10 @@
      <changeSet id="PO-5177" author="Hugh">
         <comment>Add Accrual collections table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5177.sql"/>
-     </changeSet>   
+     </changeSet> 
+     <changeSet id="PO-3979" author="Reshma">
+        <comment>Update CDE Marker Request body content. </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-3979.sql"/>
+     </changeSet>
+       
 </databaseChangeLog>

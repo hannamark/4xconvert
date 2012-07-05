@@ -200,6 +200,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
     private static final int ERROR_MSG_LENGTH = 12;
     private static final String SIR_OR_MADAM = "Sir or Madam";
+    
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -398,18 +399,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
         try {
             String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
-            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments, false);
+            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, false);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    private void sendMailWithAttachment(String mailTo, String mailFrom, String subject, String mailBody,
-            File[] attachments, boolean async) {
+    private void sendMailWithAttachment(String mailTo, String mailFrom, 
+            List<String> mailCc, String subject, String mailBody, File[] attachments, boolean async) {
         try {
             // Define Message
-            MimeMessage message = prepareMessage(mailTo, mailFrom, subject);
+            MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc, subject);
             // body
             Multipart multipart = new MimeMultipart();
             BodyPart msgPart = new MimeBodyPart();
@@ -435,7 +436,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
-
+    
+   
     
     private void invokeTransportAsync(final MimeMessage message) {
         mailDeliveryExecutor.submit(new Runnable() {
@@ -719,8 +721,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendCDERequestMail(String mailFrom, String mailBody) {
         try {
             // Define Message
-            MimeMessage message = prepareMessage(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL), mailFrom,
-                    lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
+            MimeMessage message = prepareMessage(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL), mailFrom, 
+                    null, lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
             // body
             Multipart multipart = new MimeMultipart();
             BodyPart msgPart = new MimeBodyPart();
@@ -738,6 +740,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     public void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
             String markerText) throws PAException {
         try {
@@ -745,6 +748,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
 
             boolean foundInHugo = StringUtils.isNotEmpty(CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
+            String loginName = StConverter.convertToString(marker.getUserLastCreated());
+            User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
+            RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
 
             String body = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_BODY");
             body = body.replace("${trialIdentifier}", spDTO.getNciIdentifier());
@@ -765,12 +771,36 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 markerTextClause = markerTextClause.replace("${markerText}", markerText);
             }
             body = body.replace("${markerTextClause}", markerTextClause);
-
+            if (StringUtils.isBlank(csmUser.getFirstName())
+                    && StringUtils.isBlank(csmUser.getLastName())) { 
+                if (registryUser != null && (StringUtils.isNotBlank(registryUser.getFirstName())
+                      || StringUtils.isNotBlank(registryUser.getLastName()))) {
+                            body = body.replace("${submitterName}", registryUser.getFirstName() + " "
+                                     + registryUser.getLastName());           
+                } else {
+                            body = body.replace("${submitterName}", "");
+                }
+            } else {
+                body = body.replace("${submitterName}", csmUser.getFirstName() + " "
+                        + csmUser.getLastName());
+            } 
             String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
             subject = subject.replace("${trialIdentifier}", spDTO.getNciIdentifier());
             subject = subject.replace("${markerName}", StConverter.convertToString(marker.getName()));
-            sendMailWithAttachment(toAddress, from, subject, body, null, false);
+            List<String> copyList = new ArrayList<String>();
+            copyList.add(lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
+            if (StringUtils.isBlank(csmUser.getEmailId())) {
+                if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
+                    copyList.add(registryUser.getEmailAddress());
+                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false);           
+                } else {
+                    sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
+                }
+            } else {
+                copyList.add(csmUser.getEmailId());
+                sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false); 
+            } 
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
         }
@@ -826,18 +856,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
+            String fromAddress = lookUpTableService.getPropertyValue("fromaddress");
             if (StringUtils.isBlank(from) && registryUser == null) {
-                from = lookUpTableService.getPropertyValue("fromaddress");
+                from = fromAddress;
             } else if (registryUser != null) {
                 if (StringUtils.isBlank(registryUser.getEmailAddress())) {
-                        from = lookUpTableService.getPropertyValue("fromaddress");
+                        from = fromAddress;
                  } else {
                         from = registryUser.getEmailAddress();  
                  }
             }
                 
             
-            sendMailWithAttachment(toAddress, from, subject, body, null, false);
+            sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -869,7 +900,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + StConverter.convertToString(marker.getName()) 
                 + " Request for Trial " 
                 + nciIdentifier;
-            sendMailWithAttachment(to, fromAddress, subject, body, null, false);
+            sendMailWithAttachment(to, fromAddress, null, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -1182,7 +1213,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @Override
     public void sendMailWithHtmlBody(String mailTo, String subject, String mailBody) {
         try {
-            MimeMessage message = prepareMessage(mailTo, lookUpTableService.getPropertyValue("fromaddress"), subject);
+            MimeMessage message = prepareMessage(mailTo, 
+                    lookUpTableService.getPropertyValue("fromaddress"), null, subject);
             message.setContent(mailBody, "text/html");
             // Send Message
             Transport.send(message);            
@@ -1206,7 +1238,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         sendMailWithAttachment(ctroEmail, mailSubject, mailBody, new File[0]);        
     }
 
-    MimeMessage prepareMessage(String mailTo, String mailFrom, String subject) throws PAException {
+    MimeMessage prepareMessage(String mailTo, String mailFrom, 
+            List<String> mailCc, String subject) throws PAException {
         Session session;
         // get system properties
         Properties props = System.getProperties();
@@ -1216,11 +1249,17 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
         // Get session
         session = Session.getDefaultInstance(props, null);
-
         MimeMessage result = new MimeMessage(session);
         try {
             result.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-            result.setFrom(new InternetAddress(mailFrom));
+            result.setFrom(new InternetAddress(mailFrom)); 
+            if (mailCc != null && !mailCc.isEmpty()) {
+                   InternetAddress[] myList = new InternetAddress[mailCc.size()];
+                   for (int i = 0; i < mailCc.size(); i++) {
+                       myList[i] = new InternetAddress(mailCc.get(i));
+                   }
+                result.addRecipients(Message.RecipientType.CC, myList);         
+            }
             result.addRecipient(Message.RecipientType.BCC,
                     new InternetAddress(lookUpTableService.getPropertyValue("log.email.address")));
             result.setSentDate(new java.util.Date());
@@ -1230,7 +1269,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
         return result;
     }
-
+    
+   
     @Override
     public void sendTrialOwnershipAddEmail(Long userID, Long trialID)
             throws PAException {
@@ -1278,7 +1318,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         try {
             String mailFrom = lookUpTableService
                     .getPropertyValue("fromaddress");
-            sendMailWithAttachment(user.getEmailAddress(), mailFrom,
+            sendMailWithAttachment(user.getEmailAddress(), mailFrom, null, 
                     mailSubject, mailBody, new File[0], true);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);

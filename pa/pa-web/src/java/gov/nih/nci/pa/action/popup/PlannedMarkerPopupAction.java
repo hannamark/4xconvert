@@ -93,15 +93,18 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -110,7 +113,6 @@ import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
-
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -185,8 +187,20 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public String setupEmailRequest() throws PAException {
         setToEmail(PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL"));
+        User csmUser = null;
+        try {
+            csmUser = CSMUserService.getInstance().getCSMUser(
+                   ServletActionContext.getRequest().getSession().getAttribute(Constants.LOGGED_USER_NAME).toString());
+            
+        } catch (PAException e) {
+            LOG.info("Unable to set User", e);
+        }
+        if (csmUser.getEmailId() != null && !(csmUser.getEmailId().equals(""))) {
+            getPlannedMarker().setFromEmail(csmUser.getEmailId());  
+        } else {
         getPlannedMarker().setFromEmail(
                 PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
+        }
         return EMAIL;
     }
 
@@ -203,6 +217,15 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt(getPlannedMarker().getName()));
+        
+        User csmUser = null;
+        try {
+            csmUser = CSMUserService.getInstance().getCSMUser(
+                   ServletActionContext.getRequest().getSession().getAttribute(Constants.LOGGED_USER_NAME).toString());
+        } catch (PAException e) {
+            LOG.info("Unable to set User", e);
+        }
+        dto.setUserLastCreated(StConverter.convertToSt(csmUser.getLoginName()));
         if (getPlannedMarker().isFoundInHugo()) {
             dto.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));
         }

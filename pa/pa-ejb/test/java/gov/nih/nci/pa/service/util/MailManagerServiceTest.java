@@ -399,6 +399,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("log.email.address");
         prop.setValue("logctrp@example.com");
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("CDE_MARKER_REQUEST_FROM_EMAIL");
+        prop.setValue("ncictro@example.com");
+        TestSchema.addUpdObject(prop);
     }
 
     private User createUser(String loginName, String firstName, String lastName) {
@@ -592,6 +597,57 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+    }
+    
+    @Test
+    public void testSendMarkerCDERequestEmailSubmitterName() throws PAException {
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        User csmUser = createUser("LoginName", "", "");
+        TestSchema.addUpdObject(csmUser);
+        RegistryUser user = new RegistryUser();
+        user.setLastName("LastName");
+        user.setFirstName("FirstName");
+        user.setEmailAddress(email1);
+        user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
+        TestSchema.addUpdObject(user);
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+    }
+    
+    @Test
+    public void testSendMarkerCDERequestEmailNoSubmitterName() throws PAException {
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        User csmUser = createUser("LoginName", "", "");
+        TestSchema.addUpdObject(csmUser);
+        RegistryUser user = new RegistryUser();
+        user.setLastName("");
+        user.setFirstName("");
+        user.setEmailAddress(email1);
+        user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
+        TestSchema.addUpdObject(user);
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+    }
+    
+    @Test
+    public void testSendMarkerCDERequestEmailNoSubmitterEmail() throws PAException {
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        User csmUser = createUser("LoginName", "", "");
+        TestSchema.addUpdObject(csmUser);
+        RegistryUser user = new RegistryUser();
+        user.setLastName("");
+        user.setFirstName("");
+        user.setEmailAddress("");
+        user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
+        TestSchema.addUpdObject(user);
         bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
     }
     
@@ -1019,7 +1075,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void prepareMessageTest() throws Exception {
-        MimeMessage result = bean.prepareMessage("to", "from", "subject");
+        MimeMessage result = bean.prepareMessage("to", "from", null, "subject");
         Address from = result.getFrom()[0];
         Address to = result.getRecipients(Message.RecipientType.TO)[0];
         Address bcc = result.getRecipients(Message.RecipientType.BCC)[0];
@@ -1027,5 +1083,21 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("to", to.toString());
         assertEquals("logctrp@example.com", bcc.toString());
         assertEquals("subject", result.getSubject());
+    }
+    @Test
+    public void prepareMessageTestWithCC() throws Exception {
+        List<String> copy = new ArrayList<String>();
+        copy.add("copy");
+        copy.add("CDE_MARKER_REQUEST_FROM_EMAIL");
+        MimeMessage result = bean.prepareMessage("to", "from", copy, "subject");
+        Address from = result.getFrom()[0];
+        Address to = result.getRecipients(Message.RecipientType.TO)[0];
+        Address cc = result.getRecipients(Message.RecipientType.CC)[0];
+        Address bcc = result.getRecipients(Message.RecipientType.BCC)[0];
+        assertEquals("from", from.toString());
+        assertEquals("to", to.toString());
+        assertEquals("logctrp@example.com", bcc.toString());
+        assertEquals("subject", result.getSubject());
+        assertEquals("copy",cc.toString()); 
     }
 }

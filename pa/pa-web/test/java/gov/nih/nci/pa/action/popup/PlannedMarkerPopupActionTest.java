@@ -99,12 +99,13 @@ import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.system.applicationservice.ApplicationService;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.junit.Before;
 import org.junit.Test;
@@ -116,15 +117,20 @@ import org.junit.Test;
  */
 public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     private PlannedMarkerPopupAction plannedMarkerAction;
-
+    ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
+    
     @Before
     public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerPopupAction();
         plannedMarkerAction.prepare();
 
+        
+        CSMUserService.setInstance(new MockCSMUserService());
+        
+        getSession().setAttribute(Constants.LOGGED_USER_NAME, "login1");
         EnumeratedValueDomain vd = new EnumeratedValueDomain();
         vd.setId("1");
-
+        
         DataElement de = new DataElement();
         de.setValueDomain(vd);
 
