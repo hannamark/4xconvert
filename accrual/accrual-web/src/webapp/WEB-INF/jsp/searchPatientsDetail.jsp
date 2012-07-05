@@ -272,6 +272,28 @@
                             </s:elseif>
                         </td>
                     </tr>
+                    <s:if test="%{currentAction == 'retrieve'}">
+                    <tr>
+                        <td class="label">
+                            <label>
+                                <fmt:message key="patient.userCreated"/>
+                            </label>
+                        </td>
+                        <td class="value" colspan="4">                           
+                                <s:label name="patient.userCreated" cssStyle="font-weight:normal"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <label>
+                                <fmt:message key="patient.lastUpdateDateTime"/>
+                            </label>
+                        </td>
+                        <td class="value" colspan="4">                           
+                                <s:label name="patient.dateLastUpdated" cssStyle="font-weight:normal"/>
+                        </td>
+                    </tr>      
+                    </s:if>
                 </table>
             </s:form>
             <div class="actionsrow">

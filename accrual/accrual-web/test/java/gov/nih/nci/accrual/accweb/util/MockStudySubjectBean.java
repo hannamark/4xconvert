@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -108,7 +109,16 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
 
     Long seq = 1L;
     List<StudySubjectDto> ssList;
+    User user;
+    
     {
+        user = new User();
+        user.setLoginName("Abstractor: " + new Date());
+        user.setFirstName("Joe");
+        user.setLastName("Smith");
+        user.setLoginName("curator");
+        user.setUpdateDate(new Date());
+        
         ssList = new ArrayList<StudySubjectDto>();
         StudySubjectDto dto = new StudySubjectDto();
         dto.setAssignedIdentifier(StConverter.convertToSt("SUBJ 001"));
@@ -211,9 +221,12 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
      */
     @Override
     public List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException {
-        List<StudySubject> result = new ArrayList<StudySubject>();
+        List<StudySubject> result = new ArrayList<StudySubject>();        
         for (StudySubjectDto ssDto : ssList) {
-            result.add(conv.convertFromDtoToDomain(ssDto));
+        	StudySubject ss = conv.convertFromDtoToDomain(ssDto);
+        	ss.setUserLastCreated(user);
+        	ss.setDateLastUpdated(new Timestamp(new Date().getTime()));
+            result.add(ss);
         }
         return result;
     }
@@ -225,6 +238,9 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
             StudySubject ss = conv.convertFromDtoToDomain(ssDto);
             if(id.equals(ss.getId())) {
                 result = ss;
+                result.setUserLastCreated(user);
+                result.setDateLastUpdated(new Timestamp(new Date().getTime()));
+                
             }
         }
         return result;

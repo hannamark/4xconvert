@@ -149,6 +149,7 @@ public class PatientWebDtoTest {
         ss.setStudySite(ssite);
         ss.setAssignedIdentifier("slkdfj");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setDateLastUpdated(new Timestamp(new Date().getTime()));
         Patient p = new Patient();
         Country country = new Country();
         country.setId(1423L);

@@ -111,6 +111,7 @@ function handleDelete(rowId){
        </display:column>
        <display:column titleKey="patient.registrationDate" property="registrationDate" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="patient.lastUpdateDateTime" property="dateLastUpdated" headerClass="sortable" headerScope="col" />
        <display:column titleKey="patient.update" headerClass="centered" class="action">
             <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
                 <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />

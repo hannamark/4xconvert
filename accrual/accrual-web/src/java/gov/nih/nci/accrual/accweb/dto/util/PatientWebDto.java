@@ -108,6 +108,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 
 
 /**
@@ -134,6 +135,8 @@ public class PatientWebDto {
     private String paymentMethodCode;
     private String assignedIdentifier;
     private String statusCode;
+    private String dateLastUpdated;
+    private String userCreated;
 
     // from PerformedSubjectMilestone
     private Long performedSubjectMilestoneId;
@@ -224,6 +227,10 @@ public class PatientWebDto {
         } else if (ss.getIcd9disease() != null) {
             icd9DiseasePreferredName = ss.getIcd9disease().getPreferredName();
             icd9DiseaseIdentifier = ss.getIcd9disease().getId();
+        }
+        dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
+        if (ss.getUserLastCreated() != null) {
+            userCreated = ss.getUserLastCreated().getFirstName() + " " + ss.getUserLastCreated().getLastName();
         }
     }
     
@@ -371,6 +378,30 @@ public class PatientWebDto {
      */
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+    /**
+     * @return the dateLastUpdated
+     */
+    public String getDateLastUpdated() {
+        return dateLastUpdated;
+    }
+    /**
+     * @param dateLastUpdated the dateLastUpdated to set
+     */
+    public void setDateLastUpdated(String dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
+    }
+    /**
+     * @return the userCreated
+     */
+    public String getUserCreated() {
+        return userCreated;
+    }
+    /**
+     * @param userCreated the userCreated to set
+     */
+    public void setUserCreated(String userCreated) {
+        this.userCreated = userCreated;
     }
     /**
      * @return the paymentMethodCode

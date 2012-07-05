@@ -118,6 +118,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Preparable;
@@ -371,6 +372,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 }
             }
             webDto.setOrganizationName(ssidToOrgNameMap.get(ss.getStudySite().getId()));
+            webDto.setDateLastUpdated(DateFormatUtils.format(ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm"));
             getDisplayTagList().add(webDto);
         }
     }
