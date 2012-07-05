@@ -91,16 +91,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PDQTrialUploadHelper;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.List;
-
-import javax.ejb.SessionContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -114,7 +113,7 @@ public class PDQTrialUploadBeanTest {
 
     private PDQTrialRegistrationServiceBeanRemote pdqTrialRegistrationService;
     private PDQTrialAbstractionServiceBeanRemote pdqTrialAbstractionService;
-    private SessionContext context;
+    private MailManagerServiceLocal mailManagerSvc;
 
     private PDQTrialUploadBean bean;
 
@@ -125,11 +124,11 @@ public class PDQTrialUploadBeanTest {
     public void setUp() {
         pdqTrialRegistrationService = mock(PDQTrialRegistrationServiceBeanRemote.class);
         pdqTrialAbstractionService = mock(PDQTrialAbstractionServiceBeanRemote.class);
-        context = mock(SessionContext.class);
+        mailManagerSvc = mock(MailManagerServiceLocal.class);
         bean = new PDQTrialUploadBean();
         bean.setPdqTrialRegistrationService(pdqTrialRegistrationService);
         bean.setPdqTrialAbstractionService(pdqTrialAbstractionService);
-        bean.setContext(context);
+        bean.setMailManagerService(mailManagerSvc);
     }
     
     /**
@@ -151,12 +150,24 @@ public class PDQTrialUploadBeanTest {
      * @throws PAException 
      */
     @Test
-    public void uploadTrialFromPDQXmlHappyPathBehavior() throws PAException, IOException {        
+    public void uploadTrialFromPDQXmlHappyPathBehavior() throws Exception {
+    	MessageFormat htmlBody = new MessageFormat("<html><body><table border=1><tr><th>File</th><th>Report</th></tr>{0}</table></body></html>");
+    	MessageFormat item = new MessageFormat("<tr><td>{0}</td><td>{1}</td></tr>");
+    	MessageFormat line = new MessageFormat("{0}<br/>");
+    	
+    	PDQTrialUploadHelper helper = new PDQTrialUploadHelper();
+    	URL testZipFile = this.getClass().getResource("/CDR65658.xml.zip");
+    	helper.setUploadFile(new File(testZipFile.toURI()));
+    	helper.setEmail("test@test.com");
+    	helper.setHtmlBody(htmlBody);
+    	helper.setItem(item);
+    	helper.setLine(line);
+    	helper.setUsername("username");
+    	bean.pdqUploadProcess(helper);
         bean.uploadTrialFromPDQXml(new File(""), "userName");
         InOrder inOrder = inOrder(pdqTrialRegistrationService, pdqTrialAbstractionService);
         inOrder.verify(pdqTrialRegistrationService).loadRegistrationElementFromPDQXml(any(URL.class), any(String.class));
         inOrder.verify(pdqTrialAbstractionService).loadAbstractionElementFromPDQXml(any(URL.class), any(Ii.class));
-        verify(context, never()).setRollbackOnly();
     }
     
     /**
@@ -183,10 +194,9 @@ public class PDQTrialUploadBeanTest {
     public void uploadTrialFromPDQXmlRegistrationFailedBehavior() throws PAException, IOException {
       when(pdqTrialRegistrationService.loadRegistrationElementFromPDQXml(any(URL.class), any(String.class))).thenThrow(new PAException("PAException"));
       bean.uploadTrialFromPDQXml(new File(""), "userName");
-      InOrder inOrder = inOrder(pdqTrialRegistrationService, context);
+      InOrder inOrder = inOrder(pdqTrialRegistrationService, mailManagerSvc);
       inOrder.verify(pdqTrialRegistrationService).loadRegistrationElementFromPDQXml(any(URL.class), any(String.class));
       verify(pdqTrialAbstractionService, never()).loadAbstractionElementFromPDQXml(any(URL.class), any(Ii.class));
-      inOrder.verify(context).setRollbackOnly();
       
         
     }
@@ -215,10 +225,9 @@ public class PDQTrialUploadBeanTest {
     public void uploadTrialFromPDQXmlAbstractionFailedBehavior() throws PAException, IOException {
         doThrow(new PAException("PAException")).when(pdqTrialAbstractionService).loadAbstractionElementFromPDQXml(any(URL.class), any(Ii.class));        
         bean.uploadTrialFromPDQXml(new File(""), "userName");
-        InOrder inOrder = inOrder(pdqTrialRegistrationService, pdqTrialAbstractionService, context);
+        InOrder inOrder = inOrder(pdqTrialRegistrationService, pdqTrialAbstractionService, mailManagerSvc);
         inOrder.verify(pdqTrialRegistrationService).loadRegistrationElementFromPDQXml(any(URL.class), any(String.class));
         inOrder.verify(pdqTrialAbstractionService).loadAbstractionElementFromPDQXml(any(URL.class), any(Ii.class));
-        inOrder.verify(context).setRollbackOnly();
     }
 
 }

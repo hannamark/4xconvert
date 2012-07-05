@@ -82,48 +82,30 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PDQTrialUploadHelper;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author ludetc
  *
  */
-public class PDQTrialLoadAction extends ActionSupport {
+public class PDQTrialLoadAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 1L;
     private File upload;
     private String email;
-    private static final int BYTE_SIZE = 1024;
-
-    private MailManagerServiceLocal mailSvc = null;
     private PDQTrialUploadService pdqTrialUploadService = null;   
     private String uploadFileName = null;
 
@@ -133,45 +115,36 @@ public class PDQTrialLoadAction extends ActionSupport {
 
     private static final Logger LOG  = Logger.getLogger(PDQTrialLoadAction.class);
 
-    private void initServices() {
-        mailSvc = PaRegistry.getMailManagerService();
-        pdqTrialUploadService = PaRegistry.getPDQTrialUploadService();        
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        pdqTrialUploadService = PaRegistry.getPDQTrialUploadService();
     }
 
     @Override
     public String execute() {
-        if (mailSvc == null) {
-            initServices();
-        }
 
         if (htmlBody == null) {
             initMessages();
         }
 
-        Map<File, List<String>> reportMap = new HashMap<File, List<String>>();
         String username = ServletActionContext.getRequest().getRemoteUser();
 
         if (upload == null || !StringUtils.endsWith(uploadFileName, ".zip")) {
             addActionError("Please select a valid ZIP file to upload");
             return SUCCESS;
         }
-
-        process(reportMap, username);
-
-        String emailSubject = "PDQ Load Report : "
-            + new SimpleDateFormat("MM / dd / yy", Locale.US).format(new Date());
-
-        try {
-            File reportFile = File.createTempFile("report-", ".html");
-            FileUtils.writeStringToFile(reportFile, generateEmailBody(reportMap));
-            File[] attachments = new File[1];
-            attachments[0] = reportFile;
-
-            mailSvc.sendMailWithAttachment(email, emailSubject, "Your load report is attached", attachments);
-        } catch (IOException e) {
-            addActionError("Unable to write report file before sending to user.");
-            LOG.error(e.getMessage(), e);
-        }
+        LOG.info("Calling PDQ Upload proccess");
+        PDQTrialUploadHelper helper = new PDQTrialUploadHelper();
+        helper.setUploadFile(upload);
+        helper.setEmail(email);
+        helper.setHtmlBody(htmlBody);
+        helper.setItem(item);
+        helper.setLine(line);
+        helper.setUsername(username);
+        pdqTrialUploadService.pdqUploadProcess(helper);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, getText("pdq.upload.success"));
         return SUCCESS;
     }
@@ -185,89 +158,6 @@ public class PDQTrialLoadAction extends ActionSupport {
             // Junit will always get there. Swallow.
             LOG.error(e);
         }
-    }
-
-    private void process(Map<File, List<String>> reportMap, String username) {
-        File tempFile = null;
-        List<File> xmlFiles = null;
-        try {
-            tempFile = File.createTempFile("pdq-orig-", ".zip");
-            FileUtils.copyFile(upload, tempFile);
-
-            xmlFiles = extractZip(tempFile);
-            processFiles(username, xmlFiles, reportMap);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            addActionError("Unable to unarchive uploaded file. ");
-        } finally {
-            tempFile.delete();
-            if (xmlFiles != null) {
-                for (File xmlFile : xmlFiles) {
-                    xmlFile.delete();
-                }
-            }
-        }
-    }
-
-    private void processFiles(String username, List<File> xmlFiles, Map<File, List<String>> reportMap) {
-        for (File xmlFile : xmlFiles) {
-            List<String> report = new ArrayList<String>();       
-            report = pdqTrialUploadService.uploadTrialFromPDQXml(xmlFile, username);            
-            reportMap.put(xmlFile, report);
-        }
-    }
-
-    private String generateEmailBody(Map<File, List<String>> report) {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<File, List<String>> entry : report.entrySet()) {
-            StringBuilder lineSb = new StringBuilder();
-            for (String s : entry.getValue()) {
-                lineSb.append(item.format(ArrayUtils.add(new String[0], s)));
-            }
-            String[] params = new String[2];
-            params[0] = entry.getKey().getName();
-            params[1] = lineSb.toString();
-            sb.append(line.format(params));
-        }
-        return htmlBody.format(ArrayUtils.add(new String[0], sb.toString()));
-    }
-
-    private List<File> extractZip(File input) throws IOException, PAException {
-        LOG.info("Extracting Zip ...");
-
-        List<File> extractedFiles = new ArrayList<File>();
-
-        byte[] buf = new byte[BYTE_SIZE];
-        ZipInputStream zipinputstream = null;
-        ZipEntry zipentry;
-        zipinputstream = new ZipInputStream(new FileInputStream(input));
-
-        zipentry = zipinputstream.getNextEntry();
-        while (zipentry != null) {
-            String entryName = zipentry.getName();
-            int n;
-            FileOutputStream fileoutputstream;
-            String directory;
-            directory = PaEarPropertyReader.getPDQUploadPath();
-
-            String fullpath = directory + File.separator + entryName;
-            File newFile = new File(fullpath);
-
-            LOG.info("extracting: " + fullpath);
-
-            fileoutputstream = new FileOutputStream(fullpath);
-
-            while ((n = zipinputstream.read(buf, 0, BYTE_SIZE)) > -1) {
-                fileoutputstream.write(buf, 0, n);
-            }
-
-            extractedFiles.add(newFile);
-            fileoutputstream.close();
-            zipinputstream.closeEntry();
-            zipentry = zipinputstream.getNextEntry();
-        }
-        zipinputstream.close();
-        return extractedFiles;
     }
 
     /**
@@ -293,14 +183,6 @@ public class PDQTrialLoadAction extends ActionSupport {
     public void setUpload(File upload) {
         this.upload = upload;
     }
-
-    /**
-     * Setter for MailManagerService.
-     * @param service the service
-     */
-    public void setMailManagerService(MailManagerServiceLocal service) {
-        mailSvc = service;
-    }   
 
     /**
      * @param pdqTrialUploadService the pdqTrialUploadService to set

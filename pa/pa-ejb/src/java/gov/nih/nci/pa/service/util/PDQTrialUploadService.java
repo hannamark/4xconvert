@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.util.PDQTrialUploadHelper;
+
 import java.io.File;
 import java.util.List;
 
@@ -100,5 +102,11 @@ public interface PDQTrialUploadService {
      * @return List<String> report
      */
     List<String> uploadTrialFromPDQXml(File xmlFile, String userName);
+    
+    /**
+     * Starts a thread to upload PDQ Xml.
+     * @param helper  PDQTrialUploadHelper
+     */
+    void pdqUploadProcess(PDQTrialUploadHelper helper);
 
 }

@@ -84,9 +84,7 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PDQTrialUploadBean;
 
 import java.io.File;
@@ -105,18 +103,15 @@ import org.junit.Test;
 public class PDQTrialLoadActionTest extends AbstractPaActionTest {
 
     private final URL testZipFile = this.getClass().getResource("/CDR65658.xml.zip");
-    private MailManagerServiceLocal mailSvc = null;
     private PDQTrialUploadBean uploadSvc = null;  
     private final PDQTrialLoadAction action = new PDQTrialLoadAction();
 
 
     @Before
     public void setup() throws PAException, IOException {
-        mailSvc = mock(MailManagerServiceLocal.class);
         uploadSvc = mock(PDQTrialUploadBean.class);   
 
         action.setPdqTrialUploadService(uploadSvc);
-        action.setMailManagerService(mailSvc);
 
         action.setMailDestination("sample@exmaple.com");
 

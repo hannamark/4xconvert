@@ -85,20 +85,35 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PDQTrialUploadHelper;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -111,16 +126,53 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
     private static final String ABSTRACTION_COMPLETE = "Abstraction Complete";  
     private static final String REGISTRATION_COMPLETE = "Registration Complete";
 
+    @EJB 
+    private MailManagerServiceLocal mailManagerService;
+
     @EJB
     private PDQTrialRegistrationServiceBeanRemote pdqTrialRegistrationService;
 
     @EJB
     private PDQTrialAbstractionServiceBeanRemote pdqTrialAbstractionService;
-
-    @Resource
-    private SessionContext context;
-
+    
     private static final Logger LOG = Logger.getLogger(PDQTrialUploadBean.class);
+
+    /**
+     * Class used to upload pdq trial processing thread.
+     */
+    private class PDQUploadThreadManager implements Runnable {
+        private final PDQTrialUploadHelper helper;
+        
+        public PDQUploadThreadManager(PDQTrialUploadHelper pdqhelper) {
+            this.helper = pdqhelper;
+        }
+        
+        @Override
+        public void run() {
+            try {
+                Map<File, List<String>> reportMap = new HashMap<File, List<String>>();
+                process(reportMap, helper.getUploadFile(), helper.getUsername());
+
+                String emailSubject = "PDQ Load Report : "
+                    + new SimpleDateFormat("MM / dd / yy", Locale.US).format(new Date());
+
+                try {
+                    File reportFile = File.createTempFile("report-", ".html");
+                    FileUtils.writeStringToFile(reportFile, 
+                            generateEmailBody(reportMap, helper.getHtmlBody(), helper.getItem(), helper.getLine()));
+                    File[] attachments = new File[1];
+                    attachments[0] = reportFile;
+
+                    mailManagerService.sendMailWithAttachment(helper.getEmail(), emailSubject, 
+                            "Your load report is attached", attachments);
+                } catch (IOException e) {
+                    LOG.error(e.getMessage(), e);
+                }
+            } catch (Exception e) {
+                LOG.error("Exception while processing PDQ upload" + e.getMessage());
+            }
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -141,13 +193,102 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
             report.add(ABSTRACTION_COMPLETE);
         } catch (PAException e) {
             generateErrors(xmlFile, report, e);
-            context.setRollbackOnly();
         } catch (Exception e) {
             generateErrors(xmlFile, report, e);
-            context.setRollbackOnly();
         }      
 
         return report;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void pdqUploadProcess(PDQTrialUploadHelper helper) {
+        Thread batchThread = new Thread(new PDQUploadThreadManager(helper));
+        batchThread.start();
+    }
+
+    private void process(Map<File, List<String>> reportMap, File upload, String username) {
+        File tempFile = null;
+        List<File> xmlFiles = null;
+        try {
+            tempFile = File.createTempFile("pdq-orig-", ".zip");
+            FileUtils.copyFile(upload, tempFile);
+
+            xmlFiles = extractZip(tempFile);
+            processFiles(username, xmlFiles, reportMap);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            tempFile.delete();
+            if (xmlFiles != null) {
+                for (File xmlFile : xmlFiles) {
+                    xmlFile.delete();
+                }
+            }
+        }
+    }
+
+    private List<File> extractZip(File input) throws IOException, PAException {
+        LOG.info("Extracting Zip ...");
+
+        List<File> extractedFiles = new ArrayList<File>();
+        ZipFile zip = null;
+        try {
+            zip = new ZipFile(input, ZipFile.OPEN_READ);
+            Enumeration<? extends ZipEntry> files = zip.entries();
+            while (files.hasMoreElements()) {
+                ZipEntry entry = files.nextElement();
+                String directory;
+                directory = PaEarPropertyReader.getPDQUploadPath();
+                String fullpath = directory + File.separator + entry.getName();
+                File newFile = new File(fullpath);
+                LOG.info("extracting: " + fullpath);
+                InputStream in = null;
+                FileOutputStream out = null;
+                try {
+                    in = zip.getInputStream(entry);
+                    out = FileUtils.openOutputStream(newFile);
+                    IOUtils.copy(in, out);
+                    extractedFiles.add(newFile);
+                } finally {
+                    IOUtils.closeQuietly(in);
+                    IOUtils.closeQuietly(out);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error extracting the zip files.", e);
+        } finally {
+            if (zip != null) {
+                zip.close();
+            }
+        }        
+        return extractedFiles;
+    }
+
+    private void processFiles(String username, List<File> xmlFiles, Map<File, List<String>> reportMap) {
+        for (File xmlFile : xmlFiles) {
+            List<String> report = new ArrayList<String>();       
+            report = uploadTrialFromPDQXml(xmlFile, username);            
+            reportMap.put(xmlFile, report);
+        }
+    }
+
+    private String generateEmailBody(Map<File, List<String>> report, MessageFormat htmlBody, 
+            MessageFormat item, MessageFormat line) {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<File, List<String>> entry : report.entrySet()) {
+            StringBuilder lineSb = new StringBuilder();
+            for (String s : entry.getValue()) {
+                lineSb.append(item.format(ArrayUtils.add(new String[0], s)));
+            }
+            String[] params = new String[2];
+            params[0] = entry.getKey().getName();
+            params[1] = lineSb.toString();
+            sb.append(line.format(params));
+        }
+        return htmlBody.format(ArrayUtils.add(new String[0], sb.toString()));
     }
 
     private void generateErrors(File xmlFile, List<String> report, Exception e) {
@@ -172,10 +313,10 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
     }
 
     /**
-     * @param context the context to set
+     * @param mailManagerService the mailManagerService to set
      */
-    void setContext(SessionContext context) {
-        this.context = context;
+    void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
     }
 
 }
