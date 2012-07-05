@@ -85,12 +85,12 @@ package gov.nih.nci.pa.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -109,13 +109,16 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -143,6 +146,7 @@ public class TrialInboxCommentsGeneratorTest {
     private StudyResourcingServiceLocal studyResourcingService = mock(StudyResourcingServiceLocal.class);
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService =
             mock(StudySiteAccrualStatusServiceLocal.class);
+    private StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
     private TrialInboxCommentsGenerator sut;
 
     /**
@@ -153,7 +157,7 @@ public class TrialInboxCommentsGeneratorTest {
         TrialInboxCommentsGenerator service =
                 new TrialInboxCommentsGenerator(documentWorkflowStatusService, abstractionCompletionService,
                         studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
-                        studyResourcingService);
+                        studyResourcingService, studyProtocolService);
         return service;
     }
 
@@ -191,6 +195,7 @@ public class TrialInboxCommentsGeneratorTest {
      * @throws PAException if an error occurs
      * 
      */
+    @SuppressWarnings("rawtypes")
     @Test
     public void testCheckForInboxProcessingComments() throws PAException {
         sut = createTrialInboxCommentsGeneratorMock();
@@ -200,12 +205,13 @@ public class TrialInboxCommentsGeneratorTest {
         List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
         List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        Set secIds = new HashSet();
         doCallRealMethod().when(sut).checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
                                                                      participatingSites, studyIndIdeDTOs,
-                                                                     studyResourcingDTOs);
+                                                                     studyResourcingDTOs, secIds);
         doCallRealMethod().when(sut).getInboxProcessingComments();
         sut.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO, participatingSites,
-                                            studyIndIdeDTOs, studyResourcingDTOs);
+                                            studyIndIdeDTOs, studyResourcingDTOs, secIds);
         assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
         InOrder inOrder = inOrder(sut);
         inOrder.verify(sut).checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT,

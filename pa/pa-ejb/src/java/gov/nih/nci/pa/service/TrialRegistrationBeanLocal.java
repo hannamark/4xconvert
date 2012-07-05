@@ -155,6 +155,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -176,7 +177,8 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(PaHibernateSessionInterceptor.class)
-public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean implements TrialRegistrationServiceLocal {
+public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean // NOPMD
+    implements TrialRegistrationServiceLocal { // NOPMD
     @EJB private AbstractionCompletionServiceRemote abstractionCompletionService;
     @EJB private DocumentServiceLocal documentService;
     @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
@@ -1180,6 +1182,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         try {
             InterventionalStudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
             Ii spIi = studyProtocolDTO.getIdentifier();
+            
+            Set<Ii> originalSecondaryIDs = new HashSet<Ii>();
+            if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
+                originalSecondaryIDs.addAll(spDTO.getSecondaryIdentifiers().getItem());
+            }
+            
             spDTO.setSecondaryIdentifiers(
                     getUpdatedStudyOtherIdentifiers(spDTO, studyProtocolDTO.getSecondaryIdentifiers()));
 
@@ -1201,9 +1209,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                                      studySiteAccrualStatusDTOs);
             TrialInboxCommentsGenerator icGenerator = new TrialInboxCommentsGenerator(documentWorkFlowStatusService,
                     abstractionCompletionService, studyOverallStatusService, studySiteAccrualStatusService,
-                    studyIndldeService, studyResourcingService);
+                    studyIndldeService, studyResourcingService, studyProtocolService);
             icGenerator.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
-                                                        studySiteAccrualStatusDTOs, null, studyResourcingDTOs);
+                                                        studySiteAccrualStatusDTOs, null, studyResourcingDTOs,
+                                                        originalSecondaryIDs);
 
             spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
             studyProtocolService.updateInterventionalStudyProtocol(spDTO, null);

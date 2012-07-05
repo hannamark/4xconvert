@@ -99,12 +99,14 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -113,6 +115,7 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author kkanchinadam
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class TrialInboxCommentsGenerator {
     
     private static final String SPACE = " ";
@@ -123,6 +126,7 @@ public class TrialInboxCommentsGenerator {
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
+    private static final String IDENTIFIERS_ADDED = "New identifier(s) were added.";
     
     private AbstractionCompletionServiceRemote abstractionCompletionService;
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
@@ -130,6 +134,7 @@ public class TrialInboxCommentsGenerator {
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyResourcingServiceLocal studyResourcingService;
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    private StudyProtocolService studyProtocolService;
     private List<String> inboxProcessingComments = new ArrayList<String>(); 
     
     /**
@@ -147,19 +152,22 @@ public class TrialInboxCommentsGenerator {
      * @param studySiteAccrualStatusService study site accrual status service
      * @param studyIndldeService study ind ide service
      * @param studyResourcingService study resourcing service
+     * @param protocolService StudyProtocolService
      */
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public TrialInboxCommentsGenerator(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService,
             AbstractionCompletionServiceRemote abstractionCompletionService,
             StudyOverallStatusServiceLocal studyOverallStatusService,
             StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService,
-            StudyIndldeServiceLocal studyIndldeService, StudyResourcingServiceLocal studyResourcingService) {
+            StudyIndldeServiceLocal studyIndldeService, StudyResourcingServiceLocal studyResourcingService, 
+            StudyProtocolService protocolService) {
         this.documentWorkFlowStatusService = documentWorkFlowStatusService;
         this.abstractionCompletionService = abstractionCompletionService;
         this.studyOverallStatusService = studyOverallStatusService;
         this.studySiteAccrualStatusService = studySiteAccrualStatusService;
         this.studyIndldeService = studyIndldeService;
         this.studyResourcingService = studyResourcingService;
+        this.studyProtocolService = protocolService;
     }
 
     /**
@@ -170,20 +178,35 @@ public class TrialInboxCommentsGenerator {
      * @param participatingSites participating sites dtos
      * @param studyIndIdeDTOs study Ind Ide dtos
      * @param studyResourcingDTOs study resourcing dtos
+     * @param originalSecondaryIDs originalSecondaryIDs
      * @throws PAException the exception
      */
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public void checkForInboxProcessingComments(StudyProtocolDTO studyProtocolDTO, List<DocumentDTO> documentDTOs,
             StudyOverallStatusDTO overallStatusDTO, List<StudySiteAccrualStatusDTO> participatingSites,
-            List<StudyIndldeDTO> studyIndIdeDTOs, List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
+            List<StudyIndldeDTO> studyIndIdeDTOs, List<StudyResourcingDTO> studyResourcingDTOs, 
+            Set<Ii> originalSecondaryIDs) throws PAException {
         inboxProcessingComments = new ArrayList<String>();
         checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, IRB_DOCUMENT_UPDATED);
         checkDocumentUpdates(documentDTOs, DocumentTypeCode.PARTICIPATING_SITES, PARTICIPATING_DOCUMENT_UPDATED);
         checkTrialUpdateForReview(studyProtocolDTO);
+        checkOtherIdentifiers(studyProtocolDTO, originalSecondaryIDs);
         checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
         checkParticipatingSitesRecruitmentStatusDate(participatingSites);
         checkIndIdeUpdates(studyIndIdeDTOs);
         checkGrantUpdates(studyResourcingDTOs);
+    }
+
+    private void checkOtherIdentifiers(StudyProtocolDTO studyProtocolDTO,
+            Set<Ii> originalSecondaryIDs) throws PAException {
+        int sizeBefore = originalSecondaryIDs.size();
+        int sizeAfter = ISOUtil.isDSetNotEmpty(studyProtocolDTO
+                .getSecondaryIdentifiers()) ? studyProtocolDTO
+                .getSecondaryIdentifiers().getItem().size() : 0;
+        if (sizeBefore != sizeAfter) {
+            inboxProcessingComments.add(IDENTIFIERS_ADDED);
+        }
+
     }
 
     /**
