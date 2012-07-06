@@ -18,7 +18,9 @@
         <module name="JavadocVariable">
             <property name="scope" value="protected"/>
         </module>
-        <module name="JavadocStyle"/>
+        <module name="JavadocStyle">
+	    	<property name="checkFirstSentence" value="false"/>
+	    </module>
         <module name="ConstantName"/>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
@@ -66,7 +68,10 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MagicNumber"/>
+	    <module name="MagicNumber">
+	       <property name="ignoreHashCodeMethod" value="true"/>
+	       <property name="ignoreAnnotation" value="true"/>
+	    </module>
         <module name="MissingSwitchDefault"/>
         <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
@@ -76,7 +81,6 @@
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
         <module name="ArrayTypeStyle"/>
-        <module name="TodoComment"/>
         <module name="UpperEll"/>
         <module name="FileContentsHolder"/>
     </module>
