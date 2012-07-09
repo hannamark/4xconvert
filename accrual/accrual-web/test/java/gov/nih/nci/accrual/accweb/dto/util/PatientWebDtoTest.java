@@ -202,7 +202,7 @@ public class PatientWebDtoTest {
         psm.setId(54798L);
         paList.add(psm);
         ss.setPerformedActivities(paList);
-        p.setRaceCode("White,Asian");
+        p.setRaceCode("WHITE,ASIAN");
         p.setZip("12345");
         
         r = new PatientWebDto(ss);

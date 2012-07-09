@@ -96,6 +96,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudySubject" />
         <mapping class="gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount" />
         <mapping class="gov.nih.nci.pa.domain.BatchFile" />
+        <mapping class="gov.nih.nci.pa.domain.AccrualCollections" />
 
         <!-- mapping classes for Outcomes -->
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />

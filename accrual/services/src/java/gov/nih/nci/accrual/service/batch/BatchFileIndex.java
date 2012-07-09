@@ -101,6 +101,12 @@ public final class BatchFileIndex {
      */
     public static final int LINE_IDENTIFIER_INDEX = 0;
 
+
+    /**
+     * collection protocol index.
+     */
+    public static final int CHANGE_CODE_INDEX = 10;
+
     /**
      * collection email index.
      */

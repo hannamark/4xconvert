@@ -82,13 +82,19 @@
  */
 package gov.nih.nci.pa.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -98,11 +104,28 @@ import org.hibernate.validator.NotNull;
 @Table(name = "BATCH_FILE")
 public class BatchFile extends AbstractEntity {
     private static final long serialVersionUID = 1L;
+    private List<AccrualCollections> accrualCollections = new ArrayList<AccrualCollections>();
     private RegistryUser submitter;
     private boolean passedValidation = false;
     private boolean processed = false;
     private String results;
     private String fileLocation;
+
+    /**
+     * @return the accrualCollections
+     */
+    @OneToMany(mappedBy = "batchFile")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public List<AccrualCollections> getAccrualCollections() {
+        return accrualCollections;
+    }
+
+    /**
+     * @param accrualCollections the accrualCollections to set
+     */
+    public void setAccrualCollections(List<AccrualCollections> accrualCollections) {
+        this.accrualCollections = accrualCollections;
+    }
 
     /**
      * @return the submitter

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
@@ -120,6 +121,14 @@ public interface BatchFileService {
      * @throws PAException on error
      */
     void update(BatchFile batchFile) throws PAException;
+    
+    /**
+     * Updates the given batch file and associated collection.
+     * @param collection associated collection
+     * @param batchFile the batch file to update
+     * @throws PAException on error
+     */
+    void update(BatchFile batchFile, AccrualCollections collection) throws PAException;
     
     /**
      * Returns the batch file with the given id or null if no such object exists.

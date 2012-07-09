@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
@@ -171,12 +172,31 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
         batchFile.setDateLastUpdated(new Date());
         batchFile.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
         try {
-            PaHibernateUtil.getCurrentSession().update(batchFile);
+            PaHibernateUtil.getCurrentSession().merge(batchFile);
         } catch (HibernateException hbe) {
-            throw new PAException("Error while saving batch file.", hbe);
+            throw new PAException("Error while updating BatchFile.", hbe);
         }
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void update(BatchFile batchFile, AccrualCollections collection) throws PAException {
+        if (collection.getId() != null) {
+            throw new PAException("This method does not support editing existing accrual collection objects.");
+        }
+        collection.setDateLastCreated(new Date());
+        collection.setUserLastCreated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+        collection.setBatchFile(batchFile);
+        try {
+            PaHibernateUtil.getCurrentSession().save(collection);
+        } catch (HibernateException hbe) {
+            throw new PAException("Error while saving AccrualCollections.", hbe);
+        }
+        update(batchFile);
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -88,7 +88,8 @@ package gov.nih.nci.accrual.service.batch;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BatchImportResults {
-    private int totalImports = 0;
+    private boolean skipBecauseOfChangeCode;
+    private int totalImports;
     private String fileName;
     private StringBuilder errors;
     private String nciIdentifier;
@@ -149,4 +150,17 @@ public class BatchImportResults {
         this.nciIdentifier = nciIdentifier;
     }
 
+    /**
+     * @return the skipBecauseOfChangeCode
+     */
+    public boolean isSkipBecauseOfChangeCode() {
+        return skipBecauseOfChangeCode;
+    }
+
+    /**
+     * @param skipBecauseOfChangeCode the skipBecauseOfChangeCode to set
+     */
+    public void setSkipBecauseOfChangeCode(boolean skipBecauseOfChangeCode) {
+        this.skipBecauseOfChangeCode = skipBecauseOfChangeCode;
+    }
 }

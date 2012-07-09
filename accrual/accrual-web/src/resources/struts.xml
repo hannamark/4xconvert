@@ -52,7 +52,7 @@
             <interceptor-stack name="tokenValidationStack">
                 <interceptor-ref name="methodValidationStack"/>
                 <interceptor-ref name="tokenSession">
-                    <param name="includeMethods">create,update,delete,doUpload</param>
+                    <param name="includeMethods">add,edit,create,update,delete,doUpload</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>

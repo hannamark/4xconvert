@@ -96,9 +96,11 @@ import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -149,7 +151,6 @@ import org.hibernate.criterion.Restrictions;
 @Local(CdusBatchUploadReaderServiceLocal.class)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class); 
     
@@ -185,17 +186,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(
                         f, batchFile.getSubmitter());
                     result.setFileName(entry.getName());
-                    List<BatchValidationResults> singleRS = new ArrayList<BatchValidationResults>();
                     results.add(result);
-                    singleRS.add(result);
-                    validateAndProcessData(batchFile, singleRS);
+                    validateAndProcessData(batchFile, result);
                 }
             } else {
                 BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(file, 
                         batchFile.getSubmitter());
                 result.setFileName(AccrualUtil.getFileNameWithoutRandomNumbers(result.getFileName()));
                 results.add(result);
-                validateAndProcessData(batchFile, results);
+                validateAndProcessData(batchFile, result);
             }
             if (zip != null) {
                 zip.close();
@@ -206,80 +205,61 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return results;
     }
 
-    private void validateAndProcessData(BatchFile batchFile,
-        List<BatchValidationResults> results) throws PAException {
-        boolean passed = checkValidationPassed(batchFile, results);
-        if (passed) {
+    private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult) 
+            throws PAException {
+        AccrualCollections collection = new AccrualCollections();
+        collection.setChangeCode(validationResult.getChangeCode());
+        collection.setNciNumber(validationResult.getNciIdentifier());
+        collection.setPassedValidation(validationResult.isPassedValidation());
+        if (!validationResult.isPassedValidation()) {
+            if (validationResult.getErrors() != null) {
+                collection.setResults(StringUtils.left(validationResult.getErrors().toString(), RESULTS_LEN));
+            }
+            sendValidationErrorEmail(validationResult, batchFile);
+        } else {
             batchFile.setPassedValidation(true);
             batchFile.setProcessed(true);
-            batchFileSvc.update(batchFile);
-            List<BatchImportResults> importResults = importBatchData(batchFile, results);
+            BatchImportResults importResults = importBatchData(batchFile, validationResult);
+            if (importResults.getErrors() != null) {
+                collection.setResults(StringUtils.left(importResults.getErrors().toString(), RESULTS_LEN));
+            }
+            collection.setTotalImports(importResults.getTotalImports());
             sendConfirmationEmail(importResults, batchFile);
         }
-        batchFileSvc.update(batchFile);
-    }
-
-    private boolean checkValidationPassed(BatchFile batchFile,
-            List<BatchValidationResults> results) throws PAException {    
-        boolean valid = true;
-        for (BatchValidationResults validationResult : results) {
-            if (!validationResult.isPassedValidation()) {
-                sendValidationErrorEmail(results, batchFile);
-                valid = false;
-                break;
-            }
+        if (StringUtils.isNotBlank(collection.getResults())) {
+            batchFile.setResults(collection.getResults());
         }
-        return valid;
+        batchFileSvc.update(batchFile, collection);
     }
    
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<BatchImportResults> importBatchData(BatchFile batchFile, 
-            List<BatchValidationResults> validationResults) throws PAException {
+    public BatchImportResults importBatchData(BatchFile batchFile, BatchValidationResults validationResult) 
+            throws PAException {
         CaseSensitiveUsernameHolder.setUser(batchFile.getUserLastCreated().getLoginName());
-        //Only import the data if all files have passed validation
-        return importBatchData(validationResults, batchFile.getSubmitter());
-    }
-       
-    private List<BatchImportResults> importBatchData(List<BatchValidationResults> validationResults,
-            RegistryUser user) 
-        throws PAException {
-        List<BatchImportResults> importResults = new ArrayList<BatchImportResults>();
-        for (BatchValidationResults result : validationResults) {
-            importResults.add(importBatchData(result, user));
-        }
-        return importResults;
-    }
-    
-    /**
-     * Imports a batch file if they have passed validation.
-     * @param results the validation results
-     * @param user registry user
-     * @return the batch import results
-     * @throws PAException on error
-     */
-    private BatchImportResults importBatchData(BatchValidationResults results, RegistryUser user) throws PAException {
-        BatchImportResults importResults = new BatchImportResults();
+        RegistryUser user = batchFile.getSubmitter();
+        BatchImportResults importResult = new BatchImportResults();
         StringBuffer errMsg = new StringBuffer();
         int count = 0;        
-        if (!results.isPassedValidation()) {
-            return importResults;
-        }
-        importResults.setFileName(results.getFileName());
-        List<String[]> lines = results.getValidatedLines();
+        importResult.setFileName(validationResult.getFileName());
+        List<String[]> lines = validationResult.getValidatedLines();
         String[] studyLine = BatchUploadUtils.getStudyLine(lines);
-        
         String studyProtocolId = studyLine[1];
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
         Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
-        importResults.setNciIdentifier(ii.getExtension());
+        importResult.setNciIdentifier(ii.getExtension());
+        if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
+            importResult.setSkipBecauseOfChangeCode(true);
+            return importResult;
+        }
 
-        List<StudySubject> result = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class)
+        @SuppressWarnings("unchecked")
+        List<StudySubject> ssList = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class)
                 .createCriteria("studyProtocol", "sp").add(Restrictions.eq("sp.id", 
                         IiConverter.convertToLong(spDto.getIdentifier()))).list();
-        for (StudySubject ss : result) {
+        for (StudySubject ss : ssList) {
             SubjectAccrualDTO saDTO = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(ss);
             listOfStudySubjects.put(ss.getAssignedIdentifier(), saDTO);
         }
@@ -296,9 +276,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     user);
             count++;
         }
-        importResults.setTotalImports(count);
-        importResults.setErrors(new StringBuilder(errMsg.toString().trim()));
-        return importResults;
+        importResult.setTotalImports(count);
+        importResult.setErrors(new StringBuilder(errMsg.toString().trim()));
+        return importResult;
     }
 
     private int generateSubjectAccruals(List<String[]> patientLines, 
@@ -383,39 +363,29 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @Override
-    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults, BatchFile batchFile) 
-        throws PAException {
-        if (CollectionUtils.isEmpty(validationResults)) {
-            return;
-        }
+    public void sendValidationErrorEmail(BatchValidationResults result, BatchFile batchFile) throws PAException {
         String subj = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.subject");
         String body = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.body");
         String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer errorReport = new StringBuffer();
-        for (BatchValidationResults result : validationResults) {
-            if (!result.isPassedValidation()) {
-                errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
-                        result.getErrors()));
-                String errors = result.getErrors().toString();
-                int count = 1;
-                StringBuffer numberedErrors = new StringBuffer();
-                StringTokenizer st1 = new StringTokenizer(errors, "\n");
-                while (st1.hasMoreTokens()) {
-                    numberedErrors.append(count).append(".\t").append(st1.nextToken()).append(" \n");
-                    count++;
-                }
-                body = body.replace("${fileName}", result.getFileName());
-                body = body.replace("${errors}", numberedErrors.toString());
-                body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
-                subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+        if (!result.isPassedValidation()) {
+            errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
+                    result.getErrors()));
+            String errors = result.getErrors().toString();
+            int count = 1;
+            StringBuffer numberedErrors = new StringBuffer();
+            StringTokenizer st1 = new StringTokenizer(errors, "\n");
+            while (st1.hasMoreTokens()) {
+                numberedErrors.append(count).append(".\t").append(st1.nextToken()).append(" \n");
+                count++;
             }
+            body = body.replace("${fileName}", result.getFileName());
+            body = body.replace("${errors}", numberedErrors.toString());
+            body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+            subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         }
-        if (StringUtils.isBlank(errorReport.toString())) {
-            batchFile.setPassedValidation(true);
-        }
-        batchFile.setResults(StringUtils.substring(errorReport.toString(), 0, RESULTS_LEN));
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
     }
     
@@ -423,10 +393,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @Override
-    public void sendConfirmationEmail(List<BatchImportResults> importResults, BatchFile batchFile) throws PAException {
-        if (CollectionUtils.isEmpty(importResults)) {
-            return;
-        }
+    public void sendConfirmationEmail(BatchImportResults result, BatchFile batchFile) throws PAException {
         String subject = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.subject");
         String body = PaServiceLocator.getInstance().getLookUpTableService()
@@ -435,20 +402,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer confirmation = new StringBuffer();
-        for (BatchImportResults result : importResults) {
-            if (result.getTotalImports() > 0) {
-                confirmation.append(String.format("Sucessfully imported %s patients/accrual counts from %s.\n", 
-                        result.getTotalImports(), result.getFileName()));
-                body = body.replace("${fileName}", result.getFileName());
-                body = body.replace("${count}", String.valueOf(result.getTotalImports()));
-                body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
-                subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
-            }
+        if (result.getTotalImports() > 0) {
+            confirmation.append(String.format("Sucessfully imported %s patients/accrual counts from %s.\n", 
+                    result.getTotalImports(), result.getFileName()));
         }
-        batchFile.setResults(StringUtils.substring(confirmation.toString(), 0, RESULTS_LEN));
+        body = body.replace("${fileName}", result.getFileName());
+        body = body.replace("${count}", String.valueOf(result.getTotalImports()));
+        body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
+        subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);
     }
-    
+
     private void sendEmail(String to, String subject, String msg) {
         if (StringUtils.isNotBlank(msg)) {
             PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg, 

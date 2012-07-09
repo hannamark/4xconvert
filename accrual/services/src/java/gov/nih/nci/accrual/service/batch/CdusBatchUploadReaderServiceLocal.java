@@ -103,13 +103,13 @@ public interface CdusBatchUploadReaderServiceLocal {
     List<BatchValidationResults> validateBatchData(BatchFile batchFile);
     
     /**
-     * Validates and imports the csv files.
+     * Imports the batch data. This assumes that data has already been validated.
      * @param batchFile batch file to read
-     * @param validationResults results
+     * @param result validation result
      * @return the import results
      * @throws PAException on error
      */
-    List<BatchImportResults> importBatchData(BatchFile batchFile, List<BatchValidationResults> validationResults) 
+    BatchImportResults importBatchData(BatchFile batchFile, BatchValidationResults result) 
         throws PAException;
     
     /**
@@ -118,7 +118,7 @@ public interface CdusBatchUploadReaderServiceLocal {
      * @param batchFile the batch file that's been validated
      * @throws PAException if unable to lookup user 
      */
-    void sendValidationErrorEmail(List<BatchValidationResults> validationResults, BatchFile batchFile) 
+    void sendValidationErrorEmail(BatchValidationResults validationResults, BatchFile batchFile) 
         throws PAException;
     
     /**
@@ -127,5 +127,5 @@ public interface CdusBatchUploadReaderServiceLocal {
      * @param batchFile the batch file that's been imported
      * @throws PAException if unable to lookup user 
      */
-    void sendConfirmationEmail(List<BatchImportResults> importResults, BatchFile batchFile) throws PAException;
+    void sendConfirmationEmail(BatchImportResults importResults, BatchFile batchFile) throws PAException;
 }

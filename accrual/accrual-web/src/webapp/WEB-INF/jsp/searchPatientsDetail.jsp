@@ -76,11 +76,13 @@
                 </div>
             </s:if>
             <s:form name="detailForm">
+                <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+                    <s:token/>
+                </s:if>
                 <s:hidden name = "patient.patientId" />
                 <s:hidden name = "patient.studySubjectId" />
                 <s:hidden name = "patient.studyProtocolId" />
                 <s:hidden name = "patient.statusCode" />
-                <s:hidden name = "patient.poIdentifier" />
                 <s:hidden name = "patient.performedSubjectMilestoneId" />
                 <table class="form">
                     <tr>

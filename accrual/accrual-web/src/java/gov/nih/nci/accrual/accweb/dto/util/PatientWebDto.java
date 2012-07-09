@@ -91,6 +91,7 @@ import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -255,7 +256,7 @@ public class PatientWebDto {
                     continue;
                 }
                 String txt = token.trim();
-                raceCode.add(txt);
+                raceCode.add(PatientRaceCode.valueOf(txt).getCode());
             }
         }
     }

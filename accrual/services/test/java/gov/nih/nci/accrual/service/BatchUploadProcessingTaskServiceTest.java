@@ -104,7 +104,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -147,7 +146,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
         BatchImportResults importResults = new BatchImportResults();
         importResults.setTotalImports(100);
         when(readerService.validateBatchData(any(BatchFile.class))).thenReturn(new ArrayList<BatchValidationResults>());
-        when(readerService.importBatchData(any(BatchFile.class), any(List.class))).thenReturn(Arrays.asList(importResults));
+        when(readerService.importBatchData(any(BatchFile.class), any(BatchValidationResults.class))).thenReturn(importResults);
         ServiceLocatorAccInterface svcLocator = mock(ServiceLocatorAccInterface.class);
         when(svcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         AccrualServiceLocator.getInstance().setServiceLocator(svcLocator);

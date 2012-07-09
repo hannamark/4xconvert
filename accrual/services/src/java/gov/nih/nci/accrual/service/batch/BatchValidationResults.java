@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.pa.enums.AccrualChangeCode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +94,8 @@ import java.util.List;
  */
 public class BatchValidationResults {
     private StringBuilder errors;
-    private boolean passedValidation = false;
+    private boolean passedValidation;
+    private AccrualChangeCode changeCode;
     private List<String[]> validatedLines = new ArrayList<String[]>();
     private String fileName;
     private String nciIdentifier;
@@ -137,6 +140,20 @@ public class BatchValidationResults {
      */
     public void setPassedValidation(boolean passedValidation) {
         this.passedValidation = passedValidation;
+    }
+
+    /**
+     * @return the changeCode
+     */
+    public AccrualChangeCode getChangeCode() {
+        return changeCode;
+    }
+
+    /**
+     * @param changeCode the changeCode to set
+     */
+    public void setChangeCode(AccrualChangeCode changeCode) {
+        this.changeCode = changeCode;
     }
 
     /**

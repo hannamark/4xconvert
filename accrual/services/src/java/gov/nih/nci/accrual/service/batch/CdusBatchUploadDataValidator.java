@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -170,9 +171,21 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 String[] line = AccrualUtil.csvParseAndTrim(lineIterator.nextLine());
                 lines.add(line);
                 ++lineNumber;
-                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX])) {
-                    protocolId = line[1]; 
+                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX]) 
+                        && line.length > 1) {
+                    protocolId = line[1];
+                    String changeCode = line.length > BatchFileIndex.CHANGE_CODE_INDEX 
+                            ? line[BatchFileIndex.CHANGE_CODE_INDEX] : null;
                     results.setNciIdentifier(protocolId);
+                    if (StringUtils.isNotEmpty(changeCode)) {
+                        AccrualChangeCode cc = AccrualChangeCode.getByCode(changeCode);
+                        if (cc == null) {
+                            errMsg.append("Found invalid change code " + changeCode 
+                                    + ". Valid value for COLLECTIONS.Change_Code are 1 and 2.");
+                        } else {
+                            results.setChangeCode(cc);
+                        }
+                    }
                     sp = getStudyProtocol(protocolId);
                     if (sp != null) {
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());

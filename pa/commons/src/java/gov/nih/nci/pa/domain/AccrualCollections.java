@@ -1,9 +1,15 @@
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualChangeCode;
+
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
@@ -11,14 +17,18 @@ import org.hibernate.validator.NotNull;
  * @author Hugh Reinhart
  * @since Jul 3, 2012
  */
-public class AccrualCollections extends AbstractStudyEntity {
+@Entity
+@Table(name = "ACCRUAL_COLLECTIONS")
+public class AccrualCollections extends AbstractEntity {
 
     private static final long serialVersionUID = 4897356017387688389L;
 
     private BatchFile batchFile;
-    private boolean passedValidation = false;
-    private char changeCode;
+    private boolean passedValidation;
+    private AccrualChangeCode changeCode;
     private String results;
+    private String nciNumber;
+    private Integer totalImports;
 
     /**
      * @return the batchFile
@@ -57,14 +67,15 @@ public class AccrualCollections extends AbstractStudyEntity {
      * @return the changeCode
      */
     @Column(name = "change_code")
-    public char getChangeCode() {
+    @Enumerated(EnumType.STRING)
+    public AccrualChangeCode getChangeCode() {
         return changeCode;
     }
 
     /**
      * @param changeCode the changeCode to set
      */
-    public void setChangeCode(char changeCode) {
+    public void setChangeCode(AccrualChangeCode changeCode) {
         this.changeCode = changeCode;
     }
 
@@ -81,5 +92,35 @@ public class AccrualCollections extends AbstractStudyEntity {
      */
     public void setResults(String results) {
         this.results = results;
+    }
+
+    /**
+     * @return the nciNumber
+     */
+    @Column(name = "nci_number")
+    public String getNciNumber() {
+        return nciNumber;
+    }
+
+    /**
+     * @param nciNumber the nciNumber to set
+     */
+    public void setNciNumber(String nciNumber) {
+        this.nciNumber = nciNumber;
+    }
+
+    /**
+     * @return the totalImports
+     */
+    @Column(name = "total_imports")
+    public Integer getTotalImports() {
+        return totalImports;
+    }
+
+    /**
+     * @param totalImports the totalImports to set
+     */
+    public void setTotalImports(Integer totalImports) {
+        this.totalImports = totalImports;
     }
 }
