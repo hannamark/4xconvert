@@ -87,7 +87,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
@@ -162,16 +161,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author Vrushali
- *
+ * 
  */
 public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private static String email1 = "example1@example.com";
     private static String email2 = "example2@example.com";
     private static String smtpHost = "";
     private static String fromAddress = "fromAddress@example.com";
-
 
     private static final String NOTFICATION_SUBJECT_KEY = "trial.register.subject";
     private static final String NOTFICATION_SUBJECT_VALUE = "trial.register.subject - ${leadOrgTrialIdentifier},"
@@ -210,7 +210,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         ServiceLocator svcLocator = mock(ServiceLocator.class);
-        when(svcLocator.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        when(svcLocator.getStudyProtocolService()).thenReturn(
+                new StudyProtocolServiceBean());
         PaRegistry.getInstance().setServiceLocator(svcLocator);
         PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
         protocolQrySrv.setPaServiceUtils(paServiceUtils);
@@ -225,7 +226,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
         bean.setStudySiteService(studySiteSrv);
 
-        //setup owners for both prop/nonprop trials.
+        // setup owners for both prop/nonprop trials.
         User csmOwner1 = createUser("loginName1", "fname1", "lname1");
         TestSchema.addUpdObject(csmOwner1);
         RegistryUser owner1 = new RegistryUser();
@@ -258,7 +259,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         Country c = TestSchema.createCountryObj();
         TestSchema.addUpdObject(c);
 
-        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(
+                o, p);
         TestSchema.addUpdObject(crs);
 
         ResearchOrganization ro = new ResearchOrganization();
@@ -274,7 +276,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(nonPropTrial);
         nonProprietaryTrialIi = IiConverter.convertToIi(nonPropTrial.getId());
 
-        StudyContact sc = TestSchema.createStudyContactObj(nonPropTrial, c, hcp, crs);
+        StudyContact sc = TestSchema.createStudyContactObj(nonPropTrial, c,
+                hcp, crs);
         TestSchema.addUpdObject(sc);
 
         StudySite spc = TestSchema.createStudySiteObj(nonPropTrial, hcf);
@@ -282,10 +285,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(spc);
         nonPropTrial.getStudySites().add(spc);
 
-        StudyRecruitmentStatus studyRecStatus = TestSchema.createStudyRecruitmentStatus(nonPropTrial);
+        StudyRecruitmentStatus studyRecStatus = TestSchema
+                .createStudyRecruitmentStatus(nonPropTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        DocumentWorkflowStatus docWrkNonProp = TestSchema.createDocumentWorkflowStatus(nonPropTrial);
+        DocumentWorkflowStatus docWrkNonProp = TestSchema
+                .createDocumentWorkflowStatus(nonPropTrial);
         TestSchema.addUpdObject(docWrkNonProp);
         nonPropTrial.getDocumentWorkflowStatuses().add(docWrkNonProp);
         TestSchema.addUpdObject(nonPropTrial);
@@ -296,11 +301,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         propTrial.getStudyOwners().add(owner2);
 
         Set<Ii> otherIdentifiers = new HashSet<Ii>();
-        otherIdentifiers.add(IiConverter.convertToAssignedIdentifierIi("NCI-2009-00002"));
+        otherIdentifiers.add(IiConverter
+                .convertToAssignedIdentifierIi("NCI-2009-00002"));
 
         propTrial.setOtherIdentifiers(otherIdentifiers);
         propTrial.setSubmissionNumber(Integer.valueOf(1));
-        //propTrial.setCtgovXmlRequiredIndicator(Boolean.FALSE);
+        // propTrial.setCtgovXmlRequiredIndicator(Boolean.FALSE);
         TestSchema.addUpdObject(propTrial);
         proprietaryTrialIi = IiConverter.convertToIi(propTrial.getId());
 
@@ -315,7 +321,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         studyRecStatus = TestSchema.createStudyRecruitmentStatus(propTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(propTrial);
+        DocumentWorkflowStatus docWrk = TestSchema
+                .createDocumentWorkflowStatus(propTrial);
         TestSchema.addUpdObject(docWrk);
         propTrial.getDocumentWorkflowStatuses().add(docWrk);
         TestSchema.addUpdObject(propTrial);
@@ -399,7 +406,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("log.email.address");
         prop.setValue("logctrp@example.com");
         TestSchema.addUpdObject(prop);
-        
+
         prop = new PAProperties();
         prop.setName("CDE_MARKER_REQUEST_FROM_EMAIL");
         prop.setValue("ncictro@example.com");
@@ -423,9 +430,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     private MailManagerBeanLocal createMailManagerServiceMock() {
         MailManagerBeanLocal service = mock(MailManagerBeanLocal.class);
-        doCallRealMethod().when(service).setLookUpTableService(lookUpTableService);
-        doCallRealMethod().when(service).setProtocolQueryService(protocolQueryService);
-        doCallRealMethod().when(service).setRegistryUserService(registryUserService);
+        doCallRealMethod().when(service).setLookUpTableService(
+                lookUpTableService);
+        doCallRealMethod().when(service).setProtocolQueryService(
+                protocolQueryService);
+        doCallRealMethod().when(service).setRegistryUserService(
+                registryUserService);
         doCallRealMethod().when(service).setStudySiteService(studySiteService);
         setDependencies(service);
         return service;
@@ -438,7 +448,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         service.setStudySiteService(studySiteService);
     }
 
-    @Test (expected=PAException.class)
+    @Test(expected = PAException.class)
     public void testSendTSREmail() throws PAException {
         bean.sendTSREmail(nonProprietaryTrialIi);
     }
@@ -454,7 +464,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         testSendAdminAcceptanceOrRejectionEmail(false, null);
     }
 
-    private void testSendAdminAcceptanceOrRejectionEmail(boolean accept,String reason) throws PAException {
+    private void testSendAdminAcceptanceOrRejectionEmail(boolean accept,
+            String reason) throws PAException {
         User csmUser = createUser("LoginName", "FirstName", "LastName");
         TestSchema.addUpdObject(csmUser);
         RegistryUser user = new RegistryUser();
@@ -466,7 +477,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(user);
 
         PAProperties prop = new PAProperties();
-        prop.setName("trial.admin.accept.subject"); // same property being used for both accept/reject emails.
+        prop.setName("trial.admin.accept.subject"); // same property being used
+                                                    // for both accept/reject
+                                                    // emails.
         prop.setValue("Administration Status Request");
         TestSchema.addUpdObject(prop);
 
@@ -507,7 +520,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("trial.amend.accept.body");
         prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}, (${amendmentNumber}), ${amendmentDate}.");
         TestSchema.addUpdObject(prop);
-
 
         prop = new PAProperties();
         prop.setName("trial.amend.accept.subject");
@@ -597,9 +609,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
-        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
+                dto, "Marker Text");
     }
-    
+
     @Test
     public void testSendMarkerCDERequestEmailSubmitterName() throws PAException {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
@@ -614,11 +627,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setAffiliateOrg("Affiliated Organization");
         user.setCsmUser(csmUser);
         TestSchema.addUpdObject(user);
-        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
+                dto, "Marker Text");
     }
-    
+
     @Test
-    public void testSendMarkerCDERequestEmailNoSubmitterName() throws PAException {
+    public void testSendMarkerCDERequestEmailNoSubmitterName()
+            throws PAException {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
@@ -631,11 +646,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setAffiliateOrg("Affiliated Organization");
         user.setCsmUser(csmUser);
         TestSchema.addUpdObject(user);
-        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
+                dto, "Marker Text");
     }
-    
+
     @Test
-    public void testSendMarkerCDERequestEmailNoSubmitterEmail() throws PAException {
+    public void testSendMarkerCDERequestEmailNoSubmitterEmail()
+            throws PAException {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
@@ -648,11 +665,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setAffiliateOrg("Affiliated Organization");
         user.setCsmUser(csmUser);
         TestSchema.addUpdObject(user);
-        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com", dto, "Marker Text");
+        bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
+                dto, "Marker Text");
     }
-    
+
     @Test
-    public void testsendMarkerAcceptanceMailToCDE() throws PAException{
+    public void testsendMarkerAcceptanceMailToCDE() throws PAException {
         String nciIdentifier = "nciIdentifier";
         String from = "from@example.com";
 
@@ -660,10 +678,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
         dto.setUserLastCreated(StConverter.convertToSt("1"));
-        
+
         bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
     }
-    
+
     @Test
     public void testsendMarkerAcceptanceMailToCDEUserNameNull()
             throws PAException {
@@ -709,24 +727,26 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testsendMarkerAcceptanceMailToCDEException() throws PAException {
+    public void testsendMarkerAcceptanceMailToCDENoException()
+            throws PAException {
         String nciIdentifier = "nciIdentifier";
         String from = "from@example.com";
-        
+
+        UsernameHolder.setUser(null);
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
         dto.setUserLastCreated(StConverter.convertToSt("abc"));
         try {
             bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
-            fail("An error occured while sending a acceptance email for a CDE");
         } catch (Exception e) {
-            
+
         }
-        
+
     }
+
     @Test
-    public void testsendMarkerQuestionToCTROMail() throws PAException{
+    public void testsendMarkerQuestionToCTROMail() throws PAException {
         String nciIdentifier = "nciIdentifier";
         String to = "from@example.com";
         String question = "This is a question";
@@ -735,7 +755,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
         dto.setUserLastCreated(StConverter.convertToSt("1"));
-                    
+
         bean.sendMarkerQuestionToCTROMail(nciIdentifier, to, dto, question);
     }
 
@@ -749,7 +769,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setDelayedpostingIndicator(Boolean.TRUE);
         sp.setExpandedAccessIndicator(Boolean.TRUE);
         sp.setFdaRegulatedIndicator(Boolean.TRUE);
-        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
         spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         spSecId.setExtension("NCI-P-2009-00001");
@@ -761,13 +781,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE);
-        
+
         sp.setPublicDescription("publicDescription");
         sp.setPublicTitle("publicTitle");
         sp.setRecordVerificationDate(now);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        
+
         sp.setDateLastUpdated(new Timestamp(new Date().getTime()));
         sp.setUserLastUpdated(TestSchema.getUser());
         sp.setDateLastCreated(now);
@@ -790,17 +810,23 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     /**
      * Test the sendNotificationMail method.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendNotificationMail() throws PAException {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
-        doCallRealMethod().when(sut).sendNotificationMail(spIi, Arrays.asList("bademail"));
+        doCallRealMethod().when(sut).sendNotificationMail(spIi,
+                Arrays.asList("bademail"));
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
-        when(lookUpTableService.getPropertyValue(NOTFICATION_SUBJECT_KEY)).thenReturn(NOTFICATION_SUBJECT_VALUE);
-        when(lookUpTableService.getPropertyValue(NOTFICATION_BODY_KEY)).thenReturn(NOTFICATION_BODY_VALUE);
-        when(lookUpTableService.getPropertyValue(ERRORS_BODY_KEY)).thenReturn(ERRORS_BODY_VALUE);
+        when(lookUpTableService.getPropertyValue(NOTFICATION_SUBJECT_KEY))
+                .thenReturn(NOTFICATION_SUBJECT_VALUE);
+        when(lookUpTableService.getPropertyValue(NOTFICATION_BODY_KEY))
+                .thenReturn(NOTFICATION_BODY_VALUE);
+        when(lookUpTableService.getPropertyValue(ERRORS_BODY_KEY)).thenReturn(
+                ERRORS_BODY_VALUE);
 
         StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
         spDTO.setProprietaryTrial(false);
@@ -812,7 +838,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         lastCreated.setUserLastCreated("loginName");
         spDTO.setLastCreated(lastCreated);
 
-        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L))
+                .thenReturn(spDTO);
         RegistryUser user = new RegistryUser();
         user.setFirstName("firstName");
         user.setLastName("lastName");
@@ -821,19 +848,28 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut.sendNotificationMail(spIi, Arrays.asList("bademail"));
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
-        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor.forClass(String.class);
-        verify(sut).sendMailWithAttachment(eq("emailAddress"), mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
-                                           (File[])isNull());
-        assertEquals("Wrong mail subject", "trial.register.subject - localStudyProtocolIdentifier, nciIdentifier.",
-                     mailSubjectCaptor.getValue());
-        assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier, "
-                + "leadOrganizationName, officialTitle.bademail", mailBodyCaptor.getValue());
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                .forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                .forClass(String.class);
+        verify(sut).sendMailWithAttachment(eq("emailAddress"),
+                mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
+                (File[]) isNull());
+        assertEquals(
+                "Wrong mail subject",
+                "trial.register.subject - localStudyProtocolIdentifier, nciIdentifier.",
+                mailSubjectCaptor.getValue());
+        assertEquals("Wrong mail body",
+                "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier, "
+                        + "leadOrganizationName, officialTitle.bademail",
+                mailBodyCaptor.getValue());
     }
 
     /**
      * Test the sendNotificationMail method for a proprietary study protocol.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendNotificationMailProprietary() throws PAException {
@@ -841,8 +877,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         doCallRealMethod().when(sut).sendNotificationMail(spIi, null);
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
-        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_SUBJECT_KEY)).thenReturn(PROP_NOTFICATION_SUBJECT_VALUE);
-        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_BODY_KEY)).thenReturn(PROP_NOTFICATION_BODY_VALUE);
+        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_SUBJECT_KEY))
+                .thenReturn(PROP_NOTFICATION_SUBJECT_VALUE);
+        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_BODY_KEY))
+                .thenReturn(PROP_NOTFICATION_BODY_VALUE);
 
         StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
         spDTO.setProprietaryTrial(true);
@@ -854,7 +892,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         lastCreated.setUserLastCreated("loginName");
         spDTO.setLastCreated(lastCreated);
 
-        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L))
+                .thenReturn(spDTO);
         RegistryUser user = new RegistryUser();
         user.setFirstName("firstName");
         user.setLastName("lastName");
@@ -863,30 +902,44 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         List<StudySiteDTO> studySites = new ArrayList<StudySiteDTO>();
         StudySiteDTO site = new StudySiteDTO();
-        site.setLocalStudyProtocolIdentifier(StConverter.convertToSt("siteLocalStudyProtocolIdentifier"));
-        site.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-        site.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        site.setLocalStudyProtocolIdentifier(StConverter
+                .convertToSt("siteLocalStudyProtocolIdentifier"));
+        site.setFunctionalCode(CdConverter
+                .convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        site.setHealthcareFacilityIi(IiConverter
+                .convertToPoHealthCareFacilityIi("1"));
         studySites.add(site);
-        when(studySiteService.getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class))).thenReturn(studySites);
+        when(
+                studySiteService.getByStudyProtocol(eq(spIi),
+                        anyListOf(StudySiteDTO.class))).thenReturn(studySites);
         sut.sendNotificationMail(spIi, null);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
-        verify(studySiteService).getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class));
-        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor.forClass(String.class);
-        verify(sut).sendMailWithAttachment(eq("emailAddress"), mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
-                                           (File[])isNull());
-        assertEquals("Wrong mail subject", "proprietarytrial.register.subject - localStudyProtocolIdentifier, "
-                + "nciIdentifier siteLocalStudyProtocolIdentifier.", mailSubjectCaptor.getValue());
-        assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier,"
-                             + " leadOrganizationName, officialTitle, siteLocalStudyProtocolIdentifier,"
-                             + " Mayo University.",
-                     mailBodyCaptor.getValue().trim());
+        verify(studySiteService).getByStudyProtocol(eq(spIi),
+                anyListOf(StudySiteDTO.class));
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                .forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                .forClass(String.class);
+        verify(sut).sendMailWithAttachment(eq("emailAddress"),
+                mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
+                (File[]) isNull());
+        assertEquals("Wrong mail subject",
+                "proprietarytrial.register.subject - localStudyProtocolIdentifier, "
+                        + "nciIdentifier siteLocalStudyProtocolIdentifier.",
+                mailSubjectCaptor.getValue());
+        assertEquals(
+                "Wrong mail body",
+                "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier,"
+                        + " leadOrganizationName, officialTitle, siteLocalStudyProtocolIdentifier,"
+                        + " Mayo University.", mailBodyCaptor.getValue().trim());
     }
 
     /**
      * Test the sendNotificationMail method when the user does not exist.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendNotificationMailNoUser() throws PAException {
@@ -898,17 +951,21 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         LastCreatedDTO lastCreated = new LastCreatedDTO();
         lastCreated.setUserLastCreated("loginName");
         spDTO.setLastCreated(lastCreated);
-        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L))
+                .thenReturn(spDTO);
 
         sut.sendNotificationMail(spIi, null);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
-        verify(sut,never()).sendMailWithAttachment(anyString(), anyString(), anyString(), (File[])any());
+        verify(sut, never()).sendMailWithAttachment(anyString(), anyString(),
+                anyString(), (File[]) any());
     }
 
     /**
      * Test the sendSearchUsernameEmail method with an invalid email.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test(expected = PAException.class)
     public void testSendSearchUsernameEmailInvalid() throws PAException {
@@ -918,7 +975,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     /**
      * Test the sendSearchUsernameEmail method with no user.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendSearchUsernameEmailNotFound() throws PAException {
@@ -926,7 +985,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         String emailAddress = "username@nci.nih.gov";
         doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress);
         List<RegistryUser> users = new ArrayList<RegistryUser>();
-        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(users);
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress))
+                .thenReturn(users);
         boolean result = sut.sendSearchUsernameEmail(emailAddress);
         assertFalse("Wrong result returned", result);
         verify(registryUserService).getLoginNamesByEmailAddress(emailAddress);
@@ -934,7 +994,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     /**
      * Test the sendSearchUsernameEmail method with one user.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendSearchUsernameEmailFound() throws PAException {
@@ -944,7 +1006,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         List<RegistryUser> users = new ArrayList<RegistryUser>();
         RegistryUser registryUser = new RegistryUser();
         users.add(registryUser);
-        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(users);
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress))
+                .thenReturn(users);
         List<String> userNames = new ArrayList<String>();
         userNames.add("username");
         when(sut.getGridIdentityUsernames(users)).thenReturn(userNames);
@@ -972,7 +1035,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     /**
      * Test the sendUsernameSearchEmail method.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
     @Test
     public void testSendSearchUsernameEmail() throws PAException {
@@ -984,18 +1049,23 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setLastName("lastName");
         users.add(user);
         users.add(createRegistryUser("username2"));
-        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress, users);
+        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress,
+                users);
         doCallRealMethod().when(sut).getGridIdentityUsernames(users);
         String body = "body ${firstName} ${lastName} ${userNames} end";
         String subject = "subject";
-        when(lookUpTableService.getPropertyValue("user.usernameSearch.body")).thenReturn(body);
-        when(lookUpTableService.getPropertyValue("user.usernameSearch.subject")).thenReturn(subject);
+        when(lookUpTableService.getPropertyValue("user.usernameSearch.body"))
+                .thenReturn(body);
+        when(lookUpTableService.getPropertyValue("user.usernameSearch.subject"))
+                .thenReturn(subject);
         sut.sendSearchUsernameEmail(emailAddress, users);
         verify(lookUpTableService).getPropertyValue("user.usernameSearch.body");
-        verify(lookUpTableService).getPropertyValue("user.usernameSearch.subject");
+        verify(lookUpTableService).getPropertyValue(
+                "user.usernameSearch.subject");
         verify(sut).getGridIdentityUsernames(users);
         String expectedBody = "body firstName lastName username1, username2 end";
-        verify(sut).sendMailWithAttachment(emailAddress, subject, expectedBody, null);
+        verify(sut).sendMailWithAttachment(emailAddress, subject, expectedBody,
+                null);
     }
 
     private RegistryUser createRegistryUser(String loginName) {
@@ -1005,8 +1075,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         registryUser.setCsmUser(csmUser);
         return registryUser;
     }
-    
-    
+
     /**
      * Test the sendUnidentifiableOwnerEmail method.
      * 
@@ -1068,8 +1137,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("Wrong mail body",
                 "BODY nciIdentifier NCI bademail@semanticbits.com",
                 mailBodyCaptor.getValue());
-    }    
-    
+    }
+
     /**
      * Test the method used to prepare all MIME messages.
      */
@@ -1084,6 +1153,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("logctrp@example.com", bcc.toString());
         assertEquals("subject", result.getSubject());
     }
+
     @Test
     public void prepareMessageTestWithCC() throws Exception {
         List<String> copy = new ArrayList<String>();
@@ -1098,6 +1168,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("to", to.toString());
         assertEquals("logctrp@example.com", bcc.toString());
         assertEquals("subject", result.getSubject());
-        assertEquals("copy",cc.toString()); 
+        assertEquals("copy", cc.toString());
     }
 }

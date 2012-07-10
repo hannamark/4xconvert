@@ -164,6 +164,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author asharma
  *
@@ -814,8 +816,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMarkerAcceptanceMailToCDE(String nciIdentifier, 
             String from, PlannedMarkerDTO marker) throws PAException { //NOPMD
         try {            
-            String userId = StConverter.convertToString(marker.getUserLastCreated());
-            User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
+            User csmUser = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
             RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
             boolean foundInHugo = StringUtils.isNotEmpty(CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
             String hugoCode = "N/A";
