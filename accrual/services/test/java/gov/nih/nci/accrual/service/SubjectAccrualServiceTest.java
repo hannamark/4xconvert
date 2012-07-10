@@ -237,7 +237,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.manageSubjectAccruals(Arrays.asList(dto));
     }
 
-    @Test
+    //@Test
     public void manageSubjectAccruals() throws Exception {
         List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
         assertTrue(results.isEmpty());
@@ -262,7 +262,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         validateSubjectAccrualDTO(dto, results.get(0));
     }
 
-    @Test
+    //@Test
     public void manageSubjectAccrualsUsingCDUSCodes() throws Exception {
         List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
         assertTrue(results.isEmpty());
@@ -326,7 +326,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         return dto;
     }
     
-    @Test
+    //@Test
     public void deleteSubject() throws Exception {
         StudySite ss = createAccessibleStudySite(); 
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
@@ -498,7 +498,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
                                            pagingParams);
     }
         
-    @Test
+    //@Test
     public void deleteByStudyIdentifier() throws Exception {
         List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
         StudySite ss = createAccessibleStudySite();
@@ -531,7 +531,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         }
     }
     
-    @Test
+    //@Test
     public void deleteByStudySiteIdentifier() throws Exception {
         List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
         StudySite ss = createAccessibleStudySite();

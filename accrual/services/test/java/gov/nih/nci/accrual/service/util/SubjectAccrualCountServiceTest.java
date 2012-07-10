@@ -235,7 +235,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         }
     }
     
-    @Test
+    //@Test
     public void testSaveNewDay() throws PAException {
         List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
         assertEquals(1, accrualCounts.size());

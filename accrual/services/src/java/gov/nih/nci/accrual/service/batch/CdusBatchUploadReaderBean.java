@@ -266,7 +266,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
-        count = generateSubjectAccruals(patientLines, raceMap, spDto, errMsg);
+        count = generateSubjectAccruals(patientLines, raceMap, validationResult, errMsg);
         for (Ii partSiteIi : accrualLines.keySet()) {
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
@@ -282,17 +282,20 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
 
     private int generateSubjectAccruals(List<String[]> patientLines, 
-        Map<String, List<String>> raceMap,  StudyProtocolDTO spDto, StringBuffer errMsg) throws PAException {
+        Map<String, List<String>> raceMap,  BatchValidationResults results, StringBuffer errMsg) throws PAException {
         int count = 0;
+        long startTime = System.currentTimeMillis();
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
-            Ii studySiteOrgIi = BatchUploadUtils.getOrganizationIi(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
+            /*Ii studySiteOrgIi = BatchUploadUtils.getOrganizationIi(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
             SearchStudySiteResultDto studySite = 
-                getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi);
+                getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi);*/
+            Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
+            String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
             SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, 
-                    studySite != null ? studySite.getStudySiteIi() : null);
+                    studySiteIi != null ? IiConverter.convertToIi(studySiteIi) : null);
             try {
                 if (ISOUtil.isIiNull(saDTO.getIdentifier())) {
                     listOfStudySubjects.put(saDTO.getAssignedIdentifier().getValue(), 
@@ -306,6 +309,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     + saDTO.getAssignedIdentifier().getValue() + ", " + e.getLocalizedMessage() + "\n");
             }
         }
+        LOG.info("Time to process a single Batch File data: " 
+                + (System.currentTimeMillis() - startTime) / RESULTS_LEN + " seconds");
         return count;
     }
     

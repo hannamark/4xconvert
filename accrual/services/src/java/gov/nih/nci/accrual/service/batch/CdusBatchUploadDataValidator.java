@@ -147,6 +147,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private StudyProtocolDTO sp;
     private final Map<String, String> listOfPoIds = new HashMap<String, String>();
     private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
+    private final Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
     private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     /**
@@ -240,6 +241,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
             for (String[] p : patientLines) {
                 List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
+                if (races == null) {
+                    errMsg.append("Patient race code is missing for patient ID ")
+                    .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
+                } else {
                 boolean containsUnique = false;
                 for (String raceCode : CDUSPatientRaceCode.getCodesByCdusCodes(races)) {
                     if (PatientRaceCode.getByCode(raceCode).isUnique()) {
@@ -250,12 +255,15 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     errMsg.append("No multiple selection when race code is Not Reported or Unknown for patient ID ")
                     .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
                 }
+               }
               }
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
                 results.setValidatedLines(lines);
                 results.setPassedValidation(true);
+                results.setListOfOrgIds(listOfOrgIds);
+                results.setListOfPoStudySiteIds(listOfPoIds);
             } else {
                 LOG.info(errMsg.toString());
             }
@@ -343,7 +351,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
         String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
                 + registeringInstitutionID + "\n";
-        if (listOfPoIds.containsKey(registeringInstitutionID) || listOfCtepIds.containsKey(registeringInstitutionID)) {
+        if (listOfPoIds.containsKey(registeringInstitutionID)) {
+            if (listOfOrgIds.get(registeringInstitutionID) == null) {
+                listOfOrgIds.put(registeringInstitutionID, 
+                    IiConverter.convertToIi(listOfPoIds.get(registeringInstitutionID)));
+            }
+            return true;
+        } else if (listOfCtepIds.containsKey(registeringInstitutionID)) {
+            if (listOfOrgIds.get(registeringInstitutionID) == null) {
+                listOfOrgIds.put(registeringInstitutionID, 
+                   IiConverter.convertToIi(listOfCtepIds.get(registeringInstitutionID)));
+            }
             return true;
         }
         try {

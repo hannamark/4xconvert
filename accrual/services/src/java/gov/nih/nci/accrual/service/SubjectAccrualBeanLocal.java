@@ -83,6 +83,8 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.Converters;
+import gov.nih.nci.accrual.convert.PatientConverter;
+import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
@@ -111,6 +113,7 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
@@ -153,6 +156,8 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
@@ -164,7 +169,8 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
+    "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
 
@@ -270,18 +276,29 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         PatientDto patient = populatePatientDTO(dto, new PatientDto());
         patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
-        patient = getPatientService().create(patient);
-        StudySubjectDto studySubject = populateStudySubjectDTO(dto, new StudySubjectDto());
-        studySubject.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
-        studySubject.setPatientIdentifier(patient.getIdentifier());
-        studySubject = getStudySubjectService().create(studySubject);
+        StudySubjectDto studySubj = new StudySubjectDto();
+        studySubj.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
+        studySubj.setPatientIdentifier(patient.getIdentifier());
+        StudySubjectDto studySubject = populateStudySubjectDTO(dto, studySubj);
 
         PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
         psm.setRegistrationDate(dto.getRegistrationDate());
         psm.setStudySubjectIdentifier(studySubject.getIdentifier());
         psm.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
-
-        getPerformedActivityService().createPerformedSubjectMilestone(psm);
+        PerformedSubjectMilestone pa = Converters.get(PerformedSubjectMilestoneConverter.class)
+                .convertFromDtoToDomain(psm);
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long userid = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
+        String query = "select nextval('performed_activity_identifier_seq')"; 
+        Query queryObject = session.createSQLQuery(query);
+        String nextValue = queryObject.uniqueResult().toString();
+        String sql = "INSERT INTO performed_activity(identifier, study_protocol_identifier, performed_activity_type," 
+                + "date_last_created, date_last_updated, study_subject_identifier, registration_date, " 
+                + "user_last_created_id, user_last_updated_id) VALUES ("
+                + nextValue + "," +  pa.getStudyProtocol().getId() + ", 'PerformedSubjectMilestone',"
+                + "now(), now()," + pa.getStudySubject().getId() + ",'" + pa.getRegistrationDate() + "','"
+                + userid + "','" + userid + "')";
+        session.createSQLQuery(sql).executeUpdate();
 
         StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
                 IiConverter.convertToLong(studySubject.getIdentifier()));
@@ -301,15 +318,18 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
 
         StudySubjectDto studySubject = getStudySubjectService().get(dto.getIdentifier());
-        studySubject = getStudySubjectService().update(populateStudySubjectDTO(dto, studySubject));
+        populateStudySubjectDTO(dto, studySubject);
         PatientDto patient = getPatientService().get(studySubject.getPatientIdentifier());
         patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
-        patient = getPatientService().update(populatePatientDTO(dto, patient));
+        populatePatientDTO(dto, patient);
         PerformedSubjectMilestoneDto psm =
             getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(
                     studySubject.getIdentifier()).iterator().next();
         psm.setRegistrationDate(dto.getRegistrationDate());
-        getPerformedActivityService().updatePerformedSubjectMilestone(psm);
+        String sql = "UPDATE performed_activity SET registration_date='" 
+        + TsConverter.convertToTimestamp(psm.getRegistrationDate()) + "' WHERE identifier=" 
+        + IiConverter.convertToLong(psm.getIdentifier());
+        PaHibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
 
         StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
                 IiConverter.convertToLong(studySubject.getIdentifier()));
@@ -334,7 +354,49 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         patientDTO.setRaceCode(races);
         patientDTO.setZip(dto.getZipCode());
+        // need to check for status_date_range_low
+        Patient p = Converters.get(PatientConverter.class).convertFromDtoToDomain(patientDTO);
+        String sql = "";
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long userid = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
+        SQLQuery queryObject = null;
+        if (p.getId() != null) {
+        sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code,"
+        + "birth_date=:birth_date, date_last_updated=now(), country_identifier=:country_identifier, zip=:zip" 
+        + ", user_last_updated_id=:user_last_updated_id WHERE identifier= :identifier";
+        
+        queryObject = session.createSQLQuery(sql);
+        setPatientQueryParameters(p, userid, queryObject, p.getId());
+        
+        } else {
+            String query = "select nextval('patient_identifier_seq')"; 
+            queryObject = session.createSQLQuery(query);
+            String nextValue = queryObject.uniqueResult().toString();
+            
+            sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code," 
+                  + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id," 
+                  + "user_last_updated_id) VALUES (:identifier, :race_code, :sex_code, :ethnic_code, :birth_date," 
+                  + "'ACTIVE', now(), now(), :country_identifier, :zip, :user_last_created_id, :user_last_updated_id)";
+            
+            queryObject = session.createSQLQuery(sql);
+            setPatientQueryParameters(p, userid, queryObject, Long.valueOf(nextValue));
+            queryObject.setParameter("user_last_created_id", userid);
+            
+            patientDTO.setIdentifier(IiConverter.convertToIi(nextValue));
+        }
+        queryObject.executeUpdate();
         return patientDTO;
+    }
+
+    private void setPatientQueryParameters(Patient p, Long userid, SQLQuery queryObject, Long id) {
+        queryObject.setParameter("identifier", id);
+        queryObject.setParameter("race_code", p.getRaceCode());
+        queryObject.setParameter("sex_code", p.getSexCode().getName());
+        queryObject.setParameter("ethnic_code", p.getEthnicCode().getName());
+        queryObject.setParameter("birth_date", p.getBirthDate());
+        queryObject.setParameter("country_identifier", p.getCountry().getId());
+        queryObject.setParameter("zip", p.getZip());
+        queryObject.setParameter("user_last_updated_id", userid);
     }
 
     private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO)
@@ -346,6 +408,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
         studySubjectDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), 
                 null));
+
         if (dto.getDiseaseIdentifier() != null) {
             if (PaServiceLocator.getInstance().getDiseaseService().get(dto.getDiseaseIdentifier()) != null) {
                 studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());
@@ -353,7 +416,62 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 studySubjectDTO.setIcd9DiseaseIdentifier(dto.getDiseaseIdentifier());
             }
         }
+        
+        StudySubject ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(studySubjectDTO);
+        String sql = "";
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long userid = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
+        SQLQuery queryObject = null;
+        
+        // need to update the scripts to have status_date_range_low, status_date_range_high values
+        if (ss.getId() != null) {
+        sql = "UPDATE study_subject SET study_site_identifier= :study_site_identifier, "
+        + "payment_method_code=" 
+        + (ss.getPaymentMethodCode() != null ? "'" + ss.getPaymentMethodCode().getName() + "'" : null) 
+        + ", status_code= :status_code, date_last_updated=now(),"
+        + "assigned_identifier= :assigned_identifier, user_last_updated_id= :user_last_updated_id, " 
+        + "disease_identifier=" + (ss.getDisease() != null ? ss.getDisease().getId()  : null)
+        + ", icd9disease_identifier="
+        + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
+        + " WHERE identifier= :identifier";
+        
+        queryObject = session.createSQLQuery(sql);
+        setStudySubjectQueryParameters(ss, userid, queryObject, ss.getId());
+        
+        } else {
+            String query = "select nextval('study_subject_identifier_seq')"; 
+            queryObject = session.createSQLQuery(query);
+            String nextValue = queryObject.uniqueResult().toString();            
+            
+            sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
+                + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
+                + "date_last_created, date_last_updated, assigned_identifier, " 
+                + "user_last_created_id, user_last_updated_id, icd9disease_identifier) VALUES (:identifier,"
+                + " :patient_identifier, :study_protocol_identifier, :study_site_identifier," 
+                + (ss.getDisease() != null ? ss.getDisease().getId()  : null) + ","
+                + (ss.getPaymentMethodCode() != null ? "'" + ss.getPaymentMethodCode().getName() + "'" : null)
+                + ", :status_code, now(), now(), :assigned_identifier," 
+                + ":user_last_created_id, :user_last_updated_id, "
+                + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
+                + ")";
+            
+            queryObject = session.createSQLQuery(sql);
+            queryObject.setParameter("patient_identifier", ss.getPatient().getId());
+            queryObject.setParameter("study_protocol_identifier", ss.getStudyProtocol().getId());
+            setStudySubjectQueryParameters(ss, userid, queryObject, Long.valueOf(nextValue));
+            queryObject.setParameter("user_last_created_id", userid);
+            studySubjectDTO.setIdentifier(IiConverter.convertToIi(nextValue));
+        }
+        queryObject.executeUpdate();
         return studySubjectDTO;
+    }
+
+    private void setStudySubjectQueryParameters(StudySubject ss, Long userid, SQLQuery queryObject, Long id) {
+        queryObject.setParameter("identifier", id);
+        queryObject.setParameter("study_site_identifier", ss.getStudySite().getId());
+        queryObject.setParameter("status_code", ss.getStatusCode().getName());
+        queryObject.setParameter("assigned_identifier", ss.getAssignedIdentifier());
+        queryObject.setParameter("user_last_updated_id", userid);
     }
 
     private Ii getOrganizationIi(Ii hcfIi) {

@@ -82,10 +82,12 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Bean for holding the results of batch file validation.
@@ -99,6 +101,8 @@ public class BatchValidationResults {
     private List<String[]> validatedLines = new ArrayList<String[]>();
     private String fileName;
     private String nciIdentifier;
+    private Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
+    private Map<String, String> listOfPoStudySiteIds = new HashMap<String, String>();
 
     /**
      * @return the errors
@@ -182,5 +186,33 @@ public class BatchValidationResults {
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
+    }
+
+    /**
+     * @return the listOfOrgIds
+     */
+    public Map<String, Ii> getListOfOrgIds() {
+        return listOfOrgIds;
+    }
+
+    /**
+     * @param listOfOrgIds the listOfOrgIds to set
+     */
+    public void setListOfOrgIds(Map<String, Ii> listOfOrgIds) {
+        this.listOfOrgIds = listOfOrgIds;
+    }
+
+    /**
+     * @return listOfPoStudySiteIds
+     */
+    public Map<String, String> getListOfPoStudySiteIds() {
+        return listOfPoStudySiteIds;
+    }
+
+    /**
+     * @param listOfPoStudySiteIds the listOfPoStudySiteIds to set
+     */
+    public void setListOfPoStudySiteIds(Map<String, String> listOfPoStudySiteIds) {
+        this.listOfPoStudySiteIds = listOfPoStudySiteIds;
     }
 }
