@@ -33,7 +33,7 @@
             }
 
             function acceptTrialUpdate(id) {
-                input_remove_box = confirm("Do you want to accept this update and remove it from the list?");
+                input_remove_box = confirm("Do you want to acknowledge this update and remove it from the list?");
                 if (input_remove_box==true) {
                     var url = '/pa/protected/ajaxTrialHistoryacceptUpdate.action';
                     var params = { studyInboxId: id };
