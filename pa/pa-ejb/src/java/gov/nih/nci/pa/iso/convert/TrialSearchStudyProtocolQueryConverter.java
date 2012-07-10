@@ -117,7 +117,7 @@ import org.apache.commons.lang.BooleanUtils;
  *
  */
 public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQueryConverter {
-
+    
     /**
      * Const.
      * @param registryUserSvc registry user service.
@@ -252,6 +252,7 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         if (organization != null) {
             studyProtocolDto.setLeadOrganizationName(organization.getName());
             studyProtocolDto.setLeadOrganizationId(organization.getId());
+            studyProtocolDto.setLeadOrganizationPOId(Long.valueOf(organization.getIdentifier()));
         }
 
         if (studySite != null) {

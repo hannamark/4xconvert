@@ -3,13 +3,16 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
 <script type="text/javascript" language="javascript">
 	function displaySubmitter(){
 	    showPopWin('ajaxdisplaypersoninfoquery.action', 600, 300, '', 'Trial Submitter Information');
 	}
 	function displayPi(){
-	    showPopWin('ajaxdisplaypersoninfoqueryPiInfo.action', 600, 300, '', 'Principal Investigator Information');
+        var width = 700;
+        var height = 550;
+        showPopWin('personsSearchshowPIPopup.action?personID=', width, height, '', 'Person Details');             
 	}
 </script>
 
@@ -25,8 +28,10 @@
 			<span class="value"><c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier}"/></span>
 		</div>
 		<div class="row">
-			<span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span>
-			<span class="value"><c:out value="${sessionScope.trialSummary.leadOrganizationName }"/></span>
+			<span class="label"><fmt:message key="studyProtocol.leadOrganization"/>:</span> <span class="value"><a href="javascript:void(0);"
+				onclick="javascript:displayOrgDetails(<c:out value="${sessionScope.trialSummary.leadOrganizationPOId}"/>);">
+					<c:out value="${sessionScope.trialSummary.leadOrganizationName}" />
+			</a></span>
 		</div>
 		<c:if test="${sessionScope.trialSummary.amendmentNumber != null}">
             <div class="row">
@@ -45,7 +50,7 @@
 		<c:if test="${sessionScope.trialSummary.piFullName != null }">
     		<div class="row">
     			<span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span>
-    			<span class="value"><a href="javascript:displayPi();"> <c:out value="${sessionScope.trialSummary.piFullName }"/></a></span>
+    			<span class="value"><a href="javascript:void(0);" onclick="javascript:displayPi();"> <c:out value="${sessionScope.trialSummary.piFullName }"/></a></span>
     		</div>
 		</c:if>
 		<div class="row">
@@ -54,7 +59,14 @@
 		</div>
 		<div class="row">
             <span class="label">Trial Submitter Organization:</span>
-            <span class="value"><c:out value="${sessionScope.trialSubmitterOrg}"/></span>
+            <c:if test="${sessionScope.trialSubmitterOrgPOId == null }">
+                <span class="value"><c:out value="${sessionScope.trialSubmitterOrg}"/></span>
+            </c:if>
+            <c:if test="${sessionScope.trialSubmitterOrgPOId != null }">
+             <span class="value"><a href="javascript:void(0);"
+                onclick="javascript:displayOrgDetails(<c:out value="${sessionScope.trialSubmitterOrgPOId}"/>);">
+                    <c:out value="${sessionScope.trialSubmitterOrg}" /></a></span>
+            </c:if>
         </div>
 	    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
             <div class="row">

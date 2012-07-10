@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>
     <tr>
          <th colspan="2">Sponsor/Responsible Party</th>
     </tr>          
@@ -90,4 +89,3 @@
                  </span>
             </td>           
         </tr>             
-</table>

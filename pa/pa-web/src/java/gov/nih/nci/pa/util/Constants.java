@@ -149,4 +149,7 @@ public class Constants {
     public static final String OTHER_IDENTIFIERS_LIST = "otherIdentifiersList";
     /** Trial Submitter Organization.  */
     public static final String TRIAL_SUBMITTER_ORG = "trialSubmitterOrg";
+    /** Trial Submitter Organization.  */
+    public static final String TRIAL_SUBMITTER_ORG_PO_ID = "trialSubmitterOrgPOId";
+    
 }

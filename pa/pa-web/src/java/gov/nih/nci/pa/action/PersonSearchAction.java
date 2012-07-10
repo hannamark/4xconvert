@@ -4,8 +4,13 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -22,12 +27,13 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Denis G. Krylov
  * 
  */
-public class PersonSearchAction extends ActionSupport {
+public class PersonSearchAction extends ActionSupport implements Preparable {
 
     /**
      * 
@@ -43,6 +49,14 @@ public class PersonSearchAction extends ActionSupport {
     private List<PaPersonDTO> results;
     private PaPersonDTO person;
     private String personID;
+    private CorrelationUtilsRemote correlationUtils;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void prepare() {
+        correlationUtils = new CorrelationUtils();
+    }
 
     /**
      * @return res
@@ -100,6 +114,27 @@ public class PersonSearchAction extends ActionSupport {
         PADomainUtils.retrieveAddressAndContactInfoFromRole(person);
         return DETAILS;
     }
+    
+    /**
+     * @return String
+     * @throws NullifiedEntityException NullifiedEntityException
+     * @throws PAException PAException
+     * @throws NullifiedRoleException NullifiedRoleException
+     * @throws TooManyResultsException TooManyResultsException
+     */
+    public String showPIPopup() throws NullifiedEntityException,
+            PAException, NullifiedRoleException, TooManyResultsException {
+        PersonSearchCriteriaDTO criteriaDTO = new PersonSearchCriteriaDTO();
+        StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        Person userInfo =
+            correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
+        setPersonID(userInfo.getIdentifier());
+        criteriaDTO.setId(getPersonID());
+        person = PADomainUtils.searchPoPersons(criteriaDTO).get(0);
+        PADomainUtils.retrieveAddressAndContactInfoFromRole(person);
+        return DETAILS;
+    }    
 
     /**
      * @return the criteria
@@ -151,4 +186,10 @@ public class PersonSearchAction extends ActionSupport {
         this.personID = personID;
     }
 
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
+    }
 }

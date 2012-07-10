@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +119,7 @@ public class PaOrganizationDTO implements Serializable {
     private Map<Long, String> families;
     private List<String> organizationTypes = new ArrayList<String>();
     private PaOrganizationContactInfoDTO contactInfo = new PaOrganizationContactInfoDTO();
+    private Map<Long, String> investigators = new HashMap<Long, String>();
 
     /**
      * @return the programCode
@@ -467,6 +469,19 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setStatusDate(String statusDate) {
         this.statusDate = statusDate;
-    }    
-    
+    }
+
+    /**
+     * @return the investigators
+     */
+    public Map<Long, String> getInvestigators() {
+        return investigators;
+    }
+
+    /**
+     * @param investigators the investigators to set
+     */
+    public void setInvestigators(Map<Long, String> investigators) {
+        this.investigators = investigators;
+    }
 }

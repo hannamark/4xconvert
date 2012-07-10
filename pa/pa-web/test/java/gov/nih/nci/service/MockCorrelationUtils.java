@@ -130,7 +130,12 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
      * {@inheritDoc}
      */
     public Person getPAPersonByIi(Ii isoIi) throws PAException {
-        return new Person();
+        Person person = new Person();
+        person.setFirstName("first name");
+        person.setLastName("last Name");
+        person.setId(Long.valueOf("1"));
+        person.setIdentifier("1");
+        return person;
     }
 
     /**

@@ -178,3 +178,20 @@ Event.observe(window, "load", function() {
 		Event.observe(rudMenuLink, "click", displayWaitPanel);
 	}
 });
+
+
+function displayPersonDetails(personID){
+    var width = 700;
+    var height = 550;
+    showPopWin('personsSearchshowDetailspopup.action?personID='+personID, width, height, '', 'Person Details');
+}
+
+function displayOrgDetails(orgID) {
+    var width = 650;
+    var height = 450;
+    if (Prototype.Browser.IE) {
+        width = 670;
+        height = 500;                   
+    }
+    showPopWin('organizationsSearchshowDetailspopup.action?orgID='+orgID, width, height, '', 'Organization Details');               
+}

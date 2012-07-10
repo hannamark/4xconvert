@@ -307,6 +307,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                 PAServiceUtils servUtil = new PAServiceUtils();
                 trialSubmitterOrg = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
                         .valueOf(userInfo.getAffiliatedOrganizationId())));
+                session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, userInfo.getAffiliatedOrganizationId());
             } else {
                 trialSubmitterOrg = userInfo.getAffiliateOrg();
             }

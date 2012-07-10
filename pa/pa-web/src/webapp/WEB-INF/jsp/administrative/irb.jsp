@@ -7,10 +7,10 @@
     <head>
         <title><fmt:message key="irb.main.title" /></title>
         <s:head />
-        <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
         <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl" />
         <script type="text/javascript">
             // this function is called from body onload in main.jsp (decorator)
@@ -141,8 +141,11 @@
                     </tr>
                     <tr id="boradNamerow">
                          <td class="label">Board Name:<span class="required">*</span></td>
-                         <td class="value"> 
+                         <td class="value">
                              <s:textfield name="ct.name" id="name" size="30"  readonly="true" cssClass="readonly" onchange="changeName()"/>
+                            <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${ct.id}"/>);">
+                                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+                            </a>                             
                          </td>
                          <td>  
                             <ul style="margin-top:-3px;">

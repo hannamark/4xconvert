@@ -3,6 +3,9 @@
 <c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
+
+<script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
+
 <script language="javascript" type="text/javascript">
 
     function lookup4loadresponsibleparty1() {

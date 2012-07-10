@@ -144,6 +144,8 @@ public class CollaboratorsAction extends AbstractMultiObjectDeleteAction impleme
     private String currentAction;
     private PaOrganizationDTO orgFromPO = new PaOrganizationDTO();
     private String statusCode;
+    private Organization editOrg;
+    
 
     /**
      * @return the statusCode
@@ -274,7 +276,7 @@ public class CollaboratorsAction extends AbstractMultiObjectDeleteAction impleme
     public String edit() throws PAException {
         setCurrentAction(ACT_EDIT);
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToStudySiteIi(cbValue));
-        Organization editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
+        editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
@@ -483,4 +485,18 @@ public class CollaboratorsAction extends AbstractMultiObjectDeleteAction impleme
         this.correlationUtils = correlationUtils;
     }
 
+    /**
+     * @return the editOrg
+     */
+    public Organization getEditOrg() {
+        return editOrg;
+    }
+
+    /**
+     * @param editOrg the editOrg to set
+     */
+    public void setEditOrg(Organization editOrg) {
+        this.editOrg = editOrg;
+    }
+    
 }

@@ -3,6 +3,9 @@
     <tr>
         <td>
             <s:textfield label="First Name" name="gtdDTO.sponsorName" size="30"  cssStyle="width:200px" readonly="true" cssClass="readonly"/>
+            <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${gtdDTO.sponsorIdentifier}"/>);">
+                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+            </a>            
         </td>
         <td> 
             <ul style="margin-top:-1px;">

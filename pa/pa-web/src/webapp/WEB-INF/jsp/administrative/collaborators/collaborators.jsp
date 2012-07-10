@@ -3,12 +3,14 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message key="participatingOrganizations.collaborators.title" /></title>
 <s:head />
 
 </head>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/coppa.js"/>"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
@@ -28,6 +30,7 @@ function handleCreate(){
     document.collaboratorsForm.action="collaboratorscreate.action";
     document.collaboratorsForm.submit();
 }
+
 </SCRIPT>
 
 <body>
@@ -46,7 +49,9 @@ function handleCreate(){
             <td colspan="2"><s:hidden name="cbValue" />
             <s:set name="organizationList" value="organizationList" scope="request"/>
             <display:table name="organizationList" id="row" class="data" pagesize="200">
-                <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
+                <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
+                    <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.nciNumber}"/>)"><c:out value="${row.nciNumber}"/></a>
+                </display:column>
                 <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
                 <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
                 <display:column escapeXml="true" property="functionalRole" titleKey="participatingOrganizations.functionalRole" class="sortable" />

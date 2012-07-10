@@ -3,6 +3,9 @@
     <tr>
         <td>
             <s:textfield label="First Name" name="gtdDTO.piName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly" />
+            <a href="javascript:void(0)" onclick="displayPersonDetails(<c:out value="${gtdDTO.piIdentifier}"/>);">
+                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+            </a>
         </td>
         <td>
             <ul style="margin-top: -1px;">

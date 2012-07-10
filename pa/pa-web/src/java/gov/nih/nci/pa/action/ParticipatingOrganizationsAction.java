@@ -144,7 +144,9 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -164,7 +166,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart, Harsha
  * @since 08/20/2008
  */
-public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteAction implements Preparable {
+public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteAction implements Preparable { // NOPMD
     private static final long serialVersionUID = 123412653L;
     private static final Logger LOG = Logger.getLogger(ParticipatingOrganizationsAction.class);
     
@@ -571,7 +573,15 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             orgWebDTO.setStatus(dto.getStatusCode().getCode());
             orgWebDTO.setProgramCode(dto.getProgramCodeText());
             orgWebDTO.setInvestigator(convertInvestigators(dto.getPrincipalInvestigators(), dto.getSubInvestigators()));
-
+            
+            Map<Long, String> investigatorsMap = new HashMap<Long, String>();
+            for (PaPersonDTO eachPi : dto.getPrincipalInvestigators()) {
+                investigatorsMap.put(eachPi.getPaPersonId(), getInvestigatorDisplayString(eachPi));
+            }
+            for (PaPersonDTO eachSi : dto.getSubInvestigators()) {
+                investigatorsMap.put(eachSi.getPaPersonId(), getInvestigatorDisplayString(eachSi));
+            }
+            orgWebDTO.setInvestigators(investigatorsMap);
             List<PaPersonDTO> primaryContacts = dto.getPrimaryContacts();
             StringBuffer primaryContactDisplay = new StringBuffer();
             for (PaPersonDTO primaryContact : primaryContacts) {
@@ -622,6 +632,13 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             invList.append(String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status, comma));
         }
     }
+    
+    private String getInvestigatorDisplayString(PaPersonDTO investigator) {
+        String fullName = StringUtils.defaultString(investigator.getFullName());
+        String roleName = getCode(investigator.getRoleName());
+        String status = getCode(investigator.getStatusCode());
+        return String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status, "");
+    }    
 
     /**
      * Null-safe method to get the code from a coded enum; returns "" if the enum is null.

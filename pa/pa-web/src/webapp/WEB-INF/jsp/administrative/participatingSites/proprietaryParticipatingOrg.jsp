@@ -9,7 +9,7 @@
 <s:head />
 <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
-
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/coppa.js"/>"></script>
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
@@ -48,10 +48,17 @@ function handleEdit(studyResourcingId){
     <s:hidden name="proprietaryTrialIndicator" id="proprietaryTrialIndicator"></s:hidden>
     <s:set name="organizationList" value="organizationList" scope="request"/>
     <display:table name="organizationList" id="row" class="data" pagesize="200">
-        <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
+        <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
+            <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.nciNumber}"/>)"><c:out value="${row.nciNumber}"/></a>
+        </display:column>
         <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
         <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
-        <display:column escapeXml="true" property="investigator" titleKey="participatingOrganizations.investigators"/>
+        <display:column titleKey="participatingOrganizations.investigators">
+            <c:forEach var="item" items="${row.investigators}">
+                    <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${item.key}"/>)"><c:out value="${item.value}"/></a>
+                    <br>
+            </c:forEach>
+        </display:column>
         <pa:adminAbstractorDisplayWhenCheckedOut>
             <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
                 <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16"/></s:a>

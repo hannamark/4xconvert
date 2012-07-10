@@ -9,7 +9,7 @@
 <s:head />
 <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/prototype.js"/>"></script>
-
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/coppa.js"/>"></script>
 <script type="text/javascript">
             var siteRecruitmentStatusDate = new CalendarPopup();
 </script>
@@ -29,9 +29,6 @@ function handleEdit(studyResourcingId){
     document.partOrgs.submit();
 }
 
-
-
-
 </SCRIPT>
 
 <body>
@@ -46,32 +43,39 @@ function handleEdit(studyResourcingId){
         <pa:studyUniqueToken/>
         <h2><fmt:message key="participatingOrganizations.title" /></h2> 
         <c:if test="${fn:length(requestScope.organizationList) > 5}">       
-		<div class="actionstoprow">
-		    <del class="btnwrapper">
-		        <ul class="btnrow">
-		            <pa:adminAbstractorDisplayWhenCheckedOut>
-		                <li><a href="participatingOrganizationscreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add</span></span></a></li>
-		                <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
-		                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
-		                    <li><pa:toggleDeleteBtn/></li>
-		                </s:if>                
-		            </pa:adminAbstractorDisplayWhenCheckedOut>
-		        </ul>
-		    </del>
-		</div>
-		</c:if>
+        <div class="actionstoprow">
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                    <pa:adminAbstractorDisplayWhenCheckedOut>
+                        <li><a href="participatingOrganizationscreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add</span></span></a></li>
+                        <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><pa:toggleDeleteBtn/></li>
+                        </s:if>                
+                    </pa:adminAbstractorDisplayWhenCheckedOut>
+                </ul>
+            </del>
+        </div>
+        </c:if>
     <table class="form">
         <tr>
             <td colspan="2">
                 <s:hidden name="cbValue" />
                 <s:set name="organizationList" value="organizationList" scope="request" />
                 <display:table name="organizationList" id="row" class="data" pagesize="200" sort="list" requestURI="participatingOrganizations.action">
-                    <display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" sortable="true" />
+                    <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
+                        <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.nciNumber}"/>)"><c:out value="${row.nciNumber}"/></a>
+                    </display:column>
                     <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" sortable="true" />
                     <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" sortable="true" />
                     <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" sortable="true" />
                     <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" sortable="true" />
-                    <display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
+                    <display:column titleKey="participatingOrganizations.investigators">
+                        <c:forEach var="item" items="${row.investigators}">
+                                <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${item.key}"/>)"><c:out value="${item.value}"/></a>
+                                <br>
+                        </c:forEach>
+                    </display:column>
                     <display:column property="primarycontact" titleKey="participatingOrganizations.primarycontacts"/>
                     <pa:adminAbstractorDisplayWhenCheckedOut>
                         <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">

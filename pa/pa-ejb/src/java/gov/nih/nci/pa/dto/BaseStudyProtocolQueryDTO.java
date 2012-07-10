@@ -104,6 +104,7 @@ public class BaseStudyProtocolQueryDTO {
     
     private String leadOrganizationName;
     private Long leadOrganizationId;
+    private Long leadOrganizationPOId;
     private String leadOrganizationTrialIdentifier;
 
     private String localStudyProtocolIdentifier;
@@ -359,5 +360,18 @@ public class BaseStudyProtocolQueryDTO {
     public void setDcpId(String dcpId) {
         this.dcpId = dcpId;
     }
-    
+
+    /**
+     * @return the leadOrganizationPOId
+     */
+    public Long getLeadOrganizationPOId() {
+        return leadOrganizationPOId;
+    }
+
+    /**
+     * @param leadOrganizationPOId the leadOrganizationPOId to set
+     */
+    public void setLeadOrganizationPOId(Long leadOrganizationPOId) {
+        this.leadOrganizationPOId = leadOrganizationPOId;
+    }
 }

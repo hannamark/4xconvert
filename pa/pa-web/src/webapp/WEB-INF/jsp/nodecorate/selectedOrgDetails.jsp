@@ -6,8 +6,14 @@
 	    
 		    
 		    </td>
-			<td class="value" style="width:250px">
-				<s:textfield name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
+			<td>
+                <s:textfield name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
+                <s:if test="%{currentAction == 'edit'}">
+                    <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${editOrg.identifier}"/>);">
+                        <img src="<%=request.getContextPath()%>/images/details.gif"/>
+                    </a>
+                </s:if>
+            
 				<s:if test="%{currentAction == 'create'}">
 				<span class="info">Click <strong>Look Up</strong> to choose an organization.</span>
 				<span class="formErrorMsg"></span>
