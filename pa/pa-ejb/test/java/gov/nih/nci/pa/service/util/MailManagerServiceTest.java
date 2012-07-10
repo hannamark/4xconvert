@@ -591,7 +591,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}).");
         TestSchema.addUpdObject(prop);
 
-        bean.sendUpdateNotificationMail(nonProprietaryTrialIi);
+        bean.sendUpdateNotificationMail(nonProprietaryTrialIi, "");
     }
 
     @Test

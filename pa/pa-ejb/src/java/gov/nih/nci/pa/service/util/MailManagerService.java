@@ -150,9 +150,10 @@ public interface MailManagerService {
     /**
      * 
      * @param studyProtocolIi ii
+     * @param updatesList updatesList
      * @throws PAException ex
      */
-    void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException;
+    void sendUpdateNotificationMail(Ii studyProtocolIi, String updatesList) throws PAException;
 
     /**
      * Send cde request mail.

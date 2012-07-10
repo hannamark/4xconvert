@@ -99,13 +99,15 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
     /**
      * This method creates a record in the inbox. This method should be called during update workflow.
      * @param documentDTOs list of document Dtos
+     * @param existingDocs existingDocs
      * @param studyProtocolIi studyProtocol Identifier
      * @param originalDTO original protocol before update
      * @param originalSummary4 originalSummary4
      * @param originalSites originalSites 
      * @throws PAException on any error
+     * @return String comments
      */
-    void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi,
+    String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, // NOPMD
             StudyProtocolQueryDTO originalDTO,
             StudyResourcingDTO originalSummary4,
             List<StudySiteDTO> originalSites) throws PAException;

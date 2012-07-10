@@ -100,6 +100,7 @@ import gov.nih.nci.pa.enums.StudySiteStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -140,8 +141,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.TrialInboxCommentsGenerator;
 import gov.nih.nci.pa.util.TrialRegistrationValidator;
+import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -179,6 +180,7 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean // NOPMD
     implements TrialRegistrationServiceLocal { // NOPMD
+    private static final String EMPTY_STR = "";
     @EJB private AbstractionCompletionServiceRemote abstractionCompletionService;
     @EJB private DocumentServiceLocal documentService;
     @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
@@ -302,7 +304,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyOverallStatusService.create(overallStatusDTO);
             saveDocuments(documentDTOs, spIi);
             saveAmenderInfo(studyProtocolDTO, amender);
-            sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>());
+            sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
             return studyProtocolDTO.getIdentifier();
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
@@ -405,18 +407,44 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         getPAServiceUtils().manageStudyIdentifiers(loSiteDTO);
     }
 
-    private void createInboxProcessingComments(TrialInboxCommentsGenerator icGenerator, Ii spIi)
-            throws PAException {
-        String inboxProcessingComments = icGenerator.getInboxProcessingComments();
+    private String createInboxProcessingComments(Ii spIi) throws PAException {
+
+        String inboxProcessingComments = TrialUpdatesRecorder
+                .getRecordedUpdates();
+        
+        // Store changes resulted from the update.
         if (StringUtils.isNotEmpty(inboxProcessingComments)) {
-            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-            studyInboxDTO.setStudyProtocolIdentifier(spIi);
-            studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
-                    .convertToIvl(new Timestamp(new Date().getTime()), null));
-            studyInboxDTO.setComments(StConverter.convertToSt(inboxProcessingComments));
-            // create the inbox processing comments.
-            studyInboxServiceLocal.create(studyInboxDTO);
+            
+            // Store validation errors resulted from the update separately.
+            DocumentWorkflowStatusDTO isoDocWrkStatus = documentWorkFlowStatusService
+                    .getCurrentByStudyProtocol(spIi);
+            StringBuilder sbuf = new PAServiceUtils()
+                    .createAbstractionValidationErrorsTable(spIi,
+                            isoDocWrkStatus);
+            if (sbuf.length() != 0) {
+                createStudyInboxRecord(spIi, sbuf.toString());
+            }
+
+            createStudyInboxRecord(spIi, inboxProcessingComments);
         }
+        return inboxProcessingComments;
+    }
+
+    
+
+    /**
+     * @param spIi
+     * @param inboxProcessingComments
+     * @throws PAException
+     */
+    private void createStudyInboxRecord(Ii spIi, String inboxProcessingComments)
+            throws PAException {
+        StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+        studyInboxDTO.setStudyProtocolIdentifier(spIi);
+        studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
+                .convertToIvl(new Timestamp(new Date().getTime()), null));
+        studyInboxDTO.setComments(StConverter.convertToSt(inboxProcessingComments));
+        studyInboxServiceLocal.create(studyInboxDTO);
     }
 
     /**
@@ -533,7 +561,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
             }            
-            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails);
+            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);
             
             return spIi;
     }
@@ -645,7 +673,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
             }
-            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails);
+            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);
             
             return spIi;
         } catch (Exception e) {
@@ -1026,15 +1054,17 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * @param unmatchedEmails email addresses that did not match any users.
      * @param isBatchMode
      * @param studyProtocolIi
+     * @param updatesList updatesList
      * @throws PAException
      */
-    private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi, Collection<String> unmatchedEmails) 
+    private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi, Collection<String> unmatchedEmails, 
+            String updatesList) 
             throws PAException {
         if (ISOUtil.isBlNull(isBatchMode) || !BlConverter.convertToBool(isBatchMode)) {
             if (AMENDMENT.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
             } else if (UPDATE.equalsIgnoreCase(operation)) {
-                mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
+                mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi, updatesList);
             } else if (CREATE.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi, unmatchedEmails);
             }
@@ -1063,7 +1093,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
@@ -1175,26 +1205,45 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, Bl batchMode)
             throws PAException {
         try {
+            TrialUpdatesRecorder.reset();
+            
             InterventionalStudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
             Ii spIi = studyProtocolDTO.getIdentifier();
             
+            // Other Identifiers
             Set<Ii> originalSecondaryIDs = new HashSet<Ii>();
             if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
                 originalSecondaryIDs.addAll(spDTO.getSecondaryIdentifiers().getItem());
-            }
-            
+            }            
+            final DSet<Ii> updatedStudyOtherIdentifiers = getUpdatedStudyOtherIdentifiers(
+                    spDTO, studyProtocolDTO.getSecondaryIdentifiers());
             spDTO.setSecondaryIdentifiers(
-                    getUpdatedStudyOtherIdentifiers(spDTO, studyProtocolDTO.getSecondaryIdentifiers()));
-
-            spDTO.setStartDate(studyProtocolDTO.getStartDate());
+                    updatedStudyOtherIdentifiers);
+            TrialUpdatesRecorder.recordUpdate(originalSecondaryIDs,
+                    updatedStudyOtherIdentifiers.getItem(),
+                    TrialUpdatesRecorder.IDENTIFIERS_ADDED);
+            
+            TrialUpdatesRecorder.recordUpdate(spDTO.getStartDate(),
+                    studyProtocolDTO.getStartDate(),
+                    TrialUpdatesRecorder.START_DATE_CHANGED);
+            spDTO.setStartDate(studyProtocolDTO.getStartDate());            
             spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
+            
+            TrialUpdatesRecorder.recordUpdate(spDTO.getPrimaryCompletionDate(),
+                    studyProtocolDTO.getPrimaryCompletionDate(),
+                    TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_CHANGED);            
             spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
             spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+            
+            TrialUpdatesRecorder.recordUpdate(spDTO.getCompletionDate(),
+                    studyProtocolDTO.getCompletionDate(),
+                    TrialUpdatesRecorder.COMPLETION_DATE_CHANGED);
             spDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());
             spDTO.setCompletionDateTypeCode(studyProtocolDTO.getCompletionDateTypeCode());
 
@@ -1207,50 +1256,74 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             TrialRegistrationValidator validator = createValidator();
             validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
                                      studySiteAccrualStatusDTOs);
-            TrialInboxCommentsGenerator icGenerator = new TrialInboxCommentsGenerator(documentWorkFlowStatusService,
-                    abstractionCompletionService, studyOverallStatusService, studySiteAccrualStatusService,
-                    studyIndldeService, studyResourcingService, studyProtocolService);
-            icGenerator.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
-                                                        studySiteAccrualStatusDTOs, null, studyResourcingDTOs,
-                                                        originalSecondaryIDs);
-
             spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
             studyProtocolService.updateInterventionalStudyProtocol(spDTO, null);
+            
+            // Grants
+            TrialUpdatesRecorder.recordUpdate(studyResourcingDTOs,
+                    TrialUpdatesRecorder.GRANT_INFORMATION_UPDATED);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
 
+            // Participating site's status and/or date.
             updateParticipatingSites(studySiteAccrualStatusDTOs);
+            
+            // Participating sites: program code only.
+            TrialUpdatesRecorder.recordParticipatingSiteUpdate(studySiteDTOs,
+                    TrialUpdatesRecorder.PARTICIPATING_SITES_UPDATED);            
             paServiceUtils.createOrUpdate(studySiteDTOs, IiConverter.convertToStudySiteIi(null), spIi);
 
-            studyOverallStatusService.create(overallStatusDTO);
-
-            createInboxProcessingComments(icGenerator, spIi);
-            saveDocuments(documentDTOs, spIi);
+            // Study overall status & status date.
+            TrialUpdatesRecorder.recordUpdate(overallStatusDTO,
+                    TrialUpdatesRecorder.STATUS_DATES_UPDATED);
+            studyOverallStatusService.create(overallStatusDTO);            
+            
+            saveDocuments(documentDTOs, spIi);            
+                        
             // do not send the mail when its batch mode
-            sendMail(UPDATE, batchMode, spIi, new ArrayList<String>());
+            final String updatesList = createInboxProcessingComments(spIi);
+            sendMail(UPDATE, batchMode, spIi, new ArrayList<String>(),
+                    updatesList);
 
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);
             sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
+            LOG.error(e, e);
             throw new PAException(e.getMessage(), e);
+        } finally {
+            TrialUpdatesRecorder.reset();
         }
     }
 
     /**
      * Save the given documents.
-     * @param documentDTOs The list of document DTOs
-     * @param spIi The study potocol Ii
-     * @throws PAException If an error occurs
+     * 
+     * @param documentDTOs
+     *            The list of document DTOs
+     * @param spIi
+     *            The study potocol Ii
+     * @throws PAException
+     *             If an error occurs
      */
-    void saveDocuments(List<DocumentDTO> documentDTOs, Ii spIi) throws PAException {
+    void saveDocuments(List<DocumentDTO> documentDTOs, Ii spIi)
+            throws PAException {
         PAServiceUtils paServiceUtils = getPAServiceUtils();
         Ii nullDocumentIi = IiConverter.convertToDocumentIi(null);
-        List<DocumentDTO> savedDocs = paServiceUtils.createOrUpdate(documentDTOs, nullDocumentIi, spIi);
+        List<DocumentDTO> savedDocs = paServiceUtils.createOrUpdate(
+                documentDTOs, nullDocumentIi, spIi);
         if (CollectionUtils.isNotEmpty(savedDocs)) {
             StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(spIi);
-            String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
+            String assignedIdentifier = PAUtil
+                    .getAssignedIdentifierExtension(sp);
             paServiceUtils.moveDocumentContents(savedDocs, assignedIdentifier);
+            for (DocumentDTO documentDTO : savedDocs) {
+                TrialUpdatesRecorder
+                        .recordUpdate(String.format(
+                                TrialUpdatesRecorder.DOC_UPDATED,
+                                DocumentTypeCode.getByCode(documentDTO
+                                        .getTypeCode().getCode()).getCode()));
+            }
         }
     }
 

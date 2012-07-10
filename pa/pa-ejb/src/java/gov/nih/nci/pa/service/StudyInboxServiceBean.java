@@ -80,9 +80,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyInbox;
-import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -90,17 +88,19 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -127,7 +127,7 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter>
-    implements StudyInboxServiceLocal {
+    implements StudyInboxServiceLocal { //NOPMD
 
     /** id for inboxDateRange.open. */
     public static final int FN_DATE_OPEN = 1;
@@ -136,13 +136,18 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     @EJB
     private DocumentWorkflowStatusServiceLocal docWrkFlowStatusService;
     @EJB
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
-    @EJB
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
     @EJB
     private StudyResourcingServiceLocal studyResourcingServiceLocal;
     @EJB
     private StudySiteServiceLocal studySiteServiceLocal;
+    @EJB
+    private DocumentServiceLocal documentServiceLocal;
+    
+    /**
+     * 
+     */
+    public static final String SEPARATOR = TrialUpdatesRecorder.SEPARATOR;
 
     /**
      * @param dto dto
@@ -156,18 +161,14 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         return super.create(dto);
     }
 
-    /**
-     * This method creates a record in the inbox (Only When some conditions are more). This method should be called
-     * during update workflow.
-     * @param documentDTOs list of document Dtos
-     * @param studyProtocolIi studyProtocol Identifier
-     * @param originalDTO StudyProtocolDTO
-     * @param originalSummary4 StudyResourcingDTO
-     * @param originalSites originalSites
-     * @throws PAException on any error
+   
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyInboxServiceLocal#create
+     * (java.util.List, gov.nih.nci.iso21090.Ii, gov.nih.nci.pa.dto.StudyProtocolQueryDTO, 
+     * gov.nih.nci.pa.iso.dto.StudyResourcingDTO, java.util.List)
      */
     @Override
-    public void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi,
+    public String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, //NOPMD
             StudyProtocolQueryDTO originalDTO,
             StudyResourcingDTO originalSummary4,
             List<StudySiteDTO> originalSites) throws PAException {
@@ -196,16 +197,38 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         comments.append(createComments(originalDTO, updatedDTO));
         comments.append(createComments(originalSummary4, updatedSummary4));
         comments.append(createComments(originalSites, updatedSites));
-        comments.append(createComments(documentDTOs));
-        comments.append(createComments(dws, studyProtocolIi));
+        comments.append(createDeletedDocsComments(existingDocs));
+        comments.append(createComments(documentDTOs));        
+        StringBuilder abstractionErrors = new PAServiceUtils()
+                .createAbstractionValidationErrorsTable(studyProtocolIi, dws); 
+        
+        // Store validation errors resulted from the update separately.   
+        if (abstractionErrors.length() > 0 && comments.length() > 0) {
+            createStudyInboxRecord(studyProtocolIi, abstractionErrors);
+        }        
+        
+        // Store changes resulted from the update.
         if (comments.length() > 0) {
-            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-            studyInboxDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            studyInboxDTO.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()),
-                                                                                  null));
-            studyInboxDTO.setComments(StConverter.convertToSt(comments.toString()));
-            create(studyInboxDTO);
+            createStudyInboxRecord(studyProtocolIi, comments);
         }
+                
+        return comments.toString();
+    }
+
+
+    /**
+     * @param studyProtocolIi
+     * @param comments
+     * @throws PAException
+     */
+    private void createStudyInboxRecord(Ii studyProtocolIi,
+            StringBuilder comments) throws PAException {
+        StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+        studyInboxDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        studyInboxDTO.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()),
+                                                                              null));
+        studyInboxDTO.setComments(StConverter.convertToSt(comments.toString()));
+        create(studyInboxDTO);
     }
 
     private StringBuilder createComments(List<StudySiteDTO> originalSites,
@@ -243,7 +266,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                 || !ObjectUtils.equals(
                         conv.convertLowToString(original.getStatusDateRange()),
                         conv.convertLowToString(updated.getStatusDateRange()))) {
-            comments.append("Participating Site information was changed. ");
+            comments.append("Participating Site information was changed." + SEPARATOR);
         }
     }
 
@@ -253,22 +276,22 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         if (originalDTO != null && updatedDTO != null) {
             recordChange(originalDTO.getLeadOrganizationName(),
                     updatedDTO.getLeadOrganizationName(),
-                    "Lead Organization was changed. ", comments);
+                    "Lead Organization was changed." + SEPARATOR, comments);
             recordChange(originalDTO.getLocalStudyProtocolIdentifier(),
                     updatedDTO.getLocalStudyProtocolIdentifier(),
-                    "Lead Organization Trial Identifier was changed. ", comments);
+                    "Lead Organization Trial Identifier was changed." + SEPARATOR, comments);
             recordChange(originalDTO.getNctNumber(),
                     updatedDTO.getNctNumber(),
-                    "NCT Number was changed. ", comments);
+                    "NCT Number was changed." + SEPARATOR, comments);
             recordChange(originalDTO.getOfficialTitle(),
                     updatedDTO.getOfficialTitle(),
-                    "Title was changed. ", comments);           
+                    "Title was changed." + SEPARATOR, comments);           
             recordChange(originalDTO.getPrimaryPurpose(),
                     updatedDTO.getPrimaryPurpose(),
-                    "Primary Purpose was changed. ", comments);           
+                    "Primary Purpose was changed." + SEPARATOR, comments);           
             recordChange(originalDTO.getPhaseCode(),
                     updatedDTO.getPhaseCode(),
-                    "Phase was changed. ", comments);           
+                    "Phase was changed." + SEPARATOR, comments);           
         }
         return comments;
     }
@@ -282,7 +305,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
             recordChange(
                     originalDTO.getOrganizationIdentifier().getExtension(),
                     updatedDTO.getOrganizationIdentifier().getExtension(),
-                    "Summary 4 Funding Sponsor was changed. ", comments);
+                    "Summary 4 Funding Sponsor was changed." + SEPARATOR, comments);
         }
         return comments;
     } 
@@ -365,29 +388,34 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         StringBuilder comments = new StringBuilder();
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
             for (DocumentDTO doc : documentDTOs) {
-                comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded. ");
+                comments.append(
+                        CdConverter.convertCdToString(doc.getTypeCode()))
+                        .append(" Document was uploaded." + SEPARATOR);
             }
         }
         return comments;
     }
-
-    private StringBuilder createComments(DocumentWorkflowStatusDTO dws, Ii studyProtocolIi) throws PAException {
+    
+    private StringBuilder createDeletedDocsComments(
+            List<DocumentDTO> existingDocs) throws PAException {
         StringBuilder comments = new StringBuilder();
-        DocumentWorkflowStatusCode statusCode =
-                CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dws.getStatusCode());
-        if (statusCode != null && statusCode.isAbstractedOrAbove()) {
-            List<AbstractionCompletionDTO> errorList =
-                    abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
-            if (!errorList.isEmpty()) {
-                comments.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
-                for (AbstractionCompletionDTO abDTO : errorList) {
-                    comments.append(abDTO.getErrorType()).append(" : ").append(abDTO.getErrorDescription())
-                        .append(" : ").append(abDTO.getComment()).append("<br>");
+        if (CollectionUtils.isNotEmpty(existingDocs)) {
+            for (DocumentDTO doc : existingDocs) {
+                DocumentDTO latestDoc = documentServiceLocal.get(doc
+                        .getIdentifier());
+                if (latestDoc != null
+                        && Boolean.FALSE.equals(BlConverter
+                                .convertToBoolean(latestDoc
+                                        .getActiveIndicator()))) {
+                    comments.append(
+                            CdConverter.convertCdToString(doc.getTypeCode()))
+                            .append(" Document was deleted." + SEPARATOR);
                 }
             }
         }
         return comments;
     }
+    
 
     /**
      * @param docWrkFlowStatusService the docWrkFlowStatusService to set
@@ -441,4 +469,15 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     public void setStudySiteServiceLocal(StudySiteServiceLocal studySiteServiceLocal) {
         this.studySiteServiceLocal = studySiteServiceLocal;
     }
+
+
+    /**
+     * @param documentServiceLocal the documentServiceLocal to set
+     */
+    public void setDocumentServiceLocal(DocumentServiceLocal documentServiceLocal) {
+        this.documentServiceLocal = documentServiceLocal;
+    }
+    
+ 
+    
 }

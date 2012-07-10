@@ -17,6 +17,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -89,6 +90,8 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             StudySiteAccrualStatus bo = converter.convertFromDtoToDomain(dto);
             session.saveOrUpdate(bo);
             resultDto = converter.convertFromDomainToDto(bo);
+            TrialUpdatesRecorder
+                    .recordUpdate(TrialUpdatesRecorder.RECRUITMENT_STATUS_DATE_UPDATED);
         }
         return resultDto;
     }

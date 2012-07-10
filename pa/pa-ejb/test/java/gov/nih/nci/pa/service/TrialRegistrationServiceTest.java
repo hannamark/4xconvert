@@ -287,6 +287,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getArmService()).thenReturn(armService);
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(studyOutcomeMeasureService);
         when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
+        when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
         bean.setOcsr(ocsr);
         bean.setMailManagerSerivceLocal(mailSvc);
         bean.setStudyMilestoneService(studyMilestoneSvc);

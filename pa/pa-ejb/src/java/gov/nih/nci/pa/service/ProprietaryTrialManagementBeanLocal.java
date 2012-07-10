@@ -266,8 +266,11 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             }
             paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null),
                     studyProtocolDTO.getIdentifier());
-            studyInboxServiceLocal.create(documentDTOs, studyProtocolIi, originalDTO, originalSummary4, originalSites);
-            mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
+            String updatesList = studyInboxServiceLocal.create(documentDTOs, existingDocs,
+                    studyProtocolIi, originalDTO, originalSummary4,
+                    originalSites);
+            mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi,
+                    updatesList);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
             sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);

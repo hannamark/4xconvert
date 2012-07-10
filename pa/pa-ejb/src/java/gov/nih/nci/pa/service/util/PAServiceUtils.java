@@ -95,10 +95,12 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -107,6 +109,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -1970,4 +1973,37 @@ public class PAServiceUtils {
           //First clean out the destination directory.
           FileUtils.cleanDirectory(destination);
       }
+      
+    /**
+     * Generates an HTML table with abstraction validation errors in it.
+     * 
+     * @param spIi spIi
+     * @param isoDocWrkStatus isoDocWrkStatus
+     * @throws PAException PAException
+     * @return StringBuilder StringBuilder
+     */
+    public StringBuilder createAbstractionValidationErrorsTable(Ii spIi,
+            DocumentWorkflowStatusDTO isoDocWrkStatus) throws PAException {
+        StringBuilder sbuf = new StringBuilder();
+        DocumentWorkflowStatusCode statusCode = CdConverter.convertCdToEnum(
+                DocumentWorkflowStatusCode.class,
+                isoDocWrkStatus.getStatusCode());
+        if (statusCode != null && statusCode.isAbstractedOrAbove()) {
+            List<AbstractionCompletionDTO> errorList = PaRegistry
+                    .getAbstractionCompletionService()
+                    .validateAbstractionCompletion(spIi);
+            if (!errorList.isEmpty()) {
+                sbuf.append("<table><tr><td><b>Type</b></td><td><b>Description</b></td><td><b>Comments</b></td></tr>");
+                for (AbstractionCompletionDTO abDTO : errorList) {
+                    sbuf.append("<tr><td>" + abDTO.getErrorType())
+                            .append("</td><td>")
+                            .append(abDTO.getErrorDescription())
+                            .append("</td><td>").append(abDTO.getComment())
+                            .append("</td></tr>");
+                }
+                sbuf.append("</table>");
+            }
+        }
+        return sbuf;
+    }
 }

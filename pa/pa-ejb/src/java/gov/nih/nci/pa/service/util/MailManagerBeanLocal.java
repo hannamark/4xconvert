@@ -176,6 +176,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
+    private static final String NONE = "NONE";
     private static final String USER_NAME = "${name}";
     private static final String SEND_MAIL_ERROR = "Send Mail error";
     private static final String DEADLINE = "${Deadline}";
@@ -195,6 +196,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String TRIAL_TITLE = "${trialTitle}";
     private static final String AMENDMENT_NUMBER = "${amendmentNumber}";
     private static final String AMENDMENT_DATE = "${amendmentDate}";
+    private static final String UPDATES = "${updates}";
     private static final String USERNAME_SEARCH_BODY_PROPERTY = "user.usernameSearch.body";
     private static final String USERNAME_SEARCH_SUBJECT_PROPERTY = "user.usernameSearch.subject";
     private static final String ERRORS = "${errors}";
@@ -691,13 +693,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         sendEmail(spDTO, mailBody, null, mailSubject, false);
     }
 
-    /**
-     * Sends an email notifying the submitter that the protocol is updated in the system.
-     * @param studyProtocolIi ii
-     * @throws PAException ex
+  
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendUpdateNotificationMail
+     * (gov.nih.nci.iso21090.Ii, java.lang.String)
      */
     @Override
-    public void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException {
+    public void sendUpdateNotificationMail(Ii studyProtocolIi, String updatesList) throws PAException {
 
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
             .convertToLong(studyProtocolIi));
@@ -707,6 +709,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
+        mailBody = mailBody.replace(UPDATES,
+                StringUtils.isNotBlank(updatesList) ? updatesList : NONE);
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.update.subject");
         sendEmail(spDTO, mailBody, null, mailSubject, false);
