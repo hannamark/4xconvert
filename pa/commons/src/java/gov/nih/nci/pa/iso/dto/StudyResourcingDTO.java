@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 
 
 /**
@@ -103,6 +104,8 @@ public class StudyResourcingDTO extends StudyDTO {
     private St serialNumber;
     private St inactiveCommentText;
     private Bl activeIndicator;
+    private Ts lastUpdatedDate;
+    private String userLastUpdated;
     /**
      * 
      * @return typeCode
@@ -228,7 +231,40 @@ public class StudyResourcingDTO extends StudyDTO {
      */
     public void setActiveIndicator(Bl activeIndicator) {
         this.activeIndicator = activeIndicator;
-    }  
+    }
     
+    /**
+     * 
+     * @return Ts
+     */
+    public Ts getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+    
+    /**
+     * 
+     * @param lastUpdatedDate lastUpdatedDate
+     */
+    public void setLastUpdatedDate(Ts lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+    
+    /**
+     * 
+     * @return the userLastUpdated
+     */
+    public String getUserLastUpdated() {
+        return userLastUpdated;
+    }
+    
+    /**
+     * 
+     * @param userLastUpdated userLastUpdated 
+     */
+    public void setUserLastUpdated(String userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
+    
+
     
 }

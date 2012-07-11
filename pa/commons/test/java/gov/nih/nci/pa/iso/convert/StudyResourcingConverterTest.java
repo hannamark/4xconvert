@@ -84,27 +84,40 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 public class StudyResourcingConverterTest extends
         AbstractConverterTest<StudyResourcingConverter, StudyResourcingDTO, StudyResourcing> {
-
+    private static final Date NOW = new Date();
+    private User user = new User();
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public StudyResourcing makeBo() {
         StudyResourcing bo = new StudyResourcing();
+        user.setFirstName("firstName");
+        user.setLastName("secondName");
         bo.setId(ID);
         bo.setOrganizationIdentifier("100");
         bo.setStudyProtocol(getStudyProtocol());
         bo.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         bo.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
+        bo.setDateLastUpdated(NOW);
+        bo.setInactiveCommentText("InActive Comment");
+        bo.setUserLastUpdated(user);
         return bo;
     }
 
@@ -114,10 +127,12 @@ public class StudyResourcingConverterTest extends
     @Override
     public StudyResourcingDTO makeDto() {
         StudyResourcingDTO dto = new StudyResourcingDTO();
+        user.setFirstName("firstName");
         dto.setIdentifier(IiConverter.convertToIi(ID));
         dto.setOrganizationIdentifier(IiConverter.convertToIi("100"));
         dto.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+        dto.setInactiveCommentText(StConverter.convertToSt("Comment"));     
         return dto;
     }
 
@@ -130,6 +145,8 @@ public class StudyResourcingConverterTest extends
         assertEquals("100", bo.getOrganizationIdentifier());
         assertTrue(bo.getSummary4ReportedResourceIndicator());
         assertEquals(SummaryFourFundingCategoryCode.INDUSTRIAL, bo.getTypeCode());
+        assertEquals(bo.getInactiveCommentText(), "Comment");
+        
     }
 
     /**
@@ -142,6 +159,9 @@ public class StudyResourcingConverterTest extends
         assertTrue(dto.getSummary4ReportedResourceIndicator().getValue());
         assertEquals(SummaryFourFundingCategoryCode.INDUSTRIAL.getCode(), dto.getTypeCode().getCode());
         assertEquals("2.16.840.1.113883.3.26.4.3.7", dto.getIdentifier().getRoot());
+        assertEquals(StConverter.convertToString(dto.getInactiveCommentText()), "InActive Comment");
+        assertEquals(dto.getUserLastUpdated(), "firstName secondName");
+        assertEquals(dto.getLastUpdatedDate(), TsConverter.convertToTs(NOW));
     }
 
 }

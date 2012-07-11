@@ -107,6 +107,7 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
     private static final String DELETE_RESULT = "delete";
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
     private List<TrialFundingWebDTO> trialFundingList;
+    private List<TrialFundingWebDTO> trialFundingDeleteList;
     private Long cbValue;
     private String page;
 
@@ -128,8 +129,14 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
                 PaRegistry.getStudyResourcingService().getStudyResourcingByStudyProtocol(studyProtocolIi);
             if (!isoList.isEmpty()) {
                 trialFundingList = new ArrayList<TrialFundingWebDTO>();
+                trialFundingDeleteList = new ArrayList<TrialFundingWebDTO>();
                 for (StudyResourcingDTO dto : isoList) {
-                    trialFundingList.add(new TrialFundingWebDTO(dto));
+                    if (dto.getActiveIndicator().getValue()) {
+                        trialFundingList.add(new TrialFundingWebDTO(dto));
+                    } else {
+                        trialFundingDeleteList.add(new TrialFundingWebDTO(dto));
+                    }
+                        
                 }
             } else {
                 setSuccessMessageIfNotYet(
@@ -333,5 +340,20 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
     public void setTrialFundingList(List<TrialFundingWebDTO> trialFundingList) {
         this.trialFundingList = trialFundingList;
     }
+    
+    /**
+     * @return trialFundingDeleteList
+     */
+    public List<TrialFundingWebDTO> getTrialFundingDeleteList() {
+        return trialFundingDeleteList;
+    }
+    
+    /**
+     * @param trialFundingDeleteList trialFundingDeleteList
+     */
+    public void setTrialFundingDeleteList(List<TrialFundingWebDTO> trialFundingDeleteList) {
+        this.trialFundingDeleteList = trialFundingDeleteList;
+    }
+    
 
 }

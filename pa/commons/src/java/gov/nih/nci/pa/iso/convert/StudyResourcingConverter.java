@@ -87,8 +87,10 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * Convert StudyResourcing from domain to DTO.
@@ -96,12 +98,12 @@ import gov.nih.nci.pa.util.ISOUtil;
  * @author Naveen Amiruddin
  */
 public class StudyResourcingConverter extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudyResourcingDTO convertFromDomainToDto(StudyResourcing studyResourcing) {
+    public StudyResourcingDTO convertFromDomainToDto(StudyResourcing studyResourcing) throws PAException { 
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
         srDTO.setIdentifier(IiConverter.convertToStudyResourcingIi(studyResourcing.getId()));
         if (studyResourcing.getOrganizationIdentifier() != null) {
@@ -118,9 +120,19 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
         srDTO.setStudyProtocolIdentifier(
                 IiConverter.convertToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
         srDTO.setActiveIndicator(BlConverter.convertToBl(studyResourcing.getActiveIndicator()));
+        User userLastUpdated = studyResourcing.getUserLastUpdated();
+        if (userLastUpdated != null) {
+            srDTO.setUserLastUpdated(userLastUpdated.getFirstName() + " " + userLastUpdated.getLastName());
+        }
+        if (studyResourcing.getDateLastUpdated() != null) {
+            srDTO.setLastUpdatedDate(TsConverter.convertToTs(studyResourcing.getDateLastUpdated()));
+        }
+        if (studyResourcing.getInactiveCommentText() != null) {
+            srDTO.setInactiveCommentText(StConverter.convertToSt(studyResourcing.getInactiveCommentText()));
+        }
         return srDTO;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -152,6 +164,7 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
         }
         convertTypeAndFundingMechanismToDomain(studyResourcingDTO, studyResourcing);
         convertNihNciCodesToDomain(studyResourcingDTO, studyResourcing);
+        convertInactiveTextToDomain(studyResourcingDTO, studyResourcing);
         if (studyResourcingDTO.getSerialNumber() != null) {
             studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
         }
@@ -159,8 +172,17 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
         if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
             studyResourcing.setActiveIndicator(Boolean.TRUE);
         }
+        
     }
 
+    private void convertInactiveTextToDomain(StudyResourcingDTO studyResourcingDTO,
+            StudyResourcing studyResourcing) throws PAException {
+        if (studyResourcingDTO.getInactiveCommentText() != null) {
+            studyResourcing.setInactiveCommentText(StConverter
+                    .convertToString(studyResourcingDTO.getInactiveCommentText()));
+        } 
+    }
+    
     private void convertTypeAndFundingMechanismToDomain(StudyResourcingDTO studyResourcingDTO,
             StudyResourcing studyResourcing) throws PAException {
         if (!ISOUtil.isCdNull(studyResourcingDTO.getTypeCode())) {
@@ -196,6 +218,7 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         }
     }
+    
 
 
 }

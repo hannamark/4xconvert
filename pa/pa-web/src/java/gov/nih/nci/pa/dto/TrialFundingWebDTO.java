@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * Class for holding attributes for StudyResourcing DTO.
@@ -95,6 +97,8 @@ public class TrialFundingWebDTO {
     private String id;
     private String serialNumber;
     private String inactiveCommentText;
+    private String lastUpdatedDate;
+    private String userLastUpdated;
     
     /**
      * @param iso StudyResourcingDTO object
@@ -106,6 +110,9 @@ public class TrialFundingWebDTO {
         this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
         this.id = iso.getIdentifier().getExtension();
         this.serialNumber = iso.getSerialNumber().getValue().toString();
+        this.inactiveCommentText = StConverter.convertToString(iso.getInactiveCommentText());
+        this.lastUpdatedDate = TsConverter.convertToString(iso.getLastUpdatedDate());
+        this.userLastUpdated = iso.getUserLastUpdated();
      }
     
     /** .
@@ -199,5 +206,35 @@ public class TrialFundingWebDTO {
         this.inactiveCommentText = inactiveCommentText;
     }
 
+    /**
+     * 
+     * @return The lastUpdatedDate
+     */
+    public String getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
     
+    /**
+     * 
+     * @param lastUpdatedDate lastUpdatedDate
+     */
+    public void setLastUpdatedDate(String lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+    
+    /**
+     * 
+     * @return the userLastUpdated
+     */
+    public String getUserLastUpdated() {
+        return userLastUpdated;
+    }
+    
+    /**
+     * 
+     * @param userLastUpdated userLast Updated 
+     */
+    public void setUserLastUpdated(String userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
 }

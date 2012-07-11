@@ -203,8 +203,6 @@ public class StudyResourcingBeanLocal extends
         sp.setId(IiConverter.convertToLong(studyProtocolIi));
         criteria.setStudyProtocol(sp);
         criteria.setSummary4ReportedResourceIndicator(Boolean.FALSE);
-        criteria.setActiveIndicator(Boolean.TRUE);
-
         List<StudyResourcing> results = search(new AnnotatedBeanSearchCriteria<StudyResourcing>(criteria));
         return convertFromDomainToDTOs(results);
     }

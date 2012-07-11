@@ -91,6 +91,16 @@ function handleAction(studyResourcingId){
                 </ul>
             </del>
         </div>
+        <h2><fmt:message key="trialFunding.subtitle.delete" /></h2>
+        <display:table name="trialFundingDeleteList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false">
+        <display:column escapeXml="true" titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="studyProtocol.inactiveText" property="inactiveCommentText" sortable="true" headerClass="sortable" /> 
+        <display:column escapeXml="true" titleKey="studyProtocol.deletedDate" property="lastUpdatedDate" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="studyProtocol.deletedBy" property="userLastUpdated" sortable="true" headerClass="sortable" /> 
+    </display:table>
       </s:form>
    </div>
  </body>
