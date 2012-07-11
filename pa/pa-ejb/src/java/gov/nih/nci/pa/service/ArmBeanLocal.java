@@ -245,7 +245,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
         for (ArmDTO armDbDTO : armList) {
             if (isDuplicate(dto, armDbDTO) && (dto.getIdentifier() == null
                     || (!dto.getIdentifier().getExtension().equals(armDbDTO.getIdentifier().getExtension())))) {
-                throw new PADuplicateException("Duplicates Arms are not allowed.");
+                throw new PADuplicateException("Duplicate Arms are not allowed.");
             }
         }
     }

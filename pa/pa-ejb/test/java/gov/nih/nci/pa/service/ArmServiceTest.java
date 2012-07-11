@@ -245,7 +245,7 @@ public class ArmServiceTest extends AbstractHibernateTestCase {
             remoteEjb.create(dto);
             fail("Duplicates Arms are not allowed.");
         } catch (PAException e) {
-            assertEquals("Duplicates Arms are not allowed.", e.getMessage());
+            assertEquals("Duplicate Arms are not allowed.", e.getMessage());
         }
         dto = new ArmDTO();
         dto.setName(StConverter.convertToSt("ARM 01"));
@@ -255,7 +255,7 @@ public class ArmServiceTest extends AbstractHibernateTestCase {
             remoteEjb.create(dto);
             fail("Duplicates Arms are not allowed.");
         } catch (PAException e) {
-            assertEquals("Duplicates Arms are not allowed.", e.getMessage());
+            assertEquals("Duplicate Arms are not allowed.", e.getMessage());
         }
         dto = new ArmDTO();
         dto.setName(StConverter.convertToSt("ARM Name"));

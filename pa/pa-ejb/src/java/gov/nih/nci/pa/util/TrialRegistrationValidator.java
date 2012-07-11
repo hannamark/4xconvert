@@ -152,6 +152,11 @@ import org.apache.commons.lang.StringUtils;
         "PMD.CyclomaticComplexity" })
 public class TrialRegistrationValidator {
 
+    /**
+     * FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.
+     */
+    public static final String FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG = 
+            "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.";
     private static final String AMENDMENT = "Amendment";
     private static final String CREATION = "Create";
     private static final String REJECTION = "Reject";
@@ -388,7 +393,7 @@ public class TrialRegistrationValidator {
             try {
                 paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
             } catch (PAException e) {
-                errorMsg.append("Duplicates grants are not allowed.");
+                errorMsg.append("Duplicate grants are not allowed.");
             }
         }
     }
@@ -784,9 +789,11 @@ public class TrialRegistrationValidator {
             }
             
             if (containsNonExemptInds(studyIndldeDTOs)) {
-                check(!fdaRegulated,
-                      "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.\n",
-                      errorMsg);
+                check(!fdaRegulated
+                        && errorMsg
+                                .indexOf(FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG) == -1,
+                        FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG + "\n",
+                        errorMsg);
 
                 if (studyRegAuthDTO != null && !ISOUtil.isIiNull(studyRegAuthDTO.getRegulatoryAuthorityIdentifier())) {
                     Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());

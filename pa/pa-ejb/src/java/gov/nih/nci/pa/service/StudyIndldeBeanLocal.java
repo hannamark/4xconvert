@@ -81,7 +81,7 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         for (StudyIndldeDTO sp : spList) {
             if (paServiceUtils.isIndIdeDuplicate(dto, sp) && (dto.getIdentifier() == null
                                 || (!dto.getIdentifier().getExtension().equals(sp.getIdentifier().getExtension())))) {
-                throw new PADuplicateException("Duplicates Ind/Ide are not allowed.");
+                throw new PADuplicateException("Duplicate IND/IDEs are not allowed.");
             }
         }
     }

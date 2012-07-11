@@ -485,7 +485,7 @@ public class TrialRegistrationValidatorTest {
         validator.validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
         verify(studyResourcingService).validate(studyResourcingDTO);
         verify(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
-        checkErrorMsg("Duplicates grants are not allowed.");
+        checkErrorMsg("Duplicate grants are not allowed.");
     }
 
     /**

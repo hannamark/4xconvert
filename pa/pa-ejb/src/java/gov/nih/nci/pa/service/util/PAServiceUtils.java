@@ -150,6 +150,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
@@ -199,6 +200,7 @@ import org.hibernate.Session;
  */
 @SuppressWarnings("unchecked")
 public class PAServiceUtils {
+    private static final String DUPLICATE_IND_ERR_MSG = "Duplicate IND/IDEs are not allowed.";
     private static final Logger LOG = Logger.getLogger(PAServiceUtils.class);
     private static final String ERR_MSG = "Found more than 1 record for a protocol id = %s for a given status %s";
     /**ORGANIZATION_IDENTIFIER_IS_NULL.*/
@@ -212,7 +214,8 @@ public class PAServiceUtils {
     /**LEAD_ORGANIZATION_NULLIFIED.*/
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
     /**The size of the counter portion of the NCI ID.*/
-    protected static final int NCI_ID_SIZE = 5;    
+    protected static final int NCI_ID_SIZE = 5;
+    private static final String ERR_MSG_SEPARATOR = "\n";    
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -755,8 +758,8 @@ public class PAServiceUtils {
                 isIndIdeUpdated(errorMsg, sp);
                 for (int j = i + 1; j < studyIndldeDTOs.size(); j++) {
                     StudyIndldeDTO newType = studyIndldeDTOs.get(j);
-                    if (isIndIdeDuplicate(sp, newType)) {
-                        errorMsg.append("Duplicates IND/IDEs are not allowed.");
+                    if (isIndIdeDuplicate(sp, newType) && errorMsg.indexOf(DUPLICATE_IND_ERR_MSG) == -1) {
+                        errorMsg.append(DUPLICATE_IND_ERR_MSG + ERR_MSG_SEPARATOR);
                     }
                 }
             }
@@ -764,7 +767,8 @@ public class PAServiceUtils {
             if (containsNonExemptInds(studyIndldeDTOs) && BooleanUtils.isTrue(ctGovIndicator)
                     && !BlConverter.convertToBool(
                     studyProtocolDTO.getFdaRegulatedIndicator())) {
-                errorMsg.append("FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.");
+                errorMsg.append(TrialRegistrationValidator.FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG
+                        + ERR_MSG_SEPARATOR);
             }
             if (errorMsg.length() > 1) {
                 throw new PAException(errorMsg.toString());
@@ -785,7 +789,7 @@ public class PAServiceUtils {
             if (dbDTO == null) {
                 errorMsg.append("IND/IDE ID " + sp.getIdentifier().getExtension() + " does not exist");
             } else if (!isIndIdeDuplicate(sp, dbDTO)) {
-                errorMsg.append("Existing IND/IDEs cannot be modified.");
+                errorMsg.append("Existing IND/IDEs cannot be modified." + ERR_MSG_SEPARATOR);
             }
         }
     }
@@ -816,7 +820,7 @@ public class PAServiceUtils {
                 for (int j = ++i; j < studyResourcingDTOs.size(); j++) {
                     StudyResourcingDTO newType =  studyResourcingDTOs.get(j);
                     if (isGrantDuplicate(sp, newType)) {
-                        errorMsg.append("Duplicates grants are not allowed.");
+                        errorMsg.append("Duplicate grants are not allowed." + ERR_MSG_SEPARATOR);
                   }
                 }
             }
@@ -838,7 +842,7 @@ public class PAServiceUtils {
             if (dbDTO == null) {
                 errorMsg.append("Grant ID " + sp.getIdentifier().getExtension() + " does not exist");
             } else if (!isGrantDuplicate(sp, dbDTO)) {
-                errorMsg.append("Existing grants cannot be modified.");
+                errorMsg.append("Existing grants cannot be modified." + ERR_MSG_SEPARATOR);
             }
         }
     }
@@ -924,8 +928,8 @@ public class PAServiceUtils {
                     recruiting = true;
                 }
                 if (!recruiting) {
-                    new PAException("Data inconsistency: Atleast one location needs to be recruiting"
-                            + " if the overall status recruitment status is\'Recruiting\'");
+                    new PAException("Data inconsistency: At least one location needs to be recruiting"
+                            + " if the overall status recruitment status is\'Recruiting\'." + ERR_MSG_SEPARATOR);
                 }
             }
         }
@@ -954,12 +958,12 @@ public class PAServiceUtils {
             if (CommonsConstant.YES.equalsIgnoreCase(
                 BlConverter.convertBlToYesNoString(studyProtocolDTO.getFdaRegulatedIndicator()))
                 && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
-                 errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
+                 errMsg.append("Section 801 is required if FDA Regulated indicator is true." + ERR_MSG_SEPARATOR);
             }
             if (CommonsConstant.YES.equalsIgnoreCase(
                  BlConverter.convertBlToYesNoString(studyProtocolDTO.getSection801Indicator()))
                  && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
-                   errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
+                   errMsg.append("Delayed Posting Indicator is required if Section 801 is true." + ERR_MSG_SEPARATOR);
             }
 
             if (containsNonExemptInds(studyIndldeDTOs)) {
