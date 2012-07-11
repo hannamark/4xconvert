@@ -609,7 +609,6 @@ public class TestSchema {
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
-        subj.setOutcomesLoginName("user1@mail.nih.gov");
         addUpdObject(subj);
         studySubjects.add(subj);
 

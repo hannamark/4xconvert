@@ -416,7 +416,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 studySubjectDTO.setIcd9DiseaseIdentifier(dto.getDiseaseIdentifier());
             }
         }
-        
+        studySubjectDTO.setRegistrationGroupId(dto.getRegistrationGroupId());
         StudySubject ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(studySubjectDTO);
         String sql = "";
         Session session = PaHibernateUtil.getCurrentSession();
@@ -433,6 +433,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         + "disease_identifier=" + (ss.getDisease() != null ? ss.getDisease().getId()  : null)
         + ", icd9disease_identifier="
         + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
+        + ", registration_group_id= :registration_group_id "
         + " WHERE identifier= :identifier";
         
         queryObject = session.createSQLQuery(sql);
@@ -444,16 +445,16 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             String nextValue = queryObject.uniqueResult().toString();            
             
             sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
-                + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
+                + "study_site_identifier, disease_identifier, payment_method_code, status_code, " 
                 + "date_last_created, date_last_updated, assigned_identifier, " 
-                + "user_last_created_id, user_last_updated_id, icd9disease_identifier) VALUES (:identifier,"
-                + " :patient_identifier, :study_protocol_identifier, :study_site_identifier," 
+                + "user_last_created_id, user_last_updated_id, icd9disease_identifier, registration_group_id) "
+                + "VALUES (:identifier, :patient_identifier, :study_protocol_identifier, :study_site_identifier, " 
                 + (ss.getDisease() != null ? ss.getDisease().getId()  : null) + ","
                 + (ss.getPaymentMethodCode() != null ? "'" + ss.getPaymentMethodCode().getName() + "'" : null)
                 + ", :status_code, now(), now(), :assigned_identifier," 
                 + ":user_last_created_id, :user_last_updated_id, "
                 + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
-                + ")";
+                + ", :registration_group_id)";
             
             queryObject = session.createSQLQuery(sql);
             queryObject.setParameter("patient_identifier", ss.getPatient().getId());
@@ -462,6 +463,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             queryObject.setParameter("user_last_created_id", userid);
             studySubjectDTO.setIdentifier(IiConverter.convertToIi(nextValue));
         }
+        queryObject.setParameter("registration_group_id", ss.getRegistrationGroupId());
         queryObject.executeUpdate();
         return studySubjectDTO;
     }

@@ -345,7 +345,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (!ISOUtil.isIiNull(studySiteIi)) {
             saDTO.setParticipatingSiteIdentifier(studySiteIi);
         }
-
+        saDTO.setRegistrationGroupId(StConverter.convertToSt(line[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]));
         parseSubjectDisease(line, saDTO);
         return saDTO;
     }

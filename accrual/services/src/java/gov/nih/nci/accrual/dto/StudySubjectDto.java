@@ -99,6 +99,7 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Ii icd9DiseaseIdentifier;
     private Cd paymentMethodCode;
     private Cd statusCode;
+    private St registrationGroupId;
     private Ivl<Ts> statusDateRange;
     
     
@@ -198,6 +199,16 @@ public class StudySubjectDto extends AbstractStudyDto {
     public void setIcd9DiseaseIdentifier(Ii icd9DiseaseIdentifier) {
         this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;
     }
-    
-    
+    /**
+     * @return the registrationGroupId
+     */
+    public St getRegistrationGroupId() {
+        return registrationGroupId;
+    }
+    /**
+     * @param registrationGroupId the registrationGroupId to set
+     */
+    public void setRegistrationGroupId(St registrationGroupId) {
+        this.registrationGroupId = registrationGroupId;
+    }
 }

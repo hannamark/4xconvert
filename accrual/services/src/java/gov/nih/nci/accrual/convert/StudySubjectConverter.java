@@ -128,6 +128,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
         dto.setIcd9DiseaseIdentifier(IiConverter.convertToIi(bo.getIcd9disease() == null ? null : bo.getIcd9disease()
             .getId()));
+        dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         return dto;
     }
 
@@ -161,6 +162,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             bo.setIcd9disease(fKeySetter(ICD9Disease.class, dto.getIcd9DiseaseIdentifier()));
             bo.setDisease(null);
         }
+        bo.setRegistrationGroupId(StConverter.convertToString(dto.getRegistrationGroupId()));
         return bo;
     }
 
@@ -180,6 +182,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setParticipatingSiteIdentifier(
                 IiConverter.convertToIi(bo.getStudySite() == null ? null : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
+        dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         return dto;
     }
 

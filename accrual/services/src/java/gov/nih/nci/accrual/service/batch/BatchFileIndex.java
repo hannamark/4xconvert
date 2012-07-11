@@ -158,6 +158,11 @@ public final class BatchFileIndex {
     public static final int PATIENT_REG_DATE_INDEX = 9;
 
     /**
+     * patient registering group id index.
+     */
+    public static final int PATIENT_REG_GROUP_ID_INDEX = 10;
+
+    /**
      * patient registering institution id index.
      */
     public static final int PATIENT_REG_INST_ID_INDEX = 11;

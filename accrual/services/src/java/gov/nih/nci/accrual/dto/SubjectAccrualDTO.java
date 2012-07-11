@@ -108,6 +108,7 @@ public class SubjectAccrualDTO extends BaseDTO {
     private Cd paymentMethod;
     private Ii diseaseIdentifier;
     private Ii participatingSiteIdentifier;
+    private St registrationGroupId;
     
     /**
      * @return the assignedIdentifier
@@ -268,5 +269,19 @@ public class SubjectAccrualDTO extends BaseDTO {
      */
     public void setCountryCode(Cd countryCode) {
         this.countryCode = countryCode;
+    }
+
+    /**
+     * @return the registrationGroupId
+     */
+    public St getRegistrationGroupId() {
+        return registrationGroupId;
+    }
+
+    /**
+     * @param registrationGroupId the registrationGroupId to set
+     */
+    public void setRegistrationGroupId(St registrationGroupId) {
+        this.registrationGroupId = registrationGroupId;
     }
 }

@@ -120,7 +120,7 @@ public class StudySubject extends Subject {
     private StudySite studySite;
     private SDCDisease disease;
     private ICD9Disease icd9disease;
-    private String outcomesLoginName;
+    private String registrationGroupId;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
     /**
@@ -130,12 +130,14 @@ public class StudySubject extends Subject {
     public String getAssignedIdentifier() {
         return assignedIdentifier;
     }
+
     /**
      * @param assignedIdentifier the assignedIdentifier to set
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
+
     /**
      * @return the paymentMethodCode
      */
@@ -144,12 +146,14 @@ public class StudySubject extends Subject {
     public PaymentMethodCode getPaymentMethodCode() {
         return paymentMethodCode;
     }
+
     /**
      * @param paymentMethodCode the paymentMethodCode to set
      */
     public void setPaymentMethodCode(PaymentMethodCode paymentMethodCode) {
         this.paymentMethodCode = paymentMethodCode;
     }
+
     /**
      * @return the patient
      */
@@ -157,17 +161,18 @@ public class StudySubject extends Subject {
     @JoinColumn(name = "patient_identifier")
     @NotNull
     @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    //@OnDelete(action = OnDeleteAction.CASCADE)
     @Index(name = "study_subject_patient_idx")
     public Patient getPatient() {
         return patient;
     }
+
     /**
      * @param patient the patient to set
      */
     public void setPatient(Patient patient) {
         this.patient = patient;
     }
+
     /**
      * @return the studySite
      */
@@ -177,13 +182,14 @@ public class StudySubject extends Subject {
     public StudySite getStudySite() {
         return studySite;
     }
+
     /**
      * @param studySite the studySite to set
      */
-
     public void setStudySite(StudySite studySite) {
         this.studySite = studySite;
     }
+
     /**
      * @return the disease
      */
@@ -192,6 +198,7 @@ public class StudySubject extends Subject {
     public SDCDisease getDisease() {
         return disease;
     }
+
     /**
      * @param disease the disease to set
      */
@@ -223,23 +230,26 @@ public class StudySubject extends Subject {
     public List<PerformedActivity> getPerformedActivities() {
         return performedActivities;
     }
+
     /**
      * @param performedActivities the performedActivities to set
      */
     public void setPerformedActivities(List<PerformedActivity> performedActivities) {
         this.performedActivities = performedActivities;
     }
+
     /**
-     * @return the outcomesLoginName
+     * @return the registrationGroupId
      */
-    @Column(name = "outcomes_login_name")
-    public String getOutcomesLoginName() {
-        return outcomesLoginName;
+    @Column(name = "registration_group_id")
+    public String getRegistrationGroupId() {
+        return registrationGroupId;
     }
+
     /**
-     * @param outcomesLoginName the outcomesLoginName to set
+     * @param registrationGroupId the registrationGroupId to set
      */
-    public void setOutcomesLoginName(String outcomesLoginName) {
-        this.outcomesLoginName = outcomesLoginName;
+    public void setRegistrationGroupId(String registrationGroupId) {
+        this.registrationGroupId = registrationGroupId;
     }
 }
