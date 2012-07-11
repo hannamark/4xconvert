@@ -11,6 +11,7 @@ import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
 
 /**
@@ -780,4 +781,16 @@ public class TrialDTO extends BaseTrialDTO {
             String responsibleGenericContactIdentifier) {
         this.responsibleGenericContactIdentifier = responsibleGenericContactIdentifier;
     }
+    
+    /**
+     * Includes phone number and extension, if present.
+     * 
+     * @return String
+     */
+    public String getFullContactPhone() {
+        return StringUtils.isBlank(getContactPhoneExtn()) ? StringUtils
+                .defaultString(getContactPhone())
+                : (StringUtils.defaultString(getContactPhone()) + "ext" + getContactPhoneExtn());
+    }
+    
 }

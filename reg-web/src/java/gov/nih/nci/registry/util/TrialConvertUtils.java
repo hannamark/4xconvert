@@ -973,7 +973,7 @@ public class TrialConvertUtils {
                 .convertToPoOrganizationalContactIi(trialDto
                         .getResponsibleGenericContactIdentifier()));
         spStageDTO.setContactEmail(StConverter.convertToSt(trialDto.getContactEmail()));
-        spStageDTO.setContactPhone(StConverter.convertToSt(trialDto.getContactPhone()));
+        spStageDTO.setContactPhone(StConverter.convertToSt(trialDto.getFullContactPhone()));
         spStageDTO.setProgramCodeText(StConverter.convertToSt(trialDto.getProgramCodeText()));
         spStageDTO.setTrialStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialDto.getStatusCode())));
         spStageDTO.setTrialStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStatusDate())));
@@ -1156,7 +1156,8 @@ public class TrialConvertUtils {
                 .convertToString(spStageDTO
                         .getResponsibleGenericContactIdentifier()));
         trialDto.setContactEmail(StConverter.convertToString(spStageDTO.getContactEmail()));
-        trialDto.setContactPhone(StConverter.convertToString(spStageDTO.getContactPhone()));
+        trialDto.setContactPhone(PAUtil.getPhone(StConverter.convertToString(spStageDTO.getContactPhone())));
+        trialDto.setContactPhoneExtn(PAUtil.getPhoneExtn(StConverter.convertToString(spStageDTO.getContactPhone())));
         trialDto.setProgramCodeText(StConverter.convertToString(spStageDTO.getProgramCodeText()));
         if (!ISOUtil.isCdNull(spStageDTO.getTrialStatusCode())) {
             trialDto.setStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(spStageDTO
