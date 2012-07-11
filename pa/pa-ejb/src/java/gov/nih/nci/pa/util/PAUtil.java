@@ -810,6 +810,9 @@ public class PAUtil {
      * @return extn
      */
     public static String getPhoneExtn(String phone) {
+        if (phone == null) {
+            return StringUtils.EMPTY;
+        }        
         String strExtn = "";
         if (phone.contains(EXTN)) {
             strExtn = phone.substring(phone.indexOf(EXTN) + EXTN_COUNT);
@@ -824,6 +827,9 @@ public class PAUtil {
      * @return phone
      */
     public static String getPhone(String phone) {
+        if (phone == null) {
+            return StringUtils.EMPTY;
+        }
         String strPhone = "";
         if (phone.contains(EXTN)) {
             strPhone = phone.substring(0, phone.indexOf(EXTN));
