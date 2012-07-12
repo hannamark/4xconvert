@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import java.util.List;
+
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -87,6 +89,7 @@ import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
 
 /**
@@ -119,6 +122,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private Ivl<Int> targetAccrualNumber;
+    private List<DocumentWorkflowStatusCode> processingStatuses;
 
     /**
      *
@@ -416,4 +420,18 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
         this.recordOwners = recordOwners;
     }
 
+    /**
+     * @return the processingStatuses
+     */
+    public List<DocumentWorkflowStatusCode> getProcessingStatuses() {
+        return processingStatuses;
+    }
+
+    /**
+     * @param processingStatuses the processingStatuses to set
+     */
+    public void setProcessingStatuses(
+            List<DocumentWorkflowStatusCode> processingStatuses) {
+        this.processingStatuses = processingStatuses;
+    }
 }

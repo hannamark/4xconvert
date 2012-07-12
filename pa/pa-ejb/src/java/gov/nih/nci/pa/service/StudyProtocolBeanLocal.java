@@ -622,7 +622,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         PageSortParams<StudyProtocol> params =
                 new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
                         StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
-        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
+        StudyProtocolBeanSearchCriteria crit;
+        
+        if (CollectionUtils.isNotEmpty(dto.getProcessingStatuses())) {
+            crit = new StudyProtocolBeanSearchCriteria(criteria, dto.getProcessingStatuses());
+        } else {
+            crit = new StudyProtocolBeanSearchCriteria(criteria);
+        }
+        
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
     }

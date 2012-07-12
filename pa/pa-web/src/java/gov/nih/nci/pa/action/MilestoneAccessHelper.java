@@ -141,7 +141,9 @@ public class MilestoneAccessHelper {
     }
 
     private void checkSuperUserMilestones(Set<MilestoneCode> milestones) {
-        if (!superuser || spqDTO.getSubmissionTypeCode() != SubmissionTypeCode.O) {
+        if (!superuser
+                || (spqDTO.getSubmissionTypeCode() != SubmissionTypeCode.O && spqDTO
+                        .getSubmissionTypeCode() != SubmissionTypeCode.A)) {
             milestones.remove(MilestoneCode.LATE_REJECTION_DATE);
         }
     }

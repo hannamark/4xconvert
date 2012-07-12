@@ -118,7 +118,8 @@ public class MilestoneAccessHelperTest {
      */
     @Parameters
     public static Collection<? extends Object> data() {
-        Object[][] data = new Object[][]{{false, false, false, SubmissionTypeCode.O, false, false, false},
+        Object[][] data = new Object[][]{
+                {false, false, false, SubmissionTypeCode.O, false, false, false},
                 {false, false, true, SubmissionTypeCode.O, true, true, true},
                 {false, true, false, SubmissionTypeCode.O, false, true, false},
                 {false, true, true, SubmissionTypeCode.O, true, true, true},
@@ -127,13 +128,13 @@ public class MilestoneAccessHelperTest {
                 {true, true, false, SubmissionTypeCode.O, true, true, false},
                 {true, true, true, SubmissionTypeCode.O, true, true, true},
                 {false, false, false, SubmissionTypeCode.A, false, false, false},
-                {false, false, true, SubmissionTypeCode.A, true, true, false},
+                {false, false, true, SubmissionTypeCode.A, true, true, true},
                 {false, true, false, SubmissionTypeCode.A, false, true, false},
-                {false, true, true, SubmissionTypeCode.A, true, true, false},
+                {false, true, true, SubmissionTypeCode.A, true, true, true},
                 {true, false, false, SubmissionTypeCode.A, true, false, false},
-                {true, false, true, SubmissionTypeCode.A, true, true, false},
+                {true, false, true, SubmissionTypeCode.A, true, true, true},
                 {true, true, false, SubmissionTypeCode.A, true, true, false},
-                {true, true, true, SubmissionTypeCode.A, true, true, false},
+                {true, true, true, SubmissionTypeCode.A, true, true, true}
                 };
         return Arrays.asList(data);
     }

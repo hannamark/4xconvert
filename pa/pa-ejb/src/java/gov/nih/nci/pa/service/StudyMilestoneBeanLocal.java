@@ -226,15 +226,13 @@ public class StudyMilestoneBeanLocal
         }
     }
 
-    private void checkLateRejectionRules(StudyMilestoneDTO dto) throws PAException {
-        if (MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(dto.getMilestoneCode().getCode())) {
-            if (ISOUtil.isStNull(dto.getCommentText())) {
-                throw new PAException("Milestone Comment is required.");
-            }
-            StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
-            if (sp.getSubmissionNumber().getValue().intValue() > 1) {
-                throw new PAException("Late Rejection Date is applicable to Original Submission.");
-            }
+    private void checkLateRejectionRules(StudyMilestoneDTO dto)
+            throws PAException {
+        if (MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(
+                dto.getMilestoneCode().getCode())
+                && ISOUtil.isStNull(dto.getCommentText())) {
+
+            throw new PAException("Milestone Comment is required.");
         }
     }
 
