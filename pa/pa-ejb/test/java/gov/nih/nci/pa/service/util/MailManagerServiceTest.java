@@ -87,13 +87,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -1097,6 +1097,15 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 lookUpTableService
                         .getPropertyValue("trial.register.unidentifiableOwner.email.body"))
                 .thenReturn("BODY {0} {1} {2}");
+        when(
+                lookUpTableService
+                        .getPropertyValue("trial.register.mismatchedUser.email.subject"))
+                .thenReturn("SUBJECT {0} {1}");
+        when(
+                lookUpTableService
+                        .getPropertyValue("trial.register.mismatchedUser.email.body"))
+                .thenReturn("BODY {0} {1} {2}");
+        
         when(lookUpTableService.getPropertyValue("abstraction.script.mailTo"))
                 .thenReturn("denis.krylov@semanticbits.com");
 
@@ -1121,17 +1130,17 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut.sendUnidentifiableOwnerEmail(1L,
                 Arrays.asList("bademail@semanticbits.com"));
 
-        verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
-        verify(registryUserService).getUser("loginName");
+        verify(protocolQueryService, atLeastOnce()).getTrialSummaryByStudyProtocolId(1L);
+        verify(registryUserService, atLeastOnce()).getUser("loginName");
 
         ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
                 .forClass(String.class);
         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
                 .forClass(String.class);
 
-        verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"),
+        verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"), anyString(), anyListOf(String.class),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
-                eq(new File[0]));
+                eq(new File[0]), eq(true));
         assertEquals("Wrong mail subject", "SUBJECT NCI nciIdentifier",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",

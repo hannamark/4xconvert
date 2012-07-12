@@ -176,6 +176,10 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
+    private static final String FROMADDRESS = "fromaddress";
+    private static final String PLACEHOLDER_2 = "{2}";
+    private static final String PLACEHOLDER_0 = "{0}";
+    private static final String PLACEHOLDER_1 = "{1}";
     private static final String NONE = "NONE";
     private static final String USER_NAME = "${name}";
     private static final String SEND_MAIL_ERROR = "Send Mail error";
@@ -402,7 +406,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @Override
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
         try {
-            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
+            String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
             sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, false);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
@@ -410,7 +414,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    private void sendMailWithAttachment(String mailTo, String mailFrom, 
+    void sendMailWithAttachment(String mailTo, String mailFrom, 
             List<String> mailCc, String subject, String mailBody, File[] attachments, boolean async) {
         try {
             // Define Message
@@ -560,7 +564,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                     .getPropertyValue(
                                             "trial.register.unidentifiableOwner.sub.email.body")
                                     .replace(
-                                            "{0}",
+                                            PLACEHOLDER_0,
                                             StringUtils.join(unmatchedEmails,
                                                     "\r\n")));
         } else {
@@ -861,7 +865,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
-            String fromAddress = lookUpTableService.getPropertyValue("fromaddress");
+            String fromAddress = lookUpTableService.getPropertyValue(FROMADDRESS);
             if (StringUtils.isBlank(from) && registryUser == null) {
                 from = fromAddress;
             } else if (registryUser != null) {
@@ -1155,27 +1159,68 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendUnidentifiableOwnerEmail(Long studyProtocolId,
             Collection<String> emails) throws PAException {
         
+        StudyProtocolQueryDTO study = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(studyProtocolId);  
+        
+        // First, email goes to CTRO
+        sendUnidentifiableOwnerEmailToCTRO(study, emails);
+
+        // Second, an email goes to each individual unidentifiable owner: https://tracker.nci.nih.gov/browse/PO-5223.
+        sendUnidentifiableOwnerEmailToMismatchedUsers(study, emails);
+    }
+
+    private void sendUnidentifiableOwnerEmailToMismatchedUsers(
+            StudyProtocolQueryDTO study, Collection<String> emails) throws PAException {
+
+        String mailSubjectTemplate = lookUpTableService
+                .getPropertyValue("trial.register.mismatchedUser.email.subject");       
+        String mailBodyTemplate = lookUpTableService
+                .getPropertyValue("trial.register.mismatchedUser.email.body");
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+       
+        String nciID = study.getNciIdentifier();        
+        String submitter = identifySubmitter(study);
+        
+        for (String email : emails) {
+            if (PAUtil.isValidEmail(email)) {
+                String mailSubject = mailSubjectTemplate.replace(PLACEHOLDER_0,
+                        submitter).replace(PLACEHOLDER_1, nciID);
+                String mailBody = mailBodyTemplate
+                        .replace(PLACEHOLDER_0, nciID).replace(PLACEHOLDER_1,
+                                submitter).replace(PLACEHOLDER_2,
+                                        email);
+                sendMailWithAttachment(email, mailFrom, null, mailSubject,
+                        mailBody, new File[0], true);
+            }
+        }
+    }
+
+    /**
+     * @param studyProtocolId
+     * @param emails
+     * @throws PAException
+     */
+    private void sendUnidentifiableOwnerEmailToCTRO(StudyProtocolQueryDTO study,
+            Collection<String> emails) throws PAException {
         String mailSubject = lookUpTableService
                 .getPropertyValue("trial.register.unidentifiableOwner.email.subject");
         String mailTo = lookUpTableService
                 .getPropertyValue("abstraction.script.mailTo");
         String mailBody = lookUpTableService
                 .getPropertyValue("trial.register.unidentifiableOwner.email.body");
-
-        StudyProtocolQueryDTO study = protocolQueryService
-                .getTrialSummaryByStudyProtocolId(studyProtocolId);
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);              
         
         String nciID = study.getNciIdentifier();
-        String badEmails = StringUtils.join(emails, "\r\n");
         String submitter = identifySubmitter(study);
+        String badEmails = StringUtils.join(emails, "\r\n");        
 
-        mailSubject = mailSubject.replace("{0}", submitter).replace("{1}",
+        mailSubject = mailSubject.replace(PLACEHOLDER_0, submitter).replace(PLACEHOLDER_1,
                 nciID);
-        mailBody = mailBody.replace("{0}", nciID).replace("{1}", submitter)
-                .replace("{2}", badEmails);
-
-        sendMailWithAttachment(mailTo, mailSubject, mailBody, new File[0]);
-
+        mailBody = mailBody.replace(PLACEHOLDER_0, nciID).replace(PLACEHOLDER_1, submitter)
+                .replace(PLACEHOLDER_2, badEmails);
+        
+        sendMailWithAttachment(mailTo, mailFrom, null, mailSubject,
+                mailBody, new File[0], true);        
     }
 
     /**
@@ -1219,7 +1264,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMailWithHtmlBody(String mailTo, String subject, String mailBody) {
         try {
             MimeMessage message = prepareMessage(mailTo, 
-                    lookUpTableService.getPropertyValue("fromaddress"), null, subject);
+                    lookUpTableService.getPropertyValue(FROMADDRESS), null, subject);
             message.setContent(mailBody, "text/html");
             // Send Message
             Transport.send(message);            
@@ -1322,7 +1367,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         
         try {
             String mailFrom = lookUpTableService
-                    .getPropertyValue("fromaddress");
+                    .getPropertyValue(FROMADDRESS);
             sendMailWithAttachment(user.getEmailAddress(), mailFrom, null, 
                     mailSubject, mailBody, new File[0], true);
         } catch (Exception e) {
