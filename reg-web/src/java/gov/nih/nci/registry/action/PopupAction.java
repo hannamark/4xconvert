@@ -269,8 +269,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             } else {
                 PersonDTO p = new PersonDTO();
                 p.setName(EnPnConverter.convertToEnPn(getFirstName(), null, getLastName(), null, null));
-                p.setPostalAddress(AddressConverterUtil.create(null, null, getCityName(), getStateName(), getZipCode(),
-                        getCountryName()));
+                p.setPostalAddress(AddressConverterUtil.create(null, null, getCity(), getState(), getZip(),
+                        getCountry()));
                 if (StringUtils.isNotBlank(getEmail())) {
                     List<String> emailList = new ArrayList<String>();
                     emailList.add(getEmail());
@@ -300,7 +300,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private boolean isPersonCriterionEmpty() {
         return StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
                 && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
-                && StringUtils.isEmpty(state)  && StringUtils.isEmpty(poId);
+                && StringUtils.isEmpty(state)  && StringUtils.isEmpty(poId) && StringUtils.isEmpty(country);
     }
 
     /**
@@ -367,7 +367,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private boolean isOrgCriterionEmpty() {
         return StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
                 && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(getCtepId()) && StringUtils.isEmpty(getPoId()) 
-                && StringUtils.isEmpty(familyName);
+                && StringUtils.isEmpty(familyName) && StringUtils.isEmpty(stateName);
     }
 
     private String getCountryNameUsingCode(String code) {
