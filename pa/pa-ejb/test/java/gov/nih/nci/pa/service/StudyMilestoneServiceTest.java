@@ -90,7 +90,6 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -134,7 +133,6 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
@@ -334,13 +332,6 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
         dto.setCommentText(null);
         checkMilestoneFailure(dto, "Milestone Comment is required.");
-    }
-
-    @Test
-    public void checkLateRejectionRulesNotOriginal() throws Exception {
-        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
-        dto.setStudyProtocolIdentifier(spAmendIi);
-        checkMilestoneFailure(dto, "Late Rejection Date is applicable to Original Submission.");
     }
 
     @Test
