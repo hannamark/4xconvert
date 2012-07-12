@@ -54,11 +54,11 @@
     		</div>
 		</c:if>
 		<div class="row">
-			<span class="label">Trial Submitter:</span>
+			<span class="label"><fmt:message key="last.submitter"/>:</span>
 			<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.lastCreated.userLastCreatedUsername }"/></a></span>
 		</div>
 		<div class="row">
-            <span class="label">Trial Submitter Organization:</span>
+            <span class="label"><fmt:message key="last.submitter.organization"/>:</span>
             <c:if test="${sessionScope.trialSubmitterOrgPOId == null }">
                 <span class="value"><c:out value="${sessionScope.trialSubmitterOrg}"/></span>
             </c:if>
