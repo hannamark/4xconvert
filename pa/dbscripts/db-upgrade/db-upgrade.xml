@@ -1010,5 +1010,9 @@
      <changeSet id="PO-5223" author="krylovd">
         <comment>Adding template for the email that gets sent to the email address of the mismatched user(s).</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5223.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-5247" author="krylovd">
+        <comment>Increase size of csm_user.phone_number.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5247.sql"/>
+     </changeSet>
 </databaseChangeLog>
