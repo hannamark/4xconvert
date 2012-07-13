@@ -316,6 +316,22 @@ public class PopupActionTest extends AbstractRegWebTest {
      }
 
     @Test
+    public void testDisplayPersonsListGivenPOID() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setPoId("100");
+        assertEquals("success", popUpAction.displayPersonsList());
+     }
+    
+    @Test
+    public void testDisplayPersonsListGivenCTEPID() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setPoId("1");
+        assertEquals("success", popUpAction.displayPersonsList());
+     }
+
+    
+
+    @Test
     public void testDisplayPersonsListDisplayTag() throws PAException{
         popUpAction = new PopupAction();
         popUpAction.setFirstName("firstName");
