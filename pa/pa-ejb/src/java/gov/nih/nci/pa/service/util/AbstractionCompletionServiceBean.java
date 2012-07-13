@@ -1194,7 +1194,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (armDtos == null || armDtos.isEmpty()) {
                     messages.addError("Select Arm from Scientific Data menu and associated Intervention.",
                                       "Every intervention in interventional trial must be associated with at least"
-                                              + " one arm in interventional trial", ErrorMessageTypeEnum.ADMIN);
+                                              + " one arm in interventional trial", ErrorMessageTypeEnum.SCIENTIFIC);
                 }
                 for (ArmDTO armDTO : armDtos) {
                     intervention.put(armDTO.getName().getValue(), armDTO.getName().getValue());

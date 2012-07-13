@@ -1015,4 +1015,12 @@
         <comment>Increase size of csm_user.phone_number.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5247.sql"/>
      </changeSet>
+     <changeSet id="PO-5226" author="Reshma">
+        <comment>Update saved draft email body content. </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5226.sql"/>
+     </changeSet>  
+     <changeSet id="PO-5224" author="Reshma">
+        <comment>Update email body content. </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5224.sql"/>
+     </changeSet>   
 </databaseChangeLog>

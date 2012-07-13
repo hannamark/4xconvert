@@ -911,8 +911,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @Override
     public void sendMarkerQuestionToCTROMail(String nciIdentifier, 
             String toAddress, PlannedMarkerDTO marker, String question) throws PAException {
-        try { 
-            String to = getMarkerEmailAddress(marker); 
+        try {
+            String to = toAddress;
+            if (StringUtils.isBlank(toAddress)) {
+                to = getMarkerEmailAddress(marker);
+            }
             String body = "Dear CTRO,"
                 + "\n\n"
                 + "A new marker request has been submitted to caDSR for trial "
