@@ -116,7 +116,6 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getPatientIdentifier()));
         assertTrue(cdTest(r.getPaymentMethodCode()));
         assertTrue(cdTest(r.getStatusCode()));
-        assertTrue(ivlTest(r.getStatusDateRange()));
         assertTrue(iiTest(r.getStudyProtocolIdentifier()));
         assertTrue(iiTest(r.getStudySiteIdentifier()));
         assertTrue(iiTest(r.getDiseaseIdentifier()));
@@ -178,7 +177,6 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         dto.setPatientIdentifier(iiVal);
         dto.setPaymentMethodCode(cdVal);
         dto.setStatusCode(cdVal);
-        dto.setStatusDateRange(ivlVal);
         dto.setStudyProtocolIdentifier(iiVal);
         dto.setStudySiteIdentifier(iiVal);        
         return dto;

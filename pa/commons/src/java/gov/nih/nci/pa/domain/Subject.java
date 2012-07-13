@@ -78,7 +78,19 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Hugh Reinhart
@@ -86,8 +98,94 @@ import javax.persistence.MappedSuperclass;
  *
  */
 @MappedSuperclass
-public class Subject extends PersonFunctionalRole {
+public class Subject extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 7802398346143336076L;
+    private HealthCareProvider healthCareProvider;
+    private ClinicalResearchStaff clinicalResearchStaff;
+    private FunctionalRoleStatusCode  statusCode;
+    private StudyProtocol studyProtocol;
+
+    /**
+     * Gets the status code.
+     *
+     * @return statusCode
+     */
+    @Column(name = "STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Searchable
+    public FunctionalRoleStatusCode  getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * Sets the status code.
+     *
+     * @param fStatusCode statusCode
+     */
+    public void setStatusCode(FunctionalRoleStatusCode  fStatusCode) {
+        this.statusCode = fStatusCode;
+    }
+
+    /**
+     * Gets the study protocol.
+     *
+     * @return studyProtocol
+     */
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
+    @NotNull
+    @Searchable(nested = true)
+    public StudyProtocol getStudyProtocol() {
+        return studyProtocol;
+    }
+
+    /**
+     * Sets the study protocol.
+     *
+     * @param studyProtocol studyProtocol
+     */
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
+    }
+
+    /**
+     *
+     * @return crs ClinicalResearchStaff
+     */
+    @ManyToOne
+    @JoinColumn(name = "CLINICAL_RESEARCH_STAFF_IDENTIFIER")
+    @Searchable(nested = true)
+    public ClinicalResearchStaff getClinicalResearchStaff() {
+        return clinicalResearchStaff;
+    }
+
+    /**
+     *
+     * @param clinicalResearchStaff ClinicalResearchStaff
+     */
+    public void setClinicalResearchStaff(ClinicalResearchStaff clinicalResearchStaff) {
+        this.clinicalResearchStaff = clinicalResearchStaff;
+    }
+
+    /**
+     *
+     * @return healthCareProvider healthCareProvider
+     */
+    @ManyToOne
+    @JoinColumn(name = "HEALTHCARE_PROVIDER_IDENTIFIER")
+    @Searchable(nested = true)
+    public HealthCareProvider getHealthCareProvider() {
+        return healthCareProvider;
+    }
+
+    /**
+     *
+     * @param healthCareProvider healthCareProvider
+     */
+    public void setHealthCareProvider(HealthCareProvider healthCareProvider) {
+        this.healthCareProvider = healthCareProvider;
+    }
 
 }

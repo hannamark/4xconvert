@@ -1022,5 +1022,9 @@
      <changeSet id="PO-5224" author="Reshma">
         <comment>Update email body content. </comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5224.sql"/>
-     </changeSet>   
+     </changeSet>
+     <changeSet id="PO-5189-2" author="Kalpana">
+        <comment>Delete un-used columns and sequences</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5189-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

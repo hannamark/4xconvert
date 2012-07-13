@@ -94,7 +94,6 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
@@ -221,7 +220,6 @@ public class PatientBeanLocal implements PatientServiceLocal {
     private Patient convertDtoToDomain(PatientDto dto) throws PAException {
         Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
         bo.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         return bo;
     }
 }

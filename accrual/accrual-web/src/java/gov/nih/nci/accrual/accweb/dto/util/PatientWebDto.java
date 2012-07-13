@@ -97,13 +97,11 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -286,7 +284,6 @@ public class PatientWebDto {
         pat.setGenderCode(CdConverter.convertToCd(PatientGenderCode.getByCode(getGenderCode())));
         pat.setRaceCode(DSetEnumConverter.convertSetToDSet(getRaceCode()));
         pat.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
-        pat.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         pat.setZip(StConverter.convertToSt(getZip()));
         return pat;
     }
@@ -305,7 +302,6 @@ public class PatientWebDto {
         ssub.setIcd9DiseaseIdentifier(IiConverter.convertToIi(getIcd9DiseaseIdentifier()));
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
-        ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
         return ssub;
     }
 

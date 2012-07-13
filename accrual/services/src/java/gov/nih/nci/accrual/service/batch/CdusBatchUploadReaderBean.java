@@ -205,7 +205,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return results;
     }
 
-    private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult) 
+    private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult)
             throws PAException {
         AccrualCollections collection = new AccrualCollections();
         collection.setChangeCode(validationResult.getChangeCode());
@@ -288,14 +288,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             //We're assuming this is the assigned identifier for the organization associated with the health care 
-            //facility of the study site.
-            /*Ii studySiteOrgIi = BatchUploadUtils.getOrganizationIi(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
-            SearchStudySiteResultDto studySite = 
-                getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi);*/
+            //facility of the study site.            
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
             String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
-            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, 
-                    studySiteIi != null ? IiConverter.convertToIi(studySiteIi) : null);
+            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, IiConverter.convertToIi(studySiteIi));
             try {
                 if (ISOUtil.isIiNull(saDTO.getIdentifier())) {
                     listOfStudySubjects.put(saDTO.getAssignedIdentifier().getValue(), 
@@ -342,9 +338,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (pmc != null) {
             saDTO.setPaymentMethod(CdConverter.convertToCd(pmc.getValue()));
         }
-        if (!ISOUtil.isIiNull(studySiteIi)) {
-            saDTO.setParticipatingSiteIdentifier(studySiteIi);
-        }
+        saDTO.setParticipatingSiteIdentifier(studySiteIi);
         saDTO.setRegistrationGroupId(StConverter.convertToSt(line[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]));
         parseSubjectDisease(line, saDTO);
         return saDTO;

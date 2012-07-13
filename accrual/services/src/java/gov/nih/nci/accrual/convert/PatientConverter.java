@@ -90,7 +90,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
@@ -114,7 +113,6 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, bo.getRaceCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
         dto.setZip(StConverter.convertToSt(bo.getZip()));
         return dto;
     }

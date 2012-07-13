@@ -354,7 +354,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         if (listOfPoIds.containsKey(registeringInstitutionID)) {
             if (listOfOrgIds.get(registeringInstitutionID) == null) {
                 listOfOrgIds.put(registeringInstitutionID, 
-                    IiConverter.convertToIi(listOfPoIds.get(registeringInstitutionID)));
+                    IiConverter.convertToIi(registeringInstitutionID));
             }
             return true;
         } else if (listOfCtepIds.containsKey(registeringInstitutionID)) {

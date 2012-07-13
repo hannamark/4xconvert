@@ -103,7 +103,6 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.util.PAUtil;
@@ -156,7 +155,6 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         dto.setPatientIdentifier(IiConverter.convertToIi(TestSchema.patients.get(1).getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MILITARY));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl("1/1/2000", null));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
         StudySubjectDto r = bean.create(dto);

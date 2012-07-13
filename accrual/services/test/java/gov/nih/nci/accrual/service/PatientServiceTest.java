@@ -143,7 +143,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
         dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
         return dto;
@@ -168,8 +167,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         assertNotNull(race);
         Cd status = dto.getStatusCode();
         assertNotNull(status);
-        Ts dateLow = dto.getStatusDateRangeLow();
-        assertNotNull(dateLow);
         St zip = dto.getZip();
         assertNotNull(zip);
         Ii org = dto.getOrganizationIdentifier();
@@ -190,7 +187,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
         dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
         bean.enforceBusinessRules(dto);

@@ -118,6 +118,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -314,7 +315,20 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
             }
         });
         
+        final ICD9DiseaseDTO icdDis = new ICD9DiseaseDTO();
+        icdDis.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
+        when(icd9DiseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<ICD9DiseaseDTO>() {
+            public ICD9DiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                String medraCode = (String) args[0];
+                List<String> validCodes = Arrays.asList("10053581");
+                if (validCodes.contains(medraCode)) {
+                    return icdDis;
+                }
+                return null;
+            }
+        });
         
         SubjectAccrualCountBean accrualCountSvc = new SubjectAccrualCountBean();
         accrualCountSvc.setSearchTrialService(searchTrialSvc);
@@ -325,6 +339,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         subjectAccrualSvc.setPerformedActivityService(new PerformedActivityBean());
         subjectAccrualSvc.setStudySubjectService(studySubjectService);
         subjectAccrualSvc.setSubjectAccrualCountSvc(accrualCountSvc);
+        subjectAccrualSvc.setUseTestSeq(true);
         readerService.setSubjectAccrualService(subjectAccrualSvc);
         
         RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
@@ -335,12 +350,14 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
             public StudySiteDTO answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
-                for (StudySite ss : TestSchema.studySites) {
-                    if (ss.getId().equals(IiConverter.convertToLong(ii))) {
-                        return Converters.get(StudySiteConverter.class).convertFromDomainToDto(ss);
-                    }
+                if (ii != null && ii.getExtension() != null) {
+                	for (StudySite ss : TestSchema.studySites) {
+                		if (ss.getId().equals(IiConverter.convertToLong(ii))) {
+                			return Converters.get(StudySiteConverter.class).convertFromDomainToDto(ss);
+                		}
+                	}
                 }
-                return null;
+                return Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.studySites.get(1));
             }
         });
         

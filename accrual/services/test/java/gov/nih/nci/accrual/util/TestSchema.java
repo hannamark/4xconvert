@@ -536,7 +536,6 @@ public class TestSchema {
         p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
@@ -548,7 +547,6 @@ public class TestSchema {
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
@@ -560,7 +558,6 @@ public class TestSchema {
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
@@ -572,7 +569,6 @@ public class TestSchema {
         p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
@@ -584,7 +580,6 @@ public class TestSchema {
         p.setRaceCode(PatientRaceCode.UNKNOWN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
-        p.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         p.setZip("TX");
         addUpdObject(p);
         patients.add(p);
@@ -596,7 +591,6 @@ public class TestSchema {
         subj.setAssignedIdentifier("001");
         subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
         addUpdObject(subj);
@@ -606,7 +600,6 @@ public class TestSchema {
         subj.setPatient(patients.get(1));
         subj.setAssignedIdentifier("002");
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
         addUpdObject(subj);

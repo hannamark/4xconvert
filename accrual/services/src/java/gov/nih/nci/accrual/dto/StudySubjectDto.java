@@ -81,9 +81,7 @@ package gov.nih.nci.accrual.dto;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
 
 /**
  * @author Hugh Reinhart
@@ -100,7 +98,6 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Cd paymentMethodCode;
     private Cd statusCode;
     private St registrationGroupId;
-    private Ivl<Ts> statusDateRange;
     
     
     /**
@@ -162,18 +159,6 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setStatusCode(Cd statusCode) {
         this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRange
-     */
-    public Ivl<Ts> getStatusDateRange() {
-        return statusDateRange;
-    }
-    /**
-     * @param statusDateRange the statusDateRange to set
-     */
-    public void setStatusDateRange(Ivl<Ts> statusDateRange) {
-        this.statusDateRange = statusDateRange;
     }
     /**
      * @return the diseaseIdentifier

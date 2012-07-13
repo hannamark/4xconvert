@@ -97,7 +97,6 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -120,8 +119,6 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
-                                                                     bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(bo.getStudySite() == null ? null 
                 : bo.getStudySite().getId()));
@@ -148,10 +145,6 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         }
         if (!ISOUtil.isCdNull(dto.getStatusCode())) {
             bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
-        }
-        if (dto.getStatusDateRange() != null) {
-            bo.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dto.getStatusDateRange()));
-            bo.setStatusDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getStatusDateRange()));
         }
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));

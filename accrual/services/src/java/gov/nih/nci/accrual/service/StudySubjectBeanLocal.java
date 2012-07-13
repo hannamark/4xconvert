@@ -203,10 +203,12 @@ public class StudySubjectBeanLocal extends
         for (Iterator<StudySubject> it = studySubjects.iterator(); it.hasNext();) {
             StudySubject studySubject = it.next();
             boolean found = false;
-            for (StudySiteAccrualAccess access : studySubject.getStudySite().getStudySiteAccrualAccess()) {
-                if (access.getRegistryUser().getId().equals(userId)) {
-                    found = true;
-                    break;
+            if (studySubject.getStudySite().getStudySiteAccrualAccess() != null) {
+                for (StudySiteAccrualAccess access : studySubject.getStudySite().getStudySiteAccrualAccess()) {
+                    if (access.getRegistryUser().getId().equals(userId)) {
+                        found = true;
+                        break;
+                    }
                 }
             }
             if (!found) {

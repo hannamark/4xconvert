@@ -100,7 +100,6 @@ public class PatientDto extends BaseDTO {
     private Ii countryIdentifier;
     private St zip;
     private Cd statusCode;
-    private Ts statusDateRangeLow;
     private Ii organizationIdentifier;
 
     /**
@@ -162,18 +161,6 @@ public class PatientDto extends BaseDTO {
      */
     public void setStatusCode(Cd statusCode) {
         this.statusCode = statusCode;
-    }
-    /**
-     * @return the statusDateRangeLow
-     */
-    public Ts getStatusDateRangeLow() {
-        return statusDateRangeLow;
-    }
-    /**
-     * @param statusDateRangeLow the statusDateRangeLow to set
-     */
-    public void setStatusDateRangeLow(Ts statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
     }
     /**
      * @return the zip

@@ -113,7 +113,6 @@ public class Patient extends AbstractEntity implements Auditable {
     private Country country;
     private String zip;
     private StructuralRoleStatusCode  statusCode;
-    private Timestamp statusDateRangeLow;
 
     /**
      * @return the country
@@ -215,21 +214,6 @@ public class Patient extends AbstractEntity implements Auditable {
      */
     public void setStatusCode(StructuralRoleStatusCode statusCode) {
         this.statusCode = statusCode;
-    }
-    /**
-     *
-     * @return statusDateRangeLow
-     */
-    @Column(name = "STATUS_DATE_RANGE_LOW")
-    public Timestamp getStatusDateRangeLow() {
-        return statusDateRangeLow;
-    }
-    /**
-     *
-     * @param statusDateRangeLow  statusDateRangeLow
-     */
-    public void setStatusDateRangeLow(Timestamp statusDateRangeLow) {
-        this.statusDateRangeLow = statusDateRangeLow;
     }
 
 }

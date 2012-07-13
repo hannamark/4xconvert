@@ -85,8 +85,6 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
@@ -129,7 +127,6 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
-        dto.setStatusDateRange(new Ivl<Ts>());
         ssList.add(dto);
     }
     StudySubjectConverter conv = new StudySubjectConverter();

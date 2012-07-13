@@ -5,8 +5,8 @@
 <!-- ====================================================================== -->
 
 <project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-    <property name="services.coverage.line" value="80"/>
-    <property name="services.coverage.branch" value="80"/>
+    <property name="services.coverage.line" value="86"/>
+    <property name="services.coverage.branch" value="86"/>
     <property name="services.pmd.maxerrors" value="2"/>
 
     <property file="${basedir}/../../build-pa/version.properties"/>
