@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 
 import java.util.ArrayList;
@@ -121,6 +122,7 @@ public class StudySubject extends Subject {
     private SDCDisease disease;
     private ICD9Disease icd9disease;
     private String registrationGroupId;
+    private AccrualSubmissionTypeCode submissionTypeCode;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
     /**
@@ -251,5 +253,21 @@ public class StudySubject extends Subject {
      */
     public void setRegistrationGroupId(String registrationGroupId) {
         this.registrationGroupId = registrationGroupId;
+    }
+
+    /**
+     * @return the submissionTypeCode
+     */
+    @Column(name = "submission_type")
+    @Enumerated(EnumType.STRING)
+    public AccrualSubmissionTypeCode getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(AccrualSubmissionTypeCode submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }
 }
