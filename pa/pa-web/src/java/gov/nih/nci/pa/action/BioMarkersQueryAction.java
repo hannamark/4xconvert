@@ -99,6 +99,9 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -124,7 +127,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private List<PlannedMarkerDTO> plannedMarkers;
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
-
+    
     private String selectedRowIdentifier;
 
     @Override
@@ -165,6 +168,15 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         plannedMarker = populateWebDTO(marker);
+        try {
+            String emailId = PaRegistry.getMailManagerService().getMarkerEmailAddress(marker);
+            plannedMarker.setCsmUserEmailId(emailId);
+            if (StringUtils.isBlank(emailId)) {
+                addActionError(getText("error.plannedMarker.question"));
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
         return MARKER_QUESTION;
     }
 
@@ -253,7 +265,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
-
+        
         String nciIdentifier = "";
         String userId = "";
         User csmUser;
@@ -264,7 +276,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             nciIdentifier = studyProtocolQueryDTO.getNciIdentifier();
             userId = StConverter.convertToString(markerDTO.getUserLastCreated());
             csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
-            emailId = csmUser.getEmailId();
+           emailId = csmUser.getEmailId();
         }           
         webDTO.setQuestion("");
         webDTO.setNciIdentifier(nciIdentifier);
@@ -369,4 +381,5 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public void setSelectedRowIdentifier(String selectedRowIdentifier) {
         this.selectedRowIdentifier = selectedRowIdentifier;
     }  
+    
 }

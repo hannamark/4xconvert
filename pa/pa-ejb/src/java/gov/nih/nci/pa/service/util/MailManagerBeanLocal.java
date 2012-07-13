@@ -882,13 +882,37 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMarkerEmailAddress(PlannedMarkerDTO marker) throws PAException {
+        String emailId = "";
+        try {
+            String userId = StConverter.convertToString(marker.getUserLastCreated());
+            User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
+            RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
+            if (StringUtils.isBlank(csmUser.getEmailId())) {
+                if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
+                    emailId = registryUser.getEmailAddress();                 
+                } 
+            } else {
+                emailId = csmUser.getEmailId();
+            }
+        } catch (Exception e) {
+            throw new PAException("An error occured while sending a q email for a CDE", e);
+        }
+        return emailId;
+    }
     /**
      * {@inheritDoc}
      */
     @Override
     public void sendMarkerQuestionToCTROMail(String nciIdentifier, 
             String to, PlannedMarkerDTO marker, String question) throws PAException {
-        try {               
+        try { 
+            to = getMarkerEmailAddress(marker); 
             String body = "Dear CTRO,"
                 + "\n\n"
                 + "A new marker request has been submitted to caDSR for trial "
@@ -911,7 +935,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + nciIdentifier;
             sendMailWithAttachment(to, fromAddress, null, subject, body, null, false);
         } catch (Exception e) {
-            throw new PAException("An error occured while sending a acceptance email for a CDE", e);
+            throw new PAException("An error occured while sending a q email for a CDE", e);
         }
     }
 

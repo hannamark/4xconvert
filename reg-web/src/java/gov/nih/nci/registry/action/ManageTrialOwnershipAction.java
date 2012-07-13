@@ -155,5 +155,11 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         super.assignOwnership();
         return search();
     }
+    
+    @Override
+    public String unassignOwnership() throws PAException {
+        super.unassignOwnership();
+        return search();
+    }
 
 }

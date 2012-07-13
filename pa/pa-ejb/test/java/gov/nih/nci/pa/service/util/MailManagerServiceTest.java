@@ -667,8 +667,16 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(user);
         bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
                 dto, "Marker Text");
+    }   
+    
+    @Test
+    public void testGetMarkerEmailAddress() throws PAException {
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+        assertEquals("example1@example.com", bean.getMarkerEmailAddress(dto));
     }
-
     @Test
     public void testsendMarkerAcceptanceMailToCDE() throws PAException {
         String nciIdentifier = "nciIdentifier";

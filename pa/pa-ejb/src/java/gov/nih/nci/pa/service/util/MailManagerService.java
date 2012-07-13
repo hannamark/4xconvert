@@ -197,6 +197,14 @@ public interface MailManagerService {
             PlannedMarkerDTO marker, String question) throws PAException;
     
     /**
+     * Sends emailId based .
+     * @param marker the marker containing the name and HUGO code if specified
+     * @throws PAException on error
+     * @return String the email
+     */
+    String getMarkerEmailAddress(PlannedMarkerDTO marker) throws PAException;
+    
+    /**
      * 
      * @param mailTo to
      * @param subject subject

@@ -19,6 +19,11 @@
     <c:set var="topic" scope="request" value="biomarkers"/>
 	<s:url id="cancelUrl" namespace="/protected" action="bioMarkers" />
 	<div class="box">
+	    <s:if test="hasActionErrors()">
+                <div class="error_msg">
+                    <s:actionerror />          
+                </div>
+        </s:if>
 		<s:set var="submitUrl" value="'bioMarkerssendQuestionMail'" />
 		<table class="form">
 			<tr>
@@ -70,10 +75,14 @@
 						<div class="actionsrow">
 							<del class="btnwrapper">
 								<ul class="btnrow">
-									<li><s:a cssClass="btn" href="javascript:void(0)"
-											onclick="document.forms[0].submit();">
+									<li>
+									  <s:if test="!hasActionErrors()">
+									    <s:a cssClass="btn" href="javascript:void(0)"
+											onclick="document.forms[0].submit();" >
 											<span class="btn_img">Submit</span>
-										</s:a> <s:a href="%{cancelUrl}" cssClass="btn">
+										</s:a> 
+									 </s:if>
+										<s:a href="%{cancelUrl}" cssClass="btn">
 											<span class="btn_img"><span class="cancel">Cancel</span>
 											</span>
 										</s:a></li>
