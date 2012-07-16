@@ -526,7 +526,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 .append(protocolId).append(" is not an Active study.\n");   
         } else if (!hasAccrualAccess(sp.getIdentifier())) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(CsmUserUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
+            .append(CsmUserUtil.getGridIdentityUsername(ru.getCsmUser().getLoginName()))
             .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId)
             .append(" \n");
         }
