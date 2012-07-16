@@ -185,7 +185,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
             + "${leadOrgTrialIdentifier}, ${nciTrialIdentifier} ${subOrgTrialIdentifier}.";
     private static final String PROP_NOTFICATION_BODY_KEY = "proprietarytrial.register.body";
     private static final String PROP_NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
-            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}. * ${errors}  ";
+            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}. ${errors}  ";
     private static final String ERRORS_BODY_VALUE = "{0}";
     private static final String ERRORS_BODY_KEY = "trial.register.unidentifiableOwner.sub.email.body";
 

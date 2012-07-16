@@ -568,10 +568,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                             StringUtils.join(unmatchedEmails,
                                                     "\r\n")));
         } else {
-            //To remove the empty bullet
-            String beforeErrSubString = mailBody.substring(0, mailBody.lastIndexOf("* ${errors}"));
-            String afterErrSubString = mailBody.substring(mailBody.lastIndexOf("* ${errors}") + ERROR_MSG_LENGTH);
-            mailBody = beforeErrSubString + afterErrSubString;
+            mailBody = mailBody.replace(ERRORS, "");
         }
 
         mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
