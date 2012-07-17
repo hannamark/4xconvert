@@ -1034,5 +1034,9 @@
      <changeSet id="PO-5243" author="krylovd">
         <comment>After recent email-related changes, trial registration email text is messed up.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5243.sql"/>
-     </changeSet>     
+     </changeSet>
+    <changeSet id="PO-4961" author="Kalpana">
+        <comment>Updated IC9 disease codes</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-4961.sql"/>
+     </changeSet>
 </databaseChangeLog>
