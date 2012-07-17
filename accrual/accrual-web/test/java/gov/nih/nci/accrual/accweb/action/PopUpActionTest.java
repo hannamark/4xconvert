@@ -81,7 +81,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
@@ -93,12 +92,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -138,7 +135,8 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
         SDCDiseaseDTO criteria = new SDCDiseaseDTO();
         criteria.setPreferredName(StConverter.convertToSt(action.getSearchName()));
         assertNotNull(criteria);
-        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("searchName", searchName);
+        action.setSearchName(searchName);
+        action.setIncludeSDC("false");
         assertEquals(ActionSupport.SUCCESS, action.displayList());
 
     }
@@ -146,7 +144,8 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     @Test
     public void testLoadResultListTooManyResults() throws PAException {
         when(action.getIcd9DiseaseSvc().getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());
-        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("searchName", searchName);
+        action.setSearchName(searchName);
+        action.setIncludeSDC("true");
         action.displayList();
         assertTrue(action.getActionErrors().size() > 0);
         for (String err: action.getActionErrors()) {
@@ -157,7 +156,9 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     @Test
     public void testSearchNameProperty() {
         action.setSearchName(searchName);
+        action.setIncludeSDC("true");
         assertNotNull(action.getSearchName());
+        assertNotNull(action.getIncludeSDC());
     }
 
     @Test

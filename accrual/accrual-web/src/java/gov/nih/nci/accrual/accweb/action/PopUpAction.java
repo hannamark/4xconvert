@@ -101,21 +101,24 @@ public class PopUpAction extends AbstractAccrualAction {
     static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
+    private String includeSDC;
+
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
     private void loadResultList() {
         disWebList.clear();
-        String tName = ServletActionContext.getRequest().getParameter("searchName");
 
-        if (StringUtils.isEmpty(tName)) {
+        if (StringUtils.isEmpty(searchName)) {
             String message = "Please enter at least one search criteria";
             addActionError(message);
             ServletActionContext.getRequest().setAttribute("failureMessage", message);
             return;
         }
 
-        loadSDCDiseases(tName);
-        loadICD9Diseases(tName);
+        if ("true".equalsIgnoreCase(includeSDC)) {
+            loadSDCDiseases(searchName);
+        }
+        loadICD9Diseases(searchName);
         
         if (disWebList.size() > MAX_SEARCH_RESULT_SIZE) {
             disWebList.clear();
@@ -209,6 +212,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setSearchName(String searchName) {
         this.searchName = searchName;
+    }
+    /**
+     * @return the includeSDC
+     */
+    public String getIncludeSDC() {
+        return includeSDC;
+    }
+
+    /**
+     * @param includeSDC the includeSDC to set
+     */
+    public void setIncludeSDC(String includeSDC) {
+        this.includeSDC = includeSDC;
     }
 
     /**

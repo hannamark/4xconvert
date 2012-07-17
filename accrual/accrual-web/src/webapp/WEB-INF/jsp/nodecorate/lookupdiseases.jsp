@@ -12,7 +12,9 @@
             
             function loadDiv() {     
                 var url = '/accrual/protected/popupdisplayList.action';
-                var params = { searchName: $("searchName").value };
+                var params = { searchName: $("searchName").value,
+                        includeSDC: $("includeSDC") != null && $("includeSDC").checked == true
+                		};
                 var div = $('getDiseases');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
                 var aj = callAjaxPost(div, url, params);   
@@ -25,8 +27,14 @@
                 <h2>Search Diseases</h2>
                 <table class="form">
                     <tr>
-                        <td scope="row" class="label"><label for="searchName">Disease Name: </label></td>
+                        <td scope="row" class="label"><label for="searchName"><fmt:message key="disease.name"/></label></td>
                         <td><s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px" /></td>
+                    </tr>
+                    <tr> 
+                        <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.includeSDC"/></label></td>
+                        <td>
+                            <s:checkbox name="includeSDC" id="includeSDC" />
+                        </td>                
                     </tr>
                 </table>
                 <div class="actionsrow">
