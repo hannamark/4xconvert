@@ -237,6 +237,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
     	            xml.id_domain("CTEP")
     			}
             }
+            if (spRow.dcpId != null) {
+                xml.secondary_id {
+                    xml.id(spRow.dcpId)
+                    xml.id_type("dcp-id")
+                    xml.id_domain("DCP")
+                }
+            }
             if (spRow.nctId != null) {
     			xml.secondary_id {
     				xml.id(spRow.nctId)
