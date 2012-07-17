@@ -7,9 +7,11 @@
 <head>
 <title><fmt:message key="anatomicSite.details.title" /></title>
 <s:head />
-<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
+
 
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+
+
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
