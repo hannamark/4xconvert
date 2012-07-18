@@ -325,6 +325,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException exception
      */
     public void facilitySaveOrUpdate() throws PAException {
+        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab != null) {
