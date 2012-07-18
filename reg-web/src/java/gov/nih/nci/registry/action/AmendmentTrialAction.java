@@ -142,11 +142,14 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
     private Long studyProtocolId;
     private final TrialUtil trialUtil = new TrialUtil();
     
+    private String currentUser;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare() {
+        currentUser = UsernameHolder.getUser();
         lookUpTableService = PaRegistry.getLookUpTableService();
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
@@ -318,7 +321,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
                 trialDTO.setSection801Indicator(null);
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);

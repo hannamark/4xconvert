@@ -144,6 +144,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     private String page;
     private Long id;
     private String sum4FundingCatCode;
+    private String currentUser;
     
     /**
      * Default constructor.
@@ -157,6 +158,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
      */
     @Override
     public void prepare() {
+        currentUser = UsernameHolder.getUser();
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
@@ -207,7 +209,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             TrialUtil util = new TrialUtil();
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
             StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());

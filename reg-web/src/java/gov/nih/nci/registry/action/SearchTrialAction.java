@@ -197,12 +197,15 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private Long identifier;
     private TrialUtil trialUtils = new TrialUtil();
     private HttpServletRequest httpServletRequest;
+
+    private String currentUser;
     
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare() {
+        currentUser = UsernameHolder.getUser();
         abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
         documentService = PaRegistry.getDocumentService();
         mailManagerService = PaRegistry.getMailManagerService();        
@@ -348,7 +351,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }        
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
         queryCriteria.setMyTrialsOnly(criteria.isMyTrialsOnly());
-        queryCriteria.setUserLastCreated(UsernameHolder.getUser());
+        queryCriteria.setUserLastCreated(currentUser);
         // exclude rejected protocols during search
         queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
         if (StringUtils.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
@@ -434,7 +437,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            boolean maskFields = !registryUserService.hasTrialAccess(UsernameHolder.getUser(),
+            boolean maskFields = !registryUserService.hasTrialAccess(currentUser,
                     studyProtocolId);
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
             queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
@@ -554,7 +557,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      */
     public String getMyPartiallySavedTrial() {
         StudyProtocolStageDTO criteriaSpDTO = new StudyProtocolStageDTO();
-        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));

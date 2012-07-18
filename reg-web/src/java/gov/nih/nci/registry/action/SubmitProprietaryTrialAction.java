@@ -45,13 +45,14 @@ import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Vrushali
  *
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
-public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAction {
+public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAction implements Preparable {
     /**
      *
      */
@@ -60,6 +61,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     private String selectedTrialType = "no";   
     private String sum4FundingCatCode;
     private final TrialUtil  util = new TrialUtil();
+    private String currentUser;
 
     /**
      * Default constructor.
@@ -194,7 +196,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         try {
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
 
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
@@ -370,5 +372,10 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         for (DocumentDTO dto : documentDTOs) {
            dto.setIdentifier(null);
         }
+    }
+
+    @Override
+    public void prepare() {
+        currentUser = UsernameHolder.getUser();        
     }
 }

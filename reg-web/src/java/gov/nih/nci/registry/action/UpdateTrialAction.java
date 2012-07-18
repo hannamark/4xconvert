@@ -112,11 +112,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private TrialIndIdeDTO trialIndIdeDTO;
     private int indIdeUpdateDtosLen = 0;
 
+    private String currentUser;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare()  {
+        currentUser = UsernameHolder.getUser();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
@@ -326,7 +329,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
             util.addSecondaryIdentifiers(spDTO, trialDTO);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
-            spDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+            spDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
 
             // set the overall status
             StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);

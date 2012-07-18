@@ -120,6 +120,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * The Class UpdateProprietaryTrialAction.
@@ -127,12 +128,13 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author Kalpana Guthikonda
  * @since May 18 2010
  */
-public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAction {
+public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAction implements Preparable {
 
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private final TrialUtil  util = new TrialUtil();
+    private String currentUser;
 
     /**
      * View.
@@ -233,7 +235,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
             util.convertToStudyProtocolDTO(trialDTO, studyProtocolDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
             St leadOrganizationIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
             St nctIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());
@@ -368,6 +370,11 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             ssaDTO.add(ssas);
         }
         return ssaDTO;
+    }
+
+    @Override
+    public void prepare() {
+        currentUser = UsernameHolder.getUser();
     }    
     
 }
