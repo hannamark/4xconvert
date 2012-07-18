@@ -10,6 +10,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum AccrualSubmissionTypeCode implements CodedEnum<String> {
 
+    /** Unknown. */
+    UNKNOWN("Unknown"),
     /** User Interface. */
     UI("Single UI Submission"),
     /** Batch Upload. */
@@ -28,8 +30,8 @@ public enum AccrualSubmissionTypeCode implements CodedEnum<String> {
      * @param code code
      * @return CheckOutType with the given code
      */
-    public static AccrualChangeCode getByCode(String code) {
-        return getByClassAndCode(AccrualChangeCode.class, code);
+    public static AccrualSubmissionTypeCode getByCode(String code) {
+        return getByClassAndCode(AccrualSubmissionTypeCode.class, code);
     }
 
     @Override

@@ -1042,5 +1042,9 @@
 	<changeSet id="PO-5248" author="monishd">
 	    <comment>rv_checkout_admin used for rv_checkout_scientific.Hence changed it to query proper view</comment>
 	    <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5248.sql"/>
-	</changeSet> 
+	</changeSet>
+    <changeSet id="PO-5118-2" author="Hugh">
+        <comment>Add column to store accrual submission method.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5118-2.sql"/>
+    </changeSet>
 </databaseChangeLog>

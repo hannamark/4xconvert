@@ -260,6 +260,7 @@ public class StudySubject extends Subject {
      */
     @Column(name = "submission_type")
     @Enumerated(EnumType.STRING)
+    @NotNull
     public AccrualSubmissionTypeCode getSubmissionTypeCode() {
         return submissionTypeCode;
     }

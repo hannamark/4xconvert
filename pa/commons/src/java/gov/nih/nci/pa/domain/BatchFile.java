@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -106,10 +110,11 @@ public class BatchFile extends AbstractEntity {
     private static final long serialVersionUID = 1L;
     private List<AccrualCollections> accrualCollections = new ArrayList<AccrualCollections>();
     private RegistryUser submitter;
-    private boolean passedValidation = false;
-    private boolean processed = false;
+    private boolean passedValidation;
+    private boolean processed;
     private String results;
     private String fileLocation;
+    private AccrualSubmissionTypeCode submissionTypeCode;
 
     /**
      * @return the accrualCollections
@@ -206,5 +211,22 @@ public class BatchFile extends AbstractEntity {
      */
     public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
+    }
+
+    /**
+     * @return the submissionTypeCode
+     */
+    @Column(name = "submission_type")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public AccrualSubmissionTypeCode getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(AccrualSubmissionTypeCode submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }
 }
