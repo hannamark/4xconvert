@@ -91,7 +91,6 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
-import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.LabelValueBean;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -343,13 +342,11 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             if (usr != null) {
                 regUsers.put(usr.getId(), usr);
                 String loginId = u.getLoginName() != null ? u.getLoginName() : " ";
-                if (ActionUtils.checkUserHasReadWritePrivilege(loginId)) {
-                    LabelValueBean lvBean = new LabelValueBean();
-                    lvBean.setId(usr.getId());
-                    lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
+                LabelValueBean lvBean = new LabelValueBean();
+                lvBean.setId(usr.getId());
+                lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
                             + CsmUserUtil.getGridIdentityUsername(loginId));
-                    lvBeanList.add(lvBean);
-                }
+                lvBeanList.add(lvBean);
             }
         }
         return lvBeanList;
