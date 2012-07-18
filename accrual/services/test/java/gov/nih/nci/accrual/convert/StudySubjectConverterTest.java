@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.convert;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
@@ -119,6 +120,18 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getStudyProtocolIdentifier()));
         assertTrue(iiTest(r.getStudySiteIdentifier()));
         assertTrue(iiTest(r.getDiseaseIdentifier()));
+        assertTrue(stTest(r.getAssignedIdentifier()));
+        assertTrue(stTest(r.getRegistrationGroupId()));
+        assertTrue(cdTest(r.getSubmissionTypeCode()));
+        assertTrue(stTest(r.getAssignedIdentifier()));
+        assertTrue(iiTest(r.getDiseaseIdentifier()));
+        assertNull(IiConverter.convertToLong(r.getIcd9DiseaseIdentifier()));
+        
+        dto.setDiseaseIdentifier(null);
+        bo = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(dto);
+        r = Converters.get(StudySubjectConverter.class).convertFromDomainToDto(bo);
+        assertNull(IiConverter.convertToLong(r.getDiseaseIdentifier()));
+        assertTrue(iiTest(r.getIcd9DiseaseIdentifier()));
     }
     
     @Test
@@ -145,12 +158,14 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         subject.setId(IiConverter.convertToLong(iiVal));
         subject.setAssignedIdentifier(StConverter.convertToString(stVal));
         subject.getPerformedActivities().add(milestone);
+        subject.setRegistrationGroupId(StConverter.convertToString(stVal));
         SubjectAccrualDTO dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
 
         assertTrue(iiTest(dto.getIdentifier()));
         assertTrue(stTest(dto.getAssignedIdentifier()));
         assertTrue(tsTest(dto.getRegistrationDate()));
         assertTrue(cdTest(dto.getPaymentMethod()));
+        assertTrue(stTest(dto.getRegistrationGroupId()));
         
         subject.setDisease(disease);
         subject.setPatient(patient);
@@ -169,6 +184,8 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(cdTest(dto.getPaymentMethod()));
         assertTrue(iiTest(dto.getDiseaseIdentifier()));
         assertTrue(iiTest(dto.getParticipatingSiteIdentifier()));
+        assertTrue(stTest(dto.getRegistrationGroupId()));
+        assertTrue(cdTest(dto.getSubmissionTypeCode()));
     }
     
     private StudySubjectDto createStudySubjectDTO() {
@@ -178,7 +195,12 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         dto.setPaymentMethodCode(cdVal);
         dto.setStatusCode(cdVal);
         dto.setStudyProtocolIdentifier(iiVal);
-        dto.setStudySiteIdentifier(iiVal);        
+        dto.setStudySiteIdentifier(iiVal);
+        dto.setRegistrationGroupId(stVal);
+        dto.setSubmissionTypeCode(cdVal);
+        dto.setAssignedIdentifier(stVal);
+        dto.setDiseaseIdentifier(iiVal);
+        dto.setIcd9DiseaseIdentifier(iiVal);
         return dto;
     }
 }

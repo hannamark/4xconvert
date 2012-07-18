@@ -79,12 +79,15 @@
 
 package gov.nih.nci.accrual.accweb.util;
 
+import gov.nih.nci.accrual.convert.PatientConverter;
+import gov.nih.nci.accrual.convert.PerformedActivityConverter;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
@@ -130,6 +133,8 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
         ssList.add(dto);
     }
     StudySubjectConverter conv = new StudySubjectConverter();
+    PatientConverter pConv = new PatientConverter();
+    PerformedActivityConverter paConv = new PerformedActivityConverter();
 
     /**
      * {@inheritDoc}
@@ -237,7 +242,10 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
                 result = ss;
                 result.setUserLastCreated(user);
                 result.setDateLastUpdated(new Timestamp(new Date().getTime()));
-                
+                result.setPatient(pConv.convertFromDtoToDomain(MockPatientBean.pList.get(0)));
+                List<PerformedActivity> paList = new ArrayList<PerformedActivity>();
+                paList.add(paConv.convertFromDtoToDomain(MockPerformedActivityBean.psmList.get(0)));
+                result.setPerformedActivities(paList);
             }
         }
         return result;

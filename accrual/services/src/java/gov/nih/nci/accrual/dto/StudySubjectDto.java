@@ -98,6 +98,7 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Cd paymentMethodCode;
     private Cd statusCode;
     private St registrationGroupId;
+    private Cd submissionTypeCode;
     
     
     /**
@@ -195,5 +196,17 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setRegistrationGroupId(St registrationGroupId) {
         this.registrationGroupId = registrationGroupId;
+    }
+    /**
+     * @return the submissionTypeCode
+     */
+    public Cd getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(Cd submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }
 }

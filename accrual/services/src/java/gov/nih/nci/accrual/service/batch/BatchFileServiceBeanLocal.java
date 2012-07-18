@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -96,7 +97,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
@@ -105,10 +105,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.DistinctRootEntityResultTransformer;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
@@ -137,10 +134,12 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public BatchFile createBatchFile(File file, String destinationFileName) throws PAException {
         BatchFile batchFile = new BatchFile();
         batchFile.setSubmitter(getBatchSubmitter());
         batchFile.setFileLocation(writeBatchFileToFilesystem(file, destinationFileName));
+        batchFile.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         save(batchFile);
         return batchFile;
     }
@@ -205,21 +204,6 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
             return (BatchFile) PaHibernateUtil.getCurrentSession().get(BatchFile.class, id);
         } catch (HibernateException hbe) {
             throw new PAException("Error retrieving batch file with the identifier " + id, hbe);
-        }
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public List<BatchFile> getBatchFilesAvailableForProcessing() throws PAException {
-        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class);
-        criteria.add(Restrictions.eq("passedValidation", Boolean.TRUE));
-        criteria.add(Restrictions.eq("processed", Boolean.FALSE));
-        try {
-            return criteria.setResultTransformer(new DistinctRootEntityResultTransformer()).list();
-        } catch (HibernateException hbe) {
-            throw new PAException("Error while retrieving available batch files.", hbe);
         }
     }
 }

@@ -115,6 +115,7 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
@@ -324,6 +325,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
         dto.setDiseaseIdentifier(diseaseIi);
         dto.setParticipatingSiteIdentifier(studySiteIi);
+        dto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         return dto;
     }
     
@@ -462,6 +464,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertFalse(bf.isPassedValidation());
         assertFalse(bf.isProcessed());
         assertNotNull(bf.getFileLocation());
+        assertEquals(AccrualSubmissionTypeCode.SERVICE, bf.getSubmissionTypeCode());
         FileUtils.deleteQuietly(new File(bf.getFileLocation()));
     }
     
@@ -578,5 +581,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertEquals(CdConverter.convertCdToString(expected.getPaymentMethod()), CdConverter.convertCdToString(given.getPaymentMethod()));
         assertEquals(IiConverter.convertToLong(expected.getDiseaseIdentifier()), IiConverter.convertToLong(given.getDiseaseIdentifier()));
         assertEquals(IiConverter.convertToLong(expected.getParticipatingSiteIdentifier()), IiConverter.convertToLong(given.getParticipatingSiteIdentifier()));
+        assertEquals(CdConverter.convertCdToString(expected.getSubmissionTypeCode()), CdConverter.convertCdToString(given.getSubmissionTypeCode()));
     }
 }

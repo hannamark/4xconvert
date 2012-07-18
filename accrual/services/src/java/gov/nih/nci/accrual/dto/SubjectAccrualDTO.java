@@ -109,6 +109,7 @@ public class SubjectAccrualDTO extends BaseDTO {
     private Ii diseaseIdentifier;
     private Ii participatingSiteIdentifier;
     private St registrationGroupId;
+    private Cd submissionTypeCode;
     
     /**
      * @return the assignedIdentifier
@@ -249,13 +250,6 @@ public class SubjectAccrualDTO extends BaseDTO {
     public void setParticipatingSiteIdentifier(Ii participatingSiteIdentifier) {
         this.participatingSiteIdentifier = participatingSiteIdentifier;
     }
-    
-    /**
-     * @return the serialversionuid
-     */
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
 
     /**
      * @return the countryCode
@@ -283,5 +277,19 @@ public class SubjectAccrualDTO extends BaseDTO {
      */
     public void setRegistrationGroupId(St registrationGroupId) {
         this.registrationGroupId = registrationGroupId;
+    }
+
+    /**
+     * @return the submissionTypeCode
+     */
+    public Cd getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(Cd submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }
 }

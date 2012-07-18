@@ -103,7 +103,7 @@ import java.util.List;
  */
 public class MockPatientBean implements PatientServiceLocal {
     private static Long seq = 1L;
-    private static List<PatientDto> pList;
+    static List<PatientDto> pList;
     static {
         pList = new ArrayList<PatientDto>();
         PatientDto p = new PatientDto();

@@ -129,7 +129,7 @@ public interface SubjectAccrualServiceRemote {
     void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException;
     
     /**
-     * Uploads a subject accrual batch file to the system for later processing.
+     * Process a batch submission of type AccrualSubmissionTypeCode.SERVICE.
      * @param batchFile the batch file
      * @throws PAException on error
      */

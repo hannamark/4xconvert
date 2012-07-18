@@ -118,6 +118,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
@@ -422,6 +423,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             }
         }
         studySubjectDTO.setRegistrationGroupId(dto.getRegistrationGroupId());
+        studySubjectDTO.setSubmissionTypeCode(dto.getSubmissionTypeCode());
         StudySubject ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(studySubjectDTO);
         String sql = "";
         Session session = PaHibernateUtil.getCurrentSession();
@@ -437,7 +439,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 + "disease_identifier=" + (ss.getDisease() != null ? ss.getDisease().getId()  : null)
                 + ", icd9disease_identifier="
                 + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
-                + ", registration_group_id= :registration_group_id "
+                + ", registration_group_id= :registration_group_id, submission_type= :submission_type "
                 + " WHERE identifier= :identifier";
 
             queryObject = session.createSQLQuery(sql);
@@ -447,6 +449,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             queryObject = createStudySubject(studySubjectDTO, ss, session, userid);
         }
         queryObject.setParameter("registration_group_id", ss.getRegistrationGroupId());
+        queryObject.setParameter("submission_type", ss.getSubmissionTypeCode().getName());
         queryObject.setParameter("study_site_identifier", ss.getStudySite().getId());
         queryObject.setParameter("status_code", ss.getStatusCode().getName());
         queryObject.setParameter("assigned_identifier", ss.getAssignedIdentifier());
@@ -462,13 +465,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
             + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
-            + "date_last_created, date_last_updated, assigned_identifier, " 
+            + "date_last_created, date_last_updated, assigned_identifier, submission_type," 
             + "user_last_created_id, user_last_updated_id, icd9disease_identifier, registration_group_id) "
             + "VALUES (:identifier, :patient_identifier,"
             + ":study_protocol_identifier, :study_site_identifier," 
             + (ss.getDisease() != null ? ss.getDisease().getId()  : null) + ","
             + (ss.getPaymentMethodCode() != null ? "'" + ss.getPaymentMethodCode().getName() + "'" : null)
-            + ", :status_code, now(), now(), :assigned_identifier," 
+            + ", :status_code, now(), now(), :assigned_identifier, :submission_type," 
             + ":user_last_created_id, :user_last_updated_id, "
             + (ss.getIcd9disease() != null ? ss.getIcd9disease().getId() :  null)
             + ", :registration_group_id)";
@@ -570,7 +573,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         BatchFile batch = new BatchFile();
         batch.setSubmitter(submitter);
         batch.setFileLocation(filePath);
-        batch.setPassedValidation(false);
+        batch.setSubmissionTypeCode(AccrualSubmissionTypeCode.SERVICE);
         getBatchFileService().save(batch);
         processBatchFiles(batch);
     }

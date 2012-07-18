@@ -94,11 +94,11 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import java.io.File;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -135,6 +135,7 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
         BatchFile batchFile = new BatchFile();
         batchFile.setSubmitter(TestSchema.registryUsers.get(0));
         batchFile.setFileLocation(FIlE_PATH);
+        batchFile.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         
         bean.save(batchFile);
         
@@ -156,6 +157,7 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
         assertTrue(StringUtils.contains(batchFile.getFileLocation(), "CDUS_Complete.txt"));
         assertFalse(batchFile.isPassedValidation());
         assertFalse(batchFile.isProcessed());
+        assertEquals(AccrualSubmissionTypeCode.BATCH, batchFile.getSubmissionTypeCode());
         FileUtils.deleteQuietly(new File(batchFile.getFileLocation()));
     }
     
@@ -164,6 +166,7 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
         BatchFile batchFile = new BatchFile();
         batchFile.setSubmitter(TestSchema.registryUsers.get(0));
         batchFile.setFileLocation(FIlE_PATH);
+        batchFile.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         
         bean.save(batchFile);
         
@@ -194,30 +197,5 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
         thrown.expect(PAException.class);
         thrown.expectMessage("Please call save() with new batch file objects.");
         bean.update(batchFile);
-    }
-    
-    @Test
-    public void getBatchFilesAvailableForProcessing() throws Exception {
-        BatchFile batchFile = new BatchFile();
-        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
-        batchFile.setFileLocation(FIlE_PATH);
-        
-        bean.save(batchFile);
-        
-        List<BatchFile> files = bean.getBatchFilesAvailableForProcessing();
-        assertTrue(files.isEmpty());
-        
-        batchFile.setPassedValidation(true);
-        bean.update(batchFile);
-        files = bean.getBatchFilesAvailableForProcessing();
-        
-        assertFalse(files.isEmpty());
-        assertEquals(1, files.size());
-        
-        batchFile.setProcessed(true);
-        bean.update(batchFile);
-        files = bean.getBatchFilesAvailableForProcessing();
-        
-        assertTrue(files.isEmpty());
     }
 }

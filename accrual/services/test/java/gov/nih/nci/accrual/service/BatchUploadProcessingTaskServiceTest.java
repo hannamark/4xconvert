@@ -99,6 +99,7 @@ import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -137,6 +138,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
             batchFile.setPassedValidation(true);
             batchFile.setFileLocation(file.getAbsolutePath());
             batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+            batchFile.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
             batchFileSvc.save(batchFile);
         }
         

@@ -84,6 +84,8 @@
                 <s:hidden name = "patient.studyProtocolId" />
                 <s:hidden name = "patient.statusCode" />
                 <s:hidden name = "patient.performedSubjectMilestoneId" />
+                <s:hidden name = "patient.submissionTypeCode" />
+                <s:hidden name = "patient.registrationGroupId" />
                 <table class="form">
                     <tr>
                         <td class="label">

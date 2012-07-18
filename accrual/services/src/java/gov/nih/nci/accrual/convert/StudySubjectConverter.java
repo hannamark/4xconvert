@@ -91,6 +91,7 @@ import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
@@ -126,6 +127,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setIcd9DiseaseIdentifier(IiConverter.convertToIi(bo.getIcd9disease() == null ? null : bo.getIcd9disease()
             .getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
+        dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         return dto;
     }
 
@@ -156,6 +158,9 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             bo.setDisease(null);
         }
         bo.setRegistrationGroupId(StConverter.convertToString(dto.getRegistrationGroupId()));
+        if (!ISOUtil.isCdNull(dto.getSubmissionTypeCode())) {
+            bo.setSubmissionTypeCode(AccrualSubmissionTypeCode.getByCode(dto.getSubmissionTypeCode().getCode()));
+        }
         return bo;
     }
 
@@ -176,6 +181,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
                 IiConverter.convertToIi(bo.getStudySite() == null ? null : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
+        dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         return dto;
     }
 

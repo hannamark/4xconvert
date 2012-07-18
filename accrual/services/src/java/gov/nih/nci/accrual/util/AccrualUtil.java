@@ -84,6 +84,7 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -333,5 +334,17 @@ public class AccrualUtil {
      */    
     public static String getFileNameWithoutRandomNumbers(String fileNameWithRN) {
         return fileNameWithRN.replaceFirst("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}-", "");
+    }
+
+    /**
+     * Null-safe method for returning code for CodedEnum.
+     * @param codedEnum a string coded enumerator
+     * @return the code
+     */
+    public static String getCode(CodedEnum<String> codedEnum) {
+        if (codedEnum == null) {
+            return null;
+        }
+        return codedEnum.getCode();
     }
 }

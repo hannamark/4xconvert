@@ -101,6 +101,7 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -266,7 +267,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
-        count = generateSubjectAccruals(patientLines, raceMap, validationResult, errMsg);
+        count = generateSubjectAccruals(patientLines, 
+                batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);
         for (Ii partSiteIi : accrualLines.keySet()) {
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
@@ -281,7 +283,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return importResult;
     }
 
-    private int generateSubjectAccruals(List<String[]> patientLines, 
+    private int generateSubjectAccruals(List<String[]> patientLines, AccrualSubmissionTypeCode submissionType,
         Map<String, List<String>> raceMap,  BatchValidationResults results, StringBuffer errMsg) throws PAException {
         int count = 0;
         long startTime = System.currentTimeMillis();
@@ -291,7 +293,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             //facility of the study site.            
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
             String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
-            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, IiConverter.convertToIi(studySiteIi));
+            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
+                    IiConverter.convertToIi(studySiteIi));
             try {
                 if (ISOUtil.isIiNull(saDTO.getIdentifier())) {
                     listOfStudySubjects.put(saDTO.getAssignedIdentifier().getValue(), 
@@ -310,7 +313,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return count;
     }
     
-    private SubjectAccrualDTO parserSubjectAccrual(String[] line, List<String> races, Ii studySiteIi) 
+    private SubjectAccrualDTO parserSubjectAccrual(String[] line, AccrualSubmissionTypeCode submissionType, 
+            List<String> races, Ii studySiteIi) 
         throws PAException {
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
         saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
@@ -340,6 +344,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         saDTO.setParticipatingSiteIdentifier(studySiteIi);
         saDTO.setRegistrationGroupId(StConverter.convertToSt(line[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]));
+        saDTO.setSubmissionTypeCode(CdConverter.convertToCd(submissionType));
         parseSubjectDisease(line, saDTO);
         return saDTO;
     }

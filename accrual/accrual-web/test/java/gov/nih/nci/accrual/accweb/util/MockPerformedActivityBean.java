@@ -97,8 +97,8 @@ import java.util.List;
  */
 public class MockPerformedActivityBean implements PerformedActivityService {
 
-    private List<PerformedSubjectMilestoneDto> psmList;
-    {
+    static List<PerformedSubjectMilestoneDto> psmList;
+    static {
         psmList = new ArrayList<PerformedSubjectMilestoneDto>();
         PerformedSubjectMilestoneDto dto = new PerformedSubjectMilestoneDto();
         dto.setRegistrationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));

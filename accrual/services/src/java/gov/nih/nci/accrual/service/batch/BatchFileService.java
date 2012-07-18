@@ -87,7 +87,6 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
-import java.util.List;
 
 import javax.ejb.Local;
 
@@ -106,8 +105,8 @@ public interface BatchFileService {
     void save(BatchFile batchFile) throws PAException;
     
     /**
-     * Creates a batch file from the given file, create the business object and moving the contents to the
-     * correct location on the file system.
+     * Creates a batch file from the given file setting submission type to AccrualSubmissionTypeCode.BATCH.
+     * Create the business object and move the contents to the correct location on the file system.
      * @param file the file to create a batch file from
      * @param destinationFileName the name of the destination file
      * @return the created batch file
@@ -137,13 +136,4 @@ public interface BatchFileService {
      * @throws PAException on error
      */
     BatchFile getById(Long id) throws PAException;
-    
-    /**
-     * Gets the list of batch files that are available for processing. That means they are marked as having
-     * passed validation and haven't been processed before.
-     * @return the list of files meeting the criteria
-     * @throws PAException on error
-     */
-    List<BatchFile> getBatchFilesAvailableForProcessing() throws PAException;
-
 }

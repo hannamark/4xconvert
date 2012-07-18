@@ -94,6 +94,7 @@ import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -219,5 +220,11 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         String[] arr3 = AccrualUtil.csvParseAndTrim("");
         assertEquals("", arr3[0]);
         assertEquals(1, arr3.length);
+    }
+
+    @Test
+    public void getCodeTest() {
+        assertNull(AccrualUtil.getCode(null));
+        assertEquals(AccrualSubmissionTypeCode.BATCH.getCode(), AccrualUtil.getCode(AccrualSubmissionTypeCode.BATCH));
     }
 }

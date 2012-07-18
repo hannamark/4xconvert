@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -136,6 +137,8 @@ public class PatientWebDto {
     private String statusCode;
     private String dateLastUpdated;
     private String userCreated;
+    private String registrationGroupId;
+    private String submissionTypeCode;
 
     // from PerformedSubjectMilestone
     private Long performedSubjectMilestoneId;
@@ -210,9 +213,11 @@ public class PatientWebDto {
         studyProtocolId = ss.getStudyProtocol().getId();
         studySiteId = ss.getStudySite().getId();
         identifier = ss.getId().toString();
-        paymentMethodCode = ss.getPaymentMethodCode() == null ? null : ss.getPaymentMethodCode().getCode();
+        paymentMethodCode = AccrualUtil.getCode(ss.getPaymentMethodCode());
         assignedIdentifier = ss.getAssignedIdentifier();
         statusCode = ss.getStatusCode().getCode();
+        registrationGroupId = ss.getRegistrationGroupId();
+        submissionTypeCode = AccrualUtil.getCode(ss.getSubmissionTypeCode());
 
         if (ss.getStudySite().getHealthCareFacility() != null) {
             organizationName = ss.getStudySite().getHealthCareFacility().getOrganization().getName();
@@ -236,8 +241,8 @@ public class PatientWebDto {
     private void loadPatientData(Patient p) {
         patientId = p.getId();
         loadRaces(p.getRaceCode());
-        genderCode = p.getSexCode() == null ? null : p.getSexCode().getCode();
-        ethnicCode = p.getEthnicCode() == null ? null : p.getEthnicCode().getCode();
+        genderCode = AccrualUtil.getCode(p.getSexCode());
+        ethnicCode = AccrualUtil.getCode(p.getEthnicCode());
         birthDate = p.getBirthDate() == null ? null 
                 : AccrualUtil.normalizeYearMonthString(p.getBirthDate().toString());
         countryIdentifier = p.getCountry().getId();
@@ -302,6 +307,9 @@ public class PatientWebDto {
         ssub.setIcd9DiseaseIdentifier(IiConverter.convertToIi(getIcd9DiseaseIdentifier()));
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
+        ssub.setRegistrationGroupId(StConverter.convertToSt(getRegistrationGroupId()));
+        ssub.setSubmissionTypeCode(CdConverter.convertToCd(
+                AccrualSubmissionTypeCode.getByCode(getSubmissionTypeCode())));
         return ssub;
     }
 
@@ -640,5 +648,33 @@ public class PatientWebDto {
      */
     public void setIcd9DiseaseIdentifier(Long icd9DiseaseIdentifier) {
         this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;       
+    }
+
+    /**
+     * @return the registrationGroupId
+     */
+    public String getRegistrationGroupId() {
+        return registrationGroupId;
+    }
+
+    /**
+     * @param registrationGroupId the registrationGroupId to set
+     */
+    public void setRegistrationGroupId(String registrationGroupId) {
+        this.registrationGroupId = registrationGroupId;
+    }
+
+    /**
+     * @return the submissionTypeCode
+     */
+    public String getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(String submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }    
 }

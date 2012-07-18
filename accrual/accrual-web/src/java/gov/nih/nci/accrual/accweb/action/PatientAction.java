@@ -95,6 +95,7 @@ import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -266,6 +267,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             return super.create();
         }
         ssub.setPatientIdentifier(pat.getIdentifier());
+        ssub.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         ssub = getStudySubjectSvc().create(ssub);
         psm.setStudySubjectIdentifier(ssub.getIdentifier());
         setRegistrationDate(psm);
@@ -287,6 +289,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         PatientDto pat = patient.getPatientDto();
         pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
         StudySubjectDto ssub = patient.getStudySubjectDto();
+        ssub.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         PerformedSubjectMilestoneDto psm = patient
                 .getPerformedStudySubjectMilestoneDto();
         try {

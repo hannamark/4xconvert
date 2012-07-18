@@ -99,6 +99,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -157,6 +158,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        dto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         StudySubjectDto r = bean.create(dto);
         assertNotNull(r);
     }

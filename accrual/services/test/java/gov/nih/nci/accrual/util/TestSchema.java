@@ -97,6 +97,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -593,6 +594,7 @@ public class TestSchema {
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
         addUpdObject(subj);
         studySubjects.add(subj);
 
@@ -602,6 +604,7 @@ public class TestSchema {
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
         addUpdObject(subj);
         studySubjects.add(subj);
 

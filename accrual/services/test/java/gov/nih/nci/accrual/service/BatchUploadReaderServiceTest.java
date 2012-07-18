@@ -107,6 +107,7 @@ import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -623,6 +624,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         bf.setFileLocation(file.getAbsolutePath());
         bf.setSubmitter(TestSchema.registryUsers.get(0));
         bf.setUserLastCreated(TestSchema.registryUsers.get(0).getCsmUser());
+        bf.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         TestSchema.addUpdObject(bf);
         return bf;
     }
