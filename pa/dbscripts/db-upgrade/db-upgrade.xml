@@ -1047,4 +1047,8 @@
         <comment>Add column to store accrual submission method.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5118-2.sql"/>
     </changeSet>
+    <changeSet id="PO-5242" author="monishd">
+        <comment>Increase length of name column in study_outcome_measure</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5242.sql"/>
+    </changeSet>    
 </databaseChangeLog>
