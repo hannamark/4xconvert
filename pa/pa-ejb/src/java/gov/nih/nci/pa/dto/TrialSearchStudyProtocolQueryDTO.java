@@ -95,13 +95,14 @@ import java.util.TreeSet;
  * @author mshestopalov
  *
  */
-public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQueryDTO {
+public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQueryDTO { // NOPMD
 
     private DocumentWorkflowStatusCode lastOffHollStatusCode;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
     private Date documentWorkflowStatusDate;
     private String piFullName;
     private Long piId;
+    private Long piPOId;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
     private String onHoldReasons;
@@ -343,5 +344,17 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
         return interventionTypes;
     }
 
+    /**
+     * @return the piPOId
+     */
+    public Long getPiPOId() {
+        return piPOId;
+    }
 
+    /**
+     * @param piPOId the piPOId to set
+     */
+    public void setPiPOId(Long piPOId) {
+        this.piPOId = piPOId;
+    }
 }

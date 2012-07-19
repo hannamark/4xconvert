@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -88,6 +89,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -141,8 +144,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private List<String> checkoutCommands;
     private String checkInReason;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
-   
     private String identifier;
+    private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
     
     /**
      * {@inheritDoc}
@@ -283,6 +286,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
+            Person piPersonInfo =
+                    correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
+            studyProtocolQueryDTO.setPiPOId(Long.valueOf(piPersonInfo.getIdentifier()));
             HttpSession session = ServletActionContext.getRequest().getSession();
             session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
@@ -611,5 +617,19 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     @Override
     public void setServletRequest(HttpServletRequest request) {
         httpServletRequest = request;
+    }
+
+    /**
+     * @return the correlationUtils
+     */
+    public CorrelationUtilsRemote getCorrelationUtils() {
+        return correlationUtils;
+    }
+
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
     }
 }

@@ -9,11 +9,6 @@
 	function displaySubmitter(){
 	    showPopWin('ajaxdisplaypersoninfoquery.action', 600, 300, '', 'Trial Submitter Information');
 	}
-	function displayPi(){
-        var width = 700;
-        var height = 550;
-        showPopWin('personsSearchshowPIPopup.action?personID=', width, height, '', 'Person Details');             
-	}
 </script>
 
 <div class="summarybox">
@@ -50,7 +45,10 @@
 		<c:if test="${sessionScope.trialSummary.piFullName != null }">
     		<div class="row">
     			<span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span>
-    			<span class="value"><a href="javascript:void(0);" onclick="javascript:displayPi();"> <c:out value="${sessionScope.trialSummary.piFullName }"/></a></span>
+    			<span class="value"><a href="javascript:void(0);" 
+    			     onclick="javascript:displayPersonDetails(<c:out value="${sessionScope.trialSummary.piPOId}"/>);"> 
+    			         <c:out value="${sessionScope.trialSummary.piFullName }"/>
+                </a></span>
     		</div>
 		</c:if>
 		<div class="row">

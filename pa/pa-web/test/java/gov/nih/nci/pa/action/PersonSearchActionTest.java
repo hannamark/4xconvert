@@ -3,17 +3,17 @@
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -52,10 +52,6 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
 
         ServletActionContext.getRequest().getSession()
                 .setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
-        
-        StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
-        studyProtocolQueryDTO.setPiId(1L);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
     }
 
     /**
@@ -124,23 +120,4 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
         assertNotNull(action.getPerson());
         assertEquals("1", action.getPerson().getId().toString());
     }
-    
-    /**
-     * Test method for
-     * {@link gov.nih.nci.pa.action.PersonSearchAction#showDetailspopup()}.
-     * @throws TooManyResultsException 
-     * @throws PAException 
-     * @throws NullifiedRoleException 
-     * @throws NullifiedEntityException 
-     */
-    @Test
-    public final void testshowPIPopup() throws NullifiedEntityException, NullifiedRoleException, PAException, TooManyResultsException {
-        PersonSearchAction action = new PersonSearchAction();
-        action.setCorrelationUtils(new MockCorrelationUtils());
-        String fwd = action.showPIPopup();
-        assertEquals("details", fwd);
-        assertNotNull(action.getPerson());
-        assertEquals("1", action.getPerson().getId().toString());
-    }    
-
 }

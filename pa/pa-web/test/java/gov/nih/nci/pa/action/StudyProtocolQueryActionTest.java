@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.service.MockCorrelationUtils;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
     @Before
     public void setUp() {
         spqAction = new StudyProtocolQueryAction();
+        spqAction.setCorrelationUtils(new MockCorrelationUtils());
         spqAction.prepare();
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
