@@ -127,7 +127,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         action.setStudyProtocolId(1L);
         action.setUnitedStatesId(1L);
         action.prepare();
-        System.out.println(action.getLookupTableSvc().getClass());
         when(action.getLookupTableSvc().getPropertyValue("subject.delete.reasons")).thenReturn("Incorrect Study, Test1, Test2, Test3, Test4");
         criteria = new SearchPatientsCriteriaWebDto();
         patient = new PatientWebDto();
