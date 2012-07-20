@@ -97,6 +97,7 @@ import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 
 import java.util.HashSet;
 
@@ -125,6 +126,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
     private BatchFileService batchFileSvc;
     private SubjectAccrualServiceLocal subjectAccrualSvc;
+    private LookUpTableServiceRemote lookupTableSvc;
 
     /**
      * {@inheritDoc}
@@ -143,6 +145,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         batchFileSvc = AccrualServiceLocator.getInstance().getBatchFileService();
         subjectAccrualSvc = AccrualServiceLocator.getInstance().getSubjectAccrualService();
+        lookupTableSvc = PaServiceLocator.getInstance().getLookUpTableService();
     }
     /**
      * Default execute method for action classes.
@@ -281,6 +284,13 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public SubjectAccrualServiceLocal getSubjectAccrualSvc() {
         return subjectAccrualSvc;
-    }    
+    }
+    
+    /**
+     * @return the lookupTableSvc
+     */
+    public LookUpTableServiceRemote getLookupTableSvc() {
+        return lookupTableSvc;
+    }
     
 }

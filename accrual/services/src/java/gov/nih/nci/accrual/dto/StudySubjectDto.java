@@ -99,6 +99,7 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Cd statusCode;
     private St registrationGroupId;
     private Cd submissionTypeCode;
+    private St deleteReason;
     
     
     /**
@@ -208,5 +209,17 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setSubmissionTypeCode(Cd submissionTypeCode) {
         this.submissionTypeCode = submissionTypeCode;
+    }
+    /**
+     * @return the deleteReason
+     */
+    public St getDeleteReason() {
+        return deleteReason;
+    }
+    /**
+     * @param deleteReason the deleteReason to set
+     */
+    public void setDeleteReason(St deleteReason) {
+        this.deleteReason = deleteReason;
     }
 }

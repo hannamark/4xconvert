@@ -128,6 +128,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             .getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
+        dto.setDeleteReason(StConverter.convertToSt(bo.getDeleteReason()));
         return dto;
     }
 
@@ -161,6 +162,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         if (!ISOUtil.isCdNull(dto.getSubmissionTypeCode())) {
             bo.setSubmissionTypeCode(AccrualSubmissionTypeCode.getByCode(dto.getSubmissionTypeCode().getCode()));
         }
+        bo.setDeleteReason(StConverter.convertToString(dto.getDeleteReason()));
         return bo;
     }
 

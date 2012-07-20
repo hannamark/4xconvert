@@ -6,10 +6,13 @@
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:set var="topic" scope="request" value="subjects_intro"/>
+<c:url value="/protected/ajaxpatientsgetDeleteReasons.action" var="deleteReason"/>        
 <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
 <head>
     <title><fmt:message key="patient.search.title"/></title>
     <s:head/>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script LANGUAGE="JavaScript">
 var urlParameters = '<%=StringEscapeUtils.escapeJavaScript(urlParams)%>';
 function handleSearch(){
@@ -31,12 +34,14 @@ function handleUpdate(rowId){
     document.forms[0].submit();
 }
 function handleDelete(rowId){
-    input_box=confirm("Click OK to remove the subject from the study.  Cancel to abort.");
-    if (input_box==true){
+    showPopWin('${deleteReason}', 950, 200, function deleteReason() {
         document.forms[0].selectedRowIdentifier.value = rowId;
         document.forms[0].action="patientsdelete.action" + urlParameters;
         document.forms[0].submit();
-    }
+    }, 'Subject Delete Reason');
+}
+function setDeleteReason(reason){
+    document.forms[0].deleteReason.value = reason;
 }
 </script>
 </head>
@@ -47,7 +52,7 @@ function handleDelete(rowId){
   <s:form name="listForm">
     <s:token/>
     <s:hidden name="selectedRowIdentifier"/>
-
+    <s:hidden name="deleteReason"/>
     <table class="form">
 
 

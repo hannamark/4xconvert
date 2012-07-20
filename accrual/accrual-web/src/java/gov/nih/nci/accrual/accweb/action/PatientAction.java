@@ -117,6 +117,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -128,6 +129,7 @@ import com.opensymphony.xwork2.Preparable;
  * Patient actions.
  * @author Hugh Reinhart
  */
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> implements Preparable {
     private static final long serialVersionUID = -6820189447703204634L;
     private static List<Country> listOfCountries = null;
@@ -140,6 +142,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private PatientWebDto patient;
     private EligibleGenderCode genderCriterion;
     private final PatientHelper helper = new PatientHelper(this);
+    private String deleteReason;
+    private static List<String> reasonsList = new ArrayList<String>();
     
     /**
      * {@inheritDoc}
@@ -168,10 +172,29 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             addActionError(getText("error.invalidaccess.industrial"));
             return "invalid";
         } 
-
         getListOfCountries();
         getListOfStudySites();
         return super.execute();
+    }
+
+    /**
+     * @return success
+     */
+    public String getDeleteReasons() {
+        if (reasonsList.isEmpty()) {
+            String deleteReasons;
+            try {
+                deleteReasons = getLookupTableSvc().getPropertyValue("subject.delete.reasons");
+                StringTokenizer st = new StringTokenizer(deleteReasons, ",");
+                while (st.hasMoreTokens()) {
+                    String reason = st.nextToken();
+                    reasonsList.add(reason);
+                }
+            } catch (PAException e) {
+                LOG.error("Error loading delete reasons.", e);
+            }
+        }
+        return "deleteReason";
     }
 
     private boolean isSessionTrialIndustrial() {
@@ -235,7 +258,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     @Override
     public String delete() throws PAException {
         try {
-            getSubjectAccrualSvc().deleteSubjectAccrual(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            getSubjectAccrualSvc().deleteSubjectAccrual(IiConverter.convertToIi(getSelectedRowIdentifier()), 
+                    getDeleteReason());
         } catch (PAException e) {
             LOG.error("Error in PatientAction.delete().", e);
         }
@@ -603,5 +627,26 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * @return the deleteReason
+     */
+    public String getDeleteReason() {
+        return deleteReason;
+    }
+
+    /**
+     * @param deleteReason the deleteReason to set
+     */
+    public void setDeleteReason(String deleteReason) {
+         this.deleteReason = deleteReason;
+    }
+
+    /**
+     * @return reasonsList
+     */
+    public static List<String> getReasonsList() {
+        return reasonsList;
     }
 }

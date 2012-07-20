@@ -171,6 +171,7 @@ import org.hibernate.criterion.Restrictions;
     "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
+    private static final String IDENTIFIER = "identifier";
 
     @EJB
     private PatientServiceLocal patientService;
@@ -363,7 +364,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         + ", user_last_updated_id=:user_last_updated_id WHERE identifier= :identifier";
         
         queryObject = session.createSQLQuery(sql);
-        queryObject.setParameter("identifier", p.getId());
+        queryObject.setParameter(IDENTIFIER, p.getId());
         
         } else {
             queryObject = createPatient(patientDTO, session, userid);
@@ -402,7 +403,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         SQLQuery queryObject = session.createSQLQuery(sql);
         queryObject.setParameter("user_last_created_id", userid);
-        queryObject.setParameter("identifier", id);
+        queryObject.setParameter(IDENTIFIER, id);
         patientDTO.setIdentifier(IiConverter.convertToIi(id));
         return queryObject;
     }
@@ -443,7 +444,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 + " WHERE identifier= :identifier";
 
             queryObject = session.createSQLQuery(sql);
-            queryObject.setParameter("identifier", ss.getId());
+            queryObject.setParameter(IDENTIFIER, ss.getId());
 
         } else {
             queryObject = createStudySubject(studySubjectDTO, ss, session, userid);
@@ -479,7 +480,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         queryObject = session.createSQLQuery(sql);
         queryObject.setParameter("patient_identifier", ss.getPatient().getId());
         queryObject.setParameter("study_protocol_identifier", ss.getStudyProtocol().getId());
-        queryObject.setParameter("identifier", ss.getPatient().getId());
+        queryObject.setParameter(IDENTIFIER, ss.getPatient().getId());
         queryObject.setParameter("user_last_created_id", userid);
         studySubjectDTO.setIdentifier(IiConverter.convertToIi(ss.getPatient().getId()));
         return queryObject;
@@ -487,7 +488,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     private Ii getOrganizationIi(Ii hcfIi) {
         Criteria crit = PaHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class);
-        crit.add(Restrictions.eq("identifier", hcfIi.getExtension()));
+        crit.add(Restrictions.eq(IDENTIFIER, hcfIi.getExtension()));
         HealthCareFacility hcf = (HealthCareFacility) crit.uniqueResult();
         return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
@@ -496,7 +497,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public void deleteSubjectAccrual(Ii subjectAccrualIi) throws PAException {
+    public void deleteSubjectAccrual(Ii subjectAccrualIi, String deleteReason) throws PAException {
         if (ISOUtil.isIiNull(subjectAccrualIi)) {
             throw new PAException("Study Subject Ii must be valid.");
         }
@@ -510,7 +511,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                     .convertToStudySiteIi(studySubject.getStudySite().getId()))) {
             throw new PAException("User does not have accrual access to site.");
         }
-        nullifyStudySubject(studySubject);
+        nullifyStudySubject(studySubject, deleteReason);
     }
 
     /**
@@ -628,36 +629,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return convertStudySubjectDtoToSubjectAccrualDTOList(studySubjectDtoList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void deleteByStudyIdentifier(Ii studyIdentifier) throws PAException {
-        Session session = PaHibernateUtil.getCurrentSession();
-        Criteria crit = session.createCriteria(StudySubject.class)
-            .add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyIdentifier)));
-        List<StudySubject> subjects = crit.list();
-        for (StudySubject ss : subjects) {
-            nullifyStudySubject(ss);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void deleteByStudySiteIdentifier(Ii studySubjectIi) throws PAException {
-        Session session = PaHibernateUtil.getCurrentSession();
-        Criteria crit = session.createCriteria(StudySubject.class)
-            .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySubjectIi)));
-        List<StudySubject> subjects = crit.list();
-        for (StudySubject ss : subjects) {
-            nullifyStudySubject(ss);
-        }
-    }
-
     private List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(
             List<StudySubjectDto> studySubjectDtoList) {
         List<SubjectAccrualDTO> result = new ArrayList<SubjectAccrualDTO>();
@@ -671,8 +642,9 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return result;
     }
 
-    private void nullifyStudySubject(StudySubject ss) {
+    private void nullifyStudySubject(StudySubject ss, String deleteReason) {
         ss.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
+        ss.setDeleteReason(deleteReason);
         Patient patient = ss.getPatient();
         patient.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
         PaHibernateUtil.getCurrentSession().merge(ss);

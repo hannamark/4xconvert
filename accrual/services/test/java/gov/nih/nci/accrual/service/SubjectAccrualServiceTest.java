@@ -330,6 +330,22 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     }
     
     @Test
+    public void testNullChecks() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Cannot create a subject accrual with an identifier set. Please use update().");
+    	SubjectAccrualDTO dto = new SubjectAccrualDTO();
+    	dto.setIdentifier(IiConverter.convertToIi(12l));
+        bean.create(dto);
+    }
+    
+    @Test
+    public void testUpdateNullCheck()  throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Cannot update a subject accrual without an identifier set. Please use create().");
+    	bean.update(new SubjectAccrualDTO());
+	}
+    
+    @Test
     public void deleteSubject() throws Exception {
         StudySite ss = createAccessibleStudySite(); 
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
@@ -346,7 +362,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertNotNull(pActList);
         assertEquals(1, pActList.size());
         
-        bean.deleteSubjectAccrual(ssDto.getIdentifier());
+        bean.deleteSubjectAccrual(ssDto.getIdentifier(), "Incorrect Subject");
         PaHibernateUtil.getCurrentSession().flush();
         StudySubjectDto ssdto = bean.getStudySubjectService().get(ssDto.getIdentifier());
         assertNotNull(ssdto);
@@ -407,14 +423,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void deleteSubjectAccrualIiFailureNull() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Subject Ii must be valid.");
-        bean.deleteSubjectAccrual(null);
+        bean.deleteSubjectAccrual(null, null);
     }
     
     @Test 
     public void deleteSubjectAccrualIiFailureNone() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Subject Ii must be valid.");
-        bean.deleteSubjectAccrual(new Ii());
+        bean.deleteSubjectAccrual(new Ii(), null);
     }
     
     @Test 
@@ -423,14 +439,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         Ii subjectAccrualIi = IiConverter.convertToIi(-1L);
         thrown.expectMessage("A Study Subject with id " + subjectAccrualIi.getExtension() 
                     + " does not exist.");
-        bean.deleteSubjectAccrual(subjectAccrualIi);
+        bean.deleteSubjectAccrual(subjectAccrualIi, null);
     }
     
     @Test 
     public void deleteSubjectAccrualUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
-        bean.deleteSubjectAccrual(IiConverter.convertToIi(1L));
+        bean.deleteSubjectAccrual(IiConverter.convertToIi(1L), null);
     }
 
     @Test
@@ -500,73 +516,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
                     TsConverter.convertToTs(startDate), TsConverter.convertToTs(endDate), pagingParams);
         verify(studySubjectService).search(studyIdentifier, participatingSiteIdentifier, startDate, endDate,
                                            pagingParams);
-    }
-        
-    @Test
-    public void deleteByStudyIdentifier() throws Exception {
-        List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
-        StudySite ss = createAccessibleStudySite();
-        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        
-        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        
-        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(sas);
-        assertEquals(3, results.size());
-        
-        LimitOffset pagingParams = new LimitOffset(100, 0);
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(ss.getStudyProtocol().getId());
-        Ii studySiteIi = IiConverter.convertToStudySiteIi(ss.getId());
-        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        //assertEquals(3, results.size());
-        
-        bean.deleteByStudyIdentifier(studyProtocolIi);
-        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        /*assertEquals(3, results.size());
-        for (SubjectAccrualDTO sa : results) {
-            StudySubjectDto ssdto = studySubjectService.get(sa.getIdentifier());
-            assertEquals(FunctionalRoleStatusCode.NULLIFIED.getCode(), ssdto.getStatusCode().getCode());
-        }*/
-    }
-    
-    @Test
-    public void deleteByStudySiteIdentifier() throws Exception {
-        List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
-        StudySite ss = createAccessibleStudySite();
-        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        
-        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        sas.add(dto);
-        
-        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(sas);
-        assertEquals(3, results.size());
-        
-        LimitOffset pagingParams = new LimitOffset(100, 0);
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(ss.getStudyProtocol().getId());
-        Ii studySiteIi = IiConverter.convertToStudySiteIi(ss.getId());
-        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        //assertEquals(3, results.size());
-        
-        bean.deleteByStudySiteIdentifier(studySiteIi);
-        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
-        /*assertEquals(3, results.size());
-        for (SubjectAccrualDTO sa : results) {
-            StudySubjectDto ssdto = studySubjectService.get(sa.getIdentifier());
-            assertEquals(FunctionalRoleStatusCode.NULLIFIED.getCode(), ssdto.getStatusCode().getCode());
-        }*/
-    }     
+    }   
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {
         assertEquals(StConverter.convertToString(expected.getAssignedIdentifier()), StConverter.convertToString(given.getAssignedIdentifier()));

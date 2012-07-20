@@ -115,9 +115,10 @@ public interface SubjectAccrualServiceRemote {
     /**
      * Deletes the subject accrual with the give identifier.
      * @param subjectAccrualIi the database identifier of the subject accrual you wish to delete
+     * @param deleteReason subject delete reason
      * @throws PAException on error
      */
-    void deleteSubjectAccrual(Ii subjectAccrualIi) throws PAException;
+    void deleteSubjectAccrual(Ii subjectAccrualIi, String deleteReason) throws PAException;
     
     /**
      * Updates the given participating site with the given count. Only valid for participating sites that belong

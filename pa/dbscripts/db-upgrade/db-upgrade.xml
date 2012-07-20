@@ -1050,5 +1050,9 @@
     <changeSet id="PO-5242" author="monishd">
         <comment>Increase length of name column in study_outcome_measure</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5242.sql"/>
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-5142" author="Kalpana">
+        <comment>Add column to study_subject for delete reason and add a new row in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5142.sql"/>
+     </changeSet>    
 </databaseChangeLog>

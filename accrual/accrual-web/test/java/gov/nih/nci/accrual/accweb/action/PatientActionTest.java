@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
@@ -126,6 +127,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         action.setStudyProtocolId(1L);
         action.setUnitedStatesId(1L);
         action.prepare();
+        System.out.println(action.getLookupTableSvc().getClass());
+        when(action.getLookupTableSvc().getPropertyValue("subject.delete.reasons")).thenReturn("Incorrect Study, Test1, Test2, Test3, Test4");
         criteria = new SearchPatientsCriteriaWebDto();
         patient = new PatientWebDto();
         listOfPatients = new ArrayList<PatientWebDto>();
@@ -190,15 +193,17 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void deleteTest() throws Exception {
-        action.setSelectedRowIdentifier("1");
+        action.setSelectedRowIdentifier("1");        
+        action.setDeleteReason("Incorrect Study");
         assertEquals(ActionSupport.SUCCESS,action.delete());
     }
     
     @Test
     public void deleteTestDeleteInvoke() throws Exception {              
         action.setSelectedRowIdentifier("1");        
+        action.setDeleteReason("Incorrect Study");
         action.delete();               
-        verify(action.getSubjectAccrualSvc()).deleteSubjectAccrual(IiConverter.convertToIi("1"));      
+        verify(action.getSubjectAccrualSvc()).deleteSubjectAccrual(IiConverter.convertToIi("1"), action.getDeleteReason());      
     }
 
     @Override
@@ -381,6 +386,16 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         		"Study Subject ID is required., "
         		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
         		+ "Country is required., Participating site is required."));
+    }
+    
+    @Test
+    public void getDeleteReasonsTest() throws Exception {
+        assertEquals("deleteReason", action.getDeleteReasons());
+    }
+    
+    @Test
+    public void testGetDeleteReasonsList() throws Exception {
+        assertEquals(5, action.getReasonsList().size());
     }
     
 }

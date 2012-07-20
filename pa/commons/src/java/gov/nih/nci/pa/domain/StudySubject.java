@@ -123,6 +123,7 @@ public class StudySubject extends Subject {
     private ICD9Disease icd9disease;
     private String registrationGroupId;
     private AccrualSubmissionTypeCode submissionTypeCode;
+    private String deleteReason;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
     /**
@@ -270,5 +271,20 @@ public class StudySubject extends Subject {
      */
     public void setSubmissionTypeCode(AccrualSubmissionTypeCode submissionTypeCode) {
         this.submissionTypeCode = submissionTypeCode;
+    }
+
+    /**
+     * @return the deleteReason
+     */
+    @Column(name = "delete_reason")
+    public String getDeleteReason() {
+        return deleteReason;
+    }
+
+    /**
+     * @param deleteReason the deleteReason to set
+     */
+    public void setDeleteReason(String deleteReason) {
+        this.deleteReason = deleteReason;
     }
 }

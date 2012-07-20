@@ -115,7 +115,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList", "PMD.ExcessiveClassLength" })
 public class PatientWebDto {
     // from PatientDto
     private Long patientId;

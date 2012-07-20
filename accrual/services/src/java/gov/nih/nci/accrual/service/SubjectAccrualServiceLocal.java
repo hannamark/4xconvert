@@ -112,22 +112,7 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @throws PAException on error
      */
     SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException;
-    
-    
-    /**
-     * Deletes all the subject accruals accrued to the give study site.
-     * @param studySiteIi the identifier of the study site
-     * @throws PAException on error
-     */
-    void deleteByStudySiteIdentifier(Ii studySiteIi) throws PAException;
-    
-    /**
-     * Deletes all the subject accruals associated with the give study.
-     * @param studyIdentifier the db identifier of the study
-     * @throws PAException on error
-     */
-    void deleteByStudyIdentifier(Ii studyIdentifier) throws PAException;
-    
+        
     /**
      * Updates the given participating site with the given count. Only valid for participating sites that belong
      * to Industrial studies. Checks that the user provided has accrual access to this site.
