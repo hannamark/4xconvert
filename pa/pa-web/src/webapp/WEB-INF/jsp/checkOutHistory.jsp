@@ -13,7 +13,7 @@
 
         <div class="box">
             <s:form>
-                <h2><fmt:message key="trialHistory.title"/></h2>
+                <h2><fmt:message key="checkOutHistory.list.title"/></h2>
                 <table class="form">
                     <tr>
                         <td colspan="2">
