@@ -120,9 +120,9 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void deleteSubjectAccrual(Ii ii) throws PAException {
+    public void deleteSubjectAccrual(Ii ii, String deleteReason) throws PAException {
         try {
-            GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().deleteSubjectAccrual(ii);
+            GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().deleteSubjectAccrual(ii, null);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

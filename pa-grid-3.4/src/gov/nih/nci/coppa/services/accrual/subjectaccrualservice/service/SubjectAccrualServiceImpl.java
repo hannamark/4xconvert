@@ -59,7 +59,7 @@ public class SubjectAccrualServiceImpl extends SubjectAccrualServiceImplBase {
   public void deleteSubjectAccrual(gov.nih.nci.iso21090.extensions.Id subjectAccrualdenfier) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii ii = IITransformer.INSTANCE.toDto(subjectAccrualdenfier);
-          subjectAccrualService.deleteSubjectAccrual(ii);
+          subjectAccrualService.deleteSubjectAccrual(ii, null);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);
