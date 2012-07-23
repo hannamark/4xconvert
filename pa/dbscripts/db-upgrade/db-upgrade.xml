@@ -1055,4 +1055,8 @@
         <comment>Add column to study_subject for delete reason and add a new row in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5142.sql"/>
      </changeSet>    
+    <changeSet id="PO-5116" author="Reshma">
+        <comment>Insert new value in pa_Properties table</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5116.sql"/>
+    </changeSet>  
 </databaseChangeLog>

@@ -1347,7 +1347,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
         cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
         cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
-        cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT");
+        cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQ_TO_EMAIL_SUB_PERMISSIBLE");
         cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
         labTestPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_ID"));
         labTestUofMPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_UoM_ID"));
