@@ -230,8 +230,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                             LOG.error("Error loading study sites for a trial in validateBatchData.", e);
                         }
                     }
-                }                
-                errMsg.append(validateBatchData(line, lineNumber, protocolId));
+                }
+                try {
+                    errMsg.append(validateBatchData(line, lineNumber, protocolId));
+                } catch (Exception e) {
+                    errMsg.append(e.getLocalizedMessage());
+                }
             }
             if (StringUtils.isEmpty(protocolId)) {
                 errMsg.append("No Study Protocol Identifier could be found in the given file.");

@@ -184,18 +184,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     ZipEntry entry = files.nextElement();
                     File f = File.createTempFile(StringUtils.substringBefore(entry.getName(), "."), ".txt");
                     IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(f));
-                    BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(
-                        f, batchFile.getSubmitter());
-                    result.setFileName(entry.getName());
-                    results.add(result);
-                    validateAndProcessData(batchFile, result);
+                    batchFileProcessing(results, batchFile, entry.getName(), f);
                 }
             } else {
-                BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(file, 
-                        batchFile.getSubmitter());
-                result.setFileName(AccrualUtil.getFileNameWithoutRandomNumbers(result.getFileName()));
-                results.add(result);
-                validateAndProcessData(batchFile, result);
+                batchFileProcessing(results, batchFile, 
+                        AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()), file);
             }
             if (zip != null) {
                 zip.close();
@@ -204,6 +197,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             LOG.error("Error validating batch files.", e);
         } 
         return results;
+    }
+    
+    private void batchFileProcessing(List<BatchValidationResults> results, BatchFile batchFile, 
+            String fileName, File file) throws PAException {
+        BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(
+                file, batchFile.getSubmitter());
+        result.setFileName(fileName);
+        results.add(result);
+        validateAndProcessData(batchFile, result);
     }
 
     private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult)
