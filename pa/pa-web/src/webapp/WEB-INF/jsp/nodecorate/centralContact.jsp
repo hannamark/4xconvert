@@ -1,12 +1,16 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
+
 <table>
 <tr>
+
 <td>
 <s:textfield name="gtdDTO.centralContactName" id="gtdDTO.centralContactName" size="30"  readonly="true" cssClass="readonly"/>
-<s:if test="gtdDTO.centralContactIdentifier != null">
-<a href="javascript:void(0)" onclick="displayPersonDetails(<c:out value="${gtdDTO.centralContactIdentifier}"/>);">
-    <img src="<%=request.getContextPath()%>/images/details.gif"/>
-</a>
+<s:if test="gtdDTO.centralContactIdentifier != null && gtdDTO.centralContactIdentifier != ''">
+    <s:if test="gtdDTO.centralContactName != null && gtdDTO.centralContactName != ''">
+	   <a href="javascript:void(0)" onclick="displayPersonDetails($('gtdDTO.centralContactIdentifier').value);">
+	        <img src="<%=request.getContextPath()%>/images/details.gif"/>
+	   </a>
+	</s:if>   
 </s:if>
 </td><td> 
                   <ul style="margin-top:-1px;">             
