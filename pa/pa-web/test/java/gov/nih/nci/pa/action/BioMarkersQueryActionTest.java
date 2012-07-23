@@ -84,11 +84,16 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -98,25 +103,36 @@ import org.junit.Test;
  */
 public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     private BioMarkersQueryAction bioMarkersQueryAction;
+    StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
 
+    
     @Before
     public void setUp() throws Exception {
         bioMarkersQueryAction = new BioMarkersQueryAction();
         bioMarkersQueryAction.prepare();
-
+        bioMarkersQueryAction.setStudyProtocolService(studyProtocolService);
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
         webDTO.setName("Marker #1");
         webDTO.setMeaning("Marker #1");
         webDTO.setStatus("PENDING");
-
+        
         List<PlannedMarkerWebDTO> plannedMarkerWebDTOs = new ArrayList<PlannedMarkerWebDTO>();
         plannedMarkerWebDTOs.add(webDTO);
-
+        
         bioMarkersQueryAction.setPlannedMarkerList(plannedMarkerWebDTOs);
+        
+        
     }
 
     @Test
     public void testExecute() throws PAException {
+        Map<Long, String> identifierMap = new HashMap<Long, String>();
+        List<Long> identifiersList = new ArrayList<Long>();
+        identifierMap.put(123456L, "NCI-2012-00260");
+        identifierMap.put(123457L, "NCI-2012-00261");
+        identifiersList.add(123456L);
+        identifiersList.add(123457L);
+        when(studyProtocolService.getTrialNciId(identifiersList)).thenReturn(identifierMap);
         assertEquals(bioMarkersQueryAction.execute(), "success");
         assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());
     }

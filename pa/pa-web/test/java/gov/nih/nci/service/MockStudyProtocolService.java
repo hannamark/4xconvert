@@ -113,6 +113,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import java.util.HashMap;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
@@ -317,5 +320,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     @Override
     public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         return new ArrayList<StudyProtocolDTO>();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs) { 
+        return new HashMap<Long, String>();
     }
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bala Nair
@@ -242,5 +243,10 @@ public interface StudyProtocolService {
      * @throws PAException on error
      */
     void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
-
+    /**
+     * This method is to use to get the Map of the studyProtocolis and its extensions NCIIdentifiers.
+     * @param  studyProtocolIDs  studyProtocolIDs
+     * @return {@link Map} map of Study protocol id and extensions
+     */
+    Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs);
 }

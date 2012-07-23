@@ -153,6 +153,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -736,7 +737,22 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
     }
+    @Test
+    public void getTrialNciIdTest() throws Exception {
+        List<Long> listOfTrialIDs = new ArrayList<Long>();
+        listOfTrialIDs.add(1L);
+        listOfTrialIDs.add(2L);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
 
+        Ii ii = new Ii();
+        ii = new Ii();
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        ii.setExtension("NCT-1");
+        StudyProtocolDTO spDTO = remoteEjb.loadStudyProtocol(ii);
+        
+        Map<Long, String> map = bean.getTrialNciId(listOfTrialIDs);
+        assertTrue(map.size() > 0);     
+    }
     @Test
     public void primaryPurposeCodeOtherTest2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =

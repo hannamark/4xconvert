@@ -148,6 +148,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -156,6 +157,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -171,6 +175,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.jboss.annotation.IgnoreDependency;
@@ -885,6 +890,37 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return studyProtocolIi != null
                 && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
                 && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI"));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<Long, String> getTrialNciId(List<Long> listOfTrialIDs) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Map<Long, String> resultSet = new HashMap<Long, String>();
+        List<Object[]> queryList = null;
+        SQLQuery query = session
+        .createSQLQuery("select study_protocol_id, extension, " 
+                + "root from study_otheridentifiers where study_protocol_id IN (:ids)"
+                + " and root = '"
+                + IiConverter.STUDY_PROTOCOL_ROOT
+                + "' order by root");
+        query.setParameterList("ids", listOfTrialIDs);
+        queryList = query.list();
+        
+        for (Object[] oArr : queryList) {
+            BigInteger ret = null;
+            if (oArr[0] instanceof BigInteger) { 
+                ret =  (BigInteger) oArr[0];
+                if (oArr[1] != null) {
+                    resultSet.put(ret.longValue(), oArr[1].toString());
+                }
+            }       
+        }
+
+        return resultSet;
     }
 
     /**
