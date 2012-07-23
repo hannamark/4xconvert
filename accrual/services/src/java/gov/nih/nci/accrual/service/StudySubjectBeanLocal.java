@@ -240,7 +240,7 @@ public class StudySubjectBeanLocal extends
         str.append("select ssub from StudySubject ssub");
 
         str.append(" where ssub.studyProtocol.id = :studyProtocolId ");
-
+        str.append(" and ssub.statusCode = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "'");
         if (participatingSiteIdentifier != null) {
             str.append(" and ssub.studySite.id = :studySiteId");
         }
