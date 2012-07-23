@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class for invoking the StudyProtocol remote EJB.
@@ -197,5 +198,10 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             InterventionalStudyProtocolDTO ispDTO, String page)
             throws PAException {
         throw new PAException("not supported via the grid service.");
+    }
+
+    @Override
+    public Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs) {
+        throw new RuntimeException("not supported via the grid service.");
     }
 }
