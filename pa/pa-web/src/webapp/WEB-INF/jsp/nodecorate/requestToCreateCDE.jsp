@@ -21,7 +21,7 @@
         <pa:failureMessage/>
         <pa:sucessMessage /> 
     </div>
-    <h2>Email: Request to create CDE</h2>
+    <h2>Email: Request for Permissible Value</h2>
     <table class="form">
         <tr>
             <td scope="row" class="label"><s:label for="toEmail">To Email:</s:label></td>                  
