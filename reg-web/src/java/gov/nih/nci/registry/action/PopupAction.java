@@ -213,6 +213,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     public String lookuporgs() {
         try {
             orgs = null;
+            paOrgs = null;
             populateCountryList();
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -315,6 +316,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         try {
             if (isOrgCriterionEmpty()) {
                 String message = "Please enter at least one search criteria";
+                paOrgs = null;
                 orgs = null;
                 addActionError(message);
                 ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
@@ -358,6 +360,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             
             return pagination ? ORGS_RESULT : SUCCESS;
         } catch (Exception e) {
+            paOrgs = null;
             orgs = null;
             LOG.error("Error occurred while searching PO Organizations", e);
             return pagination ? ORGS_RESULT : SUCCESS;

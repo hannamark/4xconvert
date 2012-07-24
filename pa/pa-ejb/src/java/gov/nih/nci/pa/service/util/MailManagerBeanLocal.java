@@ -898,7 +898,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 emailId = csmUser.getEmailId();
             }
         } catch (Exception e) {
-            throw new PAException("An error occured while sending a q email for a CDE", e);
+            throw new PAException("An error occured while retrieving Submitter's email address", e);
         }
         return emailId;
     }
