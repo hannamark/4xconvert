@@ -86,7 +86,7 @@
             <td scope="row" class="label"><s:label for="plannedMarker.foundInHugo"><fmt:message key="plannedMarker.request.foundInHugo"/>:</s:label></td>
             <td class="value" colspan="2">
                 <s:checkbox id="foundInHugo" name="plannedMarker.foundInHugo" onclick="toggleHugoCode();" />
-                <a href="http://nciterms.nci.nih.gov/ncitbrowser/pages/vocabulary.jsf?dictionary=Human%20Genome%20Organisation&version=July_2010" target="_blank">HUGO</a>
+                <a href="http://www.genenames.org" target="_blank">HUGO</a>
             </td>
         </tr>
         <tr id="hugoCodeRow" style="display: none">
