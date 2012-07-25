@@ -281,11 +281,18 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      */
     void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
         PrimaryPurposeCode purpose = null;
+        boolean checkDisease =  false;
         if (sp != null) {
             purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
+            try {
+                 checkDisease = getSearchStudySiteService().isStudySiteHasDCPId(sp.getIdentifier());
+                } catch (PAException e) {
+                    errMsg.append("Unable to determine if study site has a DCP Id for study with identifier " 
+                            + sp.getIdentifier() + " \n");
+            }
         }
         String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
-        if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION) {
+        if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION && !checkDisease) {
             errMsg.append("Patient Disease SDC or ICD9 Code is missing or not recognized for patient ID ")
             .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
         } else if (checkCodeExist(errMsg, code)) {

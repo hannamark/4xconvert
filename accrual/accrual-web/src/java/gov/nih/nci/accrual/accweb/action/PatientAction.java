@@ -339,10 +339,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
 
     private boolean checkDiseaseIsNeeded() throws PAException {
         boolean checkDisease = true;
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId());
         StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
-               .getStudyProtocol(IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId()));
+               .getStudyProtocol(studyProtocolIi);
+        boolean checkDCPFlag = getSearchStudySiteSvc().isStudySiteHasDCPId(studyProtocolIi);
         if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
-                .equals(PrimaryPurposeCode.PREVENTION)) {
+                .equals(PrimaryPurposeCode.PREVENTION) || checkDCPFlag) {
             checkDisease = false;
         }
         return checkDisease;

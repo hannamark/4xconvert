@@ -190,7 +190,6 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
-        System.out.println(errorMsg);
         assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 21"));
         assertTrue(StringUtils.contains(errorMsg, "PATIENTS at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));

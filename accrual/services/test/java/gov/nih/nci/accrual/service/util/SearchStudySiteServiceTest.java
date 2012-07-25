@@ -79,16 +79,36 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.StudySiteComparator;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -172,5 +192,58 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
         assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getIdentifier())));
         assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getIdentifier())));
+    }
+    
+    @Test
+    public void testisStudySiteHasDCPId() throws Exception {        
+    	StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Test study");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2012"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2012"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2012-00001");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+        
+        Organization org = new Organization();
+        org.setCity("city");
+        org.setCountryName("country name");
+        org.setName(PAConstants.DCP_ORG_NAME);
+        org.setPostalCode("12345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        TestSchema.addUpdObject(org);
+        
+    	StudySite ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier("roid");
+        ro.setOrganization(org);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ro);
+        ss.setResearchOrganization(ro);
+        ss.setStudyProtocol(sp);
+        TestSchema.addUpdObject(ss);
+        Set<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
+        studySites.add(ss);
+        sp.setStudySites(studySites);
+
+        Ii spIi = IiConverter.convertToStudyProtocolIi(sp.getId());
+        boolean result = bean.isStudySiteHasDCPId(spIi);
+        assertTrue(result);
+        
+        Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
+        assertFalse(bean.isStudySiteHasDCPId(otherSpIi));
     }
 }

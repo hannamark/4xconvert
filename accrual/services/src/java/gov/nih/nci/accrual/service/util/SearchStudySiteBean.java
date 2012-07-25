@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -172,6 +173,26 @@ public class SearchStudySiteBean implements SearchStudySiteService {
             throw new PAException("Error retrieving study site ii for the organization " + orgIi.getExtension(), e);
         }
         return returnDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException {
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
+        criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        criteria.createCriteria("researchOrganization").createCriteria("organization")
+            .add(Restrictions.eq("name", PAConstants.DCP_ORG_NAME));
+        try {
+            StudySite ss = (StudySite) criteria.uniqueResult();
+            if (ss != null) {
+                return true;
+            }
+        } catch (HibernateException e) {
+            throw new PAException("Error while checking if a study site has DCP Id ", e);
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

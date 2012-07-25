@@ -136,4 +136,9 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
     public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) throws PAException {
         return null;
     }
+
+	@Override
+	public boolean isStudySiteHasDCPId(Ii studyProtocolIi) throws PAException {
+		return false;
+	}
 }

@@ -109,4 +109,12 @@ public interface SearchStudySiteService {
      * @throws PAException on error
      */
     SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) throws PAException;
+    
+    /**
+     * Returns if a study site has a DCP Id.
+     * @param studyProtocolIi ii for the selected study
+     * @return the boolean value
+     * @throws PAException on error
+     */
+    boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException;
 }
