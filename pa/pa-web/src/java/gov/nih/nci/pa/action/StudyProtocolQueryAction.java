@@ -286,9 +286,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
-            Person piPersonInfo =
-                    correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO.getPiId()));
-            studyProtocolQueryDTO.setPiPOId(Long.valueOf(piPersonInfo.getIdentifier()));
+            if (studyProtocolQueryDTO.getPiId() != null) {
+                Person piPersonInfo =
+                        correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
+                                .getPiId()));
+                studyProtocolQueryDTO.setPiPOId(Long.valueOf(piPersonInfo.getIdentifier()));
+            }
             HttpSession session = ServletActionContext.getRequest().getSession();
             session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
