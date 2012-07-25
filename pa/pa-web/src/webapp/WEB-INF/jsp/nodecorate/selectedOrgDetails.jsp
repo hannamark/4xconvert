@@ -9,7 +9,7 @@
 			<td>
                 <s:textfield name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
                 <s:if test="%{currentAction == 'edit'}">
-                    <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${editOrg.identifier}"/>);">
+                    <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value='${editOrg.identifier}'/>);">
                         <img src="<%=request.getContextPath()%>/images/details.gif"/>
                     </a>
                 </s:if>

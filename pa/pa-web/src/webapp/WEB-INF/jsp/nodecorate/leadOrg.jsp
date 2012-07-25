@@ -4,7 +4,7 @@
 <td>
 
 <s:textfield label="Organization Name" name="gtdDTO.leadOrganizationName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly"/>
-<a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${gtdDTO.leadOrganizationIdentifier}"/>);">
+<a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value='${gtdDTO.leadOrganizationIdentifier}'/>);">
     <img src="<%=request.getContextPath()%>/images/details.gif"/>
 </a>
  </td><td> 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="build/stubs-PAServices/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="PA_GLOBUS/lib/addressing-1.0.jar"/>
@@ -102,7 +102,8 @@
 	<classpathentry kind="lib" path="build/lib/core-services-stubs-3.2.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-api-2.2.5.jar"/>
 	<classpathentry kind="lib" path="build/lib/po-services-client-3.2.0-m10.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-commons-3.7-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.7-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB"/>
+	<classpathentry kind="var" path="PAServices-3.2"/>
+	<classpathentry exported="true" kind="var" path="PA_GLOBUS"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
