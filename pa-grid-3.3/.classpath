@@ -104,8 +104,8 @@
 	<classpathentry kind="lib" path="build/lib/coppa-commons-1.3.7.jar"/>
 	<classpathentry kind="lib" path="build/lib/core-services-common-3.2.jar"/>
 	<classpathentry kind="lib" path="build/lib/core-services-stubs-3.2.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-commons-3.7-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.7-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="build/lib/po-services-client-3.2.0-m10.jar"/>
-	<classpathentry kind="var" path="PAServices-3.3"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
