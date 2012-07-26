@@ -86,7 +86,6 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -115,8 +114,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
     protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber,
             StudyProtocolDTO sp) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
-            String protocolId = AccrualUtil.safeGet(values, ACCRUAL_COUNT_STUDY_INDEX);
-            validateStudyType(errMsg, protocolId, sp);
+            validateStudyType(errMsg, sp);
             String accrualStudySite = AccrualUtil.safeGet(values, ACCRUAL_STUDY_SITE_INDEX);
             if (StringUtils.isEmpty(accrualStudySite)) {
                 errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append("\n");
@@ -128,16 +126,9 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         }
     }
 
-    private void validateStudyType(StringBuffer errMsg, String protocolId, StudyProtocolDTO sp) {
-        if (sp != null) {
-            try {
-                SummaryFourFundingCategoryCode studyType = getSummaryFourFundingCategory(sp);
-                if (!studyType.equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
-                    errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
-                }
-            } catch (PAException e) {
-                errMsg.append("Unable to determine study type for study with identifier " + protocolId + " \n");
-            }
+    private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp) {
+        if (sp != null && !sp.getProprietaryTrialIndicator().getValue()) {
+            errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
         }
     }
     
@@ -155,16 +146,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             StudyProtocolDTO sp, PatientGenderCode genderCriterion) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean trialType = true;            
-            if (sp != null) {
-                try {
-                    SummaryFourFundingCategoryCode studyType = getSummaryFourFundingCategory(sp);
-                    if (studyType.equals(SummaryFourFundingCategoryCode.INDUSTRIAL)) {
-                        trialType = false;
-                    }
-                } catch (PAException e) {
-                    errMsg.append("Unable to determine study type for study with identifier " 
-                            + sp.getIdentifier() + " \n");
-                }
+            if (sp != null && sp.getProprietaryTrialIndicator().getValue()) {
+                trialType = false;
             }
             if (trialType) {
                 List<String> patientsIdList = new ArrayList<String>();

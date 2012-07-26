@@ -96,8 +96,6 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
-import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -105,20 +103,21 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
-import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -129,7 +128,9 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -326,7 +327,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(StringUtils.isEmpty(collection.getResults()));
         assertNull(collection.getTotalImports());
 
-        setStudyResourcingSvc();
+        setStudyProtocolSvc();
         
         file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
         batchFile = getBatchFile(file);
@@ -537,7 +538,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void accrualCountBatchFileImport() throws Exception {
     	
-    	setStudyResourcingSvc();
+    	setStudyProtocolSvc();
         
         File file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
@@ -545,15 +546,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
         assertEquals("accrual-count-batch-file.txt", importResults.getFileName());
         assertEquals(2, importResults.getTotalImports());
-        verifyEmailsSent(0, 1);
-        
-        SubjectAccrualCountService countSvc = new SubjectAccrualCountBean();
-        StudySiteSubjectAccrualCount count = 
-            countSvc.getCountByStudySiteId(IiConverter.convertToStudySiteIi(TestSchema.studySites.get(7).getId()));
-        assertEquals(10, count.getAccrualCount().intValue());
-        count = 
-            countSvc.getCountByStudySiteId(IiConverter.convertToStudySiteIi(TestSchema.studySites.get(8).getId()));
-        assertEquals(20, count.getAccrualCount().intValue());
+        verifyEmailsSent(0, 1);        
     }
     
     @Test
@@ -586,7 +579,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void testIndustrialTrialWithpatients() throws Exception {
         assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
-        setStudyResourcingSvc();
+        setStudyProtocolSvc();
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -599,23 +592,27 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).getValidatedLines().isEmpty());
     }
 
-    private void setStudyResourcingSvc() throws PAException {
-        StudyResourcingServiceRemote sResourcingSvc = mock(StudyResourcingServiceRemote.class);
-        when(sResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenAnswer(new Answer<StudyResourcingDTO>() {
-            public StudyResourcingDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                StudyResourcingDTO sr = new StudyResourcingDTO();
-                sr.setStudyProtocolIdentifier(ii);
-                sr.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
-                if (StringUtils.equals(preventionIi.getExtension(), ii.getExtension())) {
-                    sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
-                }
-                return sr;
-            }
-        });
-        when(paSvcLocator.getStudyResourcingService()).thenReturn(sResourcingSvc);
+    private void setStudyProtocolSvc() throws PAException {        
+        StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
+        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+        	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+        		Object[] args = invocation.getArguments();
+        		Ii ii = (Ii) args[0];
+        		StudyProtocolDTO dto = new StudyProtocolDTO();
+        		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
+        		Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		Ii spSecId = new Ii();
+        		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        		dto.setIdentifier(abbreviatedIi);
+        		dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+        		spSecId.setExtension("NCI-2009-00003");
+        		secondaryIdentifiers.add(spSecId);
+        		dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+        		return dto;
+        	}
+            });
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
 	}
     
     private BatchFile getBatchFile(File file) {

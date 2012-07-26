@@ -115,14 +115,12 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -135,7 +133,6 @@ import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -223,6 +220,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
                 StudyProtocolDTO dto = new StudyProtocolDTO();
+                dto.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
                 Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
                 Ii spSecId = new Ii();
                 spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -361,22 +359,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
             }
         });
         
-        StudyResourcingServiceRemote studyResourcingSvc = mock(StudyResourcingServiceRemote.class);
-        when(studyResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenAnswer(new Answer<StudyResourcingDTO>() {
-            public StudyResourcingDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                StudyResourcingDTO sr = new StudyResourcingDTO();
-                sr.setStudyProtocolIdentifier(ii);
-                sr.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
-                if (StringUtils.equals(preventionIi.getExtension(), ii.getExtension())) {
-                    //sr.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
-                }
-                return sr;
-            }
-        });
-        
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
@@ -384,7 +366,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
-        when(paSvcLocator.getStudyResourcingService()).thenReturn(studyResourcingSvc);
         LookUpTableServiceRemote lookuptableSvc = mock(LookUpTableServiceRemote.class);
         when(paSvcLocator.getLookUpTableService()).thenReturn(lookuptableSvc);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_SUBJECT_KEY)).thenReturn(ERROR_SUBJECT_VALUE);
