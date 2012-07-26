@@ -1058,5 +1058,9 @@
     <changeSet id="PO-5116" author="Reshma">
         <comment>Insert new value in pa_Properties table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5116.sql"/>
-    </changeSet>  
+    </changeSet>
+    <changeSet id="PO-5309" author="Kalpana">
+        <comment>updated subject delete reasons value in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5309.sql"/>
+     </changeSet>  
 </databaseChangeLog>
