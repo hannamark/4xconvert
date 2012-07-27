@@ -155,7 +155,7 @@
 </head>
 <body>
 	<!-- main content begins-->
-	<c:set var="topic" scope="request" value="manageaccrualaccess" />
+	<c:set var="topic" scope="request" value="accrualaccess" />
 	<h1>
 		<fmt:message key="manage.accrual.access.page.header" />
 	</h1>
