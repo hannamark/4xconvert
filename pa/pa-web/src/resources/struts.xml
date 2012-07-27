@@ -588,9 +588,6 @@
         </action>
         <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
-            <interceptor-ref name="tokenSession">
-                <param name="includeMethods">execute</param>
-            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/manageAccrualAccessEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
         </action>
