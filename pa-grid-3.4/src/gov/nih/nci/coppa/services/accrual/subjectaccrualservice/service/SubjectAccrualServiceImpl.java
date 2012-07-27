@@ -14,6 +14,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.EDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -104,7 +105,8 @@ public class SubjectAccrualServiceImpl extends SubjectAccrualServiceImplBase {
       try {
           Ii participatingSiteIi = IITransformer.INSTANCE.toDto(participatingSiteIdentifier);
           Int count = INTTransformer.INSTANCE.toDto(accrualCount);
-          subjectAccrualService.updateSubjectAccrualCount(participatingSiteIi, count);
+            subjectAccrualService.updateSubjectAccrualCount(participatingSiteIi, count,
+                    AccrualSubmissionTypeCode.SERVICE);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

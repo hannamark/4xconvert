@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -104,6 +105,7 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjectAccruals) throws PAException {
         try {
             List<SubjectAccrualDTO> result =
@@ -120,6 +122,7 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteSubjectAccrual(Ii ii, String deleteReason) throws PAException {
         try {
             GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().deleteSubjectAccrual(ii, null);
@@ -133,9 +136,12 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void updateSubjectAccrualCount(Ii ii, Int count) throws PAException {
+    @Override
+    public void updateSubjectAccrualCount(Ii ii, Int count, AccrualSubmissionTypeCode submissionType)
+            throws PAException {
         try {
-            GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().updateSubjectAccrualCount(ii, count);
+            GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().updateSubjectAccrualCount(ii,
+                    count, submissionType);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -146,6 +152,7 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void submitBatchData(Ed batchFile) throws PAException {
         try {
             GridSecurityJNDIServiceLocator.newInstance().getSubjectAccrualService().submitBatchData(batchFile);
@@ -159,6 +166,7 @@ public class InvokeSubjectAccrualEjb implements SubjectAccrualServiceRemote {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<SubjectAccrualDTO> search(Ii studyProtocolIdentifier, Ii participatingSiteIdentifier, Ts startDate,
             Ts endDate, LimitOffset pagingParams) throws PAException, TooManyResultsException {
         try {
