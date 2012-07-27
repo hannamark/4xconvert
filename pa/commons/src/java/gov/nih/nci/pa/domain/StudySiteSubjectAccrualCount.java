@@ -82,13 +82,18 @@
  */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
@@ -106,7 +111,8 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
 
     private StudySite studySite;
     private Integer accrualCount;
-    
+    private AccrualSubmissionTypeCode submissionTypeCode;
+
     /**
      * Default constructor. 
      */
@@ -128,7 +134,7 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
      * @param site the site to set
      */
     public void setStudySite(StudySite site) {
-        this.studySite = site;
+        studySite = site;
     }
     
     /**
@@ -144,5 +150,22 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
      */
     public void setAccrualCount(Integer accrualCount) {
         this.accrualCount = accrualCount;
+    }
+
+    /**
+     * @return the submissionTypeCode
+     */
+    @Column(name = "submission_type")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public AccrualSubmissionTypeCode getSubmissionTypeCode() {
+        return submissionTypeCode;
+    }
+
+    /**
+     * @param submissionTypeCode the submissionTypeCode to set
+     */
+    public void setSubmissionTypeCode(AccrualSubmissionTypeCode submissionTypeCode) {
+        this.submissionTypeCode = submissionTypeCode;
     }
 }
