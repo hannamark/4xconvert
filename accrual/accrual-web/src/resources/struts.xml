@@ -115,6 +115,10 @@
             <result name="success">/WEB-INF/jsp/batchUpload.jsp</result>
         </action>
 
+        <action name="priorSubmissions*" class="gov.nih.nci.accrual.accweb.action.PriorSubmissionsAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/priorSubmissions.jsp</result>
+        </action>
+
         <action name="ajaxpatients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="displayDiseases">/WEB-INF/jsp/nodecorate/displayDisease.jsp</result>

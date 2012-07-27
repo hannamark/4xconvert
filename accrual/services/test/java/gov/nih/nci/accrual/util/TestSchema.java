@@ -594,7 +594,7 @@ public class TestSchema {
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
-        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
         addUpdObject(subj);
         studySubjects.add(subj);
 
@@ -604,7 +604,7 @@ public class TestSchema {
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
         subj.setStudySite(studySites.get(0));
-        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
         addUpdObject(subj);
         studySubjects.add(subj);
 

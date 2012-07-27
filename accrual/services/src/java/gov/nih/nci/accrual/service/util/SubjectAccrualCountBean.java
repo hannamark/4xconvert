@@ -188,14 +188,16 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         }
     }
 
-    private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) {
+    private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) throws PAException {
         StudySiteSubjectAccrualCount countToSave = newCount;
         if (newCount.getId() != null) {
             countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
                     .load(StudySiteSubjectAccrualCount.class, newCount.getId());
             countToSave.setAccrualCount(newCount.getAccrualCount());
+            countToSave.setSubmissionTypeCode(newCount.getSubmissionTypeCode());
         }
         countToSave.setDateLastUpdated(new Date());
+        countToSave.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
         PaHibernateUtil.getCurrentSession().saveOrUpdate(countToSave);
     }
 

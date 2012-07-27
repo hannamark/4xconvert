@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 
 /**
  * @author Hugh Reinhart
@@ -165,6 +166,12 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     public SubjectAccrualServiceLocal getSubjectAccrualService() {
         return (SubjectAccrualServiceLocal) JNDIUtil.lookup("accrual/SubjectAccrualBeanLocal/local");
     }
-    
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionHistoryService getSubmissionHistoryService() {
+        return (SubmissionHistoryService) JNDIUtil.lookup("accrual/SubmissionHistoryBean/local");
+    }
 }

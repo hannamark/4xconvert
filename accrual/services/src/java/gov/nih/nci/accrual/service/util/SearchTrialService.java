@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -117,4 +118,12 @@ public interface SearchTrialService {
      * @throws PAException on error
      */
     SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException;
+
+    /**
+     * Return a list of trial which user is authorized to see.
+     * @param authorizedUser the id for the registry user
+     * @return map containing the studyProtocol identifier and corresponding NCI number
+     * @throws PAException exception
+     */
+    Map<Long, String> getAuthorizedTrialMap(Long authorizedUser) throws PAException;
 }

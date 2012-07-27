@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 
 /**
@@ -107,6 +108,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final SubjectAccrualCountService subjectAccrualCountService = new MockSubjectAccrualCountService();
     private final BatchFileService batchFileSvc = mock(BatchFileService.class);
     private final SubjectAccrualServiceLocal subjectAccrualServiceLocal = mock(SubjectAccrualServiceLocal.class);
+    private final SubmissionHistoryService submissionHistoryService = mock(SubmissionHistoryService.class);
     
     /**
      * {@inheritDoc}
@@ -178,6 +180,11 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     public SubjectAccrualServiceLocal getSubjectAccrualService() {
         return subjectAccrualServiceLocal;
     }
-    
-    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionHistoryService getSubmissionHistoryService() {
+        return submissionHistoryService;
+    }
 }

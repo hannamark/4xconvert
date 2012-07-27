@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 
 /**
  * @author Hugh Reinhart
@@ -138,4 +139,9 @@ public interface ServiceLocatorAccInterface {
      * @return the Subject Accrual Service
      */
     SubjectAccrualServiceLocal getSubjectAccrualService();
+    
+    /**
+     * @return the submission history service
+     */
+    SubmissionHistoryService getSubmissionHistoryService();
 }

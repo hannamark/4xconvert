@@ -49,6 +49,14 @@
                         <li><a href="batchUpload.action" >Batch Upload</a></li>
                     </c:otherwise>
                 </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'prior_submissions'}">
+                        <li><a href="priorSubmissions.action" class="selected">Prior Submissions</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="priorSubmissions.action" >Prior Submissions</a></li>
+                    </c:otherwise>
+                </c:choose>
                 <li><a href="/accrual/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>

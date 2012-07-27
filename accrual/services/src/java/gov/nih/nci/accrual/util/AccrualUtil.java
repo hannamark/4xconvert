@@ -347,4 +347,22 @@ public class AccrualUtil {
         }
         return codedEnum.getCode();
     }
+
+    /**
+     * Get a displayable name for a given user. Return a string length 0 if not data.
+     * @param registryUser the RegistryUser object
+     * @return displayable name
+     */
+    public static String getDisplayName(RegistryUser registryUser) {
+        if (registryUser == null) {
+            return "";
+        }
+        String[] rstr = {registryUser.getFirstName(), " ", registryUser.getLastName() };
+        String displayName = StringUtils.join(rstr);
+        if (StringUtils.isBlank(displayName)) {
+            String[] cstr = {registryUser.getCsmUser().getFirstName(), " ", registryUser.getCsmUser().getLastName() };
+            displayName = StringUtils.join(cstr);
+        }
+        return displayName.trim();
+    }
 }

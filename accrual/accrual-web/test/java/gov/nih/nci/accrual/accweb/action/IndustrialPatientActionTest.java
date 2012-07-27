@@ -92,6 +92,7 @@ import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
@@ -233,6 +234,7 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         submittedCount = "123";
         action.updateCountForSiteIfSet(count, submittedCount);
         assertEquals((Integer) 123, count.getAccrualCount());
+        assertEquals(AccrualSubmissionTypeCode.UI, count.getSubmissionTypeCode());
     }
     @Test
     public void assertValidCount() throws PAException {

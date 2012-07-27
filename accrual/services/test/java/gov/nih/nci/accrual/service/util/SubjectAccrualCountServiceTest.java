@@ -101,6 +101,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -342,6 +343,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         result.setStudyProtocol(testStudy);
         result.setDateLastUpdated(new Date());
         result.setAccrualCount(count);
+        result.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         return result;
     }
 }

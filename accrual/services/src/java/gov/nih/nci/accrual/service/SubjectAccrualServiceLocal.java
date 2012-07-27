@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Local;
@@ -119,9 +120,11 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @param participatingSiteIi the ii of the participating site
      * @param count the total subject accrual count
      * @param user user.
+     * @param submissionType submission type
      * @throws PAException on error
      */
-    void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException;
+    void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user, 
+            AccrualSubmissionTypeCode submissionType) throws PAException;
     
     /**
      * Start a thread to process batch files.

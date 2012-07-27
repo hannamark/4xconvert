@@ -393,14 +393,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void updateSubjectAccrualCountWoutExistingCount() throws Exception {
         StudySite ss = createAccessibleStudySite(); 
         when(studySiteSvc.get(any(Ii.class))).thenReturn(new StudySiteConverter().convertFromDomainToDto(ss));
-        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
     
     @Test 
     public void updateSubjectAccrualCountIiFailureNull() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("The treating site that is having an accrual count added to it does not exist.");
-        bean.updateSubjectAccrualCount(null, IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(null, IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
     
     @Test 
@@ -409,14 +409,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         thrown.expectMessage("The treating site that is having an accrual count added to it does not exist.");
         Ii ii = IiConverter.convertToStudySiteIi(labSite.getId());
         when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(labSite));        
-        bean.updateSubjectAccrualCount(ii, IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(ii, IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
    
     @Test 
     public void updateSubjectAccrualUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
-        bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
     
     @Test 
@@ -457,10 +457,11 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         count.setStudySite(ss);
         count.setStudyProtocol(TestSchema.studyProtocols.get(0));
         count.setAccrualCount(new Integer(50));
+        count.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
         TestSchema.addUpdObject(count);
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
-        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
    
     @Test

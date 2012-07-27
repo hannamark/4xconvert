@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 
 
 /**
@@ -195,6 +196,14 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     @Override
     public SubjectAccrualServiceLocal getSubjectAccrualService() {
         return serviceLocator.getSubjectAccrualService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubmissionHistoryService getSubmissionHistoryService() {
+        return serviceLocator.getSubmissionHistoryService();
     }    
     
 }

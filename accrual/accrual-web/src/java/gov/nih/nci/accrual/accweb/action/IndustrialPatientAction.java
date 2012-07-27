@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -209,6 +210,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
         if (StringUtils.isNotBlank(submittedCount)) {
             assertValidCount(submittedCount);
             count.setAccrualCount(Integer.parseInt(submittedCount));
+            count.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
         }
     }
 

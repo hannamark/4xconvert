@@ -92,6 +92,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -226,5 +228,22 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
     public void getCodeTest() {
         assertNull(AccrualUtil.getCode(null));
         assertEquals(AccrualSubmissionTypeCode.BATCH.getCode(), AccrualUtil.getCode(AccrualSubmissionTypeCode.BATCH));
+    }
+    
+    @Test
+    public void getDisplayNameTest() {
+        assertEquals("", AccrualUtil.getDisplayName(null));
+        RegistryUser ru = new RegistryUser();
+        User cu = new User();
+        ru.setCsmUser(cu);
+        assertEquals("", AccrualUtil.getDisplayName(ru));
+        cu.setFirstName("x");
+        assertEquals("x", AccrualUtil.getDisplayName(ru));
+        cu.setLastName("y");
+        assertEquals("x y", AccrualUtil.getDisplayName(ru));
+        ru.setLastName("b");
+        assertEquals("b", AccrualUtil.getDisplayName(ru));
+        ru.setFirstName("a");
+        assertEquals("a b", AccrualUtil.getDisplayName(ru));
     }
 }

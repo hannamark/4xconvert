@@ -81,8 +81,6 @@ package gov.nih.nci.accrual.accweb.action;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.pa.service.PAException;
 
-import java.util.List;
-
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -90,7 +88,7 @@ import org.apache.struts2.ServletActionContext;
  * @since Oct 19, 2009
  * @param <DTO> class for dto's displayed in list
  */
-public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrualAction {
+public abstract class AbstractListEditAccrualAction<DTO> extends AbstractListAccrualAction<DTO> {
     private static final long serialVersionUID = -8797184349026635679L;
 
     /** String value for currentAction property when doing a create. */
@@ -101,30 +99,12 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     private static final String CA_UPDATE = "update";
     /** Action result returned to display the detail page. */
     private static final String AR_DETAIL = "detail";
-    /** Identifier for request bean to hold displaytag list. */
-    private static final String REQUEST_ATTR_DISPLAY_LIST = "displayTagList";
 
     /** Bean to store current action. */
     private String currentAction;
     /** Bean to store row id selected from list view. */
     private String selectedRowIdentifier;
-    /** List to be displayed in displaytag table. */
-    private List<DTO> displayTagList;
 
-    /**
-     * Set request bean with list to be displayed using displaytag table.
-     */
-    public abstract void loadDisplayList();
-
-    /**
-     * Default execute method for action classes.
-     * @return action result
-     */
-    @Override
-    public String execute() {
-        loadDisplayList();
-        return super.execute();
-    }
     /**
      * Method called to begin create workflow.
      * @return action result to display detail page
@@ -209,20 +189,5 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
      */
     public void setSelectedRowIdentifier(String selectedRowIdentifier) {
         this.selectedRowIdentifier = selectedRowIdentifier;
-    }
-
-    /**
-     * @return the displayTaglist
-     */
-    public List<DTO> getDisplayTagList() {
-        return displayTagList;
-    }
-
-    /**
-     * @param displayTaglist the displayTaglist to set
-     */
-    public void setDisplayTagList(List<DTO> displayTaglist) {
-        this.displayTagList = displayTaglist;
-        ServletActionContext.getRequest().setAttribute(REQUEST_ATTR_DISPLAY_LIST , getDisplayTagList());
     }
 }

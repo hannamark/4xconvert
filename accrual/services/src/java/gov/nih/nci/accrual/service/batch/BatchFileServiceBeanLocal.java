@@ -182,11 +182,13 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
      */
     @Override
     public void update(BatchFile batchFile, AccrualCollections collection) throws PAException {
-        if (collection.getId() != null) {
-            throw new PAException("This method does not support editing existing accrual collection objects.");
+        if (collection.getId() == null) {
+            collection.setDateLastCreated(new Date());
+            collection.setUserLastCreated(batchFile.getUserLastCreated());
+        } else {
+            collection.setDateLastUpdated(new Date());
+            collection.setUserLastUpdated(batchFile.getUserLastCreated());
         }
-        collection.setDateLastCreated(new Date());
-        collection.setUserLastCreated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
         collection.setBatchFile(batchFile);
         try {
             PaHibernateUtil.getCurrentSession().save(collection);

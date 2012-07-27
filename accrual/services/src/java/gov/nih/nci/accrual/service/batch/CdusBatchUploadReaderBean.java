@@ -214,6 +214,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         collection.setChangeCode(validationResult.getChangeCode());
         collection.setNciNumber(validationResult.getNciIdentifier());
         collection.setPassedValidation(validationResult.isPassedValidation());
+        batchFileSvc.update(batchFile, collection);
         if (!validationResult.isPassedValidation()) {
             if (validationResult.getErrors() != null) {
                 collection.setResults(StringUtils.left(validationResult.getErrors().toString(), RESULTS_LEN));
@@ -277,7 +278,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             SearchStudySiteResultDto studySite = 
                 getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), partSiteIi);
             subjectAccrualService.updateSubjectAccrualCount(studySite.getStudySiteIi(), accrualLines.get(partSiteIi), 
-                    user);
+                    user, batchFile.getSubmissionTypeCode());
             count++;
         }
         importResult.setTotalImports(count);

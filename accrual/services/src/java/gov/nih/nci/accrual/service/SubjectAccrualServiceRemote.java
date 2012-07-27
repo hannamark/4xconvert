@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -125,9 +126,11 @@ public interface SubjectAccrualServiceRemote {
      * to Industrial studies.
      * @param participatingSiteIi the ii of the participating site
      * @param count the total subject accrual count
+     * @param submissionType submission type
      * @throws PAException on error
      */
-    void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException;
+    void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, AccrualSubmissionTypeCode submissionType) 
+            throws PAException;
     
     /**
      * Process a batch submission of type AccrualSubmissionTypeCode.SERVICE.

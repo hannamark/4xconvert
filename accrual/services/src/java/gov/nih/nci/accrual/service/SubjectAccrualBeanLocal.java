@@ -125,6 +125,7 @@ import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -153,6 +154,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
@@ -172,6 +174,9 @@ import org.hibernate.criterion.Restrictions;
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
     private static final String IDENTIFIER = "identifier";
+
+    /** Number of hours witch the batch processing thread will run before being killed. */
+    public static final int BATCH_PROCESSING_THREAD_TIMEOUT_HOURS = 24;
 
     @EJB
     private PatientServiceLocal patientService;
@@ -215,7 +220,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * Class used to manage batch processing thread.
      */
     private class BatchThreadManager implements Runnable {
-        private static final int THREAD_TIMEOUT = 24;
         private final BatchFile batchFile;
         public BatchThreadManager(BatchFile batchFile) {
             this.batchFile = batchFile;
@@ -225,7 +229,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(new BatchFileProcessor(batchFile)).get(THREAD_TIMEOUT, TimeUnit.HOURS);
+                executor.submit(new BatchFileProcessor(batchFile)).get(
+                        BATCH_PROCESSING_THREAD_TIMEOUT_HOURS, TimeUnit.HOURS);
             } catch (Exception e) {
                 LOG.error("Forcing shutdown of batch file processing thread.");
                 executor.shutdownNow();
@@ -518,7 +523,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException {
+    public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, AccrualSubmissionTypeCode submissionType)
+            throws PAException {
         if (!AccrualUtil.isValidTreatingSite(participatingSiteIi)) {
             throw new PAException(
                     "The treating site that is having an accrual count added to it does not exist.");
@@ -526,10 +532,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi)) {
             throw new PAException("User does not have accrual access to site.");
         }
-        doUpdateToSubjectAccrual(participatingSiteIi, count);
+        doUpdateToSubjectAccrual(participatingSiteIi, count, submissionType);
     }
 
-    private void doUpdateToSubjectAccrual(Ii participatingSiteIi, Int count) throws PAException {
+    private void doUpdateToSubjectAccrual(Ii participatingSiteIi, Int count, AccrualSubmissionTypeCode submissionType)
+            throws PAException {
         StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
         .getCountByStudySiteId(participatingSiteIi);
         if (ssAccCount == null) {
@@ -538,8 +545,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             ssAccCount = new StudySiteSubjectAccrualCount();
             ssAccCount.setStudySite(ss);
             ssAccCount.setStudyProtocol(ss.getStudyProtocol());
+        } else {
+            if (ObjectUtils.equals(ssAccCount.getAccrualCount(), IntConverter.convertToInteger(count))) {
+                return;
+            }
         }
         ssAccCount.setAccrualCount(count.getValue());
+        ssAccCount.setSubmissionTypeCode(submissionType);
         List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
         counts.add(ssAccCount);
         getSubjectAccrualCountSvc().save(counts);
@@ -549,14 +561,15 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException {
+    public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user,
+            AccrualSubmissionTypeCode submissionType) throws PAException {
         if (ISOUtil.isIiNull(participatingSiteIi)) {
             throw new PAException("Study Site Ii cannot be null.");
         }
         if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi, user)) {
             throw new PAException("User does not have accrual access to site.");
         }
-        doUpdateToSubjectAccrual(participatingSiteIi, count);
+        doUpdateToSubjectAccrual(participatingSiteIi, count, submissionType);
     }
 
     /**

@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -127,6 +128,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private BatchFileService batchFileSvc;
     private SubjectAccrualServiceLocal subjectAccrualSvc;
     private LookUpTableServiceRemote lookupTableSvc;
+    private SubmissionHistoryService submissionHistorySvc;
 
     /**
      * {@inheritDoc}
@@ -140,6 +142,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
+        submissionHistorySvc = AccrualServiceLocator.getInstance().getSubmissionHistoryService();
         sdcDiseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
         icd9DiseaseSvc = PaServiceLocator.getInstance().getICD9DiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
@@ -291,6 +294,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public LookUpTableServiceRemote getLookupTableSvc() {
         return lookupTableSvc;
+    }
+    /**
+     * @return the submissionHistorySvc
+     */
+    public SubmissionHistoryService getSubmissionHistorySvc() {
+        return submissionHistorySvc;
     }
     
 }

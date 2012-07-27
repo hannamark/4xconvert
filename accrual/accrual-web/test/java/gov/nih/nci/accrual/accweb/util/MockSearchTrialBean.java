@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -183,5 +184,11 @@ public class MockSearchTrialBean implements SearchTrialService {
      */
     public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
         return BlConverter.convertToBl(true);
+    }
+
+    @Override
+    public Map<Long, String> getAuthorizedTrialMap(Long authorizedUser) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

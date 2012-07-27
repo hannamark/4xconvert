@@ -102,9 +102,11 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Stateless;
@@ -148,7 +150,7 @@ public class SearchTrialBean implements SearchTrialService {
                 String hql = generateStudyProtocolQuery(criteria);
                 Query query = session.createQuery(hql);
                 List<Long> queryList = query.list();
-                Set<Long> authIds = getAuthorizedTrials(authorizedUser);
+                Set<Long> authIds = getAuthorizedTrials(IiConverter.convertToLong(authorizedUser));
                 Collection<Long> searchIds = CollectionUtils.intersection(queryList, authIds);
                 return getTrialSummariesByStudyProtocolIdentifiers(searchIds);
             } catch (HibernateException hbe) {
@@ -162,7 +164,7 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
-        return BlConverter.convertToBl(getAuthorizedTrials(authorizedUser)
+        return BlConverter.convertToBl(getAuthorizedTrials(IiConverter.convertToLong(authorizedUser))
                 .contains(IiConverter.convertToLong(studyProtocolIi)));
     }
 
@@ -239,16 +241,19 @@ public class SearchTrialBean implements SearchTrialService {
     }
 
     @SuppressWarnings(UNCHECKED)
-    private Set<Long> getAuthorizedTrials(Ii registryUserIi) {
+    private Set<Long> getAuthorizedTrials(Long registryUserId) {
         Set<Long> result = new HashSet<Long>();
-        Session session = PaHibernateUtil.getCurrentSession();
-        String hql = "select distinct sp.id from StudySiteAccrualAccess ssaa join ssaa.studySite ss "
-            + "join ss.studyProtocol sp where ssaa.registryUser.id = :registryUserId and ssaa.statusCode = :statusCode";
-        Query query = session.createQuery(hql);
-        query.setParameter("registryUserId", IiConverter.convertToLong(registryUserIi));
-        query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
-        List<Long> queryList = query.list();
-        result.addAll(queryList);
+        if (registryUserId != null) {
+            Session session = PaHibernateUtil.getCurrentSession();
+            String hql = "select distinct sp.id from StudySiteAccrualAccess ssaa join ssaa.studySite ss "
+                       + "join ss.studyProtocol sp "
+                       + "where ssaa.registryUser.id = :registryUserId and ssaa.statusCode = :statusCode";
+            Query query = session.createQuery(hql);
+            query.setParameter("registryUserId", registryUserId);
+            query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
+            List<Long> queryList = query.list();
+            result.addAll(queryList);
+        }
         return result;
     }
 
@@ -286,5 +291,32 @@ public class SearchTrialBean implements SearchTrialService {
                     + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
         }
         return where.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, String> getAuthorizedTrialMap(Long registryUserId) throws PAException {
+        Map<Long, String> result = new HashMap<Long, String>();
+        Set<Long> trials = getAuthorizedTrials(registryUserId);
+        if (CollectionUtils.isNotEmpty(trials)) {
+            Session session = PaHibernateUtil.getCurrentSession();
+            String hql =
+                    " select oi.extension, sp.id "
+                            + "from StudyProtocol as sp "
+                            + "left outer join sp.otherIdentifiers as oi "
+                            + "where sp.id in (:studyProtocolIdentifiers) "
+                            + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                            + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') ";
+            Query query = session.createQuery(hql);
+            query.setParameterList("studyProtocolIdentifiers", trials);
+            @SuppressWarnings("unchecked")
+            List<Object[]> queryList = query.list();
+            for (Object[] trial : queryList) {
+                result.put((Long) trial[1], (String) trial[0]);
+            }
+        }
+        return result;
     }
 }
