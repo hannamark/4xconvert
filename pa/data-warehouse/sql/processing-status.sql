@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS STG_DW_STUDY_PROCESSING_STATUS;
 
 CREATE TABLE STG_DW_STUDY_PROCESSING_STATUS (
-    COMMENTS character varying(200),
+    COMMENTS character varying(2000),
     DATE timestamp,
     DATE_CREATED timestamp,
     DATE_LAST_UPDATED timestamp,
