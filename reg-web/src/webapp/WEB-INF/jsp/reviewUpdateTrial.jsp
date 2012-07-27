@@ -65,6 +65,9 @@
                                 <c:out value="${trialDTO.assignedIdentifier}"/>
                             </reg-web:valueRow>
                         </c:if>
+                        <reg-web:valueRow labelKey="view.trial.leadOrgTrialIdentifier">
+                            <c:out value="${trialDTO.leadOrgTrialIdentifier}"/>
+                        </reg-web:valueRow>
                         <c:if test="${trialDTO.nctIdentifier != null}">
                             <reg-web:valueRow labelKey="view.trial.nctNumber">
                                 <c:out value="${trialDTO.nctIdentifier}"/>
