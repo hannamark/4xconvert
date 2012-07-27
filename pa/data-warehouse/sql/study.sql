@@ -79,7 +79,7 @@ CREATE TABLE STG_DW_STUDY (
     BRIEF_SUMMARY character varying(5000),
     BRIEF_TITLE character varying(300),
     RECORD_VERIFICATION_DATE date,
-    REJECTION_REASON character varying(200),
+    REJECTION_REASON character varying(2000),
     REPORTING_METHOD_DATA_CODE character varying(50),
     RESP_PARTY_TYPE character varying (50),
     RESPONSIBLE_PARTY_GENERIC_CONTACT character varying(200),
