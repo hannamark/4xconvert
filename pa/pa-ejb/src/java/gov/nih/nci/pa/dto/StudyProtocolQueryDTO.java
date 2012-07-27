@@ -108,7 +108,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String phaseName;
     private Date startDate;
     private String sponsorName;
-    private String summary4FundingSponsorName;
+    private String summary4FundingSponsorType;
     private String responsiblePartyName;
     private String category;
     
@@ -385,16 +385,16 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      * 
      * @return string
      */
-    public String getSummary4FundingSponsorName() {
-        return summary4FundingSponsorName;
+    public String getSummary4FundingSponsorType() {
+        return summary4FundingSponsorType;
     }
 
     /**
      * 
      * @param summary4FundingSponsorName summary4FundingSponsorName
      */
-    public void setSummary4FundingSponsorName(String summary4FundingSponsorName) {
-        this.summary4FundingSponsorName = summary4FundingSponsorName;
+    public void setSummary4FundingSponsorType(String summary4FundingSponsorName) {
+        this.summary4FundingSponsorType = summary4FundingSponsorName;
     }
 
     /**

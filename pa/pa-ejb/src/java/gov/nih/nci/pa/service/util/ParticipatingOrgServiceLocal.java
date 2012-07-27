@@ -21,4 +21,12 @@ public interface ParticipatingOrgServiceLocal {
      * @throws PAException exception
      */
     List<ParticipatingOrgDTO> getTreatingSites(Long studyProtocolId) throws PAException;
+    
+    /**
+     * Gets a participating site.
+     * @param studySiteId studySiteId
+     * @return ParticipatingOrgDTO
+     * @throws PAException PAException
+     */
+    ParticipatingOrgDTO getTreatingSite(Long studySiteId) throws PAException;
 }

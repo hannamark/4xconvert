@@ -95,7 +95,15 @@ function selectTrialType(){
                                                 <a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageSiteOwnershipsearch.action');" >Manage Site Record Ownership</a>
                                             </c:otherwise>
                                         </c:choose>
-                                    </li>                                    
+                                    </li>
+                                    <li><a href="javascript:void(0)" class="fakelink">Manage Accrual Access</a></li>
+                                    <li class="stdsub">
+                                    <ul>                               
+                                        <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccess.action');"  class="${requestScope.topic == 'manageaccrualaccess'?'selected':''}">Assign &amp; Un-assign Access</a></li>
+                                        <li><a id="viewAccrualAccessAssignmentHistoryMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentHistory.action');"  class="${requestScope.topic == 'assignmentHistory'?'selected':''}">Assignment History</a></li>
+                                        <li><a id="viewAccrualAccessAssignmentByTrialMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentByTrial.action');"  class="${requestScope.topic == 'assignmentByTrial'?'selected':''}">Assignment By Trial</a></li>
+                                    </ul>            
+                                    </li>                                      
                                  </c:if>
                                 <li><a id="logoutMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/logout.action');" >Log Out</a></li>
                     </c:when>

@@ -241,7 +241,7 @@ body {
                 <display:column title="Trial Start Date" property="startDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>                                             
           	    <display:column title="Responsible Party" property="responsiblePartyName" sortable="true" headerClass="sortable"/>          	   
           	    <display:column title="Sponsor" property="sponsorName" sortable="true" headerClass="sortable"/>
-          	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorName" sortable="true" headerClass="sortable"/>
+          	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorType" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                 <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>
                 <display:column title="Primary Completion Date" property="primaryCompletionDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>                             

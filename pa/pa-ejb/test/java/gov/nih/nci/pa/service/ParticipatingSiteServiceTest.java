@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import static org.mockito.Mockito.*;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
@@ -28,6 +29,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
@@ -63,7 +65,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
     private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     private final OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
 
     @Before
@@ -76,6 +78,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         bean.setStudySiteContactService(studySiteContactService);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         bean.setOrganizationCorrelationService(ocsr);
+        bean.setAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
         localBean = bean;
 
         rBean.setStudyProtocolService(studyProtocolService);
@@ -84,6 +87,8 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         rBean.setOrganizationCorrelationService(ocsr);
         remoteBean = rBean;
+        
+        studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
     }
 
     private OrganizationDTO getOrg1() {

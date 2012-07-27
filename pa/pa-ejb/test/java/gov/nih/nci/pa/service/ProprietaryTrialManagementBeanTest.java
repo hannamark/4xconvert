@@ -122,6 +122,7 @@ import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -193,9 +194,10 @@ public class ProprietaryTrialManagementBeanTest extends
     private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = new MockProtocolQueryService();
+    private final StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal = mock(StudySiteAccrualAccessServiceLocal.class);
 
     private Ii spIi;
     private RegistryUser studyOwner;
@@ -260,6 +262,8 @@ public class ProprietaryTrialManagementBeanTest extends
         prop.setValue("ncictro@mail.nih.gov");
         TestSchema.addUpdObject(prop);
 
+        studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(studySiteAccrualAccessServiceLocal);
+        
         studyOverallStatusService
                 .setDocumentWorkFlowStatusService(documentWrkService);
         studyOverallStatusService.setStudyProtocolService(studyProtocolService);

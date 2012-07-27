@@ -13,6 +13,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteAccrualStatusSortCriterion;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -33,6 +35,7 @@ import javax.interceptor.Interceptors;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jboss.annotation.IgnoreDependency;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
@@ -48,6 +51,10 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
     implements StudySiteAccrualStatusServiceLocal {
 
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
+    
+    @EJB
+    @IgnoreDependency
+    private StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal;
 
     /**
      * @param ii index
@@ -90,6 +97,9 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             StudySiteAccrualStatus bo = converter.convertFromDtoToDomain(dto);
             session.saveOrUpdate(bo);
             resultDto = converter.convertFromDomainToDto(bo);
+            studySiteAccrualAccessServiceLocal
+                    .synchronizeSiteAccrualAccess(IiConverter.convertToLong(dto
+                            .getStudySiteIi()));
             TrialUpdatesRecorder
                     .recordUpdate(TrialUpdatesRecorder.RECRUITMENT_STATUS_DATE_UPDATED);
         }
@@ -179,5 +189,20 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             throw new PAException(e);
         }
         return result;
+    }
+
+    /**
+     * @return the studySiteAccrualAccessServiceLocal
+     */
+    public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessServiceLocal() {
+        return studySiteAccrualAccessServiceLocal;
+    }
+
+    /**
+     * @param studySiteAccrualAccessServiceLocal the studySiteAccrualAccessServiceLocal to set
+     */
+    public void setStudySiteAccrualAccessServiceLocal(
+            StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal) {
+        this.studySiteAccrualAccessServiceLocal = studySiteAccrualAccessServiceLocal;
     }
 }

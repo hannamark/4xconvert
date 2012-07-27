@@ -125,12 +125,14 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
 
     StudySiteAccrualAccessServiceLocal bean;
     StudySiteAccrualStatusBeanLocal statusBean;
+    
 
     @Before
     public void setUp() throws Exception {
         StudySiteAccrualAccessServiceBean bean = new StudySiteAccrualAccessServiceBean();
         statusBean = new StudySiteAccrualStatusServiceBean();
         bean.setStudySiteAccrualStatusService(statusBean);
+        statusBean.setStudySiteAccrualAccessServiceLocal(bean);
         StudySiteAccrualAccessServiceBean.setLastUpdate(new Timestamp(new Date().getTime()));
         User user = new User();
         user.setUserId(1L);

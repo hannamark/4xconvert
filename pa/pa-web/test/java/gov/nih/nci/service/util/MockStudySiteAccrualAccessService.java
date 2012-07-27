@@ -82,6 +82,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
+import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
@@ -97,6 +99,7 @@ import gov.nih.nci.service.MockAbstractBaseIsoService;
 import gov.nih.nci.service.MockStudySiteService;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -222,10 +225,46 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         return CONVERTER.convertFromDomainToDtos(result);
     }
 
-    @Override
+   
     public List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
             RegistryUser user) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+   
+    public List<Long> getActiveTrialLevelAccrualAccess(RegistryUser user)
+            throws PAException {       
+        return new ArrayList<Long>();
+    }
+
+  
+    public void assignTrialLevelAccrualAccess(RegistryUser user,
+            Collection<Long> trialIDs, String comments, RegistryUser creator) throws PAException {
+              
+    }
+
+    
+    public void unassignTrialLevelAccrualAccess(RegistryUser user,
+            Collection<Long> trialIDs, String comment, RegistryUser creator)
+            throws PAException {        
+    }
+
+    
+    public void synchronizeSiteAccrualAccess(Long studySiteId)
+            throws PAException {  // TODO Auto-generated method stub
+        
+    }
+
+   
+    public List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory()
+            throws PAException {   
+        return new ArrayList<AccrualAccessAssignmentHistoryDTO>();
+    }
+
+    @Override
+    public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial()
+            throws PAException {
+        return new ArrayList<AccrualAccessAssignmentByTrialDTO>();
     }
 }

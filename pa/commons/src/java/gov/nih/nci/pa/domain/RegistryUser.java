@@ -94,7 +94,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -419,6 +421,16 @@ public class RegistryUser extends AbstractEntity implements Auditable {
      */
     public void setAffiliatedOrgUserType(UserOrgType affiliatedOrgUserType) {
         this.affiliatedOrgUserType = affiliatedOrgUserType;
+    }
+    
+    /**
+     * Returns first name plus space plus last name. Handles nulls.
+     * @return String
+     */
+    @Transient
+    public String getFullName() {
+        return (StringUtils.defaultString(getFirstName()) + " " + StringUtils
+                .defaultString(getLastName())).trim();
     }
 
 }

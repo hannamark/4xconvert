@@ -40,6 +40,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.FundingMechanism" />
         <mapping class="gov.nih.nci.pa.domain.NIHinstitute" />
         <mapping class="gov.nih.nci.pa.domain.StudySiteAccrualStatus" />
+        <mapping class="gov.nih.nci.pa.domain.StudyAccrualAccess" />
         <mapping class="gov.nih.nci.pa.domain.StudySiteContact" />
         <mapping class="gov.nih.nci.pa.domain.Document" />
         <mapping class="gov.nih.nci.pa.domain.StudyRecruitmentStatus" />

@@ -22,6 +22,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import org.hibernate.Query;
 
 /**
@@ -38,18 +39,28 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
     @EJB
     private PAHealthCareProviderRemote paHealthCareProviderService;
 
-    private static final String HQL =
-            "select ss, org.name, org.identifier "
+    private static final String BY_PROTOCOL_HQL =
+            "select ss, org.name, org.identifier, sp.id "
                     + "from StudySite ss "
                     + "join ss.studyProtocol sp "
                     + "join ss.healthCareFacility hf "
                     + "join hf.organization org "
                     + "where sp.id = :spId "
                     + "and ss.functionalCode = :functionalCode";
+    
+    private static final String BY_STUDY_SITE_HQL =
+            "select ss, org.name, org.identifier, sp.id "
+                    + "from StudySite ss "
+                    + "join ss.studyProtocol sp "
+                    + "join ss.healthCareFacility hf "
+                    + "join hf.organization org "
+                    + "where ss.id = :studySiteId "
+                    + "and ss.functionalCode = :functionalCode";    
 
     private static final int STUDY_SITE_IDX = 0;
     private static final int ORG_NAME_IDX = 1;
     private static final int ORG_IDENTIFIER_IDS = 2;
+    private static final int PROTOCOL_IDENTIFIER_IDX = 3;
 
     /**
      * {@inheritDoc}
@@ -64,30 +75,72 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
         List<ParticipatingOrgDTO> result = new ArrayList<ParticipatingOrgDTO>();
         List<Long> studySiteIds = new ArrayList<Long>();
         try {
-            Query qry = PaHibernateUtil.getCurrentSession().createQuery(HQL);
+            Query qry = PaHibernateUtil.getCurrentSession().createQuery(BY_PROTOCOL_HQL);
             qry.setParameter("spId", studyProtocolId);
             qry.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
-            List<Object[]> queryList = qry.list();
-            for (Object[] row : queryList) {
-                StudySite studySite = (StudySite) row[STUDY_SITE_IDX];
-                ParticipatingOrgDTO site = new ParticipatingOrgDTO();
-                site.setName((String) row[ORG_NAME_IDX]);
-                site.setPoId((String) row[ORG_IDENTIFIER_IDS]);
-                site.setStudySiteId(studySite.getId());
-                site.setStatusCode(studySite.getStatusCode());
-                site.setTargetAccrualNumber(studySite.getTargetAccrualNumber());
-                site.setProgramCodeText(studySite.getProgramCodeText());
-                result.add(site);
-                studySiteIds.add(site.getStudySiteId());
-            }
+            processQueryResults(result, studySiteIds, qry);
         } catch (Exception e) {
             throw new PAException(e);
         }
+        addAccrualAndPersonData(result, studySiteIds);
+        return result;
+    }
+    
+    @Override
+    public ParticipatingOrgDTO getTreatingSite(Long studySiteId)
+            throws PAException {
+        List<ParticipatingOrgDTO> result = new ArrayList<ParticipatingOrgDTO>();
+        List<Long> studySiteIds = new ArrayList<Long>();
+        try {
+            Query qry = PaHibernateUtil.getCurrentSession().createQuery(
+                    BY_STUDY_SITE_HQL);
+            qry.setParameter("studySiteId", studySiteId);
+            qry.setParameter("functionalCode",
+                    StudySiteFunctionalCode.TREATING_SITE);
+            processQueryResults(result, studySiteIds, qry);
+        } catch (Exception e) {
+            throw new PAException(e);
+        }
+        addAccrualAndPersonData(result, studySiteIds);
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    /**
+     * @param result
+     * @param studySiteIds
+     * @throws PAException
+     */
+    private void addAccrualAndPersonData(List<ParticipatingOrgDTO> result,
+            List<Long> studySiteIds) throws PAException {
         if (CollectionUtils.isNotEmpty(studySiteIds)) {
             Long[] ssIdArray = studySiteIds.toArray(new Long[studySiteIds.size()]);
             addAccrualAndPersonData(result, ssIdArray);
         }
-        return result;
+    }
+
+    /**
+     * @param result
+     * @param studySiteIds
+     * @param qry
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private void processQueryResults(List<ParticipatingOrgDTO> result,
+            List<Long> studySiteIds, Query qry) {
+        List<Object[]> queryList = qry.list();
+        for (Object[] row : queryList) {
+            StudySite studySite = (StudySite) row[STUDY_SITE_IDX];
+            ParticipatingOrgDTO site = new ParticipatingOrgDTO();
+            site.setName((String) row[ORG_NAME_IDX]);
+            site.setPoId((String) row[ORG_IDENTIFIER_IDS]);
+            site.setStudyProtocolId((Long) row[PROTOCOL_IDENTIFIER_IDX]);
+            site.setStudySiteId(studySite.getId());
+            site.setStatusCode(studySite.getStatusCode());
+            site.setTargetAccrualNumber(studySite.getTargetAccrualNumber());
+            site.setProgramCodeText(studySite.getProgramCodeText());
+            result.add(site);
+            studySiteIds.add(site.getStudySiteId());
+        }
     }
 
     private void addAccrualAndPersonData(List<ParticipatingOrgDTO> poList, Long[] ssIdArray) throws PAException {

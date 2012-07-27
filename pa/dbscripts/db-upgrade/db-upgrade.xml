@@ -1054,7 +1054,7 @@
     <changeSet id="PO-5142" author="Kalpana">
         <comment>Add column to study_subject for delete reason and add a new row in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5142.sql"/>
-     </changeSet>
+     </changeSet> 
     <changeSet id="PO-5158" author="Hugh">
         <comment>Add column to study_site_subject_accrual_count for submission method.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5158.sql"/>
@@ -1066,5 +1066,9 @@
     <changeSet id="PO-5309" author="Kalpana">
         <comment>updated subject delete reasons value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5309.sql"/>
-     </changeSet>
+     </changeSet>  
+     <changeSet id="PO-5206" author="krylovd">
+        <comment>Added study_accrual_access table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5206.sql"/>
+     </changeSet>    
 </databaseChangeLog>

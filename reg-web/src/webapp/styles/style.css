@@ -637,3 +637,116 @@ BODY.addsite {
 .fakelink {
     cursor: text !important;
 }
+
+
+#progress_indicator_panel {
+    text-align: center;
+    font-weight: bold;
+    font-size: 110%;
+    padding: 5px 5px 5px 5px;
+    border-color: #808080;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    width: 240px !important;
+    height: 60px !important;
+    background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;
+    z-index: 100;
+    white-space: nowrap !important;
+    -moz-box-shadow: 10px 10px 5px #888;
+    -webkit-box-shadow: 10px 10px 5px #888;
+    box-shadow: 10px 10px 5px #888;    
+}
+
+#progress_indicator_panel div {
+    padding: 2px 2px 2px 2px;
+}
+
+/* Manage Accrual Access */
+.accrual_trial_cat_title {
+	font-weight: bold;
+	text-decoration: underline;
+	color: #66CCCC;
+}
+
+.accrual_trial_id {
+	font-weight: bold;
+}
+
+.accrual_trial_list_container {
+	 height: 300px;
+	 overflow: auto;
+     overflow-x: hidden;    
+}
+
+td.accrual_btn_column {
+	vertical-align: middle !important;
+}
+
+div.accrual_btn_column {
+   white-space: nowrap;
+}
+
+.accrual_btn {
+	width: 50px;
+}
+
+.accrual_trial_selected {
+	background-color: #0099FF;
+	color: white;
+	cursor: pointer;	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.accrual_trial_unselected {
+    cursor: pointer;    
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.accrual_trial_unselectable {
+	color:#D0D0D0;
+}
+
+#comments-dialog {
+	border: 2px solid black;
+	width: 300px !important;
+	height: 180px !important;
+	white-space: nowrap !important;
+    z-index: 100;
+    background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;    
+    -moz-box-shadow: 10px 10px 5px #888;
+    -webkit-box-shadow: 10px 10px 5px #888;
+    box-shadow: 10px 10px 5px #888;     
+    
+}
+
+#comments-dialog * textarea {
+     width: 100%;
+     margin-top: 10px; 
+}
+
+#comments-dialog * input {     
+     margin-top: 10px; 
+}
+
+#comments-dialog .body {
+	 padding: 10px;
+}
+#comments-dialog .header {
+	background-color: #486CAE;
+    border-color: #78A3F2 #204095 #000000 #78A3F2;
+    border-style: solid;
+    border-width: 1px 1px 2px;
+    color: #FFFFFF;
+    font-weight: bold;
+    height: 1.3em;
+    padding: 5px 5px 5px 5px;
+}

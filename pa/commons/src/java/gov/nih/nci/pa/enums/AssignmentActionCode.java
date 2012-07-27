@@ -1,31 +1,31 @@
 /*
 * caBIG Open Source Software License
-*
+* 
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
 * was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
 * includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-*
+* 
 * This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
 * person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
 * entity.  Control for purposes of this definition means
-*
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
+* 
+* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract 
 * or otherwise,or
-*
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
-*
+*  
+* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or 
+* 
 * (iii) beneficial ownership of such entity.
 * License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
 * worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to
-*
+* rights in the caBIG Software, including any copyright or patent rights therein, to 
+* 
 * (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
 * publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so;
-*
+* or permit others to do so; 
+* 
 * (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof);
-*
+* (or portions thereof); 
+* 
 * (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
 * derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
 * including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
@@ -34,22 +34,22 @@
 * displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
 * Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
 * distribute or use the caBIG Software.
-*
+* 
 * 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
 * of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
 * form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
 * documentation and/or other materials provided with the distribution, if any.
-*
+* 
 * 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
 * This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
+* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally 
 * appear.
-*
+* 
 * 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
 * caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
 * any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
 * as required to comply with the terms of this License.
-*
+* 
 * 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
 * programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
 * party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
@@ -59,133 +59,96 @@
 * In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
 * against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
 * to obtain such permissions.
-*
+* 
 * 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
 * and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
 * sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
 * provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
 * License.
-*
+* 
 * 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
+* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN 
 * NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
 * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
+* 
+* 
 */
+package gov.nih.nci.pa.enums;
 
-package gov.nih.nci.pa.service.util;
-
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
-import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
-import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
-import gov.nih.nci.pa.service.BasePaService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 2, 2009
+ * @author Denis G. Krylov
  */
-public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudySiteAccrualAccessDTO> {
+public enum AssignmentActionCode implements CodedEnum<String> {
 
     /**
-     * @return submitter csm accounts
-     * @throws PAException exception
+     * ASSIGNED.
      */
-    Set<User> getSubmitters() throws PAException;
+    ASSIGNED("Assigned"),
+    /**
+     * UNASSIGNED.
+     */
+    UNASSIGNED("Un-assigned");
+
+    private String code;
 
     /**
-     * @param studyProtocolId protocol id
-     * @return list of treating sites
-     * @throws PAException exception
+     * Constructor for StatusCode.
+     * @param code
      */
-    Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
+    private AssignmentActionCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
     /**
-     * @param studyProtocolId study site pkey
-     * @return list of access
-     * @throws PAException exception
+     * @return code coded value of enum
      */
-    List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException;
+    @Override
+    public String getCode() {
+        return code;
+    }
 
     /**
-     * Return a list of study site accrual access objects by site id.
-     * @param studySiteId study site id
-     * @return list of access
-     * @throws PAException exception
+     * @return String DisplayName
      */
-    List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException;
-    
-    /**
-     * Returns all trials and participating sites to which the User can submit accrual data.
-     * @param user user
-     * @return List<AccrualSubmissionAccessDTO>
-     * @throws PAException PAException
-     */
-    List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
-            RegistryUser user) throws PAException;
-    
-    /**
-     * Returns a {@link List} of Trial IDs to which the given user has active trial-level accrual access.
-     * @param user RegistryUser
-     * @return List<Long>
-     * @throws PAException PAException
-     */
-    List<Long> getActiveTrialLevelAccrualAccess(RegistryUser user) throws PAException;
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
     /**
-     * Assigns trial-level access to the given trials for the given user.
-     * @param user RegistryUser
-     * @param trialIDs Collection<Long>
-     * @param comment comment
-     * @param creator creator
-     * @throws PAException PAException
+     * @return String display name
      */
-    void assignTrialLevelAccrualAccess(RegistryUser user,
-            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
+    public String getName() {
+        return name();
+    }
+
     /**
-     * Un-assigns trial-level access to the given trials from the given user.
-     * @param user RegistryUser
-     * @param trialIDs Collection<Long>
-     * @param comment comment
-     * @param creator creator
-     * @throws PAException PAException
+     * @param code code
+     * @return StatusCode
      */
-    void unassignTrialLevelAccrualAccess(RegistryUser user,
-            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
+    public static AssignmentActionCode getByCode(String code) {
+        return getByClassAndCode(AssignmentActionCode.class, code);
+    }
+
     /**
-     * This method is supposed to be invoked after a change is made to a participating site or a new participating
-     * site is created. It checks trial-level accrual access records to see if a site-level accrual access needs to be
-     * automatically created for this site.
-     * @param studySiteId studySiteId
-     * @throws PAException PAException
+     * construct a array of display names for Abstracted Status coded Enum.
+     * @return String[] display names for Abstracted Status Code
      */
-    void synchronizeSiteAccrualAccess(Long studySiteId) throws PAException;
-    
-    /**
-     * Gets Accrual Access Assignment History.
-     * @return List<AccrualAccessAssignmentHistoryDTO>
-     * @throws PAException PAException
-     */
-    List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory() throws PAException;
-    
-    
-    /**
-     * @return List<AccrualAccessAssignmentByTrialDTO>
-     * @throws PAException PAException
-     */
-    List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial() throws PAException;
+    public static String[] getDisplayNames() {
+        AssignmentActionCode[] absStatusCodes = AssignmentActionCode.values();
+        String[] codedNames = new String[absStatusCodes.length];
+        for (int i = 0; i < absStatusCodes.length; i++) {
+            codedNames[i] = absStatusCodes[i].getCode();
+        }
+        return codedNames;
+    }
+
 }

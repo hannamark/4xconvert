@@ -21,6 +21,7 @@ public class AccrualSubmissionAccessDTO implements Serializable {
     private String trialTitle;
     private String participatingSiteOrgName;
     private String participatingSitePoOrgId;
+    private Long studySiteId;
     /**
      * @return the trialId
      */
@@ -95,6 +96,18 @@ public class AccrualSubmissionAccessDTO implements Serializable {
                 .append(", participatingSitePoOrgId=")
                 .append(participatingSitePoOrgId).append("]");
         return builder.toString();
+    }
+    /**
+     * @return the studySiteId
+     */
+    public Long getStudySiteId() {
+        return studySiteId;
+    }
+    /**
+     * @param studySiteId the studySiteId to set
+     */
+    public void setStudySiteId(Long studySiteId) {
+        this.studySiteId = studySiteId;
     }
     
 

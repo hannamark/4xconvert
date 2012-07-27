@@ -493,7 +493,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setPrimaryPurpose((String) row[PRIMARY_PURPOSE_CODE]);
         dto.setStartDate((Date) row[START_DATE]);
         dto.setSponsorName((String) row[SPONSOR_NAME]);
-        dto.setSummary4FundingSponsorName((String) row[SUMMARY4_FUNDING_SPONSOR_TYPE]);
+        dto.setSummary4FundingSponsorType((String) row[SUMMARY4_FUNDING_SPONSOR_TYPE]);
         String responsibleParty = (String) row[RESPONSIBILITY_PARTY_ORG_NAME];
         if (StringUtils.isEmpty(responsibleParty) 
                 && StringUtils.isNotEmpty((String) row[RESPONSIBILITY_PARTY_PI_FIRST_NAME])) {           

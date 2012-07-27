@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -125,6 +126,8 @@ public class AbstractBaseParticipatingSiteEjbBean {
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
     private StudySiteContactServiceLocal studySiteContactService;
+    @EJB
+    private StudySiteAccrualAccessServiceLocal accrualAccessServiceLocal;
 
     /**
      * generateCrsAndHcpFromCtepIdOrNewPerson.
@@ -427,5 +430,20 @@ public class AbstractBaseParticipatingSiteEjbBean {
      */
     protected void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
         this.studySiteContactService = studySiteContactService;
+    }
+
+    /**
+     * @return the accrualAccessServiceLocal
+     */
+    public StudySiteAccrualAccessServiceLocal getAccrualAccessServiceLocal() {
+        return accrualAccessServiceLocal;
+    }
+
+    /**
+     * @param accrualAccessServiceLocal the accrualAccessServiceLocal to set
+     */
+    public void setAccrualAccessServiceLocal(
+            StudySiteAccrualAccessServiceLocal accrualAccessServiceLocal) {
+        this.accrualAccessServiceLocal = accrualAccessServiceLocal;
     }
 }

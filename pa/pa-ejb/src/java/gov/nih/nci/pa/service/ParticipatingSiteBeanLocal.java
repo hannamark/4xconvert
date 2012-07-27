@@ -280,7 +280,7 @@ implements ParticipatingSiteServiceLocal {
             } else {
                 enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
             }
-            StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);
+            StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);            
             return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
         } catch (PAException e) {
             throw e;
@@ -359,7 +359,9 @@ implements ParticipatingSiteServiceLocal {
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
-        return getStudySite(studySiteDTO.getIdentifier());
+        final StudySite studySite = getStudySite(studySiteDTO.getIdentifier());
+        getAccrualAccessServiceLocal().synchronizeSiteAccrualAccess(studySite.getId());
+        return studySite;
     }
 
     private boolean isDuplicate(Ii trialIi, Ii paHcfIi) throws PAException {

@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -96,14 +97,18 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.Mockito.*;
+
 public class StudySiteAccrualStatusServiceBeanTest extends AbstractHibernateTestCase {
 
-  private final StudySiteAccrualStatusServiceLocal remoteEjb = new StudySiteAccrualStatusBeanLocal();;
+  private final StudySiteAccrualStatusBeanLocal remoteEjb = new StudySiteAccrualStatusBeanLocal();;
   Ii studySiteId;
   @Before
   public void setUp() throws Exception {
+    remoteEjb.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
     TestSchema.primeData();
     studySiteId = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
+    
   }
 
   @Test

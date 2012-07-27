@@ -16,6 +16,7 @@ public class ParticipatingOrgDTO implements Serializable {
     private static final long serialVersionUID = 5370561621744531528L;
 
     private Long studySiteId;
+    private Long studyProtocolId;
     private String poId;
     private String name;
     private FunctionalRoleStatusCode statusCode;
@@ -179,5 +180,19 @@ public class ParticipatingOrgDTO implements Serializable {
      */
     public void setSubInvestigators(List<PaPersonDTO> subInvestigators) {
         this.subInvestigators = subInvestigators;
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 }

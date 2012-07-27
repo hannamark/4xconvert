@@ -77,115 +77,98 @@
 *
 */
 
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
-import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
-import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
-import gov.nih.nci.pa.service.BasePaService;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.AssignmentActionCode;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.NotNull;
+
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
- * @author Hugh Reinhart
- * @since Sep 2, 2009
+ * @author Denis G. Krylov
+ * 
  */
-public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudySiteAccrualAccessDTO> {
+@Entity
+@Table(name = "STUDY_ACCRUAL_ACCESS")
+public class StudyAccrualAccess extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
+    private static final long serialVersionUID = 917387137764967830L;
+
+    private RegistryUser registryUser;
+    private StudyProtocol studyProtocol;
+    private String comments;
+    private AssignmentActionCode actionCode;
 
     /**
-     * @return submitter csm accounts
-     * @throws PAException exception
+     * @return the registryUser
      */
-    Set<User> getSubmitters() throws PAException;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "REGISTRY_USER_ID", nullable = false)
+    public RegistryUser getRegistryUser() {
+        return registryUser;
+    }
+    /**
+     * @param registryUser the registryUser to set
+     */
+    public void setRegistryUser(RegistryUser registryUser) {
+        this.registryUser = registryUser;
+    }
 
     /**
-     * @param studyProtocolId protocol id
-     * @return list of treating sites
-     * @throws PAException exception
+     * @return the comments
      */
-    Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
-
+    @Column(name = "COMMENTS")
+    public String getComments() {
+        return comments;
+    }
     /**
-     * @param studyProtocolId study site pkey
-     * @return list of access
-     * @throws PAException exception
+     * @param comments the requestDetails to set
      */
-    List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException;
-
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
     /**
-     * Return a list of study site accrual access objects by site id.
-     * @param studySiteId study site id
-     * @return list of access
-     * @throws PAException exception
+     * @return the studySite
      */
-    List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException;
-    
+    @ManyToOne
+    @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
+    @NotNull
+    @Index(name = "study_accrual_access_study_site_idx")
+    public StudyProtocol getStudyProtocol() {
+        return studyProtocol;
+    }
     /**
-     * Returns all trials and participating sites to which the User can submit accrual data.
-     * @param user user
-     * @return List<AccrualSubmissionAccessDTO>
-     * @throws PAException PAException
+     * @param studyProtocol the studyProtocol to set
      */
-    List<AccrualSubmissionAccessDTO> getAccrualSubmissionAccess(
-            RegistryUser user) throws PAException;
-    
+    public void setStudyProtocol(StudyProtocol studyProtocol) {
+        this.studyProtocol = studyProtocol;
+    }
     /**
-     * Returns a {@link List} of Trial IDs to which the given user has active trial-level accrual access.
-     * @param user RegistryUser
-     * @return List<Long>
-     * @throws PAException PAException
+     * @return the actionCode
      */
-    List<Long> getActiveTrialLevelAccrualAccess(RegistryUser user) throws PAException;
-
+    @Column(name = "ACTION_CODE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Searchable    
+    public AssignmentActionCode getActionCode() {
+        return actionCode;
+    }
     /**
-     * Assigns trial-level access to the given trials for the given user.
-     * @param user RegistryUser
-     * @param trialIDs Collection<Long>
-     * @param comment comment
-     * @param creator creator
-     * @throws PAException PAException
+     * @param actionCode the actionCode to set
      */
-    void assignTrialLevelAccrualAccess(RegistryUser user,
-            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
-    /**
-     * Un-assigns trial-level access to the given trials from the given user.
-     * @param user RegistryUser
-     * @param trialIDs Collection<Long>
-     * @param comment comment
-     * @param creator creator
-     * @throws PAException PAException
-     */
-    void unassignTrialLevelAccrualAccess(RegistryUser user,
-            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
-    /**
-     * This method is supposed to be invoked after a change is made to a participating site or a new participating
-     * site is created. It checks trial-level accrual access records to see if a site-level accrual access needs to be
-     * automatically created for this site.
-     * @param studySiteId studySiteId
-     * @throws PAException PAException
-     */
-    void synchronizeSiteAccrualAccess(Long studySiteId) throws PAException;
-    
-    /**
-     * Gets Accrual Access Assignment History.
-     * @return List<AccrualAccessAssignmentHistoryDTO>
-     * @throws PAException PAException
-     */
-    List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory() throws PAException;
+    public void setActionCode(AssignmentActionCode actionCode) {
+        this.actionCode = actionCode;
+    }
     
     
-    /**
-     * @return List<AccrualAccessAssignmentByTrialDTO>
-     * @throws PAException PAException
-     */
-    List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial() throws PAException;
 }

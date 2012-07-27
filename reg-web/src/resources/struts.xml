@@ -55,7 +55,8 @@
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">process,edit,update,partialSave,review,
-                    reviewUpdate,amend,create,popupupdate,assignOwnership,unassignOwnership,save,updateAccount</param>
+                    reviewUpdate,amend,create,popupupdate,assignOwnership,unassignOwnership,save,updateAccount,
+                    assignAll,assignSelected,unassignAll,unassignSelected</param>
                 </interceptor-ref>
             </interceptor-stack>
             
@@ -352,6 +353,17 @@
             <result name="input">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
             <result name="viewResults">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
         </action>
+        
+        <action name="manageAccrualAccess*" class="gov.nih.nci.registry.action.ManageAccrualAccessAction" method="{1}">
+            <interceptor-ref name="scopedModelDriven">
+                <param name="scope">session</param>
+            </interceptor-ref>
+            <interceptor-ref name="methodValidationStack" />             
+            <result name="error">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
+            <result name="history">/WEB-INF/jsp/viewAccrualAccessAssignmentHistory.jsp</result>
+            <result name="byTrial">/WEB-INF/jsp/viewAccrualAccessAssignmentByTrial.jsp</result>
+            <result name="success">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
+        </action>        
 
         <action name="ctGovXML*" class="gov.nih.nci.registry.action.CTGovXMLAction" method="{1}">
             <interceptor-ref name="noDisclaimerDefaultInterceptor" />
