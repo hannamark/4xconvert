@@ -114,4 +114,9 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService<StudyIndl
         return new StudyIndldeDTO();
     }
 
+    @Override
+    public String validateWithoutRollback(StudyIndldeDTO studyIndldeDTO) {
+        return "";
+    }
+
 }

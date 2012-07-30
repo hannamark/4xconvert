@@ -589,15 +589,18 @@ public class TrialRegistrationValidator {
             StringBuilder errorMsg) {
         if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
-                try {
-                    indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-                    studyIndldeService.validate(indIdeDto);
-                } catch (PAException e) {
-                    errorMsg.append(e.getMessage());
-                }
+                indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO
+                        .getIdentifier());
+                errorMsg.append(studyIndldeService
+                        .validateWithoutRollback(indIdeDto));
             }
             try {
-                paServiceUtils.enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
+                for (String msg : paServiceUtils.enforceNoDuplicateIndIde(
+                        studyIndldeDTOs, studyProtocolDTO)) {
+                    if (errorMsg.indexOf(StringUtils.strip(msg)) == -1) {
+                        errorMsg.append(msg);
+                    }
+                }
             } catch (PAException e) {
                 errorMsg.append(e.getMessage());
             }

@@ -753,9 +753,9 @@ public class TrialRegistrationValidatorTest {
         StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
         studyIndldeDTOs.add(studyIndldeDTO);
-        doThrow(new PAException("PAException")).when(studyIndldeService).validate(studyIndldeDTO);
+        when(studyIndldeService.validateWithoutRollback(studyIndldeDTO)).thenReturn("PAException");
         validator.validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
-        verify(studyIndldeService).validate(studyIndldeDTO);
+        verify(studyIndldeService).validateWithoutRollback(studyIndldeDTO);
         verify(paServiceUtils).enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
         checkErrorMsg("PAException");
     }
@@ -771,9 +771,9 @@ public class TrialRegistrationValidatorTest {
         studyIndldeDTOs.add(studyIndldeDTO);
         doThrow(new PAException("PAException")).when(paServiceUtils).enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);;
         validator.validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
-        verify(studyIndldeService).validate(studyIndldeDTO);
+        verify(studyIndldeService).validateWithoutRollback(studyIndldeDTO);
         verify(paServiceUtils).enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
-        checkErrorMsg("PAException");
+        checkErrorMsg("nullPAException");
     }
 
     /**
@@ -786,9 +786,9 @@ public class TrialRegistrationValidatorTest {
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
         studyIndldeDTOs.add(studyIndldeDTO);
         validator.validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
-        verify(studyIndldeService).validate(studyIndldeDTO);
+        verify(studyIndldeService).validateWithoutRollback(studyIndldeDTO);
         verify(paServiceUtils).enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
-        checkErrorMsg("");
+        checkErrorMsg("null");
     }
     
     /**

@@ -176,10 +176,12 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -748,48 +750,53 @@ public class PAServiceUtils {
      * @param studyIndldeDTOs list of dtos
      * @param studyProtocolDTO studyProtocol
      * @throws PAException on error
+     * @return Collection<String>
+     * 
      */
-    public void enforceNoDuplicateIndIde(List<StudyIndldeDTO> studyIndldeDTOs, StudyProtocolDTO studyProtocolDTO)
-            throws PAException {
-        StringBuffer errorMsg = new StringBuffer();
+    public Collection<String> enforceNoDuplicateIndIde(
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            StudyProtocolDTO studyProtocolDTO) throws PAException  {
+        Set<String> errorMsg = new LinkedHashSet<String>();
         if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
             for (int i = 0; i < studyIndldeDTOs.size(); i++) {
                 StudyIndldeDTO sp = studyIndldeDTOs.get(i);
                 isIndIdeUpdated(errorMsg, sp);
                 for (int j = i + 1; j < studyIndldeDTOs.size(); j++) {
                     StudyIndldeDTO newType = studyIndldeDTOs.get(j);
-                    if (isIndIdeDuplicate(sp, newType) && errorMsg.indexOf(DUPLICATE_IND_ERR_MSG) == -1) {
-                        errorMsg.append(DUPLICATE_IND_ERR_MSG + ERR_MSG_SEPARATOR);
+                    if (isIndIdeDuplicate(sp, newType)) {
+                        errorMsg.add(DUPLICATE_IND_ERR_MSG + ERR_MSG_SEPARATOR);
                     }
                 }
             }
-            Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator());
-            if (containsNonExemptInds(studyIndldeDTOs) && BooleanUtils.isTrue(ctGovIndicator)
-                    && !BlConverter.convertToBool(
-                    studyProtocolDTO.getFdaRegulatedIndicator())) {
-                errorMsg.append(TrialRegistrationValidator.FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG
+            Boolean ctGovIndicator = BlConverter
+                    .convertToBoolean(studyProtocolDTO
+                            .getCtgovXmlRequiredIndicator());
+            if (containsNonExemptInds(studyIndldeDTOs)
+                    && BooleanUtils.isTrue(ctGovIndicator)
+                    && !BlConverter.convertToBool(studyProtocolDTO
+                            .getFdaRegulatedIndicator())) {
+                errorMsg.add(TrialRegistrationValidator.FDA_REGULATED_INTERVENTION_INDICATOR_ERR_MSG
                         + ERR_MSG_SEPARATOR);
             }
-            if (errorMsg.length() > 1) {
-                throw new PAException(errorMsg.toString());
-            }
         }
+        return errorMsg;
     }
 
     /**
      * @param errorMsg
      * @param sp
+     * @throws NumberFormatException 
      * @throws PAException
      */
-    private void isIndIdeUpdated(StringBuffer errorMsg, StudyIndldeDTO sp) throws  PAException {
+    private void isIndIdeUpdated(Collection<String> errorMsg, StudyIndldeDTO sp) throws PAException  {
         if (!ISOUtil.isIiNull(sp.getIdentifier())) {
             StudyPaService<StudyDTO> paService = getRemoteService(IiConverter.convertToStudyIndIdeIi(
                     Long.valueOf(sp.getIdentifier().getExtension())));
             StudyIndldeDTO dbDTO = (StudyIndldeDTO) paService.get(sp.getIdentifier());
             if (dbDTO == null) {
-                errorMsg.append("IND/IDE ID " + sp.getIdentifier().getExtension() + " does not exist");
+                errorMsg.add("IND/IDE ID " + sp.getIdentifier().getExtension() + " does not exist");
             } else if (!isIndIdeDuplicate(sp, dbDTO)) {
-                errorMsg.append("Existing IND/IDEs cannot be modified." + ERR_MSG_SEPARATOR);
+                errorMsg.add("Existing IND/IDEs cannot be modified." + ERR_MSG_SEPARATOR);
             }
         }
     }

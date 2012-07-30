@@ -101,6 +101,16 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
             enforceNoDuplicate(studyIndldeDTO);
         }
     }
+    
+    @Override
+    public String validateWithoutRollback(StudyIndldeDTO studyIndldeDTO) {
+        try {
+            this.validate(studyIndldeDTO);
+        } catch (PAException e) {
+            return e.getMessage();
+        }
+        return StringUtils.EMPTY;
+    }
 
     private boolean isIdeGrantorValid(StudyIndldeDTO studyIndldeDTO) {
         return !(!ISOUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())

@@ -98,4 +98,17 @@ public interface StudyIndldeServiceLocal extends StudyPaService<StudyIndldeDTO> 
      * @throws PAException e
      */
     void validate(StudyIndldeDTO studyIndldeDTO) throws PAException;
+    
+    /**
+     * Validates the given {@link StudyIndldeDTO} following the same business
+     * rules as {@link #validate(StudyIndldeDTO)} does. However, does not throw
+     * {@link PAException} and does not mark the transaction as rollback-only.
+     * Simply returns validation error messages as a {@link String}. The
+     * original {@link #validate(StudyIndldeDTO)} method is kept for backward
+     * compatibility purposes.
+     * 
+     * @param studyIndldeDTO studyIndldeDTO
+     * @return String empty string indicates absense of validation errors.
+     */
+    String validateWithoutRollback(StudyIndldeDTO studyIndldeDTO);
 }
