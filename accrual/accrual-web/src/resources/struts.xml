@@ -64,6 +64,7 @@
                 <param name="actionName">logout</param>
             </result>
             <result name="disclaimerAction">disClaimerAction.action</result>
+            <result name="invalid.token">/WEB-INF/jsp/inValidToken.jsp</result>
         </global-results>
         <action name="login">
             <result>/WEB-INF/jsp/login.jsp</result>

@@ -140,6 +140,7 @@
         <global-results>
             <result name="disclaimerAction">disClaimerAction.action</result>
             <result name="duplicateTrialErrorAction">duplicateTrialErrorAction.action</result>
+            <result name="invalid.token">/WEB-INF/jsp/inValidToken.jsp</result>
         </global-results>
         <action name="contact">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />

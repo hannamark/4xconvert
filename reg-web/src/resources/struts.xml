@@ -102,6 +102,7 @@
         <global-results>
             <result name="applicationError">/WEB-INF/jsp/registryError.jsp</result>
             <result name="disclaimerAction">disClaimerAction.action</result>
+            <result name="invalid.token">/WEB-INF/jsp/inValidToken.jsp</result>
         </global-results>
         
         <action name="logout" class="gov.nih.nci.registry.action.Logout" method="logout">
