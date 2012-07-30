@@ -902,11 +902,13 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Map<Long, String> resultSet = new HashMap<Long, String>();
         List<Object[]> queryList = null;
         SQLQuery query = session
-        .createSQLQuery("select study_protocol_id, extension, " 
-                + "root from study_otheridentifiers where study_protocol_id IN (:ids)"
-                + " and root = '"
+        .createSQLQuery("select so.study_protocol_id, so.extension, " 
+                + "so.root from study_otheridentifiers as so " 
+                + "join study_protocol as sp on sp.identifier=so.study_protocol_id where sp.status_code ='ACTIVE'"
+                + " and so.study_protocol_id IN (:ids)"
+                + " and so.root = '"
                 + IiConverter.STUDY_PROTOCOL_ROOT
-                + "' order by root");
+                + "' order by so.root");
         query.setParameterList("ids", listOfTrialIDs);
         queryList = query.list();
         

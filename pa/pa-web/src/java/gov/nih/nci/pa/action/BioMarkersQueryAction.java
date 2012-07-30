@@ -149,8 +149,10 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         }
         Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
         for (PlannedMarkerDTO dto : plannedMarkers) {
-            pmList.add(populateWebDTO(dto, identifierMap));
-        }    
+            if (dto.getUserLastCreated() != null) {
+                pmList.add(populateWebDTO(dto, identifierMap));    
+            }          
+        } 
         setPlannedMarkerList(pmList);
         return SUCCESS;
     }
