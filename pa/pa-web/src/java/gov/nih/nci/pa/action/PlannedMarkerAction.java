@@ -124,6 +124,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
     private boolean saveReset = false;
+    private boolean pendingStatus;
     /**
      * {@inheritDoc}
      */
@@ -146,10 +147,12 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         enforceBusinessRules();
         if (!hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO(false);
-            if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning())) {
+            if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning()) && !pendingStatus) {
                 marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                pendingStatus = false;
             } else {
-                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING)); 
+                pendingStatus = true;          
             }
 
             try {
@@ -325,7 +328,11 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         webDTO = new PlannedMarkerWebDTO();
         webDTO.setId(IiConverter.convertToLong(markerDTO.getIdentifier()));
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
-        webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
+        if (pendingStatus) {
+            webDTO.setMeaning(null);
+        } else {
+            webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
+        }
         webDTO.setDescription(StConverter.convertToString(markerDTO.getTextDescription()));
         webDTO.setHugoCode(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode()));
         webDTO.setFoundInHugo(StringUtils.isNotEmpty(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode())));
@@ -453,5 +460,18 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setSaveReset(boolean saveReset) {
         this.saveReset = saveReset;
     }
-
+    /**
+     * @return the pendingStatus
+     */
+    public boolean isPendingStatus() {
+        return pendingStatus;
+    }
+    /**
+     * @param pendingStatus
+     *            the pendingStatus to set
+     */
+    public void setPendingStatus(boolean pendingStatus) {
+        this.pendingStatus = pendingStatus;
+    }
+    
 }
