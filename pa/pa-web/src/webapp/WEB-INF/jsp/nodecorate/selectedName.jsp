@@ -29,10 +29,11 @@
 	        <s:textfield name="personContactWebDTO.lastName" id="personContactWebDTO.lastName" maxlength="200" size="200" 
 	        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
 	        
-	        <a href="javascript:void(0)" onclick="displayPersonDetails(<c:out value="${personContactWebDTO.selectedPersId}"/>);">
+	        <a href="javascript:void(0)" onclick="displayPersonDetails('${personContactWebDTO.selectedPersId}');">
                 <img src="<%=request.getContextPath()%>/images/details.gif"/>
             </a>
-	        </td>
+            
+	    </td>
 	</tr>
 	<tr><td> OR    </td></tr>
     <tr>
