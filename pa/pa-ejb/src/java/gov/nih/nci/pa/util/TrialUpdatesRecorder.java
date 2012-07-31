@@ -220,8 +220,9 @@ public final class TrialUpdatesRecorder {
                         .defaultString(
                                 StConverter.convertToString(newDTO
                                         .getProgramCodeText())).equals(
-                                StConverter.convertToString(existentDTO
-                                        .getProgramCodeText()))) {
+                                StringUtils.defaultString(StConverter
+                                        .convertToString(existentDTO
+                                                .getProgramCodeText())))) {
                     add(msg);
                 }
             }
