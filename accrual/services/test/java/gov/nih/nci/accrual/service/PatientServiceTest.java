@@ -82,7 +82,6 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.PatientDto;
@@ -144,7 +143,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
         return dto;
     }
     
@@ -169,8 +167,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         assertNotNull(status);
         St zip = dto.getZip();
         assertNotNull(zip);
-        Ii org = dto.getOrganizationIdentifier();
-        assertNull(org);
 
         try {
             dto = bean.get(BII);
@@ -188,7 +184,6 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
         bean.enforceBusinessRules(dto);
         Set<String> races = new HashSet<String>();
         races.add(PatientRaceCode.AMERICAN_INDIAN.getCode());

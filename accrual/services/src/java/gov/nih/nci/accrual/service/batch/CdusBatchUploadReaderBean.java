@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
-import gov.nih.nci.accrual.convert.Converters;
-import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
@@ -91,6 +89,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -135,6 +134,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -163,9 +166,21 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private BatchFileService batchFileSvc;
     
     private static final int RESULTS_LEN = 1000;
-    private final Map<String, SubjectAccrualDTO> listOfStudySubjects = new HashMap<String, SubjectAccrualDTO>();
+    private final Map<String, Long> listOfStudySubjects = new HashMap<String, Long>();
     private static final String DATE_PATTERN = "MM/dd/yyyy";
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
+
+    // Cache for disease Ii's
+    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static final String DISEASE_CACHE_KEY = "BATCH_DISEASE_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 500;
+    private static final long CACHE_TIME = 43200;
+    static {
+        Cache cache = new Cache(DISEASE_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+        CACHE_MANAGER.removeCache(DISEASE_CACHE_KEY);
+        CACHE_MANAGER.addCache(cache);
+    }
 
     /**
      * {@inheritDoc}
@@ -264,13 +279,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 .createCriteria("studyProtocol", "sp").add(Restrictions.eq("sp.id", 
                         IiConverter.convertToLong(spDto.getIdentifier()))).list();
         for (StudySubject ss : ssList) {
-            SubjectAccrualDTO saDTO = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(ss);
-            listOfStudySubjects.put(ss.getAssignedIdentifier(), saDTO);
+            listOfStudySubjects.put(ss.getAssignedIdentifier(), ss.getId());
         }
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
-        count = generateSubjectAccruals(patientLines, 
+        count = generateSubjectAccruals(spDto.getIdentifier(), patientLines, 
                 batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);
         for (Ii partSiteIi : accrualLines.keySet()) {
             //We're assuming this is the assigned identifier for the organization associated with the health care 
@@ -286,24 +300,25 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return importResult;
     }
 
-    private int generateSubjectAccruals(List<String[]> patientLines, AccrualSubmissionTypeCode submissionType,
-        Map<String, List<String>> raceMap,  BatchValidationResults results, StringBuffer errMsg) throws PAException {
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    private int generateSubjectAccruals(Ii studyProtocolIi, List<String[]> patientLines,
+            AccrualSubmissionTypeCode submissionType, Map<String, List<String>> raceMap,
+            BatchValidationResults results, StringBuffer errMsg) throws PAException {
         int count = 0;
         long startTime = System.currentTimeMillis();
+        Long userId = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
-            //We're assuming this is the assigned identifier for the organization associated with the health care 
-            //facility of the study site.            
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
-            String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
+            String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());
             SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
                     IiConverter.convertToIi(studySiteIi));
             try {
                 if (ISOUtil.isIiNull(saDTO.getIdentifier())) {
                     listOfStudySubjects.put(saDTO.getAssignedIdentifier().getValue(), 
-                            subjectAccrualService.create(saDTO));
+                            subjectAccrualService.create(saDTO, studyProtocolIi, userId));
                 } else {
-                    subjectAccrualService.update(saDTO);
+                    subjectAccrualService.update(saDTO, studyProtocolIi, userId);
                 }
                 count++;
             } catch (PAException e) {
@@ -317,12 +332,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
     
     private SubjectAccrualDTO parserSubjectAccrual(String[] line, AccrualSubmissionTypeCode submissionType, 
-            List<String> races, Ii studySiteIi) 
-        throws PAException {
+            List<String> races, Ii studySiteIi) throws PAException {
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
         saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
         if (listOfStudySubjects.containsKey(saDTO.getAssignedIdentifier().getValue())) {
-            saDTO = listOfStudySubjects.get(saDTO.getAssignedIdentifier().getValue());
+            saDTO.setIdentifier(IiConverter.convertToSubjectAccrualIi(
+                    listOfStudySubjects.get(saDTO.getAssignedIdentifier().getValue())));
         }
         saDTO.setRegistrationDate(
                 TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
@@ -354,18 +369,26 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
 
     private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO) throws PAException {
         String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
-        if (StringUtils.isNotEmpty(diseaseCode)) {
+        if (StringUtils.isEmpty(diseaseCode)) {
+            return;
+        }
+        Element element = CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).get(diseaseCode);
+        if (element == null) {
+            Ii diseaseIi;
             SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
             if (disease != null) {
-                saDTO.setDiseaseIdentifier(disease.getIdentifier());
+                diseaseIi = disease.getIdentifier();
             } else {
                 ICD9DiseaseDTO icd9Disease = PaServiceLocator.getInstance().getICD9DiseaseService()
                     .getByCode(diseaseCode);
-                saDTO.setDiseaseIdentifier(icd9Disease.getIdentifier());
+                diseaseIi = icd9Disease.getIdentifier();
             }
+            element = new Element(diseaseCode, diseaseIi);
+            CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).put(element);
         }
+        saDTO.setDiseaseIdentifier((Ii) element.getValue());
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -100,20 +100,24 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
     
     /**
      * Creates a subject accrual.
-     * @param dto the subject accrual to create.
-     * @return the created subject accrual with the ID set.
+     * @param dto the subject accrual to create
+     * @param spIi the study protocol identifier
+     * @param userId the user id
+     * @return the id of new study subject
      * @throws PAException on error
      */
-    SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException;
-    
+    Long create(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException;
+
     /**
      * Updates a subject accrual.
      * @param dto the accrual to update
-     * @return the updated subject accrual
+     * @param spIi the study protocol identifier
+     * @param userId the user id
+     * @return the id of the updated study subject
      * @throws PAException on error
      */
-    SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException;
-        
+    Long update(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException;
+
     /**
      * Updates the given participating site with the given count. Only valid for participating sites that belong
      * to Industrial studies. Checks that the user provided has accrual access to this site.

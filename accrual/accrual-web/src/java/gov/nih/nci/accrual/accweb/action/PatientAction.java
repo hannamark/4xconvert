@@ -277,9 +277,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         if (hasActionErrors()) {
             return super.create();
         }
-        getOrganizationIdentifier();
         PatientDto pat = patient.getPatientDto();
-        pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
         PerformedSubjectMilestoneDto psm = patient
@@ -309,9 +307,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         if (hasActionErrors()) {
             return super.update();
         }
-        getOrganizationIdentifier();
         PatientDto pat = patient.getPatientDto();
-        pat.setOrganizationIdentifier(IiConverter.convertToIi(organizationId));
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         PerformedSubjectMilestoneDto psm = patient
@@ -348,16 +344,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             checkDisease = false;
         }
         return checkDisease;
-    }
-
-    private void getOrganizationIdentifier() {
-        if (patient.getStudySiteId() != null) {
-            for (SearchStudySiteResultWebDto ss : getListOfStudySites()) {
-                if (Long.valueOf(ss.getSsIi()).equals(patient.getStudySiteId())) {
-                    organizationId = Long.valueOf(ss.getOrgIi());
-                }
-            }
-        }
     }
 
     /**

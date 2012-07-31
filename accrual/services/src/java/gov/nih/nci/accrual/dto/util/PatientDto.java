@@ -100,7 +100,6 @@ public class PatientDto extends BaseDTO {
     private Ii countryIdentifier;
     private St zip;
     private Cd statusCode;
-    private Ii organizationIdentifier;
 
     /**
      * @return the raceCode
@@ -185,21 +184,5 @@ public class PatientDto extends BaseDTO {
      */
     public void setCountryIdentifier(Ii countryIdentifier) {
         this.countryIdentifier = countryIdentifier;
-    }
-  
-    /**
-     * Gets the organization identifier.
-     * @return the organization identifier
-     */
-      public Ii getOrganizationIdentifier() {
-        return organizationIdentifier;
-    }
-    
-    /**
-     * Sets the organization identifier.
-     * @param organizationIdentifier the new organization identifier
-     */
-      public void setOrganizationIdentifier(Ii organizationIdentifier) {
-        this.organizationIdentifier = organizationIdentifier;
     }
 }

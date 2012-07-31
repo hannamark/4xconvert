@@ -111,7 +111,6 @@ import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -153,13 +152,15 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 /**
  * Implementation of the subject accrual service.
@@ -169,8 +170,8 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
-    "PMD.NPathComplexity", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.NPathComplexity",
+    "PMD.ExcessiveClassLength" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
     private static final String IDENTIFIER = "identifier";
@@ -196,6 +197,18 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private BatchUploadProcessingTaskServiceLocal batchUploadProcessingTaskService;
     
     private boolean useTestSeq = false;
+
+    // Cache for country Ii's
+    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static final String COUNTRY_CACHE_KEY = "COUNTRY_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 50;
+    private static final long CACHE_TIME = 43200;
+    static {
+        Cache cache = new Cache(COUNTRY_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+        CACHE_MANAGER.removeCache(COUNTRY_CACHE_KEY);
+        CACHE_MANAGER.addCache(cache);
+    }
 
     /**
      * Class used to run separate thread for processing batch submissions.
@@ -258,11 +271,20 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                     throw new PAException("User does not have accrual access to site "
                             + subject.getParticipatingSiteIdentifier().getExtension());
                 }
+                StudySiteDTO participatingSite = PaServiceLocator.getInstance().getStudySiteService().get(
+                                subject.getParticipatingSiteIdentifier());
+                subject.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE));
+                Long userId = AccrualCsmUtil.getInstance().getCSMUser(
+                        CaseSensitiveUsernameHolder.getUser()).getUserId();
+                Long id;
                 if (ISOUtil.isIiNull(subject.getIdentifier())) {
-                    results.add(create(subject));
+                    id = create(subject, participatingSite.getStudyProtocolIdentifier(), userId);
                 } else {
-                    results.add(update(subject));
+                    id = update(subject, participatingSite.getStudyProtocolIdentifier(), userId);
                 }
+                PaHibernateUtil.getCurrentSession().clear();
+                StudySubject ssub = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, id);
+                results.add(Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(ssub));
             }
         }
         return results;
@@ -273,24 +295,22 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException {
+    public Long create(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot create a subject accrual with an identifier set. Please use update().");
         }
-        StudySiteDTO participatingSite =
-            PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
 
-        PatientDto patient = populatePatientDTO(dto, new PatientDto());
-        patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
+        Long newId = updatePatientTable(dto, new PatientDto(), userId);
+
         StudySubjectDto studySubj = new StudySubjectDto();
-        studySubj.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
-        studySubj.setPatientIdentifier(patient.getIdentifier());
-        StudySubjectDto studySubject = populateStudySubjectDTO(dto, studySubj);
+        studySubj.setStudyProtocolIdentifier(spIi);
+        studySubj.setPatientIdentifier(IiConverter.convertToIi(newId));
+        updateStudySubjectTable(dto, studySubj, userId);
 
         PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
         psm.setRegistrationDate(dto.getRegistrationDate());
-        psm.setStudySubjectIdentifier(studySubject.getIdentifier());
-        psm.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
+        psm.setStudySubjectIdentifier(IiConverter.convertToIi(newId));
+        psm.setStudyProtocolIdentifier(spIi);
         PerformedSubjectMilestone pa = Converters.get(PerformedSubjectMilestoneConverter.class)
                 .convertFromDtoToDomain(psm);
         Session session = PaHibernateUtil.getCurrentSession();
@@ -304,9 +324,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 + userid + "','" + userid + "')";
         session.createSQLQuery(sql).executeUpdate();
 
-        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
-                IiConverter.convertToLong(studySubject.getIdentifier()));
-        return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
+        return newId;
     }
 
     /**
@@ -314,36 +332,37 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException {
+    public Long update(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot update a subject accrual without an identifier set. Please use create().");
         }
-        StudySiteDTO participatingSite =
-            PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
-
         StudySubjectDto studySubject = getStudySubjectService().get(dto.getIdentifier());
-        populateStudySubjectDTO(dto, studySubject);
+        updateStudySubjectTable(dto, studySubject, userId);
         PatientDto patient = getPatientService().get(studySubject.getPatientIdentifier());
-        patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
-        populatePatientDTO(dto, patient);
+        updatePatientTable(dto, patient, userId);
         PerformedSubjectMilestoneDto psm =
             getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(
                     studySubject.getIdentifier()).iterator().next();
         psm.setRegistrationDate(dto.getRegistrationDate());
         String sql = "UPDATE performed_activity SET registration_date='" 
-        + TsConverter.convertToTimestamp(psm.getRegistrationDate()) + "' WHERE identifier=" 
-        + IiConverter.convertToLong(psm.getIdentifier());
+                + TsConverter.convertToTimestamp(psm.getRegistrationDate()) + "' WHERE identifier=" 
+                + IiConverter.convertToLong(psm.getIdentifier());
         PaHibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
-
-        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class,
-                IiConverter.convertToLong(studySubject.getIdentifier()));
-        return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
+        return IiConverter.convertToLong(studySubject.getIdentifier());
     }
 
-    private PatientDto populatePatientDTO(SubjectAccrualDTO dto, PatientDto patientDTO) throws PAException {
-        Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
+    private Long updatePatientTable(SubjectAccrualDTO dto, PatientDto patientDTO, Long userId) 
+            throws PAException {
+        Element element = CACHE_MANAGER.getCache(COUNTRY_CACHE_KEY).get(dto.getCountryCode());
+        if (element == null) {
+            Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
+            Ii countryIi = IiConverter.convertToCountryIi(country.getId());
+            element = new Element(dto.getCountryCode(), countryIi);
+            CACHE_MANAGER.getCache(COUNTRY_CACHE_KEY).put(element);
+        }
+
         patientDTO.setBirthDate(dto.getBirthDate());
-        patientDTO.setCountryIdentifier(IiConverter.convertToCountryIi(country.getId()));
+        patientDTO.setCountryIdentifier((Ii) element.getValue());
         patientDTO.setEthnicCode(CdConverter.convertToCd(
                 CDUSPatientEthnicityCode.getByCode(CdConverter.convertCdToString(dto.getEthnicity()))));
         patientDTO.setGenderCode(CdConverter.convertToCd(
@@ -359,30 +378,31 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         patientDTO.setRaceCode(races);
         patientDTO.setZip(dto.getZipCode());
         Patient p = Converters.get(PatientConverter.class).convertFromDtoToDomain(patientDTO);
+
         String sql = "";
         Session session = PaHibernateUtil.getCurrentSession();
-        Long userid = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
         SQLQuery queryObject = null;
+        Long result;
         if (p.getId() != null) {
-        sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code,"
-        + "birth_date=:birth_date, date_last_updated=now(), country_identifier=:country_identifier, zip=:zip" 
-        + ", user_last_updated_id=:user_last_updated_id WHERE identifier= :identifier";
-        
-        queryObject = session.createSQLQuery(sql);
-        queryObject.setParameter(IDENTIFIER, p.getId());
-        
+            result = p.getId();
+            sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code,"
+                    + "birth_date=:birth_date, date_last_updated=now(), country_identifier=:country_identifier"
+                    + ", zip=:zip , user_last_updated_id=:user_last_updated_id WHERE identifier= :identifier";
+            queryObject = session.createSQLQuery(sql);
         } else {
-            queryObject = createPatient(patientDTO, session, userid);
+            result = getNextId(session);
+            queryObject = createPatient(session, userId);
         }
+        queryObject.setParameter(IDENTIFIER, result);
         queryObject.setParameter("race_code", p.getRaceCode());
         queryObject.setParameter("sex_code", p.getSexCode().getName());
         queryObject.setParameter("ethnic_code", p.getEthnicCode().getName());
         queryObject.setParameter("birth_date", p.getBirthDate());
         queryObject.setParameter("country_identifier", p.getCountry().getId());
         queryObject.setParameter("zip", p.getZip());
-        queryObject.setParameter("user_last_updated_id", userid);
+        queryObject.setParameter("user_last_updated_id", userId);
         queryObject.executeUpdate();
-        return patientDTO;
+        return result;
     }
     
     private synchronized Long getNextId(Session session) {
@@ -397,9 +417,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return seq;
     }
 
-
-    private synchronized SQLQuery createPatient(PatientDto patientDTO, Session session, Long userid) {
-        Long id = getNextId(session);
+    private SQLQuery createPatient(Session session, Long userid) {
         String sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code," 
             + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id," 
             + "user_last_updated_id) VALUES (:identifier, :race_code,"
@@ -408,13 +426,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         SQLQuery queryObject = session.createSQLQuery(sql);
         queryObject.setParameter("user_last_created_id", userid);
-        queryObject.setParameter(IDENTIFIER, id);
-        patientDTO.setIdentifier(IiConverter.convertToIi(id));
         return queryObject;
     }
 
-    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO)
-        throws PAException {
+    private Long updateStudySubjectTable(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO, 
+            Long userId) throws PAException {
         studySubjectDTO.setAssignedIdentifier(dto.getAssignedIdentifier());
         studySubjectDTO.setPaymentMethodCode(CdConverter.convertToCd(
                 CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
@@ -433,10 +449,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         StudySubject ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(studySubjectDTO);
         String sql = "";
         Session session = PaHibernateUtil.getCurrentSession();
-        Long userid = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
         SQLQuery queryObject = null;
         
+        Long result;
         if (ss.getId() != null) {
+            result = ss.getId();
             sql = "UPDATE study_subject SET study_site_identifier= :study_site_identifier," 
                 + "payment_method_code=" 
                 + (ss.getPaymentMethodCode() != null ? "'" + ss.getPaymentMethodCode().getName() + "'" : null) 
@@ -449,25 +466,25 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 + " WHERE identifier= :identifier";
 
             queryObject = session.createSQLQuery(sql);
-            queryObject.setParameter(IDENTIFIER, ss.getId());
 
         } else {
-            queryObject = createStudySubject(studySubjectDTO, ss, session, userid);
+            result = ss.getPatient().getId();
+            queryObject = createStudySubject(ss, session, userId);
         }
+        queryObject.setParameter(IDENTIFIER, result);
         queryObject.setParameter("registration_group_id", ss.getRegistrationGroupId());
         queryObject.setParameter("submission_type", ss.getSubmissionTypeCode().getName());
         queryObject.setParameter("study_site_identifier", ss.getStudySite().getId());
         queryObject.setParameter("status_code", ss.getStatusCode().getName());
         queryObject.setParameter("assigned_identifier", ss.getAssignedIdentifier());
-        queryObject.setParameter("user_last_updated_id", userid);
+        queryObject.setParameter("user_last_updated_id", userId);
         queryObject.executeUpdate();
-        return studySubjectDTO;
+        return result;
     }
 
-    private SQLQuery createStudySubject(StudySubjectDto studySubjectDTO,
-            StudySubject ss, Session session, Long userid) {
+    private SQLQuery createStudySubject(StudySubject ss, Session session, Long userid) {
         String sql;
-        SQLQuery queryObject;           
+        SQLQuery queryObject;
 
         sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
             + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
@@ -485,17 +502,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         queryObject = session.createSQLQuery(sql);
         queryObject.setParameter("patient_identifier", ss.getPatient().getId());
         queryObject.setParameter("study_protocol_identifier", ss.getStudyProtocol().getId());
-        queryObject.setParameter(IDENTIFIER, ss.getPatient().getId());
         queryObject.setParameter("user_last_created_id", userid);
-        studySubjectDTO.setIdentifier(IiConverter.convertToIi(ss.getPatient().getId()));
         return queryObject;
-    }
-
-    private Ii getOrganizationIi(Ii hcfIi) {
-        Criteria crit = PaHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class);
-        crit.add(Restrictions.eq(IDENTIFIER, hcfIi.getExtension()));
-        HealthCareFacility hcf = (HealthCareFacility) crit.uniqueResult();
-        return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
 
     /**

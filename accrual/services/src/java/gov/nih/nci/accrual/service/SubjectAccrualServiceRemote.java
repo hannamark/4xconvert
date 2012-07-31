@@ -106,7 +106,7 @@ public interface SubjectAccrualServiceRemote {
     
     /**
      * Manages subject accruals, either by creating or updating them. The ordering of the returned list of accrual
-     * subjects will be the same as the ordering of the input list.
+     * subjects will be the same as the ordering of the input list. Only called through services.
      * @param subjects the subject accruals to manage
      * @return the newly created or updated subject accruals
      * @throws PAException on error

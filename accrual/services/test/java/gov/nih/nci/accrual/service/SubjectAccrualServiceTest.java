@@ -253,7 +253,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
         validateSubjectAccrualDTO(dto, results.get(0));
         
-        /*dto = results.get(0);
+        dto = results.get(0);
         dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001")));
         dto.setGender(CdConverter.convertToCd(PatientGenderCode.FEMALE));
         dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICARE));
@@ -261,7 +261,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         results = bean.manageSubjectAccruals(Arrays.asList(dto));
         assertEquals(1, results.size());
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
-        validateSubjectAccrualDTO(dto, results.get(0));*/
+        validateSubjectAccrualDTO(dto, results.get(0));
     }
 
     @Test
@@ -280,7 +280,8 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertEquals(1, results.size());
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
         SubjectAccrualDTO testDto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        testDto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE));
         validateSubjectAccrualDTO(testDto, results.get(0));
     }
     
@@ -335,14 +336,14 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         thrown.expectMessage("Cannot create a subject accrual with an identifier set. Please use update().");
     	SubjectAccrualDTO dto = new SubjectAccrualDTO();
     	dto.setIdentifier(IiConverter.convertToIi(12l));
-        bean.create(dto);
+        bean.create(dto, new Ii(), 1L);
     }
     
     @Test
     public void testUpdateNullCheck()  throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("Cannot update a subject accrual without an identifier set. Please use create().");
-    	bean.update(new SubjectAccrualDTO());
+    	bean.update(new SubjectAccrualDTO(), new Ii(), 1L);
 	}
     
     @Test
