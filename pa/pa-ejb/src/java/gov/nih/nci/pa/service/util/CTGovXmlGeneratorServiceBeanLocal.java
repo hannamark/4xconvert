@@ -174,6 +174,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -278,10 +279,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             createOverallOfficial(spDTO.getIdentifier(), doc, root);
             createOverallContact(spDTO.getIdentifier(), doc, root);
             createLocation(spDTO, doc, root);
-            XmlGenHelper.appendElement(root,
-                    XmlGenHelper.createElementWithTextblock("keyword",
-                            StringUtils.substring(StConverter.convertToString(spDTO
-                                    .getKeywordText()), 0, PAAttributeMaxLen.KEYWORD), doc));
+            createKeywords(spDTO, doc, root);
             Ts tsVerificationDate = spDTO.getRecordVerificationDate();
             if (ISOUtil.isTsNull(tsVerificationDate))  {
                 DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
@@ -307,6 +305,30 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             LOG.error("Error while generating CT.GOV.xml", e);
             return createErrorXml(spDTO, e);
         }
+    }
+
+    /**
+     * @param spDTO
+     * @param doc
+     * @param root
+     */
+    private void createKeywords(StudyProtocolDTO spDTO, Document doc,
+            Element root) {
+        final String keywords = StringUtils
+                .defaultString(
+                        StringUtils.substring(StConverter.convertToString(spDTO
+                                .getKeywordText()), 0,
+                                PAAttributeMaxLen.KEYWORD))
+                .replace("\r\n", " ").replace("\r", " ").replace("\n", " ")
+                .replaceAll("\\s+", " ").trim();
+        String wrapped = WordUtils.wrap(keywords,
+                PAAttributeMaxLen.PRS_KEYWORD, "\r", true);
+        String[] lines = wrapped.split("\\r");
+        for (String line : lines) {
+            XmlGenHelper.appendElement(root, XmlGenHelper
+                    .createElementWithTextblock("keyword", line, doc));
+        }
+
     }
 
     /**

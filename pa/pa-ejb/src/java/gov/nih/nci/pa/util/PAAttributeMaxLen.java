@@ -92,6 +92,10 @@ public class PAAttributeMaxLen {
 
     /** max lengtH for keyword. **/
     public static final  int KEYWORD = 4000;
+    
+    /** max lengtH for PRS keyword. **/
+    public static final  int PRS_KEYWORD = 160;    
+    
     /** max lengtH for middle name. **/
     public static final int MIDDLE_NAME = 10;
     /** max display lengtH for official tile. **/
