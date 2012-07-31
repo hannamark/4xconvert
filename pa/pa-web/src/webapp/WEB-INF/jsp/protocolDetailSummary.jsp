@@ -46,7 +46,7 @@
     		<div class="row">
     			<span class="label"><fmt:message key="studyProtocol.principalInvestigator"/>:</span>
     			<span class="value"><a href="javascript:void(0);" 
-    			     onclick="javascript:displayPersonDetails(<c:out value="${sessionScope.trialSummary.piPOId}"/>);"> 
+    			     onclick="javascript:displayPersonDetails(<c:out value="${sessionScope.principalInvestigatorPOId}"/>);"> 
     			         <c:out value="${sessionScope.trialSummary.piFullName }"/>
                 </a></span>
     		</div>

@@ -151,5 +151,8 @@ public class Constants {
     public static final String TRIAL_SUBMITTER_ORG = "trialSubmitterOrg";
     /** Trial Submitter Organization.  */
     public static final String TRIAL_SUBMITTER_ORG_PO_ID = "trialSubmitterOrgPOId";
+    /** Principal Investigator PO_ID  */
+    public static final String PI_PO_ID = "principalInvestigatorPOId";
+    
     
 }

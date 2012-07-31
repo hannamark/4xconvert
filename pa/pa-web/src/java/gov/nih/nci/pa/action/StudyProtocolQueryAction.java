@@ -276,12 +276,13 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @return res
      * @throws PAException exception
      */
-    public String view() throws PAException {
+    public String view() throws PAException { // NOPMD
         if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
                 .getSession())) {
             return showCriteria();
         }
         try {
+            HttpSession session = ServletActionContext.getRequest().getSession();
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
@@ -290,9 +291,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                 Person piPersonInfo =
                         correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
                                 .getPiId()));
-                studyProtocolQueryDTO.setPiPOId(Long.valueOf(piPersonInfo.getIdentifier()));
+                session.setAttribute(Constants.PI_PO_ID, piPersonInfo.getIdentifier());
             }
-            HttpSession session = ServletActionContext.getRequest().getSession();
+            
             session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
             // When the study protocol is selected, set its token to be the current time in milliseconds.
