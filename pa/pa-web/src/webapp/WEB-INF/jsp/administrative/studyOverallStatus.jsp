@@ -136,7 +136,7 @@
                                     <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
                                 </pa:valueRow>
 								<pa:valueRow labelKey="blank.label">
-								    <span class="info">Please refer to the <a href='<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getStateTransitionDiagramUrl()" />' target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
+								    <span class="info">Please refer to the <a href="https://wiki.nci.nih.gov/x/UqtiAw"  target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
 								</pa:valueRow>
                             </table>
                         </td>

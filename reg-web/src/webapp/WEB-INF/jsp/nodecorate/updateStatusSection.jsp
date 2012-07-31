@@ -100,6 +100,6 @@
     </span>
 </reg-web:valueRow>
 <reg-web:valueRow labelKey="blank.label">
-    <span class="info">Please refer to the <a href='<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getStateTransitionDiagramUrl()" />' target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
+    <span class="info">Please refer to the <a href="https://wiki.nci.nih.gov/x/SaZiAw" target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
 </reg-web:valueRow>
 <reg-web:spaceRow/> 
