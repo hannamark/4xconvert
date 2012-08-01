@@ -87,6 +87,8 @@ import javax.ejb.SessionContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
@@ -116,13 +118,15 @@ public class AuthorizationInterceptor {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     // method invocation wrapper requires throws Exception
     public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        String username;
-        try {
-            username = sessionContext.getCallerPrincipal().getName();
-        } catch (IllegalStateException e) {
-            username = getUnknownUsername();
+        if (StringUtils.isEmpty(UsernameHolder.getUser())) {
+            String username;
+            try {
+                username = sessionContext.getCallerPrincipal().getName();
+            } catch (IllegalStateException e) {
+                username = getUnknownUsername();
+            }
+            UsernameHolder.setUser(username);
         }
-        UsernameHolder.setUser(username);
         return invContext.proceed();
     }
 
