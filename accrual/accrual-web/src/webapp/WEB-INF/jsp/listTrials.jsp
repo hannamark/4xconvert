@@ -6,7 +6,7 @@
     <display:table class="data" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
       sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
-       <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" headerClass="sortable" headerScope="col">
+       <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" sortProperty="assignedIdentifier.value" headerClass="sortable" headerScope="col">
            <s:if test="%{#attr.row.industrial.value}">
                 <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
            </s:if>
