@@ -89,7 +89,6 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -193,7 +192,7 @@ public class SearchTrialBean implements SearchTrialService {
         Session session = PaHibernateUtil.getCurrentSession();
         String hql =
             " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
-            + "      sp.id, sos.statusCode, per, sr.typeCode "
+            + "      sp.id, sos.statusCode, per, sp.proprietaryTrialIndicator "
             + "from StudyProtocol as sp "
             + "left outer join sp.studyOverallStatuses as sos "
             + "left outer join sp.studyContacts as sc "
@@ -203,7 +202,6 @@ public class SearchTrialBean implements SearchTrialService {
             + "left outer join ss.researchOrganization as ro "
             + "left outer join ro.organization as org "
             + "left outer join sp.otherIdentifiers as oi "
-            + "left outer join sp.studyResourcings as sr "
             + "where sp.id in (:studyProtocolIdentifiers) "
             + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
             + "       or ss.functionalCode is null) "
@@ -213,8 +211,7 @@ public class SearchTrialBean implements SearchTrialService {
             + "                where sos.studyProtocol = sos1.studyProtocol ) "
             + "       or sos.id is null)"
             + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
-            + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') "
-            + "  and sr.typeCode is not null";
+            + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') ";
         Query query = session.createQuery(hql);
         query.setParameterList("studyProtocolIdentifiers", identifiers);
         List<Object[]> queryList = query.list();
@@ -233,8 +230,7 @@ public class SearchTrialBean implements SearchTrialService {
         trial.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) obj[SP_ID_IDX]));
         trial.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) obj[SOS_STATUS_IDX]));
         trial.setIdentifier(trial.getStudyProtocolIdentifier());
-        SummaryFourFundingCategoryCode studyType = (SummaryFourFundingCategoryCode) obj[TYPE_CODE_IDX];
-        trial.setIndustrial(BlConverter.convertToBl(studyType == SummaryFourFundingCategoryCode.INDUSTRIAL));
+        trial.setIndustrial(BlConverter.convertToBl((Boolean) obj[TYPE_CODE_IDX]));
         Person person = (Person) obj[PERSON_IDX];
         trial.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         return trial;
