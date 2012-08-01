@@ -24,7 +24,7 @@ function setCheckbox(index) {
     <s:token/>
     <s:hidden name="studyProtocolId" />
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
-        decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator">
+        decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
         <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
         <s:if test="%{#attr.row.studySite.id in sitesToSave}">
 	       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
