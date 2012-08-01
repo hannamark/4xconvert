@@ -1468,6 +1468,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @return s
      */
    public String proprietarySave() {
+        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
        clearErrorsAndMessages();
        enforceBusinessRulesForProprietary();
        if (hasErrors()) {
