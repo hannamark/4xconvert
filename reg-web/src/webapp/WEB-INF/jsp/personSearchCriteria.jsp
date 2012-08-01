@@ -141,8 +141,8 @@
 		              <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${row.id}"/>)"><c:out value="${row.id}"/></a>
 		        </display:column>
 		        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
-			    <display:column escapeXml="true" title="First Name" property="firstName"  headerClass="sortable" sortable="true"/>			    
-			    <display:column escapeXml="true" title="Last Name" property="lastName"  headerClass="sortable" sortable="true"/>			    
+			    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="First Name" property="firstName"  headerClass="sortable" sortable="true"/>			    		    
+			    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="Last Name" property="lastName" sortable="true" headerClass="sortable" />			    
 			    <display:column escapeXml="true" title="Email" property="email" sortable="true"/>
 		        <display:column escapeXml="false" title="Organization Affiliation" sortable="false">
 		            <c:forEach items="${row.organizations}" var="org">
