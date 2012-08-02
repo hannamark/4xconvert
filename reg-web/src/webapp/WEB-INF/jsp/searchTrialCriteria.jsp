@@ -15,7 +15,7 @@
         document.getElementById("officialTitle").value="";
         document.getElementById("phaseCode").value="";
         document.getElementById("typeCodeValues").value="";
-        document.getElementById("identifierType").value="";
+        document.getElementById("identifierType").value="All";
         document.getElementById("identifier").value="";
         document.getElementById("organizationType").value="";
         document.getElementById("typeCodeValues").value="";
