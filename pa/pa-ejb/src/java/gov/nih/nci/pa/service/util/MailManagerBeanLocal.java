@@ -729,7 +729,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         try {
             // Define Message
             MimeMessage message = prepareMessage(lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL), mailFrom, 
-                    null, lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL_SUBJECT"));
+                    null, lookUpTableService.getPropertyValue("CDE_REQ_TO_EMAIL_SUB_PERMISSIBLE"));
             // body
             Multipart multipart = new MimeMultipart();
             BodyPart msgPart = new MimeBodyPart();

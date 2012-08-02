@@ -461,7 +461,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 return requestToCreateCDE();
             }
             PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "CDE Request sent successfully");
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
+                    "New Permissible value Request sent successfully");
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
