@@ -322,9 +322,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 throw new PAException(
                         "Unable to find the amending user's account record.");
             }
-            String sql = "UPDATE study_protocol SET user_last_created_id = "
+            String spUpdate = "UPDATE study_protocol SET user_last_created_id = "
                     + user.getUserId() + " WHERE identifier=" + studyProtocolId;
-            getPAServiceUtils().executeSql(sql);
+            getPAServiceUtils().executeSql(spUpdate);
+            
+            //At this point there is only 1 record in study_milestone table. 
+            //Hence safe to fire an update. 
+            String smUpdate = "UPDATE study_milestone SET user_last_created_id = "
+                    + user.getUserId() + " , user_last_updated_id = " 
+                    + user.getUserId() + " WHERE study_protocol_identifier=" + studyProtocolId;
+            getPAServiceUtils().executeSql(smUpdate);            
         }
     }
 
