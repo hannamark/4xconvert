@@ -141,4 +141,10 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
 	public boolean isStudySiteHasDCPId(Ii studyProtocolIi) throws PAException {
 		return false;
 	}
+
+	@Override
+	public List<SearchStudySiteResultDto> getTreatingSites(Long studyProtocolId)
+			throws PAException {
+		return null;
+	}
 }

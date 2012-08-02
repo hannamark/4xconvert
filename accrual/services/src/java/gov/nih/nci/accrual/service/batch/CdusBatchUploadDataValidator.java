@@ -84,11 +84,10 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
-import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
@@ -102,7 +101,9 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -118,6 +119,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -145,11 +147,15 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
     private RegistryUser ru;
     private StudyProtocolDTO sp;
-    private final Map<String, String> listOfPoIds = new HashMap<String, String>();
+    private final Map<String, Long> listOfPoIds = new HashMap<String, Long>();
     private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
     private final Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
     private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
+    private static final String SUABSTRACTOR = "SuAbstractor";
+    private boolean addStudySiteAccrualAccess = false;
+    @EJB
+    private SubjectAccrualServiceLocal subjectAccrualService;
     /**
      * {@inheritDoc}
      */
@@ -194,12 +200,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         try {
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
-                                    .search(sp.getIdentifier(), IiConverter.convertToIi(ru.getId()));
+                                    .getTreatingSites(IiConverter.convertToLong(sp.getIdentifier()));
                             for (SearchStudySiteResultDto iso : isoStudySiteList) {
                                 listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
-                                        IiConverter.convertToString(iso.getStudySiteIi()));
+                                        IiConverter.convertToLong(iso.getStudySiteIi()));
                             }
-                            for (Map.Entry<String, String> entry : listOfPoIds.entrySet()) {
+                            for (Map.Entry<String, Long> entry : listOfPoIds.entrySet()) {
                                 ids.add(IiConverter.convertToLong(IiConverter.convertToPoOrganizationIi(
                                         entry.getKey())));
                             }
@@ -268,6 +274,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 results.setPassedValidation(true);
                 results.setListOfOrgIds(listOfOrgIds);
                 results.setListOfPoStudySiteIds(listOfPoIds);
+
+                if (addStudySiteAccrualAccess && isSuAbstractor()) {
+                    for (Long studySiteId : listOfPoIds.values()) {
+                        try {
+                             subjectAccrualService.createAccrualAccess(ru, studySiteId);                   
+                        } catch (NumberFormatException e) {
+                             LOG.error("NumberFormatException while creating Accrual access.", e);
+                        } catch (PAException e) {
+                            LOG.error("Error creating Accrual access.", e);
+                        }
+                    }
+                }
             } else {
                 LOG.info(errMsg.toString());
             }
@@ -455,7 +473,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, String regInstID, 
             StringBuffer errMsg, long lineNumber) {
         try {
-            String studySiteIi  = null;
+            Long studySiteIi  = null;
             String poId = null;
             studySiteIi = listOfPoIds.get(regInstID);
             if (studySiteIi == null) {
@@ -464,7 +482,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             if (StringUtils.isNotEmpty(poId)) {
                 studySiteIi = listOfPoIds.get(poId);
             }
-            if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
+            if (!isSuAbstractor() 
+                    && !AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
                 addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
             }
         } catch (PAException e) {
@@ -537,12 +556,29 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     }
     
     private boolean hasAccrualAccess(Ii spIi) {
-        String user = CaseSensitiveUsernameHolder.getUser();
         try {
-            Bl hasAccess = getSearchTrialService().isAuthorized(spIi, IiConverter.convertToIi(ru.getId()));
-            return BlConverter.convertToBool(hasAccess);
+            boolean hasAccess = BlConverter.convertToBool(getSearchTrialService().isAuthorized(spIi, 
+                    IiConverter.convertToIi(ru.getId())));
+            boolean superAbs = isSuAbstractor();
+            if (superAbs && !hasAccess) {
+                addStudySiteAccrualAccess = true;
+            }
+            if (hasAccess || superAbs) {
+                return true;
+            }
         } catch (Exception e) {
-            LOG.error("Error determining accrual access for " + user + ".", e);
+            LOG.error("Error determining accrual access for " + ru.getCsmUser().getLoginName() + ".", e);
+            return false;
+        }
+        return false;
+    }
+    
+    private boolean isSuAbstractor() {
+        CSMUserUtil userService = CSMUserService.getInstance();
+        try {     
+            return userService.isUserInGroup(ru.getCsmUser().getLoginName(), SUABSTRACTOR);
+        } catch (Exception e) {
+            LOG.error("Error determining user role for " + ru.getCsmUser().getLoginName() + ".", e);
             return false;
         }
     }    
@@ -552,5 +588,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             errMsg.append(key).append(appendLineNumber(lineNumber))
                 .append(" must contain a patient identifier that is unique within the study.\n");
         }
+    }
+    
+    /**
+     * @param subjectAccrualService the subject accrual service to set
+     */
+    public void setSubjectAccrualService(SubjectAccrualServiceLocal subjectAccrualService) {
+        this.subjectAccrualService = subjectAccrualService;
     }
 }

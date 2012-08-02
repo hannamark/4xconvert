@@ -93,19 +93,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -115,10 +122,13 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -143,6 +153,81 @@ import org.mockito.stubbing.Answer;
  * @author vrushali
  */
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
+	   
+    @Test
+    public void testSuAbstractorBatchUpload() throws Exception {
+    	
+    	final StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Test Sp1");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setProprietaryTrialIndicator(true);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2012-00003");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(2));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+        
+    	StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
+        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+        	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+        		StudyProtocolDTO dto = new StudyProtocolDTO();
+        		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
+        		Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		Ii spSecId = new Ii();
+        		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        		dto.setIdentifier(IiConverter.convertToIi(sp.getId()));
+        		dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+        		spSecId.setExtension("NCI-2012-00003");
+        		secondaryIdentifiers.add(spSecId);
+        		dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+        		return dto;
+        	}
+            });
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
+        CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+        
+
+
+        SearchTrialService searchTrialSvc = mock(SearchTrialService.class);
+        when(searchTrialSvc.isAuthorized(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<Bl>() {
+            public Bl answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii spIi = (Ii) args[0];
+                Bl result = new Bl();
+                result.setValue(Boolean.FALSE);
+                return result;
+            }
+        });
+        when(searchTrialSvc.getTrialSummaryByStudyProtocolIi(any(Ii.class))).thenAnswer(new Answer<SearchTrialResultDto>() {
+            public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
+                SearchTrialResultDto result = new SearchTrialResultDto();
+                result.setIndustrial(BlConverter.convertToBl(true));
+                return result;
+            }
+            
+        });
+        cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);       
+        
+        File file = new File(this.getClass().getResource("/suAbs-accrual-count-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
+        assertEquals("suAbs-accrual-count-batch-file.txt", importResults.getFileName());
+        assertEquals(2, importResults.getTotalImports());       
+    }
 
 	@Test
 	public void patientRCCoverage() throws URISyntaxException, PAException {

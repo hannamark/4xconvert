@@ -115,9 +115,11 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
@@ -137,7 +139,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -161,6 +165,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * Implementation of the subject accrual service.
@@ -288,6 +293,34 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             }
         }
         return results;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createAccrualAccess(RegistryUser ru, Long ssId) throws PAException {
+        StudySiteAccrualAccess ssaa = (StudySiteAccrualAccess) PaHibernateUtil.getCurrentSession()
+                .createCriteria(StudySiteAccrualAccess.class)
+                .add(Restrictions.eq("studySite.id", ssId))
+                .add(Restrictions.eq("registryUser.id", ru.getId())).uniqueResult();
+        Long userid = AccrualCsmUtil.getInstance().getCSMUser(ru.getCsmUser().getLoginName()).getUserId();
+        Session session = PaHibernateUtil.getCurrentSession();
+        if (ssaa == null) {
+        String sql = "INSERT INTO study_site_accrual_access(identifier, study_site_identifier, status_code," 
+            + "status_date_range_low, date_last_created, date_last_updated,user_last_created_id,"
+            + "registry_user_id) VALUES (:identifier, :study_site_identifier, :status_code, "
+            + ":status_date_range_low, now(), now(),:user_last_created_id, :registry_user_id)";
+            SQLQuery queryObject  = session.createSQLQuery(sql);
+            queryObject.setParameter(IDENTIFIER, getNextId(session));
+            queryObject.setParameter("study_site_identifier", ssId);
+            queryObject.setParameter("status_code", ActiveInactiveCode.ACTIVE.getName());
+            queryObject.setParameter("status_date_range_low", new Timestamp(new Date().getTime()));
+            queryObject.setParameter("user_last_created_id", userid);
+            queryObject.setParameter("registry_user_id", ru.getId());
+            queryObject.executeUpdate();
+        }
     }
 
     /**

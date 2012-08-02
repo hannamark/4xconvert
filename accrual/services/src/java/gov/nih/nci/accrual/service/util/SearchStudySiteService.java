@@ -117,4 +117,11 @@ public interface SearchStudySiteService {
      * @throws PAException on error
      */
     boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException;
+
+    /**
+     * @param studyProtocolId protocol id
+     * @return list of treating sites
+     * @throws PAException exception
+     */
+    List<SearchStudySiteResultDto> getTreatingSites(Long studyProtocolId) throws PAException;
 }

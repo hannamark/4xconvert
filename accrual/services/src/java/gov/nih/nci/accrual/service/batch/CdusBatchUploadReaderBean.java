@@ -310,7 +310,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
-            String studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());
+            Long studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
             SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
                     IiConverter.convertToIi(studySiteIi));
             try {

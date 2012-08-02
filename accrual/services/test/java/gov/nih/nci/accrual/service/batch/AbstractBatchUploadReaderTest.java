@@ -86,12 +86,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.PatientBeanLocal;
 import gov.nih.nci.accrual.service.PerformedActivityBean;
 import gov.nih.nci.accrual.service.StudySubjectBean;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -101,6 +103,7 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
 import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
+import gov.nih.nci.accrual.util.MockCSMUserService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -134,6 +137,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -259,9 +263,55 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         });
         when(spSvc.getStudyProtocol(any(Ii.class))).thenReturn(new StudyProtocolDTO());
 
-        SearchStudySiteService sssSvc = new SearchStudySiteBean();
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
         readerService.setSearchStudySiteService(sssSvc);
         cdusBatchUploadDataValidator.setSearchStudySiteService(sssSvc);
+        when(sssSvc.getTreatingSites(any(Long.class))).thenAnswer(new Answer<List<SearchStudySiteResultDto>>() {
+            public List<SearchStudySiteResultDto> answer(InvocationOnMock invocation) throws Throwable {
+            	List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
+            	SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(1).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(0).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                result.add(dto);
+                dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(2).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(1).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(1).getId()));
+                result.add(dto);
+                dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(4).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(0).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                result.add(dto);
+                dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(6).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(0).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                result.add(dto);
+                dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(7).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(0).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                result.add(dto);
+                dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(8).getId()));
+                dto.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(1).getName()));
+                dto.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(1).getId()));
+                result.add(dto);
+                return result;
+            }
+        });
+        
+        when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<SearchStudySiteResultDto>() {
+            public SearchStudySiteResultDto answer(InvocationOnMock invocation) throws Throwable {
+            	SearchStudySiteResultDto result = new SearchStudySiteResultDto();
+            	result.setStudySiteIi(IiConverter.convertToIi(TestSchema.studySites.get(8).getId()));
+            	result.setOrganizationName(StConverter.convertToSt(TestSchema.organizations.get(1).getName()));
+            	result.setOrganizationIi(IiConverter.convertToIi(TestSchema.organizations.get(1).getId()));
+                return result;
+            }
+        });
 
         SearchTrialService searchTrialSvc = mock(SearchTrialService.class);
         when(searchTrialSvc.isAuthorized(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<Bl>() {
@@ -287,6 +337,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         });
         readerService.setSearchTrialService(searchTrialSvc);
         cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
+        cdusBatchUploadDataValidator.setSubjectAccrualService(mock(SubjectAccrualServiceLocal.class));
 
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
@@ -392,6 +443,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
         when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
+        
+        CSMUserService.setInstance(new MockCSMUserService());
     }
 
     protected void setUpPoRegistry() throws NullifiedEntityException, NullifiedRoleException, EntityValidationException,

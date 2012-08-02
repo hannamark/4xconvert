@@ -135,4 +135,12 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @param batchFile the batchFile
      */
     void processBatchFiles(BatchFile batchFile);
+    
+    /**
+     * create a study site accrual access.
+     * @param ru RegistryUser
+     * @param ssId StudySiteId
+     * @throws PAException on error
+     */
+    void createAccrualAccess(RegistryUser ru, Long ssId) throws PAException;
 }

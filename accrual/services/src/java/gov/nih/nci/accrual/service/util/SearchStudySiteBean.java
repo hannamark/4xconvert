@@ -81,7 +81,9 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -144,6 +146,47 @@ public class SearchStudySiteBean implements SearchStudySiteService {
             } catch (HibernateException hbe) {
                 throw new PAException("Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().",
                         hbe);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<SearchStudySiteResultDto> getTreatingSites(Long studyProtocolId) throws PAException {
+        List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select ss.id, org.name, org.identifier "
+                + "from StudyProtocol as sp join sp.studySites as ss "
+                + "left outer join ss.healthCareFacility as ro "
+                + "left outer join ro.organization as org "
+                + "where sp.id = :spId and ss.functionalCode = :functionalCode";
+        Query query = session.createQuery(hql);
+        query.setParameter("spId", studyProtocolId);
+        query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+        List<Object[]> queryList = query.list();
+        for (Object[] qArr : queryList) {
+            Object[] site = qArr;
+            StudySiteAccrualStatus ssas = null;
+            List<StudySiteAccrualStatus> results = PaHibernateUtil.getCurrentSession()
+                .createCriteria(StudySiteAccrualStatus.class)
+                .add(Restrictions.eq("studySite.id", site[0])).list();
+            if (!results.isEmpty()) {
+                ssas = results.get(results.size() - 1);
+            }
+            RecruitmentStatusCode recruitmentStatus = null;
+            if (ssas != null) {
+                recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
+                if (recruitmentStatus.isEligibleForAccrual()) {
+                    SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
+                    dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
+                    dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
+                    dto.setOrganizationIi(IiConverter.convertToIi((String) site[2]));
+                    result.add(dto);
+                }
             }
         }
         return result;

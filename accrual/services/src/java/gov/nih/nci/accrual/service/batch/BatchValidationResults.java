@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,7 @@ public class BatchValidationResults {
     private String fileName;
     private String nciIdentifier;
     private Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
-    private Map<String, String> listOfPoStudySiteIds = new HashMap<String, String>();
+    private Map<String, Long> listOfPoStudySiteIds = new HashMap<String, Long>();
 
     /**
      * @return the errors
@@ -205,14 +206,14 @@ public class BatchValidationResults {
     /**
      * @return listOfPoStudySiteIds
      */
-    public Map<String, String> getListOfPoStudySiteIds() {
+    public Map<String, Long> getListOfPoStudySiteIds() {
         return listOfPoStudySiteIds;
     }
 
     /**
      * @param listOfPoStudySiteIds the listOfPoStudySiteIds to set
      */
-    public void setListOfPoStudySiteIds(Map<String, String> listOfPoStudySiteIds) {
+    public void setListOfPoStudySiteIds(Map<String, Long> listOfPoStudySiteIds) {
         this.listOfPoStudySiteIds = listOfPoStudySiteIds;
     }
 }

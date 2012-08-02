@@ -520,6 +520,18 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
                                            pagingParams);
     }   
     
+    @Test
+    public void testCreateAC() throws Exception {
+    	StudySite ss = new StudySite();
+    	ss.setLocalStudyProtocolIdentifier("test12345L");
+    	ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+    	ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+    	ss.setHealthCareFacility(TestSchema.healthCareFacilities.get(0));
+    	ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
+    	TestSchema.addUpdObject(ss);
+    	bean.createAccrualAccess(TestSchema.registryUsers.get(0), ss.getId());
+    }
+    
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {
         assertEquals(StConverter.convertToString(expected.getAssignedIdentifier()), StConverter.convertToString(given.getAssignedIdentifier()));
         assertEquals(AccrualUtil.tsToYearMonthString(expected.getBirthDate()), AccrualUtil.tsToYearMonthString(given.getBirthDate()));

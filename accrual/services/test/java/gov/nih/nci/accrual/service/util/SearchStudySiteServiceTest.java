@@ -92,19 +92,25 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.StudySiteComparator;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -245,5 +251,51 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         
         Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
         assertFalse(bean.isStudySiteHasDCPId(otherSpIi));
+    }
+
+    @Test
+    public void testGetTreatingSites() throws PAException {
+        
+    	StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Test study2");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2012"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2012"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2012-00001");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+        
+    	StudySite ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(TestSchema.healthCareFacilities.get(0));
+        ss.setStudyProtocol(sp);
+        TestSchema.addUpdObject(ss);
+        Set<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
+        studySites.add(ss);
+        sp.setStudySites(studySites);
+        
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setStudySite(ss);
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ssas);
+        
+        StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
+        ssaa.setStudySite(ss);
+        ssaa.setRegistryUser(TestSchema.registryUsers.get(0));
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));        
+        TestSchema.addUpdObject(ssas);
+        
+        assertNotNull(bean.getTreatingSites(sp.getId()));
     }
 }
