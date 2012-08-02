@@ -109,7 +109,7 @@
 
         
             <display:table class="data" pagesize="10" id="row" name="trialOwners" requestURI="assignOwnershipsearch.action" export="false">
-                <display:column titleKey="pending.userFirstName" sortable="true" headerClass="sortable">
+                <display:column titleKey="user.fullName" sortable="true" headerClass="sortable">
                     <c:out value="${row.regUser.firstName}"/> 
                     <c:out value="${row.regUser.lastName}"/>
                 </display:column>
