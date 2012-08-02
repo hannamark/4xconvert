@@ -637,10 +637,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 return false;
             }
 
-            if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-                return false;
-            }
-
             if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
                 return false;
             }
