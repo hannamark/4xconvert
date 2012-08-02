@@ -569,8 +569,16 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
 
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {  
     xml.address {
-        xml.street(row.streetaddressline)
-        xml.city(row.cityormunicipality)
+        if (row.streetaddressline != Constants.UNKNOWN){
+            xml.street(row.streetaddressline)
+        }else {
+            xml.street("");
+        }
+        if(row.cityormunicipality != Constants.UNKNOWN) {
+            xml.city(row.cityormunicipality)
+        }else{
+            xml.city("");
+        }
         xml.state(row.stateorprovince)
         xml.zip(row.postalcode)
         xml.country(row.country_name)
@@ -582,7 +590,17 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
         xml.fax(row.faxnumber)
     }
     
-    xml.email((spRow!=null && spRow.prim_email!=null?spRow.prim_email:(suppressPhoneAndEmail?"":row.email)))
+    if (!suppressPhoneAndEmail) {
+        if (spRow!=null && spRow.prim_email!=null && !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
+            xml.email(spRow.prim_email);
+        }else if (row.email != null && !Constants.SUPRESS_EMAIL_IDS.contains(row.email)) {
+            xml.email(row.email);
+        }else{
+            xml.email("");
+        }
+    }else{
+        xml.email("");
+    }
 }
 
 String changeSponsorNameIfNeeded(orgName) {
