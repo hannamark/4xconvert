@@ -3,6 +3,8 @@
 import groovy.sql.Sql
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
+import org.apache.commons.lang.StringUtils
+
 
 def props = new Properties()
 new File("resolved.build.properties").withInputStream {
@@ -569,12 +571,12 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
 
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {  
     xml.address {
-        if (row.streetaddressline != Constants.UNKNOWN){
+        if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")){
             xml.street(row.streetaddressline)
         }else {
             xml.street("");
         }
-        if(row.cityormunicipality != Constants.UNKNOWN) {
+        if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
             xml.city(row.cityormunicipality)
         }else{
             xml.city("");
@@ -591,9 +593,9 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
     }
     
     if (!suppressPhoneAndEmail) {
-        if (spRow!=null && spRow.prim_email!=null && !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
+        if (spRow!=null && spRow.prim_email!=null && !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown")) {
             xml.email(spRow.prim_email);
-        }else if (row.email != null && !Constants.SUPRESS_EMAIL_IDS.contains(row.email)) {
+        }else if (row.email != null && !StringUtils.containsIgnoreCase(row.email, "unknown")) {
             xml.email(row.email);
         }else{
             xml.email("");
