@@ -426,8 +426,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     public void sendConfirmationEmail(BatchImportResults result, BatchFile batchFile) throws PAException {
         String subject = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.subject");
-        String body = PaServiceLocator.getInstance().getLookUpTableService()
+        String body = "";
+        if (result.isSkipBecauseOfChangeCode()) {
+            body = PaServiceLocator.getInstance().getLookUpTableService()
+                    .getPropertyValue("accrual.changeCode.body");
+        } else {
+            body = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.body");
+        }
         String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
@@ -437,7 +443,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     result.getTotalImports(), result.getFileName()));
         }
         body = body.replace("${fileName}", result.getFileName());
-        body = body.replace("${count}", String.valueOf(result.getTotalImports()));
+        if (!result.isSkipBecauseOfChangeCode()) {
+            body = body.replace("${count}", String.valueOf(result.getTotalImports()));
+        }
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);

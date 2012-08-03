@@ -1070,5 +1070,9 @@
      <changeSet id="PO-5206" author="krylovd">
         <comment>Added study_accrual_access table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5206.sql"/>
+     </changeSet>
+    <changeSet id="PO-5319" author="Kalpana">
+        <comment>added new accrual changecode email in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5319.sql"/>
      </changeSet>    
 </databaseChangeLog>

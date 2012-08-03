@@ -193,6 +193,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     private static final String CONFIRMATION_SUBJECT_VALUE = "accrual.confirmation.subject- ${nciTrialIdentifier}";
     private static final String CONFIRMATION_BODY_KEY = "accrual.confirmation.body";
     private static final String CONFIRMATION_BODY_VALUE = "accrual.confirmation.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, ${errors}, ${count}.";
+    private static final String CHANGECODE_BODY_KEY = "accrual.changeCode.body";
+    private static final String CHANGECODE_BODY_VALUE = "accrual.changeCode.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}.";
     
     @Before
     public void setUpReader() throws Exception {
@@ -423,6 +425,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_BODY_KEY)).thenReturn(ERROR_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_SUBJECT_KEY)).thenReturn(CONFIRMATION_SUBJECT_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_BODY_KEY)).thenReturn(CONFIRMATION_BODY_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(CHANGECODE_BODY_KEY)).thenReturn(CHANGECODE_BODY_VALUE);
         
         PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
         when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
