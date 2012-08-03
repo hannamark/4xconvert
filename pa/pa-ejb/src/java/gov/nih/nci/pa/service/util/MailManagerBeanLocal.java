@@ -407,7 +407,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
         try {
             String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
-            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, false);
+            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, true);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
