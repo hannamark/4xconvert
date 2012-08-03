@@ -570,20 +570,37 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
 }
 
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {  
-    xml.address {
-        if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")){
-            xml.street(row.streetaddressline)
-        }else {
-            xml.street("");
+
+     xml.address {
+         
+        if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
+            xml.street("")
+            xml.city("")
+            xml.state("")
+            xml.zip("")
+            xml.country("")
+        } else {
+            if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
+                xml.street(row.streetaddressline)
+            } else {
+                xml.street("");
+            }
+            if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
+                xml.city(row.cityormunicipality)
+            }else{
+                xml.city("");
+            }
+            
+            xml.state(row.stateorprovince)
+            
+            if(StringUtils.equals(row.postalcode, "96960")) {
+                xml.zip("")
+            }else{
+                xml.zip(row.postalcode)
+            }
+            
+            xml.country(row.country_name)
         }
-        if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
-            xml.city(row.cityormunicipality)
-        }else{
-            xml.city("");
-        }
-        xml.state(row.stateorprovince)
-        xml.zip(row.postalcode)
-        xml.country(row.country_name)
     }
     
     xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
