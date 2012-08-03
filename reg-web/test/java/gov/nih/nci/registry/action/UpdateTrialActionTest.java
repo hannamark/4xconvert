@@ -559,14 +559,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     }
     
     @Test 
-    public void validateRespPartyInfoIncorrectResponsiblePartyTypePI() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setResponsiblePartyType("not PI");
-        action.setTrialDTO(trial);
-        assertFalse(action.validateRespPartyInfo());
-    }
-    
-    @Test 
     public void validateRespPartyInfoIncorrectContactPhone() {
         TrialDTO trial = getMockTrialDTO();
         trial.setContactPhone(null);
