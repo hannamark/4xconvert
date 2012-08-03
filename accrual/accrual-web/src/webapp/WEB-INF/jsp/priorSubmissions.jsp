@@ -65,7 +65,7 @@
   <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
   <display:table class="data" summary="This table contains list of submissions.  Please use column headers to sort results"
-                  sort="list" pagesize="25" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="false">
+                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="false">
        <display:column titleKey="priorSubmissions.list.nciNumber" property="nciNumber" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.file" property="fileHtml" sortable="false" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.submissionType" property="submissionType.code" sortable="true" headerClass="sortable" headerScope="col"/>
