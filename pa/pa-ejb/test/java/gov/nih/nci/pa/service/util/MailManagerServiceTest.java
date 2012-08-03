@@ -1148,7 +1148,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"), anyString(), anyListOf(String.class),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
-                eq(new File[0]), eq(true));
+                eq(new File[0]));
         assertEquals("Wrong mail subject", "SUBJECT NCI nciIdentifier",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",

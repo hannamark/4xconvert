@@ -407,7 +407,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
         try {
             String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
-            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, true);
+            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
@@ -415,7 +415,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     void sendMailWithAttachment(String mailTo, String mailFrom, 
-            List<String> mailCc, String subject, String mailBody, File[] attachments, boolean async) {
+            List<String> mailCc, String subject, String mailBody, File[] attachments) {
         try {
             // Define Message
             MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc, subject);
@@ -435,11 +435,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             message.setContent(multipart);
             // Send Message
-            if (!async) {
-                Transport.send(message);
-            } else {
-                invokeTransportAsync(message);
-            }
+            invokeTransportAsync(message);        
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
@@ -737,7 +733,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             multipart.addBodyPart(msgPart);
             message.setContent(multipart);
             // Send Message
-            Transport.send(message);
+            invokeTransportAsync(message);            
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         } // catch
@@ -800,13 +796,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             if (StringUtils.isBlank(csmUser.getEmailId())) {
                 if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
                     copyList.add(registryUser.getEmailAddress());
-                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false);           
+                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null);           
                 } else {
-                    sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
+                    sendMailWithAttachment(toAddress, from, null, subject, body, null);
                 }
             } else {
                 copyList.add(csmUser.getEmailId());
-                sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false); 
+                sendMailWithAttachment(toAddress, from, copyList, subject, body, null); 
             } 
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
@@ -874,7 +870,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
                 
             
-            sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
+            sendMailWithAttachment(toAddress, from, null, subject, body, null);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -933,7 +929,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + StConverter.convertToString(marker.getName()) 
                 + " Request for Trial " 
                 + nciIdentifier;
-            sendMailWithAttachment(to, fromAddress, null, subject, body, null, false);
+            sendMailWithAttachment(to, fromAddress, null, subject, body, null);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a q email for a CDE", e);
         }
@@ -1214,7 +1210,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                 submitter).replace(PLACEHOLDER_2,
                                         email);
                 sendMailWithAttachment(email, mailFrom, null, mailSubject,
-                        mailBody, new File[0], true);
+                        mailBody, new File[0]);
             }
         }
     }
@@ -1244,7 +1240,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .replace(PLACEHOLDER_2, badEmails);
         
         sendMailWithAttachment(mailTo, mailFrom, null, mailSubject,
-                mailBody, new File[0], true);        
+                mailBody, new File[0]);        
     }
 
     /**
@@ -1291,7 +1287,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                     lookUpTableService.getPropertyValue(FROMADDRESS), null, subject);
             message.setContent(mailBody, "text/html");
             // Send Message
-            Transport.send(message);            
+            invokeTransportAsync(message);           
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
@@ -1393,7 +1389,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String mailFrom = lookUpTableService
                     .getPropertyValue(FROMADDRESS);
             sendMailWithAttachment(user.getEmailAddress(), mailFrom, null, 
-                    mailSubject, mailBody, new File[0], true);
+                    mailSubject, mailBody, new File[0]);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
