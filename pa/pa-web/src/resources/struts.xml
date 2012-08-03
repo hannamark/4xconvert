@@ -253,7 +253,7 @@
         <action name="home">
             <result>studyProtocolshowCriteria.action</result>
         </action>
-        <action name="studyOverallStatusHistorypopup" class="gov.nih.nci.pa.action.StudyOverallStatusHistoryAction">
+        <action name="studyOverallStatusHistorypopup*" class="gov.nih.nci.pa.action.StudyOverallStatusHistoryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
         </action>

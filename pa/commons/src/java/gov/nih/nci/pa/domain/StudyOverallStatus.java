@@ -87,6 +87,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
@@ -181,6 +182,18 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     public Boolean isSystemCreated() {
         return systemCreated;
     }
+
+    /**
+     * Need this method to satisfy Commons BeanUtils (no getter method for
+     * systemCreated property, in Audit Logger).
+     * 
+     * @return Boolean
+     */
+    @Transient
+    public Boolean getSystemCreated() {
+        return isSystemCreated();
+    }
+    
 
     /**
      * @param systemCreated the systemCreated to set

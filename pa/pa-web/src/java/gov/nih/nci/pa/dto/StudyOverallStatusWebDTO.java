@@ -80,6 +80,8 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -95,14 +97,22 @@ public class StudyOverallStatusWebDTO {
     private String statusCode;
     private String statusDate;
     private String reason;
+    private boolean systemCreated;
+    private Long id;
+    
+    private boolean editable;
+    private boolean deletable;
+    private boolean undoable;
 
     /**
      * @param dto The iso dto object.
      */
     public StudyOverallStatusWebDTO(StudyOverallStatusDTO dto) {
-        this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getDisplayName();
+        this.id = IiConverter.convertToLong(dto.getIdentifier());
+        this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getCode();
         this.statusDate = TsConverter.convertToString(dto.getStatusDate());
         this.reason = StConverter.convertToString(dto.getReasonText());
+        this.systemCreated = BlConverter.convertToBool(dto.getSystemCreated());
     }
 
     /**
@@ -152,5 +162,75 @@ public class StudyOverallStatusWebDTO {
      */
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the systemCreated
+     */
+    public boolean isSystemCreated() {
+        return systemCreated;
+    }
+
+    /**
+     * @param systemCreated the systemCreated to set
+     */
+    public void setSystemCreated(boolean systemCreated) {
+        this.systemCreated = systemCreated;
+    }
+
+    /**
+     * @return the editable
+     */
+    public boolean isEditable() {
+        return editable;
+    }
+
+    /**
+     * @param editable the editable to set
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    /**
+     * @return the deletable
+     */
+    public boolean isDeletable() {
+        return deletable;
+    }
+
+    /**
+     * @param deletable the deletable to set
+     */
+    public void setDeletable(boolean deletable) {
+        this.deletable = deletable;
+    }
+
+    /**
+     * @return the undoable
+     */
+    public boolean isUndoable() {
+        return undoable;
+    }
+
+    /**
+     * @param undoable the undoable to set
+     */
+    public void setUndoable(boolean undoable) {
+        this.undoable = undoable;
     }
 }

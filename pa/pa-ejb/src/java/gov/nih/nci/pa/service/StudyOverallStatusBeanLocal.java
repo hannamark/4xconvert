@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -115,6 +116,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.joda.time.DateMidnight;
@@ -130,21 +133,25 @@ public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceLocal {
 
-    /** Standard error message for empty methods to be overridden. */
-    private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
-
     @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
+    @EJB
+    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
+    @RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })    
+    public StudyOverallStatusDTO create(StudyOverallStatusDTO dto)
+            throws PAException {
+        return create(dto, false);
+    }
+    
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-    public StudyOverallStatusDTO create(StudyOverallStatusDTO dto) throws PAException {
+    private StudyOverallStatusDTO create(StudyOverallStatusDTO dto, boolean relaxed) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
         }
@@ -175,7 +182,7 @@ public class StudyOverallStatusBeanLocal extends
         }
         StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
         DateMidnight newDate = TsConverter.convertToDateMidnight(dto.getStatusDate());
-        validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate);
+        validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate, relaxed);
         validateReasonText(dto);
 
         StudyOverallStatus bo = convertFromDtoToDomain(dto);
@@ -193,6 +200,7 @@ public class StudyOverallStatusBeanLocal extends
         }
         return convertFromDomainToDto(bo);
     }
+    
 
     /**
      * Creates intermediate statuses if the transition from one status to the other skips one.
@@ -238,6 +246,7 @@ public class StudyOverallStatusBeanLocal extends
             }
         }
     }
+   
 
     /**
      * Creates a recruitment status for the given StudyOverallStatus.
@@ -254,6 +263,24 @@ public class StudyOverallStatusBeanLocal extends
             return srsBo;
         }
         return null;
+    }
+    
+    private void createStudyRecruitmentStatusForCurrentOverallStatus(
+            Ii studyProtocolID) throws PAException {
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+
+        if (studyRecruitmentStatusServiceLocal
+                .getCurrentByStudyProtocol(studyProtocolID) != null) {
+            StudyOverallStatusDTO dto = getCurrentByStudyProtocol(studyProtocolID);
+            StudyOverallStatus bo = convertFromDtoToDomain(dto);
+            StudyRecruitmentStatus srs = createStudyRecruitmentStatus(bo);
+            if (srs != null) {
+                session.saveOrUpdate(srs);
+            }
+        }
+
     }
 
     private StudyOverallStatus getSystemStudyOverallStatus(StudyOverallStatusDTO newStatus, StudyStatusCode statusCode)
@@ -273,11 +300,11 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException on error
      */
     private void validateStatusCodeAndDate(StudyStatusCode oldCode, StudyStatusCode newCode, DateMidnight oldDate,
-            DateMidnight newDate) throws PAException {
+            DateMidnight newDate, boolean relaxed) throws PAException {
         checkCondition(newCode == null, "Study status must be set.");
         checkCondition(newDate == null, "Study status date must be set.");
         if (oldCode != null) {
-            checkCondition(!oldCode.canTransitionTo(newCode),
+            checkCondition(!oldCode.canTransitionTo(newCode) && !relaxed,
                            "Invalid study status transition from " + oldCode.getCode() + " to " + newCode.getCode()
                                    + ".");
         }
@@ -297,7 +324,14 @@ public class StudyOverallStatusBeanLocal extends
         checkCondition(IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1,
                        "Study status Cannot be updated.");
         validateReasonText(dto);
-        return super.update(dto);
+        final StudyOverallStatusDTO updatedDTO = super.update(dto);
+        
+        // If this update has resulted in a change of the trial's current overall status,
+        // we need to sync it up with the recruitment status.     
+        if (isCurrentStatus(updatedDTO)) {        
+            createStudyRecruitmentStatusForCurrentOverallStatus(updatedDTO.getStudyProtocolIdentifier());
+        }
+        return updatedDTO;
     }
 
     /**
@@ -307,7 +341,25 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii ii) throws PAException {
-        throw new PAException(ERR_MSG_METHOD_NOT_IMPLEMENTED);
+        
+        final StudyOverallStatusDTO dto = get(ii);
+        boolean currentStatus = isCurrentStatus(dto);
+        
+        super.delete(ii);    
+        
+        // If this deletion has resulted in a change of the trial's current overall status,
+        // we need to sync it up with the recruitment status.
+        if (currentStatus) {
+            createStudyRecruitmentStatusForCurrentOverallStatus(dto.getStudyProtocolIdentifier());
+        }
+    }
+
+    private boolean isCurrentStatus(StudyOverallStatusDTO dto) throws PAException {
+        StudyOverallStatusDTO current = getCurrentByStudyProtocol(dto
+                .getStudyProtocolIdentifier());
+        return current != null
+                && current.getIdentifier().getExtension()
+                        .equals(dto.getIdentifier().getExtension());
     }
 
     /**
@@ -353,6 +405,19 @@ public class StudyOverallStatusBeanLocal extends
             throw new PAValidationException("Validation Exception " + errorMsg);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateRelaxed(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
+        StringBuilder errorMsg = new StringBuilder();
+        validate(statusDto, studyProtocolDTO, errorMsg, true);
+        if (errorMsg.length() > 0) {
+            throw new PAValidationException("Validation Exception " + errorMsg);
+        }
+    }    
 
     private void validateReasonText(StudyOverallStatusDTO statusDto) throws PAException {
         StringBuilder errorMsg = new StringBuilder();
@@ -389,12 +454,13 @@ public class StudyOverallStatusBeanLocal extends
     /**
      * @param statusDto
      * @param studyProtocolDTO
+     * @param relaxed 
      * @param addActionError
      * @throws PAException
      * @return
      */
     private StringBuffer enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
+            StudyProtocolDTO studyProtocolDTO, boolean relaxed) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         StudyStatusCode newCode = StudyStatusCode.getByCode(statusDto.getStatusCode().getCode());
         DateMidnight newStatusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
@@ -408,7 +474,7 @@ public class StudyOverallStatusBeanLocal extends
 
         if (newCode == null) {
             errMsg.append("Invalid new study status: '" + statusDto.getStatusCode().getCode() + "'. ");
-        } else if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
+        } else if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode) && !relaxed) {
             errMsg.append("Invalid study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
@@ -594,6 +660,12 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     public void validate(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        validate(statusDto, studyProtocolDTO, errorMsg, false);
+    }
+    
+    private void validate(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg,
+            boolean relaxed) {
         try {
             if (statusDto == null) {
                 errorMsg.append("Study Overall Status cannot be null. ");
@@ -602,7 +674,7 @@ public class StudyOverallStatusBeanLocal extends
                         && this.isTrialStatusOrDateChanged(statusDto,
                                 studyProtocolDTO.getIdentifier())) {
                     errorMsg.append(enforceBusniessRuleForUpdate(statusDto,
-                            studyProtocolDTO));
+                            studyProtocolDTO, relaxed));
                 }
                 errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
                 validateReasonText(statusDto);
@@ -611,4 +683,64 @@ public class StudyOverallStatusBeanLocal extends
             errorMsg.append(e.getMessage());
         }
     }
+
+    @Override    
+    @RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })      
+    public StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto)
+            throws PAException {       
+        return create(dto, true);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void undo(final Ii id) throws PAException {
+        final StudyOverallStatusDTO dto = get(id);
+        final Ii studyProtocolIdentifier = dto
+                .getStudyProtocolIdentifier();
+        List<StudyOverallStatusDTO> list = getByStudyProtocol(studyProtocolIdentifier);
+        // The list is know to be sorted by ID. We delete this status and all
+        // immediately preceeding
+        // system-created statues.
+        int index = list.indexOf(CollectionUtils.find(list, new Predicate() {
+            public boolean evaluate(Object arg0) {
+                StudyOverallStatusDTO obj = (StudyOverallStatusDTO) arg0;
+                return obj.getIdentifier().getExtension()
+                        .equals(id.getExtension());
+            }
+        }));
+        
+        if (index != list.size() - 1) {
+            throw new PAException("Only very last trial status can be undone.");
+        }
+        if (list.size() == 1) {
+            throw new PAException(
+                    "Undoing the status transition has resulted in a study without a status.");
+        }        
+        
+        delete(id);
+        
+        for (int i = index - 1; i >= 0; i--) {
+            StudyOverallStatusDTO preceding = list.get(i);
+            if (BlConverter.convertToBool(preceding.getSystemCreated())) {
+                delete(preceding.getIdentifier());
+            } else {
+                break;
+            }
+        }
+        List<StudyOverallStatusDTO> newList = getByStudyProtocol(studyProtocolIdentifier);
+        if (newList.isEmpty()) {
+            throw new PAException(
+                    "Undoing the status transition has resulted in a study without a status.");
+        }
+        
+    }
+
+    /**
+     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
+     */
+    public void setStudyRecruitmentStatusServiceLocal(
+            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
+        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
+    }
+    
 }

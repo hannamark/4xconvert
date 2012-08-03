@@ -147,7 +147,7 @@ public class StudyOverallStatusHistoryActionTest {
         assertEquals("Wrong result size", 1, webDTOs.size());
         StudyOverallStatusDTO status = statuses.get(0);
         StudyOverallStatusWebDTO webDTO = webDTOs.get(0);
-        assertEquals("Wrong status code", StudyStatusCode.IN_REVIEW.getDisplayName(), webDTO.getStatusCode());
+        assertEquals("Wrong status code", StudyStatusCode.IN_REVIEW.getCode(), webDTO.getStatusCode());
         assertEquals("Wrong status date", TsConverter.convertToString(status.getStatusDate()), webDTO.getStatusDate());
         assertEquals("Wrong status reason", StConverter.convertToString(status.getReasonText()), webDTO.getReason());
     }

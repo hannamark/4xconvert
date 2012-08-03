@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -113,6 +114,7 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setSystemCreated(BlConverter.convertToBl(bo.isSystemCreated()));
         return dto;
     }
 

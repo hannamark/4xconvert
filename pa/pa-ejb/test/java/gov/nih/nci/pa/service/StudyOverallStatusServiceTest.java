@@ -77,7 +77,7 @@
 
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -124,6 +124,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     private final DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
     private final StudyProtocolServiceLocal studyProtocolService =  new StudyProtocolServiceBean();
     private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
+    private final StudyRecruitmentStatusBeanLocal studyRecruitmentStatusBeanLocal = new StudyRecruitmentStatusBeanLocal();
     private Ii spIi;
 
     /**
@@ -135,6 +136,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
         bean.setDocumentWorkFlowStatusService(documentWorkflowStatusService);
         bean.setStudyProtocolService(studyProtocolService);
+        bean.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusBeanLocal);
 
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
@@ -183,6 +185,8 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertEquals(TsConverter.convertToTimestamp(currentStatus.getStatusDate()),
                 TsConverter.convertToTimestamp(updatedStatus.getStatusDate()));
     }
+    
+    
 
     /**
      * Tests the creation of the intermediate study overall status when moving from In Review to Active
@@ -583,4 +587,135 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertEquals("Wrong status date", PAUtil.dateStringToTimestamp("1/1/2001"),bo.getStatusDate());
         assertEquals("Wrong strudy protocol", sp,bo.getStudyProtocol());
     }
+    
+    
+    @Test
+    public void delete() throws Exception {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = createStudyProtocol();
+        final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
+
+        // ACTIVE
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("08/03/2012")));
+        dto.setReasonText(StConverter.convertToSt("Test"));
+        dto.setStudyProtocolIdentifier(studyID);
+        StudyOverallStatusDTO active = bean.create(dto);
+        
+        // Current recrutiment status is also ACTIVE
+        assertEquals(
+                StudyStatusCode.ACTIVE.getCode(),
+                studyRecruitmentStatusBeanLocal
+                        .getCurrentByStudyProtocol(studyID).getStatusCode()
+                        .getCode());        
+
+        bean.delete(active.getIdentifier());
+        assertNull(bean.get(active.getIdentifier()));
+        
+        assertEquals(
+                StudyStatusCode.APPROVED.getCode(),
+                studyRecruitmentStatusBeanLocal
+                        .getCurrentByStudyProtocol(studyID).getStatusCode()
+                        .getCode());        
+    }
+    
+    /**
+     * test the createStudyRecruitmentStatus method.
+     * @throws PAException 
+     */
+    @Test
+    public void testRelaxedValidation() throws PAException {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = createStudyProtocol();
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.WITHDRAWN));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("08/03/2012")));
+        dto.setReasonText(StConverter.convertToSt("Test"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+
+        StudyOverallStatusDTO resultDto = bean.create(dto);
+        assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
+
+        dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("08/03/2012")));
+        dto.setReasonText(StConverter.convertToSt("Test"));
+        final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
+        dto.setStudyProtocolIdentifier(studyID);
+
+        try {
+            bean.create(dto);
+            fail();
+        } catch (PAException e) {
+        }
+        
+        bean.createRelaxed(dto);
+        
+    }
+    
+    @Test    
+    public void undo() throws PAException {
+        // simulate creating new protocol using registry
+        StudyProtocol spNew = createStudyProtocol();
+        final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
+
+        // ACTIVE
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("08/03/2012")));
+        dto.setReasonText(StConverter.convertToSt("Test"));
+        dto.setStudyProtocolIdentifier(studyID);
+        StudyOverallStatusDTO active = bean.create(dto);
+
+        List<StudyOverallStatusDTO> list = bean.getByStudyProtocol(studyID);
+        assertEquals(3, list.size());
+        assertEquals(StudyStatusCode.IN_REVIEW.getCode(), list.get(0)
+                .getStatusCode().getCode());
+        assertEquals(StudyStatusCode.APPROVED.getCode(), list.get(1)
+                .getStatusCode().getCode());
+        assertEquals(StudyStatusCode.ACTIVE.getCode(), list.get(2)
+                .getStatusCode().getCode());
+        assertEquals(
+                StudyStatusCode.ACTIVE.getCode(),
+                studyRecruitmentStatusBeanLocal
+                        .getCurrentByStudyProtocol(studyID).getStatusCode()
+                        .getCode());
+        
+        // Cannot undo status in the middle.
+        try {
+            bean.undo(list.get(0).getIdentifier());
+            fail();
+        } catch (PAException e) {  
+            assertEquals("Only very last trial status can be undone.", e.getMessage());
+        }        
+
+        bean.undo(active.getIdentifier());
+
+        list = bean.getByStudyProtocol(studyID);
+        assertEquals(1, list.size());
+        assertEquals(StudyStatusCode.IN_REVIEW.getCode(), list.get(0)
+                .getStatusCode().getCode());
+        assertEquals(
+                StudyStatusCode.IN_REVIEW.getCode(),
+                studyRecruitmentStatusBeanLocal
+                        .getCurrentByStudyProtocol(studyID).getStatusCode()
+                        .getCode());
+        
+        // Cannot undo the only status and leave the study without a status at all.
+        try {
+            bean.undo(list.get(0).getIdentifier());
+            fail();
+        } catch (PAException e) {
+            assertEquals("Undoing the status transition has resulted in a study without a status.", e.getMessage());
+        }
+    }
+    
+    
+    
 }

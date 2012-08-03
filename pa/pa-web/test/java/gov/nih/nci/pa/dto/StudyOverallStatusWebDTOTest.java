@@ -110,7 +110,7 @@ public class StudyOverallStatusWebDTOTest {
         
         StudyOverallStatusWebDTO webDto = new StudyOverallStatusWebDTO(dto);
         assertEquals(PAUtil.normalizeDateString(sString), webDto.getStatusDate());
-        assertEquals(sCode.getDisplayName(), webDto.getStatusCode());
+        assertEquals(sCode.getCode(), webDto.getStatusCode());
         
     }
 }

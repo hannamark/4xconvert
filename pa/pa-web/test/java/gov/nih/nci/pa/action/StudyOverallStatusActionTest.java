@@ -146,6 +146,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
         doCallRealMethod().when(action).setStudyOverallStatusService(studyOverallStatusService);
         doCallRealMethod().when(action).setStudyProtocolService(studyProtocolService);
+        doCallRealMethod().when(action).setServletRequest(ServletActionContext.getRequest());
         setDependencies(action);
         return action;
     }
@@ -158,6 +159,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         action.setProtocolQueryService(protocolQueryService);
         action.setStudyOverallStatusService(studyOverallStatusService);
         action.setStudyProtocolService(studyProtocolService);
+        action.setServletRequest(ServletActionContext.getRequest());
     }
 
     /**

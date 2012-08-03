@@ -223,4 +223,21 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         errorMsg.append("Invalid study status transition");        
     }
 
+    @Override
+    public void validateRelaxed(StudyOverallStatusDTO statusDto,
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
+        
+    }
+
+    @Override
+    public StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto)
+            throws PAException {      
+        return create(dto);
+    }
+
+    @Override
+    public void undo(Ii statusIi) throws PAException {
+        
+    }
+
 }

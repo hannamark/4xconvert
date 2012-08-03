@@ -101,6 +101,24 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException e
      */
     void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException;
+    
+    /**
+    * Relaxed validation for super abstractors.
+    * https://tracker.nci.nih.gov/browse/PO-4916
+    * @param statusDto dto
+    * @param studyProtocolDTO pdto
+    * @throws PAException e
+    */
+    void validateRelaxed(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException;
+    
+    /**
+     * Same as {@link #create(StudyOverallStatusDTO)}, but applies less strict validation rules.
+     * Specifically, does not validate status transitions.
+     * @param dto StudyOverallStatusDTO
+     * @return StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto) throws PAException;
 
     /**
      *
@@ -121,4 +139,11 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      */
     void validate(StudyOverallStatusDTO overallStatusDTO,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg);
+
+    /**
+     * Rolls back the transition to this status.
+     * @param statusIi statusIi
+     * @throws PAException PAException
+     */
+    void undo(Ii statusIi) throws PAException;
 }

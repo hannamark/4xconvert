@@ -100,9 +100,11 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -115,7 +117,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 08/20/2008
  */
-public class StudyOverallStatusAction extends ActionSupport implements Preparable {
+public class StudyOverallStatusAction extends ActionSupport implements Preparable, ServletRequestAware {
    
     private static final long serialVersionUID = -3647758169522163514L;
 
@@ -134,6 +136,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private String startDateType;
     private String primaryCompletionDateType;
     private String completionDateType;
+
+    private HttpServletRequest request;
     
 
     /**
@@ -185,7 +189,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * @return result
      */
     public String update() {
-        clearErrorsAndMessages();
+        clearErrorsAndMessages();        
         try {
             StudyOverallStatusDTO statusDto = getStudyOverallStatus();
             validateOverallStatus(statusDto);
@@ -257,7 +261,12 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
         studyProtocolDTO.setIdentifier(spIdIi);
         getStudyProtocolDates(studyProtocolDTO);
-        studyOverallStatusService.validate(statusDto, studyProtocolDTO);
+        boolean isSuAbstractor = request.isUserInRole(Constants.SUABSTRACTOR);
+        if (!isSuAbstractor) {
+            studyOverallStatusService.validate(statusDto, studyProtocolDTO);
+        } else {
+            studyOverallStatusService.validateRelaxed(statusDto, studyProtocolDTO);
+        }
     }
 
     /**
@@ -279,6 +288,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * @throws PAException If an error occurs
      */
     void insertOrUpdateStudyOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {
+        boolean isSuAbstractor = request.isUserInRole(Constants.SUABSTRACTOR);
         if (currentTrialStatus != null) {
             StudyProtocolQueryDTO spqDTO =
                     protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
@@ -291,7 +301,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
                 statusDto.setIdentifier(sosDto.getIdentifier());
                 studyOverallStatusService.update(statusDto);
             } else {
-                studyOverallStatusService.create(statusDto);
+                if (isSuAbstractor) {
+                    studyOverallStatusService.createRelaxed(statusDto);
+                } else {
+                    studyOverallStatusService.create(statusDto);
+                }
             }
             // set the current date and status to the session
             spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
@@ -466,6 +480,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      */
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest r) {
+        this.request = r;
     }
 
 }
