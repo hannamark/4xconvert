@@ -232,7 +232,8 @@ public class PatientWebDto {
             icd9DiseasePreferredName = ss.getIcd9disease().getPreferredName();
             icd9DiseaseIdentifier = ss.getIcd9disease().getId();
         }
-        dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
+        dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated() == null 
+                ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
         if (ss.getUserLastCreated() != null) {
             userCreated = ss.getUserLastCreated().getFirstName() + " " + ss.getUserLastCreated().getLastName();
         }

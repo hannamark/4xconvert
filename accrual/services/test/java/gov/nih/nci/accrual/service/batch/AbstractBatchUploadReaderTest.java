@@ -367,7 +367,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         });
         
         final ICD9DiseaseDTO icdDis = new ICD9DiseaseDTO();
-        icdDis.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        icdDis.setIdentifier(IiConverter.convertToIi(TestSchema.icd9Diseases.get(0).getId()));
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
         when(icd9DiseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<ICD9DiseaseDTO>() {
             public ICD9DiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
@@ -380,7 +380,17 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return null;
             }
         });
-        
+        when(icd9DiseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<ICD9DiseaseDTO>() {
+            public ICD9DiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                if (IiConverter.convertToLong(ii).equals(TestSchema.diseases.get(0).getId())) {
+                    return icdDis;
+                }
+                return null;
+            }
+        });
+
         SubjectAccrualCountBean accrualCountSvc = new SubjectAccrualCountBean();
         accrualCountSvc.setSearchTrialService(searchTrialSvc);
         SubjectAccrualBeanLocal subjectAccrualSvc = new SubjectAccrualBeanLocal();

@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -134,7 +135,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private static final long serialVersionUID = -6820189447703204634L;
     private static List<Country> listOfCountries = null;
     private static Long unitedStatesId = null;
-    private Long organizationId;
     private Long studyProtocolId;
 
     private SearchPatientsCriteriaWebDto criteria;
@@ -280,19 +280,31 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         PatientDto pat = patient.getPatientDto();
         StudySubjectDto ssub = patient.getStudySubjectDto();
         ssub.setStudyProtocolIdentifier(getSpIi());
+        ssub.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         PerformedSubjectMilestoneDto psm = patient
                 .getPerformedStudySubjectMilestoneDto();
         try {
-            pat = getPatientSvc().create(pat);
+            StudySubject existingSs = getStudySubjectSvc().get(new SubjectAccrualKey(
+                    ssub.getStudySiteIdentifier(), ssub.getAssignedIdentifier()));
+            if (existingSs != null) {
+                pat.setIdentifier(IiConverter.convertToIi(existingSs.getPatient().getId()));
+                ssub.setIdentifier(IiConverter.convertToIi(existingSs.getId()));
+                ssub.setPatientIdentifier(IiConverter.convertToIi(existingSs.getPatient().getId()));
+                psm.setIdentifier(IiConverter.convertToIi(existingSs.getPerformedActivities().get(0).getId()));
+                pat = getPatientSvc().update(pat);
+                ssub = getStudySubjectSvc().update(ssub);
+                setRegistrationDate(psm);
+            } else {
+                pat = getPatientSvc().create(pat);
+                ssub.setPatientIdentifier(pat.getIdentifier());
+                ssub = getStudySubjectSvc().create(ssub);
+                psm.setStudySubjectIdentifier(ssub.getIdentifier());
+                setRegistrationDate(psm);
+            }
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return super.create();
         }
-        ssub.setPatientIdentifier(pat.getIdentifier());
-        ssub.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
-        ssub = getStudySubjectSvc().create(ssub);
-        psm.setStudySubjectIdentifier(ssub.getIdentifier());
-        setRegistrationDate(psm);
         return super.add();
     }
 
@@ -387,7 +399,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 }
             }
             webDto.setOrganizationName(ssidToOrgNameMap.get(ss.getStudySite().getId()));
-            webDto.setDateLastUpdated(DateFormatUtils.format(ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm"));
+            webDto.setDateLastUpdated(DateFormatUtils.format(ss.getDateLastUpdated() == null 
+                    ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm"));
             getDisplayTagList().add(webDto);
         }
     }

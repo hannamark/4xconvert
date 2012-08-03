@@ -90,11 +90,15 @@ import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.MockStudySubjectBean;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,8 +212,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void addTest() throws Exception {
-    	patient.setStudyProtocolId(1L);
-    	action.setPatient(patient);
+        patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         patient.setBirthDate("7/16/2009");
         patient.setCountryIdentifier(Long.valueOf(101));
@@ -220,6 +224,53 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setRaceCode(raceCode);
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
+        patient.setRegistrationDate("12/10/2009");
+        patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+    }
+
+    @Test
+    public void addDuplicate() throws Exception {
+        patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        patient.setBirthDate("7/16/2009");
+        patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
+        patient.setRegistrationDate("12/10/2009");
+        patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
+        assertEquals(ActionSupport.SUCCESS, action.add());
+        patient.setIdentifier(null);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertTrue(action.hasActionErrors());
+        assertTrue(action.getActionErrors().contains("This Study Subject Id (PO PATIENT ID 01) has already been added to this study."));
+    }
+
+    @Test
+    public void addNullified() throws Exception {
+        MockStudySubjectBean.ssList.get(0).setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+        action.setPatient(patient);
+        patient.setBirthDate("7/16/2009");
+        patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier(StConverter.convertToString(MockStudySubjectBean.ssList.get(0).getAssignedIdentifier()));
         patient.setStudySiteId(Long.valueOf("01"));
         patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");

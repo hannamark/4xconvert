@@ -343,7 +343,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void testUpdateNullCheck()  throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("Cannot update a subject accrual without an identifier set. Please use create().");
-    	bean.update(new SubjectAccrualDTO(), new Ii(), 1L);
+    	bean.update(new SubjectAccrualDTO(), new Ii(), 1L, new Long[2]);
 	}
     
     @Test

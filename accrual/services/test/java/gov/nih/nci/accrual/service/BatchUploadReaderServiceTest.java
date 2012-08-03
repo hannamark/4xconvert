@@ -233,7 +233,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 	public void patientRCCoverage() throws URISyntaxException, PAException {
 		File file = new File(this.getClass().getResource("/patientRaceCodeValidation2.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
-		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+		List<BatchValidationResults> results = readerService .validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
@@ -563,29 +563,40 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         batchFile.setSubmitter(TestSchema.registryUsers.get(0));
         batchFileSvc.update(batchFile);
         
-        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
+        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
 
         List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
-        List<BatchImportResults> importResults = new ArrayList<BatchImportResults>();
-        for (BatchValidationResults vr : validationResults) {
-            BatchImportResults importResult = readerService.importBatchData(batchFile, vr);
-            importResults.add(importResult);
-        }
-        
-        assertEquals(24, importResults.get(0).getTotalImports());
-        assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
+
+        assertEquals("CDUS_Complete.txt", validationResults.get(0).getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
-        
-        assertEquals(72, importResults.get(1).getTotalImports());
-        assertEquals("CDUS_Abbreviated.txt", importResults.get(1).getFileName());
+
+        assertEquals("CDUS_Abbreviated.txt", validationResults.get(1).getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        
-        assertEquals(72, importResults.get(2).getTotalImports());
-        assertEquals("cdus-abbreviated-prevention-study.txt", importResults.get(2).getFileName());
-        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        
+
+        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(2).getFileName());
+        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
+
         verifyEmailsSent(0, 3);
+
+        // resubmit to confirm that existing rows are only updated
+        batchFile = getBatchFile(file);
+        batchFile.setPassedValidation(false);
+        batchFile.setFileLocation(file.getAbsolutePath());
+        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+        batchFileSvc.update(batchFile);
+
+        validationResults = readerService.validateBatchData(batchFile);
+
+        assertEquals("CDUS_Complete.txt", validationResults.get(0).getFileName());
+        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+
+        assertEquals("CDUS_Abbreviated.txt", validationResults.get(1).getFileName());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+
+        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(2).getFileName());
+        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
     }
     
     @Test

@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
@@ -100,7 +101,6 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -133,6 +133,7 @@ import org.hibernate.Session;
 */
 public class TestSchema {
     public static List<SDCDisease> diseases;
+    public static List<ICD9Disease> icd9Diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<StudySite> studySites;
     public static List<StudyDisease> studyDiseases;
@@ -169,6 +170,7 @@ public class TestSchema {
 
     public static void primeData() {
         diseases = new ArrayList<SDCDisease>();
+        icd9Diseases = new ArrayList<ICD9Disease>();
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         studySites = new ArrayList<StudySite>();
@@ -388,6 +390,13 @@ public class TestSchema {
         disease.setCtepSubCategory("sub-category");
         addUpdObject(disease);
         diseases.add(disease);
+
+        // ICD9Disease
+        ICD9Disease icd9Disease = new ICD9Disease();
+        icd9Disease.setDiseaseCode("code");
+        icd9Disease.setName("name");
+        addUpdObject(icd9Disease);
+        icd9Diseases.add(icd9Disease);
 
         // StudySite
         StudySite ss = new StudySite();
@@ -610,11 +619,16 @@ public class TestSchema {
 
         // PerformedSubjectMilestone
         PerformedSubjectMilestone m = new PerformedSubjectMilestone();
-        m.setCategoryCode(ActivityCategoryCode.OTHER);
-        m.setInformedConsentDate(PAUtil.dateStringToTimestamp("6/13/2009"));
         m.setRegistrationDate(PAUtil.dateStringToTimestamp("5/21/2009"));
         m.setStudyProtocol(studyProtocols.get(0));
         m.setStudySubject(studySubjects.get(0));
+        addUpdObject(m);
+        performedSubjectMilestones.add(m);
+
+        m = new PerformedSubjectMilestone();
+        m.setRegistrationDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        m.setStudyProtocol(studyProtocols.get(0));
+        m.setStudySubject(studySubjects.get(1));
         addUpdObject(m);
         performedSubjectMilestones.add(m);
 

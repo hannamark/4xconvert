@@ -84,10 +84,12 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
+import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
@@ -98,7 +100,6 @@ import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
@@ -111,16 +112,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -144,7 +142,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 
 /**
  * This class read CSV file and validates the input.
@@ -166,7 +163,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private BatchFileService batchFileSvc;
     
     private static final int RESULTS_LEN = 1000;
-    private final Map<String, Long> listOfStudySubjects = new HashMap<String, Long>();
     private static final String DATE_PATTERN = "MM/dd/yyyy";
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
 
@@ -273,14 +269,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             importResult.setSkipBecauseOfChangeCode(true);
             return importResult;
         }
-
-        @SuppressWarnings("unchecked")
-        List<StudySubject> ssList = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class)
-                .createCriteria("studyProtocol", "sp").add(Restrictions.eq("sp.id", 
-                        IiConverter.convertToLong(spDto.getIdentifier()))).list();
-        for (StudySubject ss : ssList) {
-            listOfStudySubjects.put(ss.getAssignedIdentifier(), ss.getId());
-        }
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
@@ -307,6 +295,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         int count = 0;
         long startTime = System.currentTimeMillis();
         Long userId = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
+        Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService().getSubjectAndPatientKeys(
+                IiConverter.convertToLong(studyProtocolIi));
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
@@ -314,11 +304,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
                     IiConverter.convertToIi(studySiteIi));
             try {
-                if (ISOUtil.isIiNull(saDTO.getIdentifier())) {
-                    listOfStudySubjects.put(saDTO.getAssignedIdentifier().getValue(), 
-                            subjectAccrualService.create(saDTO, studyProtocolIi, userId));
+                Long[] ids = listOfStudySubjects.get(new SubjectAccrualKey(IiConverter.convertToLong(
+                        saDTO.getParticipatingSiteIdentifier()), 
+                        StConverter.convertToString(saDTO.getAssignedIdentifier())));
+                if (ids == null) {
+                    subjectAccrualService.create(saDTO, studyProtocolIi, userId);
                 } else {
-                    subjectAccrualService.update(saDTO, studyProtocolIi, userId);
+                    saDTO.setIdentifier(IiConverter.convertToIi(ids[0]));
+                    subjectAccrualService.update(saDTO, studyProtocolIi, userId, ids);
                 }
                 count++;
             } catch (PAException e) {
@@ -335,10 +328,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             List<String> races, Ii studySiteIi) throws PAException {
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
         saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
-        if (listOfStudySubjects.containsKey(saDTO.getAssignedIdentifier().getValue())) {
-            saDTO.setIdentifier(IiConverter.convertToSubjectAccrualIi(
-                    listOfStudySubjects.get(saDTO.getAssignedIdentifier().getValue())));
-        }
         saDTO.setRegistrationDate(
                 TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
         saDTO.setZipCode(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
@@ -374,14 +363,18 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         Element element = CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).get(diseaseCode);
         if (element == null) {
-            Ii diseaseIi;
+            Ii diseaseIi = null;
             SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
             if (disease != null) {
                 diseaseIi = disease.getIdentifier();
+                diseaseIi.setIdentifierName(SubjectAccrualBeanLocal.SDC_DISEASE_IDENTIFIER_NAME);
             } else {
                 ICD9DiseaseDTO icd9Disease = PaServiceLocator.getInstance().getICD9DiseaseService()
-                    .getByCode(diseaseCode);
-                diseaseIi = icd9Disease.getIdentifier();
+                        .getByCode(diseaseCode);
+                if (icd9Disease != null) {
+                    diseaseIi = icd9Disease.getIdentifier();
+                    diseaseIi.setIdentifierName(SubjectAccrualBeanLocal.ICD9_DISEASE_IDENTIFIER_NAME);
+                }
             }
             element = new Element(diseaseCode, diseaseIi);
             CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).put(element);

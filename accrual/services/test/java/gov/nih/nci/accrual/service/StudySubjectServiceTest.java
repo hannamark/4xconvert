@@ -91,6 +91,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -113,6 +114,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -404,5 +406,43 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         } catch (PAException ex) {
             // expected
         }
+    }
+
+    @Test
+    public void getSubjectAndPatientKeys() throws Exception {
+        Long spId = TestSchema.studyProtocols.get(0).getId();
+        StudySubject ss1 = TestSchema.studySubjects.get(0);
+        StudySubject ss2 = TestSchema.studySubjects.get(1);
+        SubjectAccrualKey key1 = new SubjectAccrualKey(ss1.getStudySite().getId(), ss1.getAssignedIdentifier());
+        SubjectAccrualKey key2 = new SubjectAccrualKey(ss2.getStudySite().getId(), ss2.getAssignedIdentifier());
+        Map<SubjectAccrualKey, Long[]> map = bean.getSubjectAndPatientKeys(spId);
+        Long[] ids1 = map.get(key1);
+        Long[] ids2 = map.get(key2);
+        assertEquals(ss1.getId(), ids1[0]);
+        assertEquals(ss1.getPatient().getId(), ids1[1]);
+        assertEquals(ss2.getId(), ids2[0]);
+        assertEquals(ss2.getPatient().getId(), ids2[1]);
+        assertNull(map.get(new SubjectAccrualKey(-1L, "xyzzy")));
+    }
+
+    @Test(expected = PAException.class) 
+    public void getSubjectAndPatientKeysException() throws Exception {
+        bean.getSubjectAndPatientKeys(null);
+    }
+    
+    @Test
+    public void getBySubjectAccrualKey() throws Exception {
+        StudySubject ss1 = TestSchema.studySubjects.get(0);
+        StudySubject ss2 = TestSchema.studySubjects.get(1);
+        SubjectAccrualKey key1 = new SubjectAccrualKey(ss1.getStudySite().getId(), ss1.getAssignedIdentifier());
+        SubjectAccrualKey key2 = new SubjectAccrualKey(ss2.getStudySite().getId(), ss2.getAssignedIdentifier());
+        assertEquals(ss1.getId(), bean.get(key1).getId());
+        assertEquals(ss2.getId(), bean.get(key2).getId());
+        assertNull(bean.get(new SubjectAccrualKey(-3L, "xyldksfj")));
+    }
+
+    @Test(expected = PAException.class) 
+    public void getBySubjectAccrualKeyException() throws Exception {
+        bean.get(new SubjectAccrualKey((Long) null, (String) null));
     }
 }

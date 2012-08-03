@@ -103,20 +103,21 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @param dto the subject accrual to create
      * @param spIi the study protocol identifier
      * @param userId the user id
-     * @return the id of new study subject
+     * @return the id of new study subject and new patient
      * @throws PAException on error
      */
-    Long create(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException;
+    Long[] create(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException;
 
     /**
      * Updates a subject accrual.
      * @param dto the accrual to update
      * @param spIi the study protocol identifier
      * @param userId the user id
-     * @return the id of the updated study subject
+     * @param ids the study subject id and person id
+     * @return the id of the updated study subject and updated patient
      * @throws PAException on error
      */
-    Long update(SubjectAccrualDTO dto, Ii spIi, Long userId) throws PAException;
+    Long[] update(SubjectAccrualDTO dto, Ii spIi, Long userId, Long[] ids) throws PAException;
 
     /**
      * Updates the given participating site with the given count. Only valid for participating sites that belong

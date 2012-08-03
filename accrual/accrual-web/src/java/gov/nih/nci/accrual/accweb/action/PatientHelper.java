@@ -104,7 +104,7 @@ import org.apache.log4j.Logger;
 public class PatientHelper {
 
     private final PatientAction action;
-    private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
+    private static final String DELETED_STATUS_CODE = FunctionalRoleStatusCode.NULLIFIED.getCode();
     private static final Logger LOG = Logger.getLogger(PatientHelper.class);
     
     /**
@@ -152,7 +152,7 @@ public class PatientHelper {
                 action.getPatient().getAssignedIdentifier())
                 && (action.getPatient().getStudySubjectId() == null || !action.getPatient().getStudySubjectId()
                         .equals(IiConverter.convertToLong(ss.getIdentifier())))
-                && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()));
+                && !DELETED_STATUS_CODE.equals(CdConverter.convertCdToString(ss.getStatusCode()));
     }
 
     private void validateUnitedStatesRules() {

@@ -79,10 +79,12 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -107,4 +109,20 @@ public interface StudySubjectServiceLocal extends StudySubjectService {
      * @throws PAException exception
      */
     List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException;
+
+    /**
+     * Return a list of keys for existing subjects on a given study. The input studyProtocolId must not be null.
+     * @param studyProtocolId the study protocol identifier
+     * @return map where values are arrays with study subject ids as element 0 and patient ids as element 1
+     * @throws PAException exception
+     */
+    Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException;
+
+    /**
+     * Search for study subject with given Study Subject ID and Study Site. Criteria must not be fully populated.
+     * @param key the criteria
+     * @return StudySubject object
+     * @throws PAException exception
+     */
+    StudySubject get(SubjectAccrualKey key) throws PAException;
 }

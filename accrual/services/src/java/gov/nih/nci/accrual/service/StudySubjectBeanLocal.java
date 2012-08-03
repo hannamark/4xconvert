@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -100,8 +101,10 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -128,6 +131,8 @@ import org.hibernate.criterion.Restrictions;
 public class StudySubjectBeanLocal extends
         AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements
         StudySubjectServiceLocal {
+    
+    private static final int THREE = 3;
 
     /**
      * {@inheritDoc}
@@ -402,7 +407,7 @@ public class StudySubjectBeanLocal extends
             Session session = PaHibernateUtil.getCurrentSession();
             StringBuffer hql = new StringBuffer("select ssub from StudySubject ssub "
                     + "join fetch ssub.studySite ssite "
-                    + "left outer join fetch ssub.performedActivities "
+                    + "join fetch ssub.performedActivities "
                     + "join fetch ssub.patient pat ");
             hql.append(getSearchWhereClause(criteria));
             hql.append("order by ssub.id ");
@@ -440,5 +445,59 @@ public class StudySubjectBeanLocal extends
         if (criteria.getPatientBirthDate() != null) {
             query.setParameter("birthDate", criteria.getPatientBirthDate());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException {
+        Map<SubjectAccrualKey, Long[]> result = new HashMap<SubjectAccrualKey, Long[]>();
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            String sql = "select study_site_identifier, assigned_identifier, identifier, patient_identifier "
+                    + "from study_subject where study_protocol_identifier = :studyProtocolId";
+            Query query = session.createSQLQuery(sql);
+            query.setLong("studyProtocolId", studyProtocolId);
+            List<Object[]> list = query.list();
+            for (Object[] row : list) {
+                Long ssiteid = Long.valueOf(row[0].toString());
+                String assignedid = (String) row[1];
+                Long ssubjid = Long.valueOf(row[2].toString());
+                Long patientid = Long.valueOf(row[THREE].toString());
+                Long[] ids = {ssubjid, patientid};
+                result.put(new SubjectAccrualKey(ssiteid, assignedid), ids);
+            }
+        } catch (Exception e) {
+            throw new PAException("Exception in getSsPatientKeys().", e);
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubject get(SubjectAccrualKey key) throws PAException {
+        StudySubject result = null;
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            StringBuffer hql = new StringBuffer("select ssub from StudySubject ssub "
+                    + "join fetch ssub.studySite ssite "
+                    + "join fetch ssub.performedActivities "
+                    + "join fetch ssub.patient pat "
+                    + "where ssite.id = :ssId "
+                    + "  and ssub.assignedIdentifier = :assignedId");
+            Query query = session.createQuery(hql.toString());
+            query.setLong("ssId", key.getStudySiteId());
+            query.setString("assignedId", key.getAssignedIdentifier());
+            List<StudySubject> qList =  query.list();
+            if (!qList.isEmpty()) {
+                result = qList.get(0);
+            }
+        } catch (Exception e) {
+            throw new PAException("Exception in search().", e);
+        }
+        return result;
     }
 }

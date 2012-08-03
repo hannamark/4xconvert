@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.convert.PerformedActivityConverter;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
@@ -101,6 +102,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Hugh Reinhart
@@ -109,7 +114,7 @@ import java.util.List;
 public class MockStudySubjectBean implements StudySubjectServiceLocal {
 
     Long seq = 1L;
-    List<StudySubjectDto> ssList;
+    public static List<StudySubjectDto> ssList;
     User user;
     
     {
@@ -159,8 +164,12 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
      */
     @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
+        Long id = IiConverter.convertToLong(ii);
+        for (StudySubjectDto dto : ssList) {
+            if (id.equals(IiConverter.convertToLong(dto.getIdentifier()))) {
+                dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.NULLIFIED));
+            }
+        }
     }
 
     /**
@@ -197,7 +206,13 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
      */
     @Override
     public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws PAException {
-        return ssList;
+        List<StudySubjectDto> result = new ArrayList<StudySubjectDto>();
+        for (StudySubjectDto ss : ssList) {
+            if (!StringUtils.equals(FunctionalRoleStatusCode.NULLIFIED.getCode(), CdConverter.convertCdToString(ss.getStatusCode()))) {
+                result.add(ss);
+            }
+        }
+        return result;
     }
 
     /**
@@ -250,7 +265,26 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
         }
         return result;
     }
-    
-    
 
+    @Override
+    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public StudySubject get(SubjectAccrualKey key) throws PAException {
+        StudySubject result = null;
+        for (StudySubjectDto dto : ssList) {
+            SubjectAccrualKey mockkey = new SubjectAccrualKey(dto.getStudySiteIdentifier(), dto.getAssignedIdentifier());
+            if (ObjectUtils.equals(key, mockkey)) {
+                result = conv.convertFromDtoToDomain(dto);
+                result.setPatient(pConv.convertFromDtoToDomain(MockPatientBean.pList.get(0)));
+                List<PerformedActivity> paList = new ArrayList<PerformedActivity>();
+                paList.add(paConv.convertFromDtoToDomain(MockPerformedActivityBean.psmList.get(0)));
+                result.setPerformedActivities(paList);
+            }
+        }
+        return result;
+    }
 }
