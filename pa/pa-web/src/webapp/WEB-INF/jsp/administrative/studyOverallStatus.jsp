@@ -17,6 +17,7 @@
             addCalendar("Cal1", "Select Date", "statusDate", "studyoverallstatus");
             addCalendar("Cal2", "Select Date", "startDate", "studyoverallstatus");
             addCalendar("Cal3", "Select Date", "primaryCompletionDate", "studyoverallstatus");
+            addCalendar("Cal4", "Select Date", "completionDate", "studyoverallstatus");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
         
@@ -130,7 +131,7 @@
                                 </pa:valueRow>
                                 <pa:valueRow labelFor="completionDate" labelKey="trialStatus.completionDate">
                                     <s:textfield name="completionDate" id="completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                    <a href="javascript:showCal('Cal3')">
+                                    <a href="javascript:showCal('Cal4')">
                                         <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                     </a> 
                                     <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
