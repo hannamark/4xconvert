@@ -22,4 +22,9 @@ class Constants {
      * NCI Org Name.
      */
     public static def NCI_ORG_NAME = "National Cancer Institute";
+    
+    /**
+     * EMAIL-IDS which need to be supressed.
+     */
+    public static def SUPRESS_EMAIL_IDS = ["ncictepcoppaservices@mail.nih.gov","ctepcoppaservices@mail.nih.gov"];
 }

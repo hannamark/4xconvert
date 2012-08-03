@@ -610,9 +610,13 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
     }
     
     if (!suppressPhoneAndEmail) {
-        if (spRow!=null && spRow.prim_email!=null && !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown")) {
+        if (spRow!=null && spRow.prim_email!=null && 
+                !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
+                    !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
             xml.email(spRow.prim_email);
-        }else if (row.email != null && !StringUtils.containsIgnoreCase(row.email, "unknown")) {
+        }else if (row.email != null && 
+            !StringUtils.containsIgnoreCase(row.email, "unknown") && 
+                !Constants.SUPRESS_EMAIL_IDS.contains(row.email)) {
             xml.email(row.email);
         }else{
             xml.email("");
