@@ -115,6 +115,7 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -445,6 +446,9 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     
     @Test 
     public void deleteSubjectAccrualUserAuthFailure() throws PAException {
+        StudySubject ss = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 1L);
+        ss.setStudySite(TestSchema.studySites.get(0));
+        PaHibernateUtil.getCurrentSession().merge(ss);
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
         bean.deleteSubjectAccrual(IiConverter.convertToIi(1L), null);

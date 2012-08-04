@@ -89,6 +89,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
@@ -159,7 +160,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         dto.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.MILITARY));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(TestSchema.studySites.get(1).getId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         StudySubjectDto r = bean.create(dto);
         assertNotNull(r);
@@ -176,30 +177,30 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     
     @Test
     public void getByStudySite() throws Exception {
-        List<StudySubjectDto> rList = bean.getByStudySite(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        List<StudySubjectDto> rList = bean.getByStudySite(IiConverter.convertToIi(TestSchema.studySites.get(1).getId()));
         assertTrue(0 < rList.size());
     }
     
     @Test
     public void getStudySubjects() throws Exception {
         Date birthDate = AccrualUtil.yearMonthStringToTimestamp("07/1963");
-        List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(0).getId(), birthDate);
+        List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(1).getId(), birthDate);
         assertEquals(1, results.size());
         
-        results = bean.getStudySubjects("001", TestSchema.studySites.get(0).getId(), birthDate);
+        results = bean.getStudySubjects("001", TestSchema.studySites.get(1).getId(), birthDate);
         assertEquals(1, results.size());
         
-        results = bean.getStudySubjects("002", TestSchema.studySites.get(0).getId(), birthDate);
+        results = bean.getStudySubjects("002", TestSchema.studySites.get(1).getId(), birthDate);
         assertEquals(0, results.size());
         
-        results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate);
+        results = bean.getStudySubjects("004", TestSchema.studySites.get(1).getId(), birthDate);
         assertEquals(0, results.size());
     }
     
     @Test
     public void searchStudySubjectByProtocolIdSiteId() throws PAException {
         List<StudySubject> result = ((StudySubjectBean)bean).searchStudySubject(TestSchema.studyProtocols.get(0).getId(),
-                                                   TestSchema.studySites.get(0).getId(), null, null, null);
+                                                   TestSchema.studySites.get(1).getId(), null, null, null);
           assertEquals(2, result.size());
     }
     
@@ -207,7 +208,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     public void searchPaganation() throws PAException {
         LimitOffset pagingParams = new LimitOffset(5, 1);
         List<StudySubject> result = ((StudySubjectBean)bean).searchStudySubject(TestSchema.studyProtocols.get(0).getId(),
-                                                   TestSchema.studySites.get(0).getId(), null, null, pagingParams);
+                                                   TestSchema.studySites.get(1).getId(), null, null, pagingParams);
         assertEquals(1, result.size());
         assertEquals(TestSchema.studySubjects.get(1).getId(),
                      Long.valueOf(result.get(0).getId()));
@@ -444,5 +445,72 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
     @Test(expected = PAException.class) 
     public void getBySubjectAccrualKeyException() throws Exception {
         bean.get(new SubjectAccrualKey((Long) null, (String) null));
+    }
+
+    @Test
+    public void searchFast() throws Exception {
+        SearchSSPCriteriaDto criteria = new SearchSSPCriteriaDto();
+        List<Long> ssids = new ArrayList<Long>();
+        criteria.setStudySiteIds(ssids);
+        
+        // get none based on site ids
+        ssids.add(-1L);
+        assertTrue(bean.searchFast(criteria).isEmpty());
+
+        // get all based on site ids
+        ssids.add(TestSchema.studySites.get(1).getId());
+        List<PatientListDto> l = bean.searchFast(criteria);
+        assertFalse(l.isEmpty());
+        assertEquals(2, l.size());
+
+        // get one based on birth date
+        criteria.setPatientBirthDate(TestSchema.studySubjects.get(1).getPatient().getBirthDate());
+        l = bean.searchFast(criteria);
+        assertFalse(l.isEmpty());
+        assertEquals(1, l.size());
+        assertEquals(TestSchema.studySubjects.get(1).getAssignedIdentifier(), l.get(0).getAssignedIdentifier());
+        criteria.setPatientBirthDate(null);
+
+        // get one based on birth date
+        criteria.setPatientBirthDate(TestSchema.studySubjects.get(1).getPatient().getBirthDate());
+        l = bean.searchFast(criteria);
+        assertEquals(1, l.size());
+        assertEquals(TestSchema.studySubjects.get(1).getAssignedIdentifier(), l.get(0).getAssignedIdentifier());
+        criteria.setPatientBirthDate(null);
+
+        // get none based on status
+        criteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.NULLIFIED);
+        l = bean.searchFast(criteria);
+        assertTrue(l.isEmpty());
+        criteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.ACTIVE);
+
+        // get one based on subjectIdentifier
+        StudySubject ss = TestSchema.studySubjects.get(0);
+        criteria.setStudySubjectAssignedIdentifier(ss.getAssignedIdentifier());
+        l = bean.searchFast(criteria);
+        assertEquals(1, l.size());
+
+        // test values pulling date from created
+        assertNull(ss.getDateLastUpdated());
+        PatientListDto p = l.get(0);
+        assertEquals(ss.getAssignedIdentifier(), p.getAssignedIdentifier());
+        assertEquals(ss.getDateLastCreated(), p.getDateLastUpdated());
+        assertEquals(String.valueOf(ss.getId()), p.getIdentifier());
+        assertEquals(ss.getStudySite().getHealthCareFacility().getOrganization().getName(), p.getOrganizationName());
+        assertEquals(TestSchema.performedSubjectMilestones.get(0).getRegistrationDate(), p.getRegistrationDate());
+
+        // test pulling date from updated
+        ss = TestSchema.studySubjects.get(1);
+        assertNotNull(ss.getDateLastUpdated());
+        criteria.setStudySubjectAssignedIdentifier(ss.getAssignedIdentifier());
+        l = bean.searchFast(criteria);
+        assertEquals(1, l.size());
+        assertEquals(ss.getDateLastUpdated(), l.get(0).getDateLastUpdated());
+    }
+
+    @Test
+    public void searchFastInvalidCriteria() throws Exception {
+        assertTrue(bean.searchFast(null).isEmpty());
+        assertTrue(bean.searchFast(new SearchSSPCriteriaDto()).isEmpty());
     }
 }

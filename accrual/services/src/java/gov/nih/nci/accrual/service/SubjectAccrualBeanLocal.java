@@ -421,9 +421,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         Long result;
         if (ids != null) {
             result = ids[1];
-            sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code,"
-                    + "birth_date=:birth_date, date_last_updated=now(), country_identifier=:country_identifier"
-                    + ", zip=:zip , user_last_updated_id=:user_id WHERE identifier= :identifier";
+            sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code, "
+                    + "birth_date=:birth_date, status_code='ACTIVE', date_last_updated=now(), "
+                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id "
+                    + "WHERE identifier= :identifier";
         } else {
             result = getNextId(session);
             sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code, " 

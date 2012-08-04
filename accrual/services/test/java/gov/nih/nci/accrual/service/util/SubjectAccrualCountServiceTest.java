@@ -110,13 +110,10 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Hibernate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -234,43 +231,6 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
                 assertEquals((Integer) 1, accrualCount.getAccrualCount());
             }
         }
-    }
-    
-    @Test
-    public void testSaveNewDay() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
-        assertEquals(1, accrualCounts.size());
-        assertEquals((Integer) 10, accrualCounts.get(0).getAccrualCount());
-
-        StudySiteSubjectAccrualCount accrualCount = getSssa(20);
-        accrualCount.setDateLastUpdated(DateUtils.addDays(new Date(), -5));
-        TestSchema.addUpdObject(accrualCount);
-        PaHibernateUtil.getCurrentSession().flush();
-        PaHibernateUtil.getCurrentSession().clear();
-        accrualCounts = bean.getCounts(testStudyIi);
-        assertEquals(1, accrualCounts.size());
-        // still returns original value (most recent)
-        assertEquals((Integer) 10, accrualCounts.get(0).getAccrualCount());
-
-        accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
-        accrualCount = getSssa(25);
-        accrualCount.setDateLastUpdated(DateUtils.addDays(new Date(), -10));
-        accrualCounts.add(accrualCount);
-        bean.save(accrualCounts);
-        PaHibernateUtil.getCurrentSession().flush();
-        PaHibernateUtil.getCurrentSession().clear();
-
-        accrualCounts = bean.getCounts(testStudyIi);        
-        assertTrue(CollectionUtils.isNotEmpty(accrualCounts));
-        Hibernate.initialize(accrualCounts.get(0).getStudySite().getAccrualCounts()) ;
-        List<Integer> expectedCounts = new ArrayList<Integer>(Arrays.asList(10,20,25));
-        
-        for (StudySiteSubjectAccrualCount count : accrualCounts.get(0).getStudySite().getAccrualCounts()) {
-            assertTrue(expectedCounts.contains(count.getAccrualCount()));
-            int i = expectedCounts.indexOf(count.getAccrualCount());            
-            expectedCounts.remove(i);            
-        }
-        assertEquals("[]", expectedCounts.toString());
     }
 
     @Test

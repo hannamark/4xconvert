@@ -80,6 +80,7 @@ import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
+import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
@@ -92,8 +93,6 @@ import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
@@ -110,18 +109,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.Preparable;
@@ -131,7 +126,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
-public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> implements Preparable {
+public class PatientAction extends AbstractListEditAccrualAction<PatientListDto> implements Preparable {
     private static final long serialVersionUID = -6820189447703204634L;
     private static List<Country> listOfCountries = null;
     private static Long unitedStatesId = null;
@@ -363,8 +358,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public void loadDisplayList() {
-        setDisplayTagList(new ArrayList<PatientWebDto>());
-        Map<Long, String> ssidToOrgNameMap = new HashMap<Long, String>();
         try {
             SearchSSPCriteriaDto searchCriteria = new SearchSSPCriteriaDto();
             searchCriteria.setPatientBirthDate(AccrualUtil.yearMonthStringToTimestamp(getCriteria().getBirthDate()));
@@ -372,48 +365,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             searchCriteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.ACTIVE);
             if (getCriteria().getStudySiteId() != null) {
                 searchCriteria.getStudySiteIds().add(getCriteria().getStudySiteId());
-                SearchStudySiteResultWebDto selectedSite = getSelectedStudySite(getCriteria().getStudySiteId());
-                ssidToOrgNameMap.put(getCriteria().getStudySiteId(), selectedSite.getOrgName());
             } else {
                 for (SearchStudySiteResultWebDto ss : getListOfStudySites()) {
                     searchCriteria.getStudySiteIds().add(Long.valueOf(ss.getSsIi()));
-                    ssidToOrgNameMap.put(Long.valueOf(ss.getSsIi()), ss.getOrgName());
                 }
             }
-            List<StudySubject> sspr = getStudySubjectSvc().search(searchCriteria);
-            addItemsToList(sspr, ssidToOrgNameMap);
+            setDisplayTagList(getStudySubjectSvc().searchFast(searchCriteria));
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
     }
-    
-    private void addItemsToList(List<StudySubject> sspr,  Map<Long, String> ssidToOrgNameMap) throws PAException {
-        for (StudySubject ss : sspr) {
-            PatientWebDto webDto = new PatientWebDto();
-            webDto.setIdentifier(ss.getId().toString());
-            webDto.setAssignedIdentifier(ss.getAssignedIdentifier());
-            for (PerformedActivity pa : ss.getPerformedActivities()) {
-                if (pa instanceof PerformedSubjectMilestone) {
-                    PerformedSubjectMilestone psm = (PerformedSubjectMilestone) pa;
-                    webDto.setRegistrationDate(PAUtil.normalizeDateString(psm.getRegistrationDate().toString()));
-                }
-            }
-            webDto.setOrganizationName(ssidToOrgNameMap.get(ss.getStudySite().getId()));
-            webDto.setDateLastUpdated(DateFormatUtils.format(ss.getDateLastUpdated() == null 
-                    ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm"));
-            getDisplayTagList().add(webDto);
-        }
-    }
-    
-    private SearchStudySiteResultWebDto getSelectedStudySite(Long studySiteId) {
-        for (SearchStudySiteResultWebDto dto : getListOfStudySites()) {
-            if (StringUtils.equalsIgnoreCase(dto.getSsIi(), studySiteId.toString())) {
-                return dto;
-            }
-        }
-        return new SearchStudySiteResultWebDto(new SearchStudySiteResultDto());
-    }
-    
+
     /**
      * Method called from pop-up. Loads selected disease.
      *
@@ -554,35 +516,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         return genderCriterion;
     }
 
-    PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
-        List<PerformedSubjectMilestoneDto> smList;
-        try {
-            smList = getPerformedActivitySvc().getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
-        } catch (PAException e) {
-            LOG.error("Error in PatientAction.getRegistrationDate().", e);
-            return null;
-        }
-        PerformedSubjectMilestoneDto psmDto = null;
-        for (PerformedSubjectMilestoneDto sm : smList) {
-            if (!ISOUtil.isTsNull(sm.getRegistrationDate())) {
-                psmDto = sm;
-            }
-        }
-        return psmDto;
-    }
-
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) {
         try {
-            if (!ISOUtil.isTsNull(dto.getRegistrationDate())) {
-                if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-                    getPerformedActivitySvc().updatePerformedSubjectMilestone(dto);
-                } else {
-                    getPerformedActivitySvc().createPerformedSubjectMilestone(dto);
-                }
+            if (!ISOUtil.isIiNull(dto.getIdentifier())) {
+                getPerformedActivitySvc().updatePerformedSubjectMilestone(dto);
             } else {
-                if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-                    getPerformedActivitySvc().delete(dto.getIdentifier());
-                }
+                getPerformedActivitySvc().createPerformedSubjectMilestone(dto);
             }
         } catch (Exception e) {
             LOG.error("Exception setting registration date.", e);

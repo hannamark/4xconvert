@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
+import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.service.PAException;
@@ -109,6 +110,14 @@ public interface StudySubjectServiceLocal extends StudySubjectService {
      * @throws PAException exception
      */
     List<StudySubject> search(SearchSSPCriteriaDto criteria) throws PAException;
+
+    /**
+     * Quick search returning data required in patient list view for a given criteria.
+     * @param criteria criteria
+     * @return result list (empty list if none found)
+     * @throws PAException exception
+     */
+    List<PatientListDto> searchFast(SearchSSPCriteriaDto criteria) throws PAException;
 
     /**
      * Return a list of keys for existing subjects on a given study. The input studyProtocolId must not be null.

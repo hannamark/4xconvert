@@ -83,16 +83,11 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
-
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -132,27 +127,18 @@ public class PatientHelper {
     }
 
     private void validateNoPatientDuplicates() {
-        List<StudySubjectDto> allSss = null;
         try {
-            allSss = action.getStudySubjectSvc().getByStudyProtocol(action.getSpIi());
-        } catch (PAException e) {
-            LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
-            action.addActionError(e.getLocalizedMessage());
-        }
-        for (StudySubjectDto ss : allSss) {
-            if (isDuplicatePatient(ss)) {
-                action.addActionError("This Study Subject Id (" + action.getPatient().getAssignedIdentifier()
-                        + ") has already been added to this study.");
+            StudySubject ssub = action.getStudySubjectSvc().get(new SubjectAccrualKey(
+                    action.getPatient().getStudySiteId(), action.getPatient().getAssignedIdentifier()));
+            if (ssub != null && !DELETED_STATUS_CODE.equals(ssub.getStatusCode().getCode())) {
+                    action.addActionError("This Study Subject Id (" + action.getPatient().getAssignedIdentifier()
+                            + ") has already been added to this study.");
             }
+        } catch (Exception e) {
+            String msg = "Error checking for patient duplicates.";
+            LOG.error(msg, e);
+            action.addActionError(msg);
         }
-    }
-
-    private boolean isDuplicatePatient(StudySubjectDto ss) {
-        return StConverter.convertToString(ss.getAssignedIdentifier()).equals(
-                action.getPatient().getAssignedIdentifier())
-                && (action.getPatient().getStudySubjectId() == null || !action.getPatient().getStudySubjectId()
-                        .equals(IiConverter.convertToLong(ss.getIdentifier())))
-                && !DELETED_STATUS_CODE.equals(CdConverter.convertCdToString(ss.getStatusCode()));
     }
 
     private void validateUnitedStatesRules() {

@@ -109,9 +109,10 @@ function setDeleteReason(reason){
    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
    <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
+                  decorator="gov.nih.nci.accrual.accweb.decorator.SearchPatientDecorator"
                   sort="list" pagesize="10" id="row" name="displayTagList" requestURI="patients.action" export="false">
        <display:column titleKey="patient.assignedIdentifier"
-         sortable="true" headerClass="sortable" headerScope="col">
+         sortable="true" sortProperty="assignedIdentifier" headerClass="sortable" headerScope="col">
             <s:a href="#" onclick="handleRetrieve(%{#attr.row.identifier})"><c:out value="${row.assignedIdentifier}"/></s:a>
        </display:column>
        <display:column titleKey="patient.registrationDate" property="registrationDate" sortable="true" headerClass="sortable" headerScope="col"/>

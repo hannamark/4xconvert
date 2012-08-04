@@ -602,8 +602,9 @@ public class TestSchema {
         subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
-        subj.setStudySite(studySites.get(0));
+        subj.setStudySite(studySites.get(1));
         subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
+        subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
         addUpdObject(subj);
         studySubjects.add(subj);
 
@@ -612,8 +613,10 @@ public class TestSchema {
         subj.setAssignedIdentifier("002");
         subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         subj.setStudyProtocol(studyProtocols.get(0));
-        subj.setStudySite(studySites.get(0));
+        subj.setStudySite(studySites.get(1));
         subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
+        subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2002"));
+        subj.setDateLastUpdated(PAUtil.dateStringToDateTime("1/1/2003"));
         addUpdObject(subj);
         studySubjects.add(subj);
 

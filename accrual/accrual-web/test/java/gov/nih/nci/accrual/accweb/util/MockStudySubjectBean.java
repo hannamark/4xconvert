@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.accweb.util;
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.convert.PerformedActivityConverter;
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
@@ -286,5 +287,23 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
             }
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PatientListDto> searchFast(SearchSSPCriteriaDto criteria) throws PAException {
+        List<StudySubject> ssList = search(criteria);
+        List<PatientListDto> pList = new ArrayList<PatientListDto>();
+        for (StudySubject ss : ssList) {
+            PatientListDto p = new PatientListDto();
+            p.setIdentifier(String.valueOf(ss.getId()));
+            p.setDateLastUpdated(new Timestamp((ss.getDateLastUpdated() == null ? ss.getDateLastCreated() : ss.getDateLastUpdated()).getTime()));
+            p.setAssignedIdentifier(ss.getAssignedIdentifier());
+            p.setOrganizationName("xxxx");
+            p.setRegistrationDate(new Timestamp(new Date().getTime()));
+        }
+        return pList;
     }
 }

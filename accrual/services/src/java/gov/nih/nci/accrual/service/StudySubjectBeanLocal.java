@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
@@ -116,6 +117,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -133,6 +135,8 @@ public class StudySubjectBeanLocal extends
         StudySubjectServiceLocal {
     
     private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int FIVE = 5;
 
     /**
      * {@inheritDoc}
@@ -152,7 +156,7 @@ public class StudySubjectBeanLocal extends
 
             return convertFromBoListToDtoList(queryList);
         } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
+            throw new PAException("Hibernate exception in getByStudySite().", hbe);
         }
     }
 
@@ -409,10 +413,10 @@ public class StudySubjectBeanLocal extends
                     + "join fetch ssub.studySite ssite "
                     + "join fetch ssub.performedActivities "
                     + "join fetch ssub.patient pat ");
-            hql.append(getSearchWhereClause(criteria));
+            hql.append(getSearchWhereClause(criteria, true));
             hql.append("order by ssub.id ");
             Query query = session.createQuery(hql.toString());
-            setSearchQueryParameters(query, criteria);
+            setSearchQueryParameters(query, criteria, true);
             result = query.list();
         } catch (Exception e) {
             throw new PAException("Exception in search().", e);
@@ -420,27 +424,30 @@ public class StudySubjectBeanLocal extends
         return result;
     }
 
-    private String getSearchWhereClause(SearchSSPCriteriaDto criteria) {
-        StringBuffer result = new StringBuffer("where ssite.id in (:studySiteIds) ");
+    private String getSearchWhereClause(SearchSSPCriteriaDto criteria, boolean hql) {
+        StringBuffer result = new StringBuffer("where " + (hql ? "ssite.id" : "ssub.study_site_identifier")
+                + " in (:studySiteIds) ");
         if (!StringUtils.isEmpty(criteria.getStudySubjectAssignedIdentifier())) {
-            result.append("and upper(ssub.assignedIdentifier) like upper(:assignedId) ");
+            result.append("and upper(ssub." + (hql ? "assignedIdentifier" : "assigned_identifier") 
+                    + ") like upper(:assignedId) ");
         }
         if (criteria.getStudySubjectStatusCode() != null) {
-            result.append("and ssub.statusCode = :statusCode ");
+            result.append("and ssub." + (hql ? "statusCode" : "status_code") + " = :statusCode ");
         }
         if (criteria.getPatientBirthDate() != null) {
-            result.append("and pat.birthDate = :birthDate ");
+            result.append("and pat." + (hql ? "birthDate" : "birth_date") + " = :birthDate ");
         }
         return result.toString();
     }
     
-    private void setSearchQueryParameters(Query query, SearchSSPCriteriaDto criteria) {
+    private void setSearchQueryParameters(Query query, SearchSSPCriteriaDto criteria, boolean hql) {
         query.setParameterList("studySiteIds", criteria.getStudySiteIds());
         if (!StringUtils.isEmpty(criteria.getStudySubjectAssignedIdentifier())) {
             query.setParameter("assignedId", "%" + criteria.getStudySubjectAssignedIdentifier().trim() + "%");
         }
         if (criteria.getStudySubjectStatusCode() != null) {
-            query.setParameter("statusCode", criteria.getStudySubjectStatusCode());
+            FunctionalRoleStatusCode status = criteria.getStudySubjectStatusCode();
+            query.setParameter("statusCode", hql ? status : status.getName());
         }
         if (criteria.getPatientBirthDate() != null) {
             query.setParameter("birthDate", criteria.getPatientBirthDate());
@@ -496,7 +503,58 @@ public class StudySubjectBeanLocal extends
                 result = qList.get(0);
             }
         } catch (Exception e) {
-            throw new PAException("Exception in search().", e);
+            throw new PAException("Exception in get().", e);
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PatientListDto> searchFast(SearchSSPCriteriaDto criteria) throws PAException {
+        if (criteria == null || CollectionUtils.isEmpty(criteria.getStudySiteIds())) {
+            return new ArrayList<PatientListDto>();
+        }
+        
+        List<PatientListDto> result = new ArrayList<PatientListDto>();
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            SQLQuery query = session.createSQLQuery("select ss.identifier, org.name from study_site ss "
+                    + "join healthcare_facility hf on (ss.healthcare_facility_identifier = hf.identifier) "
+                    + "join organization org on (hf.organization_identifier = org.identifier) "
+                    + "where ss.identifier in (:ssIds) ");
+            query.setParameterList("ssIds", criteria.getStudySiteIds());
+            Map<String, String> orgMap = new HashMap<String, String>();
+            List<Object[]> qList =  query.list();
+            for (Object[] row : qList) {
+                orgMap.put(String.valueOf(row[0]), (String) row[1]);
+            }
+
+            StringBuffer sql = new StringBuffer("select ssub.identifier, ssub.assigned_identifier, "
+                    + "ssub.study_site_identifier, ssub.date_last_created, ssub.date_last_updated, "
+                    + "pa.registration_date "
+                    + "from study_subject ssub ");
+            if (criteria.getPatientBirthDate() != null) {
+                sql.append("join patient pat on (ssub.patient_identifier = pat.identifier) ");
+            }
+            sql.append("join performed_activity pa on (ssub.identifier = pa.study_subject_identifier) ");
+            sql.append(getSearchWhereClause(criteria, false));
+            sql.append("order by ssub.assigned_identifier");
+            query = session.createSQLQuery(sql.toString());
+            setSearchQueryParameters(query, criteria, false);
+            qList =  query.list();
+            for (Object[] row : qList) {
+                PatientListDto dto = new PatientListDto();
+                dto.setIdentifier(String.valueOf(row[0]));
+                dto.setAssignedIdentifier((String) row[1]);
+                dto.setOrganizationName(orgMap.get(String.valueOf(row[2])));
+                dto.setDateLastUpdated(row[FOUR] == null ? (Timestamp) row [THREE] : (Timestamp) row[FOUR]);
+                dto.setRegistrationDate((Timestamp) row[FIVE]);
+                result.add(dto);
+            }
+        } catch (Exception e) {
+            throw new PAException("Exception in searchFast().", e);
         }
         return result;
     }
