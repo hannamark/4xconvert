@@ -319,7 +319,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 xml.resp_party_organization {
                     if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
                         def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-                        xml.name(changeSponsorNameIfNeeded(roRow.orgname))
+                        xml.name(roRow.orgname)
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
                         def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
@@ -603,13 +603,22 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
         }
     }
     
-    xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
-    
-    if (row.faxnumber != null && !suppressPhoneAndEmail) {
-        xml.fax(row.faxnumber)
-    }
-    
     if (!suppressPhoneAndEmail) {
+        
+        if (spRow!=null && spRow.prim_phone!=null) {
+            xml.phone(spRow.prim_phone);
+        }else if(row.phone != null){
+            xml.phone(row.phone);
+        }else {
+            xml.phone("");
+        }
+
+        if (row.faxnumber != null) {
+            xml.fax(row.faxnumber);
+        }else{
+            xml.fax("");
+        }
+                
         if (spRow!=null && spRow.prim_email!=null && 
                 !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
                     !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
@@ -622,6 +631,8 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
             xml.email("");
         }
     }else{
+        xml.phone("");
+        xml.fax("");
         xml.email("");
     }
 }
