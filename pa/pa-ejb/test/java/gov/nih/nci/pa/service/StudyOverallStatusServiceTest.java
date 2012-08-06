@@ -598,8 +598,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         // ACTIVE
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp("08/03/2012")));
+        dto.setStatusDate(TsConverter.convertToTs(new Date()));
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(studyID);
         StudyOverallStatusDTO active = bean.create(dto);
@@ -628,12 +627,12 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testRelaxedValidation() throws PAException {
         // simulate creating new protocol using registry
+        final Date date = new Date();
         StudyProtocol spNew = createStudyProtocol();
 
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.WITHDRAWN));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp("08/03/2012")));
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.WITHDRAWN));       
+        dto.setStatusDate(TsConverter.convertToTs(date));
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
 
@@ -642,8 +641,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
         dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp("08/03/2012")));
+        dto.setStatusDate(TsConverter.convertToTs(date));
         dto.setReasonText(StConverter.convertToSt("Test"));
         final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
         dto.setStudyProtocolIdentifier(studyID);
@@ -667,8 +665,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         // ACTIVE
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp("08/03/2012")));
+        dto.setStatusDate(TsConverter.convertToTs(new Date()));
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(studyID);
         StudyOverallStatusDTO active = bean.create(dto);
