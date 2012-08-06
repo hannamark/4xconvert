@@ -311,10 +311,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createAccrualAccess(RegistryUser ru, Long ssId) throws PAException {
-        StudySiteAccrualAccess ssaa = (StudySiteAccrualAccess) PaHibernateUtil.getCurrentSession()
+        StudySiteAccrualAccess ssaa = null;
+        List<StudySiteAccrualAccess> ssasList = PaHibernateUtil.getCurrentSession()
                 .createCriteria(StudySiteAccrualAccess.class)
                 .add(Restrictions.eq("studySite.id", ssId))
-                .add(Restrictions.eq("registryUser.id", ru.getId())).list().get(0);
+                .add(Restrictions.eq("registryUser.id", ru.getId())).list();
+        if (!ssasList.isEmpty()) {
+            ssaa = ssasList.get(0);
+        }
         Long userid = AccrualCsmUtil.getInstance().getCSMUser(ru.getCsmUser().getLoginName()).getUserId();
         Session session = PaHibernateUtil.getCurrentSession();
         if (ssaa == null) {
