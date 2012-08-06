@@ -112,6 +112,7 @@ import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StratumGroup;
+import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyDisease;
@@ -141,6 +142,7 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
+import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.CheckOutType;
@@ -319,6 +321,17 @@ public class TestSchema {
         sos.setStatusDate(TODAY);
         sos.setStudyProtocol(sp);
         addUpdObject(sos);
+        
+        StudyAccrualAccess studyAccrualAccess = new StudyAccrualAccess();
+        studyAccrualAccess.setActionCode(AssignmentActionCode.ASSIGNED);
+        studyAccrualAccess.setComments("TEST");
+        studyAccrualAccess.setDateLastCreated(new Date());
+        studyAccrualAccess.setRegistryUser(ru);
+        studyAccrualAccess.setStatusCode(ActiveInactiveCode.ACTIVE);
+        studyAccrualAccess.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        studyAccrualAccess.setStudyProtocol(sp);
+        studyAccrualAccess.setUserLastCreated(ru.getCsmUser());
+        addUpdObject(studyAccrualAccess);
 
         Organization org = TestSchema.createOrganizationObj();
         addUpdObject(org);

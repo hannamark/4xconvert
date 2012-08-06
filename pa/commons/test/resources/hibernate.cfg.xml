@@ -69,6 +69,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.MessageLogAudit" />
         <mapping class="gov.nih.nci.pa.domain.StudyObjective"/>
         <mapping class="gov.nih.nci.pa.domain.StudySiteAccrualAccess"/>
+        <mapping class="gov.nih.nci.pa.domain.StudyAccrualAccess" />
         <mapping class="gov.nih.nci.pa.domain.MappingIdentifier"/>
         <mapping class="gov.nih.nci.pa.domain.StudySiteOverallStatus"/>
         <mapping class="gov.nih.nci.pa.domain.StudyInbox"/>

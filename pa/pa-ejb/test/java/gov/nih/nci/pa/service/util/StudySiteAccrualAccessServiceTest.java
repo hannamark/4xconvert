@@ -239,4 +239,14 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals("cancer for THOLA", dto.getTrialTitle());
     }
     
+    @Test
+    public void getActiveTrialLevelAccrualAccess() throws Exception {
+        RegistryUser user = new RegistryUser();
+        user.setId(TestSchema.registryUserIds.get(0));
+        List<Long> list = bean.getActiveTrialLevelAccrualAccess(user);
+        assertEquals(1, list.size());
+        assertEquals(TestSchema.studyProtocolIds.get(0), list.get(0));
+    }
+      
+    
 }
