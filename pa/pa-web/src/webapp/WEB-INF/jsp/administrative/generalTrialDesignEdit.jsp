@@ -5,6 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title><fmt:message key="studyProtocol.general.title"/></title>
         <s:head />
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
@@ -148,6 +149,7 @@
                 }
             }
 
+
         </script>
     </head>
     
@@ -274,7 +276,7 @@
                         </td>
                         <td class="value">
                             <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4" 
-                                maxlength="4000" cssClass="charcounter"/>
+                                maxlength="4000" cssClass="charcounter" />
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>gtdDTO.officialTitle</s:param>
