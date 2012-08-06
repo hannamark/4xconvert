@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<%@ page import="gov.nih.nci.po.service.external.CtepPersonImporter" %>
 <c:url value="/protected/ajax/search/person/results/searchdt.action" var="sortUrl"/>
-<s:set name="ctepRoot" value="@gov.nih.nci.po.service.external.CtepPersonImporter@CTEP_PERSON_OTHER_ROOT"/>
+<c:set var="ctepRoot" value="<%=CtepPersonImporter.CTEP_PERSON_ROOT%>"/>
 <ajax:displayTag id="personSearchResults" tableClass="data">
     <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}">
         <po:displayTagProperties/>
