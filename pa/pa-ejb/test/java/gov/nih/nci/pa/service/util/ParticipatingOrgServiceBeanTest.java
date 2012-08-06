@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -126,6 +126,8 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
                 new HashMap<Long, List<PaPersonDTO>>());
         bean.setStudySiteAccrualStatusService(ssas);
         bean.setPaHealthCareProviderService(paHcp);
+        
+        TestSchema.primeData();
     }
 
     @Test
@@ -138,7 +140,7 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void getTreatingSites() throws Exception {
-        TestSchema.primeData();
+        
         Long spId = TestSchema.studyProtocolIds.get(0);
         Long ssId = TestSchema.studySiteIds.get(0);
         Map<Long, StudySiteAccrualStatus> rMap = new HashMap<Long, StudySiteAccrualStatus>();
@@ -173,6 +175,46 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(0, rList.get(0).getPrimaryContacts().size());
         assertEquals(1, rList.get(0).getPrincipalInvestigators().size());
         assertEquals(0, rList.get(0).getSubInvestigators().size());
+        
+    }
+    
+    
+    @Test
+    public void getTreatingSite() throws Exception {
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        Long ssId = TestSchema.studySiteIds.get(0);
+        Map<Long, StudySiteAccrualStatus> rMap = new HashMap<Long, StudySiteAccrualStatus>();
+        StudySiteAccrualStatus r = new StudySiteAccrualStatus();
+        StudySite ss = new StudySite();
+        ss.setId(ssId);
+        r.setStudySite(ss);
+        r.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        r.setStatusDate(new Timestamp((new Date()).getTime()));
+        rMap.put(ssId, r);
+        when(ssas.getCurrentStudySiteAccrualStatus(any(Long[].class))).thenReturn(rMap);
+
+        Map<Long, List<PaPersonDTO>> pimap = new HashMap<Long, List<PaPersonDTO>>();
+        List<PaPersonDTO> pis = new ArrayList<PaPersonDTO>();
+        pis.add(new PaPersonDTO());
+        pimap.put(ssId, pis);
+        when(paHcp.getPersonsByStudySiteId(any(Long[].class),
+                eq(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName()))).thenReturn(pimap);
+
+        ParticipatingOrgDTO orgDTO = bean.getTreatingSite(ssId);
+        assertNotNull(orgDTO);
+
+        StudySite hdbSs = (StudySite) PaHibernateUtil.getCurrentSession().get(StudySite.class, ssId);
+        assertEquals(hdbSs.getId(), orgDTO.getStudySiteId());
+        assertEquals(hdbSs.getStatusCode(), orgDTO.getStatusCode());
+        assertEquals(hdbSs.getTargetAccrualNumber(), orgDTO.getTargetAccrualNumber());
+        assertEquals(hdbSs.getProgramCodeText(), orgDTO.getProgramCodeText());
+        assertEquals(hdbSs.getHealthCareFacility().getOrganization().getName(), orgDTO.getName());
+        assertEquals(hdbSs.getHealthCareFacility().getOrganization().getIdentifier(), orgDTO.getPoId());
+        assertEquals(r.getStatusCode(), orgDTO.getRecruitmentStatus());
+        assertEquals(r.getStatusDate(), orgDTO.getRecruitmentStatusDate());
+        assertEquals(0, orgDTO.getPrimaryContacts().size());
+        assertEquals(1, orgDTO.getPrincipalInvestigators().size());
+        assertEquals(0, orgDTO.getSubInvestigators().size());
     }
 
 }
