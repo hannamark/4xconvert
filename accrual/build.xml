@@ -34,6 +34,7 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="lib.dir" value="${target.dir}/lib"/>
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+    <property name="accrual-web.tooltip" value="${accrual-web.dir}/src/resources"/>
 
     <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
 
@@ -79,13 +80,18 @@
         <copy todir="${accrual-ear.build.dir}" file="${ear.ear}"/>
     </target>
 
-    <target name="deploy-ear" depends="accrual-dist">
+    <target name="deploy-ear" depends="accrual-dist, copy-tooltips-file">
         <available file="${jboss.deploy.dir}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.dir} not available."/>
         <available file="${ear.ear}" property="earEarPresent"/>
         <fail unless="earEarPresent" message="Ear file not found."/>
         <copy todir="${jboss.deploy.dir}" file="${ear.ear}"/>
     </target>
+	
+	<target name="copy-tooltips-file">
+	    <echo message="Copying ${accrual-web.tooltip}/AccrualWebTooltips.properties to ${tooltips.filepath.loc}" />
+	    <copy file="${accrual-web.tooltip}/AccrualWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
+	</target>
 
     <target name="build-notest" description="Build the ear, jar and war" depends="set-notask, accrual-dist">
     </target>

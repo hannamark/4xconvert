@@ -6,6 +6,7 @@
     <head>
         <title><fmt:message key="accrual.batchUpload.title"/></title>
         <s:head />
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
     </head>
     <body>
         <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
@@ -16,7 +17,9 @@
             <table class="form">
                 <tr>
                    <td class="value" style="width:250px">
+                    <accrual:displayTooltip tooltip="tooltip.browse">
                         <s:file name="upload" label="File"/>
+                    </accrual:displayTooltip>
                    </td>
                 </tr>
             </table>

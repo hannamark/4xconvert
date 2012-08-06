@@ -8,6 +8,7 @@
 <head>
     <title><fmt:message key="accrual.search.trials.page.title"/></title>   
     <s:head/>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
 
 function resetValues(){
@@ -32,9 +33,11 @@ function handleAction(){
     <table class="form">
     <tr>     
         <td scope="row" class="label">
+         <accrual:displayTooltip tooltip="tooltip.nci_trial_identifier">
           <label for="NCI Trial Number">
               <fmt:message key="accrual.search.trials.nciTrialNumber"/>
           </label>
+          </accrual:displayTooltip>
          </td>
          <td class="value">
             <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
@@ -42,9 +45,11 @@ function handleAction(){
       </tr> 
       <tr>     
         <td scope="row" class="label">
+         <accrual:displayTooltip tooltip="tooltip.nct_number">
           <label for="NCT Trial Number">
               <fmt:message key="accrual.search.trials.nctTrialNumber"/>
           </label>
+          </accrual:displayTooltip>
          </td>
          <td class="value">
             <s:textfield id ="leadOrgTrialIdentifier" name="criteria.leadOrgTrialIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
@@ -53,9 +58,11 @@ function handleAction(){
             
             <tr>
                 <td scope="row" class="label">
+                <accrual:displayTooltip tooltip="tooltip.official_title">
                  <label for="Official Title">
                     <fmt:message key="accrual.search.trials.officialTitle"/>
                 </label>
+                </accrual:displayTooltip>
                 </td>
                 <td colspan="4">
                 <s:textfield id ="officialTitle" name="criteria.officialTitle.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />

@@ -32,3 +32,5 @@ wikiHelp.baseUrl.accrual=https://wiki.nci.nih.gov/x/yALTAg#NCICTRPAccrualHelpTop
 
 maven.username=uploaded
 maven.password=password
+tooltips.filepath.relative.dir=tooltips
+tooltips.filepath.loc=${application.base.path}/${tooltips.filepath.relative.dir}

@@ -10,6 +10,7 @@
     <title><fmt:message key="priorSubmissions.title"/></title>
     <s:head/>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
     <script type="text/javascript" language="javascript">
       addCalendar("CalFrom", "Select Date", "dateFrom", "listForm");
       addCalendar("CalTo", "Select Date", "dateTo", "listForm");
@@ -34,7 +35,9 @@
       </tr>
       <tr>
         <td class="label">
+          <accrual:displayTooltip tooltip="tooltip.from">
           <label><fmt:message key="priorSubmissions.dates.from"/></label>
+          </accrual:displayTooltip>
         </td>
         <td>
           <s:textfield id ="dateFrom" name="dateFrom" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -42,10 +45,12 @@
         </td>
       </tr>
       <tr>
-        <td class="label">
+        <td class="label">       
+          <accrual:displayTooltip tooltip="tooltip.to">
           <label><fmt:message key="priorSubmissions.dates.to"/></label>
+          </accrual:displayTooltip>
         </td>
-        <td>
+        <td> 
           <s:textfield id ="dateTo" name="dateTo" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
           <a href="javascript:showCal('CalTo')"><img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
         </td>

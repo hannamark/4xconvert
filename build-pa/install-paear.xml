@@ -347,7 +347,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <unzip src="${pa-ear.dir.dist}/${accrual-ear.ear.file}" dest="${temp.dir}/accrual-ear"/>
       <unzip src="${temp.dir}/accrual-ear/accrual-services.jar" dest="${temp.dir}/accrual-services-jar"/>
       <unzip src="${temp.dir}/accrual-ear/accrual.war" dest="${temp.dir}/accrual-war"/>
-
+	  <move file="${temp.dir}/accrual-war/WEB-INF/classes/AccrualWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
       <echo message="Looking for quartz_jobs.xml in ${temp.dir}/accrual-war"/>
       <copy todir="${temp.dir}/accrual-war/WEB-INF/classes" filtering="true" overwrite="true">
           <fileset dir="${temp.dir}/accrual-war">
