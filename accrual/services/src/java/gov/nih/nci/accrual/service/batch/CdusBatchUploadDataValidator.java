@@ -153,7 +153,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     private static final String SUABSTRACTOR = "SuAbstractor";
-    private boolean addStudySiteAccrualAccess = false;
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
     /**
@@ -275,10 +274,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 results.setListOfOrgIds(listOfOrgIds);
                 results.setListOfPoStudySiteIds(listOfPoIds);
 
-                if (addStudySiteAccrualAccess && isSuAbstractor()) {
+                if (isSuAbstractor()) {
                     for (Long studySiteId : listOfPoIds.values()) {
                         try {
-                             subjectAccrualService.createAccrualAccess(ru, studySiteId);                   
+                             subjectAccrualService.createAccrualAccess(ru, studySiteId);
                         } catch (NumberFormatException e) {
                              LOG.error("NumberFormatException while creating Accrual access.", e);
                         } catch (PAException e) {
@@ -560,9 +559,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             boolean hasAccess = BlConverter.convertToBool(getSearchTrialService().isAuthorized(spIi, 
                     IiConverter.convertToIi(ru.getId())));
             boolean superAbs = isSuAbstractor();
-            if (superAbs && !hasAccess) {
-                addStudySiteAccrualAccess = true;
-            }
             if (hasAccess || superAbs) {
                 return true;
             }

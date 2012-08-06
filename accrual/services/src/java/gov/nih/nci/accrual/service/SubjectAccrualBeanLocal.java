@@ -314,7 +314,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         StudySiteAccrualAccess ssaa = (StudySiteAccrualAccess) PaHibernateUtil.getCurrentSession()
                 .createCriteria(StudySiteAccrualAccess.class)
                 .add(Restrictions.eq("studySite.id", ssId))
-                .add(Restrictions.eq("registryUser.id", ru.getId())).uniqueResult();
+                .add(Restrictions.eq("registryUser.id", ru.getId())).list().get(0);
         Long userid = AccrualCsmUtil.getInstance().getCSMUser(ru.getCsmUser().getLoginName()).getUserId();
         Session session = PaHibernateUtil.getCurrentSession();
         if (ssaa == null) {
@@ -330,6 +330,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             queryObject.setParameter("user_last_created_id", userid);
             queryObject.setParameter("registry_user_id", ru.getId());
             queryObject.executeUpdate();
+        } else if (ssaa.getStatusCode().getName().equals(ActiveInactiveCode.INACTIVE.getName())) {
+            String sql = "UPDATE study_site_accrual_access SET status_code='" + ActiveInactiveCode.ACTIVE.getName() 
+                    + "',date_last_updated=now(),user_last_updated_id=" + userid
+                    + " WHERE identifier=" + ssaa.getId(); 
+            session.createSQLQuery(sql).executeUpdate();
         }
     }
 
