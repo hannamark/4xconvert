@@ -89,6 +89,7 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -128,11 +129,14 @@ public class PatientHelper {
 
     private void validateNoPatientDuplicates() {
         try {
+            PatientWebDto pat = action.getPatient();
             StudySubject ssub = action.getStudySubjectSvc().get(new SubjectAccrualKey(
-                    action.getPatient().getStudySiteId(), action.getPatient().getAssignedIdentifier()));
-            if (ssub != null && !DELETED_STATUS_CODE.equals(ssub.getStatusCode().getCode())) {
-                    action.addActionError("This Study Subject Id (" + action.getPatient().getAssignedIdentifier()
-                            + ") has already been added to this study.");
+                    pat.getStudySiteId(), pat.getAssignedIdentifier()));
+            if (ssub != null 
+                    && !ObjectUtils.equals(pat.getStudySubjectId(), ssub.getId())
+                    && !DELETED_STATUS_CODE.equals(ssub.getStatusCode().getCode())) {
+                action.addActionError("This Study Subject Id (" + action.getPatient().getAssignedIdentifier()
+                        + ") has already been added to this site.");
             }
         } catch (Exception e) {
             String msg = "Error checking for patient duplicates.";

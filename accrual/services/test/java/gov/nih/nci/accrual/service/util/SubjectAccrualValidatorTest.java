@@ -83,29 +83,28 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -122,67 +121,33 @@ public class SubjectAccrualValidatorTest {
     public void setUp() {
         bean = new SubjectAccrualValidatorBean();
     }
-    
-    @Test
-    public void isDuplicateStudySubjectFalse() {
-        StudySubjectDto studySubject = createStudySubjectDto();
-        SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
-        studySubject.getAssignedIdentifier().setValue("9999999");
-        assertFalse(bean.isDuplicateStudySubject(studySubject, subjectAccrual));
-    }
-    
-    @Test
-    public void isDuplicateStudySubjectTrueTheSameAssignedIdentifier() {
-        StudySubjectDto studySubject = createStudySubjectDto();
-        SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
-        subjectAccrual.setIdentifier(null);
-        assertTrue(bean.isDuplicateStudySubject(studySubject, subjectAccrual));
-    }
-    
-    @Test
-    public void isDuplicateStudySubjectFalseTheSameAssignedIdentifierTheSameIdentifier() {
-        StudySubjectDto studySubject = createStudySubjectDto();
-        SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();        
-        assertFalse(bean.isDuplicateStudySubject(studySubject, subjectAccrual));
-    }
-    
-    @Test
-    public void isDuplicateStudySubjectFalseTheSameAssignedIdentifierTerminatedSubject() {
-        StudySubjectDto studySubject = createStudySubjectDto();
-        SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
-        studySubject.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.TERMINATED.getCode())); 
-        assertFalse(bean.isDuplicateStudySubject(studySubject, subjectAccrual));
-        
-    }
-    
+
     @Test
     public void validateNoStudySubjectDuplicatesPasses() throws PAException {
         StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
-        List<StudySubjectDto> subjects = new ArrayList<StudySubjectDto>();
-        StudySubjectDto studySubject = createStudySubjectDto();      
-        studySubject.getAssignedIdentifier().setValue("9999999");
-        subjects.add(studySubject);
-        when(studySubjectService.getByStudySite(any(Ii.class))).thenReturn(subjects);
+        StudySubject subject = new StudySubject();
+        subject.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
+        when(studySubjectService.get(any(SubjectAccrualKey.class))).thenReturn(subject);
         bean.setStudySubjectService(studySubjectService);
         SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
         subjectAccrual.setIdentifier(null);
-        
         bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);    
-        
+
+        when(studySubjectService.get(any(SubjectAccrualKey.class))).thenReturn(null);
+        bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);    
     }
     
     @Test(expected=IndexedInputValidationException.class)
     public void validateNoStudySubjectDuplicatesFails() throws PAException {
         StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
-        List<StudySubjectDto> subjects = new ArrayList<StudySubjectDto>();
-        subjects.add(createStudySubjectDto());
-        when(studySubjectService.getByStudySite(any(Ii.class))).thenReturn(subjects);
+        StudySubject subject = new StudySubject();
+        subject.setId(-1L);
+        subject.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        when(studySubjectService.get(any(SubjectAccrualKey.class))).thenReturn(subject);
         bean.setStudySubjectService(studySubjectService);
         SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
         subjectAccrual.setIdentifier(null);
-        
-        bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);        
-        
+        bean.validateNoStudySubjectDuplicates(subjectAccrual, 1); 
     }
 
     @Test

@@ -255,7 +255,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setIdentifier(null);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         assertTrue(action.hasActionErrors());
-        assertTrue(action.getActionErrors().contains("This Study Subject Id (PO PATIENT ID 01) has already been added to this study."));
+        assertTrue(action.getActionErrors().contains("This Study Subject Id (PO PATIENT ID 01) has already been added to this site."));
     }
 
     @Test

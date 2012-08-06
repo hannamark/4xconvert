@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
@@ -92,6 +92,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
@@ -109,6 +110,7 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -120,6 +122,7 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
 
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
+    private static final String DELETED_STATUS_CODE = FunctionalRoleStatusCode.NULLIFIED.getCode();
 
     @EJB
     private StudySubjectServiceLocal studySubjectService;
@@ -175,29 +178,15 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
      * @throws PAException exception thrown if validation fails
      */
     void validateNoStudySubjectDuplicates(SubjectAccrualDTO subjectAccrual, int index) throws PAException {
-        List<StudySubjectDto> studySubjects = studySubjectService.getByStudySite(subjectAccrual
-            .getParticipatingSiteIdentifier());
-        for (StudySubjectDto studySubject : studySubjects) {
-            if (isDuplicateStudySubject(studySubject, subjectAccrual)) {
-                throw new IndexedInputValidationException("This Study Subject Id ("
-                        + subjectAccrual.getAssignedIdentifier() + ") has already been added to this study.", index);
-            }
+        StudySubject ssub = studySubjectService.get(new SubjectAccrualKey(
+                subjectAccrual.getParticipatingSiteIdentifier(), subjectAccrual.getAssignedIdentifier()));
+        if (ssub != null 
+                && !ObjectUtils.equals(IiConverter.convertToLong(subjectAccrual.getIdentifier()), ssub.getId()) 
+                && !DELETED_STATUS_CODE.equals(ssub.getStatusCode().getCode())) {
+            throw new IndexedInputValidationException("This Study Subject Id ("
+                    + StConverter.convertToString(subjectAccrual.getAssignedIdentifier())
+                    + ") has already been added to this study.", index);
         }
-    }
-
-    /**
-     * @param studySubject Study Subject DTO
-     * @param subjectAccrual subject Accrual DTO
-     * @return boolean
-     */
-    boolean isDuplicateStudySubject(StudySubjectDto studySubject, SubjectAccrualDTO subjectAccrual) {
-        return StConverter.convertToString(studySubject.getAssignedIdentifier())
-            .equals(StConverter.convertToString(subjectAccrual.getAssignedIdentifier()))
-                && (subjectAccrual.getIdentifier() == null || !IiConverter
-                    .convertToLong(subjectAccrual.getIdentifier()).equals(IiConverter.convertToLong(studySubject
-                                                                              .getIdentifier())))
-                && !FunctionalRoleStatusCode.TERMINATED.getCode().equals(CdConverter.convertCdToString(studySubject
-                                                                             .getStatusCode()));
     }
 
     void validateDatesAndPaymentMethod(SubjectAccrualDTO dto, StringBuffer errMsg) {
