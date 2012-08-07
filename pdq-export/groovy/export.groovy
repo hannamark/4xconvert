@@ -614,8 +614,6 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow) {
         xml.phone("");
     }
 
-    xml.fax("");
-            
     if (spRow!=null && spRow.prim_email!=null &&
             !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") &&
                 !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
