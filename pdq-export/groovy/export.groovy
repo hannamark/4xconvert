@@ -313,7 +313,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     if (spRow.respPartyCrsId != null) {
                         def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
                         crsDetail(xml, crsRow)
-                        addressAndPhoneDetail(xml, crsRow, spRow, true)
+                        addressAndPhoneDetail(xml, crsRow, spRow, false)
                     }
                 }
                 xml.resp_party_organization {
@@ -324,7 +324,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                         xml.ctep_id(roRow.ctep_id)
                         def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
                         addressAndPhoneDetail(xml, roRow, 
-                            sponsorContactInfo, true)
+                            sponsorContactInfo, false)
                     }
                 }
             }
