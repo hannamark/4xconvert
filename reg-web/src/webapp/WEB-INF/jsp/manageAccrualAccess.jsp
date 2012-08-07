@@ -82,7 +82,7 @@
     
     function unassignedTrialClicked(row, studyProtocolId, evt) {
     	if (studiesToAssign.indexOf(studyProtocolId)==-1) {
-    		if (evt.ctrlKey!=true) {
+    		if (!isCTRL(evt)) {
     			studiesToAssign = new Array();
     			clearRowSelections(studiesToAssignRowsSelected);
     		}
@@ -90,7 +90,7 @@
     		studiesToAssign.push(studyProtocolId);
     		studiesToAssignRowsSelected.push(row);
     	} else {    		
-            if (evt.ctrlKey==true) {
+            if (isCTRL(evt)) {
             	studiesToAssign = studiesToAssign.without(studyProtocolId);
                 row.className='accrual_trial_unselected';
                 studiesToAssignRowsSelected = studiesToAssignRowsSelected.without(row);
@@ -108,7 +108,7 @@
     
     function assignedTrialClicked(row, studyProtocolId, evt) {
         if (studiesToUnassign.indexOf(studyProtocolId)==-1) {
-            if (evt.ctrlKey!=true) {
+            if (!isCTRL(evt)) {
             	studiesToUnassign = new Array();
                 clearRowSelections(studiesToUnassignRowsSelected);
             }
@@ -116,7 +116,7 @@
             studiesToUnassign.push(studyProtocolId);
             studiesToUnassignRowsSelected.push(row);
         } else {            
-            if (evt.ctrlKey==true) {
+            if (isCTRL(evt)) {
             	studiesToUnassign = studiesToUnassign.without(studyProtocolId);
                 row.className='accrual_trial_unselected';
                 studiesToUnassignRowsSelected = studiesToUnassignRowsSelected.without(row);
@@ -132,6 +132,9 @@
         return stopEventPropagation(evt);
     }
     
+    function isCTRL(evt) {
+    	return evt.ctrlKey==true || evt.metaKey==true;
+    }
     
     function stopEventPropagation(evt) {
     	 Event.extend(evt);
