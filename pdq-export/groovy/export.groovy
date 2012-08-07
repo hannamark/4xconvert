@@ -5,7 +5,6 @@ import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 
-
 def props = new Properties()
 new File("resolved.build.properties").withInputStream {
   stream -> props.load(stream)
@@ -14,19 +13,19 @@ new File("resolved.build.properties").withInputStream {
 println "Using " + props['pa.jdbc.url'] + " to connect to PA database"
 println "Using " + props['po.jdbc.url'] + " to connect to PO database"
 
-def sourceConnection = Sql.newInstance(props['pa.jdbc.url'], props['pa.db.username'], 
+def sourceConnection = Sql.newInstance(props['pa.jdbc.url'], props['pa.db.username'],
     props['pa.db.password'], props['pa.jdbc.driver'])
 
 def preLoader = new PoPreLoad();
 
 def crsMap = preLoader.getCrsMap()
-println "got Crs " + crsMap.size() 
+println "got Crs " + crsMap.size()
 def orgsMap = preLoader.getOrgsMap()
 println "got Orgs " + orgsMap.size()
 def hcfsMap = preLoader.getHcfsMap()
 println "got HCFs " + hcfsMap.size()
 def rosMap = preLoader.getRosMap()
-println "got Ros " + rosMap.size() 
+println "got Ros " + rosMap.size()
 
 
 
@@ -57,7 +56,7 @@ def collabTrialsSQL = """
         central_contact.telephone as centralContactPhone,
         respPartySponsorContact.identifier as respPartySponsorIdentifier,
         ra_country.name || ' : ' || ra.authority_name as reg_authority,
-        CASE 
+        CASE
             WHEN sos.status_code = 'APPROVED' then 'Approved'
             WHEN sos.status_code = 'IN_REVIEW' then 'In Review'
             WHEN sos.status_code = 'ACTIVE' then 'Active'
@@ -75,19 +74,19 @@ def collabTrialsSQL = """
         sp.start_date:: date as start_date,
         CASE
             WHEN sp.start_date_type_code = 'ACTUAL' then 'Actual'
-            WHEN sp.start_date_type_code = 'ANTICIPATED' then 'Anticipated'            
+            WHEN sp.start_date_type_code = 'ANTICIPATED' then 'Anticipated'
         END as start_date_type_code,
         sp.pri_compl_date::date as pri_compl_date,
         CASE
             WHEN sp.pri_compl_date_type_code = 'ACTUAL' then 'Actual'
-            WHEN sp.pri_compl_date_type_code = 'ANTICIPATED' then 'Anticipated'  
+            WHEN sp.pri_compl_date_type_code = 'ANTICIPATED' then 'Anticipated'
         END as pri_compl_date_type_code,
-        CASE 
+        CASE
             WHEN sp.accr_rept_meth_code = 'ABBREVIATED' then 'Abbreviated'
             WHEN sp.accr_rept_meth_code = 'COMPLETE' then 'Complete'
             WHEN sp.accr_rept_meth_code = 'AE' then 'AE'
         END as accr_rept_meth_code,
-        CASE 
+        CASE
             WHEN sp.primary_purpose_code = 'TREATMENT' then 'Treatment'
             WHEN sp.primary_purpose_code = 'PREVENTION' then 'Prevention'
             WHEN sp.primary_purpose_code = 'SCREENING' then 'Screening'
@@ -98,23 +97,23 @@ def collabTrialsSQL = """
             WHEN sp.primary_purpose_code = 'SUPPORTIVE_CARE' then 'Supportive Care'
         END as primary_purpose_code,
         sp.phase_code,
-        CASE 
+        CASE
             WHEN sp.allocation_code = 'RANDOMIZED_CONTROLLED_TRIAL' then 'Randomized'
             WHEN sp.allocation_code = 'NON_RANDOMIZED_TRIAL' then 'Non-randomized'
         END as allocation_code,
-        CASE 
+        CASE
             WHEN sp.blinding_schema_code = 'OPEN' then 'Open'
             WHEN sp.blinding_schema_code = 'SINGLE_BLIND' then 'Single Blind'
-            WHEN sp.blinding_schema_code = 'DOUBLE_BLIND' then 'Double Blind'    
+            WHEN sp.blinding_schema_code = 'DOUBLE_BLIND' then 'Double Blind'
         END as blinding_schema_code,
-        CASE 
+        CASE
             WHEN sp.design_configuration_code = 'SINGLE_GROUP' then 'Single Group Assignment'
             WHEN sp.design_configuration_code = 'PARALLEL' then 'Parallel Assignment'
             WHEN sp.design_configuration_code = 'CROSSOVER' then 'Crossover Assignment'
             WHEN sp.design_configuration_code = 'FACTORIAL' then 'Factorial Assignment'
         END as design_configuration_code,
         sp.number_of_intervention_groups,
-        CASE 
+        CASE
             WHEN sp.min_target_accrual_num is null then 0
             ELSE sp.min_target_accrual_num
         END as min_target_accrual_num,
@@ -132,10 +131,10 @@ def collabTrialsSQL = """
             END as section801_indicator,
         CASE WHEN sp.delayed_posting_indicator THEN 'Yes'
                  ELSE 'No'
-            END as delayed_posting_indicator,   
+            END as delayed_posting_indicator,
         CASE WHEN sp.data_monty_comty_apptn_indicator THEN 'Yes'
                  ELSE 'No'
-            END as dmc_indicator, 
+            END as dmc_indicator,
         CASE
             WHEN summary4.type_code = 'EXTERNALLY_PEER_REVIEWED' then 'Externally Peer Reviewed'
             WHEN summary4.type_code = 'INSTITUTIONAL' then 'Institutional'
@@ -162,6 +161,7 @@ def collabTrialsSQL = """
         END as classification_code
      from study_protocol sp
      join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
+            and sponsorSs.research_organization_identifier in ($ctepRoId, $dcpRoId)
      join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
         and dws.status_code in ('ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
         and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
@@ -180,8 +180,8 @@ def collabTrialsSQL = """
      left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier
      join research_organization sponsorRo on sponsorRo.identifier = sponsorSs.research_organization_identifier
      left outer join study_contact as respPartySc on respPartySc.study_protocol_identifier = sp.identifier and respPartySc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR'
-     left outer join study_site_contact respPartySponsorContact on 
-        respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier) 
+     left outer join study_site_contact respPartySponsorContact on
+        respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier)
         and respPartySponsorContact.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
      left outer join clinical_research_staff respPartyCrs on respPartyCrs.identifier = respPartySc.clinical_research_staff_identifier
      left outer join study_regulatory_authority sra on sra.study_protocol_identifier = sp.identifier
@@ -197,11 +197,7 @@ def collabTrialsSQL = """
      left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
-     where sp.status_code = 'ACTIVE'  and 
-        ((select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $ctepRoId) is not null OR 
-        (select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $dcpRoId) is not null)
+     where sp.status_code = 'ACTIVE'
 """
 
 def nbOfTrials = 0
@@ -210,76 +206,69 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
     nbOfTrials++
     
     
-	def out = new FileOutputStream("temp/" + spRow.nciId +  ".xml")
-	def writer = new OutputStreamWriter( out , "UTF-8")
+    def out = new FileOutputStream("temp/" + spRow.nciId +  ".xml")
+    def writer = new OutputStreamWriter( out , "UTF-8")
     writer.write """<?xml version="1.0" encoding="UTF-8"?>\n"""
-	
+    
     def xml = new MarkupBuilder(writer)
     xml.setDoubleQuotes(true)
     
-	def studyProtocolID = spRow.identifier
+    def studyProtocolID = spRow.identifier
 
-	xml.clinical_study {
-		xml.id_info {
-			xml.org_study_id(spRow.leadOrgId)
-			xml.secondary_id {
-				xml.id(spRow.nciId)
-				xml.id_type("Registry Identifier")
-	            xml.id_domain("CTRP (Clinical Trial Reporting Program)")
-			}
+    xml.clinical_study {
+        xml.id_info {
+            xml.org_study_id(spRow.leadOrgId)
+            xml.secondary_id {
+                xml.id(spRow.nciId)
+                xml.id_type("Registry Identifier")
+                xml.id_domain("CTRP (Clinical Trial Reporting Program)")
+            }
             sourceConnection.eachRow(Queries.otherIdsSQL, [studyProtocolID]) { row ->
                 xml.secondary_id {
                     xml.id (row.extension)
                 }
             }
             if (spRow.ctepId != null) {
-    			xml.secondary_id {
-    				xml.id(spRow.ctepId)
-    				xml.id_type("ctep-id")
-    	            xml.id_domain("CTEP")
-    			}
-            }
-            if (spRow.dcpId != null) {
                 xml.secondary_id {
-                    xml.id(spRow.dcpId)
-                    xml.id_type("dcp-id")
-                    xml.id_domain("DCP")
+                    xml.id(spRow.ctepId)
+                    xml.id_type("ctep-id")
+                    xml.id_domain("CTEP")
                 }
             }
             if (spRow.nctId != null) {
-    			xml.secondary_id {
-    				xml.id(spRow.nctId)
-    				xml.id_type("nct-id")
-    	            xml.id_domain("NCT")
-    			}
+                xml.secondary_id {
+                    xml.id(spRow.nctId)
+                    xml.id_type("nct-id")
+                    xml.id_domain("NCT")
+                }
             }
             sourceConnection.eachRow(Queries.fundingsSQL, [studyProtocolID]) { row ->
                  if (row.funding_mechanism_code != null) {
                      xml.secondary_id {
                          xml.id(row.funding_mechanism_code + row.nih_institute_code + row.serial_number)
                          xml.id_type("NIH Grant Number")
-                     }   
+                     }
                  }
             }
             xml.org_name(spRow.prs_org_name == null || spRow.prs_org_name.size() == 0?
                 "replace with PRS Organization Name you log in with":
                 spRow.prs_org_name)
-		}
-		
-		sourceConnection.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
-			xml.trial_owners {
-				xml.name(row.ownerName)
-			}
-		}
-		
-		xml.lead_org {
+        }
+        
+        sourceConnection.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
+            xml.trial_owners {
+                xml.name(row.ownerName)
+            }
+        }
+        
+        xml.lead_org {
             def roRow = rosMap.get(spRow.leadRoId.toLong())
             xml.name(roRow.orgname)
             xml.po_id(roRow.org_poid)
             xml.ctep_id(roRow.ctep_id)
             addressAndPhoneDetail(xml, roRow, null,false)
-		
-		}
+        
+        }
         
         xml.nci_specific_information {
             xml.reporting_data_set_method(spRow.accr_rept_meth_code)
@@ -313,7 +302,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     if (spRow.respPartyCrsId != null) {
                         def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
                         crsDetail(xml, crsRow)
-                        addressAndPhoneDetail(xml, crsRow, spRow)
+                        addressAndPhoneDetail(xml, crsRow, spRow, true)
                     }
                 }
                 xml.resp_party_organization {
@@ -323,7 +312,8 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
                         def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
-                        addressAndPhoneDetail(xml, roRow, sponsorContactInfo)
+                        addressAndPhoneDetail(xml, roRow,
+                            sponsorContactInfo, true)
                     }
                 }
             }
@@ -334,7 +324,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     xml.po_id(collabRow.org_poid)
                     xml.ctep_id(roRow.ctep_id)
                     addressAndPhoneDetail(xml, roRow, null, false)
-                }                   
+                }
             }
         } // end sponsors
         
@@ -368,7 +358,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                        xml.funding_nih_inst_code(fundRow.nih_institute_code)
                        xml.funding_serial_number(fundRow.serial_number)
                        xml.funding_nci_div_program(fundRow.nci_division_program_code)
-                   }   
+                   }
                }
            }
         }
@@ -415,16 +405,16 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         }
 
         xml.enrollment(spRow.min_target_accrual_num)
-        xml.enrollment_type("anticipated")     
+        xml.enrollment_type("anticipated")
         
         // try to be cheap and steal a few cycles by running 1 query instead of 3.
         def allArmsAndInt = []
         sourceConnection.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
-             allArmsAndInt.add(row.toRowResult())   
+             allArmsAndInt.add(row.toRowResult())
         }
                 
-        // get arms out of it. 
-        def armsList = []                        
+        // get arms out of it.
+        def armsList = []
         allArmsAndInt.each {
             def row = it
             if (!armsList.contains(row.arm_id)) {
@@ -455,7 +445,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     otherNamesList = []
                     allArmsAndInt.each {
                         def otherNameRow = it
-                        if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name) 
+                        if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
                             && otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {
                             xml.intervention_other_name(otherNameRow.alt_name)
                             otherNamesList.add(otherNameRow.alt_name)
@@ -505,7 +495,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         xml.overall_official {
             def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
             crsDetail(xml, crsRow)
-            addressAndPhoneDetail(xml, crsRow, null, false) 
+            addressAndPhoneDetail(xml, crsRow, null, false)
             xml.role("Principal Investigator")
             xml.affiliation {
                 def roRow = rosMap.get(spRow.leadRoId.toLong())
@@ -521,19 +511,19 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 def crsRow = crsMap.get(spRow.centralContactCrsId.toLong())
                 crsDetail(xml, crsRow)
                 def centralContactInfo = ['prim_phone':spRow.centralContactPhone,'prim_email':spRow.centralContactEmail]
-                addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)                
+                addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)
             }
         }
     
-		sourceConnection.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
-			xml.location {
-				xml.facility {
-					def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
+        sourceConnection.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
+            xml.location {
+                xml.facility {
+                    def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
                     xml.name(row.name)
                     xml.po_id(row.org_poid)
                     xml.ctep_id(hcfRow.ctep_id)
                     addressAndPhoneDetail(xml, hcfRow, null, false)
-				}
+                }
                 xml.status(row.status)
                 if (row.prim_crs_id != null && crsMap.get(row.prim_crs_id.toLong()) != null) {
                     xml.contact {
@@ -548,12 +538,12 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                          crsDetail(xml, crsRow)
                          addressAndPhoneDetail(xml, crsRow, null, false)
                          xml.role("Principal Investigator")
-                     }   
+                     }
                 }
-			}
-		}  // end part sites
-        xml.verification_date(spRow.verification_date)      
-	}
+            }
+        }  // end part sites
+        xml.verification_date(spRow.verification_date)
+    }
     writer.flush();
     writer.close();
 }
@@ -568,8 +558,8 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
         xml.ctep_id(crsRow.ctep_id)
 }
 
-
-void addAddress(MarkupBuilder xml, Object row) {
+void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {
+    
     xml.address {
         
        if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
@@ -601,68 +591,25 @@ void addAddress(MarkupBuilder xml, Object row) {
            xml.country(row.country_name)
        }
    }
-}
-
-
-void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow) {
     
-    addAddress(xml,row);
-        
-    if (spRow!=null && spRow.prim_phone!=null) {
-        xml.phone(spRow.prim_phone);
-    }else {
-        xml.phone("");
-    }
-
-    if (spRow!=null && spRow.prim_email!=null &&
-            !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") &&
-                !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
-        xml.email(spRow.prim_email);
-    }else{
-        xml.email("");
-    }
-}
+    //suppressPhoneAndEmail means, DO NOT use phone, fax and email values from PO. 
+    //Use phone, fax & email values available in PA.
     
-void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {  
-
-    addAddress(xml,row);
+    xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
     
-    if (!suppressPhoneAndEmail) {
-        
-        if (spRow!=null && spRow.prim_phone!=null) {
-            xml.phone(spRow.prim_phone);
-        }else if(row.phone != null){
-            xml.phone(row.phone);
-        }else {
-            xml.phone("");
-        }
-
-        if (row.faxnumber != null) {
-            xml.fax(row.faxnumber);
-        }else{
-            xml.fax("");
-        }
-                
-        if (spRow!=null && spRow.prim_email!=null && 
-                !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
-                    !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
-            xml.email(spRow.prim_email);
-        }else if (row.email != null && 
-            !StringUtils.containsIgnoreCase(row.email, "unknown") && 
-                !Constants.SUPRESS_EMAIL_IDS.contains(row.email)) {
-            xml.email(row.email);
-        }else{
-            xml.email("");
-        }
-    }else{
-        xml.phone("");
-        xml.fax("");
-        xml.email("");
+    if (row.faxnumber != null && !suppressPhoneAndEmail) {
+        xml.fax(row.faxnumber)
     }
+    
+    xml.email(( spRow!=null && 
+                    spRow.prim_email!=null && 
+                        !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
+                            !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email) ? spRow.prim_email : 
+                                (StringUtils.containsIgnoreCase(row.email, "unknown") || Constants.SUPRESS_EMAIL_IDS.contains(row.email) || suppressPhoneAndEmail ? "" : row.email)))
 }
 
 String changeSponsorNameIfNeeded(orgName) {
-    return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName 
+    return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName
 }
 
 println "Generated $nbOfTrials files"
