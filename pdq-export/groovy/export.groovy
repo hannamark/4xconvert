@@ -592,9 +592,9 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
        }
    }
     
-    //suppressPhoneAndEmail means, DO NOT use phone, fax and email values from PO. 
-    //Use phone, fax & email values available in PA.
-    
+    //suppressPhoneAndEmail=true implies, use phone, fax & email values from PA only. DO NOT use phone, fax and email values from PO. 
+    //suppressPhoneAndEmail=false implies, use phone, fax and email values from PA, if not available in PA then use the ones available in PO.
+
     xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
     
     if (row.faxnumber != null && !suppressPhoneAndEmail) {
