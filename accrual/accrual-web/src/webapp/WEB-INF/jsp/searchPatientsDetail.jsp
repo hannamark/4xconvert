@@ -150,6 +150,7 @@
                             <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
                                 <s:set name="raceCodeValues" value="@gov.nih.nci.pa.enums.PatientRaceCode@getDisplayMap()" />
                                 <s:select id ="raceCode" name="patient.raceCode" multiple="true" size="7" list="#raceCodeValues" />
+                                <span class="info">To select multiple races, select one race, and then press and hold the CTRL key as you select the other(s).</span>
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <s:iterator id="races" value="patient.raceCode" >
