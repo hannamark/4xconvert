@@ -1346,6 +1346,38 @@ public class TestSchema {
         create.setHealthCareFacility(hcf);
         return create;
     }
+    
+    public static StudySite createParticipatingSite(StudyProtocol sp) {
+        
+        Organization org = createOrganizationObj();
+        addUpdObject(org);
+
+        HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
+        addUpdObject(hfc);                
+        
+        StudySite site = new StudySite();
+        site.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        site.setLocalStudyProtocolIdentifier(sp.getId()+"_SITE");
+        site.setUserLastUpdated(getUser());
+        site.setDateLastUpdated(TODAY);
+        site.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        site.setStatusDateRangeLow(TODAY);
+        site.setStudyProtocol(sp);
+        site.setHealthCareFacility(hfc);
+        addUpdObject(site);
+        
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setDateLastCreated(new Date());
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStudySite(site);
+        ssas.setUserLastCreated(getUser());
+        addUpdObject(ssas);
+        
+        site.getStudySiteAccrualStatuses().add(ssas);
+        
+        return site;
+    }    
 
     public static RegistryUser getRegistryUser() {
         User user = getUser();

@@ -83,11 +83,24 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyAccrualAccess;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
+import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -100,15 +113,20 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -123,8 +141,9 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
     private static Ii REGISTRY_USER_IDENTIFIER;
     private Ii identifier;
 
-    StudySiteAccrualAccessServiceLocal bean;
+    StudySiteAccrualAccessServiceBean bean;
     StudySiteAccrualStatusBeanLocal statusBean;
+    ParticipatingOrgServiceBean participatingOrgServiceLocal;
     
 
     @Before
@@ -133,6 +152,15 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         statusBean = new StudySiteAccrualStatusServiceBean();
         bean.setStudySiteAccrualStatusService(statusBean);
         statusBean.setStudySiteAccrualAccessServiceLocal(bean);
+        
+        participatingOrgServiceLocal = new ParticipatingOrgServiceBean();        
+        participatingOrgServiceLocal.setStudySiteAccrualStatusService(statusBean);
+        PAHealthCareProviderRemote paHcp = mock(PAHealthCareProviderRemote.class);
+        when(paHcp.getPersonsByStudySiteId(any(Long[].class), any(String.class))).thenReturn(
+                new HashMap<Long, List<PaPersonDTO>>());        
+        participatingOrgServiceLocal.setPaHealthCareProviderService(paHcp);        
+        bean.setParticipatingOrgServiceLocal(participatingOrgServiceLocal);
+        
         StudySiteAccrualAccessServiceBean.setLastUpdate(new Timestamp(new Date().getTime()));
         User user = new User();
         user.setUserId(1L);
@@ -247,6 +275,333 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(1, list.size());
         assertEquals(TestSchema.studyProtocolIds.get(0), list.get(0));
     }
-      
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void assignTrialLevelAccrualAccess() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+
+        // Make sure study level access has been provisioned with correct
+        // values.
+        List<StudyAccrualAccess> trialLevelAccessList = session.createQuery(
+                "from " + StudyAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studyProtocol.id = " + sp.getId()).list();
+        assertEquals(1, trialLevelAccessList.size());
+        StudyAccrualAccess saa = trialLevelAccessList.get(0);
+        assertEquals(saa.getActionCode(), AssignmentActionCode.ASSIGNED);
+        assertEquals(saa.getComments(), "TEST");
+        assertTrue(DateUtils.isSameDay(saa.getDateLastCreated(), new Date()));
+        assertEquals(saa.getRegistryUser().getId(), user.getId());
+        assertEquals(saa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        assertTrue(DateUtils.isSameDay(saa.getStatusDateRangeLow(), new Date()));
+        assertEquals(saa.getStudyProtocol().getId(), sp.getId());
+        assertEquals(saa.getUserLastCreated().getUserId(), user.getCsmUser()
+                .getUserId());
+        
+        // Make sure site-level access has been provisioned automatically as well.
+        List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
+                "from " + StudySiteAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studySite.id = " + site.getId()).list();        
+
+        assertEquals(1, siteAccessList.size());
+        StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
+                .getUserId());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void assignTrialLevelAccrualAccessInactiveToActive() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+        
+        StudySiteAccrualAccess inactive = new StudySiteAccrualAccess();        
+        inactive.setDateLastCreated(new Date());
+        inactive.setRegistryUser(user);
+        inactive.setStatusCode(ActiveInactiveCode.INACTIVE);
+        inactive.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        inactive.setStudySite(site);
+        TestSchema.addUpdObject(inactive);
+        
+        
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+        
+        // Make sure site-level access has been provisioned automatically as well.
+        List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
+                "from " + StudySiteAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studySite.id = " + site.getId()).list();        
+
+        assertEquals(1, siteAccessList.size());
+        StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        assertEquals(ssaa.getId(), inactive.getId());
+    }
+    
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void assignTrialLevelAccrualAccessIneligibleForAccrual() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        final StudySiteAccrualStatus studySiteAccrualStatus = site.getStudySiteAccrualStatuses().get(0);
+        studySiteAccrualStatus.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+        TestSchema.addUpdObject(studySiteAccrualStatus);
+        
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        recruitmentStatus.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+
+        // Make sure study level access has been provisioned with correct
+        // values.
+        List<StudyAccrualAccess> trialLevelAccessList = session.createQuery(
+                "from " + StudyAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studyProtocol.id = " + sp.getId()).list();
+        assertEquals(1, trialLevelAccessList.size());
+        
+        // Make sure no site-level access has been provisioned automatically because not eligible for accrual yet.
+        List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
+                "from " + StudySiteAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studySite.id = " + site.getId()).list();        
+
+        assertEquals(0, siteAccessList.size());
+    }
+    
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void synchronizeSiteAccrualAccess() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();        
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+
+        // Make sure study level access has been provisioned with correct
+        // values.
+        List<StudyAccrualAccess> trialLevelAccessList = session.createQuery(
+                "from " + StudyAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studyProtocol.id = " + sp.getId()).list();
+        assertEquals(1, trialLevelAccessList.size());
+        
+        // Now create a site
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        
+        // Make sure no site-level access yet.
+        final String queryString = "from " + StudySiteAccrualAccess.class.getName()
+                + " saa where saa.registryUser.id = " + user.getId()
+                + " and studySite.id = " + site.getId();
+        List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
+                queryString).list();        
+        assertEquals(0, siteAccessList.size());
+        
+        // Now synchronize.
+        bean.synchronizeSiteAccrualAccess(site.getId());
+        
+        // Make sure site-level access has been provisioned.
+        siteAccessList = session.createQuery(
+                queryString).list();        
+
+        assertEquals(1, siteAccessList.size());
+        StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
+                .getUserId());
+    }    
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void unassignTrialLevelAccrualAccess() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+
+        // Make sure study level access has been provisioned with correct
+        // values.
+        List<StudyAccrualAccess> trialLevelAccessList = session.createQuery(
+                "from " + StudyAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studyProtocol.id = " + sp.getId()).list();
+        assertEquals(1, trialLevelAccessList.size());
+        
+        // Make sure site-level access has been provisioned automatically as well.
+        List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
+                "from " + StudySiteAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studySite.id = " + site.getId()).list();        
+
+        assertEquals(1, siteAccessList.size());
+        StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        
+        // now un-assign.
+        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST", user);
+        trialLevelAccessList = session.createQuery(
+                "from " + StudyAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studyProtocol.id = " + sp.getId()).list();
+        
+        assertEquals(2, trialLevelAccessList.size());
+        
+        // First one is the one that's cancelled
+        StudyAccrualAccess saa1 = trialLevelAccessList.get(0);
+        assertEquals(saa1.getActionCode(), AssignmentActionCode.ASSIGNED);
+        assertEquals(saa1.getStatusCode(), ActiveInactiveCode.INACTIVE);
+
+        StudyAccrualAccess saa2 = trialLevelAccessList.get(1);
+        assertEquals(saa2.getActionCode(), AssignmentActionCode.UNASSIGNED);
+        assertEquals(saa2.getStatusCode(), ActiveInactiveCode.INACTIVE);
+        
+        // Make sure site-level access has been cancelled.
+        siteAccessList = session.createQuery(
+                "from " + StudySiteAccrualAccess.class.getName()
+                        + " saa where saa.registryUser.id = " + user.getId()
+                        + " and studySite.id = " + site.getId()).list();        
+
+        assertEquals(1, siteAccessList.size());
+        ssaa = siteAccessList.get(0);
+        assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.INACTIVE);        
+        
+    }
+    
+    @Test
+    public void getAccrualAccessAssignmentHistory() throws Exception {
+
+        // Delete any previous history records.
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createQuery("delete " + StudyAccrualAccess.class.getName())
+                .executeUpdate();
+        session.flush();
+
+        RegistryUser user = TestSchema.getRegistryUser();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        // assign
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST-ASSIGN", user);        
+        // now un-assign.
+        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST-UNASSIGN", user);
+
+        // Mock user service
+        RegistryUserServiceLocal userServiceLocal = mock(RegistryUserServiceLocal.class);
+        when(userServiceLocal.getUser(any(String.class))).thenReturn(user);
+        bean.setRegistryUserService(userServiceLocal);        
+        
+        List<AccrualAccessAssignmentHistoryDTO>  list = bean.getAccrualAccessAssignmentHistory();
+        assertEquals(2, list.size());
+        
+        AccrualAccessAssignmentHistoryDTO unassign = list.get(0);
+        assertEquals("Un-assigned", unassign.getAction());        
+        assertEquals("Test User", unassign.getAssigner());
+        assertEquals("TEST-UNASSIGN", unassign.getComments());
+        assertEquals("NCI-2009-00001", unassign.getTrialNciId());
+
+        AccrualAccessAssignmentHistoryDTO assign = list.get(1);
+        assertEquals("Assigned", assign.getAction());        
+        assertEquals("Test User", assign.getAssigner());
+        assertEquals("TEST-ASSIGN", assign.getComments());
+        assertEquals("NCI-2009-00001", assign.getTrialNciId());
+        
+        
+    }
+    
+    @Test
+    public void getAccrualAccessAssignmentByTrial() throws Exception {
+
+        // Delete any previous history records.
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createQuery("delete " + StudyAccrualAccess.class.getName())
+                .executeUpdate();
+        session.flush();
+
+        RegistryUser user = TestSchema.getRegistryUser();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        // assign
+        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST-ASSIGN", user);        
+
+        // Mock user service
+        RegistryUserServiceLocal userServiceLocal = mock(RegistryUserServiceLocal.class);
+        when(userServiceLocal.getUser(any(String.class))).thenReturn(user);
+        bean.setRegistryUserService(userServiceLocal);        
+        
+        List<AccrualAccessAssignmentByTrialDTO>  list = bean.getAccrualAccessAssignmentByTrial();
+        assertEquals(1, list.size());
+        
+        // now un-assign.
+        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
+                "TEST-UNASSIGN", user);        
+
+        list = bean.getAccrualAccessAssignmentByTrial();
+        assertEquals(0, list.size());
+        
+    }
+    
+    
     
 }
