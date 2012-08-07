@@ -313,7 +313,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     if (spRow.respPartyCrsId != null) {
                         def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
                         crsDetail(xml, crsRow)
-                        addressAndPhoneDetail(xml, crsRow, spRow, false)
+                        addressAndPhoneDetail(xml, crsRow, spRow)
                     }
                 }
                 xml.resp_party_organization {
@@ -323,8 +323,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                         xml.po_id(roRow.org_poid)
                         xml.ctep_id(roRow.ctep_id)
                         def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
-                        addressAndPhoneDetail(xml, roRow, 
-                            sponsorContactInfo, false)
+                        addressAndPhoneDetail(xml, roRow, sponsorContactInfo)
                     }
                 }
             }
@@ -569,39 +568,66 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
         xml.ctep_id(crsRow.ctep_id)
 }
 
+
+void addAddress(MarkupBuilder xml, Object row) {
+    xml.address {
+        
+       if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
+           xml.street("")
+           xml.city("")
+           xml.state("")
+           xml.zip("")
+           xml.country("")
+       } else {
+           if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
+               xml.street(row.streetaddressline)
+           } else {
+               xml.street("");
+           }
+           if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
+               xml.city(row.cityormunicipality)
+           }else{
+               xml.city("");
+           }
+           
+           xml.state(row.stateorprovince)
+           
+           if(StringUtils.equals(row.postalcode, "96960")) {
+               xml.zip("")
+           }else{
+               xml.zip(row.postalcode)
+           }
+           
+           xml.country(row.country_name)
+       }
+   }
+}
+
+
+void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow) {
+    
+    addAddress(xml,row);
+        
+    if (spRow!=null && spRow.prim_phone!=null) {
+        xml.phone(spRow.prim_phone);
+    }else {
+        xml.phone("");
+    }
+
+    xml.fax("");
+            
+    if (spRow!=null && spRow.prim_email!=null &&
+            !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") &&
+                !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email)) {
+        xml.email(spRow.prim_email);
+    }else{
+        xml.email("");
+    }
+}
+    
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {  
 
-     xml.address {
-         
-        if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
-            xml.street("")
-            xml.city("")
-            xml.state("")
-            xml.zip("")
-            xml.country("")
-        } else {
-            if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
-                xml.street(row.streetaddressline)
-            } else {
-                xml.street("");
-            }
-            if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
-                xml.city(row.cityormunicipality)
-            }else{
-                xml.city("");
-            }
-            
-            xml.state(row.stateorprovince)
-            
-            if(StringUtils.equals(row.postalcode, "96960")) {
-                xml.zip("")
-            }else{
-                xml.zip(row.postalcode)
-            }
-            
-            xml.country(row.country_name)
-        }
-    }
+    addAddress(xml,row);
     
     if (!suppressPhoneAndEmail) {
         
