@@ -11,6 +11,7 @@
     <body>
         <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
         <s:if test="hasActionMessages()"><div class="confirm_msg"><s:actionmessage /></div></s:if>
+        <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
         <h1><fmt:message key="accrual.batchUpload.title"/></h1>
         <s:form action="batchUploaddoUpload" method="POST" enctype="multipart/form-data">
             <s:token/>
