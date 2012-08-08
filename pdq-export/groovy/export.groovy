@@ -1,5 +1,3 @@
-
-
 import groovy.sql.Sql
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
@@ -161,7 +159,6 @@ def collabTrialsSQL = """
         END as classification_code
      from study_protocol sp
      join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
-            and sponsorSs.research_organization_identifier in ($ctepRoId, $dcpRoId)
      join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
         and dws.status_code in ('ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
         and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
@@ -197,7 +194,11 @@ def collabTrialsSQL = """
      left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
-     where sp.status_code = 'ACTIVE'
+     where sp.status_code = 'ACTIVE'  and
+        ((select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
+            and study_site.research_organization_identifier = $ctepRoId) is not null OR
+        (select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
+            and study_site.research_organization_identifier = $dcpRoId) is not null)
 """
 
 def nbOfTrials = 0
@@ -233,6 +234,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                     xml.id(spRow.ctepId)
                     xml.id_type("ctep-id")
                     xml.id_domain("CTEP")
+                }
+            }
+            if (spRow.dcpId != null) {
+                xml.secondary_id {
+                    xml.id(spRow.dcpId)
+                    xml.id_type("dcp-id")
+                    xml.id_domain("DCP")
                 }
             }
             if (spRow.nctId != null) {
@@ -605,8 +613,10 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
                     spRow.prim_email!=null && 
                         !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
                             !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email) ? spRow.prim_email : 
-                                (StringUtils.containsIgnoreCase(row.email, "unknown") || Constants.SUPRESS_EMAIL_IDS.contains(row.email) || suppressPhoneAndEmail ? "" : row.email)))
-}
+                                (StringUtils.containsIgnoreCase(row.email, "unknown") || 
+                                    Constants.SUPRESS_EMAIL_IDS.contains(row.email) || 
+                                        suppressPhoneAndEmail ? "" : row.email)))
+}    
 
 String changeSponsorNameIfNeeded(orgName) {
     return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName
