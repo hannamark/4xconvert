@@ -6,7 +6,7 @@
 </td>
 <td>
 <s:if test="nciSpecificInformationWebDTO.organizationIi != null">
-<a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${nciSpecificInformationWebDTO.organizationIi}"/>);">
+<a href="javascript:void(0)" onclick="displayOrgDetails($('nciSpecificInformationWebDTO.organizationIi').value);">
     <img src="<%=request.getContextPath()%>/images/details.gif"/>
 </a>
 </s:if>
@@ -14,7 +14,7 @@
 <td> 
                   <ul style="margin-top:-1px;">             
                         <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookup();"/><span class="btn_img"><span class="search">Look Up</span></span></a></li>
-                  </ul><s:hidden name="nciSpecificInformationWebDTO.organizationIi" />
+                  </ul><s:hidden name="nciSpecificInformationWebDTO.organizationIi" id="nciSpecificInformationWebDTO.organizationIi"/>
                    </td>
       </tr>
 </table>

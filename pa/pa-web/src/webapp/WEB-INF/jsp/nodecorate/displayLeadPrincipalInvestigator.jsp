@@ -3,7 +3,7 @@
     <tr>
         <td>
             <s:textfield label="First Name" name="gtdDTO.piName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly" />
-            <a href="javascript:void(0)" onclick="displayPersonDetails(<c:out value='${gtdDTO.piIdentifier}'/>);">
+            <a href="javascript:void(0)" onclick="displayPersonDetails($('gtdDTO.piIdentifier').value);">
                 <img src="<%=request.getContextPath()%>/images/details.gif"/>
             </a>
         </td>
@@ -15,7 +15,7 @@
                 </a>
             </li>
             </ul>
-            <s:hidden name="gtdDTO.piIdentifier" />
+            <s:hidden name="gtdDTO.piIdentifier" id="gtdDTO.piIdentifier"/>
         </td>
     </tr>
 </table>
