@@ -79,15 +79,17 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -114,6 +116,8 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class SearchStudySiteBean implements SearchStudySiteService {
 
+    private static final String FUNCTIONAL_CODE = "functionalCode";
+
     /**
      * {@inheritDoc}
      */
@@ -130,7 +134,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                     + "where sp.id = :spId and ss.functionalCode = :functionalCode";
                 Query query = session.createQuery(hql);
                 query.setParameter("spId", IiConverter.convertToLong(studyProtocolIi));
-                query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+                query.setParameter(FUNCTIONAL_CODE, StudySiteFunctionalCode.TREATING_SITE);
                 List<Object> queryList = query.list();
                 Set<Long> authIds = getAuthorizedSites(registryUserIi);
                 for (Object qArr : queryList) {
@@ -158,6 +162,8 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     @Override
     public List<SearchStudySiteResultDto> getTreatingSites(Long studyProtocolId) throws PAException {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
+        StudySiteAccrualStatusServiceRemote accrualStatusSvc = PaServiceLocator.getInstance()
+                .getStudySiteAccrualStatusService();
         Session session = PaHibernateUtil.getCurrentSession();
         String hql = "select ss.id, org.name, org.identifier "
                 + "from StudyProtocol as sp join sp.studySites as ss "
@@ -166,21 +172,14 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                 + "where sp.id = :spId and ss.functionalCode = :functionalCode";
         Query query = session.createQuery(hql);
         query.setParameter("spId", studyProtocolId);
-        query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+        query.setParameter(FUNCTIONAL_CODE, StudySiteFunctionalCode.TREATING_SITE);
         List<Object[]> queryList = query.list();
         for (Object[] qArr : queryList) {
             Object[] site = qArr;
-            StudySiteAccrualStatus ssas = null;
-            List<StudySiteAccrualStatus> results = PaHibernateUtil.getCurrentSession()
-                .createCriteria(StudySiteAccrualStatus.class)
-                .add(Restrictions.eq("studySite.id", site[0])).list();
-            if (!results.isEmpty()) {
-                ssas = results.get(results.size() - 1);
-            }
-            RecruitmentStatusCode recruitmentStatus = null;
+            StudySiteAccrualStatusDTO ssas = accrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(
+                    IiConverter.convertToIi((Long) site[0]));
             if (ssas != null) {
-                recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
-                if (recruitmentStatus.isEligibleForAccrual()) {
+                if (RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode()).isEligibleForAccrual()) {
                     SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
                     dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
                     dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
@@ -198,7 +197,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi)  throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
-        criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
+        criteria.add(Restrictions.eq(FUNCTIONAL_CODE, StudySiteFunctionalCode.TREATING_SITE));
         criteria.createCriteria("healthCareFacility").createCriteria("organization")
             .add(Restrictions.eq("identifier", orgIi.getExtension()));
         SearchStudySiteResultDto returnDto = null;
@@ -224,7 +223,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     public boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
-        criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        criteria.add(Restrictions.eq(FUNCTIONAL_CODE, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
         criteria.createCriteria("researchOrganization").createCriteria("organization")
             .add(Restrictions.eq("name", PAConstants.DCP_ORG_NAME));
         try {

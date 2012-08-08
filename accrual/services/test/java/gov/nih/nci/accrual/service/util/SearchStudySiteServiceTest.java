@@ -83,8 +83,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
@@ -102,9 +107,12 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.StudySiteComparator;
@@ -295,6 +303,14 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         ssaa.setRegistryUser(TestSchema.registryUsers.get(0));
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));        
         TestSchema.addUpdObject(ssas);
+        
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        StudySiteAccrualStatusServiceRemote svc = mock(StudySiteAccrualStatusServiceRemote.class);
+        when(paSvcLocator.getStudySiteAccrualStatusService()).thenReturn(svc);
+        StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        when(paSvcLocator.getStudySiteAccrualStatusService().getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(dto);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
         assertNotNull(bean.getTreatingSites(sp.getId()));
     }

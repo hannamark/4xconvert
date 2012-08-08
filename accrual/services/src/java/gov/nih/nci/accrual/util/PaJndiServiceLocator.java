@@ -82,6 +82,7 @@ import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -148,5 +149,12 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public LookUpTableServiceRemote getLookUpTableService() {
         return (LookUpTableServiceRemote) JNDIUtil.lookupPa("/pa/LookUpTableServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookupPa("/pa/StudySiteAccrualStatusServiceBean/remote");
     }
 }

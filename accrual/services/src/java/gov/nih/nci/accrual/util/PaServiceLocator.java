@@ -82,6 +82,7 @@ import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -183,5 +184,13 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
      */
     public LookUpTableServiceRemote getLookUpTableService() {
         return serviceLocator.getLookUpTableService();
+    }
+
+    /**
+     *
+     * @return StudySiteAccrualStatusService
+     */
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
+        return serviceLocator.getStudySiteAccrualStatusService();
     }
 }
