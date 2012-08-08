@@ -19,7 +19,7 @@
             </p>
             <s:form name="myAccount" method="POST" >
                 <s:token/>
-                <s:actionmessage/>
+                <s:actionmessage cssClass="confirm_msg"/>
                 <s:actionerror/>
                 <s:hidden name="registryUserWebDTO.id" />
                 <s:hidden name="registryUserWebDTO.csmUserId" />
