@@ -303,7 +303,7 @@ public class StudyOverallStatusBeanLocal extends
             DateMidnight newDate, boolean relaxed) throws PAException {
         checkCondition(newCode == null, "Study status must be set.");
         checkCondition(newDate == null, "Study status date must be set.");
-        if (oldCode != null) {
+        if (oldCode != null && !StringUtils.equalsIgnoreCase(oldCode.getCode(), newCode.getCode())) {
             checkCondition(!oldCode.canTransitionTo(newCode) && !relaxed,
                            "Invalid study status transition from " + oldCode.getCode() + " to " + newCode.getCode()
                                    + ".");

@@ -79,9 +79,11 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -105,6 +107,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.joda.time.DateMidnight;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -192,7 +195,31 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         clearErrorsAndMessages();        
         try {
             StudyOverallStatusDTO statusDto = getStudyOverallStatus();
-            validateOverallStatus(statusDto);
+            StudyProtocolDTO currentProtocolDto = studyProtocolService
+                    .getStudyProtocol(statusDto.getStudyProtocolIdentifier());
+            StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+            studyProtocolDTO.setIdentifier(spIdIi);
+            getStudyProtocolDates(studyProtocolDTO);
+            StudyProtocolDates oldDates = AbstractStudyProtocolConverter.convertDatesToDomain(studyProtocolDTO);
+            StudyProtocolDates newDates = AbstractStudyProtocolConverter.convertDatesToDomain(currentProtocolDto);
+            DateMidnight oldStartDate = (oldDates.getStartDate() != null) ? new DateMidnight(
+                    oldDates.getStartDate()) : null;
+            
+            DateMidnight newStartDate = (newDates.getStartDate() != null) ? new DateMidnight(
+                   newDates.getStartDate()) : null;
+          
+            DateMidnight oldPrimaryCompletionDate = 
+                (oldDates.getPrimaryCompletionDate() != null) ? new DateMidnight(oldDates
+                        .getPrimaryCompletionDate()) : null;
+            DateMidnight newPrimaryCompletionDate =
+                    (newDates.getPrimaryCompletionDate() != null) ? new DateMidnight(newDates
+                            .getPrimaryCompletionDate()) : null;
+            
+            if (studyOverallStatusService.isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier()) 
+                    && !oldStartDate.equals(newStartDate) 
+                    && !(oldPrimaryCompletionDate).equals(newPrimaryCompletionDate)) {
+                validateOverallStatus(statusDto);
+            }
             insertOrUpdateStudyOverallStatus(statusDto);
             updateStudyProtocol();
             if (!hasActionErrors()) {

@@ -109,7 +109,6 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
-
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
@@ -284,7 +283,18 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         sut = createStudyOverallStatusActionMock();
         doCallRealMethod().when(sut).update();
         StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        StudyProtocolDTO currentProtocolDto = new StudyProtocolDTO();
+        DateTime now = new DateTime();
+        studyProtocolDTO.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        studyProtocolDTO.setCompletionDate(TsConverter.convertToTs(now.toDate()));
+        currentProtocolDto.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        currentProtocolDto.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        currentProtocolDto.setCompletionDate(TsConverter.convertToTs(now.toDate()));
         when(sut.getStudyOverallStatus()).thenReturn(statusDto);
+        when(studyProtocolService
+                .getStudyProtocol(statusDto.getStudyProtocolIdentifier())).thenReturn(currentProtocolDto);
         when(sut.hasActionErrors()).thenReturn(false);
         
         String result = sut.update();
@@ -293,7 +303,6 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         InOrder inOrder = inOrder(sut);
         inOrder.verify(sut).clearErrorsAndMessages();
         inOrder.verify(sut).getStudyOverallStatus();
-        inOrder.verify(sut).validateOverallStatus(statusDto);
         inOrder.verify(sut).insertOrUpdateStudyOverallStatus(statusDto);
         inOrder.verify(sut).updateStudyProtocol();
         inOrder.verify(sut).loadForm();
@@ -310,6 +319,17 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         sut = createStudyOverallStatusActionMock();
         doCallRealMethod().when(sut).update();
         StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        StudyProtocolDTO currentProtocolDto = new StudyProtocolDTO();
+        DateTime now = new DateTime();
+        studyProtocolDTO.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        studyProtocolDTO.setCompletionDate(TsConverter.convertToTs(now.toDate()));
+        currentProtocolDto.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        currentProtocolDto.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        currentProtocolDto.setCompletionDate(TsConverter.convertToTs(now.toDate()));
+        when(studyProtocolService
+                .getStudyProtocol(statusDto.getStudyProtocolIdentifier())).thenReturn(currentProtocolDto);
         when(sut.getStudyOverallStatus()).thenReturn(statusDto);
         when(sut.hasActionErrors()).thenReturn(true);
         
@@ -319,7 +339,6 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         InOrder inOrder = inOrder(sut);
         inOrder.verify(sut).clearErrorsAndMessages();
         inOrder.verify(sut).getStudyOverallStatus();
-        inOrder.verify(sut).validateOverallStatus(statusDto);
         inOrder.verify(sut).insertOrUpdateStudyOverallStatus(statusDto);
         inOrder.verify(sut).updateStudyProtocol();
         inOrder.verify(sut, never()).loadForm();
@@ -335,6 +354,21 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         sut = createStudyOverallStatusActionMock();
         doCallRealMethod().when(sut).update();
         StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        DateTime now = new DateTime();
+        studyProtocolDTO.setIdentifier(spIi);
+        StudyProtocolDTO currentProtocolDto = new StudyProtocolDTO();
+        studyProtocolDTO.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        studyProtocolDTO.setCompletionDate(TsConverter.convertToTs(now.toDate()));
+        currentProtocolDto.setStartDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        currentProtocolDto.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        
+        currentProtocolDto.setCompletionDate(TsConverter.convertToTs(now.toDate()));
+        when(studyOverallStatusService.isTrialStatusOrDateChanged(statusDto, spIi)).thenReturn(true);
+        when(studyProtocolService
+                .getStudyProtocol(statusDto.getStudyProtocolIdentifier())).thenReturn(currentProtocolDto);
         when(sut.getStudyOverallStatus()).thenReturn(statusDto);
         doThrow(new PAException("PAException")).when(sut).validateOverallStatus(statusDto);
         
@@ -344,8 +378,6 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         InOrder inOrder = inOrder(sut);
         inOrder.verify(sut).clearErrorsAndMessages();
         inOrder.verify(sut).getStudyOverallStatus();
-        inOrder.verify(sut).validateOverallStatus(statusDto);
-        inOrder.verify(sut).addActionError("PAException");
     }
 
     /**
