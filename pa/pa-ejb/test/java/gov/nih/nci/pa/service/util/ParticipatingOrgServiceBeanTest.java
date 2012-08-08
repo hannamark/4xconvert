@@ -78,18 +78,26 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -179,6 +187,49 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
     }
     
     
+    @Test
+    public void getTreatingSitesSortOrder() throws Exception {
+        StudyProtocol sp =
+                (StudyProtocol) getCurrentSession().get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        StudySite ss = new StudySite();
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        HealthCareFacility hf = new HealthCareFacility();
+        hf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hf.setIdentifier("hf_po_id");
+        ss.setHealthCareFacility(hf);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        Organization org = new Organization();
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        hf.setOrganization(org);
+        org.setName("aaa");
+        TestSchema.addUpdObject(org);
+        TestSchema.addUpdObject(hf);
+        TestSchema.addUpdObject(ss);
+
+        List<ParticipatingOrgDTO> rList = bean.getTreatingSites(sp.getId());
+        assertEquals(2, rList.size());
+        assertEquals(org.getName(), rList.get(0).getName());
+
+        org.setName("zzz");
+        TestSchema.addUpdObject(org);
+        rList = bean.getTreatingSites(sp.getId());
+        assertEquals(2, rList.size());
+        assertEquals(org.getName(), rList.get(1).getName());
+
+        org.setName("AAA");
+        TestSchema.addUpdObject(org);
+        rList = bean.getTreatingSites(sp.getId());
+        assertEquals(2, rList.size());
+        assertEquals(org.getName(), rList.get(0).getName());
+
+        org.setName("ZZZ");
+        TestSchema.addUpdObject(org);
+        rList = bean.getTreatingSites(sp.getId());
+        assertEquals(2, rList.size());
+        assertEquals(org.getName(), rList.get(1).getName());
+    }
+
     @Test
     public void getTreatingSite() throws Exception {
         Long spId = TestSchema.studyProtocolIds.get(0);

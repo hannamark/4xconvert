@@ -1101,6 +1101,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 }
                 participatingSites.add(participatingSite);
             }
+            Collections.sort(participatingSites);
             tsrReportGenerator.setParticipatingSites(participatingSites);
         }
     }

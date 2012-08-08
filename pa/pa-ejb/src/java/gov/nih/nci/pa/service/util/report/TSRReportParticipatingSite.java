@@ -93,7 +93,7 @@ import java.util.List;
  * @author kkanchinadam
  */
 
-public class TSRReportParticipatingSite {
+public class TSRReportParticipatingSite implements Comparable<TSRReportParticipatingSite> {
     private String facility;
     private String contact;
     private String recruitmentStatus;
@@ -208,4 +208,17 @@ public class TSRReportParticipatingSite {
         this.programCode = programCode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(TSRReportParticipatingSite that) {
+        if (facility == null) {
+            return that.facility == null ? 0 : -1;
+        }
+        if (that.facility == null) {
+            return 1;
+        }
+        return facility.compareToIgnoreCase(that.facility);
+    }
 }

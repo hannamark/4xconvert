@@ -22,7 +22,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
-
 import org.hibernate.Query;
 
 /**
@@ -46,8 +45,9 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
                     + "join ss.healthCareFacility hf "
                     + "join hf.organization org "
                     + "where sp.id = :spId "
-                    + "and ss.functionalCode = :functionalCode";
-    
+                    + "and ss.functionalCode = :functionalCode "
+                    + "order by upper(org.name)";
+
     private static final String BY_STUDY_SITE_HQL =
             "select ss, org.name, org.identifier, sp.id "
                     + "from StudySite ss "
@@ -55,7 +55,7 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
                     + "join ss.healthCareFacility hf "
                     + "join hf.organization org "
                     + "where ss.id = :studySiteId "
-                    + "and ss.functionalCode = :functionalCode";    
+                    + "and ss.functionalCode = :functionalCode";
 
     private static final int STUDY_SITE_IDX = 0;
     private static final int ORG_NAME_IDX = 1;
@@ -64,7 +64,6 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
 
     /**
      * {@inheritDoc}
-     * @throws PAException 
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -85,7 +84,7 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
         addAccrualAndPersonData(result, studySiteIds);
         return result;
     }
-    
+
     @Override
     public ParticipatingOrgDTO getTreatingSite(Long studySiteId)
             throws PAException {
@@ -122,7 +121,6 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
      * @param result
      * @param studySiteIds
      * @param qry
-     * @throws HibernateException
      */
     @SuppressWarnings("unchecked")
     private void processQueryResults(List<ParticipatingOrgDTO> result,
