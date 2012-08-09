@@ -860,7 +860,7 @@ public class PAServiceUtils {
      */
     public boolean isGrantDuplicate(StudyResourcingDTO grantDto, StudyResourcingDTO grantToCompare) {
      // Check if the grant with the same duplicate is marked deleted. If yes then return false. 
-        if (!BlConverter.convertToBoolean(grantToCompare.getActiveIndicator())) {
+        if (!BlConverter.convertToBool(grantToCompare.getActiveIndicator())) {
             return false;
         } 
         boolean sameFundingMech = StringUtils.equals(grantToCompare.getFundingMechanismCode().getCode(),
