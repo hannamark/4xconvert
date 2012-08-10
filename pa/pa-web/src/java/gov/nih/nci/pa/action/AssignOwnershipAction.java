@@ -100,8 +100,11 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -112,6 +115,7 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Vrushali
  *
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class AssignOwnershipAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private List<TrialOwner> users = null;
@@ -227,23 +231,24 @@ public class AssignOwnershipAction extends ActionSupport {
      * @return map of users
      */
     private void loadRegistryUsers() {
+        final RegistryUserService registryUserService = getRegistryUserService();
         try {
             Ii spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             if (!ISOUtil.isIiNull(spIi)) {
+                
                 RegistryUser regUser = new RegistryUser();
                 regUser.setFirstName(criteria.getFirstName());
                 regUser.setLastName(criteria.getLastName());
                 regUser.setEmailAddress(criteria.getEmailAddress());
                 regUser.setAffiliatedOrganizationId(criteria.getAffiliatedOrgId());
-                users = new ArrayList<TrialOwner>();
-                List<RegistryUser> regUserList = getRegistryUserService().search(regUser);
-                TrialOwner owner = null;
+                users = new ArrayList<TrialOwner>();               
+                List<RegistryUser> regUserList = registryUserService.search(regUser);                
+                final Collection<RegistryUser> owners = registryUserService
+                        .getAllTrialOwners(Long.parseLong(spIi.getExtension()));                
                 for (RegistryUser rUsr : regUserList) {
-                    owner = new TrialOwner();
+                    TrialOwner owner = new TrialOwner();
                     owner.setRegUser(rUsr);
-                    owner.setOwner(PaRegistry.getRegistryUserService()
-                            .isTrialOwner(rUsr.getId(),
-                                    Long.parseLong(spIi.getExtension())));
+                    owner.setOwner(contains(owners, rUsr));
                     users.add(owner);
                 }
             }
@@ -252,7 +257,18 @@ public class AssignOwnershipAction extends ActionSupport {
         }
     }
 
-   /**
+    private boolean contains(Collection<RegistryUser> owners,
+            final RegistryUser user) {
+        return CollectionUtils.find(owners, new Predicate() {
+            @Override
+            public boolean evaluate(Object obj) {
+                RegistryUser owner = (RegistryUser) obj;
+                return owner.getId().equals(user.getId());
+            }
+        }) != null;
+    }
+
+/**
     * @return result
     */
    public String displayAffiliatedOrganization() {
