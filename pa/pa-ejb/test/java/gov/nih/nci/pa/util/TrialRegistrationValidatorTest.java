@@ -481,7 +481,7 @@ public class TrialRegistrationValidatorTest {
         StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         studyResourcingDTOs.add(studyResourcingDTO);
-        doThrow(new PAException()).when(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
+        doThrow(new PAException("Duplicate grants are not allowed.")).when(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
         validator.validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
         verify(studyResourcingService).validate(studyResourcingDTO);
         verify(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
