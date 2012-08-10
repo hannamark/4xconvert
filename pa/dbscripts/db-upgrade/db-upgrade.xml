@@ -1082,5 +1082,9 @@
     <changeSet id="PO-5319-2" author="Kalpana">
         <comment>updated accrual changecode email in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5319-2.sql"/>
+     </changeSet> 
+    <changeSet id="PO-5380" author="Kalpana">
+        <comment>updated registry batch upload email in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5380.sql"/>
      </changeSet>  
 </databaseChangeLog>
