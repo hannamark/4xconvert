@@ -103,6 +103,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -137,6 +138,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  */
 public class PopupAction extends ActionSupport implements Preparable {
+    private static final String CREATE_ORG_RESPONSE = "create_org_response";
     private static final long serialVersionUID = -4295358782987888548L;
     private static final String FAILURE_MSG_ATTR = "failureMessage";
     private static final String ORGS_RESULT = "orgs";
@@ -448,7 +450,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 sb.append(" - ").append(actionErr);
             }
             ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, sb.toString());
-            return "create_org_response";
+            return CREATE_ORG_RESPONSE;
         }
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
         //PO Service requires upper case state codes for US and Canada
@@ -488,6 +490,14 @@ public class PopupAction extends ActionSupport implements Preparable {
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
             callConvert.add(PoRegistry.getOrganizationEntityService().getOrganization(id));
             convertPoOrganizationDTO(callConvert, null);
+            
+            // Load up paOrg list.
+            for (OrganizationDTO dto : callConvert) {
+                PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());                
+                paOrgs.add(paDTO);
+            }            
+            PADomainUtils.addOrganizationCtepIDs(paOrgs);            
+            
         } catch (NullifiedEntityException e) {
             handleError(e);
         } catch (URISyntaxException e) {
@@ -496,8 +506,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             handleError(e);
         } catch (CurationException e) {
             handleError(e);
+        } catch (NullifiedRoleException e) {
+            handleError(e);
         }
-        return "create_org_response";
+        return CREATE_ORG_RESPONSE;
     }
 
     private String handleError(Exception exception) {
@@ -508,7 +520,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String handleError(String message) {
         addActionError(message);
         ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, message);
-        return "create_org_response";
+        return CREATE_ORG_RESPONSE;
     }
 
     /**
