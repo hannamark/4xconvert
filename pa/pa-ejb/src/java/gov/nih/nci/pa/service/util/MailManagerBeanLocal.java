@@ -208,7 +208,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
     private static final int ERROR_MSG_LENGTH = 12;
     private static final String SIR_OR_MADAM = "Sir or Madam";
-    
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -283,9 +282,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             if (spDTO.isProprietaryTrial()) {
                 File[] attachments = {new File(rtfTsrFile), new File(htmlTsrFile)};
                 mailSubject = lookUpTableService.getPropertyValue("tsr.proprietary.subject");
-                sendEmail(spDTO, body, attachments, mailSubject, false);
-                new File(rtfTsrFile).delete();
-                new File(htmlTsrFile).delete();
+                sendEmail(spDTO, body, attachments, mailSubject, false, true);
             } else if (BooleanUtils.isTrue(spDTO.getCtgovXmlRequiredIndicator())) {
                 String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
                 File[] attachments = {new File(xmlFile), new File(rtfTsrFile), new File(htmlTsrFile)};
@@ -295,10 +292,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 } else {
                     mailSubject = lookUpTableService.getPropertyValue("tsr.subject");
                 }
-                sendEmail(spDTO, body, attachments, mailSubject, false);
-                new File(rtfTsrFile).delete();
-                new File(htmlTsrFile).delete();
-                new File(xmlFile).delete();
+                sendEmail(spDTO, body, attachments, mailSubject, false, true);
             } else {
                 File[] attachments = {new File(rtfTsrFile), new File(htmlTsrFile)};
 
@@ -307,9 +301,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 } else {
                     mailSubject = lookUpTableService.getPropertyValue("noxml.tsr.subject");
                 }
-                sendEmail(spDTO, body, attachments, mailSubject, false);
-                new File(rtfTsrFile).delete();
-                new File(htmlTsrFile).delete();
+                sendEmail(spDTO, body, attachments, mailSubject, false, true);
             }
 
         } catch (Exception e) {
@@ -397,25 +389,26 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     /**
-     *
-     * @param mailTo mailTo
-     * @param subject subject
-     * @param mailBody mailBody
-     * @param attachments File attachments
+     * {@inheritDoc}
      */
     @Override
     public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
+        sendMailWithAttachment(mailTo, subject, mailBody, attachments, false);
+    }
+
+    private void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments, 
+            boolean deleteAttachments) {
         try {
             String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
-            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments);
+            sendMailWithAttachment(mailTo, mailFrom, null , subject, mailBody, attachments, deleteAttachments);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    void sendMailWithAttachment(String mailTo, String mailFrom, 
-            List<String> mailCc, String subject, String mailBody, File[] attachments) {
+    void sendMailWithAttachment(String mailTo, String mailFrom, List<String> mailCc, String subject, String mailBody,
+            File[] attachments, boolean deleteAttachments) {
         try {
             // Define Message
             MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc, subject);
@@ -435,20 +428,23 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             message.setContent(multipart);
             // Send Message
-            invokeTransportAsync(message);        
+            invokeTransportAsync(message, deleteAttachments ? attachments : null);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
-    
-   
-    
-    private void invokeTransportAsync(final MimeMessage message) {
+
+    private void invokeTransportAsync(final MimeMessage message, final File[] postDeletes) {
         mailDeliveryExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     Transport.send(message);
+                    if (postDeletes != null) {
+                        for (File file : postDeletes) {
+                            file.delete();
+                        }
+                    }
                 } catch (Exception e) {
                     LOG.error(SEND_MAIL_ERROR, e);
                 }
@@ -481,7 +477,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
 
     }
 
@@ -507,7 +503,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.accept.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
     }
 
     /**
@@ -595,7 +591,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(HOLD_REASON, StringUtils.isBlank(onhold
                 .getOnholdReasonText()) ? onhold.getOnholdReasonCode()
                 .getCode() : onhold.getOnholdReasonText());
-        return sendEmail(spDTO, mailBody, new File[0], mailSubject, true);
+        return sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
     }
 
     /**
@@ -623,7 +619,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
     }
 
     /**
@@ -652,7 +648,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
 
         String mailSubject = lookUpTableService.getPropertyValue("rejection.subject");
-        sendEmail(spDTO, body, null, mailSubject, false);
+        sendEmail(spDTO, body, null, mailSubject, false, false);
     }
 
     /**
@@ -687,7 +683,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.accept.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
     }
 
   
@@ -710,7 +706,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 StringUtils.isNotBlank(updatesList) ? updatesList : NONE);
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.update.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
 
     }
 
@@ -733,7 +729,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             multipart.addBodyPart(msgPart);
             message.setContent(multipart);
             // Send Message
-            invokeTransportAsync(message);            
+            invokeTransportAsync(message, null);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         } // catch
@@ -796,13 +792,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             if (StringUtils.isBlank(csmUser.getEmailId())) {
                 if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
                     copyList.add(registryUser.getEmailAddress());
-                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null);           
+                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false);
                 } else {
-                    sendMailWithAttachment(toAddress, from, null, subject, body, null);
+                    sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
                 }
             } else {
                 copyList.add(csmUser.getEmailId());
-                sendMailWithAttachment(toAddress, from, copyList, subject, body, null); 
+                sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false); 
             } 
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
@@ -870,7 +866,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
                 
             
-            sendMailWithAttachment(toAddress, from, null, subject, body, null);
+            sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
@@ -929,7 +925,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 + StConverter.convertToString(marker.getName()) 
                 + " Request for Trial " 
                 + nciIdentifier;
-            sendMailWithAttachment(to, fromAddress, null, subject, body, null);
+            sendMailWithAttachment(to, fromAddress, null, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a q email for a CDE", e);
         }
@@ -966,17 +962,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
 
             File[] attachments = {new File(xmlFile), new File(rtfTsrFile), new File(htmlTsrFile)};
-            sendMailWithAttachment(mailTo, mailSubject, body, attachments);
-            new File(rtfTsrFile).delete();
-            new File(htmlTsrFile).delete();
-            new File(xmlFile).delete();
+            sendMailWithAttachment(mailTo, mailSubject, body, attachments, true);
         } catch (Exception e) {
             throw new PAException("Exception occured while sending XML and TSR Report to submitter", e);
         }
     }
 
     private List<String> sendEmail(StudyProtocolQueryDTO spDTO, String body, File[] attachments, String mailSubject, 
-            boolean includeSubmitter)
+            boolean includeSubmitter, boolean deleteAttachments)
             throws PAException {
         Set<String> emails = new HashSet<String>();
         String emailSubject = mailSubject;
@@ -1001,7 +994,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 emailAddress = recipient.getEmailAddress();
                 String regUserName = recipient.getFirstName() + " " + recipient.getLastName();
                 String emailBodyText = body.replace(OWNER_NAME, regUserName);
-                sendMailWithAttachment(emailAddress, emailSubject, emailBodyText, attachments);
+                sendMailWithAttachment(emailAddress, emailSubject, emailBodyText, attachments, deleteAttachments);
                 emails.add(emailAddress);
             }
         } catch (Exception e) {
@@ -1210,7 +1203,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                 submitter).replace(PLACEHOLDER_2,
                                         email);
                 sendMailWithAttachment(email, mailFrom, null, mailSubject,
-                        mailBody, new File[0]);
+                        mailBody, new File[0], false);
             }
         }
     }
@@ -1240,7 +1233,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .replace(PLACEHOLDER_2, badEmails);
         
         sendMailWithAttachment(mailTo, mailFrom, null, mailSubject,
-                mailBody, new File[0]);        
+                mailBody, new File[0], false);
     }
 
     /**
@@ -1287,7 +1280,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                     lookUpTableService.getPropertyValue(FROMADDRESS), null, subject);
             message.setContent(mailBody, "text/html");
             // Send Message
-            invokeTransportAsync(message);           
+            invokeTransportAsync(message, null);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
@@ -1389,7 +1382,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String mailFrom = lookUpTableService
                     .getPropertyValue(FROMADDRESS);
             sendMailWithAttachment(user.getEmailAddress(), mailFrom, null, 
-                    mailSubject, mailBody, new File[0]);
+                    mailSubject, mailBody, new File[0], false);
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }

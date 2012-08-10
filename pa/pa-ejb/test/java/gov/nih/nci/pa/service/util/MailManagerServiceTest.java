@@ -87,13 +87,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -1148,7 +1150,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"), anyString(), anyListOf(String.class),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
-                eq(new File[0]));
+                eq(new File[0]), anyBoolean());
         assertEquals("Wrong mail subject", "SUBJECT NCI nciIdentifier",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",
