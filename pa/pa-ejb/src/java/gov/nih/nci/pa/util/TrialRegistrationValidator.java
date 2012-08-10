@@ -393,7 +393,7 @@ public class TrialRegistrationValidator {
             try {
                 paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
             } catch (PAException e) {
-                errorMsg.append("Duplicate grants are not allowed.");
+                errorMsg.append(e.getMessage());
             }
         }
     }

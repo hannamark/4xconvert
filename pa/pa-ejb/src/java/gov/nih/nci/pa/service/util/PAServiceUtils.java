@@ -848,21 +848,33 @@ public class PAServiceUtils {
             StudyResourcingDTO dbDTO = (StudyResourcingDTO) paService.get(sp.getIdentifier());
             if (dbDTO == null) {
                 errorMsg.append("Grant ID " + sp.getIdentifier().getExtension() + " does not exist");
-            } else if (!isGrantDuplicate(sp, dbDTO)) {
+            } else if (!areTwoGrantsSame(sp, dbDTO)) {
                 errorMsg.append("Existing grants cannot be modified." + ERR_MSG_SEPARATOR);
             }
         }
     }
+
     /**
-     * @param grantDto grant DTO
-     * @param grantToCompare grant DTO
+     * @param grantDto
+     *            grant DTO
+     * @param grantToCompare
+     *            grant DTO
      * @return isGrantDup
      */
-    public boolean isGrantDuplicate(StudyResourcingDTO grantDto, StudyResourcingDTO grantToCompare) {
-     // Check if the grant with the same duplicate is marked deleted. If yes then return false. 
-        if (!BlConverter.convertToBool(grantToCompare.getActiveIndicator())) {
+    public boolean isGrantDuplicate(StudyResourcingDTO grantDto,
+            StudyResourcingDTO grantToCompare) {
+        // Check if the grant with the same duplicate is marked deleted. If yes
+        // then return false.
+        final Boolean inactive = BlConverter.convertToBoolean(grantToCompare
+                .getActiveIndicator());
+        if (Boolean.TRUE.equals(inactive)) {
             return false;
-        } 
+        }
+        return areTwoGrantsSame(grantDto, grantToCompare);
+    }
+
+    private boolean areTwoGrantsSame(StudyResourcingDTO grantDto,
+            StudyResourcingDTO grantToCompare) {
         boolean sameFundingMech = StringUtils.equals(grantToCompare.getFundingMechanismCode().getCode(),
                        grantDto.getFundingMechanismCode().getCode());
         boolean sameNih = StringUtils.equals(grantToCompare.getNihInstitutionCode().getCode(),
@@ -871,7 +883,7 @@ public class PAServiceUtils {
                         grantDto.getNciDivisionProgramCode().getCode());
         boolean sameSerial = StringUtils.equals(grantToCompare.getSerialNumber().getValue(),
                         grantDto.getSerialNumber().getValue());
-        return sameFundingMech && sameNih && sameNci && sameSerial;        
+        return sameFundingMech && sameNih && sameNci && sameSerial;
     }
     /**
      *
