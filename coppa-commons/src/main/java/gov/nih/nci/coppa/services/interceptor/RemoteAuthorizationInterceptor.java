@@ -87,6 +87,8 @@ import javax.ejb.SessionContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -121,13 +123,15 @@ public class RemoteAuthorizationInterceptor extends AuthorizationInterceptor {
     @AroundInvoke
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        String username;
-        try {
-            username = sessionContext.getCallerPrincipal().getName();
-        } catch (IllegalStateException e) {
-            username = getUnknownUsername();
+        if (StringUtils.equalsIgnoreCase(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser())) {
+            String username;
+            try {
+                username = sessionContext.getCallerPrincipal().getName();
+            } catch (IllegalStateException e) {
+                username = getUnknownUsername();
+            }
+            UsernameHolder.setUserCaseSensitive(username);
         }
-        UsernameHolder.setUserCaseSensitive(username);
         return invContext.proceed();
     }
 }

@@ -119,11 +119,15 @@ public class RemoteAuthorizationInterceptorTest {
         interceptor.prepareReturnValue(invocationContext);
         assertEquals(USER_NAME, UsernameHolder.getUser());
         
+        UsernameHolder.setUser(UsernameHolder.ANONYMOUS_USERNAME);
         when(principal.getName()).thenReturn(USER_NAME.toUpperCase());
+        assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         interceptor.prepareReturnValue(invocationContext);
         assertNotSame(USER_NAME, UsernameHolder.getUser());
-        
+
+        UsernameHolder.setUser(UsernameHolder.ANONYMOUS_USERNAME);
         when(principal.getName()).thenThrow(new IllegalStateException());
+        assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         interceptor.prepareReturnValue(invocationContext);
         assertEquals("unknown", UsernameHolder.getUser());
     }
