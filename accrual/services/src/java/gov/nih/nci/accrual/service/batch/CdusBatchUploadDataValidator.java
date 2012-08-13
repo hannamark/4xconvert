@@ -362,7 +362,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             if (!isCorrectOrganizationId(studySiteID, errMsg)) {
                 return;
             }
-            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, values, lineNumber);
+            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, lineNumber);
         }
     }
 
@@ -453,13 +453,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * on the COLLECTION line.
      * @throws PAException 
      */
-    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, List<String> values, 
-            long lineNumber) {
+    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, long lineNumber) {
         if (listOfPoIds.containsKey(regInstID)  || listOfCtepIds.containsKey(regInstID)) {
             assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, errMsg, lineNumber);
             return;
         }
-        addAccrualSiteValidationError(values, errMsg, lineNumber);
+        addAccrualSiteValidationError(regInstID, errMsg, lineNumber);
     }
     
     /**
@@ -503,9 +502,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         .append(appendLineNumber(lineNumber)).append("\n");
     }
     
-    private void addAccrualSiteValidationError(List<String> values, StringBuffer errMsg, 
+    private void addAccrualSiteValidationError(String siteId, StringBuffer errMsg, 
             long lineNumber) {
-        errMsg.append("Accrual study site ").append(getAccrualCountStudySiteId(values))
+        errMsg.append("Accrual study site ").append(siteId)
         .append(" is not valid")
         .append(appendLineNumber(lineNumber)).append("\n");
     }
