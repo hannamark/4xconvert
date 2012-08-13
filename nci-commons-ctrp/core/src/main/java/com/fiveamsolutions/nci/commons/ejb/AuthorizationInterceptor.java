@@ -118,7 +118,7 @@ public class AuthorizationInterceptor {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     // method invocation wrapper requires throws Exception
     public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        if (StringUtils.isEmpty(UsernameHolder.getUser())) {
+        if (StringUtils.equalsIgnoreCase(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser())) {
             String username;
             try {
                 username = sessionContext.getCallerPrincipal().getName();
