@@ -143,9 +143,11 @@
                          <td class="label">Board Name:<span class="required">*</span></td>
                          <td class="value">
                              <s:textfield name="ct.name" id="name" size="30"  readonly="true" cssClass="readonly" onchange="changeName()"/>
-                            <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${ct.id}"/>);">
-                                <img src="<%=request.getContextPath()%>/images/details.gif"/>
-                            </a>                             
+                             <c:if test="${not empty ct.id}">
+	                            <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${ct.id}"/>);">
+	                                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+	                            </a>           
+                            </c:if>                  
                          </td>
                          <td>  
                             <ul style="margin-top:-3px;">
