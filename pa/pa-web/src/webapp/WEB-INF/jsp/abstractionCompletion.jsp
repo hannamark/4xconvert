@@ -53,6 +53,7 @@
                                 <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
                                 <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
                             </display:table>
+			    <br/>
                         </s:if>   
                     </s:if>
                    
@@ -66,6 +67,7 @@
                                 <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Description" property="errorDescription" sortable="true" headerClass="sortable" />
                                 <display:column decorator="gov.nih.nci.pa.decorator.HtmlEscapeDecorator" escapeXml="false" title="Comment" property="comment" sortable="true" headerClass="sortable" />
                             </display:table>
+			   <br/>
                         </s:if>   
                     </s:if>
                      
