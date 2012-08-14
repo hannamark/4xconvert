@@ -316,7 +316,7 @@ BubbleTips.activateTipOn("dfn");
                         	<s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
                         	<s:hidden  id="eligibilityList_%{#stat.index}_displayOrder" name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />                       
                        </td>                       
-                         <td>
+                         <td class="nodnd">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <s:url id="url" action="eligibilityCriteriaedit">
                                     <s:param name="id" value="%{id}" />
@@ -325,7 +325,7 @@ BubbleTips.activateTipOn("dfn");
                                 <s:a href="%{url}"><img src="<c:url value="/images/ico_edit.gif"/>" alt="Edit" width="16" height="16"/></s:a>
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                          </td>
-                         <td>
+                         <td class="nodnd">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <s:checkbox name="objectsToDelete" fieldValue="%{id}" value="%{id in objectsToDelete}"/>                            
                             </pa:scientificAbstractorDisplayWhenCheckedOut>   
