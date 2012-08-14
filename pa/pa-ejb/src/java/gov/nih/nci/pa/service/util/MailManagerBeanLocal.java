@@ -127,6 +127,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -152,10 +153,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.apache.xml.serialize.LineSeparator;
 import org.apache.xml.serialize.OutputFormat;
@@ -417,20 +420,52 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             BodyPart msgPart = new MimeBodyPart();
             msgPart.setText(mailBody);
             multipart.addBodyPart(msgPart);
+            
+            List<File> postDeletes = new ArrayList<File>();
+            
             if (!ArrayUtils.isEmpty(attachments)) {
                 // Add attachments to message
                 for (File attachment : attachments) {
                     MimeBodyPart attPart = new MimeBodyPart();
-                    attPart.setDataHandler(new DataHandler(new FileDataSource(attachment)));
+                    final File guardCopy = createGuardCopy(attachment);
+                    attPart.setDataHandler(new DataHandler(new FileDataSource(guardCopy)));
                     attPart.setFileName(attachment.getName());
                     multipart.addBodyPart(attPart);
+                    
+                    postDeletes.add(attachment);
+                    postDeletes.add(guardCopy);
                 }
             }
             message.setContent(multipart);
             // Send Message
-            invokeTransportAsync(message, deleteAttachments ? attachments : null);
+            invokeTransportAsync(message, deleteAttachments ? postDeletes.toArray(new File[0]) : null); // NOPMD
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
+        }
+    }
+
+    /**
+     * Since we are sending emails asynchronously now, attachments may get
+     * deleted by other parts of code before the email gets actually sent. We
+     * need to create a guard copy of the attachment.
+     * 
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    private File createGuardCopy(File file) {
+        try {
+            String uuid = UUID.randomUUID().toString();
+            File tempDir = new File(SystemUtils.getJavaIoTmpDir(), uuid);
+            tempDir.mkdirs();
+            File guard = new File(tempDir, file.getName());
+            FileUtils.copyFile(file, guard);
+            guard.deleteOnExit();
+            return guard;
+        } catch (IOException e) {
+            LOG.error(e, e);
+            // Well, what can we do here, just return the original file.
+            return file;
         }
     }
 
