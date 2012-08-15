@@ -213,7 +213,7 @@
                     <tr>
                         <td class="label">
                             <label>
-                                <fmt:message key="patient.registrationDate"/>
+                                <fmt:message key="patient.registrationDate"/>:
                                 <span class="required">*</span>
                             </label>
                         </td>
@@ -263,7 +263,7 @@
                     <tr>
                         <td class="label">
                             <label>
-                                <fmt:message key="patient.organizationName"/>
+                                <fmt:message key="patient.organizationName"/>:
                                 <span class="required">*</span>
                             </label>
                         </td>
@@ -281,7 +281,7 @@
                     <tr>
                         <td class="label">
                             <label>
-                                <fmt:message key="patient.userCreated"/>
+                                <fmt:message key="patient.userCreated"/>:
                             </label>
                         </td>
                         <td class="value" colspan="4">                           
@@ -291,7 +291,7 @@
                     <tr>
                         <td class="label">
                             <label>
-                                <fmt:message key="patient.lastUpdateDateTime"/>
+                                <fmt:message key="patient.lastUpdateDateTime"/>:
                             </label>
                         </td>
                         <td class="value" colspan="4">                           

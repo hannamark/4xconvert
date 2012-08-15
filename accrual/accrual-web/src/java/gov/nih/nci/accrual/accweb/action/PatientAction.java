@@ -214,7 +214,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     @Override
     public String retrieve() {
         try {
-            loadPatient(getSelectedRowIdentifier());
+            loadPatient(getSelectedRowIdentifier(), true);
             if (patient != null) {
                 patient.setRaceCode(getParsedCode(patient.getRaceCode()));
                 patient.setEthnicCode(getParsedCode(patient.getEthnicCode()));
@@ -235,7 +235,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     @Override
     public String update() {
         try {
-            loadPatient(getSelectedRowIdentifier());
+            loadPatient(getSelectedRowIdentifier(), false);
             if (patient == null) {
                 addActionError("Error retrieving study subject info for update.");
                 return execute();
@@ -330,7 +330,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         return super.edit();
     }
 
-    private void loadPatient(String id) throws PAException {
+    private void loadPatient(String id, boolean loadusername) throws PAException {
         if (id == null) {
             patient = null;
             return;
@@ -338,6 +338,11 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         StudySubject ss = getStudySubjectSvc().get(Long.valueOf(id));
         ss.getPerformedActivities();
         patient = new PatientWebDto(ss);
+        if (loadusername && ss.getUserLastCreated() != null) {
+            RegistryUser regUser = PaServiceLocator.getInstance()
+                    .getRegistryUserService().getUser(ss.getUserLastCreated().getLoginName());
+            patient.setUserCreated(regUser.getFirstName() + " " + regUser.getLastName());
+        }
     }
 
     private boolean checkDiseaseIsNeeded() throws PAException {

@@ -234,9 +234,6 @@ public class PatientWebDto {
         }
         dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated() == null 
                 ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
-        if (ss.getUserLastCreated() != null) {
-            userCreated = ss.getUserLastCreated().getFirstName() + " " + ss.getUserLastCreated().getLastName();
-        }
     }
     
     private void loadPatientData(Patient p) {
@@ -605,7 +602,6 @@ public class PatientWebDto {
      */
     public void setSdcDiseasePreferredName(String sdcDiseasePreferredName) {
         this.sdcDiseasePreferredName = sdcDiseasePreferredName;
-        icd9DiseasePreferredName = null;
     }
 
     /**
@@ -634,7 +630,6 @@ public class PatientWebDto {
      */
     public void setIcd9DiseasePreferredName(String icd9DiseasePreferredName) {
         this.icd9DiseasePreferredName = icd9DiseasePreferredName;
-        sdcDiseasePreferredName = null;
     }
 
     /**
