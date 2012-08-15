@@ -65,11 +65,12 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
     public String lookuporgs() {
         try {
             getCountriesList();
-            orgs.clear();
+            
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
+        orgs = null;
         return "orgs";
     }
 
