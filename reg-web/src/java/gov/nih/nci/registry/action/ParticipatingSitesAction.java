@@ -104,6 +104,8 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -173,6 +175,14 @@ public class ParticipatingSitesAction extends ActionSupport implements Preparabl
                 }
                 organizationList.add(orgWebDTO);
             }
+            
+            Collections.sort(organizationList, new Comparator<PaOrganizationDTO>() {
+                @Override
+                public int compare(PaOrganizationDTO o1, PaOrganizationDTO o2) {
+                    return StringUtils.defaultString(o1.getName()).compareTo(
+                            StringUtils.defaultString(o2.getName()));
+                }
+            });
         }
         return SUCCESS;
     }
