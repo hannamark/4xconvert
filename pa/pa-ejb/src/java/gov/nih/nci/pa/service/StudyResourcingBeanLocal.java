@@ -111,6 +111,8 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.mockito.cglib.core.CollectionUtils;
+import org.mockito.cglib.core.Predicate;
 
 /**
  * @author asharma
@@ -344,5 +346,20 @@ public class StudyResourcingBeanLocal extends
                 .append(code.getCode()).append(" from table ").append(tableName).append("\n.");
             }
         }
+    }
+
+    @Override
+    public List<StudyResourcingDTO> getActiveStudyResourcingByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        final List<StudyResourcingDTO> list = getStudyResourcingByStudyProtocol(studyProtocolIi);
+        CollectionUtils.filter(list, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg) {
+                StudyResourcingDTO dto = (StudyResourcingDTO) arg;
+                return !Boolean.FALSE.equals(BlConverter.convertToBoolean(dto
+                        .getActiveIndicator()));
+            }
+        });
+        return list;
     }
 }

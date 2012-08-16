@@ -116,5 +116,14 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
      */
     public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
     }
-
+    // CHECKSTYLE:OFF
+    /* (non-Javadoc)
+     * @see 
+     * gov.nih.nci.pa.service.StudyResourcingService#getActiveStudyResourcingByStudyProtocol(gov.nih.nci.iso21090.Ii)
+     */
+    public List<StudyResourcingDTO> getActiveStudyResourcingByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

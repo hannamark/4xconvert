@@ -865,9 +865,9 @@ public class PAServiceUtils {
             StudyResourcingDTO grantToCompare) {
         // Check if the grant with the same duplicate is marked deleted. If yes
         // then return false.
-        final Boolean inactive = BlConverter.convertToBoolean(grantToCompare
+        final Boolean active = BlConverter.convertToBoolean(grantToCompare
                 .getActiveIndicator());
-        if (Boolean.TRUE.equals(inactive)) {
+        if (Boolean.FALSE.equals(active)) {
             return false;
         }
         return areTwoGrantsSame(grantDto, grantToCompare);

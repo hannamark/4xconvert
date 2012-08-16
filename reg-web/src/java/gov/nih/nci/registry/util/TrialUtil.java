@@ -352,7 +352,8 @@ public class TrialUtil extends TrialConvertUtils {
             copyINDIDEList(studyIndldeDTOList, trialDTO);
         }
         // query the study grants
-        List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().getStudyResourcingByStudyProtocol(
+        List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().
+                getActiveStudyResourcingByStudyProtocol(
                 studyProtocolIi);
         if (!(isoList.isEmpty())) {
             copyGrantList(isoList, trialDTO);

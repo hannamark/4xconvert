@@ -164,6 +164,12 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     @Override
     public List<StudyResourcingDTO> getAll() throws PAException {
         return null;
+    }
+
+    @Override
+    public List<StudyResourcingDTO> getActiveStudyResourcingByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        return getStudyResourcingByStudyProtocol(studyProtocolIi);
     }    
 
 }

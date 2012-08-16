@@ -589,6 +589,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             for (int i = 0; i < srList.size(); i++) {
                 int j = 0;
                 if (srList.size() > 1 && i != 0
+                        && (!Boolean.FALSE.equals(BlConverter.convertToBoolean(srList.get(j).getActiveIndicator())))
+                        && (!Boolean.FALSE.equals(BlConverter.convertToBoolean(srList.get(i).getActiveIndicator())))
                         && srList.get(j).getFundingMechanismCode().getCode().toString()
                                  .equalsIgnoreCase(srList.get(i).getFundingMechanismCode().getCode().toString())
                         && srList.get(j).getNihInstitutionCode().getCode().toString()

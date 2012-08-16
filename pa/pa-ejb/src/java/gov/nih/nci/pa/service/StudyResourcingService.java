@@ -121,7 +121,16 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @return StudyResourcingDTO
      * @throws PAException PAException
      */
-    List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException; 
+    List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * @param studyProtocolIi Ii 
+     * @return StudyResourcingDTO
+     * @throws PAException PAException
+     */
+    List<StudyResourcingDTO> getActiveStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException; 
+    
+    
     /**
      * @param studyResourceIi Ii 
      * @return StudyResourcingDTO
