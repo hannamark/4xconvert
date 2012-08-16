@@ -212,7 +212,7 @@ public class AssignOwnershipAction extends ActionSupport {
             return view();
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, successMessage);
-        return search();
+        return view();
      }
 
     private String changeOwnershipHelper(boolean assign, Long userId, Long trialId) throws PAException {
