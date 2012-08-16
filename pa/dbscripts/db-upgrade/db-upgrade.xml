@@ -1086,5 +1086,9 @@
     <changeSet id="PO-5380" author="Kalpana">
         <comment>updated registry batch upload email in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5380.sql"/>
-     </changeSet>  
+     </changeSet>
+     <changeSet id="PO-5401" author="krylovd">
+        <comment>Fixed wording in On-Hold Reminder Email body.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5401.sql"/>
+     </changeSet>       
 </databaseChangeLog>
