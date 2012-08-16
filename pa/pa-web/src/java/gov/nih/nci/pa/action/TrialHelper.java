@@ -72,7 +72,7 @@ public class TrialHelper {
     private static final int PG_CODE_LEN = 100;
     private static final String SPONSOR = "sponsor";
     private static final int OFFICIAL_TITLE = 4000;
-    private static final int KEYWORD = 600;
+    private static final int KEYWORD = 4000;
     private static final String ABSTRACTION = "Abstraction";
     private static final String VALIDATION = "Validation";
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
