@@ -114,7 +114,7 @@ public final class InterventionScript extends BaseScript {
     private InterventionScript() {
         try{
             new FileOutputStream(fName);
-            out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)));
+            out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)), true, "UTF-8");
             out.println("DELETE FROM intervention_alternate_name;");
             out.println("UPDATE intervention SET status_code='" + ActiveInactivePendingCode.INACTIVE.getName() + "';");
         }

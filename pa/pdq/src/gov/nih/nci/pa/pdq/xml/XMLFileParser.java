@@ -80,6 +80,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -155,8 +157,9 @@ public class XMLFileParser {
      * @param fileName XML file name
      * @param doc XML document to save
      * @return <B>true</B> if method success <B>false</B> otherwise
+     * @throws UnsupportedEncodingException 
      */
-    public boolean saveXMLDocument(String fileName, Document doc) {
+    public boolean saveXMLDocument(String fileName, Document doc) throws UnsupportedEncodingException {
         LOG.info("Saving XML file... " + fileName);
         // open output stream where XML Document will be saved
         File xmlOutputFile = new File(fileName);
@@ -179,7 +182,7 @@ public class XMLFileParser {
             return false;
         }
         DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(fos);
+        StreamResult result = new StreamResult(new OutputStreamWriter(fos, "UTF-8"));
         // transform source into result will do save
         try {
             transformer.transform(source, result);

@@ -122,7 +122,7 @@ public class DiseaseScript extends BaseScript {
     public DiseaseScript() {
         try{
             new FileOutputStream(fName);
-            out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)));
+            out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)), true, "UTF-8");
             out.println("UPDATE pdq_disease SET status_code = '" + ActiveInactivePendingCode.INACTIVE.getName() + "';");
             out.println("DELETE FROM pdq_disease_altername;");
             out.println("DELETE FROM pdq_disease_parent;");

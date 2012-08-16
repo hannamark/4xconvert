@@ -11,10 +11,10 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="lib/commons-net-ftp-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.0.jar"/>
-	<classpathentry kind="lib" path="/Users/ludetc/dev/coppa/code/pa/pdq/lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="/Users/ludetc/dev/coppa/code/pa/pdq/lib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="/Users/ludetc/dev/coppa/code/pa/pdq/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="/Users/ludetc/dev/coppa/code/pa/pdq/lib/nci-commons-core-1.2.20.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar" sourcepath="C:/Users/dkrylov/.m2/repository/jdom/jdom/1.0/jdom-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/nci-commons-core-1.2.20.jar"/>
 	<classpathentry kind="lib" path="/pa/pdq/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="/pa/pdq/lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="/pa/pdq/lib/commons-collections-3.2.1.jar"/>
