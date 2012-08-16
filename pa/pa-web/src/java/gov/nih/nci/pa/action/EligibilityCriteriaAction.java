@@ -532,8 +532,8 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             }
-            query();
             reOrder();
+            query();
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }

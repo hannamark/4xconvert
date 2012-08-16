@@ -115,9 +115,6 @@ BubbleTips.activateTipOn("dfn");
             <ul class="btnrow">
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-                    <s:if test="eligibilityList != null" >
-                        <li><s:a href="javascript:void(0)" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
-                    </s:if>
                     <s:if test="list != null">
                         <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Another Criterion</span></span></s:a></li>
                     </s:if>
@@ -349,9 +346,6 @@ BubbleTips.activateTipOn("dfn");
             <ul class="btnrow">
                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-                    <s:if test="eligibilityList != null" >
-                        <li><s:a href="javascript:void(0)" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
-                    </s:if>
                     <s:if test="list != null">
                         <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Another Criterion</span></span></s:a></li>
                     </s:if>
