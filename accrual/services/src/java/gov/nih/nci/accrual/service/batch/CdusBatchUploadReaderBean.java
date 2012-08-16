@@ -406,6 +406,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
             body = body.replace("${fileName}", result.getFileName());
             body = body.replace("${errors}", numberedErrors.toString());
+            if (result.getNciIdentifier() == null) {
+                result.setNciIdentifier("");
+            }
             body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
             subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         }
