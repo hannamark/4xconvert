@@ -178,7 +178,6 @@ import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -191,7 +190,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -1129,23 +1127,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private String getInterventionAltNames(InterventionDTO i) throws PAException {
         List<InterventionAlternateNameDTO> ianList =
             interventionAlternateNameService.getByIntervention(i.getIdentifier());
-        int cnt = 1;
+        
         StringBuffer interventionAltName = new StringBuffer();
         List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-        //The below values are all being converted to upper-case because the values in the intervention alternate
-        //name are not set via the constants but rather set via the pdq scripts.
-        List<String> nameTypeCodes = Arrays.asList(StringUtils.upperCase(PAConstants.SYNONYM),
-                StringUtils.upperCase(PAConstants.ABBREVIATION), StringUtils.upperCase(PAConstants.US_BRAND_NAME),
-                StringUtils.upperCase(PAConstants.FOREIGN_BRAND_NAME), StringUtils.upperCase(PAConstants.CODE_NAME));
 
-        for (InterventionAlternateNameDTO ian : ianList) {
-            if (nameTypeCodes.contains(StringUtils.upperCase(ian.getNameTypeCode().getValue()))) {
+        for (InterventionAlternateNameDTO ian : ianList) {            
                 interventionNames.add(ian);
-                if (cnt++ > PAAttributeMaxLen.LEN_5) {
-                    break;
-                }
-            }
         }
+        
         Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
             public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
                 return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
