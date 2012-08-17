@@ -37,6 +37,8 @@
 								headerClass="sortable" />
 							<display:column escapeXml="true" property="name" sortable="false"
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
+                            <display:column escapeXml="true" property="tissueSpecimenType" sortable="false"
+                                titleKey="plannedMarker.tissueSpecimenType" headerClass="sortable" />								
 							<display:column escapeXml="true" property="status"
 								sortable="false" titleKey="plannedMarker.markerStatus"
 								headerClass="sortable" />
