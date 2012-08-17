@@ -256,6 +256,11 @@
                         </tr>
                     </table>
                 </table>
+                
+                <div id="existingDocsDiv">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/updateProprietaryTrialDocumentsSection.jsp" %>
+                </div>
+                
                 <div id="uploadDocDiv">
                     <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
                 </div>

@@ -135,6 +135,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private final TrialUtil  util = new TrialUtil();
     private String currentUser;
+    private List<TrialDocumentWebDTO> existingDocuments = new ArrayList<TrialDocumentWebDTO>();
 
     /**
      * View.
@@ -349,7 +350,8 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
                 TrialDocumentWebDTO webDto = null;
                 for (DocumentDTO docDTO : documentISOList) {
                      webDto = new TrialDocumentWebDTO(docDTO);
-                     addDocumentToSession(webDto);                     
+                     addDocumentToSession(webDto);   
+                     existingDocuments.add(webDto);
                 }
             }
         } catch (PAException e) {
@@ -376,5 +378,12 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     public void prepare() {
         currentUser = UsernameHolder.getUser();
     }    
+    
+    /**
+     * @return the existingDocuments
+     */
+    public List<TrialDocumentWebDTO> getExistingDocuments() {
+        return existingDocuments;
+    }
     
 }
