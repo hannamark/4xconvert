@@ -274,6 +274,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
         count = generateSubjectAccruals(spDto.getIdentifier(), patientLines, 
                 batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);
+        if (spDto.getProprietaryTrialIndicator().getValue()) {
+            importResult.setIndustrialTrial(true);
+            importResult.setIndustrialCounts(BatchUploadUtils.getStudySiteCounts(lines));
+        }
         for (Ii partSiteIi : accrualLines.keySet()) {
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
@@ -426,6 +430,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (result.isSkipBecauseOfChangeCode()) {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.changeCode.body");
+        } else if (result.isIndustrialTrial())  {
+            body = PaServiceLocator.getInstance().getLookUpTableService()
+                    .getPropertyValue("accrual.industrialTrial.body");
+            StringBuffer studySiteCounts = new StringBuffer();
+            for (String partSiteIi : result.getIndustrialCounts().keySet()) {
+                studySiteCounts.append(partSiteIi).append(" : ")
+                .append(result.getIndustrialCounts().get(partSiteIi)).append(" Study Subjects updated successfully.\n");
+            }
+            body = body.replace("${studySiteCounts}", studySiteCounts);
         } else {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.body");
@@ -439,7 +452,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     result.getTotalImports(), result.getFileName()));
         }
         body = body.replace("${fileName}", result.getFileName());
-        if (!result.isSkipBecauseOfChangeCode()) {
+        if (!result.isSkipBecauseOfChangeCode() && !result.isIndustrialTrial()) {
             body = body.replace("${count}", String.valueOf(result.getTotalImports()));
         }
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());

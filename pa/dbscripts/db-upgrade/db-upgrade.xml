@@ -1082,5 +1082,9 @@
      <changeSet id="PO-5401" author="krylovd">
         <comment>Fixed wording in On-Hold Reminder Email body.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5401.sql"/>
-     </changeSet>       
+     </changeSet>
+    <changeSet id="PO-5402" author="Kalpana">
+        <comment>added new accrual industrialTrial email in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5402.sql"/>
+     </changeSet>      
 </databaseChangeLog>

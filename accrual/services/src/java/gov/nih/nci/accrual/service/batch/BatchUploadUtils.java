@@ -270,4 +270,21 @@ public class BatchUploadUtils {
         }
         return raceMap;
     }
+    
+    /**
+     * Returns a list of all accrual count lines from the batch file.
+     * @param batchFile the batch file as a list
+     * @return the list of accrual counts
+     * @throws PAException when error.
+     */ 
+    public static Map<String, Integer> getStudySiteCounts(List<String[]> batchFile) throws PAException {
+        Map<String, Integer> accrualCounts = new HashMap<String, Integer>();
+        for (String[] line : batchFile) {
+            if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
+                Integer count = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
+                accrualCounts.put(line[ACCRUAL_COUNT_STUDY_SITE_INDEX], count);
+            }
+        }
+        return accrualCounts;
+    }
 }

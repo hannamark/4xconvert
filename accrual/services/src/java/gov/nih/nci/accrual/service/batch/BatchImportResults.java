@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Bean for holding results of batch import.
  * 
@@ -93,6 +96,8 @@ public class BatchImportResults {
     private String fileName;
     private StringBuilder errors;
     private String nciIdentifier;
+    private boolean industrialTrial;
+    private Map<String, Integer> industrialCounts = new HashMap<String, Integer>();
 
     /**
      * @return the totalImports
@@ -162,5 +167,33 @@ public class BatchImportResults {
      */
     public void setSkipBecauseOfChangeCode(boolean skipBecauseOfChangeCode) {
         this.skipBecauseOfChangeCode = skipBecauseOfChangeCode;
+    }
+
+    /**
+     * @return thw industrialTrial
+     */
+    public boolean isIndustrialTrial() {
+        return industrialTrial;
+    }
+
+    /**
+     * @param industrialTrial the industrialTrial to set
+     */
+    public void setIndustrialTrial(boolean industrialTrial) {
+        this.industrialTrial = industrialTrial;
+    }
+
+    /**
+     * @return the industrialCounts
+     */
+    public Map<String, Integer> getIndustrialCounts() {
+        return industrialCounts;
+    }
+
+    /**
+     * @param industrialCounts the industrialCounts to set
+     */
+    public void setIndustrialCounts(Map<String, Integer> industrialCounts) {
+        this.industrialCounts = industrialCounts;
     }
 }
