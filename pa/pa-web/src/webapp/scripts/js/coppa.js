@@ -195,3 +195,17 @@ function displayOrgDetails(orgID) {
     }
     showPopWin('organizationsSearchshowDetailspopup.action?orgID='+orgID, width, height, '', 'Organization Details');               
 }
+
+function extractPhoneNumberNoExt(phone) {
+	return phone!=null?phone.gsub(/(ext.*|x.*)$/i,'').strip():'';
+}
+
+function extractPhoneNumberExt(phone) {
+	if (phone!=null) {
+		var ext = phone.gsub(/^(.*extn|.*ext|.*x)/i,'');
+		if (ext!=phone) {
+			return ext.strip();
+		}
+	}
+	return '';
+}

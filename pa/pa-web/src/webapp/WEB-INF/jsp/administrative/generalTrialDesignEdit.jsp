@@ -24,7 +24,7 @@
             var persid;
             var contactMail;
             var contactPhone;
-            var selectedName;    
+            var selectedName;
 
             // this function is called from body onload in main.jsp (decorator)
             function callOnloadFunctions() {
@@ -87,7 +87,8 @@
                $('gtdDTO.centralContactTitle').value = selectedName;
                $('gtdDTO.centralContactIdentifier').value =  persid;
                $("gtdDTO.centralContactEmail").value = contactMail;
-               $("gtdDTO.centralContactPhone").value = contactPhone;
+               $("gtdDTO.centralContactPhone").value = extractPhoneNumberNoExt(contactPhone);
+               $("gtdDTO.centralContactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
             }
 
             function loadDiv(orgid) {
@@ -96,6 +97,7 @@
                 $('gtdDTO.centralContactIdentifier').value =  "";
                 $("gtdDTO.centralContactEmail").value = "";
                 $("gtdDTO.centralContactPhone").value = "";
+                $("gtdDTO.centralContactPhoneExtn").value = "";
             }
 
             function loadPersDiv(persid, func) {

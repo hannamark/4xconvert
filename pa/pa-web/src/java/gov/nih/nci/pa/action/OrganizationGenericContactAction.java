@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -232,7 +233,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
 
             contactDTO.setTelecomAddress(list);
 
-            contactDTO.setTypeCode(CdConverter.convertStringToCd(type));
+            contactDTO.setTypeCode(CdConverter.convertStringToCd(type));           
+            PAServiceUtils paServiceUtil = new PAServiceUtils();
+            paServiceUtil.validateAndFormatPhoneNumber(
+                    contactDTO.getScoperIdentifier(), contactDTO.getTelecomAddress());
             PoRegistry.getOrganizationalContactCorrelationService()
                     .createCorrelation(contactDTO);
             List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();

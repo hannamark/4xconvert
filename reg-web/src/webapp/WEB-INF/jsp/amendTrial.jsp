@@ -96,6 +96,7 @@
                 $('trialDTO.responsibleGenericContactName').value = '';
                 $("trialDTO.contactEmail").value = '';
                 $("trialDTO.contactPhone").value = ''; 
+                $("trialDTO.contactPhoneExtn").value = ''; 
                 $('trialDTO.responsiblePersonName').value = '';
                 respartOrgid = orgid;
             }

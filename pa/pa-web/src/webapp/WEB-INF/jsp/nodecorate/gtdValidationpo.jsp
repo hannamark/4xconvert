@@ -77,7 +77,8 @@
         $('gtdDTO.responsiblePersonIdentifier').value = persid;
         $('gtdDTO.responsibleGenericContactName').value = selectedName;
         $("gtdDTO.contactEmail").value = contactMail;
-        $("gtdDTO.contactPhone").value = contactPhone;
+        $("gtdDTO.contactPhone").value = extractPhoneNumberNoExt(contactPhone);
+        $("gtdDTO.contactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
         $('gtdDTO.responsiblePersonName').value = '';
     }
     
