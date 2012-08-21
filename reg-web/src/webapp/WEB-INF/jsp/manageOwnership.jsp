@@ -118,7 +118,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td scope="row" class="label">
+                    <td scope="row" class="label" style="text-align:left;">
                         <s:set name="orgMembers" value="registryUsers" scope="request"/>
                         <display:table class="data" summary="This table contains your search results." style="width:40%"
                                        decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="regUserRow"
