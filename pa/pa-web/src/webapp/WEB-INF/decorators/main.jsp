@@ -5,6 +5,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <title><decorator:title default="Protocol Abstraction (PA)"/></title>
         <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
         <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>

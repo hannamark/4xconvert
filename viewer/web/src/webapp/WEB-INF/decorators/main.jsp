@@ -5,6 +5,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <title><decorator:title default="NCI CTRP Viewer"/></title>    
         <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
         <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
