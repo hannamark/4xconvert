@@ -134,7 +134,13 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
         when(hibernateHelper.getCurrentSession()).thenReturn(session);
         PaHibernateUtil.setHibernateHelper(hibernateHelper);
         pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
-        FileUtils.cleanDirectory(pdqDirectory);
+        try {
+            FileUtils.cleanDirectory(pdqDirectory);
+        } catch (IOException e) {
+            System.out.println("PDQUpdateGeneratorTaskTest was unable to clean pdqDirectory in setUp; " +
+            		"oncoming test may fail?");
+            e.printStackTrace();
+        }
     }
 
 
