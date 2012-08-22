@@ -54,10 +54,10 @@
             <c:if test="${sessionScope.isSuAbstractor}">
                 <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable" media="html">
                     <s:if test="%{#attr.row.adminCheckout.checkoutBy != null}">
-                        <a href="javascript:void(0)" onclick="adminCheckIn('${row.studyProtocolId}')">Check-In (Admin)</a><br/>
+                        <a href="javascript:void(0)" onclick="checkIn('adminCheckIn','${row.studyProtocolId}')">Check-In (Admin)</a><br/>
                     </s:if>
                     <s:if test="%{#attr.row.scientificCheckout.checkoutBy != null}">
-                        <a href="javascript:void(0)" onclick="scientificCheckIn('${row.studyProtocolId}')">Check-In (Scientific)</a><br/>
+                        <a href="javascript:void(0)" onclick="checkIn('scientificCheckIn','${row.studyProtocolId}')">Check-In (Scientific)</a><br/>
                     </s:if>
                 </display:column>
             </c:if>
@@ -70,16 +70,19 @@
                 form.action = paApp.contextPath + "/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=" + id;
                 form.submit();
             }
-            function adminCheckIn(id) {
+            
+            function checkIn(action,id) {
                 var form = document.sForm;
                 form.target = "";
-                form.action = paApp.contextPath + "/protected/studyProtocoladminCheckIn.action?studyProtocolId=" + id;
-                form.submit();
-            }
-            function scientificCheckIn(id) {
-                var form = document.sForm;
-                form.target = "";
-                form.action = paApp.contextPath + "/protected/studyProtocolscientificCheckIn.action?studyProtocolId=" + id;
+                
+                var bs=new Array(64).join(' ');
+                var comment=prompt(bs+"Enter check-in comment:"+bs,"");
+                if (comment==null){
+                    return;
+                }
+                form.elements["checkInReason"].value = comment.substr(0,200);
+                
+                form.action = paApp.contextPath + "/protected/studyProtocol" + action + ".action?studyProtocolId=" + id;
                 form.submit();
             }
         </script>
