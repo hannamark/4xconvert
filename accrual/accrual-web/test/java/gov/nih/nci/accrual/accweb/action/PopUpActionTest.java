@@ -157,14 +157,26 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     public void testSearchNameProperty() {
         action.setSearchName(searchName);
         action.setIncludeSDC("true");
+        action.setSearchCode("searchCode");
         assertNotNull(action.getSearchName());
         assertNotNull(action.getIncludeSDC());
+        assertNotNull(action.getSearchCode());
     }
 
     @Test
     public void testGetDisWebListProperty() {
         action.setDisWebList(disWebList);
         assertNotNull(action.getDisWebList());
+    }
+
+    @Test
+    public void testLoadResultListByCode() {
+
+        assertNotNull(StringUtils.isEmpty(action.getSearchName()));
+        action.setSearchCode("searchCode");
+        action.setIncludeSDC("true");
+        assertEquals(ActionSupport.SUCCESS, action.displayList());
+
     }
 
     private ICD9DiseaseDTO createICD9DiseaseDTO() {

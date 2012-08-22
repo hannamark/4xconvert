@@ -94,6 +94,7 @@ import org.apache.struts2.ServletActionContext;
 /**
  * @author Hugh Reinhart
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PopUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
@@ -101,6 +102,7 @@ public class PopUpAction extends AbstractAccrualAction {
     static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
+    private String searchCode;
     private String includeSDC;
 
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
@@ -108,22 +110,42 @@ public class PopUpAction extends AbstractAccrualAction {
     private void loadResultList() {
         disWebList.clear();
 
-        if (StringUtils.isEmpty(searchName)) {
+        if (StringUtils.isEmpty(searchName) && StringUtils.isEmpty(searchCode)) {
             String message = "Please enter at least one search criteria";
             addActionError(message);
             ServletActionContext.getRequest().setAttribute("failureMessage", message);
             return;
         }
+        if (!StringUtils.isEmpty(searchCode)) {
+            try {
+                if ("true".equalsIgnoreCase(includeSDC)) {
+                    SDCDiseaseDTO sdc = getSDCDiseaseSvc().getByCode(searchCode);
+                    if (sdc != null) {
+                        DiseaseWebDTO newRec = convertToDiseaseWebDTO(sdc);
+                        getDisWebList().add(newRec);
+                    }
+                }
+                ICD9DiseaseDTO disease = getIcd9DiseaseSvc().getByCode(searchCode);
+                if (disease != null) {
+                    DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
+                    getDisWebList().add(newRec);
+                }
+            } catch (Exception e) {
+                error("Exception while loading disease results by code.", e);
+                return;
+            }
+        } else {
 
-        if ("true".equalsIgnoreCase(includeSDC)) {
-            loadSDCDiseases(searchName);
-        }
-        loadICD9Diseases(searchName);
-        
-        if (disWebList.size() > MAX_SEARCH_RESULT_SIZE) {
-            disWebList.clear();
-            error("Too many diseases found.  Please narrow search.");
-            return;
+            if ("true".equalsIgnoreCase(includeSDC)) {
+                loadSDCDiseases(searchName);
+            }
+            loadICD9Diseases(searchName);
+
+            if (disWebList.size() > MAX_SEARCH_RESULT_SIZE) {
+                disWebList.clear();
+                error("Too many diseases found.  Please narrow search.");
+                return;
+            }
         }
     }
 
@@ -239,5 +261,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setDisWebList(List<DiseaseWebDTO> disWebList) {
         this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the searchCode
+     */
+    public String getSearchCode() {
+        return searchCode;
+    }
+
+    /**
+     * @param searchCode the searchCode to set
+     */
+    public void setSearchCode(String searchCode) {
+        this.searchCode = searchCode;
     }
 }

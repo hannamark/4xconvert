@@ -2,9 +2,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.7.1.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
+        
+	        jQuery(function(){
+	            jQuery(window).keypress(function(e) {
+	                if(e.keyCode == 13) {                 
+	                	loadDiv();
+	                }
+	              });           
+	        });
+	        
             function submitform(disid, type) {
                 top.window.loadDiv(disid, type);
                 window.top.hidePopWin(true); 
@@ -13,6 +23,7 @@
             function loadDiv() {     
                 var url = '/accrual/protected/popupdisplayList.action';
                 var params = { searchName: $("searchName").value,
+                		searchCode: $("searchCode").value,
                         includeSDC: $("includeSDC") != null && $("includeSDC").checked == true
                 		};
                 var div = $('getDiseases');
@@ -29,6 +40,8 @@
                     <tr>
                         <td scope="row" class="label"><label for="searchName"><fmt:message key="disease.name"/></label></td>
                         <td><s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px" /></td>
+                        <td scope="row" class="label"><label for="searchCode"><fmt:message key="disease.code"/></label></td>
+                        <td><s:textfield id="searchCode" name="searchCode" maxlength="60" size="60" cssStyle="width:200px" /></td>
                     </tr>
                     <tr> 
                         <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.includeSDC"/></label></td>
