@@ -111,6 +111,7 @@ public class RegistryUserWebDTO {
     private UserOrgType affiliatedOrgType;
     private boolean adminForAffiliatedOrg;
     private boolean requestAdminAccess;
+    private Boolean enableEmails;
 
     /**
     *
@@ -132,6 +133,7 @@ public class RegistryUserWebDTO {
        this.phone = registryUser.getPhone();
        this.affiliateOrg = registryUser.getAffiliateOrg();
        this.prsOrgName = registryUser.getPrsOrgName();
+       this.enableEmails = registryUser.getEnableEmails();
        this.emailAddress = registryUser.getEmailAddress();
        this.affiliatedOrganizationId = registryUser.getAffiliatedOrganizationId();
        this.affiliatedOrgType = registryUser.getAffiliatedOrgUserType();
@@ -386,6 +388,20 @@ public class RegistryUserWebDTO {
      */
     public void setAdminForAffiliatedOrg(boolean adminForAffiliatedOrg) {
         this.adminForAffiliatedOrg = adminForAffiliatedOrg;
+    }
+
+    /**
+     * @return the enableEmails
+     */
+    public Boolean getEnableEmails() {
+        return enableEmails;
+    }
+
+    /**
+     * @param enableEmails the enableEmails to set
+     */
+    public void setEnableEmails(Boolean enableEmails) {
+        this.enableEmails = enableEmails;
     }
 
 }

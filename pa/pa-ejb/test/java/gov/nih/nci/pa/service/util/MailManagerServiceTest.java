@@ -140,6 +140,7 @@ import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -413,6 +414,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("CDE_MARKER_REQUEST_FROM_EMAIL");
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
+        
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
+                .executeUpdate();       
     }
 
     private User createUser(String loginName, String firstName, String lastName) {

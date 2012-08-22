@@ -648,23 +648,48 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return registryUser;
     }
 
-    @SuppressWarnings(UNCHECKED)
+
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
             throws PAException {
-        try {
-            Session session = PaHibernateUtil.getCurrentSession();
-            SQLQuery query = session
-                    .createSQLQuery("select enable_emails from study_owner where study_id="
-                            + trialId + " and user_id=" + userId);
-            List<Boolean> results = query.list();
-            if (!results.isEmpty()) {
-                return results.get(0);
-            }
-        } catch (Exception cse) {
-            throw new PAException(cse);
+        boolean trialLevel = isEmailNotificationsEnabledOnTrialLevel(userId,
+                trialId);
+        boolean globalLevel = isEmailNotificationsEnabledOnGlobalLevel(userId);
+        return trialLevel && globalLevel;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private boolean isEmailNotificationsEnabledOnGlobalLevel(Long userId) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select enable_emails from registry_user where identifier="
+                        + userId);
+        List<Boolean> results = query.list();
+        if (!results.isEmpty()) {
+            final Boolean val = results.get(0);
+            return val != null ? val : true;
+        } else {
+            return true;
         }
-        return true;
+    }
+
+    @SuppressWarnings(UNCHECKED)
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public boolean isEmailNotificationsEnabledOnTrialLevel(Long userId,
+            Long trialId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select enable_emails from study_owner where study_id="
+                        + trialId + " and user_id=" + userId);
+        List<Boolean> results = query.list();
+        if (!results.isEmpty()) {
+            return results.get(0);
+        } else {
+            return true;
+        }
     }
 
     @Override

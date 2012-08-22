@@ -461,6 +461,16 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
                                 + " where study_id=" + spId + " and user_id="
                                 + userId).executeUpdate();
         assertTrue(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+        
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update registry_user set enable_emails=false"
+                                + " where identifier=" + userId)
+                .executeUpdate();
+        assertFalse(remoteEjb.isEmailNotificationsEnabled(userId, spId));
+        assertTrue(remoteEjb.isEmailNotificationsEnabledOnTrialLevel(userId,
+                spId));
 
     }
     

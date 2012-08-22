@@ -241,4 +241,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     
         
     }
+
+    @Override
+    public boolean isEmailNotificationsEnabledOnTrialLevel(Long userId,
+            Long trialId) throws PAException {
+      
+        return false;
+    }
 }

@@ -267,12 +267,23 @@ public interface RegistryUserService {
 
     /**
      * Determines whether email notifications for the given trial ownership are enabled.
+     * This method takes into account both global level and trial level settings.
      * @param userId userId
      * @param trialId trialId
      * @return isEmailNotificationsEnabled
      * @exception PAException PAException
      */
     boolean isEmailNotificationsEnabled(Long userId, Long trialId) throws PAException;
+    
+    /**
+     * Determines whether email notifications for the given trial ownership are enabled.
+     * This method takes into account trial level settings ONLY.
+     * @param userId userId
+     * @param trialId trialId
+     * @return isEmailNotificationsEnabled
+     * @exception PAException PAException
+     */
+    boolean isEmailNotificationsEnabledOnTrialLevel(Long userId, Long trialId) throws PAException;    
     
     /**
      * Sets email notifications preference for the given trial ownership record.

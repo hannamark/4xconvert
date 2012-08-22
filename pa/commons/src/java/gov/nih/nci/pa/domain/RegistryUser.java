@@ -129,6 +129,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private Set<StudySite> studySites = new HashSet<StudySite>();
     private Long affiliatedOrganizationId;
     private UserOrgType affiliatedOrgUserType;
+    private Boolean enableEmails;
 
     /**
      * @return the csmUser
@@ -431,6 +432,21 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     public String getFullName() {
         return (StringUtils.defaultString(getFirstName()) + " " + StringUtils
                 .defaultString(getLastName())).trim();
+    }
+
+    /**
+     * @return the enableEmails
+     */
+    @Column(name = "ENABLE_EMAILS")
+    public Boolean getEnableEmails() {
+        return enableEmails;
+    }
+
+    /**
+     * @param enableEmails the enableEmails to set
+     */
+    public void setEnableEmails(Boolean enableEmails) {
+        this.enableEmails = enableEmails;
     }
 
 }

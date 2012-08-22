@@ -137,7 +137,7 @@ public class AssignOwnershipAction extends ActionSupport {
                 TrialOwner owner = new TrialOwner();
                 owner.setRegUser(regUser);  
                 owner.setEnableEmails(getRegistryUserService()
-                        .isEmailNotificationsEnabled(regUser.getId(), id));
+                        .isEmailNotificationsEnabledOnTrialLevel(regUser.getId(), id));
                 trialOwners.add(owner);
             }            
         } catch (PAException e) {

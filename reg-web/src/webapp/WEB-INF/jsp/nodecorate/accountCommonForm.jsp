@@ -186,6 +186,19 @@
     </td>
 </tr>
 <tr>
+    <td scope="row" class="label">
+        <label for="registerUsershowMyAccount_registryUserWebDTO_enableEmails"> <fmt:message key="register.user.enableEmails"/></label>
+    </td>
+    <td>
+        <s:checkbox name="registryUserWebDTO.enableEmails" />
+        <span class="formErrorMsg">
+            <s:fielderror>
+                <s:param>registryUserWebDTO.enableEmails</s:param>
+            </s:fielderror>
+        </span>
+    </td>
+</tr>
+<tr>
     <td colspan="2" align="left">
         <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
     </td>
