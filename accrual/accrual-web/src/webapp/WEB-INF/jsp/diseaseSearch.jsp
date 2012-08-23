@@ -1,42 +1,47 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<!DOCTYPE html PUBLIC 
+    "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
+<c:set var="topic" scope="request" value="disease_search"/>
+<head>
+    <title><fmt:message key="accrual.search.trials.page.title"/></title>   
+    <s:head/>    
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.7.1.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        <script type="text/javascript" language="javascript">
-        
-	        jQuery(function(){
-	            jQuery(window).keypress(function(e) {
-	                if(e.keyCode == 13) {                 
-	                	loadDiv();
-	                }
-	              });           
-	        });
-	        
-            function submitform(disid, type) {
-                top.window.loadDiv(disid, type);
-                window.top.hidePopWin(true); 
-            }
-            
-            function loadDiv() {     
-                var url = '/accrual/protected/popupdisplayList.action';
-                var params = { searchName: $("searchName").value,
-                		searchCode: $("searchCode").value,
-                        page: "searchLookup",
-                        includeSDC: $("includeSDC") != null && $("includeSDC").checked == true
-                		};
-                var div = $('getDiseases');
-                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-                var aj = callAjaxPost(div, url, params);   
-            }
-        </script>
-    </head> 
-    <body>
-        <div class="box">
+<SCRIPT LANGUAGE="JavaScript">
+
+jQuery(function(){
+    jQuery(window).keypress(function(e) {
+        if(e.keyCode == 13) {                 
+            loadDiv();
+        }
+      });           
+});
+
+function loadDiv() {     
+    var url = '/accrual/protected/popupdisplayList.action';
+    var params = { searchName: $("searchName").value,
+            searchCode: $("searchCode").value,
+            page: "searchMenu",
+            includeSDC: $("includeSDC") != null && $("includeSDC").checked == true
+            };
+    var div = $('getDiseases');
+    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+    var aj = callAjaxPost(div, url, params);   
+}
+
+</SCRIPT>
+</head>
+<body>
+
+<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
+<h1><fmt:message key="disease.search"/></h1>
+  <div class="box">
             <s:form id="diseases" name="diseases" >
-                <h2><fmt:message key="disease.search"/></h2>
                 <table class="form">
                     <tr>
                         <td scope="row" class="label"><label for="searchName"><fmt:message key="disease.name"/></label></td>

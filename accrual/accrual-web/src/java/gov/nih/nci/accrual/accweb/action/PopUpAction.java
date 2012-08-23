@@ -104,6 +104,7 @@ public class PopUpAction extends AbstractAccrualAction {
     private String searchName;
     private String searchCode;
     private String includeSDC;
+    private String page;
 
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
@@ -219,6 +220,7 @@ public class PopUpAction extends AbstractAccrualAction {
     public String displayList() {
         loadResultList();
         ServletActionContext.getRequest().setAttribute("disWebList", disWebList);
+        ServletActionContext.getRequest().setAttribute("page", page);
         return SUCCESS;
     }
 
@@ -275,5 +277,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setSearchCode(String searchCode) {
         this.searchCode = searchCode;
+    }
+
+    /**
+     * @return the page
+     */
+    public String getPage() {
+        return page;
+    }
+
+    /**
+     * @param page the page to set
+     */
+    public void setPage(String page) {
+        this.page = page;
     }
 }

@@ -57,6 +57,14 @@
                         <li><a href="priorSubmissions.action" >Prior Submissions</a></li>
                     </c:otherwise>
                 </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'disease_search'}">
+                        <li><a href="diseaseSearch.action" class="selected">Disease Search</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="diseaseSearch.action" >Disease Search</a></li>
+                    </c:otherwise>
+                </c:choose>
                 <li><a href="/accrual/logout.action" >Log Out</a></li>
             </c:when>
             <c:otherwise>

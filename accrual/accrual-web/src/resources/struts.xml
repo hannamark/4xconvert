@@ -129,5 +129,9 @@
         <action name="popup*" class="gov.nih.nci.accrual.accweb.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
+
+        <action name="diseaseSearch" class="gov.nih.nci.accrual.accweb.action.PopUpAction">
+            <result>/WEB-INF/jsp/diseaseSearch.jsp</result>
+        </action>
     </package>
 </struts>
