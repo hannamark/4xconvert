@@ -83,6 +83,8 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Person DTO  for transferring Person object .
  * @author Naveen Amiruddin, Harsha
@@ -431,7 +433,9 @@ public class PaPersonDTO {
      * @return the address
      */
     public String getAddress() {
-        return city + "," + state + "," + country + "," + zip;
+        
+        String stateVal = StringUtils.isNotBlank(state) ? state : "";
+        return city + "," + stateVal + "," + country + "," + zip;
     }
 
     /**

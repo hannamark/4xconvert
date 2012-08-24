@@ -99,4 +99,21 @@ public class PaPersonDTOTest extends AbstractHibernateTestCase {
         assertEquals("Testing url", "www.url.com", data.get(0).getUrl());
         assertEquals("Testing fax", "222222222", data.get(0).getFax());
     }
+    
+    
+    @Test
+    public void testGetAddressWithVariousStateValues() throws Exception {
+        List<PaPersonDTO> data = remoteEjb.getPersonsByStudySiteId(Long.valueOf(1), "SUBMITTER");
+        data.get(0).setCity("Richardson");
+        data.get(0).setState(null);
+        data.get(0).setCountry("USA");
+        data.get(0).setZip("75081");
+        assertEquals("Richardson,,USA,75081",data.get(0).getAddress());
+        data.get(0).setState("");
+        assertEquals("Richardson,,USA,75081",data.get(0).getAddress());
+        data.get(0).setState("   ");
+        assertEquals("Richardson,,USA,75081",data.get(0).getAddress());
+        data.get(0).setState("TX");
+        assertEquals("Richardson,TX,USA,75081",data.get(0).getAddress());
+    }
 }
