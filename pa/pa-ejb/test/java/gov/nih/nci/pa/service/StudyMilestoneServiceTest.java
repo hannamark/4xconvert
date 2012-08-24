@@ -435,6 +435,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, canNotReachMsg);
     }
 
@@ -465,6 +466,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, canNotReachMsg);
     }
 
@@ -493,6 +495,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_READY_FOR_QC, canNotReachMsg);
     }
 
@@ -521,6 +524,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_QC_START, canNotReachMsg);
     }
 
@@ -549,6 +553,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_QC_COMPLETE, canNotReachMsg);
     }
 
@@ -577,6 +582,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, canNotReachMsg);
     }
 
@@ -605,6 +611,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, canNotReachMsg);
     }
 
@@ -633,6 +640,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, canNotReachMsg);
     }
 
@@ -661,6 +669,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_START, canNotReachMsg);
     }
 
@@ -687,6 +696,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, canNotReachMsg);
     }
 
@@ -711,6 +721,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     @Test
     public void checkAbstractionsRules() throws Exception {
         createMilestones(UP_TO_READY_FOR_TSR);
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
         bean.setValidateAbstractions(true);
         bean.setAbstractionCompletionService(null);
@@ -941,7 +952,9 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SUBMISSION_REACTIVATED);
-                
+        
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
+        
         bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         checkMilestoneFailure(MilestoneCode.SUBMISSION_REACTIVATED);
         
@@ -1030,6 +1043,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         checkTerminationAndReactivation(DocumentWorkflowStatusCode.ACCEPTED);        
         
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkTerminationAndReactivation(DocumentWorkflowStatusCode.ABSTRACTED);
         checkCurrentDWS(DocumentWorkflowStatusCode.ABSTRACTED);
         
@@ -1074,6 +1088,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         checkDWS(2, DocumentWorkflowStatusCode.ACCEPTED);
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_TSR));
         checkDWS(3, DocumentWorkflowStatusCode.ABSTRACTED);
     }
 
