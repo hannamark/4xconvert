@@ -231,7 +231,7 @@ public class PopUpPersonAction extends AbstractPopUpPoAction {
         return StringUtils.isBlank(getFirstName()) && StringUtils.isBlank(getLastName())
                 && StringUtils.isBlank(getCityName()) && StringUtils.isBlank(getZipCode())
                 && StringUtils.isBlank(getStateName()) && StringUtils.isBlank(getPoId())
-                && StringUtils.isBlank(getCtepId());
+                && StringUtils.isBlank(getCtepId()) && StringUtils.isBlank(getCountryName());
     }
 
     /**
