@@ -263,6 +263,8 @@ public class StudyProtocolConverter {
         if (studyProtocolDTO.getAmendmentReasonCode() != null) {
             studyProtocol.setAmendmentReasonCode(AmendmentReasonCode.getByCode(studyProtocolDTO
                     .getAmendmentReasonCode().getCode()));
+        } else {
+            studyProtocol.setAmendmentReasonCode(null);
         }
 
         if (studyProtocolDTO.getAmendmentDate() != null) {

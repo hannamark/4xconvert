@@ -224,4 +224,21 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         }
         assertTrue(sites.contains("Lung"));
     }
+    
+   @Test 
+   public void convertFromDTOToDomainWithVariousAmendmentReasonCodes() throws PAException {
+       Session session  = PaHibernateUtil.getCurrentSession();
+       StudyProtocol create = TestSchema.createStudyProtocolObj(new StudyProtocol());
+       session.save(create);
+       assertNotNull(create.getId());
+       //convert to DTO
+       StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
+       AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+       StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
+       assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
+       spDTO.setAmendmentReasonCode(null);
+       sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, sp);
+       assertEquals(null ,sp.getAmendmentReasonCode());
+   }    
+    
 }
