@@ -183,6 +183,24 @@ public class CSMUserService implements CSMUserUtil {
         return createdCSMUser;
 
     }
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public User updateCSMUser(User csmUser) throws PAException {
+        try {
+            UserProvisioningManager upManager = SecurityServiceProvider.
+            getUserProvisioningManager("pa");
+            ///update the user info in CSM table
+            upManager.modifyUser(csmUser);
+            return upManager.getUser(csmUser.getLoginName());
+        } catch (CSException cse) {
+            throw new PAException("CSM exception while updating CSM user: " + csmUser.getLoginName(), cse);
+        }
+        
+    }
 
     /**
      * {@inheritDoc}

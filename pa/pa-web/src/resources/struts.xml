@@ -249,6 +249,12 @@
             <result name="error">/WEB-INF/jsp/registeredUserDetails.jsp</result>
             <result name="success">/WEB-INF/jsp/registeredUserDetails.jsp</result>
         </action>
+        
+        <action name="userAccountDetails*" class="gov.nih.nci.pa.action.UserAccountDetailsAction" method="{1}">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            
+            <result name="error">/WEB-INF/jsp/userAccountDetails.jsp</result>
+            <result name="success">/WEB-INF/jsp/userAccountDetails.jsp</result>
+        </action>
                 
         <action name="home">
             <result>studyProtocolshowCriteria.action</result>

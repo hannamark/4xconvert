@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC
+    "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <title><fmt:message key="userAccountDetails.title"/></title>
+        <s:head/>
+        <script type="text/javascript" language="javascript">
+        
+	        function handleAction() {
+	            document.forms[0].action="userAccountDetailssave.action";
+	            document.forms[0].submit();
+	        }        
+        
+        </script>
+    </head>
+    <body>
+    <!-- main content begins-->
+        <h1><fmt:message key="userAccountDetails.title"/></h1>
+        <c:set var="topic" scope="request" value="userAccountDetails"/>
+        <div class="box" id="filters">
+            <div class="fixedTopHeader">
+            <s:form id="userAccountDetailsForm">
+                <s:token/>        
+                <pa:failureMessage/>
+                <pa:sucessMessage/>                
+                <table class="form">
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.loginName"/>
+                            </td>
+                            <td class="value">                                
+                                <i><c:out value="${userName}"/></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.firstName"/>
+                            </td>
+                            <td class="value">                                
+                                <s:textfield id="firstName" name="firstName" maxlength="200" size="100" cssStyle="width:200px" />                                          
+                            </td>
+                        </tr>
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.lastName"/>
+                            </td>
+                            <td class="value">                                
+                                <s:textfield id="lastName" name="lastName" maxlength="200" size="100" cssStyle="width:200px"  />                                          
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.organization"/>
+                            </td>
+                            <td class="value">                                
+                                <s:textfield id="organization" name="organization" maxlength="200" size="100" cssStyle="width:200px"  />                                          
+                            </td>
+                        </tr>                                     
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.phoneNumber"/>
+                            </td>
+                            <td class="value">                                
+                                <s:textfield id="phoneNumber" name="phoneNumber" maxlength="200" size="100" cssStyle="width:200px"  />                                          
+                            </td>
+                        </tr>                                     
+                        <tr>
+                            <td  scope="row" class="label" align="left">
+                                <fmt:message key="userAccountDetails.emailId"/>
+                            </td>
+                            <td class="value">                                
+                                <s:textfield id="emailId" name="emailId" maxlength="200" size="100" cssStyle="width:200px"  />                                          
+                            </td>
+                        </tr>                           
+                </table>
+                <div class="actionsrow">
+                    <del class="btnwrapper">
+                        <ul class="btnrow">
+                            <li>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                            </li>
+                        </ul>
+                    </del>
+                </div>                
+            </s:form>
+            </div>
+        </div>        
+    </body>
+</html>

@@ -118,6 +118,9 @@ public class MockCSMUserService implements CSMUserUtil {
         user.setLoginName("user3@mail.nih.gov");
         user.setFirstName("FirstName");
         user.setLastName("LastName");
+        user.setOrganization("Organization");
+        user.setEmailId("user1@mail.nih.gov");
+        user.setPhoneNumber("1231231234");
         user.setUserId(3L);
         users.add(user);
     }
@@ -170,7 +173,15 @@ public class MockCSMUserService implements CSMUserUtil {
      * {@inheritDoc}
      */
     public User getCSMUserById(Long id) throws PAException {
-        return users.get(0);
+        if (id.equals(1L)) {
+            return users.get(0);
+        }else if (id.equals(2L)) {
+            return users.get(1);
+        }else if (id.equals(3L)) {
+            return users.get(2);
+        }else {
+            return users.get(0);
+        }
     }
 
     /**
@@ -186,5 +197,10 @@ public class MockCSMUserService implements CSMUserUtil {
         groups.add("Abstractor");
         groups.add("SuAbstractor");
         return groups;
+    }
+
+    @Override
+    public User updateCSMUser(User csmUser) throws PAException {
+        return csmUser;
     }
 }

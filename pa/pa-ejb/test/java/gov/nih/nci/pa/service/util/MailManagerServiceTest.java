@@ -683,7 +683,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt("Marker #1"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
-        dto.setUserLastCreated(StConverter.convertToSt("1"));
+        dto.setUserLastCreated(StConverter.convertToSt("3"));
+        assertEquals("user1@mail.nih.gov", bean.getMarkerEmailAddress(dto));
+        dto.setUserLastCreated(StConverter.convertToSt("1000"));
         assertEquals("example1@example.com", bean.getMarkerEmailAddress(dto));
     }
     @Test

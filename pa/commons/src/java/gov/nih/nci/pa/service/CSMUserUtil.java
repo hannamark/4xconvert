@@ -115,6 +115,16 @@ public interface CSMUserUtil {
      * @throws PAException PAException
      */
     User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException;
+    
+    
+    /**
+     * Update an existing CSM user.
+     * @param csmUser user
+     * @return user
+     * @throws PAException PAException
+     */
+    User updateCSMUser(User csmUser) throws PAException;
+    
 
     /**
      * Retrieve an existing CSM user.
@@ -123,6 +133,7 @@ public interface CSMUserUtil {
      * @return user
      * @throws PAException PAException
      */
+    
     User getCSMUser(String loginName) throws PAException;
 
     /**
