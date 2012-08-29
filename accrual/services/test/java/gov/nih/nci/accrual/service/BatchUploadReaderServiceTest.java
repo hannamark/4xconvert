@@ -108,12 +108,15 @@ import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -176,6 +179,18 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         sp.setSubmissionNumber(Integer.valueOf(2));
         sp.setProprietaryTrialIndicator(false);
         TestSchema.addUpdObject(sp);
+        
+        StudySubject subj = new StudySubject();
+        subj.setPatient(TestSchema.patients.get(0));
+        subj.setAssignedIdentifier("001");
+        subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStudyProtocol(sp);
+        subj.setStudySite(TestSchema.studySites.get(1));
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
+        subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
+        subj.setIcd9disease(TestSchema.icd9Diseases.get(0));
+        TestSchema.addUpdObject(subj);
         
     	StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
         when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
@@ -276,13 +291,36 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "Found invalid change code 3. Valid value for COLLECTIONS.Change_Code are 1 and 2."));
         assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 21"));
         assertTrue(StringUtils.contains(errorMsg, "PATIENTS at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));
         assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 207747 at line 2"));
         assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 208847 at line 3"));
+        assertTrue(StringUtils.contains(errorMsg, "Patient ICD9 Disease Code is used instaed of SDC Code  at line 3"));
         assertTrue(results.get(0).getValidatedLines().isEmpty()); 
-	}	
+                       
+        file = new File(this.getClass().getResource("/no_protocol.txt").toURI());
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "No Study Protocol Identifier could be found in the given file."));
+	}
+
+	@Test
+	public void testDiseaseCodes() throws URISyntaxException {
+		File file = new File(this.getClass().getResource("/junit_coverage2.txt").toURI());
+		BatchFile batchFile = getBatchFile(file);
+		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        String errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "COLLECTIONS at line 1 NCITrial is not a valid NCI or CTEP/DCP identifier."));
+	}
 	
     @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {
@@ -359,7 +397,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals((Integer) 72, collection.getTotalImports());
     }
 
-    @Test
+   @Test
     public void changeCode2BatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated_cc2.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
@@ -569,14 +607,14 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
 
-        assertEquals("CDUS_Complete.txt", validationResults.get(0).getFileName());
-        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(0).getFileName());
+        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
 
         assertEquals("CDUS_Abbreviated.txt", validationResults.get(1).getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-
-        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(2).getFileName());
-        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
+        
+        assertEquals("CDUS_Complete.txt", validationResults.get(2).getFileName());
+        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
 
         verifyEmailsSent(0, 3);
 
@@ -589,14 +627,15 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         validationResults = readerService.validateBatchData(batchFile);
 
-        assertEquals("CDUS_Complete.txt", validationResults.get(0).getFileName());
-        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(0).getFileName());
+        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
 
         assertEquals("CDUS_Abbreviated.txt", validationResults.get(1).getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
+        assertEquals("CDUS_Complete.txt", validationResults.get(2).getFileName());
+        assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
 
-        assertEquals("cdus-abbreviated-prevention-study.txt", validationResults.get(2).getFileName());
-        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
     }
     
     @Test

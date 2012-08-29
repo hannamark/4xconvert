@@ -129,7 +129,7 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "PMD.TooManyMethods" })
 public class StudySubjectBeanLocal extends
         AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements
         StudySubjectServiceLocal {
@@ -555,6 +555,30 @@ public class StudySubjectBeanLocal extends
             }
         } catch (Exception e) {
             throw new PAException("Exception in searchFast().", e);
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySubject searchActiveByStudyProtocol(Long spId) throws PAException {
+        StudySubject result = null;
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            String hql = "from StudySubject ssub "
+                    + "where ssub.studyProtocol.id = :studyProtocolId "
+                    + " and ssub.statusCode = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "'"
+                    + " order by ssub.id ";
+            Query query = session.createQuery(hql);
+            query.setParameter("studyProtocolId", spId);
+            List<StudySubject> qList = query.list();
+            if (!qList.isEmpty()) {
+                result = qList.get(0);
+            }
+        } catch (Exception e) {
+            throw new PAException("Exception in searchByStudyProtocolAndStatus().", e);
         }
         return result;
     }

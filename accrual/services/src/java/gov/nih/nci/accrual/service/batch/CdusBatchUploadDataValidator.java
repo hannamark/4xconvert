@@ -90,11 +90,14 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -153,6 +156,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     private static final String SUABSTRACTOR = "SuAbstractor";
+    private boolean sdcCode;
+    private boolean icd9Code;
+    private boolean checkDisease;
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
     /**
@@ -187,7 +193,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         AccrualChangeCode cc = AccrualChangeCode.getByCode(changeCode);
                         if (cc == null) {
                             errMsg.append("Found invalid change code " + changeCode 
-                                    + ". Valid value for COLLECTIONS.Change_Code are 1 and 2.");
+                                    + ". Valid value for COLLECTIONS.Change_Code are 1 and 2.\n");
                         } else {
                             results.setChangeCode(cc);
                         }
@@ -197,6 +203,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
                         results.setNciIdentifier(ii.getExtension());
                         try {
+                            StudySubject ss = getStudySubjectService().searchActiveByStudyProtocol(
+                                    IiConverter.convertToLong(sp.getIdentifier()));
+                            if (ss != null && ss.getDisease() != null && ss.getIcd9disease() == null) {
+                                sdcCode = true;
+                            } else if (ss != null && ss.getDisease() == null && ss.getIcd9disease() != null) {
+                                icd9Code = true;
+                            }
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
                                     .getTreatingSites(IiConverter.convertToLong(sp.getIdentifier()));
@@ -320,7 +333,24 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion);
+        if (lineNumber == 2 && StringUtils.equalsIgnoreCase("PATIENTS", key) && !sdcCode && !icd9Code) {
+            String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
+            SDCDiseaseDTO sdc = getDisease(code, new StringBuffer());
+            ICD9DiseaseDTO icd9 = getICD9Disease(code, new StringBuffer());
+            if (sdc != null && icd9 == null) {
+                sdcCode = true;
+            } else if (sdc == null && icd9 != null) {
+                icd9Code = true;
+            }
+            try {
+                checkDisease = getSearchStudySiteService().isStudySiteHasDCPId(sp.getIdentifier());
+               } catch (PAException e) {
+                   errMsg.append("Unable to determine if study site has a DCP Id for study with identifier " 
+                           + sp.getIdentifier() + " \n");
+               }
+        }
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion, sdcCode, 
+            icd9Code, checkDisease);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccrualCount(key, values, errMsg, lineNumber, sp);

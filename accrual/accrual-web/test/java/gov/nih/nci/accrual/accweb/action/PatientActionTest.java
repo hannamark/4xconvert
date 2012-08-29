@@ -448,4 +448,36 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertEquals(5, action.getReasonsList().size());
     }
     
+    @Test
+    public void diseaseCodeTest() throws Exception {
+    	patient.setStudyProtocolId(1L);
+        patient.setBirthDate("7/16/2009");
+        patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setIcd9DiseaseIdentifier(Long.valueOf("1"));
+        patient.setStudySubjectId(1L);
+        patient.setPatientId(1L);
+        patient.setRegistrationDate("12/10/2009");
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        assertTrue(action.hasActionErrors());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Please select SDC Disease code for this trial."));
+        
+        patient.setStudyProtocolId(2L);
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.edit());
+        assertTrue(action.hasActionErrors());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Please select ICD Disease code for this trial."));
+    }
+    
 }

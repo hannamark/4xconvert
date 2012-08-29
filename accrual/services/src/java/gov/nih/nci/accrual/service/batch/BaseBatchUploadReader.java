@@ -258,7 +258,7 @@ public class BaseBatchUploadReader {
             disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(meddraCode);
         } catch (PAException e) {
             LOG.error("Error retrieving disease." , e);
-            errMsg.append("Unable to load the meddra diease with code ")
+            errMsg.append("Unable to load the SDC diease with code ")
                 .append(meddraCode).append(" from the database.\n");
         }
         return disease;
@@ -280,24 +280,6 @@ public class BaseBatchUploadReader {
                 .append(code).append(" from the database.\n");
         }
         return disease;
-    }
-    
-    /**
-     * Retrieves the PO identifier of the organization related with the given identifier.
-     * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
-     * @param errMsg the error messages
-     * @return the po identifier of the org
-     */
-    protected Ii getOrganizationIi(String orgIdentifier, StringBuffer errMsg) {
-        Ii resultingIi = null;
-        try {
-            resultingIi = BatchUploadUtils.getOrganizationIi(orgIdentifier);
-        } catch (Exception e) {
-            LOG.error("Error retrieving study site organization." , e);
-            errMsg.append("Unable to load an organization with the id ").append(orgIdentifier)
-            .append(" from the database.\n");
-        }
-        return resultingIi;
     }
     
     /**

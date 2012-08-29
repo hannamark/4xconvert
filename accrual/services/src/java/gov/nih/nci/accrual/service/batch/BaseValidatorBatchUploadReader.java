@@ -86,9 +86,10 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,10 +141,16 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      * @param sp study protocol
      * @param genderCriterion gender
+     * @param icd9Code 
+     * @param sdcCode 
+     * @param checkDisease 
      */
     @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
+ // CHECKSTYLE:OFF More than 7 Parameters
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
-            StudyProtocolDTO sp, PatientGenderCode genderCriterion) {
+            StudyProtocolDTO sp, PatientGenderCode genderCriterion, boolean sdcCode, boolean icd9Code, 
+            boolean checkDisease) {
+        // CHECKSTYLE:ON
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean trialType = true;            
             if (sp != null && sp.getProprietaryTrialIndicator().getValue()) {
@@ -168,7 +175,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 validateGender(values, errMsg, lineNumber, genderCriterion);
                 validateEthnicity(values, errMsg, lineNumber);
                 validateDateOfEntry(values, errMsg, lineNumber);
-                validateDiseaseCode(values, errMsg, lineNumber, sp);
+                validateDiseaseCode(values, errMsg, lineNumber, sp, sdcCode, icd9Code, checkDisease);
             } else {
                 errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")
                 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
@@ -261,31 +268,41 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg
      * @param lineNumber
      * @param sp study protocol
+     * @param icd9Code 
+     * @param sdcCode 
+     * @param checkDisease 
      */
-    void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
+    @SuppressWarnings({ "PMD.ExcessiveParameterList" })
+    void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp, 
+        boolean sdcCode, boolean icd9Code, boolean checkDisease) {
         PrimaryPurposeCode purpose = null;
-        boolean checkDisease =  false;
         if (sp != null) {
             purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
-            try {
-                 checkDisease = getSearchStudySiteService().isStudySiteHasDCPId(sp.getIdentifier());
-                } catch (PAException e) {
-                    errMsg.append("Unable to determine if study site has a DCP Id for study with identifier " 
-                            + sp.getIdentifier() + " \n");
-            }
         }
         String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
         if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION && !checkDisease) {
             errMsg.append("Patient Disease SDC or ICD9 Code is missing or not recognized for patient ID ")
             .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
-        } else if (checkCodeExist(errMsg, code)) {
+        } else if (checkCodeExist(errMsg, code, sdcCode, icd9Code, lineNumber)) {
             errMsg.append("Patient Disease SDC or ICD9 Code is invalid for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append("\n");
         }
     }
 
-    private boolean checkCodeExist(StringBuffer errMsg, String code) {
-        return StringUtils.isNotEmpty(code) && getDisease(code, errMsg) == null && getICD9Disease(code, errMsg) == null;
+    private boolean checkCodeExist(StringBuffer errMsg, String code, boolean sdcCode, 
+            boolean icd9Code, long lineNumber) {
+        SDCDiseaseDTO sdc = getDisease(code, errMsg);
+        ICD9DiseaseDTO icd9 = getICD9Disease(code, errMsg);
+        if (sdc != null && !sdcCode) {
+            errMsg.append("Patient SDC Disease Code is used instaed of ICD9 Code ")
+            .append(appendLineNumber(lineNumber)).append("\n");   
+            return false;
+        } else if (icd9 != null && !icd9Code) {
+            errMsg.append("Patient ICD9 Disease Code is used instaed of SDC Code ")
+            .append(appendLineNumber(lineNumber)).append("\n"); 
+            return false;
+        } 
+        return StringUtils.isNotEmpty(code) && sdc == null && icd9 == null;
     }
     
 

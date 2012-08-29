@@ -513,4 +513,10 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         assertTrue(bean.searchFast(null).isEmpty());
         assertTrue(bean.searchFast(new SearchSSPCriteriaDto()).isEmpty());
     }
+    
+    @Test
+    public void searchByStudyProtocolAndStatus() throws Exception {
+    	assertNotNull(bean.searchActiveByStudyProtocol(TestSchema.studyProtocols.get(0).getId()));
+    	assertNull(bean.searchActiveByStudyProtocol(TestSchema.studyProtocols.get(1).getId()));
+    }
 }

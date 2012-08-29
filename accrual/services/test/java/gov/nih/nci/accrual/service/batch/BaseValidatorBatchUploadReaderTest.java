@@ -87,7 +87,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 
 import java.util.ArrayList;
@@ -108,11 +107,11 @@ public class BaseValidatorBatchUploadReaderTest {
     public void validateDiseaseCodeICD9ValidationFails() {
         StringBuffer errMsg = new StringBuffer();
         BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         when(bean.getDisease(CODE, errMsg)).thenReturn(null);
         when(bean.getICD9Disease(CODE, errMsg)).thenReturn(null);
         
-        bean.validateDiseaseCode(valueList, errMsg, 1, null);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         
         assertFalse(StringUtil.isEmpty(errMsg.toString()));
       
@@ -122,11 +121,11 @@ public class BaseValidatorBatchUploadReaderTest {
     public void validateDiseaseCodeICD9ValidationPasses() {
         StringBuffer errMsg = new StringBuffer();
         BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         when(bean.getDisease(CODE, errMsg)).thenReturn(null);
         when(bean.getICD9Disease(CODE, errMsg)).thenReturn(new ICD9DiseaseDTO());
         
-        bean.validateDiseaseCode(valueList, errMsg, 1, null);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         
         assertTrue(StringUtil.isEmpty(errMsg.toString()));
       

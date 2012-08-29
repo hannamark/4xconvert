@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.PatientListDto;
+import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.service.PAException;
@@ -134,4 +134,12 @@ public interface StudySubjectServiceLocal extends StudySubjectService {
      * @throws PAException exception
      */
     StudySubject get(SubjectAccrualKey key) throws PAException;
+    
+    /**
+     * Search based on spId and Status as Active to know the disease code used for the trial.
+     * @param spId studyprotocol id
+     * @return result study subject object (empty if none found)
+     * @throws PAException exception
+     */
+    StudySubject searchActiveByStudyProtocol(Long spId) throws PAException;
 }

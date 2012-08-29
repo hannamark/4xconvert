@@ -97,6 +97,7 @@ import org.apache.log4j.Logger;
  * @author moweis
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PatientHelper {
 
     private final PatientAction action;
@@ -124,6 +125,7 @@ public class PatientHelper {
             if (StringUtils.isEmpty(action.getPatient().getRegistrationDate())) {
                 action.addActionError("Registration Date is required.");
             }
+            validateDiseaseCodes();
         }
     }
 
@@ -167,6 +169,24 @@ public class PatientHelper {
                 && action.getPatient().getGenderCode().equals(PatientGenderCode.FEMALE.getCode())) {
             action.addActionError("Gender must not be " + action.getPatient().getGenderCode()
                     + " for subjects in this study.");
+        }
+    }
+
+    private void validateDiseaseCodes() {
+        try {
+            StudySubject ss = action.getStudySubjectSvc().searchActiveByStudyProtocol(
+                    action.getPatient().getStudyProtocolId());
+            if (ss != null && ss.getDisease() != null && ss.getIcd9disease() == null 
+                && action.getPatient().getIcd9DiseaseIdentifier() != null) {
+                action.addActionError("Please select SDC Disease code for this trial.");
+            } else if (ss != null && ss.getDisease() == null && ss.getIcd9disease() != null 
+                && action.getPatient().getSdcDiseaseIdentifier() != null) {
+                action.addActionError("Please select ICD Disease code for this trial.");
+            }
+        } catch (Exception e) {
+            String msg = "Error while validating the disease code for a trial.";
+            LOG.error(msg, e);
+            action.addActionError(msg);
         }
     }
 }
