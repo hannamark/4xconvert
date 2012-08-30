@@ -183,4 +183,9 @@ public class MockCSMUserService implements CSMUserUtil {
         groups.add("SuAbstractor");
         return groups;
     }
+
+    @Override
+    public User updateCSMUser(User csmUser) throws PAException {
+        return csmUser;
+    }
 }
