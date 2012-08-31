@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -118,6 +119,7 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void convertFromDomainToDto(Document doc, DocumentDTO docDTO) {
         super.convertFromDomainToDto(doc, docDTO);
@@ -125,6 +127,15 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         docDTO.setInactiveCommentText(StConverter.convertToSt(doc.getInactiveCommentText()));
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
         docDTO.setDateLastUpdated(TsConverter.convertToTs(doc.getDateLastUpdated()));
+        docDTO.setOriginal(BlConverter.convertToBl(doc.getOriginal()));
+        docDTO.setDeleted(BlConverter.convertToBl(doc.getDeleted()));
+        docDTO.setStudyInboxIdentifier(IiConverter.convertToIi(doc
+                .getStudyInbox() != null ? doc.getStudyInbox().getId() : null));
+        if (doc.getUserLastUpdated() != null) {
+            docDTO.setUserLastUpdated(StConverter.convertToSt(doc
+                    .getUserLastUpdated().getLoginName()));
+        }
+        
     }
 
     /**
@@ -135,7 +146,9 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         super.convertFromDtoToDomain(docDTO, doc);
         doc.setActiveIndicator(BlConverter.convertToBoolean(docDTO.getActiveIndicator()));
         doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
-
+        doc.setOriginal(BlConverter.convertToBoolean(docDTO.getOriginal()));
+        doc.setDeleted(BlConverter.convertToBoolean(docDTO.getDeleted()));
+        
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
         doc.setStudyProtocol(spBo);
@@ -143,5 +156,13 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         if (ISOUtil.isBlNull(docDTO.getActiveIndicator())) {
             doc.setActiveIndicator(Boolean.TRUE);
         }
+        
+        if (!ISOUtil.isIiNull(docDTO.getStudyInboxIdentifier())) {
+            StudyInbox studyInbox = new StudyInbox();
+            studyInbox.setId(IiConverter.convertToLong(docDTO
+                    .getStudyInboxIdentifier()));
+            doc.setStudyInbox(studyInbox);
+        }
+        
     }
 }

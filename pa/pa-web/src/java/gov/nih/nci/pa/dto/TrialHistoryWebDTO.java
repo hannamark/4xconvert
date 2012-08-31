@@ -78,6 +78,11 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -92,10 +97,18 @@ import gov.nih.nci.pa.util.PAUtil;
  * @author Anupama Sharma
  * @since 4/21/2009
  */
-public class TrialHistoryWebDTO {
+public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
+
+    private static final String AMEND = "Amendment";
+
+    private static final String ACTUAL = "Original";
+
+    private static final String UPDATE = "Update";
 
     /** The submission number. */
     private String submissionNumber;
+    
+    private String submitter;
 
     /** The amendment number. */
     private String amendmentNumber;
@@ -107,7 +120,7 @@ public class TrialHistoryWebDTO {
     private String type;
 
     /** The submission date. */
-    private String submissionDate;
+    private Date submissionDate;
 
     /** The amendment reason code. */
     private String amendmentReasonCode;
@@ -145,13 +158,27 @@ public class TrialHistoryWebDTO {
             this.amendmentDate = "";
         }
         if (isoDto.getStatusDate() != null && isoDto.getStatusDate().getValue() != null) {
-            this.submissionDate = PAUtil.normalizeDateString(TsConverter.convertToTimestamp(isoDto.getStatusDate())
-                .toString());
+            this.submissionDate = TsConverter.convertToTimestamp(isoDto
+                    .getStatusDate());
         } else {
-            this.submissionDate = "";
+            this.submissionDate = null;
         }
         this.documents = "";
         this.type = getType(isoDto);
+    }
+
+    /**
+     * @param isoDto StudyInboxDTO
+     */
+    public TrialHistoryWebDTO(StudyInboxDTO isoDto) {
+        this.identifier = IiConverter.convertToString(isoDto.getIdentifier());
+        if (isoDto.getInboxDateRange().getLow() != null
+                && isoDto.getInboxDateRange().getLow().getValue() != null) {
+            this.submissionDate = TsConverter.convertToTimestamp(isoDto
+                    .getInboxDateRange().getLow());
+        }        
+        this.type = UPDATE;
+        
     }
 
     /**
@@ -195,9 +222,9 @@ public class TrialHistoryWebDTO {
         int submissionNum = 0;
         submissionNum = IntConverter.convertToInteger(isoDto.getSubmissionNumber());
         if (submissionNum == 1) {
-            return "Actual";
+            return ACTUAL;
         }
-        return "Amend";
+        return AMEND;
     }
 
     /**
@@ -272,12 +299,21 @@ public class TrialHistoryWebDTO {
         this.type = type;
     }
 
+    
+    /**
+     * @return date
+     */
+    public String getSubmissionDateAsString() {
+        return submissionDate != null ? DateFormatUtils.format(submissionDate,
+                PAUtil.DATE_FORMAT) : "";
+    }
+    
     /**
      * Gets the submission date.
      *
      * @return the submissionDate
      */
-    public String getSubmissionDate() {
+    public Date getSubmissionDate() {
         return submissionDate;
     }
 
@@ -286,7 +322,7 @@ public class TrialHistoryWebDTO {
      *
      * @param submissionDate the submissionDate to set
      */
-    public void setSubmissionDate(String submissionDate) {
+    public void setSubmissionDate(Date submissionDate) {
         this.submissionDate = submissionDate;
     }
 
@@ -339,6 +375,34 @@ public class TrialHistoryWebDTO {
      */
     public void setSubmissionNumberToSort(double submissionNumberToSort) {
         this.submissionNumberToSort = submissionNumberToSort;
+    }
+
+    /**
+     * @return the submitter
+     */
+    public String getSubmitter() {
+        return submitter;
+    }
+
+    /**
+     * @param submitter the submitter to set
+     */
+    public void setSubmitter(String submitter) {
+        this.submitter = submitter;
+    }
+
+    @Override
+    public int compareTo(TrialHistoryWebDTO o) {
+        if (this.submissionDate == null && o.submissionDate == null) {
+            return 0;
+        }
+        if (this.submissionDate == null) {
+            return 1;
+        }
+        if (o.submissionDate == null) {
+            return -1;
+        }
+        return -this.submissionDate.compareTo(o.submissionDate);
     }
 
 }

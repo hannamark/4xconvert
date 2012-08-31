@@ -264,11 +264,12 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                     removeFromCollectionByID(documentDTOs, doc.getIdentifier());
                 }
             }
-            paServiceUtils.createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null),
+            List<DocumentDTO> savedDocs = paServiceUtils.createOrUpdate(
+                    documentDTOs, IiConverter.convertToDocumentIi(null),
                     studyProtocolDTO.getIdentifier());
             String updatesList = studyInboxServiceLocal.create(documentDTOs, existingDocs,
                     studyProtocolIi, originalDTO, originalSummary4,
-                    originalSites);
+                    originalSites, savedDocs);
             mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi,
                     updatesList);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);

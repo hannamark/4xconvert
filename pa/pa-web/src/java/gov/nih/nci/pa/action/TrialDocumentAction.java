@@ -318,14 +318,13 @@ public class TrialDocumentAction extends AbstractMultiObjectDeleteAction impleme
         return query();
     }
      
+    
     @Override
     public void deleteObject(Long objectId) throws PAException {
-        DocumentDTO docDTO = new DocumentDTO();
-        docDTO = PaRegistry.getDocumentService().get(
-                IiConverter.convertToIi(objectId));
-        docDTO.setInactiveCommentText(StConverter
-                .convertToSt(trialDocumentWebDTO.getInactiveCommentText()));
-        PaRegistry.getDocumentService().delete(docDTO.getIdentifier());
+        PaRegistry.getDocumentService().delete(
+                IiConverter.convertToDocumentIi(objectId),
+                StConverter.convertToSt(trialDocumentWebDTO
+                        .getInactiveCommentText()));
     }
 
      /**

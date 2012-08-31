@@ -93,6 +93,7 @@ import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -302,7 +303,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             createStudyRelationship(spIi, toStudyProtocolIi, studyProtocolDTO);
             paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             studyOverallStatusService.create(overallStatusDTO);
-            saveDocuments(documentDTOs, spIi);
+            List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
+            documentService.markAsOriginalSubmission(savedDocs);
             saveAmenderInfo(studyProtocolDTO, amender);
             sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
             return studyProtocolDTO.getIdentifier();
@@ -414,7 +416,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         getPAServiceUtils().manageStudyIdentifiers(loSiteDTO);
     }
 
-    private String createInboxProcessingComments(Ii spIi) throws PAException {
+    private String createInboxProcessingComments(Ii spIi, List<DocumentDTO> docs) throws PAException {
 
         String inboxProcessingComments = TrialUpdatesRecorder
                 .getRecordedUpdates();
@@ -429,10 +431,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     .createAbstractionValidationErrorsTable(spIi,
                             isoDocWrkStatus);
             if (sbuf.length() != 0) {
-                createStudyInboxRecord(spIi, sbuf.toString());
+                createStudyInboxRecord(spIi, sbuf.toString(), null, StudyInboxTypeCode.VALIDATION);
             }
 
-            createStudyInboxRecord(spIi, inboxProcessingComments);
+            createStudyInboxRecord(spIi, inboxProcessingComments, docs, StudyInboxTypeCode.UPDATE);
         }
         return inboxProcessingComments;
     }
@@ -442,16 +444,23 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     /**
      * @param spIi
      * @param inboxProcessingComments
+     * @param docs 
      * @throws PAException
      */
-    private void createStudyInboxRecord(Ii spIi, String inboxProcessingComments)
+    private void createStudyInboxRecord(Ii spIi, String inboxProcessingComments, List<DocumentDTO> docs,
+            StudyInboxTypeCode typeCode)
             throws PAException {
         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
         studyInboxDTO.setStudyProtocolIdentifier(spIi);
         studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
                 .convertToIvl(new Timestamp(new Date().getTime()), null));
         studyInboxDTO.setComments(StConverter.convertToSt(inboxProcessingComments));
-        studyInboxServiceLocal.create(studyInboxDTO);
+        studyInboxDTO.setTypeCode(CdConverter.convertToCd(typeCode));
+        StudyInboxDTO createdInbox = studyInboxServiceLocal.create(studyInboxDTO);
+        if (docs != null) {
+            documentService.associateDocumentsWithStudyInbox(docs,
+                    createdInbox);
+        }
     }
 
     /**
@@ -563,7 +572,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
             assignOwnership(studyProtocolDTO, spIi);
             paServiceUtils.addNciIdentifierToTrial(spIi);
-            saveDocuments(documentDTOs, spIi);
+            List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
+            documentService.markAsOriginalSubmission(savedDocs);            
             Collection<String> unmatchedEmails = new ArrayList<String>();
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
@@ -674,8 +684,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             createStudySiteContact(studySiteIi, spIi, studySiteOrganizationDTO, studySiteInvestigatorDTO,
                     studyTypeCode);
             assignOwnership(studyProtocolDTO, spIi);
-            getPAServiceUtils().addNciIdentifierToTrial(spIi);
-            saveDocuments(documentDTOs, spIi);
+            getPAServiceUtils().addNciIdentifierToTrial(spIi);            
+            List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
+            documentService.markAsOriginalSubmission(savedDocs);            
             Collection<String> unmatchedEmails = new ArrayList<String>();
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
@@ -1285,10 +1296,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     TrialUpdatesRecorder.STATUS_DATES_UPDATED);
             studyOverallStatusService.create(overallStatusDTO);            
             
-            saveDocuments(documentDTOs, spIi);            
+            List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
             // do not send the mail when its batch mode
-            final String updatesList = createInboxProcessingComments(spIi);
+            final String updatesList = createInboxProcessingComments(spIi, savedDocs);
             sendMail(UPDATE, batchMode, spIi, new ArrayList<String>(),
                     updatesList);
 
@@ -1313,7 +1324,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * @throws PAException
      *             If an error occurs
      */
-    void saveDocuments(List<DocumentDTO> documentDTOs, Ii spIi)
+    List<DocumentDTO> saveDocuments(List<DocumentDTO> documentDTOs, Ii spIi)
             throws PAException {
         PAServiceUtils paServiceUtils = getPAServiceUtils();
         Ii nullDocumentIi = IiConverter.convertToDocumentIi(null);
@@ -1332,6 +1343,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                         .getTypeCode().getCode()).getCode()));
             }
         }
+        return savedDocs;
     }
 
     private TrialRegistrationValidator createValidator() {

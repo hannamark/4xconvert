@@ -76,109 +76,80 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.enums;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
-
-import java.util.List;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Bala Nair
- * @since 03/23/2009
- * copyright NCI 2007.  All rights reserved.
+ * @author Denis G. Krylov
+ * @since 3.9
+ * copyright NCI 2008.  All rights reserved.
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public interface DocumentService extends StudyPaService <DocumentDTO> {
-    
+public enum StudyInboxTypeCode implements CodedEnum<String> {
+
+    /** UPDATE */
+    UPDATE("Update"),
+    /** VALIDATION */
+    VALIDATION("Validation");
+
+    private String code;
 
     /**
-     * @param studyProtocolIi Ii 
-     * @return DocumentDTO
-     * @throws PAException PAException
-     */
-    List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException;
-    
-    /**
-     * Returns all documents of the given protocol including TSRs of all previous amendments and
-     * original submission (if any). If this protocol has never been amended, the invocation
-     * of this method is equivalent to that of {@link #getDocumentsByStudyProtocol(Ii)}.
-     * @param studyProtocolIi study ID
-     * @return List<DocumentDTO>
-     * @throws PAException PAException
-     */
-    List<DocumentDTO> getDocumentsAndAllTSRByStudyProtocol(Ii studyProtocolIi) throws PAException;
-    
-    /**
-     * Forces delete of the given document thereby bypassing validation checks.
-     * @param documentIi documentIi
-     * @throws PAException PAException
-     */
-    void forceDelete(Ii documentIi) throws PAException;
-    
-
-    /**
-     * Marks the given trial documents as 'original submission' to indicate that these specific documents
-     * originally came with a trial submission or trial amendment. This will allow Trial History to properly display
-     * historical documents. 
-     * @param savedDocs trial documents
-     * @throws PAException PAException
-     */
-    void markAsOriginalSubmission(List<DocumentDTO> savedDocs) throws PAException;
-    
-    /**
-     * Links the given documents to a {@link StudyInbox} record. This will allow Trial History page to precisely
-     * determine which documents came with a trial update. 
-     * @param docs docs
-     * @param createdInbox createdInbox
-     * @throws PAException PAException
-     */
-    void associateDocumentsWithStudyInbox(List<DocumentDTO> docs,
-            StudyInboxDTO createdInbox) throws PAException;
-    
-    /**
-     * Returns <b>original documents</b> submitted with a protocol or an
-     * amendment. For pre-3.9 trials, falls back to old functionality.
      * 
-     * @param identifier identifier
-     * @throws PAException PAException
-     * @return List<DocumentDTO>
+     * @param code
      */
-    List<DocumentDTO> getOriginalDocumentsByStudyProtocol(Ii identifier)
-            throws PAException;;
+    private StudyInboxTypeCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-        
     /**
-     * Returns <b>original documents</b> submitted with a protocol or an
-     * amendment. For pre-3.9 trials, falls back to old functionality.
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
      * 
-     * @param dto
-     *            dto
-     * @throws PAException
-     *             PAException
-     * @return List<DocumentDTO>
+     * @return String name
      */
-    List<DocumentDTO> getOriginalDocumentsByStudyInbox(StudyInboxDTO dto) throws PAException;
-    
+    public String getName() {
+        return name();
+    }
+
     /**
-     * Returns deleted documents for the given trial.
-     * @param studyProtocolIi studyProtocolIi
-     * @throws PAException
-     *             PAException
-     * @return List<DocumentDTO> 
+     * 
+     * @param code code
+     * @return TrialPhaseType
      */
-    List<DocumentDTO> getDeletedDocumentsByTrial(Ii studyProtocolIi) throws PAException;   
-    
-    
+    public static StudyInboxTypeCode getByCode(String code) {
+        return getByClassAndCode(StudyInboxTypeCode.class, code);
+    }
+
     /**
-     * Deletes the document and specified the reason.
-     * @see #delete(Ii).
-     * @param docID docID
-     * @param reasonToDelete reasonToDelete
-     * @throws PAException PAException
+     * @return String[] display names of enums
      */
-    void delete(Ii docID, St reasonToDelete) throws PAException;   
+    public static String[] getDisplayNames() {
+        StudyInboxTypeCode[] l = StudyInboxTypeCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

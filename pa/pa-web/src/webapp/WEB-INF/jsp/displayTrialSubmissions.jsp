@@ -1,21 +1,31 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <pa:studyUniqueToken/>
 <s:set name="trialHistoryWebDTO" value="trialHistoryWebDTO" scope="request" />
-<display:table name="trialHistoryWebDTO" id="row" class="data" sort="list" defaultsort="1" defaultorder="ascending"
+<s:set name="deletedDocuments" value="deletedDocuments" scope="request" />
+<p class="info">
+    Note: for trials submitted prior to the 3.9 Release, the <b>Documents</b> column
+    might not precisely represent the <u>original</u> documents that came with a submission or an amendment.
+    Also for trial updates made prior to the 3.9 Release, the corresponding documents will not be available here.
+</p>
+<display:table name="trialHistoryWebDTO" id="row" class="data" sort="list" 
     pagesize="10" requestURI="trialHistory.action">
-    <display:column escapeXml="true" property="submissionNumber" sortable="false"
-        titleKey="trialHistory.submissionNumber" sortProperty="submissionNumberToSort" />
-    <display:column escapeXml="true" property="type" sortable="false" titleKey="trialHistory.type" />
-    <display:column escapeXml="true" property="amendmentNumber" sortable="false" titleKey="trialHistory.amendmentNumber" />
-    <display:column escapeXml="true" property="amendmentDate" sortable="false" titleKey="trialHistory.amendmentDate" />
-    <display:column escapeXml="true" property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" />
-    <display:column escapeXml="true" property="amendmentReasonCode" sortable="false"
-        titleKey="trialHistory.amendmentReasonCode" />
-    <display:column escapeXml="false" property="documents" sortable="false" style="word-wrap: break-word"
+    
+    <display:column escapeXml="true" property="submissionDateAsString" sortable="true" title="Date" />    
+    <display:column escapeXml="false" sortable="true" title="Type">
+        <c:out value="${row.type}"></c:out>
+        <c:if test="${row.type == 'Amendment'}">
+            <br/><br/>
+            Date:&nbsp;<c:out value="${row.amendmentDate}"></c:out><br/>
+            Number:&nbsp;<c:out value="${row.amendmentNumber}"></c:out><br/>
+            Reason:&nbsp;<c:out value="${row.amendmentReasonCode}"></c:out><br/>
+        </c:if>
+    </display:column>    
+    <display:column escapeXml="true" property="submitter" sortable="true" title="Submitter" />        
+    <display:column escapeXml="false" property="documents" sortable="true" style="word-wrap: break-word"
         titleKey="trialHistory.documents" />
     <pa:displayWhenCheckedOut>
         <display:column title="Action" headerClass="centered" class="action">
-            <s:if test="%{#attr.row.submissionNumber != 1}">
+            <s:if test="%{#attr.row.submissionNumber != 1 && #attr.row.submissionNumber != null}">
                 <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.identifier})">
                     <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                 </s:a>
@@ -23,3 +33,32 @@
         </display:column>
     </pa:displayWhenCheckedOut>
 </display:table>
+
+<br/>
+
+<div id="showDocsDiv">
+    <a href="javascript:void(0);" onclick="$('showDocsDiv').hide();$('deletedDocDiv').show();$('hideDocsDiv').show();"><b>Show Deleted Documents</b></a>
+</div>
+<div id="hideDocsDiv" style="display: none;">
+    <a href="javascript:void(0);" onclick="$('showDocsDiv').show();$('deletedDocDiv').hide();$('hideDocsDiv').hide();"><b>Hide Deleted Documents</b></a>
+</div>
+
+
+<div id="deletedDocDiv" style="display: none;">
+	<c:if test="${empty deletedDocuments}">
+	    <p class="info">No history of deleted trial documents.</p>
+	</c:if>
+	<c:if test="${not empty deletedDocuments}">
+		<display:table name="deletedDocuments" id="delDoc" class="data" sort="list" 
+		    pagesize="50" requestURI="trialHistory.action">
+		    <display:column escapeXml="true" property="dateLastUpdated" sortable="true" title="Deletion Date" />    
+		    <display:column escapeXml="true" property="userLastUpdated" sortable="true" title="Deleted By" />
+		    <display:column escapeXml="true" property="typeCode" sortable="true" title="Document Type" />
+		    <display:column escapeXml="false" sortable="true" title="File Name">
+		        <a onclick="handlePopup('${delDoc.studyProtocolId}','${delDoc.id}','<c:out value="${delDoc.fileName}"/>')" href="javascript:void(0);">
+		            <c:out value="${delDoc.fileName}"/>
+		        </a>
+		    </display:column>
+		</display:table>
+	</c:if>
+</div>

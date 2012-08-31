@@ -104,13 +104,14 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
      * @param originalDTO original protocol before update
      * @param originalSummary4 originalSummary4
      * @param originalSites originalSites 
+     * @param updatedDocs updatedDocs
      * @throws PAException on any error
      * @return String comments
      */
     String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, // NOPMD
             StudyProtocolQueryDTO originalDTO,
             StudyResourcingDTO originalSummary4,
-            List<StudySiteDTO> originalSites) throws PAException;
+            List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException;
 
      /**
       * Returns a list of all open inbox entries for a study protocol.
@@ -119,5 +120,14 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
       * @throws PAException on error
       */
      List<StudyInboxDTO> getOpenInboxEntries(Ii studyProtocolIi) throws PAException;
+     
+     /**
+      * Returns a list of all trial update inbox records created against a protocol.
+      * @param studyProtocolIi the study protocol identifier
+      * @return list of inbox entries for the given study protocol
+      * @throws PAException on error
+      */
+     List<StudyInboxDTO> getAllTrialUpdates(Ii studyProtocolIi) throws PAException;
+     
 
 }

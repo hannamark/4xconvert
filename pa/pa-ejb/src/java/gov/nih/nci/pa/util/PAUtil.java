@@ -1392,4 +1392,32 @@ public class PAUtil {
     }
     
     
+    /**
+     * For the given {@link DocumentDTO} attempts to determine full name of the
+     * person who last updated the document.
+     * 
+     * @param documentDTO
+     *            DocumentDTO
+     * @return full name of the person who last updated the document
+     * @throws PAException 
+     */
+    public static String getDocumentUserLastUpdatedName(DocumentDTO documentDTO) {
+        try {
+            if (!ISOUtil.isStNull(documentDTO.getUserLastUpdated())) {
+                User user = CSMUserService.getInstance().getCSMUser(
+                        documentDTO.getUserLastUpdated().getValue());
+                if (user != null) {
+                    RegistryUser regUser = PaRegistry.getRegistryUserService()
+                            .getUser(user.getLoginName());
+                    String userName = regUser != null ? regUser.getFullName()
+                            : CsmUserUtil.getDisplayUsername(user);
+                    return userName;
+                }
+            }
+        } catch (PAException e) {
+           LOG.error(e, e);
+        }
+        return "";
+    }
+    
 }

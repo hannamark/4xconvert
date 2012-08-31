@@ -85,12 +85,14 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -114,6 +116,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -127,9 +130,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -141,7 +146,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
-        DocumentServiceLocal {
+        DocumentServiceLocal { //NOPMD
     
     
     @EJB
@@ -152,9 +157,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
-        if (ISOUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("studyProtocol Identifier should not be null.");
-        }
+        protocolIdCheck(studyProtocolIi);
 
         Document criteria = new Document();
         StudyProtocol sp = new StudyProtocol();
@@ -170,6 +173,16 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     /**
+     * @param studyProtocolIi
+     * @throws PAException
+     */
+    private void protocolIdCheck(Ii studyProtocolIi) throws PAException {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException("studyProtocol Identifier should not be null.");
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -177,7 +190,20 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
+        return createDocument(docDTO);
+    }
+
+    /**
+     * @param docDTO
+     * @return
+     * @throws PAException
+     */
+    private DocumentDTO createDocument(DocumentDTO docDTO) throws PAException {
         docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        docDTO.setDeleted(BlConverter.convertToBl(Boolean.FALSE));
+        if (docDTO.getOriginal() == null) {
+            docDTO.setOriginal(BlConverter.convertToBl(Boolean.FALSE));
+        }
         DocumentDTO saved = super.create(docDTO);
         saved.setText(docDTO.getText());
         saved.setFileName(docDTO.getFileName());
@@ -219,9 +245,18 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
+        
+        // We no longer update document records directly; instead we retire old versions and create new ones.
+        // That is needed to preserve history. 
+        DocumentDTO docToUpdate = get(docDTO.getIdentifier());
+        docToUpdate.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        docToUpdate.setDeleted(BlConverter.convertToBl(false));
+        super.update(docToUpdate);        
+        
         docDTO.setInactiveCommentText(null);
-        saveFile(docDTO);
-        return super.update(docDTO);
+        docDTO.setIdentifier(null);
+        docDTO.setOriginal(BlConverter.convertToBl(Boolean.FALSE));
+        return createDocument(docDTO); 
     }
 
     /**
@@ -230,13 +265,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii documentIi) throws PAException {
-        if (ISOUtil.isIiNull(documentIi)) {
-            throw new PAException("Document Ii should not be null.");
-        }
-        DocumentDTO docDTO = get(documentIi);
-        checkTypeCodesForDelete(docDTO);
-        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
-        super.update(docDTO);
+        this.delete(documentIi, StConverter.convertToSt(null));
     }
     
     /**
@@ -250,6 +279,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         }
         DocumentDTO docDTO = get(documentIi);        
         docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        docDTO.setDeleted(BlConverter.convertToBl(true));
         super.update(docDTO);
     }
 
@@ -378,6 +408,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             }
         }
         docs.addAll(previousTSRs);
+        Collections.sort(docs, documentComparator());
         return docs;
     }
 
@@ -420,5 +451,103 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public void setStudyProtocolService(
             StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
+    }
+
+    @Override
+    public void markAsOriginalSubmission(List<DocumentDTO> savedDocs)
+            throws PAException {
+        if (savedDocs != null) {
+            for (DocumentDTO dto : savedDocs) {
+                DocumentDTO doc = get(dto.getIdentifier());
+                if (doc != null) {
+                    doc.setOriginal(BlConverter.convertToBl(true));
+                    super.update(doc);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void associateDocumentsWithStudyInbox(List<DocumentDTO> savedDocs,
+            StudyInboxDTO inbox) throws PAException {
+        if (savedDocs != null) {            
+            for (DocumentDTO dto : savedDocs) {
+                DocumentDTO doc = get(dto.getIdentifier());
+                if (doc != null) {                    
+                    doc.setStudyInboxIdentifier(inbox.getIdentifier());
+                    super.update(doc);
+                }
+            }
+        }        
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<DocumentDTO> getOriginalDocumentsByStudyProtocol(
+            Ii studyProtocolIi) throws PAException {
+        protocolIdCheck(studyProtocolIi);
+
+        Document criteria = new Document();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(studyProtocolIi));
+        criteria.setStudyProtocol(sp);
+        criteria.setOriginal(Boolean.TRUE);
+
+        PageSortParams<Document> params = new PageSortParams<Document>(
+                PAConstants.MAX_SEARCH_RESULTS, 0,
+                DocumentSortCriterion.DOCUMENT_ID, false);
+
+        List<Document> results = search(
+                new AnnotatedBeanSearchCriteria<Document>(criteria), params);
+        // zero results means this protocol is pre-3.9, which means we have to
+        // fall back to the old
+        // functionality rather than totally suppress protocol document list.
+        // For pre-3.9 trials,
+        // document list might not be exactly 'original'.
+        if (CollectionUtils.isEmpty(results)) {             
+            return getDocumentsByStudyProtocol(studyProtocolIi);
+        } else {
+            return convertFromDomainToDTOs(results);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DocumentDTO> getOriginalDocumentsByStudyInbox(StudyInboxDTO dto)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery("from " + Document.class.getName()
+                + " where studyInbox.id = "
+                + dto.getIdentifier().getExtension());
+        return convertFromDomainToDTOs(query.list());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DocumentDTO> getDeletedDocumentsByTrial(Ii studyProtocolIi)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session
+                .createQuery("from "
+                        + Document.class.getName()
+                        + " where studyProtocol.id = "
+                        + studyProtocolIi.getExtension()
+                        + " and activeIndicator=false and (deleted is null or deleted=true) "
+                        + "order by dateLastUpdated desc");
+        return convertFromDomainToDTOs(query.list());
+    }
+
+    @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
+    public void delete(Ii documentIi, St reasonToDelete) throws PAException {
+        if (ISOUtil.isIiNull(documentIi)) {
+            throw new PAException("Document Ii should not be null.");
+        }
+        DocumentDTO docDTO = get(documentIi);
+        checkTypeCodesForDelete(docDTO);
+        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        docDTO.setDeleted(BlConverter.convertToBl(true));
+        docDTO.setInactiveCommentText(reasonToDelete);
+        super.update(docDTO);        
     }
 }

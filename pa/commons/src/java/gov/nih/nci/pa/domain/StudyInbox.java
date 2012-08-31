@@ -78,12 +78,15 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
@@ -108,7 +111,7 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
   private String comments;
   private Timestamp openDate;
   private Timestamp closeDate;
-
+  private StudyInboxTypeCode typeCode;
 
   /**
    * @return comments
@@ -153,4 +156,21 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
   public void setCloseDate(Timestamp closeDate) {
     this.closeDate = closeDate;
   }
+
+    /**
+     * @return the typeCode
+     */
+    @Column(name = "type_code")
+    @Enumerated(EnumType.STRING)
+    public StudyInboxTypeCode getTypeCode() {
+        return typeCode;
+    }
+
+    /**
+     * @param typeCode
+     *            the typeCode to set
+     */
+    public void setTypeCode(StudyInboxTypeCode typeCode) {
+        this.typeCode = typeCode;
+    }
 }

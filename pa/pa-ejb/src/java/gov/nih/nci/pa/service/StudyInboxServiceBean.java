@@ -81,6 +81,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -171,7 +172,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     public String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, //NOPMD
             StudyProtocolQueryDTO originalDTO,
             StudyResourcingDTO originalSummary4,
-            List<StudySiteDTO> originalSites) throws PAException {
+            List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException {
         StringBuilder comments = new StringBuilder();
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException(" Study Protocol Identifier cannot be null");
@@ -204,12 +205,12 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         
         // Store validation errors resulted from the update separately.   
         if (abstractionErrors.length() > 0 && comments.length() > 0) {
-            createStudyInboxRecord(studyProtocolIi, abstractionErrors);
+            createStudyInboxRecord(studyProtocolIi, abstractionErrors, null, StudyInboxTypeCode.VALIDATION);
         }        
         
         // Store changes resulted from the update.
         if (comments.length() > 0) {
-            createStudyInboxRecord(studyProtocolIi, comments);
+            createStudyInboxRecord(studyProtocolIi, comments, updatedDocs, StudyInboxTypeCode.UPDATE);
         }
                 
         return comments.toString();
@@ -219,16 +220,22 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     /**
      * @param studyProtocolIi
      * @param comments
+     * @param docs 
      * @throws PAException
      */
     private void createStudyInboxRecord(Ii studyProtocolIi,
-            StringBuilder comments) throws PAException {
+            StringBuilder comments, List<DocumentDTO> docs, StudyInboxTypeCode typeCode) throws PAException {
         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
         studyInboxDTO.setStudyProtocolIdentifier(studyProtocolIi);
         studyInboxDTO.setInboxDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()),
                                                                               null));
         studyInboxDTO.setComments(StConverter.convertToSt(comments.toString()));
-        create(studyInboxDTO);
+        studyInboxDTO.setTypeCode(CdConverter.convertToCd(typeCode));
+        StudyInboxDTO createdInbox = create(studyInboxDTO);
+        
+        if (CollectionUtils.isNotEmpty(docs)) {
+            documentServiceLocal.associateDocumentsWithStudyInbox(docs, createdInbox);
+        }
     }
 
     private StringBuilder createComments(List<StudySiteDTO> originalSites,
@@ -477,7 +484,26 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     public void setDocumentServiceLocal(DocumentServiceLocal documentServiceLocal) {
         this.documentServiceLocal = documentServiceLocal;
     }
-    
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<StudyInboxDTO> getAllTrialUpdates(Ii studyProtocolIi)
+            throws PAException {
+        Criteria crit = PaHibernateUtil
+                .getCurrentSession()
+                .createCriteria(StudyInbox.class)
+                .add(Restrictions.eq("typeCode", StudyInboxTypeCode.UPDATE))
+                .createCriteria("studyProtocol")
+                .add(Restrictions.eq("id",
+                        IiConverter.convertToLong(studyProtocolIi)));
+        try {
+            List<StudyInbox> entries = crit.list();
+            return convertFromDomainToDTOs(entries);
+        } catch (Exception e) {
+            throw new PAException("Error retrieving inbox entries.", e);
+        }
+    }
  
     
 }

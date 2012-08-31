@@ -81,7 +81,10 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.TrialUpdateWebDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -98,6 +101,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -109,6 +113,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -134,6 +139,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private DocumentServiceLocal documentService;
     private StudyInboxServiceLocal studyInboxService;
     private StudyProtocolServiceLocal studyProtocolService;
+    private RegistryUserServiceLocal registryUserServiceLocal;
 
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
     private TrialHistoryWebDTO trialHistoryWbDto;
@@ -143,6 +149,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private HttpServletResponse servletResponse;
     private List<TrialUpdateWebDTO> records = new ArrayList<TrialUpdateWebDTO>();
     private final StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+    private List<TrialDocumentWebDTO> deletedDocuments = new ArrayList<TrialDocumentWebDTO>();
 
     /**
      * {@inheritDoc}
@@ -153,6 +160,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         documentService = PaRegistry.getDocumentService();
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
+        registryUserServiceLocal = PaRegistry.getRegistryUserService();
     }
 
     /**
@@ -284,6 +292,52 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      */
     @Override
     protected void loadListForm() throws PAException {
+        List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
+        loadTrialSubmissions(trialHistoryWebdtos);
+        loadTrialUpdates(trialHistoryWebdtos);
+        Collections.sort(trialHistoryWebdtos);
+        setTrialHistoryWebDTO(trialHistoryWebdtos);
+        
+        loadDeletedDocuments();
+    }
+
+    private void loadDeletedDocuments() throws PAException {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        final List<DocumentDTO> deletedDocs = documentService
+                .getDeletedDocumentsByTrial(studyProtocolIi);
+        for (DocumentDTO documentDTO : deletedDocs) {
+            final TrialDocumentWebDTO docWebDTO = new TrialDocumentWebDTO(documentDTO);
+            this.deletedDocuments.add(docWebDTO);
+        }
+    }
+
+    private void loadTrialUpdates(List<TrialHistoryWebDTO> list) throws PAException {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);    
+        List<StudyInboxDTO> inboxEntries = studyInboxService
+                .getAllTrialUpdates(studyProtocolIi);
+        for (StudyInboxDTO dto : inboxEntries) {
+            TrialHistoryWebDTO webDTO = new TrialHistoryWebDTO(dto);   
+            webDTO.setDocuments(getDocuments(dto));
+            webDTO.setSubmitter(getSubmitterName(dto));            
+            list.add(webDTO);
+        }
+
+    }
+
+    private String getDocuments(StudyInboxDTO dto) throws PAException {
+        List<DocumentDTO> documentDTO = documentService.
+                getOriginalDocumentsByStudyInbox(dto);
+        return getDocumentsAsString(documentDTO);
+    }
+
+    /**
+     * @param trialHistoryWebdtos
+     * @throws PAException
+     */
+    private void loadTrialSubmissions(
+            List<TrialHistoryWebDTO> trialHistoryWebdtos) throws PAException {
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II);
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
@@ -307,26 +361,58 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
-        List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
+        
         if (!spList.isEmpty()) {
             for (StudyProtocolDTO sp : spList) {
                 TrialHistoryWebDTO dto = new TrialHistoryWebDTO(sp);
                 dto.setDocuments(getDocuments(sp));
+                dto.setSubmitter(getSubmitterName(sp));
                 trialHistoryWebdtos.add(dto);
             }
         }
-        setTrialHistoryWebDTO(trialHistoryWebdtos);
     }
 
+    private String getSubmitterName(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
+        final St userLoginName = studyProtocolDTO.getUserLastCreated();
+        return getSubmitterName(userLoginName);
+    }
+
+    private String getSubmitterName(StudyInboxDTO dto) throws PAException {
+        final St userLoginName = dto.getUserLastCreated();
+        return getSubmitterName(userLoginName);
+    }
+
+    /**
+     * @param userLoginName
+     * @return
+     * @throws PAException
+     */
+    private String getSubmitterName(final St userLoginName) throws PAException {
+        RegistryUser usr = registryUserServiceLocal.getUser(StConverter
+                .convertToString(userLoginName));
+        return usr != null ? usr.getFullName() : "";
+    }
+    
+    
     /**
      * Gets the documents.
      * @param sp the sp
      * @return the documents
      * @throws PAException the PA exception
      */
-    private String getDocuments(StudyProtocolDTO sp) throws PAException {
+    private String getDocuments(StudyProtocolDTO sp) throws PAException {       
+        List<DocumentDTO> documentDTO = documentService.
+                getOriginalDocumentsByStudyProtocol(sp.getIdentifier());
+        return getDocumentsAsString(documentDTO);
+    }
+
+    /**
+     * @param documentDTO
+     * @return
+     */
+    private String getDocumentsAsString(List<DocumentDTO> documentDTO) {
         StringBuffer documents = new StringBuffer();
-        List<DocumentDTO> documentDTO = documentService.getDocumentsByStudyProtocol(sp.getIdentifier());
         for (DocumentDTO docDto : documentDTO) {
             String fileName = StConverter.convertToString(docDto.getFileName());
             documents.append("<a href='#' onclick=\"handlePopup('");
@@ -359,7 +445,8 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
 
             StringBuffer fileName = new StringBuffer();
-            fileName.append(PAUtil.getAssignedIdentifier(spDTO)).append('-').append(docDTO.getFileName().getValue());
+            fileName.append(PAUtil.getAssignedIdentifier(spDTO).getExtension()).append('-').
+                append(docDTO.getFileName().getValue());
 
             ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
 
@@ -541,6 +628,28 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     @Override
     public void deleteObject(Long objectId) throws PAException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @param registryUserServiceLocal the registryUserServiceLocal to set
+     */
+    public void setRegistryUserServiceLocal(
+            RegistryUserServiceLocal registryUserServiceLocal) {
+        this.registryUserServiceLocal = registryUserServiceLocal;
+    }
+
+    /**
+     * @return the deletedDocuments
+     */
+    public List<TrialDocumentWebDTO> getDeletedDocuments() {
+        return deletedDocuments;
+    }
+
+    /**
+     * @param deletedDocuments the deletedDocuments to set
+     */
+    public void setDeletedDocuments(List<TrialDocumentWebDTO> deletedDocuments) {
+        this.deletedDocuments = deletedDocuments;
     }
 
 

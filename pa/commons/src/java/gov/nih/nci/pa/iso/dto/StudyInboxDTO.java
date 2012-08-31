@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
@@ -90,6 +91,9 @@ public class StudyInboxDTO  extends StudyDTO {
   private static final long serialVersionUID = -487404345792624715L;
   private St comments;
   private Ivl<Ts> inboxDateRange;
+  private Cd typeCode;
+  private St userLastCreated;
+  
   /**
    * @return the comments
    */
@@ -113,7 +117,34 @@ public class StudyInboxDTO  extends StudyDTO {
    */
   public void setInboxDateRange(Ivl<Ts> inboxDateRange) {
      this.inboxDateRange = inboxDateRange;
-  }  
+  }
+
+    /**
+     * @return the typeCode
+     */
+    public Cd getTypeCode() {
+        return typeCode;
+    }
+
+    /**
+     * @param typeCode
+     *            the typeCode to set
+     */
+    public void setTypeCode(Cd typeCode) {
+        this.typeCode = typeCode;
+    }
+    /**
+     * @return the userLastCreated
+     */
+    public St getUserLastCreated() {
+        return userLastCreated;
+    }
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(St userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
   
   
   

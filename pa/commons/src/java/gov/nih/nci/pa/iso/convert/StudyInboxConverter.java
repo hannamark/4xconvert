@@ -80,7 +80,9 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -93,6 +95,7 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public StudyInboxDTO convertFromDomainToDto(StudyInbox bo) {
         StudyInboxDTO dto = new StudyInboxDTO();
@@ -100,6 +103,11 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setInboxDateRange((IvlConverter.convertTs().convertToIvl(bo.getOpenDate(), bo.getCloseDate())));
+        dto.setTypeCode(CdConverter.convertToCd(bo.getTypeCode()));
+        if (bo.getUserLastCreated() != null) {
+            dto.setUserLastCreated(StConverter.convertToSt(bo
+                    .getUserLastCreated().getLoginName()));
+        }
         return dto;
     }
 
@@ -122,6 +130,7 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         bo.setComments(StConverter.convertToString(dto.getComments()));
+        bo.setTypeCode(CdConverter.convertCdToEnum(StudyInboxTypeCode.class, dto.getTypeCode()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setOpenDate((IvlConverter.convertTs().convertLow(dto.getInboxDateRange())));
         bo.setCloseDate(IvlConverter.convertTs().convertHigh(dto.getInboxDateRange()));

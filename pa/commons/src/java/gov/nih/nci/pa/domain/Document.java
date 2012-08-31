@@ -102,6 +102,9 @@ public class Document extends AbstractDocument implements Auditable {
     private Boolean activeIndicator;
     private String inactiveCommentText;
     private StudyProtocol studyProtocol;
+    private Boolean original;
+    private Boolean deleted;
+    private StudyInbox studyInbox;
 
     /**
      * @return studyProtocol
@@ -155,5 +158,53 @@ public class Document extends AbstractDocument implements Auditable {
      */
     public void setInactiveCommentText(String inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
+    }
+
+    /**
+     * @return the original
+     */
+    @Column(name = "original")
+    @Searchable
+    public Boolean getOriginal() {
+        return original;
+    }
+
+    /**
+     * @param original the original to set
+     */
+    public void setOriginal(Boolean original) {
+        this.original = original;
+    }
+
+    /**
+     * @return the deleted
+     */
+    @Column(name = "deleted")
+    @Searchable
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    /**
+     * @return the studyInbox
+     */
+    @ManyToOne
+    @JoinColumn(name = "study_inbox_id")
+    public StudyInbox getStudyInbox() {
+        return studyInbox;
+    }
+
+    /**
+     * @param studyInbox the studyInbox to set
+     */
+    public void setStudyInbox(StudyInbox studyInbox) {
+        this.studyInbox = studyInbox;
     }
 }

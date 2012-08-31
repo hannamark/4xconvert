@@ -79,7 +79,9 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.PAUtil;
 /**
  * 
  * @author Kalpana Guthikonda
@@ -93,8 +95,10 @@ public class TrialDocumentWebDTO {
     private String typeCode;
     private String fileName;
     private String id;
+    private String studyProtocolId;
     private String inactiveCommentText;
     private String dateLastUpdated;
+    private String userLastUpdated;
     
     /**
      * @param iso StudyResourcingDTO object
@@ -105,6 +109,8 @@ public class TrialDocumentWebDTO {
         this.fileName = iso.getFileName().getValue(); 
         this.id = iso.getIdentifier().getExtension();
         this.dateLastUpdated = TsConverter.convertToString(iso.getDateLastUpdated());
+        this.studyProtocolId = IiConverter.convertToString(iso.getStudyProtocolIdentifier());
+        this.userLastUpdated = PAUtil.getDocumentUserLastUpdatedName(iso);
     }
     
     /** .
@@ -182,5 +188,33 @@ public class TrialDocumentWebDTO {
      */
     public void setDateLastUpdated(String dateLastUpdated) {
         this.dateLastUpdated = dateLastUpdated;
+    }
+
+    /**
+     * @return the userLastUpdated
+     */
+    public String getUserLastUpdated() {
+        return userLastUpdated;
+    }
+
+    /**
+     * @param userLastUpdated the userLastUpdated to set
+     */
+    public void setUserLastUpdated(String userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 }

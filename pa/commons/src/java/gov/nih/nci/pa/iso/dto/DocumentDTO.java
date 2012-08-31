@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ed;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 /**
@@ -99,6 +100,10 @@ public class DocumentDTO extends StudyDTO {
     private St inactiveCommentText;
     private Ed text;
     private Ts dateLastUpdated;
+    private Bl original;
+    private Bl deleted;
+    private Ii studyInboxIdentifier;   
+    private St userLastUpdated;
     
     /**
      * @return typeCode
@@ -188,7 +193,60 @@ public class DocumentDTO extends StudyDTO {
         this.dateLastUpdated = dateLastUpdated;
     }
 
-    
-    
+    /**
+     * @return the original
+     */
+    public Bl getOriginal() {
+        return original;
+    }
+
+    /**
+     * @param original the original to set
+     */
+    public void setOriginal(Bl original) {
+        this.original = original;
+    }
+
+    /**
+     * @return the deleted
+     */
+    public Bl getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Bl deleted) {
+        this.deleted = deleted;
+    }
+
+    /**
+     * @return the studyInboxIdentifier
+     */
+    public Ii getStudyInboxIdentifier() {
+        return studyInboxIdentifier;
+    }
+
+    /**
+     * @param studyInboxIdentifier the studyInboxIdentifier to set
+     */
+    public void setStudyInboxIdentifier(Ii studyInboxIdentifier) {
+        this.studyInboxIdentifier = studyInboxIdentifier;
+    }
+
+    /**
+     * @return the userLastUpdated
+     */
+    public St getUserLastUpdated() {
+        return userLastUpdated;
+    }
+
+    /**
+     * @param userLastUpdated the userLastUpdated to set
+     */
+    public void setUserLastUpdated(St userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
     
 }
