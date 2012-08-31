@@ -103,7 +103,6 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
 import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
-import gov.nih.nci.accrual.util.MockCSMUserService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -460,7 +459,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
         
-        CSMUserService.setInstance(new MockCSMUserService());
+        CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
     }
 
     protected void setUpPoRegistry() throws NullifiedEntityException, NullifiedRoleException, EntityValidationException,

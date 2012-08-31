@@ -13,7 +13,7 @@ public enum AccrualSubmissionTypeCode implements CodedEnum<String> {
     /** Unknown. */
     UNKNOWN("Unknown"),
     /** User Interface. */
-    UI("GUI"),
+    UI("Web Application"),
     /** Batch Upload. */
     BATCH("Batch"),
     /** Batch Upload. */

@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +39,22 @@ public class PriorSubmissionsAction extends AbstractListAccrualAction<Historical
         try {
             RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService().getUser(
                     CaseSensitiveUsernameHolder.getUser());
-            setDisplayTagList(getSubmissionHistorySvc().search(PAUtil.dateStringToTimestamp(getDateFrom()),
-                    PAUtil.dateStringToTimestamp(getDateTo()), ru));
+            List<HistoricalSubmissionDto> submissionList = getSubmissionHistorySvc().search(
+                    PAUtil.dateStringToTimestamp(getDateFrom()),
+                    PAUtil.dateStringToTimestamp(getDateTo()), ru);
+            for (HistoricalSubmissionDto dto : submissionList) {
+                if (dto.getBatchFileIdentifier() != null) {
+                    dto.setFileHtml("<a href='/accrual/protected/priorSubmissionsviewDoc.action?batchFileId=" 
+                        + dto.getBatchFileIdentifier() + "'>" + dto.getFileName() + "</a>");
+                } else if (dto.getCompleteTrialId() !=  null) {
+                    dto.setFileHtml("<a href='/accrual/protected/patients.action?studyProtocolId=" 
+                        + dto.getCompleteTrialId() + "'>Trial subjects</a>");
+                } else if (dto.getAbbreviatedTrialId() != null) {
+                    dto.setFileHtml("<a href='/accrual/protected/industrialPatients.action?studyProtocolId=" 
+                        + dto.getAbbreviatedTrialId() + "'>Trial counts</a>");
+                }
+            }
+            setDisplayTagList(submissionList);
         } catch (PAException e) {
             addActionError(e.getMessage());
         }
@@ -53,7 +68,7 @@ public class PriorSubmissionsAction extends AbstractListAccrualAction<Historical
         loadDisplayList();
         BatchFile batchFile = null;
         for (HistoricalSubmissionDto item : getDisplayTagList()) {
-            if (ObjectUtils.equals(item.getBatchFileIdentifier(), getBatchFileId())) {
+            if (getBatchFileId() != null && ObjectUtils.equals(item.getBatchFileIdentifier(), getBatchFileId())) {
                 batchFile = getBatchFileSvc().getById(item.getBatchFileIdentifier());
             }
         }

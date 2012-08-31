@@ -22,6 +22,9 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
     private Timestamp date;
     private String username;
     private String result;
+    private Long completeTrialId;
+    private Long abbreviatedTrialId;
+    private String fileName;
 
     /**
      * @return the batchFileIdentifier
@@ -106,6 +109,42 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+    /**
+     * @return the completeTrialId
+     */
+    public Long getCompleteTrialId() {
+        return completeTrialId;
+    }
+    /**
+     * @param completeTrialId the completeTrialId to set
+     */
+    public void setCompleteTrialId(Long completeTrialId) {
+        this.completeTrialId = completeTrialId;
+    }
+    /**
+     * @return the abbreviatedTrialId
+     */
+    public Long getAbbreviatedTrialId() {
+        return abbreviatedTrialId;
+    }
+    /**
+     * @param abbreviatedTrialId the abbreviatedTrialId to set
+     */
+    public void setAbbreviatedTrialId(Long abbreviatedTrialId) {
+        this.abbreviatedTrialId = abbreviatedTrialId;
+    }
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+    /**
+     * @param fileName the fileName to set
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
     @Override
     public int compareTo(HistoricalSubmissionDto that) {

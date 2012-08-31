@@ -119,8 +119,8 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         assertEquals("NCI-2009-00001", dto.getNciNumber());
         assertEquals(bf.getId(), dto.getBatchFileIdentifier());
         assertEquals(bf.getDateLastCreated(), dto.getDate());
-        assertTrue(dto.getFileHtml().contains(bf.getFileLocation()));
-        assertEquals("Fail", dto.getResult());
+        assertTrue(dto.getFileName().contains(bf.getFileLocation()));
+        assertEquals("No", dto.getResult());
         assertEquals(bf.getSubmissionTypeCode(), dto.getSubmissionType());
         assertEquals(AccrualUtil.getDisplayName(user), dto.getUsername());
     }
@@ -196,17 +196,17 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         
         AccrualCollections ac = new AccrualCollections();
         ac.setPassedValidation(false);
-        assertEquals("Fail", b.getBatchResult(ac));
+        assertEquals("No", b.getBatchResult(ac));
         
         ac.setPassedValidation(true);
         ac.setTotalImports(50);
-        assertEquals("Pass", b.getBatchResult(ac));
+        assertEquals("Yes", b.getBatchResult(ac));
         
         ac.setTotalImports(null);
         ac.setDateLastCreated(new Date());
         assertNull(b.getBatchResult(ac));
         
         ac.setDateLastCreated(PAUtil.dateStringToDateTime("7/23/2012"));
-        assertEquals("Fail", b.getBatchResult(ac));
+        assertEquals("No", b.getBatchResult(ac));
     }
 }

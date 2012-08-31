@@ -44,6 +44,9 @@ import org.hibernate.Session;
 @SuppressWarnings("unchecked")
 public class SubmissionHistoryBean implements SubmissionHistoryService {
     
+    private static final String YES = "Yes";
+    private static final String NO = "No";
+
     @EJB
     private SearchTrialService searchTrialSvc;
     
@@ -104,8 +107,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setBatchFileIdentifier(bf.getId());
             row.setDate(bf.getDateLastCreated() == null ? null : new Timestamp(bf.getDateLastCreated().getTime()));
             File file = new File(bf.getFileLocation());
-            row.setFileHtml("<a href='/accrual/protected/priorSubmissionsviewDoc.action?batchFileId=" + bf.getId()
-                    + "'>" + AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()) + "</a>");
+            row.setFileName(AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()));
             row.setNciNumber(ac.getNciNumber());
             row.setResult(getBatchResult(ac));
             row.setSubmissionType(bf.getSubmissionTypeCode());
@@ -119,16 +121,16 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     String getBatchResult(AccrualCollections ac) {
         String result = null;
         if (!ac.isPassedValidation()) {
-            result = "Fail";
+            result = NO;
         }
         if (ac.getTotalImports() != null) {
-            result = "Pass";
+            result = YES;
         }
         if (result == null) {
             Date td = new Date(new Date().getTime() 
                     - SubjectAccrualBeanLocal.BATCH_PROCESSING_THREAD_TIMEOUT_HOURS * ONE_HOUR);
             if (td.after(ac.getDateLastCreated())) {
-                result = "Fail";
+                result = NO;
             }
         }
         return result;
@@ -148,10 +150,9 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             HistoricalSubmissionDto row = new HistoricalSubmissionDto();
             row.setDate((Timestamp) subm[DATE_COL]);
             Long trialId = ((BigInteger) subm[1]).longValue();
-            row.setFileHtml("<a href='/accrual/protected/patients.action?studyProtocolId=" + trialId
-                    + "'>Trial subjects</a>");
+            row.setCompleteTrialId(trialId);
             row.setNciNumber(trials.get(trialId));
-            row.setResult("Pass");
+            row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.UI);
             row.setUsername(getRegistryUsername(usernames, subm[2] == null ? null : ((Integer) subm[2]).longValue()));
             result.add(row);
@@ -173,10 +174,9 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             HistoricalSubmissionDto row = new HistoricalSubmissionDto();
             row.setDate((Timestamp) subm[DATE_COL]);
             Long trialId = ((BigInteger) subm[1]).longValue();
-            row.setFileHtml("<a href='/accrual/protected/industrialPatients.action?studyProtocolId=" + trialId
-                    + "'>Trial counts</a>");
+            row.setAbbreviatedTrialId(trialId);
             row.setNciNumber(trials.get(trialId));
-            row.setResult("Pass");
+            row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.UI);
             row.setUsername(getRegistryUsername(usernames, subm[2] == null ? null : ((Integer) subm[2]).longValue()));
             result.add(row);

@@ -120,7 +120,7 @@
 						                        <s:textarea wrap="true" name="milestoneList[%{#stat.index}].comment" value="%{comment}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
 						                       </td>
 						                       <td class="tdBoxed">
-						                        <s:textfield  name="milestoneList[%{#stat.index}].creator" value="%{creator}" cssStyle="width:80px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
+						                        <s:textfield  name="milestoneList[%{#stat.index}].creator" value="%{creator}" cssStyle="width:150px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
 						                       </td>
 						                       <td class="tdBoxed">
 						                        <s:textfield  name="milestoneList[%{#stat.index}].creationDate" value="%{creationDate}" cssStyle="width:110px;border: 1px solid #FFFFFF" readonly="true"/>

@@ -44,6 +44,12 @@ public class PriorSubmissionActionTest extends AbstractAccrualActionTest {
         HistoricalSubmissionDto hsItem = new HistoricalSubmissionDto();
         hsItem.setBatchFileIdentifier(testBatchId);
         hsList.add(hsItem);
+        hsItem = new HistoricalSubmissionDto();
+        hsItem.setCompleteTrialId(1L);
+        hsList.add(hsItem);
+        hsItem = new HistoricalSubmissionDto();
+        hsItem.setAbbreviatedTrialId(2L);
+        hsList.add(hsItem);
         when(action.getSubmissionHistorySvc().search(any(Timestamp.class), any(Timestamp.class), any(RegistryUser.class)))
             .thenReturn(hsList);
         BatchFile bf = new BatchFile();
