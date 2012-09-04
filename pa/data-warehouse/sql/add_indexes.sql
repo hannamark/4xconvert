@@ -242,3 +242,7 @@ CREATE INDEX DW_STUDY_DESC_IDX on dw_study_subgroup(description);
 CREATE INDEX DW_STUDY_GROUP_CODE_IDX on dw_study_subgroup(group_code);
 CREATE INDEX DW_STUDY_NCI_IDX on dw_study_subgroup(nci_id);
 
+CREATE INDEX DW_STUDY_SITE_ACCRUAL_ACCESS_NCI_IDX on dw_study_site_accrual_access(nci_id);
+CREATE INDEX DW_STUDY_SITE_ACCRUAL_ACCESS_ACCRUAL_ADMIN_IDX on dw_study_site_accrual_access(accrual_admin);
+CREATE INDEX DW_STUDY_SITE_ACCRUAL_ACCESS_ORG_IDX on dw_study_site_accrual_access(org_name);
+CREATE INDEX DW_STUDY_SITE_ACCRUAL_ACCESS_ORG_FAMILY_IDX on dw_study_site_accrual_access(org_org_family);
