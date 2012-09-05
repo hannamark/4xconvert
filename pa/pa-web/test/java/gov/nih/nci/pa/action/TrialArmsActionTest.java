@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -99,7 +100,27 @@ public class TrialArmsActionTest extends AbstractPaActionTest {
 		trialsArmsAction.add();
 		assertEquals("Record Created", getRequest().getAttribute("successMessage"));
 	}
+	
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.TrialArmsAction#add()}.
+     */
+    @Test
+    public void testAddWithoutDescription() throws PAException {
+        trialsArmsAction.setArmType("Experimental");
+        trialsArmsAction.setArmDescription(null);
+        trialsArmsAction.setCurrentAction("listArm");
+        trialsArmsAction.add();
+        assertFalse("Record Created".equals(getRequest().getAttribute("successMessage")));
 
+        trialsArmsAction.setArmDescription("");
+        trialsArmsAction.add();
+        assertFalse("Record Created".equals(getRequest().getAttribute("successMessage")));
+
+        trialsArmsAction.setArmDescription("       ");
+        trialsArmsAction.add();
+        assertFalse("Record Created".equals(getRequest().getAttribute("successMessage")));
+    }
+	
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.TrialArmsAction#update()}.
 	 */

@@ -307,10 +307,15 @@ public class TrialArmsAction extends AbstractMultiObjectDeleteAction implements 
         if (StringUtils.isEmpty(getArmType())) {
             addFieldError("armType", "Select an Arm Type");
         }
-        if (StringUtils.isNotEmpty(getArmDescription())
-              && PAUtil.isGreaterThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
-            addFieldError("armDescription", "Arm Description length should not be greater than 1000");
+        
+        if (StringUtils.isNotEmpty(getArmDescription())) {
+            if (PAUtil.isGreaterThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
+                addFieldError("armDescription", "Arm Description length should not be greater than 1000");
+            }
+        } else {
+            addFieldError("armDescription", "Provide Arm Description");
         }
+        
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
                 && (StringUtils.isNotEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
                 && (getAssociatedIds().size() > 0))) {
