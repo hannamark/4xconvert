@@ -97,6 +97,7 @@ import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -214,7 +215,10 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
 
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             clearDocumentIdentifiers(documentDTOs);
-
+            if (StringUtils.length(trialDTO.getLeadOrgTrialIdentifier()) > PAAttributeMaxLen.LEN_30) {
+                addActionError("Lead Organization Trial Identifier  cannot be more than 30 characters");
+                return ERROR;   
+            }
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
             OrganizationDTO sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);

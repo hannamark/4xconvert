@@ -11,7 +11,6 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
@@ -191,6 +190,20 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setNctIdentifier(null);
         action.getTrialDTO().setPhaseCode(null);
         assertEquals("error", action.review());
+
+    }
+    @Test
+    public void testReviewLongLeadOrgTrialIdentifier() throws Exception{
+        action.setTrialDTO(getMockProprietaryTrialDTO());
+        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrailIdentifer12");  
+        assertEquals("error", action.review());
+
+    }
+    @Test
+    public void testReviewShortLeadOrgTrialIdentifier() throws Exception{
+        action.setTrialDTO(getMockProprietaryTrialDTO());
+        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrailIdentifer");  
+        assertEquals("review", action.review());
 
     }
     @Test

@@ -151,6 +151,7 @@ public class TrialValidator {
     public Map<String, String> validateTrial(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
         validateTrialDTO(trialDto, addFieldError);
+        validateTrialDTOLeadOrgId(trialDto, addFieldError);
         validatePrimaryPurposeAdditionalQualifier(trialDto, addFieldError);
         validatePrimaryPurposeOtherText(trialDto, addFieldError);
         validateDates(trialDto, addFieldError);
@@ -192,6 +193,16 @@ public class TrialValidator {
                 .trim()));
         }
     }
+    
+    private void validateTrialDTOLeadOrgId(TrialDTO trialDto, Map<String, String> addFieldError) {
+        if (StringUtils.length(trialDto
+                .getLeadOrgTrialIdentifier()) > PAAttributeMaxLen.LEN_30) {
+            addFieldError.put("trialDTO.leadOrgTrialIdentifier", 
+                    "Lead Organization Trial Identifier  cannot be more than 30 characters");
+        }
+        
+    }
+
 
     private void validateDates(TrialDTO trialDto, Map<String, String> addFieldError) {
         String dateError = getText("error.submit.invalidDate"); 

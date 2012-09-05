@@ -18,8 +18,6 @@ import gov.nih.nci.registry.util.Constants;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
@@ -182,6 +180,23 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         TrialDTO dto = getMockTrialDTO();
         dto.setLeadOrganizationIdentifier("2");
         dto.setLeadOrgTrialIdentifier("DupTestinglocalStudyProtocolId");
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute("trialDTO", dto);
+        assertEquals("redirect_to_search", action.create());
+    }
+    @Test
+    public void testCreateWithLongLeadOrgIdentifier(){
+        TrialDTO dto = getMockTrialDTO();
+        dto.setLeadOrgTrialIdentifier("TestinglocalleadOrgTrialIdentifier12");
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        session.setAttribute("trialDTO", dto);
+        assertEquals("error", action.create());
+    }
+    
+    @Test
+    public void testCreateWithShortLeadOrgIdentifier(){
+        TrialDTO dto = getMockTrialDTO();
+        dto.setLeadOrgTrialIdentifier("localleadOrgTrialIdentifier");
         HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute("trialDTO", dto);
         assertEquals("redirect_to_search", action.create());

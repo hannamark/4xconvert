@@ -40,6 +40,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -821,6 +822,10 @@ public class TrialUtil extends TrialConvertUtils {
         StringBuffer errMsg = new StringBuffer();
         if (StringUtils.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
             errMsg.append("Lead Organization Trial Identifier is required.");
+        }
+        if (StringUtils.length(trialDTO
+                .getLeadOrgTrialIdentifier()) > PAAttributeMaxLen.LEN_30) {
+            errMsg.append("Lead Organization Trial Identifier  cannot be more than 30 characters");
         }
         if (StringUtils.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
             errMsg.append("Lead Organization is required.");

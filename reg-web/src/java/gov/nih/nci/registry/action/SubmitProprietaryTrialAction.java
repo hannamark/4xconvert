@@ -20,6 +20,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
+import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
@@ -135,7 +136,12 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         ClassValidator<ProprietaryTrialDTO> validator =
                 new ClassValidator<ProprietaryTrialDTO>(ProprietaryTrialDTO.class);
         final ProprietaryTrialDTO trialDTO = getTrialDTO();
+        if (StringUtils.length(trialDTO
+                .getLeadOrgTrialIdentifier()) > PAAttributeMaxLen.LEN_30) {
+            addActionError("Lead Organization Trial Identifier  cannot be more than 30 characters");
+        }
         for (InvalidValue invalidValue : validator.getInvalidValues(trialDTO)) {
+            
             if (StringUtils.isNotEmpty(trialDTO.getNctIdentifier())) {
                 if (!invalidValue.getPropertyName().equalsIgnoreCase("phaseCode")
                         && !invalidValue.getPropertyName().equalsIgnoreCase("primaryPurposeCode")) {
