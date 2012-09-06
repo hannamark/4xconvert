@@ -26,14 +26,14 @@
                 <label for="j_username">Username:</label>
             </td>
             <td class="value">
-                <input name="j_username" maxlength="100" size="25" type="text">
+                <input id="j_username" name="j_username" maxlength="100" size="25" type="text">
             </td>
         </tr>
         <tr>
             <td class="label" scope="row">
                 <label for="j_password">Password:</label>
             </td>
-            <td class="value"><input name="j_password" maxlength="100" size="25" type="password" autocomplete="off"/></td>
+            <td class="value"><input id="j_password" name="j_password" maxlength="100" size="25" type="password" autocomplete="off"/></td>
         </tr>
          <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
                 <c:choose>
