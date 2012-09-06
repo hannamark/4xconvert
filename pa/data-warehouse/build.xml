@@ -60,6 +60,7 @@
             <transaction src="${basedir}/sql/affiliate_org.sql"/>
             <transaction src="${basedir}/sql/user.sql"/>
             <transaction src="${basedir}/sql/study_site_accrual_access.sql"/>
+            <transaction src="${basedir}/sql/study_site_accrual_details.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -131,6 +132,8 @@
         <groovy src="groovy/participating_site_investigators.groovy"/>
         <echo message = "Running study_site_accrual_access"/>
         <groovy src="groovy/study_site_accrual_access.groovy"/>
+        <echo message = "Running study_site_accrual_details"/>
+        <groovy src="groovy/study_site_accrual_details.groovy"/>
     </target>
 
 

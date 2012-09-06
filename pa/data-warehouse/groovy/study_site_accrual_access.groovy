@@ -5,20 +5,11 @@ def sql = """
            || CASE WHEN ru.middle_name IS NOT NULL THEN ru.middle_name || ' ' ELSE '' END 
            || CASE WHEN ru.last_name IS NOT NULL THEN ru.last_name ELSE '' END 
            AS accrual_admin,
-       ssaa.date_last_created, ssaa.date_last_updated, 
-       NULL AS nci_id, 
-       NULL AS org_name, 
-       NULL AS org_recruitment_status, 
+       ssaa.date_last_created,
+       ssaa.date_last_updated, 
        request_details, 
-       NULL AS org_org_family,
-       CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
-            WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
-            ELSE split_part(creator.login_name, 'CN=', 2)
-       END AS user_name_last_created,
-       CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
-            WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
-            ELSE split_part(updater.login_name, 'CN=', 2)
-       END AS user_name_last_updated,  
+       ssaa.user_last_created_id,
+       ssaa.user_last_updated_id,
        ss.identifier AS internal_system_id
     FROM study_site_accrual_access ssaa
     JOIN study_site ss ON (ssaa.study_site_identifier = ss.identifier)
@@ -41,15 +32,19 @@ sourceConnection.eachRow(sql) { row ->
         accrual_admin: row.accrual_admin, 
         date_last_created: row.date_last_created, 
         date_last_updated: row.date_last_updated, 
-        nci_id: row.nci_id, 
-        org_name: row.org_name, 
-        org_recruitment_status: row.org_recruitment_status, 
         request_details: row.request_details, 
-        org_org_family: row.org_org_family, 
-        user_name_last_created: row.user_name_last_created, 
-        user_name_last_updated: row.user_name_last_updated,
+        user_last_created_id: row.user_last_created_id, 
+        user_last_updated_id: row.user_last_updated_id,
         internal_system_id: row.internal_system_id
     )};
+    
+destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
+                                 SET user_name_last_created = us.name 
+                                 FROM stg_dw_user us where ssad.user_last_created_id = us.csm_user_id""");
+   
+destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
+                                 SET user_name_last_updated = us.name 
+                                 FROM stg_dw_user us where ssad.user_last_updated_id = us.csm_user_id""");
     
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_access ssaa
                                  SET nci_id = ps.nci_id, 
