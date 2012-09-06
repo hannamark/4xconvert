@@ -750,3 +750,14 @@ div.accrual_btn_column {
     height: 1.3em;
     padding: 5px 5px 5px 5px;
 }
+
+/* hover/tooltip */
+a:hover {z-index:25; background:; text-decoration:none;} /*BG color is a must for IE6*/
+a.tooltip span {display:none; padding:2px 3px; margin-left:2px; width:90px;}
+a.tooltip:hover span{display:inline; position:absolute;
+    background:#f1f3f7; border:1px solid #ccaacc; 
+    color:#00000c;
+    filter: alpha(opacity:90);
+    KHTMLOpacity: 0.90;
+    MozOpacity: 0.90;
+    opacity: 0.90;}
