@@ -144,7 +144,13 @@
             }
             
             function cancelProtocol() {
-                submitFirstForm("Submit", "submitTrialcancel.action");
+                var retVal = confirm("All data entered will be lost. Do you want to continue ?");
+                if( retVal == true ){
+                    submitFirstForm("Submit", "submitTrialcancel.action");
+                    return true;
+                }else{
+                    return false;
+                } 
             }
             
             function submitFirstForm(value, action) {
