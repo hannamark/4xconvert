@@ -216,7 +216,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
             studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
             if (indInfoNodeElt != null) {
                 StudyIndldeDTO indDTO = new StudyIndldeDTO();
-                indDTO.setExemptIndicator(BlConverter.convertToBl(!isIndStudy));
+                indDTO.setExemptIndicator(BlConverter.convertToBl(isIndStudy));
                 indDTO.setGrantorCode(CdConverter.convertStringToCd(getText(indInfoNodeElt, "ind_grantor")));
                 indDTO.setIndldeNumber(StConverter.convertToSt(getText(indInfoNodeElt, "ind_number")));
                 studyIndldeDTOs.add(indDTO);

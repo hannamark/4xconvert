@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -92,14 +91,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -308,19 +305,6 @@ public class PDQRegistrationXMLParserTest {
         assertEquals(1, indList.size());
         StudyIndldeDTO indDTO = indList.get(0);
         assertEquals("CDER", indDTO.getGrantorCode().getCode());
-    }
-    
-    @Test
-    public void testWithIsStudyIndYes() throws PAException {
-        when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class)))
-            .thenReturn(new ArrayList<IdentifiedPersonDTO>());
-        rXMLParser.setUrl(this.getClass().getResource("/sample-with-ind.xml"));
-        rXMLParser.parse();
-        List<StudyIndldeDTO> indList = rXMLParser.getStudyIndldeDTOs();
-        assertEquals(1, indList.size());
-        StudyIndldeDTO indDTO = indList.get(0);
-        assertEquals("CDER", indDTO.getGrantorCode().getCode());
-        assertFalse(BlConverter.convertToBoolean(indDTO.getExemptIndicator()));
     }
     
     @Test
