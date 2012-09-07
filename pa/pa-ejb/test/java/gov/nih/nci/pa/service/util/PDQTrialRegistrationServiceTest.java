@@ -261,7 +261,8 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);
         trialRegistrationSvc.setDocumentService(new DocumentServiceBean());
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
-
+        trialRegistrationSvc.setRegulatoryInfoBean(new RegulatoryInformationBean());
+        
         // cannot use Mockito because multiple other methods in PAServiceUtils are used
         // in the process of registering a trial.
         trialRegistrationSvc.setPaServiceUtils(new MockPAServiceUtils());
