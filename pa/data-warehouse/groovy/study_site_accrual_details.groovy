@@ -4,7 +4,7 @@ def sql = """
        co.name AS country,
        ssub.date_last_created AS date_last_created,
        ssub.date_last_created AS date_last_updated,
-       ssub.delete_reason AS deletion_reason,
+       '3.8.1 data element' AS deletion_reason,
        pat.ethnic_code AS ethnicity,
        pat.sex_code AS gender,
        icd9.disease_code AS icd9_disease_code,
