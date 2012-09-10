@@ -12,7 +12,7 @@ def sql = """
        ssub.payment_method_code AS payment_method,
        pat.race_code AS race,
        pact.registration_date AS registration_date,
-       ssub.registration_group_id AS registration_group,
+       '3.8.1 data element' AS registration_group,
        sdc.disease_code AS sdc_disease_code,
        sdc.ctep_term AS sdc_disease_term,
        ssub.study_site_identifier AS site_org_id,
