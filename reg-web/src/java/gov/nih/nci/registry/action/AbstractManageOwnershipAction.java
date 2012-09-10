@@ -155,6 +155,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 .getSession()
                 .removeAttribute(
                         AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
+        checked = false;
 
         try {            
             RegistryUser loggedInUser = getRegistryUser();
