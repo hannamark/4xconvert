@@ -31,7 +31,7 @@
                     </tr>  			    
 			    </c:if>
 				<tr>
-					<td><display:table class="data" sort="list" pagesize="50"
+					<td><display:table class="data" sort="list" pagesize="20"
 							uid="row" name="model.history" export="false"
 							requestURI="manageAccrualAccesshistoryPaging.action">
 							<display:setProperty name="basic.msg.empty_list"
