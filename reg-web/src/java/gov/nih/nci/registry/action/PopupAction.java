@@ -295,6 +295,8 @@ public class PopupAction extends ActionSupport implements Preparable {
         } catch (Exception e) {
             persons = null;
             LOG.error("Error occured while searching PO Persons " + e.getMessage(), e);
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, e.getMessage());
             return pagination ? "persons" : SUCCESS;
         }
         return pagination ? "persons" : SUCCESS;
@@ -365,6 +367,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             paOrgs = null;
             orgs = null;
             LOG.error("Error occurred while searching PO Organizations", e);
+            addActionError(e.getMessage());
+            ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, e.getMessage());
             return pagination ? ORGS_RESULT : SUCCESS;
         }
     }
