@@ -34,7 +34,7 @@ function handleAction(){
     <tr>     
         <td scope="row" class="label">
          <accrual:displayTooltip tooltip="tooltip.nci_trial_identifier">
-          <label for="NCI Trial Number">
+          <label for="assignedIdentifier">
               <fmt:message key="accrual.search.trials.nciTrialNumber"/>
           </label>
           </accrual:displayTooltip>
@@ -46,7 +46,7 @@ function handleAction(){
       <tr>     
         <td scope="row" class="label">
          <accrual:displayTooltip tooltip="tooltip.nct_number">
-          <label for="NCT Trial Number">
+          <label for="leadOrgTrialIdentifier">
               <fmt:message key="accrual.search.trials.nctTrialNumber"/>
           </label>
           </accrual:displayTooltip>
@@ -59,7 +59,7 @@ function handleAction(){
             <tr>
                 <td scope="row" class="label">
                 <accrual:displayTooltip tooltip="tooltip.official_title">
-                 <label for="Official Title">
+                 <label for="OfficialTitle">
                     <fmt:message key="accrual.search.trials.officialTitle"/>
                 </label>
                 </accrual:displayTooltip>

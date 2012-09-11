@@ -58,7 +58,7 @@ function setDeleteReason(reason){
 
       <tr>
         <td class="label">
-           <label for="Patient ID">
+           <label for="assignedIdentifier">
               <fmt:message key="patient.assignedIdentifier"/>
            </label>
          </td>
@@ -69,7 +69,7 @@ function setDeleteReason(reason){
       </tr>
       <tr>
         <td class="label">
-          <label for="Participating Site">
+          <label for="organizationName">
              <fmt:message key="patient.organizationName"/>
           </label>
          </td>
@@ -80,7 +80,7 @@ function setDeleteReason(reason){
       </tr>
       <tr>
           <td class="label">
-           <label for="Birth Date">
+           <label for="birthDate">
               <fmt:message key="patient.birthDate"/>
           </label>
           </td>

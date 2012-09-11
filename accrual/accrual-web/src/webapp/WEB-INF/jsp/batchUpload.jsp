@@ -19,7 +19,7 @@
                 <tr>
                    <td class="value" style="width:250px">
                     <accrual:displayTooltip tooltip="tooltip.browse">
-                        <s:file name="upload" label="File"/>
+                        <label for="upload"><fmt:message key="accrual.batchUpload.label"/></label><s:file id="upload" name="upload" label="File"/>
                     </accrual:displayTooltip>
                    </td>
                 </tr>

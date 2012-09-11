@@ -26,17 +26,12 @@
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="priorSubmissions.title"/></h1>
   <s:form name="listForm">
+   <h3><fmt:message key="priorSubmissions.dates.label"/></h3>
     <table class="form">
       <tr>
         <td class="label">
-          <label><fmt:message key="priorSubmissions.dates.label"/></label>
-        </td>
-        <td/>
-      </tr>
-      <tr>
-        <td class="label">
           <accrual:displayTooltip tooltip="tooltip.from">
-          <label><fmt:message key="priorSubmissions.dates.from"/></label>
+          <label for="dateFrom"><fmt:message key="priorSubmissions.dates.from"/></label>
           </accrual:displayTooltip>
         </td>
         <td>
@@ -47,7 +42,7 @@
       <tr>
         <td class="label">       
           <accrual:displayTooltip tooltip="tooltip.to">
-          <label><fmt:message key="priorSubmissions.dates.to"/></label>
+          <label for="dateTo"><fmt:message key="priorSubmissions.dates.to"/></label>
           </accrual:displayTooltip>
         </td>
         <td> 

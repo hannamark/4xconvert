@@ -89,7 +89,7 @@
                 <table class="form">
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="identifier">
                                 <fmt:message key="patient.ID"/>
                                 <span class="required">*</span>
                             </label>
@@ -106,7 +106,7 @@
                     </tr> 
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="birthDate">
                                 <fmt:message key="patient.birthDate"/>
                                 <span class="required">*</span>
                             </label>
@@ -123,7 +123,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="genderCode">
                                 <fmt:message key="patient.gender"/>
                                 <span class="required">*</span>
                             </label>
@@ -141,7 +141,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="raceCode">
                                 <fmt:message key="patient.race"/>
                                 <span class="required">*</span>
                             </label>
@@ -162,7 +162,7 @@
                     </tr>
                      <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="ethnicCode">
                                 <fmt:message key="patient.ethnicity"/>
                                 <span class="required">*</span>
                             </label>
@@ -180,7 +180,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="countryIdentifier">
                                 <fmt:message key="patient.country"/>
                                 <span class="required">*</span>
                             </label>
@@ -197,7 +197,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="zip">
                                 <fmt:message key="patient.zipCode"/>
                             </label>
                         </td>
@@ -212,7 +212,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="registrationDate">
                                 <fmt:message key="patient.registrationDate"/>:
                                 <span class="required">*</span>
                             </label>
@@ -229,7 +229,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="paymentMethodCode">
                                 <fmt:message key="patient.methodOfPayment"/>
                             </label>
                         </td>
@@ -247,7 +247,7 @@
                     <tr>
                         <td class="label">
                             <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}"><div class="padme5"></div></s:if>
-                            <label><fmt:message key="patient.disease"/><span class="required">*</span></label>
+                            <label for="disease"><fmt:message key="patient.disease"/><span class="required">*</span></label>
                         </td>
                         <td class="value">
                             <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
@@ -262,7 +262,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="organizationName">
                                 <fmt:message key="patient.organizationName"/>:
                                 <span class="required">*</span>
                             </label>
@@ -280,7 +280,7 @@
                     <s:if test="%{currentAction == 'retrieve'}">
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="userCreated">
                                 <fmt:message key="patient.userCreated"/>:
                             </label>
                         </td>
@@ -290,7 +290,7 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <label>
+                            <label for="dateLastUpdated">
                                 <fmt:message key="patient.lastUpdateDateTime"/>:
                             </label>
                         </td>
