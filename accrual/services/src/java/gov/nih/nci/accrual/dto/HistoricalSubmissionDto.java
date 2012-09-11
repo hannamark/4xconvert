@@ -149,7 +149,7 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
     @Override
     public int compareTo(HistoricalSubmissionDto that) {
         NullComparator nc = new NullComparator();
-        int comparison = nc.compare(getDate(), that.getDate());
+        int comparison = nc.compare(that.getDate(), getDate());
         if (comparison != 0) {
            return comparison;
         }
