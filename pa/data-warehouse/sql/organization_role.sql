@@ -10,7 +10,8 @@ CREATE TABLE STG_DW_ORGANIZATION_ROLE (
 	CTEP_ID character varying (50),
 	NAME character varying (255),
 	ROLE_NAME character varying (30),
-	PO_ID integer,
+	ORGANIZATION_PO_ID integer,
+	ROLE_PO_ID integer,
 	STATUS character varying (20),
 	STATUS_DATE date,
 	SUFFIX character varying (10),
@@ -18,6 +19,9 @@ CREATE TABLE STG_DW_ORGANIZATION_ROLE (
 	FAX character varying (256),
 	PHONE character varying (256),
 	TTY character varying (50),
-	INTERNAL_ID integer
+        date_last_created timestamp without time zone,
+        date_last_updated timestamp without time zone,
+        user_name_last_created character varying(500),
+        user_name_last_updated character varying(500)
 	)
 ;

@@ -8,13 +8,15 @@ def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jd
 def orgs = destinationConnection.dataSet("STG_DW_ORGANIZATION_ROLE")
 
 def sql = """select 
+                         org.name,
+                         org.id as organization_po_id,
 			 add.streetaddressline,
 			 add.deliveryaddressline,
 			 add.postalcode,
 			 add.cityormunicipality,
 			 country.name as country_name,
 			 ctepid.extension as ctep_id,
-			 sr.id,
+			 sr.id as role_po_id,
 			 sr.status,
 			 sr.statusdate,
 			 add.stateorprovince,
@@ -44,13 +46,15 @@ def sql = """select
 
 sourceConnection.eachRow(sql) { row ->
     orgs.add(
+        name: row.name,
     	address_line_1: row.streetaddressline,
     	address_line_2: row.deliveryaddressline,
     	postal_code: row.postalcode,
     	city: row.cityormunicipality,
     	country: row.country_name,
     	ctep_id: row.ctep_id,
- 		po_id: row.id,
+        organization_po_id: row.organization_po_id,
+        role_po_id: row.role_po_id,
  		status: row.status,
  		status_date: row.statusdate,
  		state_or_province: row.stateorprovince,
@@ -58,19 +62,20 @@ sourceConnection.eachRow(sql) { row ->
  	 	fax: row.faxnumber,
  	 	phone: row.phone,
  	 	tty: row.tty,
- 	 	internal_id: row.id,
  	 	ROLE_NAME: "Healthcare Facility"
 	)
 }
 
 sql = """select 
+                         org.name,
+                         org.id as organization_po_id,
 			 add.streetaddressline,
 			 add.deliveryaddressline,
 			 add.postalcode,
 			 add.cityormunicipality,
 			 country.name as country_name,
 			 ctepid.extension as ctep_id,
-			 sr.id,
+			 sr.id as role_po_id,
 			 sr.status,
 			 sr.statusdate,
 			 add.stateorprovince,
@@ -100,13 +105,15 @@ sql = """select
 
 sourceConnection.eachRow(sql) { row ->
     orgs.add(
+        name: row.name,
     	address_line_1: row.streetaddressline,
     	address_line_2: row.deliveryaddressline,
     	postal_code: row.postalcode,
     	city: row.cityormunicipality,
     	country: row.country_name,
     	ctep_id: row.ctep_id,
- 		po_id: row.id,
+        organization_po_id: row.organization_po_id,
+        role_po_id: row.role_po_id,
  		status: row.status,
  		status_date: row.statusdate,
  		state_or_province: row.stateorprovince,
@@ -114,7 +121,6 @@ sourceConnection.eachRow(sql) { row ->
  	 	fax: row.faxnumber,
  	 	phone: row.phone,
  	 	tty: row.tty,
- 	 	internal_id: row.id,
  	 	ROLE_NAME: "Research Organization"
 	)
 }
