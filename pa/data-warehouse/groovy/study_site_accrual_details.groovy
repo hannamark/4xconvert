@@ -69,4 +69,4 @@ destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
                                  SET nci_id = ps.nci_id, 
                                      org_name = ps.org_name, 
                                      org_org_family = ps.org_org_family
-                                 FROM dw_study_participating_site ps where ssad.site_org_id = ps.internal_system_id""");
+                                 FROM stg_dw_study_participating_site ps where ssad.site_org_id = ps.internal_system_id""");

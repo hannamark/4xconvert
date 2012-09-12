@@ -14,7 +14,10 @@ try {
     println "Error reading maximum current value from dw_study_audit... rebuilding table.";
     destinationConnection.executeUpdate("DROP TABLE IF EXISTS DW_STUDY_AUDIT");
     destinationConnection.executeUpdate("ALTER TABLE STG_DW_STUDY_AUDIT RENAME TO DW_STUDY_AUDIT");
-    def file = new File("sql//study_audit.sql");
+    def file = new File("..//pa//data-warehouse//sql//study_audit.sql");
+    if (!file.exists()) {
+        file = new File("sql//study_audit.sql");
+    }
     destinationConnection.executeUpdate(file.getText());
 }
 

@@ -51,4 +51,4 @@ destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_access ssaa
                                      org_name = ps.org_name, 
                                      org_org_family = ps.org_org_family,
                                      org_recruitment_status = ps.recruitment_status                        
-                                 FROM dw_study_participating_site ps where ssaa.internal_system_id = ps.internal_system_id""");
+                                 FROM stg_dw_study_participating_site ps where ssaa.internal_system_id = ps.internal_system_id""");
