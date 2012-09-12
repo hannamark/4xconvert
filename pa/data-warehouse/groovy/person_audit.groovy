@@ -10,7 +10,9 @@ def audits = destinationConnection.dataSet("STG_DW_PERSON_AUDIT")
 def maxId = 0;
 try {
     def maxRow = destinationConnection.firstRow("select max(internal_system_id) from dw_person_audit");
-    maxId = maxRow[0];
+    if (maxRow[0] != null) {
+        maxId = maxRow[0];
+    }
 } catch (Exception e) {
     println "Error reading maximum current value from dw_person_audit... rebuilding table.";
     destinationConnection.executeUpdate("DROP TABLE IF EXISTS DW_PERSON_AUDIT");
