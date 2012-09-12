@@ -1362,7 +1362,6 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null, null);
     }
 

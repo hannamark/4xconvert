@@ -144,6 +144,7 @@ public class StudyMilestoneBeanLocal
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
         updateRecordVerificationDates(resultDto);
+        createReadyForTSRMilestone(resultDto);
         // Send TSR e-mail for the appropriate milestone
         attachTSRToTrialDocs(workDto);
         sendTSREmail(workDto);
@@ -597,6 +598,18 @@ public class StudyMilestoneBeanLocal
             }
         }
         return false;
+    }
+
+    private void createReadyForTSRMilestone(StudyMilestoneDTO dto) throws PAException {
+        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
+        if (canCreateReadyForTSRMilestone(mileStones)) {
+            StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
+            readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
+            readyForTSR.setMilestoneDate(TsConverter.convertToTs(new Date()));
+            readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+            create(readyForTSR);
+        }
     }
 
     private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
