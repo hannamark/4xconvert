@@ -157,6 +157,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -1459,7 +1460,13 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = getStudySiteService().getByStudyProtocol(spDTO.getIdentifier(), srDTO);
-        for (StudySiteDTO sp : spList) {
+        TreeMap<String, StudySiteDTO> sortedList = new TreeMap<String, StudySiteDTO>();
+        for (StudySiteDTO ss : spList) {
+            Organization orgBo = getCorUtils().getPAOrganizationByIi(ss.getHealthcareFacilityIi());
+            String key = orgBo.getName() + ss.hashCode();
+            sortedList.put(key, ss);
+        }
+        for (StudySiteDTO sp : sortedList.values()) {
             Element location = doc.createElement("location");
             createFacility(sp, location, doc);
             StudySiteAccrualStatusDTO ssas = getStudySiteAccrualStatusService()
