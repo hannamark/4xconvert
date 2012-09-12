@@ -273,3 +273,8 @@ CREATE INDEX DW_STUDY_ACCRUAL_COUNT_COUNT_TYPE_IDX on dw_study_accrual_count(cou
 CREATE INDEX DW_STUDY_ACCRUAL_COUNT_NCI_ID_IDX on dw_study_accrual_count(nci_id);
 CREATE INDEX DW_STUDY_ACCRUAL_COUNT_ORG_NAME_IDX on dw_study_accrual_count(org_name);
 CREATE INDEX DW_STUDY_ACCRUAL_COUNT_ORG_ORG_FAMILY_IDX on dw_study_accrual_count(org_org_family);
+
+DROP INDEX IF EXISTS DW_ORGANIZATION_AUDIT_IDX;
+CREATE INDEX DW_ORGANIZATION_AUDIT_IDX on dw_organization_audit(internal_system_id);
+DROP INDEX IF EXISTS DW_PERSON_AUDIT_IDX;
+CREATE INDEX DW_PERSON_AUDIT_IDX on dw_person_audit(internal_system_id);

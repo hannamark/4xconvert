@@ -11,5 +11,3 @@ CREATE TABLE STG_DW_PERSON_AUDIT (
 	INTERNAL_SYSTEM_ID INTEGER
 	)
 	;
-
-ALTER TABLE stg_dw_person_audit ADD PRIMARY KEY (internal_system_id);

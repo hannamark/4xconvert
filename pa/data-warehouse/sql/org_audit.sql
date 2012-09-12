@@ -10,4 +10,3 @@ CREATE TABLE STG_DW_ORGANIZATION_AUDIT (
 	)
 	;
 
-ALTER TABLE stg_dw_organization_audit ADD PRIMARY KEY (internal_system_id);
