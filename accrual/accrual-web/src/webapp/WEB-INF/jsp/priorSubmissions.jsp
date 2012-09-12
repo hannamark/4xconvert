@@ -65,9 +65,44 @@
   <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
 
   <display:table class="data" summary="This table contains list of submissions.  Please use column headers to sort results"
-                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="false">
+                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true">                                             
+       <display:setProperty name="export.xml" value="false"/>
+       <display:setProperty name="export.excel.filename" value="resultsPriorSubmissions.xls"/>
+       <display:setProperty name="export.excel.include_header" value="true"/>
+       <display:setProperty name="export.csv.filename" value="resultsPriorSubmissions.csv"/>
+       <display:setProperty name="export.csv.include_header" value="true"/>
        <display:column titleKey="priorSubmissions.list.nciNumber" property="nciNumber" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="priorSubmissions.list.file" property="fileHtml" sortable="false" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.file" sortable="false" headerClass="sortable" headerScope="col" media="html">
+        <s:if test="%{#attr.row.batchFileIdentifier != null}">
+	        <s:url id="viewDocUrl" action="priorSubmissionsviewDoc">
+	            <s:param name="batchFileId" value="%{#attr.row.batchFileIdentifier}" />
+	        </s:url>
+	        <s:a href="%{viewDocUrl}"><s:property value="%{#attr.row.fileName}" /></s:a>
+        </s:if>
+		<s:elseif test="%{#attr.row.completeTrialId != null}">
+		    <s:url id="completeTrialUrl" action="patients">
+                <s:param name="studyProtocolId" value="%{#attr.row.completeTrialId}" />
+            </s:url>
+            <s:a href="%{completeTrialUrl}">Trial subjects</s:a>
+		</s:elseif>
+		<s:elseif test="%{#attr.row.abbreviatedTrialId != null}">
+		    <s:url id="abbreviatedTrialUrl" action="industrialPatients">
+                <s:param name="studyProtocolId" value="%{#attr.row.abbreviatedTrialId}" />
+            </s:url>
+            <s:a href="%{abbreviatedTrialUrl}">Trial counts</s:a>
+		</s:elseif>
+       </display:column>
+       <display:column titleKey="priorSubmissions.list.file" sortable="false" headerClass="sortable" headerScope="col" media="excel csv">
+        <s:if test="%{#attr.row.batchFileIdentifier != null}">
+            <s:property value="%{#attr.row.fileName}" />
+        </s:if>
+        <s:elseif test="%{#attr.row.completeTrialId != null}">
+            Trial subjects
+        </s:elseif>
+        <s:elseif test="%{#attr.row.abbreviatedTrialId != null}">
+            Trial counts
+        </s:elseif>
+       </display:column>
        <display:column titleKey="priorSubmissions.list.submissionType" property="submissionType.code" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.date" property="date" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.user" property="username" sortable="true" headerClass="sortable" headerScope="col"/>

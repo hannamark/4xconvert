@@ -42,18 +42,6 @@ public class PriorSubmissionsAction extends AbstractListAccrualAction<Historical
             List<HistoricalSubmissionDto> submissionList = getSubmissionHistorySvc().search(
                     PAUtil.dateStringToTimestamp(getDateFrom()),
                     PAUtil.dateStringToTimestamp(getDateTo()), ru);
-            for (HistoricalSubmissionDto dto : submissionList) {
-                if (dto.getBatchFileIdentifier() != null) {
-                    dto.setFileHtml("<a href='/accrual/protected/priorSubmissionsviewDoc.action?batchFileId=" 
-                        + dto.getBatchFileIdentifier() + "'>" + dto.getFileName() + "</a>");
-                } else if (dto.getCompleteTrialId() !=  null) {
-                    dto.setFileHtml("<a href='/accrual/protected/patients.action?studyProtocolId=" 
-                        + dto.getCompleteTrialId() + "'>Trial subjects</a>");
-                } else if (dto.getAbbreviatedTrialId() != null) {
-                    dto.setFileHtml("<a href='/accrual/protected/industrialPatients.action?studyProtocolId=" 
-                        + dto.getAbbreviatedTrialId() + "'>Trial counts</a>");
-                }
-            }
             setDisplayTagList(submissionList);
         } catch (PAException e) {
             addActionError(e.getMessage());
