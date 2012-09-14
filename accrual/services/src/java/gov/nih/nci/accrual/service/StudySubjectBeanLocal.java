@@ -573,12 +573,13 @@ public class StudySubjectBeanLocal extends
                     + " order by ssub.id ";
             Query query = session.createQuery(hql);
             query.setParameter("studyProtocolId", spId);
+            query.setMaxResults(1);
             List<StudySubject> qList = query.list();
             if (!qList.isEmpty()) {
                 result = qList.get(0);
             }
         } catch (Exception e) {
-            throw new PAException("Exception in searchByStudyProtocolAndStatus().", e);
+            throw new PAException("Exception in searchActiveByStudyProtocol().", e);
         }
         return result;
     }
