@@ -41,7 +41,7 @@
                         <tr>
                             <td scope="row" class="label">
                                 <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
-                                    <label for="submitTrial_summary4FundingCategory">Trial Submission Category: </label>
+                                    <label for="summaryFourFundingCategoryCode">Trial Submission Category: </label>
                                     <span class="required">*</span>
                                 </reg-web:displayTooltip>
                             </td>

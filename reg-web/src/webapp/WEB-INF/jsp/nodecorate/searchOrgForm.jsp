@@ -21,21 +21,21 @@ Please do not use wildcard characters.<br>
 </p>
 <table class="form">
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgName"> <fmt:message
+        <td scope="row" class="label"><label for="orgNameSearch"> <fmt:message
             key="popUpOrg.name" /></label></td>
         <td><s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100"
             cssStyle="width:195px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgCity"> <fmt:message
+        <td scope="row" class="label"><label for="orgCitySearch"> <fmt:message
             key="popUpOrg.city" /></label></td>
         <td colspan="3"><s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity" maxlength="200"
             size="100" cssStyle="width:195px" /></td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_familyName"> <fmt:message
+        <td scope="row" class="label"><label for="orgFamilyNameSearch"> <fmt:message
             key="popUpOrg.familyName" /></label></td>
         <td><s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" size="100"
             cssStyle="width:195px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgCountry"> <fmt:message
+        <td scope="row" class="label"><label for="orgCountrySearch"> <fmt:message
             key="popUpOrg.country" /></label></td>
         <td colspan="3"><s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"
             listKey="alpha3" listValue="name" headerKey="" headerValue="" cssStyle="width:270px" />
@@ -44,7 +44,7 @@ Please do not use wildcard characters.<br>
     <tr>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
-        <td scope="row" class="label"><label for="poOrganizations_orgSearchCriteria_orgState"> <fmt:message
+        <td scope="row" class="label"><label for="orgStateSearch"> <fmt:message
             key="popUpOrg.state" /></label></td>
         <td><s:textfield id="orgStateSearch" name="orgSearchCriteria.orgState" maxlength="55" size="30"
             cssStyle="width:135px" /><br>
@@ -52,7 +52,7 @@ Please do not use wildcard characters.<br>
         identifier for US states for ex:<br>
         'MD' for Maryland</span></font></td>
 
-        <td scope="row" class="value"><label for="poOrganizations_orgSearchCriteria_orgZip"> <fmt:message
+        <td scope="row" class="value"><label for="orgZipSearch"> <fmt:message
             key="popUpOrg.zip" /> </label></td>
         <td><s:textfield id="orgZipSearch" name="orgSearchCriteria.orgZip" maxlength="15" size="20"
             cssStyle="width:100px" /></td>
@@ -64,9 +64,9 @@ Please do not use wildcard characters.<br>
         </td>
     </tr>
     <tr>
-        <td><label for="poOrganizations_orgSearchCriteria_poId">PO ID (Exact Match)</label></td>
+        <td><label for="orgPOIdSearch">PO ID (Exact Match)</label></td>
         <td><s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssStyle="width:200px" /></td>
-        <td><label for="poOrganizations_orgSearchCriteria_ctepId">CTEP Identifier</label></td>
+        <td><label for="orgCtepIdSearch">CTEP Identifier</label></td>
         <td><s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100"
             cssStyle="width:200px" /></td>
     </tr>

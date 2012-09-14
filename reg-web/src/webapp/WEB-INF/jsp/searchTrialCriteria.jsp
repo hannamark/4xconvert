@@ -69,7 +69,7 @@
 	            document.getElementById("Site").style.display = "none";
 	            document.getElementById("LeadOrSite").style.display = "";
 	            document.getElementById("organizationId").value="";
-	            document.getElementById("participatingSiteId").value="";	            
+	            document.getElementById("participatingSiteId").value="";
 	        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
                 document.getElementById("Lead").style.display = "none";
                 document.getElementById("LeadOrSite").style.display = "none";
@@ -94,7 +94,7 @@
 </SCRIPT>
 <body>
 <!-- main content begins-->
-    <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a>
+    <!--  <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a> -->
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic"  scope="request" value="searchtrials"/>
     <s:if test="records.size > 0">
@@ -107,7 +107,7 @@
         <table class="form">
             <tr>
                 <td scope="row" class="label">
-                <label for="searchTrial_criteria_officialTitle"> <fmt:message key="search.trial.title"/></label>
+                <label for="officialTitle"> <fmt:message key="search.trial.title"/></label>
                 </td>
                 <td colspan="4">
                 <s:textfield id ="officialTitle" name="criteria.officialTitle" maxlength="400" size="300"  cssStyle="width:98%;max-width:680px" />
@@ -115,14 +115,14 @@
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_phaseCode"> <fmt:message key="search.trial.phase"/></label>
+                    <label for="phaseCode"> <fmt:message key="search.trial.phase"/></label>
                 </td>
                     <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>
                     <s:select id="phaseCode" headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
                 </td>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_primaryPurposeCode"> <fmt:message key="search.trial.purpose"/></label>
+                    <label for="typeCodeValues"> <fmt:message key="search.trial.purpose"/></label>
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
                 <td>
@@ -131,7 +131,7 @@
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_phaseAdditionalQualifierCode">
+                    <label for="phaseAdditionalQualifierCode">
                     <fmt:message key="search.trial.phaseAdditionalQualifier"/></label>
                 </td>
                   <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
@@ -143,7 +143,7 @@
                 </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_identifierType"> <fmt:message key="search.trial.identifierType"/></label>
+                    <label for="identifierType"> <fmt:message key="search.trial.identifierType"/></label>
                 </td>
                 <td>
                     <s:select
@@ -162,7 +162,7 @@
                     </span>
                 </td>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_identifier"> <fmt:message key="search.trial.identifier"/></label>
+                    <label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
                     <br><span class="info">(Examples: NCI-2008-00015; ECOG-1234)</span>
                 </td>
                 <td>
@@ -176,13 +176,13 @@
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_organizationType"> <fmt:message key="search.trial.organizationType"/></label>
+                    <label for="organizationType"> <fmt:message key="search.trial.organizationType"/></label>
                 </td>
                 <td>
                     <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
                 </td>
                 <td scope="row" class="label">
-                    <label for="searchTrial_criteria_organizationId"> <fmt:message key="search.trial.organization"/></label>
+                    <label for="organizationId"> <fmt:message key="search.trial.organization"/></label>
                 </td>
                 <td id="Lead">
                     <s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
@@ -215,7 +215,7 @@
             <s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
              <tr>
                 <td  scope="row" class="label">
-                    <label for="principalInvestigator"> <fmt:message key="search.trial.principalInvestigator"/></label>
+                    <label for="principalInvestigatorId"> <fmt:message key="search.trial.principalInvestigator"/></label>
                 </td>
                 <td align=left>
                     <s:select

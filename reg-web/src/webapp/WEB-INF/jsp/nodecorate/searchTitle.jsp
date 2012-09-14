@@ -7,7 +7,7 @@
 </p>
 <table  class="form">  
    	<tr>    
-        <td scope="row" class="label"><label for="title">Title:</label></td>
+        <td scope="row" class="label"><label for="search_title">Title:</label></td>
         <td><s:textfield name="title" id="search_title" maxlength="200" size="100"  cssStyle="width:200px" /></td>
      </tr>   
    	</table>

@@ -10,7 +10,7 @@
         <tr>
         <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.oversight_authority_organization_country">
-                <fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span>
+                <label for="countries" ><fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span> </label>
             </reg-web:displayTooltip>
         </td>
           <td class="value"><s:select id="countries" headerValue="-Select-" headerKey=""
@@ -29,7 +29,7 @@
        <tr>
          <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.oversight_authority_organization_name">
-                <fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span>
+                <label for="submitTrial_trialDTO_selectedRegAuth" ><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></label>
             </reg-web:displayTooltip>
          </td>
                 <td class="value">
@@ -43,7 +43,7 @@
      <tr>
          <td scope="row"  class="label">
             <reg-web:displayTooltip tooltip="tooltip.fda_regulated_intervention_indicator">
-                <fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span>
+                <label for="trialDTO.fdaRegulatoryInformationIndicator" ><fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span></label>
             </reg-web:displayTooltip>
          </td>
          <td class="value"><s:select  id ="trialDTO.fdaRegulatoryInformationIndicator" name="trialDTO.fdaRegulatoryInformationIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" onchange="checkFDADropDown();" value="trialDTO.fdaRegulatoryInformationIndicator"/>
@@ -54,7 +54,7 @@
      <tr id="sec801row">
          <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.section_801_indicator">
-                <fmt:message key="regulatory.section801.ind"/><span class="required">*</span>
+                <label for="trialDTO.section801Indicator" ><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></label>
             </reg-web:displayTooltip>
          </td>
          <td class="value"><s:select id="trialDTO.section801Indicator" name="trialDTO.section801Indicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" onchange="checkSection108DropDown();" value="trialDTO.section801Indicator"/>
@@ -66,7 +66,7 @@
      <tr id="delpostindrow">
          <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.delayed_posting_indicator">
-                <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span>
+               <label for="trialDTO.delayedPostingIndicator" > <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></label>
             </reg-web:displayTooltip>
          </td>
          <td class="value"><s:select id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" />
@@ -77,7 +77,7 @@
      <tr id="datamonrow">
          <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.data_monitoring_committee_appointed_indicator">
-                <fmt:message key="regulatory.data.monitoring.committee.ind"/>
+                <label for="trialDTO.dataMonitoringCommitteeAppointedIndicator" ><fmt:message key="regulatory.data.monitoring.committee.ind"/></label>
             </reg-web:displayTooltip>
          </td>
          <td class="value"><s:select id="trialDTO.dataMonitoringCommitteeAppointedIndicator" name="trialDTO.dataMonitoringCommitteeAppointedIndicator" list="#{'':'', 'No':'No', 'Yes':'Yes'}" value="trialDTO.dataMonitoringCommitteeAppointedIndicator" />

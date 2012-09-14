@@ -23,7 +23,7 @@
   <tr style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
     <td scope="row" class="label">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
+        <label for="submitTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
     </td>
     <td class="value">

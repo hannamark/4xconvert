@@ -395,7 +395,7 @@
                     <reg-web:spaceRow/>
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>
                     <reg-web:titleRow titleKey="submit.trial.otherIdentifiers"/>
-                    <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_otherIdentifiers" labelKey="submit.trial.otherIdentifier" tooltip="tooltip.other_identifier">
+                    <reg-web:valueRow labelFor="otherIdentifierOrg" labelKey="submit.trial.otherIdentifier" tooltip="tooltip.other_identifier">
                         <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; 
                         <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
                     </reg-web:valueRow>
@@ -407,7 +407,7 @@
                         </td>
                     </tr>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
-                    <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_trialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
+                    <reg-web:valueRow labelFor="submitTrial_trialDTO_officialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
                         <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
                        
                         <span class="formErrorMsg">
@@ -420,13 +420,13 @@
                     <reg-web:spaceRow/>
                     <reg-web:titleRow titleKey="submit.trial.leadOrgInvestigator"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="submit.trial.leadOrganization" required="true" tooltip="tooltip.lead_organization">
+                    <reg-web:valueRow labelFor="trialDTO.leadOrganizationName" labelKey="submit.trial.leadOrganization" required="true" tooltip="tooltip.lead_organization">
                         <div id="loadOrgField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
                         </div>
                     </reg-web:valueRow>
                     <!-- include po person jsp -->
-                    <reg-web:valueRow labelFor="submitTrial_poLeadPiFullName" labelKey="submit.trial.principalInvestigator" required="true" tooltip="tooltip.pi">
+                    <reg-web:valueRow labelFor="trialDTO.piName" labelKey="submit.trial.principalInvestigator" required="true" tooltip="tooltip.pi">
                         <div id="loadPersField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadPrincipalInvestigator.jsp" %>
                         </div>
@@ -450,7 +450,7 @@
                     <!--  summary4 information -->
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="submitTrial_summary4FundingCategory" labelKey="update.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
+                    <reg-web:valueRow labelFor="submitTrial_trialDTO_summaryFourFundingCategoryCode" labelKey="update.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                         <s:select headerKey="" headerValue="--Select--" 
                                     name="trialDTO.summaryFourFundingCategoryCode"
@@ -462,13 +462,13 @@
                              </s:fielderror>
                          </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_selectedSummary4Sponsor_name_part_0__value" labelKey="update.proprietary.trial.summary4Sponsor" 
+                    <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor" 
                                       required="true" tooltip="tooltip.summary_4_funding_source">
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="summary4ProgramCode" labelKey="studyProtocol.summaryFourPrgCode" tooltip="tooltip.summary_4_program_code">
+                    <reg-web:valueRow labelFor="submitTrial_trialDTO_programCodeText" labelKey="studyProtocol.summaryFourPrgCode" tooltip="tooltip.summary_4_program_code">
                         <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                         <span class="formErrorMsg">
                             <s:fielderror>

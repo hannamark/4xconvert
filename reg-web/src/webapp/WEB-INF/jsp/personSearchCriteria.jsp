@@ -67,7 +67,7 @@
                             <s:textfield id="poID" name="criteria.id" maxlength="10" cssStyle="width:294px"  />
                         </td>
                         <td  scope="row" class="label">
-                            <label for="country"> <fmt:message key="person.search.role"/></label>
+                            <label for="functionalRole"> <fmt:message key="person.search.role"/></label>
                         </td>
                         <td>
                              <s:select name="criteria.functionalRole" id="functionalRole" cssStyle="width:300px;"

@@ -21,7 +21,7 @@
 </s:iterator>
 <tr>
     <td scope="row" class="label">
-        <label for="updateTrial_protocolWebDTO_otherIdentifiers">
+        <label for="otherIdentifierOrg">
             <fmt:message key="submit.trial.otherIdentifier"/>
         </label>
     </td>

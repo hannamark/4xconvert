@@ -32,11 +32,11 @@ function formClose() {
 </p>
 <table  class="form">
        <tr>
-         <td scope="row" class="label"><label for="poOrganizations_firstName">First Name</label></td>
+         <td scope="row" class="label"><label for="firstName">First Name</label></td>
          <td><s:textfield name="personDTO.firstName" id="firstName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
-         <td scope="row" class="label"><label for="poOrganizations_lastName"> Last Name</label></td>
+         <td scope="row" class="label"><label for="lastName"> Last Name</label></td>
          <td><s:textfield name="personDTO.lastName"  id="lastName" maxlength="200" size="100"  cssStyle="width:200px" /></td>
-         <td scope="row" class="label"><label for="poOrganizations_email"> Email</label></td>
+         <td scope="row" class="label"><label for="email"> Email</label></td>
         <td><s:textfield name="personDTO.email" id="email" maxlength="200" size="100"  cssStyle="width:150px" /></td>
 
     </tr>
@@ -60,9 +60,9 @@ function formClose() {
     </tr>
     <tr><td colspan="6"> <hr></td> </tr>
         <tr>
-        <td><label for="poId">PO ID (Exact Match)</label></td>
+        <td><label for="perPOIdSearch">PO ID (Exact Match)</label></td>
         <td><s:textfield id="perPOIdSearch" name="perPOIdSearch" maxlength="10" size="100" cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_ctepId">CTEP Identifier</label></td>
+        <td scope="row" class="label"><label for="perCtepIdSearch">CTEP Identifier</label></td>
          <td><s:textfield name="perCtepIdSearch" id="perCtepIdSearch" maxlength="200" size="100"  cssStyle="width:200px" /></td>
     </tr>
 

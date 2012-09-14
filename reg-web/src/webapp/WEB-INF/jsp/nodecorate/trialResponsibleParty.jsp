@@ -7,7 +7,7 @@
         <tr>
                     <td scope="row" class="label">
                         <reg-web:displayTooltip tooltip="tooltip.sponsor">
-                            <label for="submitTrial_selectedSponsor_name_part_0__value"> Sponsor:<span class="required">*</span></label>
+                            <label for="trialDTO.sponsorName"> Sponsor:<span class="required">*</span></label>
                         </reg-web:displayTooltip>
                     </td>
                     <td class="value">
@@ -33,7 +33,7 @@
         </tr>
     <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
         <tr id="rpcid">
-            <td scope="row" class="label"><label for="submitTrial_resPartyContactFullName"> <fmt:message
+            <td scope="row" class="label"><label for="trialDTO.responsiblePersonName"> <fmt:message
                         key="submit.trial.responsiblePartyContact" />
             </label></td>
             <td class="value">
@@ -50,7 +50,7 @@
         <tr id="rpgcid">
             <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.responsible_party_general_contact">
-                <label for="submitTrial_resPartyGenericContact"><fmt:message
+                <label for="trialDTO.responsibleGenericContactName"><fmt:message
                         key="submit.trial.responsiblePartyGenericContact" />
                 </label>
             </reg-web:displayTooltip>    
@@ -101,7 +101,7 @@
           <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.responsible_party_email_address">
-                        <label for="submitTrial_contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label>
+                        <label for="trialDTO.contactEmail"> <fmt:message key="submit.trial.responsiblePartyEmail"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                 <td class="value">
@@ -116,12 +116,12 @@
                 <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.responsible_party_phone_number">
-                        <label for="submitTrial_contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
+                        <label for="trialDTO.contactPhone"> <fmt:message key="submit.trial.responsiblePartyPhone"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                 <td class="value">
                     <s:textfield name="trialDTO.contactPhone"  id="trialDTO.contactPhone" maxlength="200" size="100"  cssStyle="width:100px" />
-                    Ext:<s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
+                   <label for="trialDTO.contactPhoneExtn">Ext:</label><s:textfield name="trialDTO.contactPhoneExtn"  id="trialDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                     <span class="formErrorMsg">
                         <s:fielderror>
                         <s:param>trialDTO.contactPhone</s:param>

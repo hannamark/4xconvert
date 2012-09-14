@@ -52,7 +52,7 @@
                 <table class="form">
                     <tr>
                         <td scope="row" class="label">
-                            <label for="siteAdministration_criteria_firstName"> <fmt:message key="siteadministration.criteria.firstname"/></label>
+                            <label for="firstName"> <fmt:message key="siteadministration.criteria.firstname"/></label>
                         </td>
                         <td>
                             <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"  cssStyle="width:200px" />
@@ -60,7 +60,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="siteAdministration_criteria_lastName"> <fmt:message key="siteadministration.criteria.lastname"/></label>
+                            <label for="lastName"> <fmt:message key="siteadministration.criteria.lastname"/></label>
                         </td>
                         <td>
                             <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssStyle="width:200px" />
@@ -68,7 +68,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="siteAdministration_criteria_email"> <fmt:message key="siteadministration.criteria.email"/></label>
+                            <label for="emailAddress"> <fmt:message key="siteadministration.criteria.email"/></label>
                         </td>
                         <td>
                             <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />

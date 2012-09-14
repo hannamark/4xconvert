@@ -2,7 +2,7 @@
           <tr>
                 <td  scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.phase">
-                        <label for="submitTrial_protocolWebDTO_trialPhase"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label>
+                        <label for="trialDTO.phaseCode"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
@@ -18,7 +18,7 @@
           </tr>
           <tr id ="phaseOtherDiv" style="display:'none'">
                 <td scope="row" class="label">
-                    <label for="submitTrial_protocolWebDTO_otherPhaseText"> <fmt:message key="submit.trial.otherPhaseText"/></label>
+                    <label for="submitTrial_trialDTO_phaseAdditionalQualifier"> <fmt:message key="submit.trial.otherPhaseText"/></label>
                 </td>
                 <td>
                     <s:textfield name="trialDTO.phaseAdditionalQualifier" readonly="true" value="Pilot"></s:textfield>

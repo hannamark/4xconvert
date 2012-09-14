@@ -3,7 +3,7 @@
 <s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
                 <td  scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.primary_purpose">
-                        <label for="submitTrial_protocolWebDTO_trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
+                        <label for="trialDTO.primaryPurposeCode"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
@@ -20,7 +20,7 @@
             <tr id="purposeOtherTextDiv" style="display:'none'">
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.purpose_comment">
-                        <label for="submitTrial_protocolWebDTO_otherPurposeText">
+                        <label for="trialDTO.primaryPurposeOtherText">
                          <fmt:message key="submit.trial.otherPurposeText"/></label>
                     </reg-web:displayTooltip>
                 </td>

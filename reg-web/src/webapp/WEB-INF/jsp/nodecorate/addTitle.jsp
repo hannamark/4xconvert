@@ -3,7 +3,7 @@
 <br><p><b><i>Please provide professional contact information only.</i></b></p>
 <table  class="form">  
    <tr>             
-        <td scope="row" class="label"><label for="title">Title :</label><span class="required">*</span></td>
+        <td scope="row" class="label"><label for="create_title">Title :</label><span class="required">*</span></td>
         <td><s:textfield name="title"  id="create_title" maxlength="50" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>
