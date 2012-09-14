@@ -275,7 +275,6 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
-        webDTO.setTissueSpecimenType(CdConverter.convertCdToString(markerDTO.getTissueSpecimenTypeCode()));
         
         String nciIdentifier = "";
         String userId = "";
