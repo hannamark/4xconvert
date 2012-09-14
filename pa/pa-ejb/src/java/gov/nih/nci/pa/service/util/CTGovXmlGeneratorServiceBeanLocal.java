@@ -179,6 +179,7 @@ import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.apache.commons.lang.StringEscapeUtils;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -540,8 +541,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      */
     protected void addOverallOfficialAffiliation(Ii roIi, Element overallofficial, Document doc) throws PAException {
         Organization o = getCorUtils().getPAOrganizationByIi(roIi);
+        String data = replaceXMLCharacters(o.getName());
         XmlGenHelper.appendElement(overallofficial,
-                XmlGenHelper.createElementWithTextblock("affiliation", o.getName(), doc));
+                XmlGenHelper.createElement("affiliation", data, doc));
     }
 
     private void createOverallOfficial(Ii studyProtocolIi, Document doc, Element root) throws PAException {
@@ -745,7 +747,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                     : PRS_PLACEHOLDER;
         }
         
-        XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElementWithTextblock("org_name", prsOrgName, doc));
+        //XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElementWithTextblock("org_name", prsOrgName, doc)); 
+        String data = replaceXMLCharacters(prsOrgName);
+        XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElement("org_name", data, doc));
         XmlGenHelper.appendElement(root, idInfo);
 
     }
@@ -1157,7 +1161,15 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
         return studyDesign;
     }
-
+    
+    private String replaceXMLCharacters(String inputData) {
+        String data = inputData;
+      if (XmlGenHelper.containsXmlChars(inputData)) {
+               data = StringEscapeUtils.escapeXml(inputData);
+      } 
+      return data;
+    }
+    
     /**
      * Add prim purpose and phase additional qualifiers.
      * @param ispDTO InterventionalStudyProtocolDTO
@@ -1384,8 +1396,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         XmlGenHelper.createElement("investigator_title", resPartyType, doc));
         }
         if (sponsor != null) {
-            XmlGenHelper.appendElement(responsibleParty,
-                    XmlGenHelper.createElement("investigator_affiliation", sponsor.getName(), doc));
+                String data = replaceXMLCharacters(sponsor.getName());
+                XmlGenHelper.appendElement(responsibleParty,
+                        XmlGenHelper.createElement("investigator_affiliation", data, doc));  
         }
         return responsibleParty;
     }
@@ -1402,9 +1415,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 .convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
         String sponsorName = sponsor.getName();
+        String data = replaceXMLCharacters(StringUtils.substring(sponsorName, 0,
+                PAAttributeMaxLen.LEN_160));
         XmlGenHelper.appendElement(lead,
-                XmlGenHelper.createElement("agency", StringUtils.substring(sponsorName, 0,
-                PAAttributeMaxLen.LEN_160), doc));
+                XmlGenHelper.createElement("agency", data, doc));
         return lead;
     }
 
@@ -1422,9 +1436,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     
         for (Organization eachOrg : orgs) {
             Element collaborator = doc.createElement("collaborator");
+            String data = replaceXMLCharacters(StringUtils.substring(eachOrg.getName(), 0,
+                    PAAttributeMaxLen.LEN_160));
             XmlGenHelper.appendElement(collaborator,
-                    XmlGenHelper.createElementWithTextblock("agency", StringUtils.substring(eachOrg.getName(), 0,
-                        PAAttributeMaxLen.LEN_160), doc));
+                    XmlGenHelper.createElementWithTextblock("agency", data, doc));
             collaborators.add(collaborator);
         }
         return collaborators;
@@ -1442,8 +1457,8 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         Element address = doc.createElement("address");
 
         Organization orgBo = getCorUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-
-        XmlGenHelper.appendElement(facility, XmlGenHelper.createElementWithTextblock("name", orgBo.getName(), doc));
+        String data = replaceXMLCharacters(orgBo.getName());
+        XmlGenHelper.appendElement(facility, XmlGenHelper.createElement("name", data, doc));
         XmlGenHelper.appendElement(address, XmlGenHelper.createElementWithTextblock("city", orgBo.getCity(), doc));
         XmlGenHelper.appendElement(address, XmlGenHelper.createElementWithTextblock("state", orgBo.getState(), doc));
         XmlGenHelper.appendElement(address, XmlGenHelper.createElementWithTextblock("zip", orgBo.getPostalCode(), doc));
@@ -1653,4 +1668,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         DateFormat formatter1 = new SimpleDateFormat(YYYYMMDD, Locale.getDefault());
         return formatter1.format(ts);
     }
+    
+    
 }
