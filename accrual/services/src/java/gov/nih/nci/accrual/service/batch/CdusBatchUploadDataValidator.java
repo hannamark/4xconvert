@@ -183,7 +183,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 String[] line = AccrualUtil.csvParseAndTrim(lineIterator.nextLine());
                 lines.add(line);
                 ++lineNumber;
-                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX]) 
+                if (line != null 
+                        && StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX]) 
                         && line.length > 1) {
                     protocolId = line[1];
                     String changeCode = line.length > BatchFileIndex.CHANGE_CODE_INDEX 
@@ -320,7 +321,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @return errMsg if any
      */
     private String validateBatchData(String[] data, long lineNumber, String expectedProtocolId) {
-        String key = data[0];
+        String key = data != null ? data[0] : null;
         if (!LIST_OF_ELEMENT.containsKey(key)) {
             return StringUtils.EMPTY;
         }
