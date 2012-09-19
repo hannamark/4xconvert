@@ -246,7 +246,7 @@
                         </div>
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true" tooltip="tooltip.trial_id">
-                        <s:textfield name="trialDTO.leadOrgTrialIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
+                        <s:textfield name="trialDTO.leadOrgTrialIdentifier"  maxlength="30 " size="100"  cssStyle="width:200px" cssClass="charcounter" />
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.leadOrgTrialIdentifier</s:param>
