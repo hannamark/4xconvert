@@ -1,11 +1,17 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -24,7 +30,8 @@ public class UserAccountDetailsAction extends ActionSupport implements Preparabl
     private static final long serialVersionUID = -768848603259442783L;
     private User user;
     private CSMUserUtil userService;
-    
+    private OrganizationEntityServiceRemote organizationEntityService;
+
     //UI fields
     private String firstName;
     private String lastName;
@@ -35,6 +42,7 @@ public class UserAccountDetailsAction extends ActionSupport implements Preparabl
     @Override
     public void prepare() {
         userService = CSMUserService.getInstance();
+        organizationEntityService = PoRegistry.getOrganizationEntityService();
     }
     
     /**
@@ -69,6 +77,28 @@ public class UserAccountDetailsAction extends ActionSupport implements Preparabl
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
     }
+
+    /**
+     * @return action
+     */
+    public String updateOrgName() {
+        String orgId = ServletActionContext.getRequest().getParameter("orgId");
+        try {
+            execute();
+            OrganizationDTO poOrg = organizationEntityService.
+                getOrganization(IiConverter.convertToPoOrganizationIi(orgId));
+            if (poOrg == null) {
+                throw new PAException("Error getting organization data from PO for id = " + orgId
+                    + ".  Check that PO service is running and databases are synchronized.  ");
+            }
+            setOrganization(EnOnConverter.convertEnOnToString(poOrg.getName()));
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        } catch (NullifiedEntityException e) {
+            addActionError(e.getMessage());
+        }
+        return SUCCESS;
+    }
     
     /**
      * @return the userName
@@ -85,6 +115,14 @@ public class UserAccountDetailsAction extends ActionSupport implements Preparabl
      */
     public void setUserService(CSMUserUtil userService) {
         this.userService = userService;
+    }
+    
+    /**
+     * @param organizationEntityService the organizationEntityService to set
+     */
+    public void setOrganizationEntityService(
+            OrganizationEntityServiceRemote organizationEntityService) {
+        this.organizationEntityService = organizationEntityService;
     }
 
     /**

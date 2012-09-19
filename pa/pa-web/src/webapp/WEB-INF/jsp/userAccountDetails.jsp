@@ -7,12 +7,22 @@
     <head>
         <title><fmt:message key="userAccountDetails.title"/></title>
         <s:head/>
+        <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl" />
         <script type="text/javascript" language="javascript">
         
 	        function handleAction() {
 	            document.forms[0].action="userAccountDetailssave.action";
 	            document.forms[0].submit();
-	        }        
+	        }
+            function lookup() {
+                    showPopup('${lookupUrl}', null, 'Organization');
+            }
+            function setorgid(orgid) {}
+            function loadDiv(orgid) {
+                document.forms[0].action='userAccountDetailsupdateOrgName.action?orgId='+orgid;
+                document.forms[0].submit();
+                return false;
+            }
         
         </script>
     </head>
@@ -56,8 +66,9 @@
                                 <fmt:message key="userAccountDetails.organization"/>
                             </td>
                             <td class="value">                                
-                                <s:textfield id="organization" name="organization" maxlength="200" size="100" cssStyle="width:200px"  />                                          
-                            </td>
+                                <s:textfield id="organization" name="organization" size="100" cssStyle="float:left; width:200px" readonly="true" cssClass="readonly"  />                                          
+                                <a href="javascript:void(0)" class="btn" onclick="lookup();"><span class="btn_img"><span class="search">Look Up</span></span></a>                            
+                         </td>
                         </tr>                                     
                         <tr>
                             <td  scope="row" class="label" align="left">

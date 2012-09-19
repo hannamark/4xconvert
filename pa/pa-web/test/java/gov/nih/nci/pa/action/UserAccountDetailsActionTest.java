@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.service.MockPoOrganizationEntityService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.opensymphony.xwork2.Action;
 
 public class UserAccountDetailsActionTest extends AbstractPaActionTest {
     
@@ -27,6 +29,7 @@ public class UserAccountDetailsActionTest extends AbstractPaActionTest {
         super.setUp();
         action = new UserAccountDetailsAction();
         action.setUserService(new MockCSMUserService());
+        action.setOrganizationEntityService(new MockPoOrganizationEntityService());
         UsernameHolder.setUser("user3@mail.nih.gov");
     }
 
@@ -94,5 +97,12 @@ public class UserAccountDetailsActionTest extends AbstractPaActionTest {
         assertNull(action.getUserName());
         action.getUser().setLoginName("/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=monishd");
         assertEquals("monishd", action.getUserName());
+    }
+
+    @Test
+    public void testUpdateOrgName() {
+        getRequest().setupAddParameter("orgId", "1");
+        assertEquals(Action.SUCCESS, action.updateOrgName());
+        assertEquals("OrgName", action.getOrganization());
     }
 }
