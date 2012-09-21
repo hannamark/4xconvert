@@ -27,9 +27,12 @@
                 <s:hidden name="page" />
                 <table class="form">
                     <tbody>
-                        <reg-web:valueRow labelKey="register.user.username">
-                            <c:out value="${userName}"/>
-                        </reg-web:valueRow>
+	                    <tr>
+							<td class="label-noinput" scope="row">
+							 	<fmt:message key="register.user.username"/>
+							</td>
+							<td class="value"><c:out value="${userName}"/></td>
+						</tr>
                         <%@include file="nodecorate/accountCommonForm.jsp" %>
                     </tbody>
                 </table>

@@ -17,9 +17,9 @@
                     </td>
         </tr>
         <tr>
-                <td scope="row" class="label">
+                <td scope="row" class="label-noinput">
                     <reg-web:displayTooltip tooltip="tooltip.responsible_party">
-                        <label for="submitTrial_resppartysponsor"> <fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
+                        <fmt:message key="submit.trial.responsibleParty" /><span class="required">*</span>
                     </reg-web:displayTooltip>
                 </td>
                 <td>
@@ -71,7 +71,7 @@
     <s:else>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
-                                 <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label>
+                                 <label for="trialDTO.responsiblePersonName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label>
                      </td>
                      <td class="value">
                                <div id="loadResponsibleContactField">
@@ -82,7 +82,7 @@
             <tr id="rpgcid"  style="display:none">
                     <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.responsible_party_general_contact">
-                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label>
+                        <label for="trialDTO.responsibleGenericContactName"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label>
                     </reg-web:displayTooltip>    
                     </td>
                     <td class="value">

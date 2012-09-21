@@ -18,10 +18,10 @@
           </tr>
           <tr id ="phaseOtherDiv" style="display:'none'">
                 <td scope="row" class="label">
-                    <label for="submitTrial_trialDTO_phaseAdditionalQualifier"> <fmt:message key="submit.trial.otherPhaseText"/></label>
+                    <label for="trialDTO.phaseAdditionalQualifier"> <fmt:message key="submit.trial.otherPhaseText"/></label>
                 </td>
                 <td>
-                    <s:textfield name="trialDTO.phaseAdditionalQualifier" readonly="true" value="Pilot"></s:textfield>
+                    <s:textfield id="trialDTO.phaseAdditionalQualifier" name="trialDTO.phaseAdditionalQualifier" readonly="true" value="Pilot"></s:textfield>
                 </td>
           </tr>
 <SCRIPT LANGUAGE="JavaScript">

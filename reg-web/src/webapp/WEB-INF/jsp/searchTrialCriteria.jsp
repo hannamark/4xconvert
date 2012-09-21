@@ -67,19 +67,28 @@
 	        if (inputElement.options[inputElement.selectedIndex].value == "Both") {
 	            document.getElementById("Lead").style.display = "none";
 	            document.getElementById("Site").style.display = "none";
+	            document.getElementById("Lead-label").style.display = "none";
+	            document.getElementById("Site-label").style.display = "none";
 	            document.getElementById("LeadOrSite").style.display = "";
+	            document.getElementById("LeadOrSite-label").style.display = "";
 	            document.getElementById("organizationId").value="";
 	            document.getElementById("participatingSiteId").value="";
 	        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
                 document.getElementById("Lead").style.display = "none";
                 document.getElementById("LeadOrSite").style.display = "none";
+	            document.getElementById("Lead-label").style.display = "none";
+	            document.getElementById("LeadOrSite-label").style.display = "none";
                 document.getElementById("Site").style.display = "";
+                document.getElementById("Site-label").style.display = "";
                 document.getElementById("organizationId").value="";
                 document.getElementById("leadAndParticipatingOrgId").value="";
             } else {
                 document.getElementById("Lead").style.display = "";
                 document.getElementById("Site").style.display = "none";
                 document.getElementById("LeadOrSite").style.display = "none";
+                document.getElementById("Lead-label").style.display = "";
+                document.getElementById("Site-label").style.display = "none";
+                document.getElementById("LeadOrSite-label").style.display = "none";
                 document.getElementById("participatingSiteId").value="";
                 document.getElementById("leadAndParticipatingOrgId").value="";
             }
@@ -181,7 +190,7 @@
                 <td>
                     <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
                 </td>
-                <td scope="row" class="label">
+                <td id="Lead-label" scope="row" class="label">
                     <label for="organizationId"> <fmt:message key="search.trial.organization"/></label>
                 </td>
                 <td id="Lead">
@@ -193,6 +202,9 @@
                        </s:fielderror>
                     </span>
                 </td>
+                 <td id="Site-label" scope="row" class="label" style="display:none">
+                    <label for="participatingSiteId"> <fmt:message key="search.trial.organization"/></label>
+                </td>
                 <td id="Site" style="display:none">
                     <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
                     <s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
@@ -201,6 +213,9 @@
                         <s:param>criteria.organizationId</s:param>
                        </s:fielderror>
                     </span>
+                </td>
+                <td id="LeadOrSite-label" scope="row" class="label" style="display:none">
+                    <label for="leadAndParticipatingOrgId"> <fmt:message key="search.trial.organization"/></label>
                 </td>
                 <td id="LeadOrSite" style="display:none">   
                     <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />                

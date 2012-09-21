@@ -493,22 +493,22 @@
                                         <tr>
                                             <th>
                                                 <reg-web:displayTooltip tooltip="tooltip.funding_mechanism">
-                                                    <fmt:message key="submit.trial.fundingMechanism"/>
+                                                    <label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th>
                                                 <reg-web:displayTooltip tooltip="tooltip.institution_code">
-                                                    <fmt:message key="submit.trial.instituteCode"/>
+                                                    <label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th>
                                                 <reg-web:displayTooltip tooltip="tooltip.serial_number">
-                                                    <fmt:message key="submit.trial.serialNumber"/>
+                                                   <label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th>
                                                 <reg-web:displayTooltip tooltip="tooltip.nci_division_program_code">
-                                                    <fmt:message key="submit.trial.divProgram"/>
+                                                   <label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th></th>

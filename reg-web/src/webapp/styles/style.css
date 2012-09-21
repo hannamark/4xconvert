@@ -333,6 +333,8 @@ TABLE.form TD
 { height:35px }
 .label LABEL
 { font-size:92% }
+.label-noinput 
+{ text-align:right; font-weight:bold; width:20%; white-space:nowrap; padding:5px 5px 5px 0 !important; color:#333; font-size:92% }
 .value INPUT, .value SELECT, .value TEXTAREA
 { display:block; margin-top:-3px }
 .label

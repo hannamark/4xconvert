@@ -36,14 +36,23 @@
             document.getElementById('programcodenciid').style.display = '';
             document.getElementById('programcodenihid').style.display = 'none';
             document.getElementById('programcodeid').style.display = 'none';
+            document.getElementById('programcodenciselectedvalue_label').style.display =  ''
+           	document.getElementById('programcodenihselectedvalue_label').style.display =  'none'
+       		document.getElementById('programcodenoneselected_label').style.display =  'none'
         } else if (ref.value == 'NIH') {
             document.getElementById('programcodenciid').style.display = 'none';
             document.getElementById('programcodenihid').style.display = '';
             document.getElementById('programcodeid').style.display = 'none';
+            document.getElementById('programcodenciselectedvalue_label').style.display =  'none'
+           	document.getElementById('programcodenihselectedvalue_label').style.display =  ''
+       		document.getElementById('programcodenoneselected_label').style.display =  'none'
         } else {
             document.getElementById('programcodenihid').style.display = 'none';
             document.getElementById('programcodenciid').style.display = 'none';
             document.getElementById('programcodeid').style.display = '';
+            document.getElementById('programcodenciselectedvalue_label').style.display =  'none'
+           	document.getElementById('programcodenihselectedvalue_label').style.display =  'none'
+       		document.getElementById('programcodenoneselected_label').style.display =  ''
         }
     }
     
@@ -208,14 +217,18 @@
 <table class="form">
     <tbody>
         <tr>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_type">IND/IDE Types</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_number">IND/IDE Number</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_grantor">IND/IDE Grantor</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_holder_type">IND/IDE Holder Type</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">NIH Institution, NCI Division/Program Code (if applicable)</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator">Expanded Access?</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status">Expanded Access Type (if applicable)</reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator">Exempt? (if applicable)</reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_type"> <label for="group3">IND/IDE Types</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_number"> <label for="indidenumber">IND/IDE Number</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_grantor"> <label for="SubCat">IND/IDE Grantor</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_holder_type"> <label for="holderType">IND/IDE Holder Type</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">
+            	<label id=programcodenoneselected_label for="programcodenoneselected">NIH Institution, NCI Division/Program Code (if applicable)</label>
+            	<label id=programcodenihselectedvalue_label for="programcodenihselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code (if applicable)</label>
+            	<label id=programcodenciselectedvalue_label for="programcodenciselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code (if applicable)</label>
+            </reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator"> <label  for="group4">Expanded Access?</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status"> <label for="expanded_status">Expanded Access Type (if applicable)</label></reg-web:displayTooltip></th>
+            <th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator"> <label for="exemptIndicator">Exempt? (if applicable)</label></reg-web:displayTooltip></th>
             <th></th>
         </tr>
         <tr>

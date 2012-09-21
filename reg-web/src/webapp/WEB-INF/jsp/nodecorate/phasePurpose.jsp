@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ include file="/WEB-INF/jsp/nodecorate/phase.jsp" %>
 <tr>
-    <td  scope="row" class="label">
-        <label> <fmt:message key="submit.trial.type"/><span class="required">*</span></label>
+    <td  scope="row" class="label-noinput">
+        <fmt:message key="submit.trial.type"/><span class="required">*</span>
     </td>
     <td>
         <input type="radio" name="trialDTO.trialType" value="Interventional" checked="checked" id="trialDTO.trialType.Interventional"> <label for = "trialDTO.trialType.Interventional">Interventional</label>

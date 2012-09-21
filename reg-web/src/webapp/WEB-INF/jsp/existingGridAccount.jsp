@@ -39,16 +39,16 @@
                     </tr>
                     <tr>
                         <td class="label" scope="row">
-                            <label><fmt:message key="register.user.username"/></label>
+                            <label for="username"><fmt:message key="register.user.username"/></label>
                         </td>
                         <td class="value"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" id="username"/></td>
                     </tr>
                     <tr>
                         <td class="label" scope="row">
-                            <label> <fmt:message key="register.user.password"/></label>
+                            <label for="password"> <fmt:message key="register.user.password"/></label>
                         </td>
                         <td class="value">
-                            <s:password  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  />
+                            <s:password  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  id="password"/>
                         </td>
                     </tr>
                     <tr>
@@ -60,7 +60,7 @@
                         <s:else>
                             <td class="label" scope="row"><label for="selectedIdentityProvider">Account Source:</label></td>
                             <td class="value">
-                                <s:select name="selectedIdentityProvider" list="identityProviders" listKey="value" listValue="key"/>
+                                <s:select name="selectedIdentityProvider" list="identityProviders" listKey="value" listValue="key" id="selectedIdentityProvider"/>
                             </td>
                         </s:else>
                     </tr>

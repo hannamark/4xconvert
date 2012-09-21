@@ -19,7 +19,7 @@
   <tr>
     <td scope="row" class="label">
     <reg-web:displayTooltip tooltip="tooltip.abbreviated_trial_template">
-      <label for="submitTrial_protocolDoc">
+      <label for="submitProprietaryTrial_protocolDoc">
         <fmt:message key="submit.proprietary.trial.protocolDocument"/>
       </label>
     </reg-web:displayTooltip>
@@ -44,7 +44,7 @@
   <tr>
     <td scope="row" class="label">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
+        <fmt:message key="submit.trial.otherDocument"/>
       </reg-web:displayTooltip>
     </td>
     <td class="value">   
@@ -63,11 +63,11 @@
   <tr style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
     <td scope="row" class="label">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument"><fmt:message key="submit.trial.otherDocument"/></label>
+        <label for="submitProprietaryTrial_otherDocument_${varStatus.index}"><fmt:message key="submit.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
     </td>
     <td class="value">
-        <s:file name="otherDocument" cssStyle="width:270px"/>
+        <input id="submitProprietaryTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
         <span class="formErrorMsg">
           <s:fielderror>
             <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>

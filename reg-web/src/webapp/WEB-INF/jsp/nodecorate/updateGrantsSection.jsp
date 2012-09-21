@@ -21,10 +21,10 @@
                     <table class="form">
                         <tbody>
                             <tr>
-                                <th><fmt:message key="update.trial.fundingMechanism"/></th>
-                                <th><fmt:message key="update.trial.instituteCode"/></th>
-                                <th><fmt:message key="update.trial.serialNumber"/></th>
-                                <th><fmt:message key="update.trial.divProgram"/></th>
+                                <th><label for="fundingMechanismCode"><fmt:message key="update.trial.fundingMechanism"/></label> </th>
+                                <th><label for="nihInstitutionCode"><fmt:message key="update.trial.instituteCode"/></label></th>
+                                <th><label for="serialNumber"><fmt:message key="update.trial.serialNumber"/></label></th>
+                                <th><label for="nciDivisionProgramCode"><fmt:message key="update.trial.divProgram"/></label></th>
                                 <th></th>
                             </tr>
                             <tr>
