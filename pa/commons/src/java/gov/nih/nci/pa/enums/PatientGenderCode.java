@@ -93,6 +93,8 @@ public enum PatientGenderCode implements CodedEnum<String> {
     MALE("Male"),
     /** Female. */
     FEMALE("Female"),
+    /** Unspecified. */
+    UNSPECIFIED("Unspecified"),
     /** Both. */
     UNKNOWN("Unknown");
 

@@ -85,7 +85,6 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 
@@ -117,7 +116,11 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     /** Self pay (no insurance). */
     SELF("7", PaymentMethodCode.SELF.getCode(), PaymentMethodCode.SELF),
     /** Self pay (no insurance). */
-    MANAGED_CARE_MEDICARE("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT.getCode(), PaymentMethodCode.NO_MEANS_OF_PAYMENT),
+    NO_MEANS_OF_PAYMENT("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT.getCode(), PaymentMethodCode.NO_MEANS_OF_PAYMENT),
+    /** Managed care. */
+    MANAGED_CARE("9", PaymentMethodCode.MANAGED_CARE.getCode(), PaymentMethodCode.MANAGED_CARE),
+    /** State Supplemental Health Insurance. */
+    STATE_SUPPLEMENTAL("10", PaymentMethodCode.STATE_SUPPLEMENTAL.getCode(), PaymentMethodCode.STATE_SUPPLEMENTAL),
     /** Other. */
     OTHER("98", PaymentMethodCode.OTHER.getCode(), PaymentMethodCode.OTHER),
     /** Unknown. */

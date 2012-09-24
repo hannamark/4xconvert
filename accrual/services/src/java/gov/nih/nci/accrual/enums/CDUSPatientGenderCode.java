@@ -85,7 +85,6 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 
@@ -102,6 +101,8 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
     MALE("1", PatientGenderCode.MALE.getCode(), PatientGenderCode.MALE),
     /** Female. */
     FEMALE("2", PatientGenderCode.FEMALE.getCode(), PatientGenderCode.FEMALE),
+    /** Unspecified. */
+    UNSPECIFIED("3", PatientGenderCode.UNSPECIFIED.getCode(), PatientGenderCode.UNSPECIFIED),
     /** Unknown. */
     UNKNOWN("9", PatientGenderCode.UNKNOWN.getCode(), PatientGenderCode.UNKNOWN);
 
