@@ -83,6 +83,7 @@
 package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
@@ -119,8 +120,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -159,6 +162,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean sdcCode;
     private boolean icd9Code;
     private boolean checkDisease;
+    private final Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
     /**
@@ -204,13 +208,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
                         results.setNciIdentifier(ii.getExtension());
                         try {
-                            StudySubject ss = getStudySubjectService().searchActiveByStudyProtocol(
-                                    IiConverter.convertToLong(sp.getIdentifier()));
-                            if (ss != null && ss.getDisease() != null && ss.getIcd9disease() == null) {
-                                sdcCode = true;
-                            } else if (ss != null && ss.getDisease() == null && ss.getIcd9disease() != null) {
-                                icd9Code = true;
-                            }
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
                                     .getTreatingSites(IiConverter.convertToLong(sp.getIdentifier()));
@@ -280,6 +277,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
                }
               }
+            validateDiseaseCode(errMsg);
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
@@ -310,6 +308,25 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         LOG.info("Time to validate a single Batch File data: " 
                 + (System.currentTimeMillis() - startTime) / TIME_SECONDS + " seconds");
         return results;
+    }
+
+
+    private void validateDiseaseCode(StringBuffer errMsg) {
+        try {
+             StudySubject ss = getStudySubjectService().searchActiveByStudyProtocol(
+                  IiConverter.convertToLong(sp.getIdentifier()));
+             if (ss != null && ss.getDisease() != null && ss.getIcd9disease() == null && icd9Code 
+                    || ss != null && ss.getDisease() == null && ss.getIcd9disease() != null && sdcCode) {
+                Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService()
+                        .getSubjectAndPatientKeys(IiConverter.convertToLong(sp.getIdentifier()));
+                Set<SubjectAccrualKey> patientsFromDB = listOfStudySubjects.keySet();
+                if (!patientsFromBatchFile.containsAll(patientsFromDB)) {
+                    errMsg.append("Please follow same Disease code for the trial.\n");               
+                }
+             }
+        } catch (Exception e) {
+            errMsg.append(e.getLocalizedMessage());
+        }
     }
 
     
@@ -393,7 +410,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             if (!isCorrectOrganizationId(studySiteID, errMsg)) {
                 return;
             }
-            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, lineNumber);
+            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, lineNumber, values);
         }
     }
 
@@ -484,9 +501,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * on the COLLECTION line.
      * @throws PAException 
      */
-    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, long lineNumber) {
+    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, 
+        long lineNumber, List<String> values) {
         if (listOfPoIds.containsKey(regInstID)  || listOfCtepIds.containsKey(regInstID)) {
-            assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, errMsg, lineNumber);
+            assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, errMsg, lineNumber, values);
             return;
         }
         addAccrualSiteValidationError(regInstID, errMsg, lineNumber);
@@ -498,9 +516,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @param regInstID site ID provided in file.
      * @param errMsg msg buffer
      * @param lineNumber location of input
+     * @param values the line values
      */
     protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, String regInstID, 
-            StringBuffer errMsg, long lineNumber) {
+            StringBuffer errMsg, long lineNumber, List<String> values) {
         try {
             Long studySiteIi  = null;
             String poId = null;
@@ -511,6 +530,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             if (StringUtils.isNotEmpty(poId)) {
                 studySiteIi = listOfPoIds.get(poId);
             }
+            patientsFromBatchFile.add(new SubjectAccrualKey(studySiteIi, getPatientId(values)));
             if (!isSuAbstractor() 
                     && !AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
                 addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
