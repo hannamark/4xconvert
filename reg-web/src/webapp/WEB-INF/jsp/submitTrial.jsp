@@ -407,8 +407,8 @@
                         </td>
                     </tr>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
-                    <reg-web:valueRow labelFor="submitTrial_trialDTO_officialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
-                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
+                    <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
+                        <s:textarea id="trialDTO.officialTitle" name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
                        
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -450,9 +450,10 @@
                     <!--  summary4 information -->
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="submitTrial_trialDTO_summaryFourFundingCategoryCode" labelKey="update.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
+                    <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                         <s:select headerKey="" headerValue="--Select--" 
+                                    id="trialDTO.summaryFourFundingCategoryCode"
                                     name="trialDTO.summaryFourFundingCategoryCode"
                                     list="#summaryFourFundingCategoryCodeValues"
                                     cssStyle="width:206px" disabled="true"/>
@@ -468,8 +469,8 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_trialDTO_programCodeText" labelKey="studyProtocol.summaryFourPrgCode" tooltip="tooltip.summary_4_program_code">
-                        <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                    <reg-web:valueRow labelFor="trialDTO.programCodeText" labelKey="studyProtocol.summaryFourPrgCode" tooltip="tooltip.summary_4_program_code">
+                        <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.programCodeText</s:param>

@@ -9,21 +9,25 @@
 <%@ attribute name="required" required="false" type="java.lang.Boolean" description="True for a required indicator" %>
 <%@ attribute name="strong" required="false" type="java.lang.Boolean" description="True for a strong row" %>
 <%@ attribute name="tooltip" required="false" type="java.lang.String" description="An optional tooltip" %>
+<%@ attribute name="noLabelTag" required="false" type="java.lang.Boolean" description="If set to true, dont use label tag" %>
 <c:if test="${not cellOnly}">
     <c:choose>
         <c:when test="${empty id}"><tr></c:when>
         <c:otherwise><tr id="${id}"></c:otherwise>
     </c:choose>
 </c:if>
-    <td scope="row" class="label">
+    <c:choose>
+        <c:when test="${noLabelTag}"><td scope="row" class="label-noinput"></c:when>
+        <c:otherwise><td scope="row" class="label"></c:otherwise>
+    </c:choose>
         <c:choose>
             <c:when test="${not empty tooltip}">
                 <reg-web:displayTooltip tooltip="${tooltip}">
-                    <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
+                    <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}"/>
                 </reg-web:displayTooltip>
             </c:when>
             <c:otherwise>
-                <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
+                <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}" />
             </c:otherwise>
         </c:choose>
     </td>

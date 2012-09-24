@@ -19,7 +19,7 @@
   <tr>
     <td scope="row" class="label">
     <reg-web:displayTooltip tooltip="tooltip.abbreviated_trial_template">
-      <label for="submitProprietaryTrial_protocolDoc">
+      <label for="protocolDoc">
         <fmt:message key="submit.proprietary.trial.protocolDocument"/>
       </label>
     </reg-web:displayTooltip>
@@ -27,10 +27,10 @@
     <td class="value">
       <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">
         <s:property value="%{#session.protocolDoc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
+        <input id="protocolDoc" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
       </s:if>
       <s:else>
-        <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
+        <s:file id="protocolDoc" name="protocolDoc" value="true" cssStyle="width:270px"/>
         <span class="formErrorMsg">
           <s:fielderror>
             <s:param>trialDTO.protocolDocFileName</s:param>

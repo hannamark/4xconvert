@@ -29,7 +29,7 @@
        <tr>
          <td scope="row" class="label">
             <reg-web:displayTooltip tooltip="tooltip.oversight_authority_organization_name">
-                <label for="submitTrial_trialDTO_selectedRegAuth" ><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></label>
+                <label for="trialDTO.selectedRegAuth" ><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></label>
             </reg-web:displayTooltip>
          </td>
                 <td class="value">
