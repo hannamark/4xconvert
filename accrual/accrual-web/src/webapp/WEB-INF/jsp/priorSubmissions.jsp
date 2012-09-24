@@ -107,6 +107,6 @@
        <display:column titleKey="priorSubmissions.list.date" property="date" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.user" property="username" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.result" property="result" sortable="true" headerClass="sortable" headerScope="col"/>
-   </display:table>
+   </display:table>    
 </body>
 </html>
