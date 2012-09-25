@@ -105,7 +105,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -269,7 +268,11 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             return criteria;
         }
         if (StringUtils.isNotEmpty(getName())) {
-            criteria.add(Expression.ilike("pv.value", getName(), MatchMode.ANYWHERE));
+            String newName = getName();
+            if (newName.contains("-")) {
+                 newName = getName().replaceAll("-", "");
+            }
+            criteria.add(Expression.ilike("pv.value", newName, MatchMode.ANYWHERE));
         }
         if (StringUtils.isNotEmpty(getMeaning())) {
             criteria.add(Expression.ilike("vm.longName", getMeaning(), MatchMode.ANYWHERE));

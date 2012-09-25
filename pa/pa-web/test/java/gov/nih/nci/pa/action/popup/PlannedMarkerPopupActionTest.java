@@ -182,6 +182,13 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
        getRequest().clearAttributes();
+       plannedMarkerAction.setPublicId(null);
+       plannedMarkerAction.setName("ly-co");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       
+       getRequest().clearAttributes();
        plannedMarkerAction.setName(null);
        plannedMarkerAction.setMeaning("lyco");
        assertEquals(plannedMarkerAction.lookup(), "results");
