@@ -1339,9 +1339,9 @@ public class PAServiceUtils {
         StringBuffer errorMsg = new StringBuffer();
         if (studySiteAccrualStatusDTO != null) {
             errorMsg.append(ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
-                    ? "Site recruitment Status Code cannot be null , " : "");
+                    ? "Site recruitment Status Code cannot be null. " : "");
             errorMsg.append(ISOUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())
-                    ? "Site recruitment Status Date should be a valid date , " : "");
+                    ? "Site recruitment Status Date should be a valid date. " : "");
             if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     && null == RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode())) {
                 errorMsg.append("Please enter valid RecruitmentStatusCode.");
