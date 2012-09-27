@@ -213,4 +213,10 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs) {
         throw new RuntimeException("not supported via the grid service.");
     }
+    
+    @Override
+    public Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs) {
+        throw new RuntimeException("not supported via the grid service.");
+    }
 }
+
