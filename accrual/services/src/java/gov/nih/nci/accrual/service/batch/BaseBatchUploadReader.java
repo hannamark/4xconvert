@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
+import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
@@ -160,7 +162,9 @@ public class BaseBatchUploadReader {
      */
     protected static final List<String> PATIENT_GENDER = new ArrayList<String>();
     static {
-        PATIENT_GENDER.addAll(Arrays.asList("1", "2", "9"));
+        for (CDUSPatientGenderCode gc : CDUSPatientGenderCode.values()) {
+            PATIENT_GENDER.add(gc.getCdusCode());
+        }
         PATIENT_GENDER.addAll(Arrays.asList(PatientGenderCode.getDisplayNames()));
     }
     /**
@@ -168,7 +172,9 @@ public class BaseBatchUploadReader {
      */
     protected static final List<String> PATIENT_ETHNICITY = new ArrayList<String>();
     static {
-        PATIENT_ETHNICITY.addAll(Arrays.asList("1", "2", "8", "9"));
+        for (CDUSPatientEthnicityCode ec : CDUSPatientEthnicityCode.values()) {
+            PATIENT_ETHNICITY.add(ec.getCdusCode());
+        }
         PATIENT_ETHNICITY.addAll(Arrays.asList(PatientEthnicityCode.getDisplayNames()));
     }
     /**
