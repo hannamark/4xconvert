@@ -5,7 +5,7 @@
     <!--User Details-->
   	<c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-        <div id="userarea">Welcome, ${CsmHelper.firstName} |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
+        <div id="userarea">Welcome, ${CsmHelper.firstName} ${CsmHelper.lastName} |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
         </c:when>
         <c:otherwise>
         <div id="userarea"><a href='<c:url value="/protected/welcome.action"/>' class="btn_login">Log In</a></div>
