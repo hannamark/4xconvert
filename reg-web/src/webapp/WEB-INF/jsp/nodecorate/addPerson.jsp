@@ -43,7 +43,7 @@
    </tr>
    <tr>
    
-     <td scope="row" class="label"><label for="poOrganizations_state">State :<br></label></td>
+     <td scope="row" class="label"><label for="poOrganizations_orgStateSelect">State :<br></label></td>
      <td>
       <div id="poOrganizations_orgStateDivSelect" style="display:''">
        <s:select id="poOrganizations_orgStateSelect" name="state" headerKey="" headerValue="-Select a State-"  list="#usStates" />
@@ -57,7 +57,7 @@
   </tr>
    <tr>
        <td scope="row" class="label"><label for="poOrganizations_email">Email :</label><span class="required">*</span></td><td><s:textfield name="email"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
-       <td scope="row" class="label"><label for="oOrganizations_phone">Phone :</label></td><td><s:textfield name="phone"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
+       <td scope="row" class="label"><label for="poOrganizations_phone">Phone :</label></td><td><s:textfield name="phone"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>
    <tr>
         <td scope="row" class="label"><label for="poOrganizations_url">URL :</label></td><td><s:textfield name="url"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
