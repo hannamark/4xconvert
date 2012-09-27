@@ -104,7 +104,6 @@ import org.junit.Test;
 public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     private BioMarkersQueryAction bioMarkersQueryAction;
     StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
-
     
     @Before
     public void setUp() throws Exception {
@@ -121,7 +120,6 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         
         bioMarkersQueryAction.setPlannedMarkerList(plannedMarkerWebDTOs);
         
-        
     }
 
     @Test
@@ -132,7 +130,11 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         identifierMap.put(123457L, "NCI-2012-00261");
         identifiersList.add(123456L);
         identifiersList.add(123457L);
+        Map<Long, String> statusMap = new HashMap<Long, String>();
+        statusMap.put(123456L, "REJECTED");
+        statusMap.put(123457L, "VERIFICATION_PENDING");
         when(studyProtocolService.getTrialNciId(identifiersList)).thenReturn(identifierMap);
+        when(studyProtocolService.getTrialProcessingStatus(identifiersList)).thenReturn(statusMap);
         assertEquals(bioMarkersQueryAction.execute(), "success");
         assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());
     }
@@ -163,6 +165,6 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     public void testAccept() throws PAException{
         assertEquals(bioMarkersQueryAction.accept(), "success");
     }
-
+    
 
 }

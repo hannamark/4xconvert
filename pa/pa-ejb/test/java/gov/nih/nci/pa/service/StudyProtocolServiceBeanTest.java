@@ -753,6 +753,19 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         Map<Long, String> map = bean.getTrialNciId(listOfTrialIDs);
         assertTrue(map.size() > 0);     
     }
+    
+    @Test
+    public void getTrialProcessingStatus() throws Exception {
+        List<Long> listOfTrialIDs = new ArrayList<Long>();
+        listOfTrialIDs.add(1L);
+        listOfTrialIDs.add(2L);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+        createStudyProtocols(2, PAConstants.DCP_ORG_NAME, "DCP-2", false);
+        Map<Long, String> map = bean.getTrialProcessingStatus(listOfTrialIDs);
+        assertTrue(map.size() > 0);
+        assertTrue(map.containsValue("ACCEPTED"));
+        assertEquals("ACCEPTED", map.get(1L));
+    }
     @Test
     public void primaryPurposeCodeOtherTest2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =

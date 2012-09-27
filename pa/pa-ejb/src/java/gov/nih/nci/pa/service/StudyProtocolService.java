@@ -249,4 +249,10 @@ public interface StudyProtocolService {
      * @return {@link Map} map of Study protocol id and extensions
      */
     Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs);
+    /**
+     * This method is to use to get the Map of the studyProtocolis and its trial processing status codes.
+     * @param  studyProtocolIDs  studyProtocolIDs
+     * @return {@link Map} map of Study protocol id and trial processing status code
+     */
+    Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs);
 }

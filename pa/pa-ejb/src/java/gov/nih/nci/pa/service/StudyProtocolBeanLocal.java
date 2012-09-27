@@ -924,7 +924,37 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         return resultSet;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<Long, String> getTrialProcessingStatus(List<Long> listOfTrialIDs) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Map<Long, String> resultSet = new HashMap<Long, String>();
+        List<Object[]> queryList = null;
+        for (Long identifier : listOfTrialIDs) {
+            SQLQuery query = session
+            .createSQLQuery("select dws.study_protocol_identifier,"
+                    + " dws.status_code from document_workflow_status as dws"
+                    + " WHERE dws.study_protocol_identifier = (:id)"
+                    + " order by dws.identifier desc LIMIT 1");
+            query.setParameter("id", identifier);
+            queryList = query.list();
+            
+            for (Object[] oArr : queryList) {
+                BigInteger ret = null;
+                if (oArr[0] instanceof BigInteger) { 
+                    ret =  (BigInteger) oArr[0];
+                    if (oArr[1] != null) {
+                        resultSet.put(ret.longValue(), oArr[1].toString());
+                    }
+                }       
+            }
+        }
+        return resultSet;
+    
+    }
     /**
      * @param studyIndldeService the studyIndldeService to set
      */

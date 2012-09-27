@@ -328,4 +328,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     public Map<Long, String> getTrialNciId(List<Long> studyProtocolIDs) { 
         return new HashMap<Long, String>();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs) { 
+        return new HashMap<Long, String>();
+    }
 }

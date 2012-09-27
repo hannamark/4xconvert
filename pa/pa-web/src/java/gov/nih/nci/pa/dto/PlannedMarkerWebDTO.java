@@ -102,7 +102,7 @@ public class PlannedMarkerWebDTO {
     private String tissueSpecimenType;
     private String tissueCollectionMethod;
     private String status;
-
+    private String trialStatus;
     private String hugoCode;
     private boolean foundInHugo = false;
     private String fromEmail;
@@ -278,6 +278,19 @@ public class PlannedMarkerWebDTO {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+    /**
+     * @return the trialStatus
+     */
+    public String getTrialStatus() {
+        return trialStatus;
+    }
+
+    /**
+     * @param trialStatus the trialStatus to set
+     */
+    public void setTrialStatus(String trialStatus) {
+        this.trialStatus = trialStatus;
     }
 
     /**
