@@ -42,12 +42,9 @@ function selectTrialType(){
 					            <li class="stdsub">
 					                <ul>
 	                                    <c:choose>                                
-		                                    <c:when test="${requestScope.topic == 'searchtrials'}">
+		                                    <c:when test="${requestScope.topic == 'searchtrials' || requestScope.topic == 'searchresults' || requestScope.topic == 'viewresult' || requestScope.topic == 'updatetrial'}">
 		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Trials</a></li>
-		                                    </c:when>
-		                                    <c:when test="${requestScope.topic == 'searchresults'}">
-		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" class="selected">Trials</a></li>
-		                                    </c:when>
+		                                    </c:when>		                               
 		                                    <c:otherwise>
 		                                       <li><a id="searchTrialsMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/searchTrial.action');" >Trials</a></li>
 		                                    </c:otherwise>
