@@ -1,0 +1,33 @@
+<project name="ChangeRequest-ReportGenerator" default="generate:orgcr:report" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+   <tstamp>
+        <format property="TODAY" pattern="yyyy-MM-dd" locale="US"/>
+    </tstamp>   
+	
+	<property file="${basedir}/local.properties" />
+	<property file="${basedir}/build.properties"/>
+	<echoproperties destfile="${basedir}/resolved.build.properties"/>	
+    <property name="temp.dir" value="${basedir}/temp" />
+	
+	<delete dir="${temp.dir}" failonerror="false" quiet="true"/>
+	<mkdir dir="${temp.dir}"/>
+	<mkdir dir="${output.dir}"/>
+	
+    <path id="crreportgenerator.classpath">
+        <fileset dir="${basedir}/lib">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="crreportgenerator.classpath"/>
+    <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="crreportgenerator.classpath" name="groovy"/> 
+    	
+    <target name="generate:orgcr:report" description="Generates the Organization Change Request Report">
+        <echo message = "Generating Organization Change Request Report..."/>
+        <groovy src="groovy/OrganizationCRReportGenerator.groovy"/>
+    	<zip destfile="${output.dir}/Organization-CR-Report-${TODAY}.zip" basedir="${temp.dir}"/>
+    	<delete quiet="true" file="${basedir}/resolved.build.properties"/>
+    	<delete dir="${temp.dir}"/>
+    </target>
+    
+</project>
