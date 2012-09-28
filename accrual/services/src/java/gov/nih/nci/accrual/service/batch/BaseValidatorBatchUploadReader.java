@@ -176,6 +176,11 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 validateEthnicity(values, errMsg, lineNumber);
                 validateDateOfEntry(values, errMsg, lineNumber);
                 validateDiseaseCode(values, errMsg, lineNumber, sp, sdcCode, icd9Code, checkDisease);
+                String paymentMethod = AccrualUtil.safeGet(values, PATIENT_PAYMENT_METHOD_INDEX);
+                if (!StringUtils.isEmpty(paymentMethod) && !PATIENT_PAYMENT_METHOD.contains(paymentMethod.trim())) {
+                    errMsg.append("Please enter valid patient payment method for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+                }
             } else {
                 errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")
                 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");

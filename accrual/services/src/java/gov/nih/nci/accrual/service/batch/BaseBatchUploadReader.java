@@ -84,6 +84,8 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
+import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
+import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
@@ -96,6 +98,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -153,6 +156,10 @@ public class BaseBatchUploadReader {
      */
     protected static final int PATIENT_ETHNICITY_INDEX = 6;
     /**
+     * patient payment method index.
+     */
+    protected static final int PATIENT_PAYMENT_METHOD_INDEX = 7;
+    /**
      * patient date of entry index.
      */
     protected static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
@@ -199,7 +206,9 @@ public class BaseBatchUploadReader {
      */
     protected static final int ACCRUAL_COUNT_INDEX = 2;
     static {
-        PATIENT_RACE_CODE.addAll(Arrays.asList("01", "03", "04", "05", "06", "98", "99"));
+        for (CDUSPatientRaceCode rc : CDUSPatientRaceCode.values()) {
+            PATIENT_RACE_CODE.add(rc.getCdusCode());
+        }
         PATIENT_RACE_CODE.addAll(Arrays.asList(PatientRaceCode.getDisplayNames()));
     }
     private static final int ACCRUAL_COUNT_STUDY_SITE_ID_INDEX = 1;
@@ -209,6 +218,16 @@ public class BaseBatchUploadReader {
     protected static final List<String> KEY_WITH_PATIENTS_IDS = new ArrayList<String>();
     static {
         KEY_WITH_PATIENTS_IDS.addAll(Arrays.asList("PATIENTS", "PATIENT_RACES"));
+    }
+    /**
+     * patient payment method.
+     */
+    protected static final List<String> PATIENT_PAYMENT_METHOD = new ArrayList<String>();
+    static {
+        for (CDUSPaymentMethodCode pmc : CDUSPaymentMethodCode.values()) {
+            PATIENT_PAYMENT_METHOD.add(pmc.getCdusCode());
+        }        
+        PATIENT_PAYMENT_METHOD.addAll(Arrays.asList(PaymentMethodCode.getDisplayNames()));
     }
     /**
      * patient disease index.
