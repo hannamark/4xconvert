@@ -124,11 +124,11 @@
   <tr style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
     <td scope="row" class="label">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument"><fmt:message key="update.trial.otherDocument"/></label>
+        <label for="updateTrial_otherDocument_${varStatus.index}"><fmt:message key="update.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
     </td>
     <td class="value">
-        <s:file name="otherDocument" cssStyle="width:270px"/>
+        <input id="updateTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
         <span class="formErrorMsg">
           <s:fielderror>
             <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>

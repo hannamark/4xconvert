@@ -15,10 +15,8 @@
 </tr>
 <%-- Lead organization --%>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:property value="trialDTO.leadOrganizationName"/>
@@ -26,10 +24,8 @@
 </tr>
 <%-- principal investigator --%>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:property value="trialDTO.piName"/>

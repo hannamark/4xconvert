@@ -13,30 +13,24 @@
     <td colspan="2" class="space">&nbsp;</td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            Summary 4 Funding Sponsor Type:<span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        Summary 4 Funding Sponsor Type:<span class="required">*</span>
     </td>
     <td class="value">
         <s:property value="trialDTO.summaryFourFundingCategoryCode"/>
     </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label> 
-            Summary 4 Funding Sponsor: <span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        Summary 4 Funding Sponsor: <span class="required">*</span>
     </td>
     <td class="value">
         <s:property value="trialDTO.summaryFourOrgName"/>
     </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label for="summary4ProgramCode">
-            <fmt:message key="studyProtocol.summaryFourPrgCode"/>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="studyProtocol.summaryFourPrgCode"/>
     </td>
     <td class="value">
         <s:property value="trialDTO.programCodeText"/>

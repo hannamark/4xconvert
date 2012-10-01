@@ -8,12 +8,12 @@
     <tr>
         <s:if test="root != rootConstant || root == null" >
             <td scope="row" class="label">
-                 <label for="updateTrial_protocolWebDTO_otherIdentifiers">
+                 <label for="updateTrial_otherIdentifiers">
                     <fmt:message key="submit.trial.otherIdentifier"/>
                  </label>
              </td>
               <td>
-                <s:textfield name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100" 
+                <s:textfield id="updateTrial_otherIdentifiers" name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100" 
                              cssClass="%{#attr.updateOrAmendMode ? 'readonly' : ''}" cssStyle="width:200px" readonly="%{#attr.updateOrAmendMode}"/>
              </td>
         </s:if>     

@@ -26,10 +26,9 @@
     </td>
 </tr>
 <tr>
-    <td  scope="row" class="label">
-        <label>
+    <td  scope="row" class="label-noinput">
+
             <fmt:message key="submit.trial.phase"/><span class="required">*</span>
-        </label>
     </td>
     <td>
         <s:property value="trialDTO.phaseCode"/>
@@ -37,10 +36,8 @@
 </tr>
 <s:if test="trialDTO.phaseCode == 'NA'">
     <tr>
-        <td scope="row" class="label">
-            <label> 
+        <td scope="row" class="label-noinput">
                 <fmt:message key="submit.trial.otherPhaseText"/>
-            </label>
         </td>
         <td>
             <s:property value="trialDTO.phaseAdditionalQualifier"/>
@@ -48,20 +45,16 @@
     </tr>
 </s:if>
 <tr>
-    <td  scope="row" class="label">
-        <label>
+    <td  scope="row" class="label-noinput">
             <fmt:message key="submit.trial.type"/><span class="required">*</span>
-        </label>
     </td>
     <td>
          Interventional
     </td>
 </tr>
 <tr>
-    <td  scope="row" class="label">
-        <label>
+    <td  scope="row" class="label-noinput">
             <fmt:message key="submit.trial.purpose"/><span class="required">*</span>
-        </label>
     </td>
     <td>
         <s:property value="trialDTO.primaryPurposeCode"/>
@@ -70,7 +63,7 @@
 <s:if test="trialDTO.primaryPurposeCode == 'Other'">
     <tr>
         <td scope="row" class="label">
-            <label>
+            <label for="trialDTO.primaryPurposeOtherText">
                 <fmt:message key="submit.trial.otherPurposeText"/>
             </label>
         </td>

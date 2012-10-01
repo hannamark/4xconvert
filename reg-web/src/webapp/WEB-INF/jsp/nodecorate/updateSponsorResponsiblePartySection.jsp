@@ -20,18 +20,16 @@
 	    <td colspan="2" class="space">&nbsp;</td>
 	</tr>
 	<tr>
-	    <td scope="row" class="label">
-	        <label>Sponsor:<span class="required">*</span></label> 
+	    <td scope="row" class="label-noinput">
+	        Sponsor:<span class="required">*</span>
 	    </td>
 	    <td>
 	        <s:property value="trialDTO.sponsorName"/>
 	    </td>
 	</tr>   
 	<tr>
-	    <td scope="row" class="label">
-	        <label>
-	            <fmt:message key="update.trial.responsibleParty"/><span class="required">*</span>
-	        </label>
+	    <td scope="row" class="label-noinput">
+            <fmt:message key="update.trial.responsibleParty"/><span class="required">*</span>
 	    </td>
 	    <td>
 	        <s:property value="trialDTO.responsiblePartyType"/>
@@ -39,20 +37,16 @@
 	</tr>
 	<s:if test="trialDTO.responsiblePartyType == 'sponsor'">
 	    <tr>
-	        <td scope="row" class="label">
-	            <label> 
-	                <fmt:message key="update.trial.responsiblePartyContact"/>
-	            </label> 
+	        <td scope="row" class="label-noinput">
+                <fmt:message key="update.trial.responsiblePartyContact"/>
 	        </td>                                        
 	        <td class="value">
 	            <s:property value="trialDTO.responsiblePersonName"/>
 	        </td>
 	    </tr>
 	    <tr>
-	        <td scope="row" class="label">
-	            <label>
-	                <fmt:message key="update.trial.responsiblePartyGenericContact"/>
-	            </label> 
+	        <td scope="row" class="label-noinput">
+                <fmt:message key="update.trial.responsiblePartyGenericContact"/>
 	        </td>
 	        <td class="value">
 	            <s:property value="trialDTO.responsibleGenericContactName"/>
@@ -60,20 +54,16 @@
 	    </tr>   
 	</s:if>
 	<tr>
-	    <td scope="row" class="label">
-	        <label>
-	            <fmt:message key="update.trial.responsiblePartyEmail"/><span class="required">*</span>
-	        </label> 
+	    <td scope="row" class="label-noinput">
+            <fmt:message key="update.trial.responsiblePartyEmail"/><span class="required">*</span>
 	    </td>
 	    <td class="value">
 	        <s:property value="trialDTO.contactEmail"/>
 	    </td>
 	</tr>
 	<tr>
-	    <td scope="row" class="label">
-	        <label>
-	            <fmt:message key="update.trial.responsiblePartyPhone"/><span class="required">*</span>
-	        </label>
+	    <td scope="row" class="label-noinput">
+            <fmt:message key="update.trial.responsiblePartyPhone"/><span class="required">*</span>
 	    </td>
 	    <td class="value">
 	        <s:property value="trialDTO.contactPhone"/>

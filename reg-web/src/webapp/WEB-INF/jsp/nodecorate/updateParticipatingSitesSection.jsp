@@ -24,9 +24,9 @@
                                         </td>
                                         <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()"  />
                                         <td>
-                                            <s:select headerKey="" headerValue="--Select--"
+                                            <label><s:select headerKey="" headerValue="--Select--"
                                                 name="participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
-                                                list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
+                                                list="#recruitmentStatusValues" cssStyle="text-align:left;"/></label>
                                             <span class="formErrorMsg">
                                                 <s:fielderror>
                                                     <s:param>participatingsite.recStatus<s:property value="%{#psstats.index}"/></s:param>
@@ -34,7 +34,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <s:textfield  name="participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/>
+                                            <label><s:textfield  name="participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/></label>
                                             <span class="formErrorMsg">
                                                 <s:fielderror>
                                                     <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
@@ -42,7 +42,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/>
+                                            <label><s:textfield  name="participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/></label>
                                             <s:hidden  name="participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
                                         </td>
                                     </tr>

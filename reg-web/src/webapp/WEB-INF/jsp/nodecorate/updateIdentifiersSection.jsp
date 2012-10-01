@@ -15,30 +15,24 @@
     <td colspan="2" class="space">&nbsp;</td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span>
     </td>
     <td>
         <s:property value="trialDTO.leadOrgTrialIdentifier"/>
     </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="submit.trial.nctNumber"/>
-        </label>
+    <td scope="row" class="label-noinput">
+         <fmt:message key="submit.trial.nctNumber"/>
     </td>
     <td>
         <s:property value="trialDTO.nctIdentifier"/>
     </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="view.trial.identifier"/>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="view.trial.identifier"/>
     </td>
     <td class="value">
         <s:property value="trialDTO.assignedIdentifier"/>
@@ -46,10 +40,8 @@
 </tr>
 <c:if test="${trialDTO.ctepIdentifier != null }">
     <tr>
-        <td scope="row" class="label">
-            <label>
-                <fmt:message key="submit.trial.ctepIdentifier"/>
-            </label>
+        <td scope="row" class="label-noinput">
+            <fmt:message key="submit.trial.ctepIdentifier"/>
         </td>
         <td>
             <s:property value="trialDTO.ctepIdentifier"/>
@@ -58,10 +50,8 @@
 </c:if>
 <c:if test="${trialDTO.dcpIdentifier!= null}">
     <tr>
-        <td scope="row" class="label">
-            <label>
-                <fmt:message key="submit.trial.dcpIdentifier"/>
-            </label>
+        <td scope="row" class="label-noinput">
+            <fmt:message key="submit.trial.dcpIdentifier"/>
         </td>
         <td>
             <s:property value="trialDTO.dcpIdentifier"/>

@@ -7,10 +7,8 @@
 </tr>
 <!--  Trial Oversight Authority Country -->
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span>
-        </label>    
+    <td scope="row" class="label-noinput">
+        <fmt:message key="regulatory.oversight.country.name"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.lst"/>
@@ -18,10 +16,8 @@
      </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.selectedRegAuth"/>
@@ -30,10 +26,8 @@
 </tr>
 <!--   FDA Regulated Intervention Indicator-->
 <tr>
-    <td scope="row"  class="label">
-        <label>
-            <fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span>
-        </label>
+    <td scope="row"  class="label-noinput">
+        <fmt:message key="regulatory.FDA.regulated.interv.ind"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.fdaRegulatoryInformationIndicator"/>
@@ -42,10 +36,8 @@
  </tr>
 <!--   Section 801 Indicator-->
 <tr id="sec801row">
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="regulatory.section801.ind"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="regulatory.section801.ind"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.section801Indicator"/>
@@ -55,10 +47,8 @@
 
 <!--   Delayed Posting Indicator-->
 <tr id="delpostindrow">
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.delayedPostingIndicator"/>
@@ -67,10 +57,8 @@
 </tr>
 <!--   Data Monitoring Committee Appointed Indicator -->
 <tr id="datamonrow">
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="regulatory.data.monitoring.committee.ind"/>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="regulatory.data.monitoring.committee.ind"/>
     </td>
     <td class="value">
         <s:hidden name="trialDTO.dataMonitoringCommitteeAppointedIndicator"/>

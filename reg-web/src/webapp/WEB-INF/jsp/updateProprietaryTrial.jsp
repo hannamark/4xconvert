@@ -114,24 +114,24 @@
                 <table class="form">
                     <reg-web:titleRow titleKey="submit.proprietary.trial.trialIdentification"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.identifier">
+                    <reg-web:valueRow labelKey="view.trial.identifier" noLabelTag="true">
                         <s:property value="trialDTO.assignedIdentifier"/>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="view.trial.leadOrganization" required="true">
+                    <reg-web:valueRow labelFor="trialDTO.leadOrganizationName" labelKey="view.trial.leadOrganization" required="true">
                         <div id="loadOrgField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
                         </div>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true">
-                        <s:textfield name="trialDTO.leadOrgTrialIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
+                    <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true">
+                        <s:textfield id="trialDTO.leadOrgTrialIdentifier" name="trialDTO.leadOrgTrialIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.leadOrgTrialIdentifier</s:param>
                             </s:fielderror>
                         </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_participationWebDTO_nctNumber" labelKey="submit.trial.nctNumber">
-                        <s:textfield name="trialDTO.nctIdentifier" maxlength="200" size="100" cssStyle="width:200px" />
+                    <reg-web:valueRow labelFor="trialDTO.nctIdentifier" labelKey="submit.trial.nctNumber">
+                        <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier" maxlength="200" size="100" cssStyle="width:200px" />
                         <span class="info">(Mandatory if Exists)</span>
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -140,8 +140,8 @@
                         </span>
                     </reg-web:valueRow>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
-                    <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_trialTitle" labelKey="submit.trial.title" required="true">
-                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
+                    <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title" required="true">
+                        <s:textarea id="trialDTO.officialTitle" name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
                         
                         <span class="formErrorMsg">
                             <s:fielderror>
@@ -149,9 +149,9 @@
                             </s:fielderror>
                         </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialType" labelKey="submit.trial.type" required="true">
-                        <input type="radio" name="trialDTO.trialType" value="Interventional" checked="checked"> Interventional
-                        <input type="radio" name="trialDTO.trialType" value="Observational" disabled="disabled"> Observational
+                    <reg-web:valueRow labelFor="trialType" labelKey="submit.trial.type" required="true" noLabelTag="true">
+                        <label><input type="radio" name="trialDTO.trialType" value="Interventional" checked="checked">Interventional</label>
+                        <label><input type="radio" name="trialDTO.trialType" value="Observational" disabled="disabled"> Observational</label>
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.trialType</s:param>
@@ -165,11 +165,12 @@
                     <!--  summary4 information -->
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="submitTrial_summary4FundingCategory" labelKey="update.proprietary.trial.summary4FundingCategory">
+                    <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                         <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
                              <s:select headerKey="" headerValue="--Select--"
                                 name="trialDTO.summaryFourFundingCategoryCode"
+                                id="trialDTO.summaryFourFundingCategoryCode"
                                 list="#summaryFourFundingCategoryCodeValues"
                                 cssStyle="width:206px"
                                 disabled="true"/>
@@ -186,7 +187,7 @@
                              </s:fielderror>
                          </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="submitTrial_selectedSummary4Sponsor_name_part_0__value" labelKey="update.proprietary.trial.summary4Sponsor">
+                    <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
@@ -213,37 +214,37 @@
                                         <s:iterator id="trialDTO.participatingSitesList" value="trialDTO.participatingSitesList" status="psstats">
                                         <tr>
                                             <td>
-                                                <s:textarea  name="trialDTO.participatingSitesList[%{#psstats.index}].nameInvestigator" value="%{nameInvestigator}" readonly="true" cssStyle="width:200px;border: 1px solid #FFFFFF" rows="2"/>
+                                                <label><s:textarea  name="trialDTO.participatingSitesList[%{#psstats.index}].nameInvestigator" value="%{nameInvestigator}" readonly="true" cssStyle="width:200px;border: 1px solid #FFFFFF" rows="2"/></label>
                                                 <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].name" value="%{name}"/>
                                                 <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].investigator" value="%{investigator}"/>
                                             </td>
                                             <td>
-                                                <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].siteLocalTrialIdentifier" value="%{siteLocalTrialIdentifier}"/>
+                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].siteLocalTrialIdentifier" value="%{siteLocalTrialIdentifier}"/></label>
                                             </td>
                                             <td>
-                                                <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/>
+                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/></label>
                                                 <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
                                             </td>
                                             <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()"  />
                                             <td class="value">
-                                                <s:select headerKey="" headerValue="--Select--"
+                                                <label><s:select headerKey="" headerValue="--Select--"
                                                           name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
-                                                          list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
+                                                          list="#recruitmentStatusValues" cssStyle="text-align:left;"/></label>
                                             </td>
                                             <td nowrap="nowrap">
-                                                <s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12"/>
+                                                <label><s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12"/></label>
                                                 <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
                                                     <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                                                 </a>
                                             </td>
                                             <td nowrap="nowrap">
-                                                <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12"/>
+                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12"/></label>
                                                 <a href="javascript:showCal('Cal2-<s:property value="%{#psstats.index}"/>')"> 
                                                     <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                                                 </a>
                                             </td>
                                             <td nowrap="nowrap">
-                                                <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12"/>
+                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12"/></label>
                                                 <a href="javascript:showCal('Cal3-<s:property value="%{#psstats.index}"/>')"> 
                                                     <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                                                 </a>
