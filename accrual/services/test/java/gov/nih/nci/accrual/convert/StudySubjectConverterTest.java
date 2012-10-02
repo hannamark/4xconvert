@@ -84,6 +84,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.SDCDisease;
@@ -93,6 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import org.junit.Test;
 /**
@@ -186,8 +188,17 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(dto.getParticipatingSiteIdentifier()));
         assertTrue(stTest(dto.getRegistrationGroupId()));
         assertTrue(cdTest(dto.getSubmissionTypeCode()));
+
+        subject.setDisease(null);
+        dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
+        assertTrue(ISOUtil.isIiNull(dto.getDiseaseIdentifier()));
+        ICD9Disease icd9 = new ICD9Disease();
+        icd9.setId(IiConverter.convertToLong(iiVal));
+        subject.setIcd9disease(icd9);
+        dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
+        assertTrue(iiTest(dto.getDiseaseIdentifier()));
     }
-    
+
     private StudySubjectDto createStudySubjectDTO() {
         StudySubjectDto dto = new StudySubjectDto();
         dto.setIdentifier(iiVal);

@@ -181,7 +181,13 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setPaymentMethod(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setParticipatingSiteIdentifier(
                 IiConverter.convertToIi(bo.getStudySite() == null ? null : bo.getStudySite().getId()));
-        dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
+        Long diseaseId;
+        if (bo.getDisease() == null) {
+            diseaseId = bo.getIcd9disease() == null ? null : bo.getIcd9disease().getId();
+        } else {
+            diseaseId = bo.getDisease().getId();
+        }
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(diseaseId));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         return dto;

@@ -159,6 +159,7 @@ import javax.interceptor.Interceptors;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -206,16 +207,21 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     
     private boolean useTestSeq = false;
 
-    // Cache for country Ii's
-    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    /** Cache for country Ii's. */
+    private static CacheManager cacheManager;
     private static final String COUNTRY_CACHE_KEY = "COUNTRY_CACHE_KEY";
     private static final int CACHE_MAX_ELEMENTS = 50;
     private static final long CACHE_TIME = 43200;
-    static {
-        Cache cache = new Cache(COUNTRY_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+
+    private Cache getCountryCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(COUNTRY_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
                 CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
-        CACHE_MANAGER.removeCache(COUNTRY_CACHE_KEY);
-        CACHE_MANAGER.addCache(cache);
+            cacheManager.removeCache(COUNTRY_CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(COUNTRY_CACHE_KEY);
     }
 
     /**
@@ -397,12 +403,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     private Long updatePatientTable(SubjectAccrualDTO dto, Long userId, Long[] ids) 
             throws PAException {
-        Element element = CACHE_MANAGER.getCache(COUNTRY_CACHE_KEY).get(dto.getCountryCode());
+        Element element = getCountryCache().get(dto.getCountryCode());
         if (element == null) {
             Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
             Ii countryIi = IiConverter.convertToCountryIi(country.getId());
             element = new Element(dto.getCountryCode(), countryIi);
-            CACHE_MANAGER.getCache(COUNTRY_CACHE_KEY).put(element);
+            getCountryCache().put(element);
         }
 
         PatientDto patientDTO = new PatientDto();
