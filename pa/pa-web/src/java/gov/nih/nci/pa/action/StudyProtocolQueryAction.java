@@ -348,22 +348,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     private void setSuperAbstractorCommands(StudyProtocolQueryDTO spqDTO,
             boolean suAbs) {
-        // no need to display "Admin/Scientific Checkout" button if the trial
-        // has already been checked out
+        
         // for both uses by this super abstractor.
-        if (spqDTO.getAdminCheckout().getCheckoutBy() != null
-                && spqDTO.getScientificCheckout().getCheckoutBy() != null
-                && spqDTO.getAdminCheckout().getCheckoutBy()
-                        .equalsIgnoreCase(UsernameHolder.getUser())
-                && spqDTO.getScientificCheckout().getCheckoutBy()
-                        .equalsIgnoreCase(UsernameHolder.getUser())) {
-
-            return;
-
-        }
-
-        if (suAbs) {
-            checkoutCommands.add("adminAndScientificCheckOut");
+        if (spqDTO.getAdminCheckout().getCheckoutBy() != null && suAbs) {   
+        checkoutCommands.add("adminAndScientificCheckIn");
+        } else if (suAbs) {
+        checkoutCommands.add("adminAndScientificCheckOut");
         }
     }
 
@@ -452,6 +442,30 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         scientificCheckOut();
         return SHOW_VIEW_REFRESH;
     }
+    
+    /**
+     * Forced administrative and scientific check-in for super abstractors.
+     * @return The result name
+     * @throws PAException exception
+     */
+    public String adminAndScientificCheckIn() throws PAException {
+    	HttpSession session = ServletActionContext.getRequest().getSession();
+    	boolean suAbs = BooleanUtils.toBoolean((Boolean) session
+                .getAttribute(Constants.IS_SU_ABSTRACTOR));
+        if (!suAbs) {
+            throw new PAException(
+                    "Admin & Scientific forced check-in is only available to super abstractors.");
+        }
+        // forcibly check out, in case a different user has this trial checked in
+        adminCheckOut();
+        scientificCheckOut();
+        // now check in.
+        adminCheckIn();
+        scientificCheckIn();
+    	return SHOW_VIEW_REFRESH;
+    	
+    }
+     		
     
     /**
      * Scientific check-out.

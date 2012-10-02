@@ -220,7 +220,7 @@
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">adminCheckIn,adminCheckOut,scientificCheckIn,scientificCheckOut,adminAndScientificCheckOut</param>
+                <param name="includeMethods">adminCheckIn,adminCheckOut,scientificCheckIn,scientificCheckOut,adminAndScientificCheckOut,adminAndScientificCheckIn</param>
             </interceptor-ref>
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>
             <result name="error">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>

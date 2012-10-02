@@ -20,7 +20,7 @@
             function handleAction(action) {
                 var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
                 var form = document.forms[0];
-                if ((action == 'adminCheckIn') || (action == 'scientificCheckIn')){
+                if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
                     var bs=new Array(64).join(' ');
                     var comment=prompt(bs+"Enter check-in comment:"+bs,"");
                     if (comment==null){
