@@ -225,7 +225,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
-      <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" log.level.hibernate="${app.log.level.hibernate}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
+      <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" log.level.hibernate="${app.log.level.hibernate}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>	  
+	<echo message="replace server.xml - ${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"/>
+	<replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                 match='&lt;Connector acceptCount="100" address="\$\{jboss.bind.address\}"'
+                 replace='&lt;Connector acceptCount="100" address="${jboss.bind.address}" maxSavePostSize="16384"'
+                  />
   </target>
 
   <target name="install:pa-ear-jboss:app:re-configure" unless="exclude.pa-ear">
@@ -472,7 +477,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
   <target name="install:pa-ear-jboss:configure" unless="exclude.pa-ear">
 
     <!-- Use below if you are defining all the ports in your install.xml not the NCICB port configuraitons-->
-
     <if>
         <equals arg1="${jboss.major.version}" arg2="4"/>
         <then>
@@ -490,7 +494,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </if>
     <if>
         <equals arg1="${jboss.major.version}" arg2="5"/>
-        <then>
+        <then>		
             <jboss-configure
                 jboss.grid.configure="true"
                 jboss.server.bindingfile.location="${jboss.home}/server/${jboss.server.name}/conf/bindingservice.beans/META-INF/bindings-jboss-beans.xml"
