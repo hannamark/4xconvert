@@ -326,9 +326,9 @@
 	        <div id="comments-dialog" style="display:none;">
 	           <div class="header"><fmt:message key="manage.accrual.access.comments"/></div>
 	           <div class="body">
-	           <div>Please add comments for this action <i>(Optional)</i>:</div>
+	           <div><label for="comments">Please add comments for this action <i>(Optional)</i></label>:</div>
 	           <div>
-	               <s:textarea name="comments" value="" rows="5"></s:textarea>
+	               <s:textarea id="comments" name="comments" value="" rows="5"></s:textarea>
 	           </div>
 	           <div align="center">
 	               <input type="button" value="Save" 

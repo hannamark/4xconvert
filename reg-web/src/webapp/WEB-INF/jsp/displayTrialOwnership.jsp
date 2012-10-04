@@ -86,7 +86,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
         <table class="form">
             <tr>
                 <td scope="row" class="label">
-                    <label for="displayTrialOwnership_criteria_firstName"> <fmt:message key="displaytrialownership.criteria.firstname"/></label>
+                    <label for="firstName"> <fmt:message key="displaytrialownership.criteria.firstname"/></label>
                 </td>
                 <td>
                     <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"  cssStyle="width:200px" />
@@ -94,7 +94,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="displayTrialOwnership_criteria_lastName"> <fmt:message key="displaytrialownership.criteria.lastname"/></label>
+                    <label for="lastName"> <fmt:message key="displaytrialownership.criteria.lastname"/></label>
                 </td>
                 <td>
                     <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssStyle="width:200px" />
@@ -102,7 +102,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="displayTrialOwnership_criteria_email"> <fmt:message key="displaytrialownership.criteria.email"/></label>
+                    <label for="emailAddress"> <fmt:message key="displaytrialownership.criteria.email"/></label>
                 </td>
                 <td>
                     <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -110,7 +110,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
             </tr>
             <tr>
                 <td scope="row" class="label">
-                    <label for="displayTrialOwnership_criteria_nciIdentifier"> <fmt:message key="displaytrialownership.criteria.nciidentifier"/></label>
+                    <label for="nciIdentifier"> <fmt:message key="displaytrialownership.criteria.nciidentifier"/></label>
                 </td>
                 <td>
                     <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
@@ -140,7 +140,8 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.emails" headerScope="col">
-                <s:select name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
+                <label for="enableEmailNotifications_${row.userId}_${row.trialId}" class="hidden-label"><fmt:message key="displaytrialownership.results.emails"/></label>
+                <s:select id="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
                     onchange="setEmailNotificationsPreference(%{#attr.row.userId}, %{#attr.row.trialId}, $F(this));"
                     list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/>
             </display:column>
@@ -166,9 +167,9 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.emails" headerScope="col">
-                <s:select name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
+                <s:select id="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
                     onchange="setEmailNotificationsPreference(%{#attr.row.userId}, %{#attr.row.trialId}, $F(this));"
-                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/>
+                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/></label>
             </display:column>            
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">

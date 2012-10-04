@@ -11,10 +11,10 @@
         <c:set var="chkId" value="chk${row.id}" />
         <c:choose>
             <c:when test="${row.affiliatedOrgUserType.code == 'Admin'}">
-                <input type="checkbox" name="${chkId}" value="true" id="${chkId}" checked="checked" onclick="updateUserOrgType('${row.id}')"/>
+               <label for=${chkId} class="hidden-label"><fmt:message key="siteadministration.results.usertype"/></label><input type="checkbox" name="${chkId}" value="true" id="${chkId}" checked="checked" onclick="updateUserOrgType('${row.id}')"/>
             </c:when>
             <c:otherwise>
-                <input type="checkbox" name="${chkId}" value="true" id="${chkId}" onclick="updateUserOrgType('${row.id}')"/>
+                <label for=${chkId} class="hidden-label"><fmt:message key="siteadministration.results.usertype"/></label><input type="checkbox" name="${chkId}" value="true" id="${chkId}" onclick="updateUserOrgType('${row.id}')"/>
             </c:otherwise>
         </c:choose>
 

@@ -130,9 +130,11 @@
                                 <c:set var="chkRegUserId" value="chk${regUserRow.registryUser.id}" />
                                 <c:choose>
                                     <c:when test="${regUserRow.selected}">
+                                        <label for="${chkRegUserId}" class="hidden-label"><fmt:message key="managetrialownership.users.allow"/></label>
                                         <input type="checkbox" name="${chkRegUserId}" value="true" id="${chkRegUserId}" checked="checked" onclick="updateRegUser('${regUserRow.registryUser.id}')"/>
                                     </c:when>
                                     <c:otherwise>
+                                        <label for="${chkRegUserId}" class="hidden-label"><fmt:message key="managetrialownership.users.allow"/></label>
                                         <input type="checkbox" name="${chkRegUserId}" value="true" id="${chkRegUserId}" onclick="updateRegUser('${regUserRow.registryUser.id}')"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -158,9 +160,11 @@
                                 <c:set var="chkTrialId" value="chk${studyProtocolRow.studyProtocol.id}" />
                                 <c:choose>
                                     <c:when test="${studyProtocolRow.selected}">
+                                        <label for="${chkTrialId}" class="hidden-label"><fmt:message key="managetrialownership.trials.allow"/></label>
                                         <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" checked="checked" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
                                     </c:when>
                                     <c:otherwise>
+                                        <label for="${chkTrialId}" class="hidden-label"><fmt:message key="managetrialownership.trials.allow"/></label>
                                         <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -170,9 +174,11 @@
 	                                <c:set var="chkEmailTrialId" value="chkEmail${studyProtocolRow.studyProtocol.id}" />
 	                                <c:choose>
 	                                    <c:when test="${studyProtocolRow.emailSelected}">
-	                                        <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" checked="checked" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
+	                                        <label for="${chkEmailTrialId}" class="hidden-label"><fmt:message key="managetrialownership.trials.emails"/></label>
+                                            <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" checked="checked" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
 	                                    </c:when>
 	                                    <c:otherwise>
+                                            <label for="${chkEmailTrialId}" class="hidden-label"><fmt:message key="managetrialownership.trials.emails"/></label>
 	                                        <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
 	                                    </c:otherwise>
 	                                </c:choose>

@@ -355,6 +355,15 @@ TD.title
 { background:url("../images/ico_displayhidden.gif") no-repeat; padding-left:18px; }
 .calendaricon
 { vertical-align:middle; padding-left:5px; }
+/* for form label that are not visible in the page, but is read out by screen readers */
+.hidden-label{
+    position:absolute;
+    left:-10px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+}
 
 TD.btnrow
 { vertical-align:middle; border-top:1px dotted #dcdcdc; text-align:center  }
@@ -763,3 +772,4 @@ a.tooltip:hover span{display:inline; position:absolute;
     KHTMLOpacity: 0.90;
     MozOpacity: 0.90;
     opacity: 0.90;}
+
