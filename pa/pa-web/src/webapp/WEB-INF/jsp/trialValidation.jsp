@@ -256,9 +256,9 @@
                     <pa:displayWhenCheckedOut>
                         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">
                             <pa:button id="saveButton" imgClass="save" labelKey="trialValidation.button.save"/>
-                            <pa:button id="acceptButton" imgClass="save" labelKey="trialValidation.button.accept"/>
-                            <pa:button id="rejectButton" imgClass="save"  labelKey="trialValidation.button.reject"/>
-                            <pa:button id="onholdButton" imgClass="save"  labelKey="trialValidation.button.onhold"/>
+                            <pa:button id="acceptButton" imgClass="confirm" labelKey="trialValidation.button.accept"/>
+                            <pa:button id="rejectButton" imgClass="cancel"  labelKey="trialValidation.button.reject"/>
+                            <pa:button id="onholdButton" imgClass="history"  labelKey="trialValidation.button.onhold"/>
                         </c:if>
                         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'On-Hold'}">
                             <pa:button id="onholdButton" imgClass="save"  labelKey="trialValidation.button.offhold"/>
