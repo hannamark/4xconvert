@@ -36,8 +36,8 @@ def addrNoChangeSheetHeaderList = [ "CR ID - Current", "Organization Name - Curr
 Workbook workbook = new XSSFWorkbook();
 CreationHelper createHelper = workbook.getCreationHelper();
 Sheet sheet = workbook.createSheet("Valid CRs-To be Reviewed");
-Sheet sheet1 = workbook.createSheet("Duplicate CRs");
-Sheet sheet2 = workbook.createSheet("Invalid Or Phantom CRs");
+Sheet sheet1 = workbook.createSheet("Invalid Or Phantom CRs");
+Sheet sheet2 = workbook.createSheet("Duplicate CRs");
 
 Font headerFont = workbook.createFont();
 headerFont.setFontHeightInPoints((short)14);
@@ -91,61 +91,27 @@ poSourceConnection.eachRow(Queries.orgsWithCRSQL) { orgsWithCR ->
                         crOfcurrOrg.email,crOfcurrOrg.crid)
             }
         }
+
+        
+        duplicateCRs = [] //CR same as Current Organization
         filteredList = []
+        phantomList = []
+
         orginalList.each {
-            if (filteredList.contains(it)) {
-                row2 = sheet2.createRow(rowNum2++)
-                row2.createCell(0.shortValue()).setCellValue(it.getCrId())
-                row2.createCell(1.shortValue()).setCellValue(currentOrganization.getName())
-                row2.createCell(2.shortValue()).setCellValue(currentOrganization.getOrgPOId())
-                row2.createCell(3.shortValue()).setCellValue(currentOrganization.getStreetAddressLine())
-                row2.createCell(4.shortValue()).setCellValue(currentOrganization.getDeliveryAddressLine())
-                row2.createCell(5.shortValue()).setCellValue(currentOrganization.getCityOrMunicipality())
-                row2.createCell(6.shortValue()).setCellValue(currentOrganization.getStateOrProvince())
-                row2.createCell(7.shortValue()).setCellValue(currentOrganization.getPostalCode())
-                row2.createCell(8.shortValue()).setCellValue(currentOrganization.getCountry())
-                row2.createCell(9.shortValue()).setCellValue(currentOrganization.getEmail())
-                row2.createCell(10.shortValue()).setCellValue(currentOrganization.getCompleteAddress())
-                row2.createCell(11.shortValue()).setCellValue(it.getName())
-                row2.createCell(12.shortValue()).setCellValue(it.getStreetAddressLine())
-                row2.createCell(13.shortValue()).setCellValue(it.getDeliveryAddressLine())
-                row2.createCell(14.shortValue()).setCellValue(it.getCityOrMunicipality())
-                row2.createCell(15.shortValue()).setCellValue(it.getStateOrProvince())
-                row2.createCell(16.shortValue()).setCellValue(it.getPostalCode())
-                row2.createCell(17.shortValue()).setCellValue(it.getCountry())
-                row2.createCell(18.shortValue()).setCellValue(it.getEmail())
-                row2.createCell(19.shortValue()).setCellValue(it.getCompleteAddress())
-            }else{
+            if (currentOrganization.equals(it) ){
+                duplicateCRs.add(it);
+            }
+            if (!filteredList.contains(it)) {
                 filteredList.add(it)
+            }else {
+                if(!duplicateCRs.contains(it)){
+                    phantomList.add(it)
+                }
             }
         }
         
         filteredList.each {
-            if(currentOrganization.equals(it)){
-                row1 = sheet1.createRow(rowNum1++)
-                row1.createCell(0.shortValue()).setCellValue(it.getCrId())
-                row1.createCell(1.shortValue()).setCellValue(currentOrganization.getName())
-                row1.createCell(2.shortValue()).setCellValue(currentOrganization.getOrgPOId())
-                row1.createCell(3.shortValue()).setCellValue(currentOrganization.getStreetAddressLine())
-                row1.createCell(4.shortValue()).setCellValue(currentOrganization.getDeliveryAddressLine())
-                row1.createCell(5.shortValue()).setCellValue(currentOrganization.getCityOrMunicipality())
-                row1.createCell(6.shortValue()).setCellValue(currentOrganization.getStateOrProvince())
-                row1.createCell(7.shortValue()).setCellValue(currentOrganization.getPostalCode())
-                row1.createCell(8.shortValue()).setCellValue(currentOrganization.getCountry())
-                row1.createCell(9.shortValue()).setCellValue(currentOrganization.getEmail())
-                row1.createCell(10.shortValue()).setCellValue(currentOrganization.getCompleteAddress())
-                row1.createCell(11.shortValue()).setCellValue(it.getName())
-                row1.createCell(12.shortValue()).setCellValue(it.getStreetAddressLine())
-                row1.createCell(13.shortValue()).setCellValue(it.getDeliveryAddressLine())
-                row1.createCell(14.shortValue()).setCellValue(it.getCityOrMunicipality())
-                row1.createCell(15.shortValue()).setCellValue(it.getStateOrProvince())
-                row1.createCell(16.shortValue()).setCellValue(it.getPostalCode())
-                row1.createCell(17.shortValue()).setCellValue(it.getCountry())
-                row1.createCell(18.shortValue()).setCellValue(it.getEmail())
-                row1.createCell(19.shortValue()).setCellValue(it.getCompleteAddress())
-
-            }else {
-                
+            if(!currentOrganization.equals(it)){
                 row = sheet.createRow(rowNum++)
                 row.createCell(0.shortValue()).setCellValue(it.getCrId())
                 row.createCell(1.shortValue()).setCellValue(currentOrganization.getName())
@@ -198,6 +164,58 @@ poSourceConnection.eachRow(Queries.orgsWithCRSQL) { orgsWithCR ->
                 row.createCell(22.shortValue()).setCellValue("")
             }
         }
+        
+        duplicateCRs.each {
+            row1 = sheet1.createRow(rowNum1++)
+            row1.createCell(0.shortValue()).setCellValue(it.getCrId())
+            row1.createCell(1.shortValue()).setCellValue(currentOrganization.getName())
+            row1.createCell(2.shortValue()).setCellValue(currentOrganization.getOrgPOId())
+            row1.createCell(3.shortValue()).setCellValue(currentOrganization.getStreetAddressLine())
+            row1.createCell(4.shortValue()).setCellValue(currentOrganization.getDeliveryAddressLine())
+            row1.createCell(5.shortValue()).setCellValue(currentOrganization.getCityOrMunicipality())
+            row1.createCell(6.shortValue()).setCellValue(currentOrganization.getStateOrProvince())
+            row1.createCell(7.shortValue()).setCellValue(currentOrganization.getPostalCode())
+            row1.createCell(8.shortValue()).setCellValue(currentOrganization.getCountry())
+            row1.createCell(9.shortValue()).setCellValue(currentOrganization.getEmail())
+            row1.createCell(10.shortValue()).setCellValue(currentOrganization.getCompleteAddress())
+            row1.createCell(11.shortValue()).setCellValue(it.getName())
+            row1.createCell(12.shortValue()).setCellValue(it.getStreetAddressLine())
+            row1.createCell(13.shortValue()).setCellValue(it.getDeliveryAddressLine())
+            row1.createCell(14.shortValue()).setCellValue(it.getCityOrMunicipality())
+            row1.createCell(15.shortValue()).setCellValue(it.getStateOrProvince())
+            row1.createCell(16.shortValue()).setCellValue(it.getPostalCode())
+            row1.createCell(17.shortValue()).setCellValue(it.getCountry())
+            row1.createCell(18.shortValue()).setCellValue(it.getEmail())
+            row1.createCell(19.shortValue()).setCellValue(it.getCompleteAddress())
+        }
+        
+        phantomList.each {
+            row2 = sheet2.createRow(rowNum2++)
+            row2.createCell(0.shortValue()).setCellValue(it.getCrId())
+            row2.createCell(1.shortValue()).setCellValue(currentOrganization.getName())
+            row2.createCell(2.shortValue()).setCellValue(currentOrganization.getOrgPOId())
+            row2.createCell(3.shortValue()).setCellValue(currentOrganization.getStreetAddressLine())
+            row2.createCell(4.shortValue()).setCellValue(currentOrganization.getDeliveryAddressLine())
+            row2.createCell(5.shortValue()).setCellValue(currentOrganization.getCityOrMunicipality())
+            row2.createCell(6.shortValue()).setCellValue(currentOrganization.getStateOrProvince())
+            row2.createCell(7.shortValue()).setCellValue(currentOrganization.getPostalCode())
+            row2.createCell(8.shortValue()).setCellValue(currentOrganization.getCountry())
+            row2.createCell(9.shortValue()).setCellValue(currentOrganization.getEmail())
+            row2.createCell(10.shortValue()).setCellValue(currentOrganization.getCompleteAddress())
+            row2.createCell(11.shortValue()).setCellValue(it.getName())
+            row2.createCell(12.shortValue()).setCellValue(it.getStreetAddressLine())
+            row2.createCell(13.shortValue()).setCellValue(it.getDeliveryAddressLine())
+            row2.createCell(14.shortValue()).setCellValue(it.getCityOrMunicipality())
+            row2.createCell(15.shortValue()).setCellValue(it.getStateOrProvince())
+            row2.createCell(16.shortValue()).setCellValue(it.getPostalCode())
+            row2.createCell(17.shortValue()).setCellValue(it.getCountry())
+            row2.createCell(18.shortValue()).setCellValue(it.getEmail())
+            row2.createCell(19.shortValue()).setCellValue(it.getCompleteAddress())
+        }
+        
+
+        
+
     }
 }
 FileOutputStream fileOut = new FileOutputStream("temp/Organization-CR-Report-"+ReportGenUtils.getFormatedCurrentDate()+".xlsx");
