@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.iso.dto;
 
+import java.util.List;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 
@@ -104,7 +106,9 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private Cd tissueSpecimenTypeCode;
     private Cd tissueCollectionMethodCode;
     private Cd statusCode;
-
+    private List<String> slectedAssayType;
+    private List<String> selectedAssayPurpose;
+    private List<String> selectedTissueSpecType;
     /**
      * @return the name
      */
@@ -258,5 +262,41 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
      */
     public void setStatusCode(Cd statusCode) {
         this.statusCode = statusCode;
+    }
+    /**
+     * @return the slectedAssayType
+     */
+    public List<String> getSlectedAssayType() {
+        return slectedAssayType;
+    }
+    /**
+     * @param slectedAssayType the slectedAssayType to set
+     */
+    public void setSlectedAssayType(List<String> slectedAssayType) {
+        this.slectedAssayType = slectedAssayType;
+    } 
+    /**
+     * @return the selectedAssayPurpose
+     */
+    public List<String> getSelectedAssayPurpose() {
+        return selectedAssayPurpose;
+    }
+    /**
+     * @param selectedAssayPurpose the selectedAssayPurpose to set
+     */
+    public void setSelectedAssayPurpose(List<String> selectedAssayPurpose) {
+        this.selectedAssayPurpose = selectedAssayPurpose;
+    } 
+    /**
+     * @return the selectedTissueSpecType
+     */
+    public List<String> getSelectedTissueSpecType() {
+        return selectedTissueSpecType;
+    }
+    /**
+     * @param selectedTissueSpecType the selectedTissueSpecType to set
+     */
+    public void setSelectedTissueSpecType(List<String> selectedTissueSpecType) {
+        this.selectedTissueSpecType = selectedTissueSpecType;
     }
 }

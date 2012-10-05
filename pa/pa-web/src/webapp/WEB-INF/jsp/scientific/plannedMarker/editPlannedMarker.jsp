@@ -27,16 +27,16 @@
                 }
             }
 
-            function toggleAssayTypeOtherText() {
-                if ($('assayType').value == 'Other') {
+            function toggleAssayTypeOtherText(inputValue) { 
+                if (inputValue.value == 'Other' && inputValue.checked == true) {
                     $('assayTypeOtherTextRow').show();
                 } else {
                     $('assayTypeOtherTextRow').hide();
                 }
             }
             
-            function toggleAssayPurposeOtherText() {
-                if ($('assayPurpose').value == 'Other') {
+            function toggleAssayPurposeOtherText(inputValue) {
+                if (inputValue.value == 'Other' && inputValue.checked == true) {
                     $('assayPurposeOtherTextRow').show();
                 } else {
                     $('assayPurposeOtherTextRow').hide();

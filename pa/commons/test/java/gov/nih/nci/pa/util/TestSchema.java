@@ -649,24 +649,24 @@ public class TestSchema {
         PlannedMarker marker01 = new PlannedMarker();
         marker01.setStudyProtocol(sp);
         marker01.setName("Marker #1");
-        marker01.setAssayTypeCode(AssayTypeCode.PCR);
+        marker01.setAssayTypeCode(AssayTypeCode.PCR.getCode());
         marker01.setAssayUseCode(AssayUseCode.RESEARCH);
-        marker01.setAssayPurposeCode(AssayPurposeCode.RESEARCH);
+        marker01.setAssayPurposeCode(AssayPurposeCode.RESEARCH.getCode());
         marker01.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        marker01.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA);
+        marker01.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA.getCode());
         marker01.setStatusCode(ActiveInactivePendingCode.PENDING);
         addUpdObject(marker01);
 
         PlannedMarker marker02 = new PlannedMarker();
         marker02.setStudyProtocol(sp);
         marker02.setName("Marker #2");
-        marker02.setAssayTypeCode(AssayTypeCode.OTHER);
+        marker02.setAssayTypeCode(AssayTypeCode.OTHER.getCode());
         marker02.setAssayTypeOtherText("Assay Type Other Text");
         marker02.setAssayUseCode(AssayUseCode.RESEARCH);
-        marker02.setAssayPurposeCode(AssayPurposeCode.OTHER);
+        marker02.setAssayPurposeCode(AssayPurposeCode.OTHER.getCode());
         marker02.setAssayPurposeOtherText("Assay Purpose Other Text");
         marker02.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        marker02.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA);
+        marker02.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA.getCode());
         marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
         addUpdObject(marker02);
 
@@ -1107,11 +1107,11 @@ public class TestSchema {
     public static PlannedMarker createPlannedMarker() {
         PlannedMarker result = new PlannedMarker(); 
         result.setName("name");
-        result.setAssayTypeCode(AssayTypeCode.CGH);
+        result.setAssayTypeCode(AssayTypeCode.CGH.getCode());
         result.setAssayUseCode(AssayUseCode.CORRELATIVE);
-        result.setAssayPurposeCode(AssayPurposeCode.ELIGIBILITY_CRITERION);
+        result.setAssayPurposeCode(AssayPurposeCode.ELIGIBILITY_CRITERION.getCode());
         result.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        result.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.CITRATED_PLASMA);
+        result.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.CITRATED_PLASMA.getCode());
         result.setStatusCode(ActiveInactivePendingCode.ACTIVE);       
         return result;
     }

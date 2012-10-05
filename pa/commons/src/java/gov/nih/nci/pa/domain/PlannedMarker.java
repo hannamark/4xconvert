@@ -83,12 +83,8 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
-import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -113,12 +109,12 @@ public class PlannedMarker extends PlannedObservation {
     private String name;
     private String longName;
     private String hugoBiomarkerCode;
-    private AssayTypeCode assayTypeCode;
+    private String assayTypeCode;
     private String assayTypeOtherText;
     private AssayUseCode assayUseCode;
-    private AssayPurposeCode assayPurposeCode;
+    private String assayPurposeCode;
     private String assayPurposeOtherText;
-    private TissueSpecimenTypeCode tissueSpecimenTypeCode;
+    private String tissueSpecimenTypeCode;
     private TissueCollectionMethodCode tissueCollectionMethodCode;
     private ActiveInactivePendingCode statusCode;
 
@@ -173,17 +169,17 @@ public class PlannedMarker extends PlannedObservation {
      * @return the assayTypeCode
      */
     @Column(name = "ASSAY_TYPE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
+   // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
-    public AssayTypeCode getAssayTypeCode() {
+    public String getAssayTypeCode() {
         return assayTypeCode;
     }
 
     /**
      * @param assayTypeCode the assayTypeCode to set
      */
-    public void setAssayTypeCode(AssayTypeCode assayTypeCode) {
+    public void setAssayTypeCode(String assayTypeCode) {
         this.assayTypeCode = assayTypeCode;
     }
 
@@ -225,17 +221,17 @@ public class PlannedMarker extends PlannedObservation {
      * @return the assayPurposeCode
      */
     @Column(name = "ASSAY_PURPOSE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
+   // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
-    public AssayPurposeCode getAssayPurposeCode() {
+    public String getAssayPurposeCode() {
         return assayPurposeCode;
     }
 
     /**
      * @param assayPurposeCode the assayPurposeCode to set
      */
-    public void setAssayPurposeCode(AssayPurposeCode assayPurposeCode) {
+    public void setAssayPurposeCode(String assayPurposeCode) {
         this.assayPurposeCode = assayPurposeCode;
     }
 
@@ -259,17 +255,17 @@ public class PlannedMarker extends PlannedObservation {
      * @return the tissueSpecimenTypeCode
      */
     @Column(name = "TISSUE_SPECIMEN_TYPE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
+   // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
-    public TissueSpecimenTypeCode getTissueSpecimenTypeCode() {
+    public String getTissueSpecimenTypeCode() {
         return tissueSpecimenTypeCode;
     }
 
     /**
      * @param tissueSpecimenTypeCode the tissueSpecimenTypeCode to set
      */
-    public void setTissueSpecimenTypeCode(TissueSpecimenTypeCode tissueSpecimenTypeCode) {
+    public void setTissueSpecimenTypeCode(String tissueSpecimenTypeCode) {
         this.tissueSpecimenTypeCode = tissueSpecimenTypeCode;
     }
 

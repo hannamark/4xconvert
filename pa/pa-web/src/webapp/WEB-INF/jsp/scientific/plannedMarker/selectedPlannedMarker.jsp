@@ -58,15 +58,26 @@
         <td class="label">
             <s:label for="plannedMarker.assayType"><fmt:message key="plannedMarker.assayType" />:</s:label><span class="required">*</span>
         </td>
-        <td style="width: 250px">
+        <td style="border:1px solid lavender">
             <s:set name="assayTypeValues" value="@gov.nih.nci.pa.enums.AssayTypeCode@getDisplayNames()" />
-            <s:select headerKey="" headerValue="" name="plannedMarker.assayType" id="assayType" list="#assayTypeValues"
-                onchange="toggleAssayTypeOtherText();" />
+            <s:set name="selectedValues" value="@gov.nih.nci.pa.enums.AssayTypeCode@getSelectedDisplayNames(plannedMarker.selectedAssayType)"/>
+            <s:checkboxlist list="#assayTypeValues" name="plannedMarker.assayType" value="#selectedValues" id="assayType" onclick="toggleAssayTypeOtherText(this);" theme="vertical-checkbox"/> 
+            
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>plannedMarker.assayType</s:param>
                 </s:fielderror>
             </span>
+        </td>
+        <td>  
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>               
+            <p> Note: Users have the option to multi-select attribute values for Assay Type </p>
         </td>
     </tr>
     <tr id="assayTypeOtherTextRow" style="display: none;">
@@ -100,16 +111,19 @@
         <td class="label">
             <s:label for="plannedMarker.assayPurpose"><fmt:message key="plannedMarker.assayPurpose" />:</s:label><span class="required">*</span>
         </td>
-        <td style="width: 250px">
+        <td style="width: 250px;border:1px solid lavender">
             <s:set name="assayPurposeValues" value="@gov.nih.nci.pa.enums.AssayPurposeCode@getDisplayNames()" /> 
-            <s:select headerKey="" headerValue="" name="plannedMarker.assayPurpose" id="assayPurpose" list="#assayPurposeValues"
-                onchange="toggleAssayPurposeOtherText()" />
+            <s:set name="selectedPurposeValues" value="@gov.nih.nci.pa.enums.AssayPurposeCode@getSelectedDisplayNames(plannedMarker.selectedAssayPurpose)"/>
+          
+            <s:checkboxlist list="#assayPurposeValues" name="plannedMarker.assayPurpose" value="#selectedPurposeValues" id="assayPurpose" onclick="toggleAssayPurposeOtherText(this);" theme="vertical-checkbox"/>
+            
             <span class="formErrorMsg">
                 <s:fielderror>
                     <s:param>plannedMarker.assayPurpose</s:param>
                 </s:fielderror>
             </span>
         </td>
+        
         <s:if test="%{plannedMarker.id == null}">      
         <td class="value">
             <ul style="margin-top: -6px;">
@@ -118,7 +132,13 @@
                         <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span></span>
                     </s:a>
                 </li>
-            </ul>
+            </ul>      
+            <br>
+            <br>
+            <br>      
+           <p> Note: Users have the option to multi-select attribute values for Assay Purpose</p>
+            
+    </tr>
         </td>
         </s:if>
     </tr>
@@ -139,16 +159,24 @@
         <td class="label">
             <s:label for="plannedMarker.tissueSpecimenType"><fmt:message key="plannedMarker.tissueSpecimenType" />:</s:label><span class="required">*</span>
         </td>
-        <td style="width: 250px">
+        <td style="width: 250px;border:1px solid lavender">
             <s:set name="tissueSpecimenTypeValues" value="@gov.nih.nci.pa.enums.TissueSpecimenTypeCode@getDisplayNames()" />
-            <s:select headerKey="" headerValue="" name="plannedMarker.tissueSpecimenType" id="tissueSpecimenType"
-                list="#tissueSpecimenTypeValues" />
+            <s:set name="selectedTissueValues" value="@gov.nih.nci.pa.enums.TissueSpecimenTypeCode@getSelectedDisplayNames(plannedMarker.selectedTissueSpecType)"/>
+           
+            <s:checkboxlist list="#tissueSpecimenTypeValues" name="plannedMarker.tissueSpecimenType" value="#selectedTissueValues" id="tissueSpecimenType" theme="vertical-checkbox" />
+           
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>plannedMarker.tissueSpecimenType</s:param>
                 </s:fielderror>
             </span>
         </td>
+        <td style="width:350px">
+            <br>
+            <br>
+            <br>
+            <p> Note: Users have the option to multi-select attribute values for Tissue Specimen Type </p> 
+            </td>
     </tr>
     <tr>
         <td class="label">

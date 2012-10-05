@@ -84,7 +84,7 @@ package gov.nih.nci.pa.enums;
 
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
-
+import java.util.List;
 /**
  * Enumeration for planned marker's assay type code.
  *
@@ -197,7 +197,22 @@ public enum AssayTypeCode implements CodedEnum<String> {
     public static AssayTypeCode getByCode(String code) {
         return getByClassAndCode(AssayTypeCode.class, code);
     }
-
+    /**
+     * @param selectedValues the selectedValues
+     * @return selected display names for assay type codes
+     */
+    public static String[] getSelectedDisplayNames(List<String> selectedValues) {
+            AssayTypeCode[] codes = new AssayTypeCode[selectedValues.size()];
+            for (int i = 0; i < selectedValues.size(); i++) {
+                codes[i] = AssayTypeCode.getByCode(selectedValues.get(i).toString());
+            }
+            String[] codedNames = new String[codes.length];
+            for (int i = 0; i < codes.length; i++) {
+                codedNames[i] = codes[i].getCode();
+            }
+            return codedNames;
+        
+    }
     /**
      * @return display names for assay type codes
      */

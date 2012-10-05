@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.util.List;
 /**
  * Web DTO for planned markers.
  *
@@ -111,7 +112,9 @@ public class PlannedMarkerWebDTO {
     private String nciIdentifier;
     private String csmUserEmailId;
     private String question;
-
+    private List<String> selectedAssayType;
+    private List<String> selectedAssayPurpose;
+    private List<String> selectedTissueSpecType;
     /**
      * @return the id
      */
@@ -396,8 +399,47 @@ public class PlannedMarkerWebDTO {
     public void setQuestion(String question) {
         this.question = question;
     }
-
-
-
-
+    /**
+     * 
+     * @return selectedAssayType
+     */
+    public List<String> getSlectedAssayType() {
+        return selectedAssayType;
+    }
+    /**
+     * 
+     * @param selectedAssayType selectedAssayType
+     */
+    public void setSlectedAssayType(List<String> slectedAssayType) {
+        this.selectedAssayType = slectedAssayType;
+    }
+    /**
+     * 
+     * @return selectedAssayPurpose
+     */
+    public List<String> getSelectedAssayPurpose() {
+        return selectedAssayPurpose;
+    }
+    /**
+     * 
+     * @param selectedAssayPurpose selectedAssayPurpose
+     */
+    public void setSelectedAssayPurpose(List<String> selectedAssayPurpose) {
+        this.selectedAssayPurpose = selectedAssayPurpose;
+    }
+    /**
+     * 
+     * @return selectedTissueSpecType
+     */
+    public List<String> getSelectedTissueSpecType() {
+        return selectedTissueSpecType;
+    }
+    /**
+     * 
+     * @param selectedTissueSpecType selectedTissueSpecType
+     */
+    public void setSelectedTissueSpecType(List<String> selectedTissueSpecType) {
+        this.selectedTissueSpecType = selectedTissueSpecType;
+    }
+    
 }

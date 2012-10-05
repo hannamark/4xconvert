@@ -87,6 +87,7 @@ import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
+import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -308,15 +309,26 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         }
         enforceAdditionalBusinessRules();
     }
-
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private void enforceAdditionalBusinessRules() {
-        if (StringUtils.equals(getPlannedMarker().getAssayType(), AssayTypeCode.OTHER.getCode())
-                && StringUtils.isEmpty(getPlannedMarker().getAssayTypeOtherText())) {
-            addFieldError("plannedMarker.assayTypeOtherText", getText("error.plannedMarker.assayTypeOtherText"));
+        String[] assayTypeList = StringUtils.split(getPlannedMarker().getAssayType(), ",");
+        if (assayTypeList != null) {      
+            for (String assayType : assayTypeList) {
+                if (StringUtils.equals(assayType, AssayTypeCode.OTHER.getCode())
+                        && StringUtils.isEmpty(getPlannedMarker().getAssayTypeOtherText())) {
+                  addFieldError("plannedMarker.assayTypeOtherText", getText("error.plannedMarker.assayTypeOtherText"));
+                }
+            }
         }
-        if (StringUtils.equals(getPlannedMarker().getAssayPurpose(), AssayPurposeCode.OTHER.getCode())
-                && StringUtils.isEmpty(getPlannedMarker().getAssayPurposeOtherText())) {
-            addFieldError("plannedMarker.assayPurposeOtherText", getText("error.plannedMarker.assayPurposeOtherText"));
+        String[] assayPurposeList = StringUtils.split(getPlannedMarker().getAssayPurpose(), ",");
+        if (assayPurposeList != null) {
+            for (String assayPurpose : assayPurposeList) {
+                if (StringUtils.equals(assayPurpose, AssayPurposeCode.OTHER.getCode())
+                        && StringUtils.isEmpty(getPlannedMarker().getAssayPurposeOtherText())) {
+                    addFieldError("plannedMarker.assayPurposeOtherText", 
+                            getText("error.plannedMarker.assayPurposeOtherText"));
+                }
+            }
         }
         if (StringUtils.isEmpty(getPlannedMarker().getTissueSpecimenType())) {
             addFieldError("plannedMarker.tissueSpecimenType", getText("error.plannedMarker.tissueSpecimenType"));
@@ -337,11 +349,36 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         webDTO.setHugoCode(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode()));
         webDTO.setFoundInHugo(StringUtils.isNotEmpty(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode())));
         webDTO.setAssayType(CdConverter.convertCdToString(markerDTO.getAssayTypeCode()));
+        if (markerDTO.getAssayTypeCode() != null) {
+            String[] assayTypeSplit = CdConverter.convertCdToString(markerDTO.getAssayTypeCode()).split(","); 
+            List<String> assayTypeList = new ArrayList<String>();   
+            for (String assayTypeValue : assayTypeSplit) {
+                assayTypeList.add(AssayTypeCode.getByCode(assayTypeValue).getCode());
+            }
+            webDTO.setSlectedAssayType(assayTypeList);
+        }
         webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO.getAssayTypeOtherText()));
         webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO.getAssayUseCode()));
+        if (markerDTO.getAssayPurposeCode() != null) {
+            String[] assayPurposeSplit = CdConverter.convertCdToString(markerDTO.getAssayPurposeCode()).split(",");
+            List<String> assayPurposeList = new ArrayList<String>();
+            for (String assayPurposeValue : assayPurposeSplit) {
+                assayPurposeList.add(AssayPurposeCode.getByCode(assayPurposeValue).getCode());
+            }
+            webDTO.setSelectedAssayPurpose(assayPurposeList);
+        }
         webDTO.setAssayPurpose(CdConverter.convertCdToString(markerDTO.getAssayPurposeCode()));
         webDTO.setAssayPurposeOtherText(StConverter.convertToString(markerDTO.getAssayPurposeOtherText()));
         webDTO.setTissueSpecimenType(CdConverter.convertCdToString(markerDTO.getTissueSpecimenTypeCode()));
+        if (markerDTO.getTissueSpecimenTypeCode() != null) {
+            String[] tissueSpecTypeSplit = CdConverter.convertCdToString(
+                    markerDTO.getTissueSpecimenTypeCode()).split(",");
+            List<String> tissueSpecTypeList = new ArrayList<String>();
+            for (String tissueSpecTypeValue : tissueSpecTypeSplit) {
+                tissueSpecTypeList.add(TissueSpecimenTypeCode.getByCode(tissueSpecTypeValue).getCode());
+            }
+            webDTO.setSelectedTissueSpecType(tissueSpecTypeList);
+        }
         webDTO.setTissueCollectionMethod(CdConverter.convertCdToString(markerDTO.getTissueCollectionMethodCode()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
         return webDTO;

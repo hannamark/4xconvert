@@ -102,7 +102,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*
+                        _,d-\d+?-[sop],^struts\..*,^__multiselect_.*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -113,7 +113,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*
+                        _,d-\d+?-[sop],^struts\..*,^__multiselect_.*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="maliciousInput" />

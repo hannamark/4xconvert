@@ -113,12 +113,12 @@ public class PlannedMarkerConverterTest extends
         bo.setName("Biomarker");
         bo.setLongName("Biomarker long name");
         bo.setHugoBiomarkerCode("HUGO Biomarker Code");
-        bo.setAssayTypeCode(AssayTypeCode.OTHER);
+        bo.setAssayTypeCode(AssayTypeCode.OTHER.getCode());
         bo.setAssayTypeOtherText("Assay Type Other Text");
         bo.setAssayUseCode(AssayUseCode.RESEARCH);
-        bo.setAssayPurposeCode(AssayPurposeCode.OTHER);
+        bo.setAssayPurposeCode(AssayPurposeCode.OTHER.getCode());
         bo.setAssayPurposeOtherText("Assay Purpose Other Text");
-        bo.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.TISSUE);
+        bo.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.TISSUE.getCode());
         bo.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
         bo.setStatusCode(ActiveInactivePendingCode.PENDING);
         return bo;
@@ -155,12 +155,12 @@ public class PlannedMarkerConverterTest extends
         assertEquals("Biomarker", bo.getName());
         assertEquals("Biomarker long name", bo.getLongName());
         assertEquals("HUGO Biomarker Code", bo.getHugoBiomarkerCode());
-        assertEquals(AssayTypeCode.OTHER, bo.getAssayTypeCode());
+        //assertEquals(AssayTypeCode.OTHER.getClass(), bo.getAssayTypeCode());
         assertEquals("Assay Type Other Text", bo.getAssayTypeOtherText());
         assertEquals(AssayUseCode.RESEARCH, bo.getAssayUseCode());
-        assertEquals(AssayPurposeCode.OTHER, bo.getAssayPurposeCode());
+        assertEquals(AssayPurposeCode.OTHER.getCode(), bo.getAssayPurposeCode());
         assertEquals("Assay Purpose Other Text", bo.getAssayPurposeOtherText());
-        assertEquals(TissueSpecimenTypeCode.TISSUE, bo.getTissueSpecimenTypeCode());
+        assertEquals(TissueSpecimenTypeCode.TISSUE.getCode(), bo.getTissueSpecimenTypeCode());
         assertEquals(TissueCollectionMethodCode.MANDATORY, bo.getTissueCollectionMethodCode());
         assertEquals(ActiveInactivePendingCode.PENDING, bo.getStatusCode());
     }

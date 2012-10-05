@@ -82,11 +82,16 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
+
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
 import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -120,18 +125,61 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         dto.setName(StConverter.convertToSt(marker.getName()));
         dto.setLongName(StConverter.convertToSt(marker.getLongName()));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd(marker.getHugoBiomarkerCode()));
-        dto.setAssayTypeCode(CdConverter.convertToCd(marker.getAssayTypeCode()));
+        String assayType = marker.getAssayTypeCode();        
+        String finalAssayTypeCode = enumTypeCodeValue(AssayTypeCode.class, assayType); 
+        //String finalAssayTypeCode = assayTypeCodeValue(assayType);
+        dto.setAssayTypeCode(CdConverter.convertStringToCd(finalAssayTypeCode));
         dto.setAssayTypeOtherText(StConverter.convertToSt(marker.getAssayTypeOtherText()));
         dto.setAssayUseCode(CdConverter.convertToCd(marker.getAssayUseCode()));
-        dto.setAssayPurposeCode(CdConverter.convertToCd(marker.getAssayPurposeCode()));
+        // change of Assay Purpose Code
+        String assayPurposeCode = marker.getAssayPurposeCode();
+       // String finalAssayPurposeCode = assayPurposeCodeValue(assayPurposeCode);
+        String finalAssayPurposeCode = enumTypeCodeValue(AssayPurposeCode.class, assayPurposeCode);
+        dto.setAssayPurposeCode(CdConverter.convertStringToCd(finalAssayPurposeCode)); 
+       // dto.setAssayPurposeCode(CdConverter.convertToCd(marker.getAssayPurposeCode()));
         dto.setAssayPurposeOtherText(StConverter.convertToSt(marker.getAssayPurposeOtherText()));
-        dto.setTissueSpecimenTypeCode(CdConverter.convertToCd(marker.getTissueSpecimenTypeCode()));
+        // change of tissueSpecimenType
+        String tissueSpecimenType = marker.getTissueSpecimenTypeCode();
+        String finaltissueSpecimenType = enumTypeCodeValue(TissueSpecimenTypeCode.class, tissueSpecimenType);
+        dto.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(finaltissueSpecimenType));
+        
         dto.setTissueCollectionMethodCode(CdConverter.convertToCd(marker.getTissueCollectionMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(marker.getStatusCode()));
         if (marker.getUserLastCreated() != null) {
             dto.setUserLastCreated(StConverter.convertToSt(marker.getUserLastCreated().getUserId().toString()));
         }
         return dto;
+    }
+    @SuppressWarnings("unchecked")
+    private <E extends Enum<E>> String enumTypeCodeValue(Class<E> enumData, String typeValue) {       
+        String[] typeCodeSplit = null;
+        if (typeValue != null) {
+            typeCodeSplit = typeValue.split(",\\s*");
+        }     
+        CodedEnum<String>[] enumConstants = (CodedEnum<String>[]) enumData.getEnumConstants();    
+        List<String> typeCodeList = new ArrayList<String>();
+        for (String assayTypeValue : typeCodeSplit) {
+            for (CodedEnum<String> enumConstant : enumConstants) {
+                if (enumConstant.getDisplayName().equals(assayTypeValue) 
+                        || enumConstant.toString().equals(assayTypeValue)) {
+                    typeCodeList.add(enumConstant.getDisplayName());
+                    break;
+                }
+            }         
+        }   
+        Iterator<String> itr = typeCodeList.iterator();
+        String finalTypeCode = "";
+        int i = typeCodeList.size();
+        while (itr.hasNext()) {
+            if (i == 1) {
+                finalTypeCode = finalTypeCode.concat(itr.next());
+            } else {
+                finalTypeCode = finalTypeCode.concat(itr.next() + ",");
+            }
+            i--;
+        }
+        return finalTypeCode;
+        
     }
 
     /**
@@ -140,17 +188,25 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
     @Override
     public void convertFromDtoToDomain(PlannedMarkerDTO dto, PlannedMarker marker) {
         new PlannedActivityConverter().convertFromDtoToDomain(dto, marker);
+        
         marker.setName(StConverter.convertToString(dto.getName()));
         marker.setLongName(StConverter.convertToString(dto.getLongName()));
         marker.setHugoBiomarkerCode(CdConverter.convertCdToString(dto.getHugoBiomarkerCode()));
-        marker.setAssayTypeCode(AssayTypeCode.getByCode(CdConverter.convertCdToString(dto.getAssayTypeCode())));
+        String finalAssayTypeCode = enumTypeCodeValue(AssayTypeCode.class, 
+                CdConverter.convertCdToString(dto.getAssayTypeCode()));
+        marker.setAssayTypeCode(finalAssayTypeCode);
         marker.setAssayTypeOtherText(StConverter.convertToString(dto.getAssayTypeOtherText()));
         marker.setAssayUseCode(AssayUseCode.getByCode(CdConverter.convertCdToString(dto.getAssayUseCode())));
-        marker.setAssayPurposeCode(
-                AssayPurposeCode.getByCode(CdConverter.convertCdToString(dto.getAssayPurposeCode())));
+        String finalAssayPurposeCode = enumTypeCodeValue(AssayPurposeCode.class, 
+                CdConverter.convertCdToString(dto.getAssayPurposeCode()));
+
+        marker.setAssayPurposeCode(finalAssayPurposeCode);
         marker.setAssayPurposeOtherText(StConverter.convertToString(dto.getAssayPurposeOtherText()));
-        marker.setTissueSpecimenTypeCode(
-                TissueSpecimenTypeCode.getByCode(CdConverter.convertCdToString(dto.getTissueSpecimenTypeCode())));
+        
+        String finalTissueSpecType = enumTypeCodeValue(TissueSpecimenTypeCode.class, 
+                CdConverter.convertCdToString(dto.getTissueSpecimenTypeCode()));
+
+        marker.setTissueSpecimenTypeCode(finalTissueSpecType);
         marker.setTissueCollectionMethodCode(TissueCollectionMethodCode.getByCode(
                 CdConverter.convertCdToString(dto.getTissueCollectionMethodCode())));
         marker.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
