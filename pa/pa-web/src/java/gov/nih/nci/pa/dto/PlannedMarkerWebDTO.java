@@ -403,15 +403,15 @@ public class PlannedMarkerWebDTO {
      * 
      * @return selectedAssayType
      */
-    public List<String> getSlectedAssayType() {
+    public List<String> getSelectedAssayType() {
         return selectedAssayType;
     }
     /**
      * 
      * @param selectedAssayType selectedAssayType
      */
-    public void setSlectedAssayType(List<String> slectedAssayType) {
-        this.selectedAssayType = slectedAssayType;
+    public void setSelectedAssayType(List<String> selectedAssayType) {
+        this.selectedAssayType = selectedAssayType;
     }
     /**
      * 

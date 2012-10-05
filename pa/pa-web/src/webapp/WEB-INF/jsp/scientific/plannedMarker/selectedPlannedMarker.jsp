@@ -124,15 +124,17 @@
             </span>
         </td>
         
-        <s:if test="%{plannedMarker.id == null}">      
+             
         <td class="value">
+        <s:if test="%{plannedMarker.id == null}"> 
             <ul style="margin-top: -6px;">
                 <li style="padding-left: 0">
                     <s:a href="javascript:void(0)" cssClass="btn" id="addVariation" onclick="addVariation('true');">
                         <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span></span>
                     </s:a>
                 </li>
-            </ul>      
+            </ul>
+            </s:if>      
             <br>
             <br>
             <br>      
@@ -140,7 +142,7 @@
             
     </tr>
         </td>
-        </s:if>
+        
     </tr>
     <tr id="assayPurposeOtherTextRow" style="display: none;">
         <td class="label">

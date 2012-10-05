@@ -355,7 +355,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             for (String assayTypeValue : assayTypeSplit) {
                 assayTypeList.add(AssayTypeCode.getByCode(assayTypeValue).getCode());
             }
-            webDTO.setSlectedAssayType(assayTypeList);
+            webDTO.setSelectedAssayType(assayTypeList);
         }
         webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO.getAssayTypeOtherText()));
         webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO.getAssayUseCode()));
