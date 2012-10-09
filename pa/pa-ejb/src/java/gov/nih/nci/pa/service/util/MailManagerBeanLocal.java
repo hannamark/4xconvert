@@ -610,24 +610,73 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @Override
     public List<String> sendOnHoldReminder(Long studyProtocolId, StudyOnhold onhold,
             Date deadline) throws PAException {     
+        
         StudyProtocolQueryDTO spDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
-        String mailBody = lookUpTableService.getPropertyValue("trial.onhold.reminder.body");
-        String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
         
+        String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
+        String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, true);
+        return sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
+    }
+    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see gov.nih.nci.pa.service.util.MailManagerService#sendOnHoldReminder
+     * (java.lang.Long, gov.nih.nci.pa.domain.StudyOnhold, java.util.Date)
+     */
+    @Override
+    public void sendOnHoldEmail(Long studyProtocolId, StudyOnhold onhold,
+            Date deadline) throws PAException {
+        
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(studyProtocolId);
+        
+        String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
+        String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, false);
+        sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
+    }    
+    
+    
+    /**
+     * This method constructs the mail body for a on hold reminder email or immediate email. 
+     * @param onhold StudyOnHold
+     * @param deadline Deadline date for responding to the Hold. 
+     * @param spDTO StudyProtocolQueryDTO
+     * @param reminderMail Boolean value to pick the reminder template or the immediate mail template.
+     * @return MailBody
+     * @throws PAException Exception to be thrown 
+     */
+    private String prepareOnHoldMailBody(StudyOnhold onhold, Date deadline,
+            StudyProtocolQueryDTO spDTO, boolean reminderMail)
+            throws PAException {
+        String mailBody = "";
+        if (reminderMail) {
+            mailBody = lookUpTableService
+                    .getPropertyValue("trial.onhold.reminder.body");
+        } else {
+            mailBody = lookUpTableService
+                    .getPropertyValue("trial.onhold.email.body");
+        }
         mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER,
+                spDTO.getNciIdentifier());
         mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
+        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER,
+                spDTO.getLocalStudyProtocolIdentifier());
+        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO
+                .getLastCreated().getDateLastCreated()));
         mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(HOLD_DATE, getFormatedDate(onhold.getOnholdDate()));
+        mailBody = mailBody.replace(HOLD_DATE,
+                getFormatedDate(onhold.getOnholdDate()));
         mailBody = mailBody.replace(DEADLINE, getFormatedDate(deadline));
         mailBody = mailBody.replace(HOLD_REASON, StringUtils.isBlank(onhold
                 .getOnholdReasonText()) ? onhold.getOnholdReasonCode()
                 .getCode() : onhold.getOnholdReasonText());
-        return sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
+        return mailBody;
     }
+    
 
     /**
      * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.

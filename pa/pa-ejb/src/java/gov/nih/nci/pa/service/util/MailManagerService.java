@@ -321,4 +321,13 @@ public interface MailManagerService {
             throws PAException;
     
 
+    /**
+     * Sends On-Hold email to all trial record owners and the trial submitter.
+     * @param studyProtocolId studyProtocolId
+     * @param onhold onhold
+     * @param deadline deadline
+     * @throws PAException PAException
+     */
+    void sendOnHoldEmail(Long studyProtocolId, StudyOnhold onhold, Date deadline) throws PAException;     
+    
 }

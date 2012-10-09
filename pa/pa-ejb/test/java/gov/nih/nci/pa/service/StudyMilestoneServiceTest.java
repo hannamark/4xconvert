@@ -83,6 +83,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -110,7 +111,9 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceBean;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
@@ -165,7 +168,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorServiceRemote = mock(TSRReportGeneratorServiceRemote.class);
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
     private final DocumentServiceLocal documentServiceLocal = mock(DocumentServiceLocal.class);
-    
+    private final LookUpTableServiceRemote lookUpTableServiceRemote = mock(LookUpTableServiceRemote.class);
 
     private Ii spIi;
     private Ii spAmendIi;
@@ -177,6 +180,11 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         CSMUserService.setInstance(new MockCSMUserService());
 
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.deadline")))
+                .thenReturn("21");
+        ohs.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
         bean.setDocumentWorkflowStatusService(dws);
         bean.setMailManagerService(mailSrc);
@@ -344,6 +352,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void checkOnHoldRules() throws Exception {
+        MailManagerServiceLocal mailManagerServiceLocal = mock(MailManagerServiceLocal.class);
+        ohs.setMailManagerSerivceLocal(mailManagerServiceLocal);
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));

@@ -127,6 +127,7 @@ implements StudyOnholdServiceLocal {
         if (!onHold && newOnHold) {
             createDocumentWorkflowStatus(dto.getStudyProtocolIdentifier(), DocumentWorkflowStatusCode.ON_HOLD);
         }
+        sendOnHoldEmail(dto);
         return result;
     }
     
@@ -366,11 +367,36 @@ implements StudyOnholdServiceLocal {
             }
         }       
     }
+    
+    private void sendOnHoldEmail(StudyOnholdDTO onHoldDto) throws PAException {
+        StudyOnhold studyOnHold = new StudyOnholdConverter()
+                .convertFromDtoToDomain(onHoldDto);
+        Date deadline = calculateDeadLineDate(studyOnHold);
+        mailManagerSerivceLocal.sendOnHoldEmail(studyOnHold.getStudyProtocol()
+                .getId(), studyOnHold, deadline);
+    }
+    
+    /**
+     * This method calculates the On Hold Deadline date.
+     * @param studyOnHold StudyOnHold
+     * @return Deadline date
+     * @throws PAException Exception to be thrown
+     */
+    private Date calculateDeadLineDate(StudyOnhold studyOnHold)
+            throws PAException {
+        int deadlineDays = Integer.parseInt(lookUpTableServiceRemote
+                .getPropertyValue("trial.onhold.deadline"));
+        // protection from invalid configuration
+        if (deadlineDays <= 0) {
+            throw new IllegalArgumentException(
+                    "Invalid configuration: trial.onhold.deadline property");
+        }
+        return DateUtils.addDays(studyOnHold.getOnholdDate(), deadlineDays);
+    }
 
     private void sendReminderOrTerminateSubmission(StudyProtocol studyProtocol,
             StudyOnhold recentHold) throws PAException {
-        int deadlineDays = Integer.parseInt(lookUpTableServiceRemote
-                .getPropertyValue("trial.onhold.deadline"));
+        
         int reminderFreq = Integer.parseInt(lookUpTableServiceRemote
                 .getPropertyValue("trial.onhold.reminder.frequency"));
         Date startDate = null;
@@ -383,15 +409,15 @@ implements StudyOnholdServiceLocal {
                     "Invalid trial.onhold.startdate configuration property.", e);
         }
         // protection from invalid configuration
-        if (deadlineDays <= 0 || reminderFreq <= 0) {
+        if (reminderFreq <= 0) {
             throw new IllegalArgumentException(
-                    "Invalid configuration: trial.onhold.deadline & trial.onhold.reminder.frequency properties");
+                    "Invalid configuration: trial.onhold.reminder.frequency property");
         }
         
         Date holdDate = recentHold.getOnholdDate();
         if (DateUtils.isSameDay(holdDate, startDate)
                 || holdDate.after(startDate)) {
-            Date deadline = DateUtils.addDays(holdDate, deadlineDays);
+            Date deadline = calculateDeadLineDate(recentHold);
             Date today = getTodaysDate();
             if (today.after(deadline)) {
                 terminateSubmission(studyProtocol, recentHold);
