@@ -105,10 +105,10 @@
                                 <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIds.jsp" %>
                                 <c:if test="${trialDTO.assignedIdentifier !=null && trialDTO.assignedIdentifier!= ''}">
                                     <reg-web:titleRow titleKey="trial.amendDetails"/>
-                                    <reg-web:valueRow labelKey="view.trial.amendmentNumber">
+                                    <reg-web:valueRow labelKey="view.trial.amendmentNumber" noLabelTag="true">
                                         <c:out value="${trialDTO.localAmendmentNumber}"/>
                                     </reg-web:valueRow>
-                                    <reg-web:valueRow labelKey="view.trial.amendmentDate">
+                                    <reg-web:valueRow labelKey="view.trial.amendmentDate" noLabelTag="true">
                                         <c:out value="${trialDTO.amendmentDate}"/>
                                     </reg-web:valueRow>
                                 </c:if>

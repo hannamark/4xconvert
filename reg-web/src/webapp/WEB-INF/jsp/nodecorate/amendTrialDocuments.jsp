@@ -13,7 +13,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_protocolDoc"> 
+        <label for="protocolDoc"> 
           <fmt:message key="amend.trial.protocolDocument" /> <span class="required">*</span>
         </label>
       </td>
@@ -35,7 +35,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_otherDocument">
+        <label for="changeMemoDoc">
           <fmt:message key="amend.trial.changeMemo" />
           <span class="required">**</span>
         </label>
@@ -58,7 +58,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_otherDocument">
+        <label for="protocolHighlightDocument">
           <fmt:message key="amend.trial.protocolHighlight" /> <span class="required">**</span> 
         </label>
       </td>
@@ -80,7 +80,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_irbApproval"> 
+        <label for="irbApproval"> 
           <fmt:message  key="submit.trial.irbApproval" /> 
           <span class="required">*</span> 
         </label>
@@ -102,7 +102,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_participatingSites">
+        <label for="participatingSites">
           <fmt:message key="submit.trial.participatingSites" />
         </label>
       </td>
@@ -124,7 +124,7 @@
     </tr>
     <tr>
       <td scope="row" class="label">
-        <label for="submitTrial_informedConsentDocument">
+        <label for="informedConsentDocument">
           <fmt:message key="submit.trial.informedConsent" />
         </label>
       </td>

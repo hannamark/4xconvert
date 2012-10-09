@@ -35,10 +35,8 @@
     </td>
 </tr>
 <tr>
-    <td scope="row" class="label">
-        <label>
-            <fmt:message key="view.trial.identifier"/>
-        </label>
+    <td scope="row" class="label-noinput">
+        <fmt:message key="view.trial.identifier"/>
     </td>
     <td class="value">
         <s:property value="trialDTO.assignedIdentifier"/>

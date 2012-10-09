@@ -9,7 +9,7 @@
           <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
-                        <label for="submitTrial_summary4FundingCategory">Summary 4 Funding Sponsor Type:</label>
+                        <label for="trialDTO.summaryFourFundingCategoryCode">Summary 4 Funding Sponsor Type:</label>
                         <span class="required">*</span>
                     </reg-web:displayTooltip>
                 </td>
@@ -17,6 +17,7 @@
                 <td class="value">
                     <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
                          <s:select headerKey="" headerValue="--Select--" 
+                            id="trialDTO.summaryFourFundingCategoryCode"
                             name="trialDTO.summaryFourFundingCategoryCode" 
                             list="#summaryFourFundingCategoryCodeValues"
                             value ="trialDTO.summaryFourFundingCategoryCode"
@@ -25,6 +26,7 @@
                      </c:if>
                      <c:if test="${empty trialDTO.summaryFourFundingCategoryCode}">
                         <s:select headerKey="" headerValue="--Select--" 
+                            id="trialDTO.summaryFourFundingCategoryCode" 
                             name="trialDTO.summaryFourFundingCategoryCode" 
                             list="#summaryFourFundingCategoryCodeValues"
                             value ="trialDTO.summaryFourFundingCategoryCode"
@@ -40,7 +42,7 @@
            <tr>
                 <td scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_source">
-                        <label for="submitTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor: </label>
+                        <label for="trialDTO.summaryFourOrgName"> Summary 4 Funding Sponsor: </label>
                         <span class="required">*</span>
                     </reg-web:displayTooltip>
                 </td>
@@ -58,11 +60,11 @@
             <tr>
              <td scope="row" class="label">
                 <reg-web:displayTooltip tooltip="tooltip.summary_4_program_code">
-                    <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+                    <label for="trialDTO.programCodeText"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                 </reg-web:displayTooltip>
              </td>
              <td class="value">
-                <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                 <span class="formErrorMsg">
                     <s:fielderror>
                             <s:param>trialDTO.programCodeText</s:param>

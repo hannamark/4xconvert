@@ -8,7 +8,7 @@
 <%-- Lead organization --%>
 <tr>
     <td scope="row" class="label">
-        <label for="submitTrial_selectedLeadOrg_name_part_0__value">
+        <label for="trialDTO.leadOrganizationName">
             <fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span>
         </label>
     </td>
@@ -43,7 +43,7 @@
 <%-- principal investigator --%>
 <tr>
     <td scope="row" class="label">
-        <label for="submitTrial_poLeadPiFullName"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
+        <label for="trialDTO.piName"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
     </td>
     <td class="value">
         <div id="loadPersField">

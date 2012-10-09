@@ -373,8 +373,8 @@
                     <reg-web:spaceRow/>
                     <reg-web:titleRow titleKey="trial.amendDetails"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.amendmentNumber">
-                        <s:textfield name="trialDTO.localAmendmentNumber" maxlength="200" size="100" cssStyle="width:200px"  />
+                    <reg-web:valueRow labelKey="view.trial.amendmentNumber" labelFor="trialDTO.localAmendmentNumber">
+                        <s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" size="100" cssStyle="width:200px"  />
                         <span class="formErrorMsg">
                             <s:fielderror>
                                 <s:param>trialDTO.localAmendmentNumber</s:param>
@@ -382,8 +382,8 @@
                         </span>
                     </reg-web:valueRow>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.amendmentDate" required="true">
-                        <s:textfield name="trialDTO.amendmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                    <reg-web:valueRow labelKey="view.trial.amendmentDate" required="true" labelFor="trialDTO.amendmentDate">
+                        <s:textfield id="trialDTO.amendmentDate" name="trialDTO.amendmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                         <a href="javascript:showCal('Cal5')">
                             <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                         </a> (mm/dd/yyyy)
@@ -426,10 +426,10 @@
                                 <table class="form">
                                     <tbody>
                                         <tr>
-                                            <th><fmt:message key="submit.trial.fundingMechanism"/></th>
-                                            <th><fmt:message key="submit.trial.instituteCode"/></th>
-                                            <th><fmt:message key="submit.trial.serialNumber"/></th>
-                                            <th><fmt:message key="submit.trial.divProgram"/></th>
+                                            <th><label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/></<label></th>
+                                            <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/></<label></th>
+                                            <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/></<label></th>
+                                            <th><label for="nciDivisionProgramCode"><fmt:message key="submit.trial.divProgram"/></<label></th>
                                             <th></th>
                                         </tr>
                                         <tr>
