@@ -13,6 +13,11 @@ import java.rmi.RemoteException;
  */
 public class StudyRecruitmentStatusServiceImpl extends StudyRecruitmentStatusServiceImplBase {
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
   public StudyRecruitmentStatusServiceImpl() throws RemoteException {
       super();
   }

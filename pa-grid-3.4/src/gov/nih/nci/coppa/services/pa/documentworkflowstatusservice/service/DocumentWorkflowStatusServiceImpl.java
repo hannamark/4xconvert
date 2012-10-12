@@ -17,6 +17,11 @@ public class DocumentWorkflowStatusServiceImpl extends DocumentWorkflowStatusSer
         super();
     }
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     private final GenericStudyCurrentPaGridServiceImpl<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> impl
             = new GenericStudyCurrentPaGridServiceImpl<DocumentWorkflowStatusDTO,
                 DocumentWorkflowStatus>(DocumentWorkflowStatus.class, DocumentWorkflowStatusDTO.class);

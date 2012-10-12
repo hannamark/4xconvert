@@ -24,6 +24,12 @@ public class RegulatoryAuthorityServiceImpl extends RegulatoryAuthorityServiceIm
 
     private static final Logger logger = LogManager.getLogger(RegulatoryAuthorityServiceImpl.class);
     private final InvokeRegulatoryAuthorityEjb regAuthService = new InvokeRegulatoryAuthorityEjb();
+
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
 	public RegulatoryAuthorityServiceImpl() throws RemoteException {
 		super();
 	}

@@ -21,6 +21,11 @@ public class StudySiteAccrualStatusServiceImpl extends StudySiteAccrualStatusSer
     private static final Logger logger = LogManager.getLogger(StudySiteAccrualStatusServiceImpl.class);
     private final InvokeStudySiteAccrualStatusEjb ejb = new InvokeStudySiteAccrualStatusEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudySiteAccrualStatusServiceImpl() throws RemoteException {
         super();
     }

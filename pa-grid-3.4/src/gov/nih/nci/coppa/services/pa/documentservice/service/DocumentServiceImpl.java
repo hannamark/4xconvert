@@ -23,6 +23,11 @@ public class DocumentServiceImpl extends DocumentServiceImplBase {
   private static final Logger logger = LogManager.getLogger(DocumentServiceImpl.class);
   private final InvokeDocumentEjb documentService = new InvokeDocumentEjb();
 
+  static {
+      gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+  }
+
+
   public DocumentServiceImpl() throws RemoteException {
     super();
   }

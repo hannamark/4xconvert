@@ -28,6 +28,11 @@ public class StudySiteContactServiceImpl extends StudySiteContactServiceImplBase
             new GenericStudyPaGridServiceImpl<StudySiteContactDTO, StudySiteContact>(StudySiteContact.class,
                     StudySiteContactDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudySiteContactServiceImpl() throws RemoteException {
         super();
     }

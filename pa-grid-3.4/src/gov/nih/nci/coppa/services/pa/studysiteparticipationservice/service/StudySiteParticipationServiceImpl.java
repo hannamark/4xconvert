@@ -53,6 +53,11 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
     private static final Logger logger = LogManager.getLogger(StudySiteParticipationServiceImpl.class);
     private final InvokeParticipatingSiteEjb service = new InvokeParticipatingSiteEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudySiteParticipationServiceImpl() throws RemoteException {
         super();
     }

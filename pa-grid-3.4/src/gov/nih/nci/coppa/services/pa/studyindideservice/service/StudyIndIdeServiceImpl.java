@@ -17,6 +17,11 @@ public class StudyIndIdeServiceImpl extends StudyIndIdeServiceImplBase {
         super();
     }
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     private GenericStudyPaGridServiceImpl<StudyIndldeDTO, StudyIndlde> impl
     = new GenericStudyPaGridServiceImpl<StudyIndldeDTO, StudyIndlde>(StudyIndlde.class, StudyIndldeDTO.class);
 

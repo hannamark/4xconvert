@@ -22,6 +22,11 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
     private static final Logger logger = LogManager.getLogger(ArmServiceImpl.class);
     private final InvokeStudyResourcingEjb srService = new InvokeStudyResourcingEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyResourcingServiceImpl() throws RemoteException {
         super();
     }

@@ -23,6 +23,11 @@ public class StudyOnholdServiceImpl extends StudyOnholdServiceImplBase {
     private static final Logger logger = LogManager.getLogger(StudyOnholdServiceImpl.class);
     private final InvokeStudyOnholdEjb studyOnholdService = new InvokeStudyOnholdEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyOnholdServiceImpl() throws RemoteException {
         super();
     }

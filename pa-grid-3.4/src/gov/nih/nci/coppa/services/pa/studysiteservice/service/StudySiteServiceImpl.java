@@ -30,6 +30,11 @@ public class StudySiteServiceImpl extends StudySiteServiceImplBase {
     private GenericStudyPaGridServiceImpl<StudySiteDTO, StudySite> impl =
             new GenericStudyPaGridServiceImpl<StudySiteDTO, StudySite>(StudySite.class, StudySiteDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudySiteServiceImpl() throws RemoteException {
         super();
     }

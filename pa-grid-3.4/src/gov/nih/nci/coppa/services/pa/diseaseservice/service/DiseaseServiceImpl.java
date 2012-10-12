@@ -27,6 +27,11 @@ public class DiseaseServiceImpl extends DiseaseServiceImplBase {
     private GenericPaGridServiceImpl<PDQDiseaseDTO, Disease> impl =
             new GenericPaGridServiceImpl<PDQDiseaseDTO, Disease>(Disease.class, PDQDiseaseDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public DiseaseServiceImpl() throws RemoteException {
         super();
     }

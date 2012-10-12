@@ -23,6 +23,10 @@ public class ArmServiceImpl extends ArmServiceImplBase {
     private static final Logger logger = LogManager.getLogger(ArmServiceImpl.class);
     private final InvokeArmEjb armService = new InvokeArmEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
     private GenericStudyPaGridServiceImpl<ArmDTO, Arm> impl
         = new GenericStudyPaGridServiceImpl<ArmDTO, Arm>(Arm.class, ArmDTO.class);
     /**

@@ -27,6 +27,11 @@ public class StudyRelationshipServiceImpl extends StudyRelationshipServiceImplBa
     private GenericPaGridServiceImpl<StudyRelationshipDTO, StudyRelationship> impl
       = new GenericPaGridServiceImpl<StudyRelationshipDTO, StudyRelationship>(StudyRelationship.class, StudyRelationshipDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyRelationshipServiceImpl() throws RemoteException {
         super();
     }

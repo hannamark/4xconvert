@@ -26,6 +26,12 @@ public class StudyContactServiceImpl extends StudyContactServiceImplBase {
 
     private static final Logger logger = LogManager.getLogger(StudyContactServiceImpl.class);
     private final InvokeStudyContactEjb studyContactService = new InvokeStudyContactEjb();
+
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyContactServiceImpl() throws RemoteException {
         super();
     }

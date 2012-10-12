@@ -12,6 +12,11 @@ import java.rmi.RemoteException;
  */
 public class StudyOutcomeMeasureServiceImpl extends StudyOutcomeMeasureServiceImplBase {
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyOutcomeMeasureServiceImpl() throws RemoteException {
         super();
     }

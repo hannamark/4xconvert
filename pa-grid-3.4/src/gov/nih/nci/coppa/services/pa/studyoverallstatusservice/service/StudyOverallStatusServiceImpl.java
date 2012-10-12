@@ -93,6 +93,11 @@ import java.rmi.RemoteException;
  */
 public class StudyOverallStatusServiceImpl extends StudyOverallStatusServiceImplBase {
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
   public StudyOverallStatusServiceImpl() throws RemoteException {
       super();
   }

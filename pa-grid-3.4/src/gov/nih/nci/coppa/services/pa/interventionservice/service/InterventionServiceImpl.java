@@ -25,6 +25,11 @@ public class InterventionServiceImpl extends InterventionServiceImplBase {
     private GenericPaGridServiceImpl<InterventionDTO, Intervention> impl =
             new GenericPaGridServiceImpl<InterventionDTO, Intervention>(Intervention.class, InterventionDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
 	public InterventionServiceImpl() throws RemoteException {
 		super();
 	}

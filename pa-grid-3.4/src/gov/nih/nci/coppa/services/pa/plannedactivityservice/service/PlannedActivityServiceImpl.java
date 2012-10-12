@@ -32,6 +32,11 @@ public class PlannedActivityServiceImpl extends PlannedActivityServiceImplBase {
             new GenericStudyPaGridServiceImpl<PlannedActivityDTO, PlannedActivity>(PlannedActivity.class,
                     PlannedActivityDTO.class);
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public PlannedActivityServiceImpl() throws RemoteException {
         super();
     }

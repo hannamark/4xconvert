@@ -30,6 +30,10 @@ import org.apache.log4j.Logger;
 public class SubjectAccrualServiceImpl extends SubjectAccrualServiceImplBase {
     private static final Logger logger = LogManager.getLogger(SubjectAccrualServiceImpl.class);
     private final InvokeSubjectAccrualEjb subjectAccrualService = new InvokeSubjectAccrualEjb();
+    
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
 
     /**
      * Simple constructor.

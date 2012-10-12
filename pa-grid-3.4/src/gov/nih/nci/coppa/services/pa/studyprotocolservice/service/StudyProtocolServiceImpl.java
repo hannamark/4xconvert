@@ -28,6 +28,12 @@ public class StudyProtocolServiceImpl extends StudyProtocolServiceImplBase {
 
     private static final Logger logger = LogManager.getLogger(StudyProtocolServiceImpl.class);
     private final InvokeStudyProtocolEjb studyProtService = new InvokeStudyProtocolEjb();
+
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyProtocolServiceImpl() throws RemoteException {
         super();
     }

@@ -11,6 +11,11 @@ import java.rmi.RemoteException;
  */
 public class StudyRegulatoryAuthorityServiceImpl extends StudyRegulatoryAuthorityServiceImplBase {
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     private GenericStudyCurrentPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority> impl =
             new GenericStudyCurrentPaGridServiceImpl<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority>(
                     StudyRegulatoryAuthority.class, StudyRegulatoryAuthorityDTO.class);

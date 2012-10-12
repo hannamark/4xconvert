@@ -17,6 +17,12 @@ import org.apache.log4j.Logger;
 public class StudyDiseaseServiceImpl extends StudyDiseaseServiceImplBase {
 
     private static final Logger logger = LogManager.getLogger(StudyDiseaseServiceImpl.class);
+
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public StudyDiseaseServiceImpl() throws RemoteException {
         super();
     }

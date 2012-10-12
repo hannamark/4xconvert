@@ -62,6 +62,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
     private final InvokeTrialRegistrationEjb trialRegService = new InvokeTrialRegistrationEjb();    
     private final InvokeProprietaryTrialManagementEjb propTrialMgmtService = new InvokeProprietaryTrialManagementEjb();
 
+    static {
+        gov.nih.nci.coppa.services.pa.grid.PAGridUtils.initIso21090Transformers();
+    }
+
+
     public TrialRegistrationServiceImpl() throws RemoteException {
         super();
     }
