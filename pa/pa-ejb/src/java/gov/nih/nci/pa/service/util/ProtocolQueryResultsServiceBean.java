@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.convert.BaseStudyProtocolQueryConverter;
@@ -154,7 +155,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "dcp_id, ctep_id,amendment_date,date_last_updated,phase_code,primary_purpose_code,start_date," 
             + "summary4fundingSponsor_type,sponsor_name,responsible_party_organization_name,"
             + "responsible_party_PI_first_name,responsible_party_PI_last_name,user_last_updated_login, "
-            + "user_last_updated_first,user_last_updated_last,primary_completion_date "
+            + "user_last_updated_first,user_last_updated_last,primary_completion_date,"
+            + "study_protocol_type,study_subtype_code"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -227,6 +229,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int USER_LAST_UPDATED_FIRST_IDX = 41;
     private static final int USER_LAST_UPDATED_LAST_IDX = 42;
     private static final int PRIMARY_COMPLETION_DATE_IDX = 43;
+    private static final int STUDY_PROTOCOL_TYPE = 44;
+    private static final int STUDY_SUBTYPE_CODE = 45;
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
@@ -502,7 +506,13 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             
         }
         dto.setResponsiblePartyName(responsibleParty);
-        dto.setPrimaryCompletionDate((Date) row[PRIMARY_COMPLETION_DATE_IDX]);
+        dto.setPrimaryCompletionDate((Date) row[PRIMARY_COMPLETION_DATE_IDX]);        
+        dto.setStudyProtocolType((String) row[STUDY_PROTOCOL_TYPE]);
+        
+        final StudySubtypeCode studySubtypeCode = getEnumFromString(
+                StudySubtypeCode.class, (String) row[STUDY_SUBTYPE_CODE]);
+        dto.setStudySubtypeCode(studySubtypeCode != null ? studySubtypeCode
+                .getCode() : "");
         
         if (amendmentDate != null) {
             User updatedUser = new User();

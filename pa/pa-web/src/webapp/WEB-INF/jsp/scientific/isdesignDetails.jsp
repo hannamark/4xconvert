@@ -163,6 +163,26 @@ function initialize() {
                </span>
          </td>
       </tr>
+      
+    <tr>
+        <td  scope="row" class="label">
+            <label>
+                <fmt:message key="isdesign.details.secondary.purpose"/>
+            </label>
+        </td>
+        <s:set name="secondaryPurposeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
+        <td>
+          <s:select headerKey="" headerValue="" name="webDTO.secondaryPurposeId" id="webDTO.secondaryPurposeId" list="#secondaryPurposeCodeValues"  
+                listKey="identifier.extension" listValue="name.value" 
+                   value="webDTO.secondaryPurposeId" cssStyle="width:150px"/>
+	          <span class="formErrorMsg"> 
+	             <s:fielderror>
+	               <s:param>webDTO.secondaryPurposeId</s:param>
+	             </s:fielderror>                            
+	          </span>
+        </td>
+    </tr>
+      
     <tr>
         <td scope="row" class="label"><label for="studyPhase">
         	 <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>

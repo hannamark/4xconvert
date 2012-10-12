@@ -86,7 +86,7 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AbstractStudyProtocol;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
@@ -136,6 +136,7 @@ public class AbstractStudyProtocolConverter {
     public static void convertFromDomainToDTO(AbstractStudyProtocol bo, AbstractStudyProtocolDTO dto) {
         convertDatesToDto(bo.getDates(), dto);
         convertPrimaryPurposeToDto(bo, dto);
+        convertSecondaryPurposeToDto(bo, dto);
         dto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(bo
             .getDataMonitoringCommitteeAppointedIndicator()));
         dto.setDelayedpostingIndicator(BlConverter.convertToBl(bo.getDelayedpostingIndicator()));
@@ -144,8 +145,8 @@ public class AbstractStudyProtocolConverter {
         dto.setPhaseCode(CdConverter.convertToCd(bo.getPhaseCode()));
         dto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(bo.getPhaseAdditionalQualifierCode()));
         dto.setSection801Indicator(BlConverter.convertToBl(bo.getSection801Indicator()));
-        if (bo instanceof ObservationalStudyProtocol) {
-            dto.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
+        if (bo instanceof NonInterventionalStudyProtocol) {
+            dto.setStudyProtocolType(StConverter.convertToSt("NonInterventionalStudyProtocol"));
         } else if (bo instanceof InterventionalStudyProtocol) {
             dto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
         } else {
@@ -185,6 +186,15 @@ public class AbstractStudyProtocolConverter {
             .getPrimaryPurposeAdditionalQualifierCode()));
         dto.setPrimaryPurposeOtherText(StConverter.convertToSt(bo.getPrimaryPurposeOtherText()));
     }
+    
+   
+    private static void convertSecondaryPurposeToDto(AbstractStudyProtocol bo,
+            AbstractStudyProtocolDTO dto) {
+        if (bo.getSecondaryPurpose() != null) {
+            dto.setSecondaryPurpose(new SecondaryPurposeConverter()
+                    .convertFromDomainToDto(bo.getSecondaryPurpose()));
+        }
+    }
 
     /**
      * Converts a given AbstractStudyProtocolDTO to a AbstractStudyProtocol.
@@ -194,6 +204,7 @@ public class AbstractStudyProtocolConverter {
     public static void convertFromDTOToDomain(AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
         bo.setDates(convertDatesToDomain(dto));
         convertPrimaryPurposeToDomain(dto, bo);
+        convertSecondaryPurposeToDomain(dto, bo);
 
         bo.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBoolean(dto
             .getDataMonitoringCommitteeAppointedIndicator()));
@@ -256,6 +267,14 @@ public class AbstractStudyProtocolConverter {
                 .getPrimaryPurposeAdditionalQualifierCode().getCode()));
         }
         bo.setPrimaryPurposeOtherText(StConverter.convertToString(dto.getPrimaryPurposeOtherText()));
+    }
+    
+    private static void convertSecondaryPurposeToDomain(
+            AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
+        if (dto.getSecondaryPurpose() != null) {
+            bo.setSecondaryPurpose(new SecondaryPurposeConverter()
+                    .convertFromDtoToDomain(dto.getSecondaryPurpose()));
+        }
     }
 
     private static void setUserLastCreated(AbstractStudyProtocolDTO abstractStudyProtocolDTO,

@@ -94,11 +94,8 @@ public enum StudyTypeCode implements CodedEnum<String> {
     /** Interventional. */
     INTERVENTIONAL("Interventional"),
     /*** Observational. */
-    OBSERVATIONAL("Observational"),
-    /**
-     * AE.
-     */
-    AE("AE");
+    NON_INTERVENTIONAL("NonInterventional");
+
 
     private String code;
 

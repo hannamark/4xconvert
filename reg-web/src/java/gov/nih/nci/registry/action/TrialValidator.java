@@ -83,7 +83,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -92,8 +94,10 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -151,6 +155,7 @@ public class TrialValidator {
     public Map<String, String> validateTrial(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
         validateTrialDTO(trialDto, addFieldError);
+        validateNonInterventionalTrialDTO(trialDto, addFieldError);
         validateTrialDTOLeadOrgId(trialDto, addFieldError);
         validatePrimaryPurposeAdditionalQualifier(trialDto, addFieldError);
         validatePrimaryPurposeOtherText(trialDto, addFieldError);
@@ -159,6 +164,43 @@ public class TrialValidator {
         validateXMLReqElement(trialDto, addFieldError);
         validateSummaryFourInfo(trialDto, addFieldError);
         return addFieldError;
+    }
+
+    /**
+     * @param trialDto TrialDTO
+     * @param addFieldError Map<String, String> 
+     */
+    public void validateNonInterventionalTrialDTO(BaseTrialDTO trialDto, // NOPMD
+            Map<String, String> addFieldError) {
+        if (PAConstants.NON_INTERVENTIONAL.equals(trialDto.getTrialType())) {
+            if (StringUtils.isBlank(trialDto.getStudySubtypeCode())) {
+                addFieldError.put("trialDTO.studySubtypeCode",
+                        getText("error.submit.studySubtypeCode"));
+            }
+            if (StringUtils.isBlank(trialDto.getStudyModelCode())) {
+                addFieldError.put("trialDTO.studyModelCode",
+                        getText("error.submit.studyModelCode"));
+            }
+            if (StringUtils.isBlank(trialDto.getTimePerspectiveCode())) {
+                addFieldError.put("trialDTO.timePerspectiveCode",
+                        getText("error.submit.timePerspectiveCode"));
+            }
+            if (StudyModelCode.OTHER.getCode().equalsIgnoreCase(
+                    trialDto.getStudyModelCode())
+                    && StringUtils.isBlank(trialDto.getStudyModelOtherText())) {
+                addFieldError.put("trialDTO.studyModelOtherText",
+                        getText("error.submit.studyModelOtherText"));
+            }
+            if (TimePerspectiveCode.OTHER.getCode().equalsIgnoreCase(
+                    trialDto.getTimePerspectiveCode())
+                    && StringUtils.isBlank(trialDto
+                            .getTimePerspectiveOtherText())) {
+                addFieldError.put("trialDTO.timePerspectiveOtherText",
+                        getText("error.submit.timePerspectiveOtherText"));
+            }
+            
+        }
+
     }
 
     private void validateStudyStatusReason(TrialDTO trialDto, Map<String, String> addFieldError) {

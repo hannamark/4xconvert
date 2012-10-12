@@ -107,6 +107,7 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -167,6 +168,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportHumanSubjectSafety;
 import gov.nih.nci.pa.service.util.report.TSRReportIndIde;
 import gov.nih.nci.pa.service.util.report.TSRReportIntervention;
 import gov.nih.nci.pa.service.util.report.TSRReportInvestigator;
+import gov.nih.nci.pa.service.util.report.TSRReportLabelText;
 import gov.nih.nci.pa.service.util.report.TSRReportNihGrant;
 import gov.nih.nci.pa.service.util.report.TSRReportOutcomeMeasure;
 import gov.nih.nci.pa.service.util.report.TSRReportParticipatingSite;
@@ -204,6 +206,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * service bean for generating TSR.
@@ -263,7 +266,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private AbstractTsrReportGenerator tsrReportGenerator;
 
-    private static final String REPORT_TITLE = "Trial Summary Report";
+    private static final String REPORT_TITLE = TSRReportLabelText.REPORT_TITLE;
     private static final String YES = "Yes";
     private static final String NO = "No";
     private static final String INFORMATION_NOT_PROVIDED = "Information Not Provided";
@@ -271,7 +274,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String PROPRIETARY = "Abbreviated";
     private static final String NON_PROPRIETARY = "Complete";
     private static final String TYPE_INTERVENTIONAL = "Interventional";
-    private static final String TYPE_OBSERVATIONAL = "Observational";
+    private static final String TYPE_NON_INTERVENTIONAL = "Non-Interventional";
     private static final String CRITERION_GENDER = "GENDER";
     private static final String CRITERION_AGE = "AGE";
     private static final String ROLE_PI = "Principal Investigator";
@@ -283,6 +286,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String AS_OF = " as of ";
     private static final String EMAIL = " email: ";
     private static final String PHONE = " phone: ";
+    
+    private static final Logger LOG = Logger.getLogger(TSRReportGeneratorServiceBean.class);
 
     /**
      * {@inheritDoc}
@@ -325,11 +330,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         boolean isProprietaryTrial = !ISOUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
             && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
+        boolean isNonInterventionalTrial = studyProtocolDto instanceof NonInterventionalStudyProtocolDTO;
 
         TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
                 PAUtil.convertTsToFormattedDate(studyProtocolDto.getRecordVerificationDate()));
         reportGenerator.setProprietaryTrial(isProprietaryTrial);
         reportGenerator.setTsrReport(tsrReport);
+        reportGenerator.setNonInterventionalTrial(isNonInterventionalTrial);
 
         try {
             if (isProprietaryTrial) {
@@ -339,6 +346,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
             outputByteStream = reportGenerator.generateTsrReport();
         } catch (Exception e) {
+            LOG.error(e, e);
             TSRErrorReport tsrErrorReport =
                 new TSRErrorReport(REPORT_TITLE, PAUtil.getAssignedIdentifierExtension(studyProtocolDto),
                         getValue(studyProtocolDto.getOfficialTitle()));
@@ -446,21 +454,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return (StringUtils.isNotBlank(identifier) ? identifier : INFORMATION_NOT_PROVIDED);
     }
 
-    private void setGeneralTrialDetails(StudyProtocolDTO studyProtocolDto, boolean isProprietaryTrial)
+    private void setGeneralTrialDetails(StudyProtocolDTO studyProtocolDto, boolean isProprietaryTrial) //NOPMD
     throws PAException, NullifiedRoleException {
         TSRReportGeneralTrialDetails gtd = new TSRReportGeneralTrialDetails();
 
+        boolean interventionalType = !(studyProtocolDto instanceof NonInterventionalStudyProtocolDTO);
+        gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_NON_INTERVENTIONAL);        
         gtd.setOfficialTitle(getValue(studyProtocolDto.getOfficialTitle(), INFORMATION_NOT_PROVIDED));
-
+        setNonInterventionalInfo(studyProtocolDto, gtd);
+        
         if (isProprietaryTrial) {
             gtd.setPrimaryPurpose(getValue(studyProtocolDto.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPrimaryPurposeOtherText(getValue(studyProtocolDto.getPrimaryPurposeOtherText()));
             gtd.setPhase(getValue(studyProtocolDto.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             gtd.setPhaseAdditonalQualifier(getValue(studyProtocolDto.getPhaseAdditionalQualifierCode(), null));
-            InterventionalStudyProtocolDTO ispDTO =
-                PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
-            boolean interventionalType = ispDTO != null ? true : false;
-            gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
         } else {
             gtd.setBriefTitle(getValue(studyProtocolDto.getPublicTitle(), INFORMATION_NOT_PROVIDED));
             gtd.setAcronym(getValue(studyProtocolDto.getAcronym(), INFORMATION_NOT_PROVIDED));
@@ -501,6 +508,20 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         }
 
         tsrReportGenerator.setGeneralTrialDetails(gtd);
+    }
+
+
+    /**
+     * @param studyProtocolDto
+     * @param gtd
+     */
+    private void setNonInterventionalInfo(StudyProtocolDTO studyProtocolDto,
+            TSRReportGeneralTrialDetails gtd) {
+        if (studyProtocolDto instanceof NonInterventionalStudyProtocolDTO) {
+            NonInterventionalStudyProtocolDTO nonIntDTO = (NonInterventionalStudyProtocolDTO) studyProtocolDto;
+            gtd.setSubType(getValue(nonIntDTO.getStudySubtypeCode(),
+                    INFORMATION_NOT_PROVIDED));
+        }
     }
 
     private String getCentralContactDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
@@ -828,25 +849,31 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private void setTrialDesign(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
-        InterventionalStudyProtocolDTO ispDTO =
-            PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(studyProtocolDto.getIdentifier());
-        boolean interventionalType = ispDTO != null ? true : false;
-        trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_OBSERVATIONAL);
+        StudyProtocolDTO ispDTO =
+            PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolDto.getIdentifier());
+        boolean interventionalType = !(ispDTO instanceof NonInterventionalStudyProtocolDTO);
+        trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_NON_INTERVENTIONAL);
         if (ispDTO != null) {
             trialDesign.setPrimaryPurpose(getValue(ispDTO.getPrimaryPurposeCode(), INFORMATION_NOT_PROVIDED));
             trialDesign.setPrimaryPurposeOtherText(getValue(ispDTO.getPrimaryPurposeOtherText()));
             trialDesign.setPhase(getValue(ispDTO.getPhaseCode(), INFORMATION_NOT_PROVIDED));
             trialDesign.setPhaseAdditonalQualifier(getValue(ispDTO.getPhaseAdditionalQualifierCode(),
                     INFORMATION_NOT_PROVIDED));
-            trialDesign.setInterventionModel(getValue(ispDTO.getDesignConfigurationCode(), INFORMATION_NOT_PROVIDED));
-            trialDesign.setNumberOfArms(getValue(ispDTO.getNumberOfInterventionGroups(), INFORMATION_NOT_PROVIDED));
-            trialDesign.setMasking(getValue(ispDTO.getBlindingSchemaCode()));
-            if (ispDTO.getBlindingSchemaCode() != null) {
-                trialDesign.setMaskedRoles(getTrialDesignMaskedRoles(ispDTO));
-            }
-            trialDesign.setAllocation(getValue(ispDTO.getAllocationCode()));
-            trialDesign.setStudyClassification(getValue(ispDTO.getStudyClassificationCode()));
             trialDesign.setTargetEnrollment(getValue(ispDTO.getTargetAccrualNumber().getLow()));
+            
+            if (ispDTO instanceof InterventionalStudyProtocolDTO) {
+                InterventionalStudyProtocolDTO intDTO = (InterventionalStudyProtocolDTO) ispDTO;
+                trialDesign.setInterventionModel(getValue(intDTO.getDesignConfigurationCode(), 
+                        INFORMATION_NOT_PROVIDED));
+                trialDesign.setNumberOfArms(getValue(intDTO.getNumberOfInterventionGroups(), INFORMATION_NOT_PROVIDED));
+                trialDesign.setMasking(getValue(intDTO.getBlindingSchemaCode()));
+                if (intDTO.getBlindingSchemaCode() != null) {
+                    trialDesign.setMaskedRoles(getTrialDesignMaskedRoles(intDTO));
+                }
+                trialDesign.setAllocation(getValue(intDTO.getAllocationCode()));
+                trialDesign.setStudyClassification(getValue(intDTO.getStudyClassificationCode()));
+            }
+            
         }
         tsrReportGenerator.setTrialDesign(trialDesign);
     }
@@ -880,7 +907,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
         if (CollectionUtils.isNotEmpty(paECs)) {
             TSRReportEligibilityCriteria eligibilityCriteria = new TSRReportEligibilityCriteria();
-
+            if (studyProtocolDto instanceof NonInterventionalStudyProtocolDTO) {
+                final NonInterventionalStudyProtocolDTO nonIntStudy = (NonInterventionalStudyProtocolDTO) 
+                        studyProtocolDto;
+                eligibilityCriteria.setStudyPopulationDescription(getValue(
+                        nonIntStudy.getStudyPopulationDescription(),
+                        INFORMATION_NOT_PROVIDED));
+                eligibilityCriteria.setSampleMethodCode(getValue(
+                        nonIntStudy.getSamplingMethodCode(),
+                        INFORMATION_NOT_PROVIDED));                
+            }
             eligibilityCriteria.setAcceptsHealthyVolunteers(getValue(studyProtocolDto
                     .getAcceptHealthyVolunteersIndicator(), INFORMATION_NOT_PROVIDED));
             Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
@@ -1184,7 +1220,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     }
 
     private String getValue(Cd cd, String defaultValue) {
-        return (cd != null ? CdConverter.convertCdToString(cd) : defaultValue);
+        return (!ISOUtil.isCdNull(cd) ? CdConverter.convertCdToString(cd) : defaultValue); 
     }
 
     private String getValue(String str, String defaultValue) {

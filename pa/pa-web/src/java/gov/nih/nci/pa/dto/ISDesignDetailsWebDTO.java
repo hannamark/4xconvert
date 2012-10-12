@@ -87,9 +87,10 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO {
+public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
 
     private String primaryPurposeCode;
+    private Long secondaryPurposeId;
     private String phaseCode;
     private String designConfigurationCode;
     private String numberOfInterventionGroups;
@@ -356,6 +357,20 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO {
      */
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the secondaryPurposeId
+     */
+    public Long getSecondaryPurposeId() {
+        return secondaryPurposeId;
+    }
+
+    /**
+     * @param secondaryPurposeId the secondaryPurposeId to set
+     */
+    public void setSecondaryPurposeId(Long secondaryPurposeId) {
+        this.secondaryPurposeId = secondaryPurposeId;
     }
 
 }

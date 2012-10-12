@@ -95,7 +95,7 @@ import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -231,8 +231,8 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     * {@inheritDoc}
     */
     @Override
-    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
-    	    ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
+    public NonInterventionalStudyProtocolDTO getNonInterventionalStudyProtocol(Ii ii) throws PAException {
+    	    NonInterventionalStudyProtocolDTO ospDTO = new NonInterventionalStudyProtocolDTO();
             Timestamp now = new Timestamp((new Date()).getTime());
             ospDTO.setStartDate(TsConverter.convertToTs(now));
             ospDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
@@ -241,7 +241,8 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
             ospDTO.setStudyModelCode(CdConverter.convertStringToCd(StudyModelCode.CASE_CONTROL.getCode()));
             ospDTO.setTimePerspectiveCode(CdConverter.convertStringToCd(TimePerspectiveCode.PROSPECTIVE.getCode()));
             ospDTO.setBiospecimenDescription(StConverter.convertToSt("BiospecimenDescription"));
-            ospDTO.setBiospecimenRetentionCode(CdConverter.convertStringToCd(BiospecimenRetentionCode.RETAINED.getCode()));
+            ospDTO.setBiospecimenRetentionCode(CdConverter.convertStringToCd(BiospecimenRetentionCode.
+                    NONE_RETAINED.getCode()));
             ospDTO.setNumberOfGroups(IntConverter.convertToInt(4));
             ospDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
             ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
@@ -261,16 +262,16 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
      * {@inheritDoc}
      */
     @Override
-    public Ii createObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+    public Ii createNonInterventionalStudyProtocol(
+            NonInterventionalStudyProtocolDTO ospDTO) throws PAException {
         return null;
     }
     /**
      * {@inheritDoc}
      */
     @Override
-    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO ospDTO) throws PAException {
+    public NonInterventionalStudyProtocolDTO updateNonInterventionalStudyProtocol(
+            NonInterventionalStudyProtocolDTO ospDTO) throws PAException {
         return null;
     }
 

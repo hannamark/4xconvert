@@ -85,6 +85,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
@@ -108,6 +110,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.ReportStudyProtocolQueryConverter;
@@ -422,7 +425,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private StudyProtocolQueryBeanSearchCriteria getExampleCriteria(StudyProtocolQueryCriteria criteria) 
             throws PAException {
-        StudyProtocol example = new StudyProtocol();
+        StudyProtocol example = instantiateExampleObject(criteria);
         StudyProtocolOptions options = new StudyProtocolOptions();
         options.setUserId(criteria.getUserId());
         options.setExcludeRejectedTrials(BooleanUtils.isTrue(criteria.isExcludeRejectProtocol()));
@@ -461,6 +464,29 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
+    }
+
+    /**
+     * @param criteria 
+     * @return
+     */
+    private StudyProtocol instantiateExampleObject(
+            StudyProtocolQueryCriteria criteria) {
+        StudyProtocol protocol;
+        if (NonInterventionalStudyProtocol.class.getSimpleName().equalsIgnoreCase(
+                criteria.getStudyProtocolType())) {
+            protocol = new NonInterventionalStudyProtocol();
+            ((NonInterventionalStudyProtocol) protocol)
+                    .setStudySubtypeCode(StudySubtypeCode.getByCode(criteria
+                            .getStudySubtypeCode()));
+        } else if (InterventionalStudyProtocol.class.getSimpleName()
+                .equalsIgnoreCase(criteria.getStudyProtocolType())) {
+            protocol = new InterventionalStudyProtocol();
+
+        } else {
+            protocol = new StudyProtocol();
+        }
+        return protocol;
     }
 
     private boolean includeCTEP(StudyProtocolQueryCriteria criteria) {
@@ -755,6 +781,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getCtepDcpCategory())
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
+                && StringUtils.isEmpty(criteria.getStudyProtocolType())
+                && StringUtils.isEmpty(criteria.getStudySubtypeCode())
                 && criteria.getSumm4FundingSourceId() == null
                 && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
                 && CollectionUtils.isEmpty(criteria.getInterventionIds())

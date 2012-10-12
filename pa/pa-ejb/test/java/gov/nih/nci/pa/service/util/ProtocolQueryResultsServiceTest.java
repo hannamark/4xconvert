@@ -85,6 +85,8 @@ public class ProtocolQueryResultsServiceTest {
     String responsiblePartyPILastName = "";
     String sponsor = "NCI";
     Date primaryCompletionDate = new Date();
+    String studyProtocolType = "InterventionalStudyProtocol";
+    String studySubtypeCode = "OBSERVATIONAL";
         
     Object[] qryResult = { studyProtocolIdentifier, officialTitle, proprietaryTrialIndicator, recordVerificationDate
             , ctgovXmlRequiredIndicator, updating, dateLastCreated, submissionNumber, nciNumber, nctNumber, leadOrgPoid
@@ -95,7 +97,8 @@ public class ProtocolQueryResultsServiceTest {
             , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId, amendmentDate, updatedDate 
             , phase, primaryPusrpose, startDate
             , summary4fundingSponsor,sponsor,responsiblePartyOrganizationName
-            , responsiblePartyPIFirstName,responsiblePartyPILastName,userLastCreatedLogin,userLastCreatedFirst,userLastCreatedLast,primaryCompletionDate};
+            , responsiblePartyPIFirstName,responsiblePartyPILastName,userLastCreatedLogin,userLastCreatedFirst,userLastCreatedLast,primaryCompletionDate,
+            studyProtocolType,studySubtypeCode};
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

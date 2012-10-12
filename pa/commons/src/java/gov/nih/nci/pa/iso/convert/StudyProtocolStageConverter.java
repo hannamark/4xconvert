@@ -84,8 +84,11 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -151,6 +154,17 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStage.getPiInitiatedIndicator()));
         studyProtocolStageDTO.setSiteNciDesignatedCancerCenterIndicator(BlConverter.convertToBl(
                 studyProtocolStage.getSiteNciDesignatedCancerCenterIndicator()));
+        
+        studyProtocolStageDTO.setStudyModelCode(CdConverter.convertToCd(studyProtocolStage.getStudyModelCode()));
+        studyProtocolStageDTO.setStudyModelOtherText(StConverter
+                .convertToSt(studyProtocolStage.getStudyModelOtherText()));
+        studyProtocolStageDTO.setTimePerspectiveCode(CdConverter
+                .convertToCd(studyProtocolStage.getTimePerspectiveCode()));
+        studyProtocolStageDTO.setTimePerspectiveOtherText(StConverter
+                .convertToSt(studyProtocolStage.getTimePerspectiveOtherText()));
+        studyProtocolStageDTO.setStudySubtypeCode(CdConverter
+                .convertToCd(studyProtocolStage.getStudySubtypeCode()));
+        
         setSecondaryIdentifiers(studyProtocolStage, studyProtocolStageDTO);
         return studyProtocolStageDTO;
     }
@@ -245,6 +259,22 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStageDTO.getPiInitiatedIndicator()));
         studyProtocolStage.setSiteNciDesignatedCancerCenterIndicator(BlConverter.convertToBoolean(
                 studyProtocolStageDTO.getSiteNciDesignatedCancerCenterIndicator()));
+        studyProtocolStage.setStudyModelCode(StudyModelCode
+                .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                        .getStudyModelCode())));
+        studyProtocolStage
+                .setStudyModelOtherText(StConverter
+                        .convertToString(studyProtocolStageDTO
+                                .getStudyModelOtherText()));
+        studyProtocolStage.setTimePerspectiveCode(TimePerspectiveCode
+                .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                        .getTimePerspectiveCode())));
+        studyProtocolStage.setTimePerspectiveOtherText(StConverter
+                .convertToString(studyProtocolStageDTO
+                        .getTimePerspectiveOtherText()));
+        studyProtocolStage.setStudySubtypeCode(StudySubtypeCode
+                .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                        .getStudySubtypeCode())));        
         setOtherIdentifiers(studyProtocolStageDTO, studyProtocolStage);
     }
 

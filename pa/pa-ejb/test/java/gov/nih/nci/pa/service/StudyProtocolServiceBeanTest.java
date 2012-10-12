@@ -119,7 +119,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -232,24 +232,24 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test(expected=PAException.class)
     public void nullParameter8() throws Exception {
-        remoteEjb.getObservationalStudyProtocol(null);
+        remoteEjb.getNonInterventionalStudyProtocol(null);
     }
 
     @Test(expected=PAException.class)
     public void nullParameter9() throws Exception {
-        remoteEjb.updateObservationalStudyProtocol(null);
+        remoteEjb.updateNonInterventionalStudyProtocol(null);
     }
 
     @Test(expected=PAException.class)
     public void nullParameter10() throws Exception {
-        ObservationalStudyProtocolDTO dto = new ObservationalStudyProtocolDTO();
+        NonInterventionalStudyProtocolDTO dto = new NonInterventionalStudyProtocolDTO();
         dto.setIdentifier(IiConverter.convertToIi("111"));
-        remoteEjb.createObservationalStudyProtocol(dto);
+        remoteEjb.createNonInterventionalStudyProtocol(dto);
     }
 
     @Test(expected=PAException.class)
     public void nullParameter11() throws Exception {
-        remoteEjb.createObservationalStudyProtocol(null);
+        remoteEjb.createNonInterventionalStudyProtocol(null);
     }
 
     @Test(expected=PAException.class)

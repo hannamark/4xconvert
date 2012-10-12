@@ -32,6 +32,11 @@
                 $("trialCategory").value="";
                 $("ctepDcpCategory").value="";
                 $("ctgovXmlRequiredIndicator").value="";
+                $("studyProtocolType").value = "";
+                $("InterventionalStudyProtocol_studySubtypeCode").value = "";
+                $("NonInterventionalStudyProtocol_studySubtypeCode").value = "";
+                
+                studyProtocolTypeChanged();
                 
             }
 
@@ -43,6 +48,23 @@
                     return false;
                 }
             }
+            
+            function studyProtocolTypeChanged() {
+            	var studyType = $F('studyProtocolType');
+            	if (studyType == 'NonInterventionalStudyProtocol') {
+            		$("InterventionalStudyProtocol_studySubtypeCode").disable();
+            		$("InterventionalStudyProtocol_studySubtypeCode").hide();
+                    $("NonInterventionalStudyProtocol_studySubtypeCode").enable();
+                    $("NonInterventionalStudyProtocol_studySubtypeCode").show();            		
+            	} else {
+            		$("NonInterventionalStudyProtocol_studySubtypeCode").disable();
+                    $("NonInterventionalStudyProtocol_studySubtypeCode").hide();
+                    $("InterventionalStudyProtocol_studySubtypeCode").enable();
+                    $("InterventionalStudyProtocol_studySubtypeCode").show();              		
+            	}
+            }
+            
+            Event.observe(window, "load", studyProtocolTypeChanged);
             
         </script>
     </head>
@@ -190,6 +212,27 @@
                            <s:select headerKey="" headerValue="All" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                         </td>
                     </tr>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="studyProtocolType"><fmt:message key="studyProtocol.trialtype"/></label>
+                        </td>                        
+                        <td>
+                           <s:select headerKey="" headerValue="All" id="studyProtocolType" name="criteria.studyProtocolType" 
+                                list="#{'InterventionalStudyProtocol':'Interventional','NonInterventionalStudyProtocol':'Non-interventional'}"  
+                                    onchange="studyProtocolTypeChanged();"
+                                    value="criteria.studyProtocolType" cssStyle="width:206px" />
+                        </td>
+                        <td scope="row" class="label">
+                            <label for="InterventionalStudyProtocol_studySubtypeCode"><fmt:message key="studyProtocol.trialSubType"/></label>
+                        </td>
+                        <td>
+                           <s:set name="studySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
+                           <s:select headerKey="" headerValue="All" id="InterventionalStudyProtocol_studySubtypeCode"
+                                name="criteria.studySubtypeCode" list="#{}"  value="criteria.studySubtypeCode" cssStyle="width:206px" />
+                           <s:select headerKey="" headerValue="All" id="NonInterventionalStudyProtocol_studySubtypeCode"
+                                name="criteria.studySubtypeCode" list="#studySubtypeCodeValues"  value="criteria.studySubtypeCode" cssStyle="width:206px; display:none;" />                                
+                        </td>
+                    </tr>                    
                     <tr>
                     	<td scope="row" class="label">
                             <label for="ctgovXmlRequiredIndicator"> <fmt:message key="studyProtocol.ctgovXmlRequired"/></label>

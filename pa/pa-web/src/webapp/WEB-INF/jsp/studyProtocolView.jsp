@@ -47,6 +47,27 @@
                 <table class="form">
                     <tr>
                         <td scope="row" class="label">
+                        <label>                          
+                                <fmt:message key="studyProtocol.studyProtocolType"/>
+                                </label>                          
+                        </td>
+                        <td class="value">
+                            <c:out value="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>
+                        </td>
+                    </tr>   
+                    <c:if test="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'}">
+	                    <tr>
+	                        <td scope="row" class="label"><label>	                            
+	                                <fmt:message key="studyProtocol.nonIntTrialType"/>
+	                                </label>	                           
+	                        </td>
+	                        <td class="value">
+	                            <c:out value="${trialSummary.studySubtypeCode}"/>
+	                        </td>
+	                    </tr>
+                    </c:if>             
+                    <tr>
+                        <td scope="row" class="label">
                             <label for="nciAccessionNumber">
                                 <fmt:message key="studyProtocol.nciIdentifier"/>
                             </label>

@@ -5,8 +5,11 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
 import gov.nih.nci.pa.util.NotEmptyIiRoot;
 import gov.nih.nci.pa.util.ValidIi;
@@ -78,6 +81,84 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private Timestamp closedForAccrualDate;
     private Boolean piInitiatedIndicator;
     private Boolean siteNciDesignatedCancerCenterIndicator;
+    
+    private StudyModelCode studyModelCode;
+    private String studyModelOtherText;
+    private TimePerspectiveCode timePerspectiveCode;
+    private String timePerspectiveOtherText;
+    private StudySubtypeCode studySubtypeCode;
+    
+    
+    /**
+     * @return the studySubtypeCode
+     */
+    @Column(name = "STUDY_SUBTYPE_CODE")
+    @Enumerated(EnumType.STRING)    
+    public StudySubtypeCode getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(StudySubtypeCode studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
+    }    
+    
+    /**
+     * @return timePerspectiveCode
+     */
+    @Column(name = "TIME_PERSPECTIVE_CODE")
+    @Enumerated(EnumType.STRING)
+    public TimePerspectiveCode getTimePerspectiveCode() {
+        return timePerspectiveCode;
+    }
+    /**
+     * @param timePerspectiveCode timePerspectiveCode
+     */
+    public void setTimePerspectiveCode(TimePerspectiveCode timePerspectiveCode) {
+        this.timePerspectiveCode = timePerspectiveCode;
+    }
+    /**
+     * @return timePerspectiveOtherText
+     */
+    @Column(name = "TIME_PERSPECTIVE_OTHER_TEXT")
+    public String getTimePerspectiveOtherText() {
+        return timePerspectiveOtherText;
+    }
+    /**
+     * @param timePerspectiveOtherText timePerspectiveOtherText
+     */
+    public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
+        this.timePerspectiveOtherText = timePerspectiveOtherText;
+    }    
+    
+    /**
+     * @return studyModelCode
+     */
+    @Column(name = "STUDY_MODEL_CODE")
+    @Enumerated(EnumType.STRING)
+    public StudyModelCode getStudyModelCode() {
+        return studyModelCode;
+    }
+    /**
+     * @param studyModelCode studyModelCode
+     */
+    public void setStudyModelCode(StudyModelCode studyModelCode) {
+        this.studyModelCode = studyModelCode;
+    }
+    /**
+     * @return studyModelOtherText
+     */
+    @Column(name = "STUDY_MODEL_OTHER_TEXT")
+    public String getStudyModelOtherText() {
+        return studyModelOtherText;
+    }
+    /**
+     * @param studyModelOtherText studyModelOtherText
+     */
+    public void setStudyModelOtherText(String studyModelOtherText) {
+        this.studyModelOtherText = studyModelOtherText;
+    }    
 
     /**
      * @return the localProtocolIdentifier

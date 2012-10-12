@@ -97,6 +97,8 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.SecondaryPurposeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
@@ -178,17 +180,15 @@ public class TrialConvertUtils {
      * @throws PAException on error
      */
     public StudyProtocolDTO convertToStudyProtocolDTOForAmendment(BaseTrialDTO trialDTO) throws PAException {
-        StudyProtocolDTO isoDto = null;
-
-        if (trialDTO.getTrialType().equalsIgnoreCase("Observational")) {
-            isoDto = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(
-                        IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
-        } else {
-            isoDto  = PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(
-                    IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
-        }
+        StudyProtocolDTO isoDto = PaRegistry.getStudyProtocolService()
+                .getStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(Long
+                                .parseLong(trialDTO.getIdentifier())));     
         addSecondaryIdentifiers(isoDto, (TrialDTO) trialDTO);
-        isoDto = convertToStudyProtocolDTO(trialDTO, isoDto);
+        convertToStudyProtocolDTO(trialDTO, isoDto);
+        if (isoDto instanceof NonInterventionalStudyProtocolDTO) {
+            convertNonInterventionalTrialFields(trialDTO, (NonInterventionalStudyProtocolDTO) isoDto);
+        }
         if (isoDto.getSecondaryIdentifiers() != null && isoDto.getSecondaryIdentifiers().getItem() != null) {
             for (Ii ii : isoDto.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
@@ -207,10 +207,9 @@ public class TrialConvertUtils {
      *
      * @param trialDTO the trial dto
      * @param isoDto the iso dto
-     *
-     * @return the study protocol dto
+     *    
      */
-    public StudyProtocolDTO convertToStudyProtocolDTO(BaseTrialDTO trialDTO,
+    public void convertToStudyProtocolDTO(BaseTrialDTO trialDTO,
             StudyProtocolDTO isoDto) {
         if (StringUtils.isNotEmpty(trialDTO.getOfficialTitle())) {
             isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
@@ -228,14 +227,14 @@ public class TrialConvertUtils {
         }
         if (trialDTO instanceof TrialDTO) {
             convertToStudyProtocolDTO((TrialDTO) trialDTO, isoDto);
-        }
-        return isoDto;
+        }      
     }
 
     /**
      * @param trialDTO
      * @param isoDto
      */
+    @SuppressWarnings("deprecation")
     private void setPrimaryPurposeToDTO(BaseTrialDTO trialDTO, StudyProtocolDTO isoDto) {
        isoDto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
            trialDTO.getPrimaryPurposeCode())));
@@ -247,6 +246,12 @@ public class TrialConvertUtils {
                     StConverter.convertToSt(trialDTO.getPrimaryPurposeOtherText()));
         } else {
             isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+        }
+        if (trialDTO.getSecondaryPurposeId() != null) {
+            SecondaryPurposeDTO secondaryPurposeDTO = new SecondaryPurposeDTO();
+            secondaryPurposeDTO.setIdentifier(IiConverter.convertToIi(trialDTO
+                    .getSecondaryPurposeId()));
+            isoDto.setSecondaryPurpose(secondaryPurposeDTO);
         }
     }
 
@@ -914,7 +919,8 @@ public class TrialConvertUtils {
     * @param trialDto dot
     * @return isoDto
     */
-   public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDto) {
+   @SuppressWarnings("deprecation")
+public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDto) {
        StudyProtocolStageDTO spStageDTO = new StudyProtocolStageDTO();
        spStageDTO.setIdentifier(IiConverter.convertToIi(trialDto.getStudyProtocolId()));
        spStageDTO.setNctIdentifier(StConverter.convertToSt(trialDto.getNctIdentifier()));
@@ -927,12 +933,31 @@ public class TrialConvertUtils {
        spStageDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
              PrimaryPurposeAdditionalQualifierCode.getByCode(trialDto.getPrimaryPurposeAdditionalQualifierCode())));
        spStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
+        if (trialDto.getSecondaryPurposeId() != null) {
+            SecondaryPurposeDTO secondaryPurpose = new SecondaryPurposeDTO();
+            secondaryPurpose.setIdentifier(IiConverter.convertToIi(trialDto
+                    .getSecondaryPurposeId()));
+            spStageDTO.setSecondaryPurpose(secondaryPurpose);
+        }
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
        spStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
        spStageDTO.setSummaryFourFundingCategoryCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.getByCode(
                trialDto.getSummaryFourFundingCategoryCode())));
        spStageDTO.setTrialType(StConverter.convertToSt(trialDto.getTrialType()));
+       
+        spStageDTO.setStudyModelCode(CdConverter.convertStringToCd(trialDto
+                .getStudyModelCode()));
+        spStageDTO.setStudyModelOtherText(StConverter.convertToSt(trialDto
+                .getStudyModelOtherText()));
+        spStageDTO.setTimePerspectiveCode(CdConverter
+                .convertStringToCd(trialDto.getTimePerspectiveCode()));
+        spStageDTO.setTimePerspectiveOtherText(StConverter.convertToSt(trialDto
+                .getTimePerspectiveOtherText()));
+        spStageDTO.setStudySubtypeCode(CdConverter.convertStringToCd(trialDto
+                .getStudySubtypeCode()));
+       
+       
        if (trialDto instanceof TrialDTO) {
            convertNonPropDtoToStage((TrialDTO) trialDto, spStageDTO);
        } else if (trialDto instanceof ProprietaryTrialDTO) {
@@ -1065,6 +1090,12 @@ public class TrialConvertUtils {
        trialDto.setOfficialTitle(StConverter.convertToString(spStageDTO.getOfficialTitle()));
        convertPhaseAndPurposeToTrialDTO(spStageDTO, trialDto);
        trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
+       if (spStageDTO.getSecondaryPurpose() != null) {
+           trialDto.setSecondaryPurposeId(IiConverter.convertToLong(spStageDTO
+                   .getSecondaryPurpose().getIdentifier()));
+           trialDto.setSecondaryPurposeName(StConverter.convertToString(spStageDTO
+                   .getSecondaryPurpose().getName()));
+       }       
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
        if (!ISOUtil.isIiNull(spStageDTO.getLeadOrganizationIdentifier())) {
@@ -1073,6 +1104,18 @@ public class TrialConvertUtils {
                trialDto.setLeadOrganizationIdentifier(null);
            }
        }
+       
+        trialDto.setStudyModelCode(CdConverter.convertCdToString(spStageDTO
+                .getStudyModelCode()));
+        trialDto.setStudyModelOtherText(StConverter.convertToString(spStageDTO
+                .getStudyModelOtherText()));
+        trialDto.setTimePerspectiveCode(CdConverter
+                .convertCdToString(spStageDTO.getTimePerspectiveCode()));
+        trialDto.setTimePerspectiveOtherText(StConverter
+                .convertToString(spStageDTO.getTimePerspectiveOtherText()));
+        trialDto.setStudySubtypeCode(CdConverter.convertCdToString(spStageDTO
+                .getStudySubtypeCode()));
+       
        return trialDto;
    }
 
@@ -1137,6 +1180,7 @@ public class TrialConvertUtils {
        trialDto.setDateOpenedforAccrual(TsConverter.convertToString(spStageDTO.getOpendedForAccrualDate()));
        trialDto.setDateClosedforAccrual(TsConverter.convertToString(spStageDTO.getClosedForAccrualDate()));
        trialDto.setPropritaryTrialIndicator(CommonsConstant.YES);
+       trialDto.setTrialType(StConverter.convertToString(spStageDTO.getTrialType()));
        return trialDto;
    }
 
@@ -1360,9 +1404,65 @@ public class TrialConvertUtils {
     public InterventionalStudyProtocolDTO convertToInterventionalStudyProtocolDTO(BaseTrialDTO trialDTO)
             throws PAException {
         InterventionalStudyProtocolDTO isoDto = new InterventionalStudyProtocolDTO();
-        isoDto = (InterventionalStudyProtocolDTO) convertToStudyProtocolDTO(trialDTO, isoDto);
+        convertToStudyProtocolDTO(trialDTO, isoDto);
         return isoDto;
     }
+    
+    /**
+     * Convert to non-interventional study protocol dto.
+     * @param trialDTO dtotoConvert
+     * @return isoDto
+     * @throws PAException on error
+     */
+     public NonInterventionalStudyProtocolDTO convertToNonInterventionalStudyProtocolDTO(BaseTrialDTO trialDTO)
+             throws PAException {
+         NonInterventionalStudyProtocolDTO isoDto = new NonInterventionalStudyProtocolDTO();
+         convertToNonInterventionalStudyProtocolDTO(trialDTO, isoDto);         
+         return isoDto;
+     }
+
+    /**
+     * @param trialDTO
+     *            trialDTO
+     * @param isoDto
+     *            isoDto
+     * 
+     */
+    public void convertToNonInterventionalStudyProtocolDTO(
+            BaseTrialDTO trialDTO, NonInterventionalStudyProtocolDTO isoDto) {
+        convertToStudyProtocolDTO(trialDTO, isoDto);
+        convertNonInterventionalTrialFields(trialDTO, isoDto);
+
+    }
+
+    /**
+     * @param trialDTO
+     * @param isoDto
+     */
+    private void convertNonInterventionalTrialFields(BaseTrialDTO trialDTO,
+            NonInterventionalStudyProtocolDTO isoDto) {
+        isoDto.setStudyModelCode(CdConverter.convertStringToCd(trialDTO.getStudyModelCode()));
+         isoDto.setStudyModelOtherText(StConverter.convertToSt(trialDTO.getStudyModelOtherText()));
+         isoDto.setTimePerspectiveCode(CdConverter.convertStringToCd(trialDTO.getTimePerspectiveCode()));
+         isoDto.setTimePerspectiveOtherText(StConverter.convertToSt(trialDTO.getTimePerspectiveOtherText()));         
+         isoDto.setStudySubtypeCode(CdConverter.convertStringToCd(trialDTO.getStudySubtypeCode()));
+    }
+    
+    /**
+     * @param trialDTO
+     *            BaseTrialDTO
+     * @return StudyProtocolDTO
+     * @throws PAException
+     *             PAException
+     */
+    public StudyProtocolDTO convertToStudyProtocolDTO(BaseTrialDTO trialDTO)
+            throws PAException {
+        if (PAConstants.NON_INTERVENTIONAL.equals(trialDTO.getTrialType())) {
+            return convertToNonInterventionalStudyProtocolDTO(trialDTO);
+        } else {
+            return convertToInterventionalStudyProtocolDTO(trialDTO);
+        }
+    }    
 
     /**
      * Convert to iso document list.

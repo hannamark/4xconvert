@@ -457,9 +457,9 @@
             <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
             <result name="outcomeAdd">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasureAdd.jsp</result>
         </action>
-        <action name="observationalStudyDesign*" class="gov.nih.nci.pa.action.ObservationalStudyDesignAction" method="{1}">
+        <action name="noninterventionalStudyDesign*" class="gov.nih.nci.pa.action.NonInterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
-            <result name="details">/WEB-INF/jsp/osdesignDetails.jsp</result>
+            <result name="details">/WEB-INF/jsp/nonIntDesignDetails.jsp</result>
         </action>
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

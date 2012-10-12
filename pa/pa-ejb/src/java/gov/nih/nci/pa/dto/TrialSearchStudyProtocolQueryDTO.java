@@ -112,6 +112,12 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     private Set<String> diseaseNames = new TreeSet<String>();
     private Set<String> interventionTypes = new TreeSet<String>();
     private Long studyInboxId;
+    private String studySubtypeCode;
+    private String studyModelCode;
+    private String studyModelOtherText;
+    private String timePerspectiveCode;
+    private String timePerspectiveOtherText;
+    
     
     /**
      * @return the studyInboxId
@@ -341,5 +347,75 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
      */
     public Set<String> getInterventionTypes() {
         return interventionTypes;
+    }
+
+    /**
+     * @return the studySubtypeCode
+     */
+    public String getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(String studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
+    }
+
+    /**
+     * @return the studyModelCode
+     */
+    public String getStudyModelCode() {
+        return studyModelCode;
+    }
+
+    /**
+     * @param studyModelCode the studyModelCode to set
+     */
+    public void setStudyModelCode(String studyModelCode) {
+        this.studyModelCode = studyModelCode;
+    }
+
+    /**
+     * @return the studyModelOtherText
+     */
+    public String getStudyModelOtherText() {
+        return studyModelOtherText;
+    }
+
+    /**
+     * @param studyModelOtherText the studyModelOtherText to set
+     */
+    public void setStudyModelOtherText(String studyModelOtherText) {
+        this.studyModelOtherText = studyModelOtherText;
+    }
+
+    /**
+     * @return the timePerspectiveCode
+     */
+    public String getTimePerspectiveCode() {
+        return timePerspectiveCode;
+    }
+
+    /**
+     * @param timePerspectiveCode the timePerspectiveCode to set
+     */
+    public void setTimePerspectiveCode(String timePerspectiveCode) {
+        this.timePerspectiveCode = timePerspectiveCode;
+    }
+
+    /**
+     * @return the timePerspectiveOtherText
+     */
+    public String getTimePerspectiveOtherText() {
+        return timePerspectiveOtherText;
+    }
+
+    /**
+     * @param timePerspectiveOtherText the timePerspectiveOtherText to set
+     */
+    public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
+        this.timePerspectiveOtherText = timePerspectiveOtherText;
     }
 }

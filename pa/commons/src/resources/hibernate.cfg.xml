@@ -25,6 +25,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
         <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />
         <mapping class="gov.nih.nci.pa.domain.Country" />
+        <mapping class="gov.nih.nci.pa.domain.SecondaryPurpose" />
         <mapping class="gov.nih.nci.pa.domain.StudyContact" />
         <mapping class="gov.nih.nci.pa.domain.StudySite" />
         <mapping class="gov.nih.nci.pa.domain.Organization" />
@@ -49,7 +50,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.Intervention" />
         <mapping class="gov.nih.nci.pa.domain.InterventionAlternateName" />
         <mapping class="gov.nih.nci.pa.domain.PlannedActivity" />
-        <mapping class="gov.nih.nci.pa.domain.ObservationalStudyProtocol" />
+        <mapping class="gov.nih.nci.pa.domain.NonInterventionalStudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.StudyOutcomeMeasure" />
         <mapping class="gov.nih.nci.pa.domain.StudyIndlde" />
         <mapping class="gov.nih.nci.pa.domain.Arm" />

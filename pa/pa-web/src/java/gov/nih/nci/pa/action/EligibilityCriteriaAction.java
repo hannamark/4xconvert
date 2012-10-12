@@ -97,7 +97,7 @@ import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.UnitsCode;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -225,9 +225,9 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             }
             StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
-            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-                ObservationalStudyProtocolDTO ospDTO = PaRegistry.getStudyProtocolService()
-                    .getObservationalStudyProtocol(studyProtocolIi);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("NonInterventionalStudyProtocol")) {
+                NonInterventionalStudyProtocolDTO ospDTO = PaRegistry.getStudyProtocolService()
+                    .getNonInterventionalStudyProtocol(studyProtocolIi);
                 if (ospDTO != null) {
                     if (ospDTO.getSamplingMethodCode() != null && ospDTO.getSamplingMethodCode().getCode() != null) {
                         samplingMethodCode = ospDTO.getSamplingMethodCode().getCode().toString();
@@ -483,12 +483,12 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
             StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
-            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
-                ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-                ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+            if (spqDTO.getStudyProtocolType().equalsIgnoreCase("NonInterventionalStudyProtocol")) {
+                NonInterventionalStudyProtocolDTO ospDTO = new NonInterventionalStudyProtocolDTO();
+                ospDTO = PaRegistry.getStudyProtocolService().getNonInterventionalStudyProtocol(studyProtocolIi);
                 ospDTO.setStudyPopulationDescription(StConverter.convertToSt(studyPopulationDescription));
                 ospDTO.setSamplingMethodCode(CdConverter.convertToCd(SamplingMethodCode.getByCode(samplingMethodCode)));
-                ospDTO = PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospDTO);
+                ospDTO = PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospDTO);
             }
 
             StudyProtocolDTO spDTO = new StudyProtocolDTO();
@@ -908,7 +908,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     private void enforceBusinessRules() {
         StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.TRIAL_SUMMARY);
-        if (spqDTO.getStudyProtocolType().equalsIgnoreCase("ObservationalStudyProtocol")) {
+        if (spqDTO.getStudyProtocolType().equalsIgnoreCase("NonInterventionalStudyProtocol")) {
             if (StringUtils.isEmpty(studyPopulationDescription)) {
                 addFieldError("studyPopulationDescription", getText("error.trialPopulationDescription"));
             }

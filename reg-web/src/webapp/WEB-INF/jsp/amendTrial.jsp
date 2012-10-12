@@ -333,6 +333,9 @@
             document.observe("dom:loaded", function () {
                                                displayTrialStatusDefinition('trialDTO_statusCode');
                                                });
+            
+            Event.observe(window, "load", setDisplayBasedOnTrialType);
+            Event.observe(window, "load", disableTrialTypeChangeRadios);
         </script>
     </head>
     <body>

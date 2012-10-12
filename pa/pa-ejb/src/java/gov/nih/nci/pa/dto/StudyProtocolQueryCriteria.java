@@ -120,6 +120,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private static final long serialVersionUID = 1047596217516203744L;
     
     private Long studyProtocolId;
+    private String studyProtocolType;
+    private String studySubtypeCode;
     private String anyTypeIdentifier;
     private String nciIdentifier;
     private String dcpIdentifier;
@@ -953,7 +955,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(summary4AnatomicSites).append(", familyId=")
                 .append(familyId).append(", participatingSiteFamilyId=")
                 .append(participatingSiteFamilyId).append(", submitter=")
-                .append(submitter).append("]");
+                .append(submitter).append(", studyProtocolType=")
+                .append(studyProtocolType).append(", studySubtypeCode=")
+                .append(studySubtypeCode).append("]");
         return builder.toString();
     }
 
@@ -1011,6 +1015,34 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setSubmitter(String submitter) {
         this.submitter = submitter;
+    }
+
+    /**
+     * @return the studyProtocolType
+     */
+    public String getStudyProtocolType() {
+        return studyProtocolType;
+    }
+
+    /**
+     * @param studyProtocolType the studyProtocolType to set
+     */
+    public void setStudyProtocolType(String studyProtocolType) {
+        this.studyProtocolType = studyProtocolType;
+    }
+
+    /**
+     * @return the studySubtypeCode
+     */
+    public String getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(String studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
     }    
     
 }

@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><c:choose>
-     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
      </c:when>
      <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose>
@@ -41,7 +41,7 @@ BubbleTips.activateTipOn("dfn");
 <body>
 <c:set var="topic" scope="request" value="abstractoutcome"/>
  <h1><c:choose>
-     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>
      </c:when>
      <c:otherwise><fmt:message key="isdesign.outcome.title"/></c:otherwise></c:choose></h1>

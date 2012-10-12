@@ -94,14 +94,21 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum BiospecimenRetentionCode implements CodedEnum<String> {
 
-    /** Retained. */
-    RETAINED("Retained"),
-    /** Speciment and DNA. */
-    SPECIMENT_AND_DNA("Speciment and DNA"),
-    /** Speciment Only. */
-    SPECIMENT_ONLY("Speciment Only"),
-    /** None. */
-    NONE("None");
+   
+  
+    /**
+     * 
+     */
+    NONE_RETAINED("None Retained"), 
+    /**
+     * 
+     */
+    SAMPLES_WITH_DNA("Samples With DNA"), 
+    /**
+     * 
+     */
+    SAMPLES_WITHOUT_DNA(
+            "Samples Without DNA");
 
     private String code;
 

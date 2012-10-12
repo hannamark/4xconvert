@@ -12,7 +12,7 @@ import org.hibernate.validator.NotEmpty;
  * @author Vrushali
  *
  */
-public class BaseTrialDTO {
+public class BaseTrialDTO { // NOPMD
     private String assignedIdentifier; // used to store nci-accession number
     private String officialTitle;
     private String phaseCode;
@@ -20,6 +20,8 @@ public class BaseTrialDTO {
     private String primaryPurposeCode;
     private String primaryPurposeAdditionalQualifierCode;
     private String primaryPurposeOtherText;
+    private Long secondaryPurposeId;
+    private String secondaryPurposeName;
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
@@ -36,6 +38,12 @@ public class BaseTrialDTO {
     private List<TrialFundingWebDTO> fundingDtos;
     private List<TrialDocumentWebDTO> docDtos;
     private List <TrialIndIdeDTO> indIdeDtos;
+    private String studySubtypeCode;
+    private String studyModelCode;
+    private String studyModelOtherText;
+    private String timePerspectiveCode;
+    private String timePerspectiveOtherText;
+    
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
     /**
@@ -321,6 +329,90 @@ public class BaseTrialDTO {
      */
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+    /**
+     * @return the secondaryPurposeId
+     */
+    public Long getSecondaryPurposeId() {
+        return secondaryPurposeId;
+    }
+    /**
+     * @param secondaryPurposeId the secondaryPurposeId to set
+     */
+    public void setSecondaryPurposeId(Long secondaryPurposeId) {
+        this.secondaryPurposeId = secondaryPurposeId;
+    }
+    /**
+     * @return the secondaryPurposeName
+     */
+    public String getSecondaryPurposeName() {
+        return secondaryPurposeName;
+    }
+    /**
+     * @param secondaryPurposeName the secondaryPurposeName to set
+     */
+    public void setSecondaryPurposeName(String secondaryPurposeName) {
+        this.secondaryPurposeName = secondaryPurposeName;
+    }
+    /**
+     * @return the studySubtypeCode
+     */
+    public String getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(String studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
+    }
+    /**
+     * @return the studyModelCode
+     */
+    public String getStudyModelCode() {
+        return studyModelCode;
+    }
+    /**
+     * @param studyModelCode the studyModelCode to set
+     */
+    public void setStudyModelCode(String studyModelCode) {
+        this.studyModelCode = studyModelCode;
+    }
+    /**
+     * @return the studyModelOtherText
+     */
+    public String getStudyModelOtherText() {
+        return studyModelOtherText;
+    }
+    /**
+     * @param studyModelOtherText the studyModelOtherText to set
+     */
+    public void setStudyModelOtherText(String studyModelOtherText) {
+        this.studyModelOtherText = studyModelOtherText;
+    }
+    /**
+     * @return the timePerspectiveCode
+     */
+    public String getTimePerspectiveCode() {
+        return timePerspectiveCode;
+    }
+    /**
+     * @param timePerspectiveCode the timePerspectiveCode to set
+     */
+    public void setTimePerspectiveCode(String timePerspectiveCode) {
+        this.timePerspectiveCode = timePerspectiveCode;
+    }
+    /**
+     * @return the timePerspectiveOtherText
+     */
+    public String getTimePerspectiveOtherText() {
+        return timePerspectiveOtherText;
+    }
+    /**
+     * @param timePerspectiveOtherText the timePerspectiveOtherText to set
+     */
+    public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
+        this.timePerspectiveOtherText = timePerspectiveOtherText;
     }
 
 }

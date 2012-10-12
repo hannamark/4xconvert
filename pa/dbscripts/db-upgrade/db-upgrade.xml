@@ -1095,12 +1095,18 @@
         <comment>Increase column width to accomodate markers.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5439.sql"/>
      </changeSet>
+
      <changeSet id="PO-5417" author="krylovd">
         <comment>Updates to documents table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5417.sql"/>
      </changeSet>
+
      <changeSet id="PO-5545" author="monishd">
         <comment>New property trial.onhold.email.body added to pa_properties.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5545.sql"/>
+     </changeSet>  
+     <changeSet id="PO-5513" author="krylovd">
+        <comment>Added support for non-interventional trials.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513.sql"/>
      </changeSet>     
 </databaseChangeLog>

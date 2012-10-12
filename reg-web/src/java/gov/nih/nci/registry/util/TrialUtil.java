@@ -13,6 +13,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
@@ -99,7 +100,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @param spDTO sdto
      * @param trialDTO gdto
      */
-    private void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+    private void copy(StudyProtocolDTO spDTO, TrialDTO trialDTO) { //NOPMD
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
@@ -107,7 +108,8 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         trialDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
-        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
+        trialDTO.setTrialType(spDTO instanceof NonInterventionalStudyProtocolDTO ? PAConstants.NON_INTERVENTIONAL
+                : PAConstants.INTERVENTIONAL);
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStartDate(TsConverter.convertToString(spDTO.getStartDate()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
@@ -127,6 +129,35 @@ public class TrialUtil extends TrialConvertUtils {
                 }
             }
             trialDTO.setSecondaryIdentifierList(listIi);
+        }
+        if (spDTO.getSecondaryPurpose() != null) {
+            trialDTO.setSecondaryPurposeId(IiConverter.convertToLong(spDTO
+                    .getSecondaryPurpose().getIdentifier()));
+            trialDTO.setSecondaryPurposeName(StConverter.convertToString(spDTO
+                    .getSecondaryPurpose().getName()));
+        }
+        
+        copyNonInterventionalTrialFields(spDTO, trialDTO);
+    }
+
+    /**
+     * @param spDTO
+     * @param trialDTO
+     */
+    private void copyNonInterventionalTrialFields(StudyProtocolDTO spDTO,
+            BaseTrialDTO trialDTO) {
+        if (spDTO instanceof NonInterventionalStudyProtocolDTO) {
+            NonInterventionalStudyProtocolDTO nonIntDTO = (NonInterventionalStudyProtocolDTO) spDTO;
+            trialDTO.setStudyModelCode(CdConverter.convertCdToString(nonIntDTO
+                    .getStudyModelCode()));
+            trialDTO.setStudyModelOtherText(StConverter
+                    .convertToString(nonIntDTO.getStudyModelOtherText()));
+            trialDTO.setTimePerspectiveCode(CdConverter
+                    .convertCdToString(nonIntDTO.getTimePerspectiveCode()));
+            trialDTO.setTimePerspectiveOtherText(StConverter
+                    .convertToString(nonIntDTO.getTimePerspectiveOtherText()));
+            trialDTO.setStudySubtypeCode(CdConverter
+                    .convertCdToString(nonIntDTO.getStudySubtypeCode()));
         }
     }
 
@@ -689,9 +720,9 @@ public class TrialUtil extends TrialConvertUtils {
      */
     public BaseTrialDTO getTrialDTOForPartiallySumbissionById(String tempStudyProtocolId)
             throws NullifiedRoleException, PAException {
-        BaseTrialDTO trialDTO = new BaseTrialDTO();
-        trialDTO = convertToTrialDTO(PaRegistry.getStudyProtocolStageService().get(
-                IiConverter.convertToIi(tempStudyProtocolId)));
+        BaseTrialDTO trialDTO = convertToTrialDTO(PaRegistry
+                .getStudyProtocolStageService().get(
+                        IiConverter.convertToIi(tempStudyProtocolId)));
         List<StudyFundingStageDTO> fundingIsoDtos = PaRegistry.getStudyProtocolStageService()
                 .getGrantsByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
         List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
@@ -873,7 +904,8 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         trialDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
-        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
+        trialDTO.setTrialType(spDTO instanceof NonInterventionalStudyProtocolDTO ? PAConstants.NON_INTERVENTIONAL
+                : PAConstants.INTERVENTIONAL);
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStudyProtocolId(spqDto.getStudyProtocolId().toString());
         trialDTO.setLeadOrgTrialIdentifier(spqDto.getLocalStudyProtocolIdentifier());
@@ -883,6 +915,13 @@ public class TrialUtil extends TrialConvertUtils {
         copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi),
                 trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
+        if (spDTO.getSecondaryPurpose() != null) {
+            trialDTO.setSecondaryPurposeId(IiConverter.convertToLong(spDTO
+                    .getSecondaryPurpose().getIdentifier()));
+            trialDTO.setSecondaryPurposeName(StConverter.convertToString(spDTO
+                    .getSecondaryPurpose().getName()));
+        }
+        copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 
     /**

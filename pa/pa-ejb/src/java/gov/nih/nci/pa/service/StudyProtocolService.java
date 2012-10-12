@@ -84,7 +84,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.Collection;
@@ -171,7 +171,7 @@ public interface StudyProtocolService {
      * @return ObservationalStudyProtocolDTO
      * @throws PAException PAException
      */
-    ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException;
+    NonInterventionalStudyProtocolDTO getNonInterventionalStudyProtocol(Ii ii) throws PAException;
 
     /**
      *
@@ -179,8 +179,8 @@ public interface StudyProtocolService {
      * @return ObservationalStudyProtocolDTO
      * @throws PAException PAException
      */
-    ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
-            ObservationalStudyProtocolDTO ospDTO) throws PAException;
+    NonInterventionalStudyProtocolDTO updateNonInterventionalStudyProtocol(
+            NonInterventionalStudyProtocolDTO ospDTO) throws PAException;
 
     /**
      * for creating a new OSP.
@@ -188,7 +188,7 @@ public interface StudyProtocolService {
      * @return ii ii
      * @throws PAException exception
      */
-    Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO) throws PAException;
+    Ii createNonInterventionalStudyProtocol(NonInterventionalStudyProtocolDTO ospDTO) throws PAException;
 
     /**
      * deletes protocol and all of its related classes.

@@ -109,6 +109,7 @@ public class TSRReportGeneralTrialDetails {
     private String primaryPurposeOtherText;
     private String phase;
     private String phaseAdditonalQualifier;
+    private String subType;
 
     /**
      * Default Constructor.
@@ -382,6 +383,20 @@ public class TSRReportGeneralTrialDetails {
      */
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the subType
+     */
+    public String getSubType() {
+        return subType;
+    }
+
+    /**
+     * @param subType the subType to set
+     */
+    public void setSubType(String subType) {
+        this.subType = subType;
     }
 
 }

@@ -34,6 +34,92 @@
                      </span>
                 </td>
           </tr>
+          
+          <tr class="interventional">        
+                <td  scope="row" class="label">                    
+                   <label for="trialDTO.secondaryPurposeId"><fmt:message key="submit.trial.secondaryPurpose"/></label>                    
+                </td>
+                <s:set name="typeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
+                <td>
+                    <s:select headerKey="" headerValue="--Select--" id ="trialDTO.secondaryPurposeId" name="trialDTO.secondaryPurposeId" list="#typeCodeValues"  cssStyle="width:206px"
+                    listKey="identifier.extension" listValue="name.value" 
+                    value="trialDTO.secondaryPurposeId"/>
+                     <span class="formErrorMsg">
+                        <s:fielderror>
+                        <s:param>trialDTO.secondaryPurposeId</s:param>
+                       </s:fielderror>
+                     </span>
+                </td>
+          </tr>
+          
+		<tr class="non-interventional">        
+		      <td  scope="row" class="label">                    
+		         <label for="trialDTO.studyModelCode"><fmt:message key="submit.trial.studyModelCode"/><span class="required">*</span></label>                    
+		     </td>
+		     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
+		     <td>
+		         <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studyModelCode" name="trialDTO.studyModelCode" list="#typeCodeValues"  cssStyle="width:206px" 
+		                   onchange="displayStudyModelOtherTextDiv();" value="trialDTO.studyModelCode"/>
+		          <span class="formErrorMsg">
+		             <s:fielderror>
+		             <s:param>trialDTO.studyModelCode</s:param>
+		            </s:fielderror>
+		           </span>
+		      </td>
+		</tr>
+		
+        <tr id="studyModelOtherTextDiv" style="display:none;">
+            <td scope="row" class="label non-interventional">                
+                <label for="trialDTO.studyModelOtherText">
+                    <fmt:message key="submit.trial.studyModelOtherText"/></label>                
+            </td>
+             <td class="non-interventional">
+                <s:textarea id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"  cols="50" rows="2" />
+                <span class="info">Required if Study Model equals &#39;Other&#39;</span>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.studyModelOtherText</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>
+      </tr>
+		
+      <tr class="non-interventional">        
+            <td  scope="row" class="label">                    
+               <label for="trialDTO.timePerspectiveCode"><fmt:message key="submit.trial.timePerspectiveCode"/><span class="required">*</span></label>                    
+           </td>
+           <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
+           <td>
+               <s:select headerKey="" headerValue="--Select--" id ="trialDTO.timePerspectiveCode" 
+                    name="trialDTO.timePerspectiveCode" list="#typeCodeValues"  cssStyle="width:206px"
+                    onchange="displayTimePerspectiveOtherTextDiv();" 
+                         value="trialDTO.timePerspectiveCode"/>
+                <span class="formErrorMsg">
+                   <s:fielderror>
+                   <s:param>trialDTO.timePerspectiveCode</s:param>
+                  </s:fielderror>
+                 </span>
+            </td>
+      </tr>
+      
+        <tr id="timePerspectiveOtherTextDiv" style="display:none;">
+            <td scope="row" class="label non-interventional">                
+                <label for="trialDTO.timePerspectiveOtherText">
+                    <fmt:message key="submit.trial.timePerspectiveOtherText"/></label>                
+            </td>
+             <td class="non-interventional">
+                <s:textarea id="trialDTO.timePerspectiveOtherText" name="trialDTO.timePerspectiveOtherText"  cols="50" rows="2" />
+                <span class="info">Required if Time Perspective equals &#39;Other&#39;</span>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                    <s:param>trialDTO.timePerspectiveOtherText</s:param>
+                   </s:fielderror>                            
+                 </span>
+            </td>
+      </tr>
+      
+          
+          
 <SCRIPT LANGUAGE="JavaScript">
 displayPrimaryPurposeOtherCode();
 function displayPrimaryPurposeOtherCode(){
@@ -47,6 +133,29 @@ function displayPrimaryPurposeOtherCode(){
         document.getElementById('trialDTO.primaryPurposeAdditionalQualifierCode').value = null;
     }
 }
+
+displayStudyModelOtherTextDiv();
+function displayStudyModelOtherTextDiv() {
+    if ($('trialDTO.studyModelCode').value == 'Other') {
+        $('studyModelOtherTextDiv').show();
+        document.getElementById('trialDTO.studyModelOtherText').disabled = false;        
+    } else {
+        $('studyModelOtherTextDiv').hide();
+        document.getElementById('trialDTO.studyModelOtherText').disabled = true;        
+    }	
+}
+
+displayTimePerspectiveOtherTextDiv();
+function displayTimePerspectiveOtherTextDiv() {
+    if ($('trialDTO.timePerspectiveCode').value == 'Other') {
+        $('timePerspectiveOtherTextDiv').show();
+        document.getElementById('trialDTO.timePerspectiveOtherText').disabled = false;        
+    } else {
+        $('timePerspectiveOtherTextDiv').hide();
+        document.getElementById('trialDTO.timePerspectiveOtherText').disabled = true;        
+    }   
+}
+
 </SCRIPT>
 
           

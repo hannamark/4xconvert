@@ -102,7 +102,7 @@ import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -175,9 +175,12 @@ import org.apache.commons.lang.BooleanUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
+    private static final String SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU = 
+            "Select Participating Sites from Administrative Data menu.";
     private static final String SELECT_INT_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Interventional Trial"
             + " Design under Scientific Data menu.";
-    private static final String SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Observational Trial"
+    private static final String SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from "
+            + "Non-Interventional Trial"
             + " Design under Scientific Data menu.";
     private static final String SELECT_TRIAL_DESCRIPTION = "Select Trial Description from Scientific Data menu.";
     private static final String SELECT_TRIAL_DETAILS = "Select General Trial Details from Administrative Data menu.";
@@ -281,17 +284,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     }
                 }
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
-                .equalsIgnoreCase("ObservationalStudyProtocol")) {
-                ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-                ospDTO = studyProtocolService.getObservationalStudyProtocol(studyProtocolIi);
-                enforceObservational(ospDTO, messages);
+                .equalsIgnoreCase("NonInterventionalStudyProtocol")) {
+                NonInterventionalStudyProtocolDTO ospDTO = new NonInterventionalStudyProtocolDTO();
+                ospDTO = studyProtocolService.getNonInterventionalStudyProtocol(studyProtocolIi);
+                enforeNonInterventional(ospDTO, messages);
                 if (ospDTO.getNumberOfGroups().getValue() != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
                     if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
-                        messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
-                                          "Number of Observational study group records must be the same"
-                                                  + " as Number of Groups assigned in Observational Study Design.", 
-                                                  ErrorMessageTypeEnum.SCIENTIFIC);
+                        messages.addError(
+                                SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                "Number of non-interventional study group records must be the same"
+                                        + " as the Number of Groups assigned in Non-Interventional Study Design.",
+                                ErrorMessageTypeEnum.SCIENTIFIC);
                     }
                 }
             }
@@ -371,7 +375,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
         if (spList == null || spList.isEmpty()) {
-            messages.addError("Select Participating Sites from Administrative Data menu.",
+            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                               "No Participating Sites exists for the trial.", ErrorMessageTypeEnum.ADMIN);
             return;
         }
@@ -389,7 +393,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             Organization orgBo = getPoOrg(spartDto);
             if (!piFound) {
                 // Error Message ID Does Not Match Participating Site PO ID#
-                messages.addError("Select Participating Sites from Administrative Data menu.", "Participating site # "
+                messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU, "Participating site # "
                         + orgBo.getIdentifier() + " Must have an Investigator", ErrorMessageTypeEnum.ADMIN);
 
             }
@@ -402,7 +406,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
-            messages.addError("Select Participating Sites from Administrative Data menu.",
+            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                               "Trial cannot have duplicate Treating Site.", ErrorMessageTypeEnum.ADMIN);
         }
     }
@@ -492,7 +496,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteFunctionalCode.TREATING_SITE.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        messages.addWarning("Select Participating Sites from Administrative Data menu.",
+                        messages.addWarning(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                                             "Participating Site status has been set to nullified, "
                                                     + "Please select another Participating Site");
                     }
@@ -617,8 +621,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 messages.addError("Select Arm under Scientific Data menu.",
                                   "No Arm exists for the trial.", ErrorMessageTypeEnum.SCIENTIFIC);
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
-                .equalsIgnoreCase("ObservationalStudyProtocol")) {
-                messages.addError("Select Groups from Observational Trial Design " + "under Scientific Data menu.",
+                .equalsIgnoreCase("NonInterventionalStudyProtocol")) {
+                messages.addError("Select Groups from Non-Interventional Trial Design " + "under Scientific Data menu.",
                                   "No Groups exists for the trial.", ErrorMessageTypeEnum.SCIENTIFIC);
             }
         } else {
@@ -807,7 +811,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (recruitmentStatus.isRecruiting() && !studySiteRecruiting) {
             String errorMsg = "Data inconsistency: At least one location needs to be recruiting if the overall "
                     + "recruitment status is '%s'";
-            messages.addError("Select Participating Sites from Administrative Data menu.",
+            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                               String.format(errorMsg, recruitmentStatus.getCode()), ErrorMessageTypeEnum.ADMIN);
         }
         boolean isInReviewOrApproved = recruitmentStatus == RecruitmentStatusCode.IN_REVIEW
@@ -816,7 +820,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (isInReviewOrApproved && studySiteRecruiting) {
             String errorMsg = "Data inconsistency. No site can recruit patients if the overall"
                     + " recruitment status is '%s'";
-            messages.addWarning("Select Participating Sites from Administrative Data menu.",
+            messages.addWarning(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                                 String.format(errorMsg, recruitmentStatus.getCode()));
         }
 
@@ -873,7 +877,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
         if (spList == null || spList.isEmpty()) {
-            messages.addError("Select Participating Sites from Administrative Data menu.",
+            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                               "No Participating Sites exists for the trial.", ErrorMessageTypeEnum.ADMIN);
             return;
         }
@@ -897,7 +901,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             Organization orgBo = getPoOrg(spartDto);
             if (!piFound) {
                 // Error Message ID Does Not Match Participating Site PO ID#
-                messages.addError("Select Participating Sites from Administrative Data menu.", "Participating site # "
+                messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU, "Participating site # "
                         + orgBo.getIdentifier() + " Must have an Investigator", ErrorMessageTypeEnum.ADMIN);
 
             }
@@ -919,7 +923,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
-            messages.addError("Select Participating Sites from Administrative Data menu.",
+            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
                               "Trial cannot have duplicate Treating Site.", ErrorMessageTypeEnum.ADMIN);
         }
 
@@ -1044,9 +1048,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
         if (!isPrimayFound) {
-            messages.addError("Select Outcome Measure from Interventional/Observational under Scientific Data menu.",
-                              "Trial must include at least one PRIMARY outcome measure.", 
-                              ErrorMessageTypeEnum.SCIENTIFIC);
+            messages.addError(
+                    "Select Outcome Measure from Interventional/Non-Interventional under Scientific Data menu.",
+                    "Trial must include at least one PRIMARY outcome measure.",
+                    ErrorMessageTypeEnum.SCIENTIFIC);
         }
     }
 
@@ -1117,37 +1122,47 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceObservational(ObservationalStudyProtocolDTO ospDTO, AbstractionMessageCollection messages) {
-        if (ospDTO.getStudyModelCode().getCode() == null) {
+    private void enforeNonInterventional(NonInterventionalStudyProtocolDTO nonIntDTO, //NOPMD
+            AbstractionMessageCollection messages) {
+        if (nonIntDTO.getPrimaryPurposeCode().getCode() == null) {
+            messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Primary Purpose must be Entered", 
+                    ErrorMessageTypeEnum.SCIENTIFIC);
+        }
+        if (ISOUtil.isCdNull(nonIntDTO.getStudySubtypeCode())) {
+            messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Non-interventional Study Type must be Entered", 
+                    ErrorMessageTypeEnum.SCIENTIFIC);
+        }
+        if (nonIntDTO.getStudyModelCode().getCode() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Study Model must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
         } else {
-            if (ospDTO.getStudyModelCode().getCode().equalsIgnoreCase("Other")
-                    && ospDTO.getStudyModelOtherText() == null) {
-                messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Study Model Comment must be Entered", 
+            if (nonIntDTO.getStudyModelCode().getCode().equalsIgnoreCase("Other")
+                    && nonIntDTO.getStudyModelOtherText() == null) {
+                messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "If Study Model is 'Other', please describe", 
                         ErrorMessageTypeEnum.SCIENTIFIC);
             }
         }
 
-        if (ospDTO.getTimePerspectiveCode().getCode() == null) {
+        if (nonIntDTO.getTimePerspectiveCode().getCode() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Time Perspective must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
         } else {
-            if (ospDTO.getTimePerspectiveCode().getCode().equalsIgnoreCase("Other")
-                    && ospDTO.getTimePerspectiveOtherText() == null) {
-                messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Time Perspective Comment must be Entered", 
+            if (nonIntDTO.getTimePerspectiveCode().getCode().equalsIgnoreCase("Other")
+                    && nonIntDTO.getTimePerspectiveOtherText() == null) {
+                messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                        "If Time Perspective is 'Other', " + "please describe",
                         ErrorMessageTypeEnum.SCIENTIFIC);
             }
         }
-        if (ospDTO.getBiospecimenRetentionCode().getCode() == null) {
+        if (nonIntDTO.getBiospecimenRetentionCode().getCode() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Bio-specimen Retention must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
         }
-        if (ospDTO.getNumberOfGroups().getValue() == null) {
+        if (nonIntDTO.getNumberOfGroups().getValue() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Number of Groups/Cohorts must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
         }
-        if (ospDTO.getTargetAccrualNumber().getLow().getValue() == null) {
+        if (nonIntDTO.getTargetAccrualNumber().getLow().getValue() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Target Enrollment must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
         }
@@ -1222,7 +1237,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
 
         if (paECs == null || paECs.isEmpty()) {
-            messages.addError("Select Eligibilty Criteria from specific Interventional/Observational"
+            messages.addError("Select Eligibilty Criteria from specific Interventional/Non-Interventional"
                     + " under Scientific Data menu.", " Does not have any Eligibilty Criteria", 
                     ErrorMessageTypeEnum.SCIENTIFIC);
             return;
@@ -1234,8 +1249,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         } // for loop
         if (!otherCriteriaExist) {
-            messages.addError("Select Eligibilty Criteria from specific Interventional/Observational under Scientific "
-                    + "Data menu and Add Other Criteria.", " Minimum one Other criteria must be added ", 
+            messages.addError(
+                    "Select Eligibilty Criteria from specific Interventional/Non-Interventional under Scientific "
+                            + "Data menu and Add Other Criteria.",
+                    " Minimum one Other criteria must be added ",
                     ErrorMessageTypeEnum.SCIENTIFIC);
 
         }

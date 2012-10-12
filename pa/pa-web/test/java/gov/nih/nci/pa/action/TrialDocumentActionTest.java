@@ -34,7 +34,7 @@ public class TrialDocumentActionTest extends AbstractPaActionTest{
         trialDocumentAction.setTrialDocumentWebDTO(trialDocumentWebDTO);
                 
         spDTO = new StudyProtocolQueryDTO();
-        spDTO.setStudyProtocolType("ObservationalStudyProtocol");
+        spDTO.setStudyProtocolType("NonInterventionalStudyProtocol");
         spDTO.setNciIdentifier("nci");
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);

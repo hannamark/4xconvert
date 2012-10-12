@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -176,7 +177,29 @@ public abstract class AbstractTrialRegistrationBean {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
             returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
         }
+        returnStudyProtocolDTO.setSecondaryPurpose(studyProtocolDTO.getSecondaryPurpose());
     }
-
+    
+    
+    /**
+     * @param from
+     *            StudyProtocolDTO
+     * @param to
+     *            StudyProtocolDTO
+     */
+    protected void setNonInterventionalTrialFields(StudyProtocolDTO from,
+            StudyProtocolDTO to) {
+        if (from instanceof NonInterventionalStudyProtocolDTO
+                && to instanceof NonInterventionalStudyProtocolDTO) {
+            NonInterventionalStudyProtocolDTO fromDTO = (NonInterventionalStudyProtocolDTO) from;
+            NonInterventionalStudyProtocolDTO toDTO = (NonInterventionalStudyProtocolDTO) to;
+            toDTO.setStudySubtypeCode(fromDTO.getStudySubtypeCode());
+            toDTO.setStudyModelCode(fromDTO.getStudyModelCode());
+            toDTO.setStudyModelOtherText(fromDTO.getStudyModelOtherText());
+            toDTO.setTimePerspectiveCode(fromDTO.getTimePerspectiveCode());
+            toDTO.setTimePerspectiveOtherText(fromDTO
+                    .getTimePerspectiveOtherText());
+        }
+    }
 
 }

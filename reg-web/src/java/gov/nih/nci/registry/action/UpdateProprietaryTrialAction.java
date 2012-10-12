@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -111,7 +112,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -181,6 +184,11 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
                 return ERROR;
             }
             getTrialDTO().setDocDtos(getTrialDocuments());
+            if (getTrialDTO().getSecondaryPurposeId() != null) {
+                getTrialDTO().setSecondaryPurposeName(PAServiceUtils
+                        .getSecondaryPurpose(getTrialDTO().getSecondaryPurposeId())
+                        .getName().getValue());
+            }            
         } catch (IOException e) {
             addActionError(e.getMessage());
             return ERROR;
@@ -235,7 +243,12 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
-            util.convertToStudyProtocolDTO(trialDTO, studyProtocolDTO);
+            if (studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO) {
+                util.convertToNonInterventionalStudyProtocolDTO(trialDTO,
+                        (NonInterventionalStudyProtocolDTO) studyProtocolDTO);
+            } else {
+                util.convertToStudyProtocolDTO(trialDTO, studyProtocolDTO);
+            }           
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
             St leadOrganizationIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
@@ -287,9 +300,18 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         validateDocuments();
         validateProtocolDocUpdate();        
         checkSubmittingOrgRules();
+        checkNonInterventionalFields();
     }
 
     
+
+    private void checkNonInterventionalFields() {
+        Map<String, String> errMap = new HashMap<String, String>();
+        final ProprietaryTrialDTO trialDTO = getTrialDTO();
+        new TrialValidator()
+                .validateNonInterventionalTrialDTO(trialDTO, errMap);
+        addErrors(errMap);
+    }
 
     private void checkSubmittingOrgRules() {
         PAServiceUtils paServiceUtils = new PAServiceUtils();

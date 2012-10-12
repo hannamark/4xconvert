@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.OrganizationalStructuralRole;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.SecondaryPurpose;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
@@ -108,10 +109,13 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.convert.SecondaryPurposeConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
+import gov.nih.nci.pa.iso.dto.SecondaryPurposeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -243,11 +247,20 @@ public class PAServiceUtils {
      * @return ii
      */
     public Ii copy(Ii fromStudyProtocolIi) throws PAException {
-        InterventionalStudyProtocolDTO dto =
-                PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(fromStudyProtocolIi);
+        StudyProtocolDTO dto =
+                PaRegistry.getStudyProtocolService().getStudyProtocol(fromStudyProtocolIi);
         dto.setIdentifier(null);
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-        Ii toIi = PaRegistry.getStudyProtocolService().createInterventionalStudyProtocol(dto);
+        Ii toIi;
+        if (dto instanceof NonInterventionalStudyProtocolDTO) {
+            toIi = PaRegistry.getStudyProtocolService()
+                    .createNonInterventionalStudyProtocol(
+                            (NonInterventionalStudyProtocolDTO) dto);
+        } else {
+            toIi = PaRegistry.getStudyProtocolService()
+                    .createInterventionalStudyProtocol(
+                            (InterventionalStudyProtocolDTO) dto);
+        }        
         getRemoteService(IiConverter.convertToStudyMilestoneIi(null)).copy(fromStudyProtocolIi, toIi);
         getRemoteService(IiConverter.convertToDocumentWorkFlowStatusIi(null)).copy(fromStudyProtocolIi, toIi);
         getRemoteService(IiConverter.convertToStudyIndIdeIi(null)).copy(fromStudyProtocolIi, toIi);
@@ -633,10 +646,7 @@ public class PAServiceUtils {
         Long hcpId = null;
         try {
             crsId = crs.createClinicalResearchStaffCorrelations(orgPoIdentifier, personPoIdentifier);
-
-            if (StudyTypeCode.INTERVENTIONAL.equals(studyTypeCode)) {
-                hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifier);
-            }
+            hcpId = hcp.createHealthCareProviderCorrelationBeans(orgPoIdentifier, personPoIdentifier);            
         } catch (PAException pae) {
             if (pae.getMessage().contains(PAExceptionConstants.NULLIFIED_PERSON)) {
                 throw new PAException(PRINCIPAL_INVESTIGATOR + pae.getMessage(), pae);
@@ -2033,4 +2043,32 @@ public class PAServiceUtils {
         }
         return sbuf;
     }
+    
+    /**
+     * @return List<SecondaryPurposeDTO>
+     */
+    public static List<SecondaryPurposeDTO> getSecondaryPurposeList() {
+        List<SecondaryPurposeDTO> list = new ArrayList<SecondaryPurposeDTO>();
+        final SecondaryPurposeConverter secondaryPurposeConverter = new SecondaryPurposeConverter();
+        Session session = PaHibernateUtil.getCurrentSession();
+        for (SecondaryPurpose purpose : (List<SecondaryPurpose>) session
+                .createQuery(" from " + SecondaryPurpose.class.getName())
+                .list()) {
+            list.add(secondaryPurposeConverter.convertFromDomainToDto(purpose));
+        }
+        return list;
+    }
+
+    /**
+     * @param id id
+     * @return SecondaryPurposeDTO
+     */
+    public static SecondaryPurposeDTO getSecondaryPurpose(long id) {
+        final SecondaryPurposeConverter secondaryPurposeConverter = new SecondaryPurposeConverter();
+        Session session = PaHibernateUtil.getCurrentSession();
+        SecondaryPurpose purpose = (SecondaryPurpose) session.get(
+                SecondaryPurpose.class, id);
+        return secondaryPurposeConverter.convertFromDomainToDto(purpose);
+    }
+    
 }

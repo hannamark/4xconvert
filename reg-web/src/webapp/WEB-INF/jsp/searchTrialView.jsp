@@ -145,9 +145,14 @@
                                 <c:out value="${requestScope.trialDTO.phaseAdditionalQualifier}"/>
                             </reg-web:valueRow>
                         </c:if>
-                        <c:if test= "${requestScope.trialDTO.trialType != null} ">
+                        <c:if test="${not empty trialSummary.studyProtocolType.value}">
                             <reg-web:valueRow labelKey="view.trial.type" noLabelTag="true">
-                                <c:out value="${requestScope.trialDTO.trialType}"/>
+                                <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol' || trialSummary.studyProtocolType.value=='Interventional'}">
+                                    Interventional
+                                </c:if>
+                                <c:if test="${trialSummary.studyProtocolType.value=='NonInterventionalStudyProtocol' || trialSummary.studyProtocolType.value=='NonInterventional'}">
+                                    Non-Interventional
+                                </c:if>
                             </reg-web:valueRow>
                         </c:if>
                         <reg-web:valueRow labelKey="view.trial.primaryPurpose" noLabelTag="true">
@@ -158,6 +163,32 @@
                                 <c:out value="${trialDTO.primaryPurposeOtherText}"/>
                             </reg-web:valueRow>
                         </c:if>
+                        <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol'}">
+	                        <reg-web:valueRow labelKey="view.trial.secondaryPurpose">                            
+	                            <c:out value="${requestScope.trialSummary.secondaryPurpose.name.value}"/>
+	                        </reg-web:valueRow>                        
+                        </c:if>
+                        <c:if test="${trialSummary.studyProtocolType.value!='InterventionalStudyProtocol'}">
+                            <reg-web:valueRow labelKey="submit.trial.studySubtypeCode">                            
+                                <c:out value="${trialSummary.studySubtypeCode.code}"/>
+                            </reg-web:valueRow>  
+                            <reg-web:valueRow labelKey="submit.trial.studyModelCode">                            
+                                <c:out value="${trialSummary.studyModelCode.code}"/>
+                            </reg-web:valueRow>   
+                            <c:if test="${trialSummary.studyModelCode.code == 'Other'}">
+                                <reg-web:valueRow labelKey="submit.trial.studyModelOtherText" noLabelTag="true">
+                                    <c:out value="${trialSummary.studyModelOtherText.value}"/>
+                                </reg-web:valueRow>                                
+                            </c:if>
+                            <reg-web:valueRow labelKey="submit.trial.timePerspectiveCode">                            
+                                <c:out value="${trialSummary.timePerspectiveCode.code}"/>
+                            </reg-web:valueRow>   
+                            <c:if test="${trialSummary.timePerspectiveCode.code == 'Other'}">
+                                <reg-web:valueRow labelKey="submit.trial.timePerspectiveOtherText" noLabelTag="true">
+                                    <c:out value="${trialSummary.timePerspectiveOtherText.value}"/>
+                                </reg-web:valueRow>                                
+                            </c:if>
+                        </c:if>                        
                         <reg-web:spaceRow/>
                         <tr>
                             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null

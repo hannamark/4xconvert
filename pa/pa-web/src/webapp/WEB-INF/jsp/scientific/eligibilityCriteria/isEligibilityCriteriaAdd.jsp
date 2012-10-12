@@ -8,7 +8,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>
             <c:choose>
-                <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+                <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
                     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
                 </c:when>
                 <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise>
@@ -182,7 +182,7 @@
         <c:set var="topic" scope="request" value="abstracteligibility"/>
         <h1>
             <c:choose>
-                <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+                <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
                     <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
                 </c:when>
                 <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise>

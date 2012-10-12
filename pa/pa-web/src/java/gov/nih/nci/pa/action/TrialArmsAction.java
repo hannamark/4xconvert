@@ -142,20 +142,22 @@ public class TrialArmsAction extends AbstractMultiObjectDeleteAction implements 
     private String armDescription;
     private String checkBoxEntry;
 
+    private StudyProtocolQueryDTO spDTO;
+
 
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException e
      */
+    @SuppressWarnings("deprecation")
     public void prepare() throws PAException {
         armService = PaRegistry.getArmService();
         plaService = PaRegistry.getPlannedActivityService();
         intService = PaRegistry.getInterventionService();
 
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
+        spDTO = (StudyProtocolQueryDTO) ServletActionContext
                 .getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
-
         spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
     }
 
@@ -164,21 +166,24 @@ public class TrialArmsAction extends AbstractMultiObjectDeleteAction implements 
      * @throws PAException exception.
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() throws PAException {         
         loadForm();
-        setCurrentAction(ACT_LIST_ARM);
+        if (isNonInterventionalStudy()) {
+            setCurrentAction(ACT_LIST_GROUP);
+        } else {
+            setCurrentAction(ACT_LIST_ARM);
+        }
         return ACT_LIST;
     }
 
     /**
-     * @return Action result.
-     * @throws PAException exception.
+     * @return
      */
-    public String observational() throws PAException {
-        loadForm();
-        setCurrentAction(ACT_LIST_GROUP);
-        return ACT_LIST;
+    private boolean isNonInterventionalStudy() {
+        return "NonInterventionalStudyProtocol".equalsIgnoreCase(spDTO
+                .getStudyProtocolType());
     }
+ 
 
     /**
      * @return result
@@ -303,22 +308,22 @@ public class TrialArmsAction extends AbstractMultiObjectDeleteAction implements 
         return ACT_LIST;
     }
 
-    private void businessRules() {
-        if (StringUtils.isEmpty(getArmType())) {
+    private void businessRules() { //NOPMD
+        if (StringUtils.isEmpty(getArmType()) && !isNonInterventionalStudy()) {
             addFieldError("armType", "Select an Arm Type");
         }
         
         if (StringUtils.isNotEmpty(getArmDescription())) {
             if (PAUtil.isGreaterThan(StConverter.convertToSt(getArmDescription()), PAAttributeMaxLen.LEN_1000)) {
-                addFieldError("armDescription", "Arm Description length should not be greater than 1000");
+                addFieldError("armDescription", "Description length should not be greater than 1000");
             }
         } else {
-            addFieldError("armDescription", "Provide Arm Description");
+            addFieldError("armDescription", "Provide Description");
         }
         
         if ((getCurrentAction().equals(ACT_EDIT_ARM) || getCurrentAction().equals(ACT_EDIT_NEW_ARM))
                 && (StringUtils.isNotEmpty(armType) && armType.equals(ArmTypeCode.NO_INTERVENTION.getCode())
-                && (getAssociatedIds().size() > 0))) {
+                && (getAssociatedIds().size() > 0)) && !isNonInterventionalStudy()) {
             addActionError("Arms of type " + armType + " cannot have associated interventions.  ");
         }
     }

@@ -58,6 +58,12 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     //TODO - as part of PO-2434 this should be moved to the AbstractStudyProtocolDTO
     //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
     private List<Ii> secondaryIdentifierList = new ArrayList<Ii>();
+    
+    private Cd studyModelCode;
+    private St studyModelOtherText;
+    private Cd timePerspectiveCode;
+    private St timePerspectiveOtherText;    
+    private Cd studySubtypeCode;
 
     /**
      * @return the localProtocolIdentifier
@@ -460,6 +466,66 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     public void setResponsibleGenericContactIdentifier(
             Ii responsibleGenericContactIdentifier) {
         this.responsibleGenericContactIdentifier = responsibleGenericContactIdentifier;
+    }
+    /**
+     * @return the studyModelCode
+     */
+    public Cd getStudyModelCode() {
+        return studyModelCode;
+    }
+    /**
+     * @param studyModelCode the studyModelCode to set
+     */
+    public void setStudyModelCode(Cd studyModelCode) {
+        this.studyModelCode = studyModelCode;
+    }
+    /**
+     * @return the studyModelOtherText
+     */
+    public St getStudyModelOtherText() {
+        return studyModelOtherText;
+    }
+    /**
+     * @param studyModelOtherText the studyModelOtherText to set
+     */
+    public void setStudyModelOtherText(St studyModelOtherText) {
+        this.studyModelOtherText = studyModelOtherText;
+    }
+    /**
+     * @return the timePerspectiveCode
+     */
+    public Cd getTimePerspectiveCode() {
+        return timePerspectiveCode;
+    }
+    /**
+     * @param timePerspectiveCode the timePerspectiveCode to set
+     */
+    public void setTimePerspectiveCode(Cd timePerspectiveCode) {
+        this.timePerspectiveCode = timePerspectiveCode;
+    }
+    /**
+     * @return the timePerspectiveOtherText
+     */
+    public St getTimePerspectiveOtherText() {
+        return timePerspectiveOtherText;
+    }
+    /**
+     * @param timePerspectiveOtherText the timePerspectiveOtherText to set
+     */
+    public void setTimePerspectiveOtherText(St timePerspectiveOtherText) {
+        this.timePerspectiveOtherText = timePerspectiveOtherText;
+    }
+    /**
+     * @return the studySubtypeCode
+     */
+    public Cd getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(Cd studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
     }
 
 }

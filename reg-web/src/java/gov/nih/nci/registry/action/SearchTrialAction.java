@@ -382,7 +382,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
 
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
-        trialUtils.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
+        trialUtils.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);        
         ServletActionContext.getRequest().setAttribute("leadOrganizationName", trialDTO.getLeadOrganizationName());
         ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier", trialDTO.getLeadOrgTrialIdentifier());
         ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
@@ -398,8 +398,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         trialUtils.getTrialDTOFromDb(studyProtocolIi, trialDTO);
         if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
             trialDTO.setTrialType("Interventional");
-        } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
-            trialDTO.setTrialType("Observational");
+        } else if (trialDTO.getTrialType().equals("NonInterventionalStudyProtocol")) {
+            trialDTO.setTrialType("NonInterventional");
         }
         final HttpServletRequest request = ServletActionContext.getRequest();
         request.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);

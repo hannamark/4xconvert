@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
     <c:choose>
-     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
      </c:when>
      <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise> 
@@ -96,7 +96,7 @@ BubbleTips.activateTipOn("dfn");
 <c:set var="topic" scope="request" value="abstracteligibility"/>
  <h1>
  <c:choose>
-     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <fmt:message key="osdesign.eligibilitycriteria.webtitle"/>
      </c:when>
      <c:otherwise><fmt:message key="isdesign.eligibilitycriteria.webtitle"/></c:otherwise></c:choose> </h1>
@@ -128,14 +128,14 @@ BubbleTips.activateTipOn("dfn");
     </div>
     </c:if> 
     <table class="form">
-    <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'ObservationalStudyProtocol'}">
+    <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
         <tr>
             <td scope="row"  class="label">
             <label>
-                <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/>(Max 800 chars)<span class="required">*</span>
+                <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/><span class="required">*</span>
              </label>
              </td> <td class="value">               
-                <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" />
+                <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" maxlength="800" cssClass="charcounter" />
                 <span class="formErrorMsg"> 
                         <s:fielderror>
                         <s:param>studyPopulationDescription</s:param>

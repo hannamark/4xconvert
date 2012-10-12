@@ -37,14 +37,7 @@ public class TrialArmsActionTest extends AbstractPaActionTest {
 		assertEquals("list", trialsArmsAction.execute());
 	}
 
-	/**
-	 * Test method for {@link gov.nih.nci.pa.action.TrialArmsAction#observational()}.
-	 */
-	@Test
-	public void testObservational()  throws PAException {
-		assertEquals("list", trialsArmsAction.observational());
-	}
-
+	
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.TrialArmsAction#create()}.
 	 */

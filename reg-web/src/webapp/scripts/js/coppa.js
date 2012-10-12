@@ -131,3 +131,34 @@ function displayWaitPanel() {
 	$('progress_indicator_panel').style.top = y + 'px';
 	$('progress_indicator_panel').show();
 }
+
+
+function setDisplayBasedOnTrialType() {
+	if ($('trialDTO.trialType.Interventional').checked) {
+		hideElements('.non-interventional');
+		showElements('.interventional');
+	} else {
+		showElements('.non-interventional');
+        hideElements('.interventional');
+	}
+}
+
+function hideElements(cssRule) {
+	$$(cssRule).each(function (e) {
+		e.hide();
+	});
+}
+
+function showElements(cssRule) {
+    $$(cssRule).each(function (e) {
+        e.show();
+    });
+}
+
+function disableTrialTypeChangeRadios() {
+	if (!$('trialDTO.trialType.Interventional').checked) {
+		$('trialDTO.trialType.Interventional').disabled = true;		
+	} else if (!$('trialDTO.trialType.Noninterventional').checked) {
+		$('trialDTO.trialType.Noninterventional').disabled = true;		
+	} 
+}

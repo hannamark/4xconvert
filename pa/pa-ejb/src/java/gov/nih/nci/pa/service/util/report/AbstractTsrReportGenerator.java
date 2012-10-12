@@ -144,6 +144,7 @@ public abstract class AbstractTsrReportGenerator {
     private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private Document reportDocument;
     private boolean proprietaryTrial;
+    private boolean nonInterventionalTrial;
     private TSRReport tsrReport;
     private TSRErrorReport tsrErrorReport;
     private TSRReportTrialIdentification trialIdentification;
@@ -383,29 +384,36 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private void addTrialIdentificationTable() throws DocumentException {
-        if (getTrialIdentification() != null) {
+        final TSRReportTrialIdentification trialInfo = getTrialIdentification();
+        final TSRReportGeneralTrialDetails gtd = getGeneralTrialDetails();
+        if (trialInfo != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_TRIAL_IDENTIFICATION, false);
-            addTableRow(table, TSRReportLabelText.TI_TRIAL_CATEGORY, getTrialIdentification().getTrialCategory());
-            addTableRow(table, TSRReportLabelText.TI_NCI_IDENTIFIER, getTrialIdentification().getNciIdentifier());
-            addTableRow(table, TSRReportLabelText.TI_LEAD_ORG_IDENTIFIER, getTrialIdentification()
+            addTableRow(table, TSRReportLabelText.TI_TRIAL_CATEGORY, trialInfo.getTrialCategory());            
+            addTableRow(table, TSRReportLabelText.TRIAL_TYPE, gtd.getType());
+            if (StringUtils.isNotBlank(gtd.getSubType())) {
+                addTableRow(table, TSRReportLabelText.SUBTYPE,
+                        gtd.getSubType());
+            }
+            addTableRow(table, TSRReportLabelText.TI_NCI_IDENTIFIER, trialInfo.getNciIdentifier());
+            addTableRow(table, TSRReportLabelText.TI_LEAD_ORG_IDENTIFIER, trialInfo
                     .getLeadOrgIdentifier());
 
             if (isProprietaryTrial()) {
-                addTableRow(table, TSRReportLabelText.TI_LEAD_ORGANIZATION, getTrialIdentification()
+                addTableRow(table, TSRReportLabelText.TI_LEAD_ORGANIZATION, trialInfo
                         .getLeadOrganization());
             } else {
-                addTableRow(table, TSRReportLabelText.TI_OTHER_IDENTIFIER, getTrialIdentification()
+                addTableRow(table, TSRReportLabelText.TI_OTHER_IDENTIFIER, trialInfo
                         .getOtherIdentifiers());
             }
 
-            addTableRow(table, TSRReportLabelText.TI_NCT_NUMBER, getTrialIdentification().getNctNumber());
-            addTableRow(table, TSRReportLabelText.TI_DCP_IDENTIFIER, getTrialIdentification().getDcpIdentifier());
-            addTableRow(table, TSRReportLabelText.TI_CTEP_IDENTIFIER, getTrialIdentification().getCtepIdentifier());
+            addTableRow(table, TSRReportLabelText.TI_NCT_NUMBER, trialInfo.getNctNumber());
+            addTableRow(table, TSRReportLabelText.TI_DCP_IDENTIFIER, trialInfo.getDcpIdentifier());
+            addTableRow(table, TSRReportLabelText.TI_CTEP_IDENTIFIER, trialInfo.getCtepIdentifier());
 
             if (!isProprietaryTrial()) {
-                addTableRow(table, TSRReportLabelText.TI_AMENDMENT_NUMBER, getTrialIdentification()
+                addTableRow(table, TSRReportLabelText.TI_AMENDMENT_NUMBER, trialInfo
                         .getAmendmentNumber());
-                addTableRow(table, TSRReportLabelText.TI_AMENDMENT_DATE, getTrialIdentification().getAmendmentDate());
+                addTableRow(table, TSRReportLabelText.TI_AMENDMENT_DATE, trialInfo.getAmendmentDate());
             }
 
             reportDocument.add(table);
@@ -614,37 +622,47 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private void addEligibilityCriteriaTable() throws DocumentException {
-        if (getEligibilityCriteria() != null) {
+        final TSRReportEligibilityCriteria ec = getEligibilityCriteria();
+        if (ec != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_ELIGIBILITY_CRITERIA, true);
             Table innerTable = getInnerTable(new ArrayList<String>());
+            if (isNonInterventionalTrial()) {
+                addTableRow(innerTable,
+                        TSRReportLabelText.SAMPLING_METHOD_CODE,
+                        ec.getSampleMethodCode());
+                addTableRow(innerTable,
+                        TSRReportLabelText.STUDY_POPULATION_DESC,
+                        ec
+                                .getStudyPopulationDescription());
+            }
             addTableRow(innerTable, TSRReportLabelText.EC_ACCEPTS_HEALTHY_VOLUNTEERS,
-                    getEligibilityCriteria().getAcceptsHealthyVolunteers());
-            addTableRow(innerTable, TSRReportLabelText.EC_GENDER, getEligibilityCriteria().getGender());
-            addTableRow(innerTable, TSRReportLabelText.EC_MINIMUM_AGE, getEligibilityCriteria().getMinimumAge());
-            addTableRow(innerTable, TSRReportLabelText.EC_MAXIMUM_AGE, getEligibilityCriteria().getMaximumAge());
+                    ec.getAcceptsHealthyVolunteers());
+            addTableRow(innerTable, TSRReportLabelText.EC_GENDER, ec.getGender());
+            addTableRow(innerTable, TSRReportLabelText.EC_MINIMUM_AGE, ec.getMinimumAge());
+            addTableRow(innerTable, TSRReportLabelText.EC_MAXIMUM_AGE, ec.getMaximumAge());
             addTableSeparatorRow(innerTable, 2);
             table.insertTable(innerTable);
 
             // inclusion criteria
-            if (getEligibilityCriteria().getInclusionCriteria().size() > 0) {
+            if (ec.getInclusionCriteria().size() > 0) {
                 Table inclusionCriteriaTable = getInnerTable(Arrays.asList(TSRReportLabelText.EC_INCLUSION_CRITERIA));
-                inclusionCriteriaTable.addCell(getItemValueCell(getEligibilityCriteria().getInclusionCriteria()));
+                inclusionCriteriaTable.addCell(getItemValueCell(ec.getInclusionCriteria()));
                 addTableSeparatorRow(inclusionCriteriaTable, 1);
                 table.insertTable(inclusionCriteriaTable);
             }
 
             // exclusion criteria
-            if (getEligibilityCriteria().getExclusionCriteria().size() > 0) {
+            if (ec.getExclusionCriteria().size() > 0) {
                 Table exclusionCriteriaTable = getInnerTable(Arrays.asList(TSRReportLabelText.EC_EXCLUSION_CRITERIA));
-                exclusionCriteriaTable.addCell(getItemValueCell(getEligibilityCriteria().getExclusionCriteria()));
+                exclusionCriteriaTable.addCell(getItemValueCell(ec.getExclusionCriteria()));
                 addTableSeparatorRow(exclusionCriteriaTable, 1);
                 table.insertTable(exclusionCriteriaTable);
             }
 
             // other criteria
-            if (getEligibilityCriteria().getOtherCriteria().size() > 0) {
+            if (ec.getOtherCriteria().size() > 0) {
                 Table otherCriteriaTable = getInnerTable(Arrays.asList(TSRReportLabelText.EC_OTHER_CRITERIA));
-                otherCriteriaTable.addCell(getItemValueCell(getEligibilityCriteria().getOtherCriteria()));
+                otherCriteriaTable.addCell(getItemValueCell(ec.getOtherCriteria()));
                 addTableSeparatorRow(otherCriteriaTable, 1);
                 table.insertTable(otherCriteriaTable);
             }
@@ -1298,6 +1316,20 @@ public abstract class AbstractTsrReportGenerator {
      */
     public void setPlannedMarkers(List<TSRReportPlannedMarker> markers) {
         this.plannedMarkers = markers;
+    }
+
+    /**
+     * @return the nonInterventionalTrial
+     */
+    public boolean isNonInterventionalTrial() {
+        return nonInterventionalTrial;
+    }
+
+    /**
+     * @param nonInterventionalTrial the nonInterventionalTrial to set
+     */
+    public void setNonInterventionalTrial(boolean nonInterventionalTrial) {
+        this.nonInterventionalTrial = nonInterventionalTrial;
     }
 
 }

@@ -9,10 +9,11 @@
 <SCRIPT LANGUAGE="JavaScript">
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
-    activate();         
+    toggleFields();  
+    displayPrimaryPurposeOtherText();
 }
 
-function activate(){
+function toggleFields(){
 	var input="webDTO.studyModelCode";
   	var inputElement = document.forms[0].elements[input];
 	
@@ -35,13 +36,22 @@ function activate(){
 	}
 
 function handleAction(){
- document.forms[0].action="observationalStudyDesignupdate.action";
+ document.forms[0].action="noninterventionalStudyDesignupdate.action";
  document.forms[0].submit(); 
 } 
 function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 }
+
+function displayPrimaryPurposeOtherText(){
+	   if ($('webDTO.primaryPurposeCode').value == 'Other') {
+	        $('purposeOtherTextDiv').show();
+	   } else {
+	        $('purposeOtherTextDiv').hide();
+	  }
+}
+
 </SCRIPT>
 <body>
 <h1><fmt:message key="osdesign.details.title"/></h1>
@@ -51,17 +61,63 @@ function tooltip() {
 <pa:sucessMessage/>
    <pa:failureMessage/>
 <s:form>
+ <s:token/>
 <pa:studyUniqueToken/>
 <s:actionerror/>
 <h2><fmt:message key="osdesign.details.title"/></h2>
 <table class="form">
+
+    <tr>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
+        <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+        <td>
+          <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" id="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
+                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="toggleFields();displayPrimaryPurposeOtherText()"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.primaryPurposeCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+    <tr id="purposeOtherTextDiv" style="display:'none'">
+         <td scope="row" class="label">
+            <label><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
+         </td>
+         <td>
+               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" />
+               <span class="info">Required if Purpose equals &#39;Other&#39;</span>
+               <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>webDTO.primaryPurposeOtherText</s:param>
+               </s:fielderror>                            
+               </span>
+         </td>
+      </tr>
+
+    <tr>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="osdesign.details.study.subtype"/><span class="required">*</span></label></td>
+        <s:set name="StudySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
+        <td>
+          <s:select headerKey="" headerValue="" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
+                   value="webDTO.studySubtypeCode" cssStyle="width:200px" onchange="toggleFields()"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.studySubtypeCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+
 	<tr>
 	 	<td  scope="row" class="label"><label>
 	 		<fmt:message key="osdesign.details.study.model"/><span class="required">*</span></label></td>
      	<s:set name="studyModelCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.studyModelCode" list="#studyModelCodeValues"  
-                   value="webDTO.studyModelCode" cssStyle="width:200px" onchange="activate()"/>
+                   value="webDTO.studyModelCode" cssStyle="width:200px" onchange="toggleFields();"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyModelCode</s:param>
@@ -71,9 +127,9 @@ function tooltip() {
     </tr>
     <tr id="studyModelOtherText">
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.study.model.other"/>(Max 200 chars)<span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.study.model.other"/><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" />
+			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyModelOtherText</s:param>
@@ -87,7 +143,7 @@ function tooltip() {
         <s:set name="timePerspectiveCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.timePerspectiveCode" list="#timePerspectiveCodeValues" 
-				value="webDTO.timePerspectiveCode" cssStyle="width:126px" onchange="activate()" />
+				value="webDTO.timePerspectiveCode" cssStyle="width:126px" onchange="toggleFields()" />
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.timePerspectiveCode</s:param>
@@ -97,9 +153,9 @@ function tooltip() {
     </tr>
     <tr id="timePerspectiveOtherText">
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.time.perspective.comment"/>(Max 200 chars)<span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.time.perspective.comment"/><span class="required">*</span></label></td>
 		<td>
-			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px" />
+			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px"  maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
 				<s:fielderror>
                		<s:param>webDTO.timePerspectiveOtherText</s:param>
@@ -164,8 +220,6 @@ function tooltip() {
             <pa:scientificAbstractorDisplayWhenCheckedOut>
                 <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
             </pa:scientificAbstractorDisplayWhenCheckedOut>         
-			<li><a href="trialDocumentquery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-			<li><a href="interventionalStudyDesignoutcomeQuery.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>			
 		</ul>	
 	</del>
 </div>

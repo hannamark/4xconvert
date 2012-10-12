@@ -7,7 +7,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -106,7 +106,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      * @return always throws exception!
      * @exception PAException always thrown
      */
-    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0) throws PAException {
+    public Ii createNonInterventionalStudyProtocol(NonInterventionalStudyProtocolDTO arg0) throws PAException {
         throw new PAException("ObservationStudyProtocal methods are not implemented!");
     }
 
@@ -117,7 +117,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      * @return always throws exception!
      * @exception PAException always thrown
      */
-    public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0) throws PAException {
+    public NonInterventionalStudyProtocolDTO getObservationalStudyProtocol(Ii arg0) throws PAException {
         throw new PAException("ObservationStudyProtocal methods are not implemented!");
     }
 
@@ -128,7 +128,8 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      * @return always throws exception!
      * @exception PAException always thrown
      */
-    public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO arg0)
+    public NonInterventionalStudyProtocolDTO 
+        updateNonInterventionalStudyProtocol(NonInterventionalStudyProtocolDTO arg0)
             throws PAException {
         throw new PAException("ObservationStudyProtocal methods are not implemented!");
     }
@@ -208,5 +209,13 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     @Override
     public Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs) {
         throw new RuntimeException("not supported via the grid service.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public NonInterventionalStudyProtocolDTO getNonInterventionalStudyProtocol(
+            Ii ii) throws PAException {
+        throw new PAException("not supported via the grid service.");
     }
 }

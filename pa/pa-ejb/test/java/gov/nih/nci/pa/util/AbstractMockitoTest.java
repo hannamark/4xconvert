@@ -133,7 +133,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -315,7 +315,7 @@ public class AbstractMockitoTest {
     protected InterventionDTO interventionDto;
     protected InterventionAlternateNameDTO interventionAltNameDto;
     protected List<InterventionAlternateNameDTO> interventionAltNameDtoList;
-    protected ObservationalStudyProtocolDTO observationalSPDto;
+    protected NonInterventionalStudyProtocolDTO observationalSPDto;
     protected List<StudyResourcingDTO> studyResourcingDtoList;
     protected PlannedMarkerDTO plannedMarkerDto;
     protected List<PlannedMarkerDTO> plannedMarkerDtoList;
@@ -387,7 +387,7 @@ public class AbstractMockitoTest {
 
        setupStudyResDtos();
 
-       observationalSPDto = new ObservationalStudyProtocolDTO();
+       observationalSPDto = new NonInterventionalStudyProtocolDTO();
 
        researchOrg = new ResearchOrganization();
        researchOrg.setId(1L);
@@ -1015,7 +1015,7 @@ public class AbstractMockitoTest {
         spSvc = mock(StudyProtocolServiceLocal.class);
         when(spSvc.getStudyProtocol((Ii)anyObject())).thenReturn(spDto);
         when(spSvc.getInterventionalStudyProtocol((Ii)anyObject())).thenReturn(interventionalSPDto);
-        when(spSvc.getObservationalStudyProtocol(any(Ii.class))).thenReturn(observationalSPDto);
+        when(spSvc.getNonInterventionalStudyProtocol(any(Ii.class))).thenReturn(observationalSPDto);
         when(spSvc.getAbstractedCollaborativeTrials()).thenReturn(Arrays.asList(spDto));
     }
 
@@ -1343,7 +1343,7 @@ public class AbstractMockitoTest {
         return interventionAltNameDtoList;
     }
 
-    public ObservationalStudyProtocolDTO getObservationalSPDto() {
+    public NonInterventionalStudyProtocolDTO getObservationalSPDto() {
         return observationalSPDto;
     }
 

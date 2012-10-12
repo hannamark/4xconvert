@@ -88,7 +88,7 @@ package gov.nih.nci.pa.service.util.report;
  *
  * @author kkanchinadam
  */
-public class TSRReportLabelText {
+public class TSRReportLabelText { //NOPMD
 
     private static final String DESCRIPTION = "Description";
     /**
@@ -100,6 +100,11 @@ public class TSRReportLabelText {
      * type.
      */
     public static final String TYPE = "Type";
+    
+    /**
+     * 
+     */
+    public static final String TRIAL_TYPE = "Trial Type";
 
     // Error Report related message strings.
     /**
@@ -693,4 +698,17 @@ public class TSRReportLabelText {
      * Tissue Collection Method.
      */
     public static final String PLANNED_MARKER_TISSUE_COLLECTION_METHOD = "Tissue Collection Method";
+    
+    /**
+     * 
+     */
+    public static final String SUBTYPE = "Non-Interventional Trial Type";
+    /**
+     * 
+     */
+    public static final String SAMPLING_METHOD_CODE = "Sampling Method Code";
+    /**
+     * 
+     */
+    public static final String STUDY_POPULATION_DESC = "Study Population Description";
 }

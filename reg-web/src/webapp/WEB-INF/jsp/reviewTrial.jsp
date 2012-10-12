@@ -136,6 +136,32 @@
                                     <c:out value="${trialDTO.primaryPurposeOtherText}"/>
                                 </reg-web:valueRow>
                             </c:if>
+                            <c:if test="${trialDTO.trialType != 'NonInterventional'}">
+	                            <reg-web:valueRow labelKey="view.trial.secondaryPurpose" noLabelTag="true">
+	                                <c:out value="${trialDTO.secondaryPurposeName}"/>
+	                            </reg-web:valueRow>    
+                            </c:if>
+                            <c:if test="${trialDTO.trialType == 'NonInterventional'}">
+                                <reg-web:valueRow labelKey="submit.trial.studySubtypeCode" noLabelTag="true">
+                                    <c:out value="${trialDTO.studySubtypeCode}"/>
+                                </reg-web:valueRow>
+                                <reg-web:valueRow labelKey="submit.trial.studyModelCode" noLabelTag="true">
+                                    <c:out value="${trialDTO.studyModelCode}"/>
+                                </reg-web:valueRow>
+                                <c:if test="${trialDTO.studyModelCode == 'Other'}">
+                                    <reg-web:valueRow labelKey="submit.trial.studyModelOtherText" noLabelTag="true">
+                                        <c:out value="${trialDTO.studyModelOtherText}"/>
+                                    </reg-web:valueRow>                                
+                                </c:if>                                
+                                <reg-web:valueRow labelKey="submit.trial.timePerspectiveCode" noLabelTag="true">
+                                    <c:out value="${trialDTO.timePerspectiveCode}"/>
+                                </reg-web:valueRow>             
+                                <c:if test="${trialDTO.timePerspectiveCode == 'Other'}">
+                                    <reg-web:valueRow labelKey="submit.trial.timePerspectiveOtherText" noLabelTag="true">
+                                        <c:out value="${trialDTO.timePerspectiveOtherText}"/>
+                                    </reg-web:valueRow>                                
+                                </c:if>
+                            </c:if>                                                                                
                             <reg-web:spaceRow/>
                             <reg-web:titleRow titleKey="view.trial.leadOrgInvestigator"/>
                             <reg-web:valueRow labelKey="view.trial.leadOrganization" noLabelTag="true">

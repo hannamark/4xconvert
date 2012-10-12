@@ -89,7 +89,7 @@ import gov.nih.nci.iso21090.St;
 * This code may not be used without the express written permission of the
 * copyright holder, NCI.
 */
-public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
+public class NonInterventionalStudyProtocolDTO extends StudyProtocolDTO {
     private static final long serialVersionUID = 6877702567997997743L;
     private St biospecimenDescription;
     private Cd biospecimenRetentionCode;
@@ -100,6 +100,7 @@ public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
     private Cd timePerspectiveCode;
     private St timePerspectiveOtherText;
     private St studyPopulationDescription;
+    private Cd studySubtypeCode;
     
     /**
      * @return biospecimenDescription
@@ -208,5 +209,17 @@ public class ObservationalStudyProtocolDTO extends StudyProtocolDTO {
      */
     public void setStudyPopulationDescription(St studyPopulationDescription) {
       this.studyPopulationDescription = studyPopulationDescription;
+    }
+    /**
+     * @return the studySubtypeCode
+     */
+    public Cd getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(Cd studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
     }
 }

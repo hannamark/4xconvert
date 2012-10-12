@@ -120,6 +120,12 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         }
         final ProprietaryTrialDTO trialDTO = getTrialDTO();
         trialDTO.setDocDtos(getTrialDocuments());
+        
+        if (trialDTO.getSecondaryPurposeId() != null) {
+            trialDTO.setSecondaryPurposeName(PAServiceUtils
+                    .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
+                    .getName().getValue());
+        }        
 
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);
@@ -160,6 +166,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         Map<String, String> errMap = new HashMap<String, String>();
         try {
             errMap = validateProtocolDoc();
+            new TrialValidator().validateNonInterventionalTrialDTO(trialDTO, errMap);
             addErrors(errMap);
             validateOtherDocUpdate();
         } catch (IOException e) {
@@ -201,7 +208,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         }
         try {
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
-            StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
+            StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
 
@@ -316,9 +323,14 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     public String partialSave() {
         try {            
             validateDocuments(); // this will make sure docs are in the session. PO-4914.            
-            getTrialDTO().setDocDtos(getTrialDocuments());
+            getTrialDTO().setDocDtos(getTrialDocuments());            
             setTrialDTO((ProprietaryTrialDTO) util.saveDraft(getTrialDTO()));
             final ProprietaryTrialDTO trialDTO = getTrialDTO();
+            if (trialDTO.getSecondaryPurposeId() != null) {
+                trialDTO.setSecondaryPurposeName(PAServiceUtils
+                        .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
+                        .getName().getValue());
+            }            
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);

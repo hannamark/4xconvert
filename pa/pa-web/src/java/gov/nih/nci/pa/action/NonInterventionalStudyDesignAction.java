@@ -81,27 +81,33 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.OSDesignDetailsWebDTO;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Kalpana Guthikonda
  * @since 10/27/2008
  */
-public class ObservationalStudyDesignAction extends ActionSupport {
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
+public class NonInterventionalStudyDesignAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -3532986378452861444L;
     private OSDesignDetailsWebDTO webDTO =  new OSDesignDetailsWebDTO();
@@ -112,13 +118,15 @@ public class ObservationalStudyDesignAction extends ActionSupport {
      */
     public String detailsQuery() {
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
-            ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
-            ospDTO = PaRegistry.getStudyProtocolService().getObservationalStudyProtocol(studyProtocolIi);
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                    .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            NonInterventionalStudyProtocolDTO ospDTO = PaRegistry
+                    .getStudyProtocolService()
+                    .getNonInterventionalStudyProtocol(studyProtocolIi);
             webDTO = setDesignDetailsDTO(ospDTO);
         } catch (PAException e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return "details";
     }
@@ -126,7 +134,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     /**
      * @return res
      */
-    public String update() {
+    public String update() { //NOPMD
         enforceBusinessRules();
         if (hasFieldErrors()) {
             return "details";
@@ -134,8 +142,31 @@ public class ObservationalStudyDesignAction extends ActionSupport {
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            ObservationalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry.getStudyProtocolService()
-            .getObservationalStudyProtocol(studyProtocolIi);
+            NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry.getStudyProtocolService()
+            .getNonInterventionalStudyProtocol(studyProtocolIi);
+            ospFromDatabaseDTO.setPrimaryPurposeCode(CdConverter
+                    .convertToCd(PrimaryPurposeCode.getByCode(webDTO
+                            .getPrimaryPurposeCode())));
+            if (PAUtil
+                    .isPrimaryPurposeCodeOther(webDTO.getPrimaryPurposeCode())) {
+                ospFromDatabaseDTO
+                        .setPrimaryPurposeAdditionalQualifierCode(CdConverter
+                                .convertToCd(PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO
+                                        .getPrimaryPurposeAdditionalQualifierCode())));
+            } else {
+                ospFromDatabaseDTO
+                        .setPrimaryPurposeAdditionalQualifierCode(CdConverter
+                                .convertToCd(null));
+            }
+            if (PAUtil
+                    .isPrimaryPurposeCodeOther(webDTO.getPrimaryPurposeCode())) {
+                ospFromDatabaseDTO.setPrimaryPurposeOtherText(StConverter
+                        .convertToSt(webDTO.getPrimaryPurposeOtherText()));
+            } else {
+                ospFromDatabaseDTO.setPrimaryPurposeOtherText(null);
+            }          
+            ospFromDatabaseDTO.setStudySubtypeCode(
+                    CdConverter.convertToCd(StudySubtypeCode.getByCode(webDTO.getStudySubtypeCode())));            
             ospFromDatabaseDTO.setStudyModelCode(
                     CdConverter.convertToCd(StudyModelCode.getByCode(webDTO.getStudyModelCode())));
             ospFromDatabaseDTO.setTimePerspectiveCode(
@@ -154,7 +185,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                     IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));*/
             ospFromDatabaseDTO.setTargetAccrualNumber(
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
-            PaRegistry.getStudyProtocolService().updateObservationalStudyProtocol(ospFromDatabaseDTO);
+            PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospFromDatabaseDTO);
             detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         } catch (Exception e) {
@@ -164,12 +195,36 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     }
 
     private void enforceBusinessRules() {
+        validateBaseFields();
+        validatePrimaryPurpose();        
         validateStudyModelCode();
         validateTimePerspective();
         validateBiospecimenRetentionCode();
         validateNumberOfGroups();
         validateMinTargetAccrual();
     }
+
+    private void validateBaseFields() {
+        addErrors(webDTO.getStudySubtypeCode(), "webDTO.studySubtypeCode", "error.studytype");        
+    }
+
+    /**
+     * 
+     */
+    private void validatePrimaryPurpose() {
+        addErrors(webDTO.getPrimaryPurposeCode(), "webDTO.primaryPurposeCode", "error.primary");
+        //validate Purpose when Selected value is OTHER
+        if (PAUtil.isPrimaryPurposeOtherTextReq(webDTO.getPrimaryPurposeCode(),
+                 webDTO.getPrimaryPurposeAdditionalQualifierCode(), webDTO.getPrimaryPurposeOtherText())) {
+             addFieldError("webDTO.primaryPurposeOtherText", getText("error.otherPurposeText"));
+        }
+    }
+    
+    private void addErrors(String fieldValue, String fieldName, String errMsg) {
+        if (StringUtils.isEmpty(fieldValue)) {
+            addFieldError(fieldName, getText(errMsg));
+        }
+     }
 
     private void validateBiospecimenRetentionCode() {
         if (StringUtils.isEmpty(webDTO.getBiospecimenRetentionCode())) {
@@ -180,7 +235,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     private void validateStudyModelCode() {
         if (StringUtils.isEmpty(webDTO.getStudyModelCode())) {
             addFieldError("webDTO.studyModelCode", getText("error.studyModelCode"));
-        }
+        } else
         if (webDTO.getStudyModelCode().equalsIgnoreCase("Other")
                 && StringUtils.isEmpty(webDTO.getStudyModelOtherText())) {
             addFieldError("webDTO.studyModelOtherText", getText("error.studyModelOtherText"));
@@ -221,7 +276,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     private void validateTimePerspective() {
         if (StringUtils.isEmpty(webDTO.getTimePerspectiveCode())) {
             addFieldError("webDTO.timePerspectiveCode", getText("error.timePerspectiveCode"));
-        }
+        } else
         if (webDTO.getTimePerspectiveCode().equalsIgnoreCase("Other")
                 && StringUtils.isEmpty(webDTO.getTimePerspectiveOtherText())) {
             addFieldError("webDTO.timePerspectiveOtherText", getText("error.timePerspectiveOtherText"));
@@ -237,33 +292,66 @@ public class ObservationalStudyDesignAction extends ActionSupport {
      * @param ispDTO InterventionalStudyProtocolDTO
      * @return DesignDetailsWebDTO
      */
-    private OSDesignDetailsWebDTO setDesignDetailsDTO(ObservationalStudyProtocolDTO ospDTO) {
+    private OSDesignDetailsWebDTO setDesignDetailsDTO(NonInterventionalStudyProtocolDTO ospDTO) {
         OSDesignDetailsWebDTO dto = new OSDesignDetailsWebDTO();
         if (ospDTO != null) {
 
             convertTimePerspective(ospDTO, dto);
-
-            if (ospDTO.getBiospecimenRetentionCode() != null) {
-                dto.setBiospecimenRetentionCode(ospDTO.getBiospecimenRetentionCode().getCode());
-            }
-
-            if (ospDTO.getBiospecimenDescription() != null) {
-                dto.setBiospecimenDescription(ospDTO.getBiospecimenDescription().getValue());
-            }
-
-            if (ospDTO.getNumberOfGroups().getValue() != null) {
-                dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
-            }
-
+            convertBiospecimenFields(ospDTO, dto);
+            convertGroupsCohorts(ospDTO, dto);
             convertMinTargetAccrual(ospDTO, dto);
-
             convertStudyModelCode(ospDTO, dto);
+            convertBaseFields(ospDTO, dto);
 
         }
         return dto;
     }
 
-    private void convertTimePerspective(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+    private void convertBaseFields(NonInterventionalStudyProtocolDTO ospDTO,
+            OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getPrimaryPurposeCode() != null) {
+            dto.setPrimaryPurposeCode(ospDTO.getPrimaryPurposeCode().getCode());
+        }
+        if (ospDTO.getPrimaryPurposeOtherText() != null) {
+            dto.setPrimaryPurposeOtherText(StConverter.convertToString(ospDTO.getPrimaryPurposeOtherText()));
+        }        
+        if (ospDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
+            dto.setPrimaryPurposeAdditionalQualifierCode(ospDTO.getPrimaryPurposeAdditionalQualifierCode()
+                                                         .getCode());
+        }        
+        if (ospDTO.getStudySubtypeCode() != null) {
+            dto.setStudySubtypeCode(ospDTO.getStudySubtypeCode().getCode());
+        }
+        
+    }
+
+    /**
+     * @param ospDTO
+     * @param dto
+     */
+    private void convertGroupsCohorts(NonInterventionalStudyProtocolDTO ospDTO,
+            OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getNumberOfGroups().getValue() != null) {
+            dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
+        }
+    }
+
+    /**
+     * @param ospDTO
+     * @param dto
+     */
+    private void convertBiospecimenFields(
+            NonInterventionalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getBiospecimenRetentionCode() != null) {
+            dto.setBiospecimenRetentionCode(ospDTO.getBiospecimenRetentionCode().getCode());
+        }
+
+        if (ospDTO.getBiospecimenDescription() != null) {
+            dto.setBiospecimenDescription(ospDTO.getBiospecimenDescription().getValue());
+        }
+    }
+
+    private void convertTimePerspective(NonInterventionalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
         if (ospDTO.getTimePerspectiveCode() != null) {
             dto.setTimePerspectiveCode(ospDTO.getTimePerspectiveCode().getCode());
         }
@@ -272,14 +360,14 @@ public class ObservationalStudyDesignAction extends ActionSupport {
         }
     }
 
-    private void convertMinTargetAccrual(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+    private void convertMinTargetAccrual(NonInterventionalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
         if (ospDTO.getTargetAccrualNumber() != null && ospDTO.getTargetAccrualNumber().getLow() != null
                 && ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
             dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
         }
     }
 
-    private void convertStudyModelCode(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+    private void convertStudyModelCode(NonInterventionalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
         if (ospDTO.getStudyModelCode() != null) {
             dto.setStudyModelCode(ospDTO.getStudyModelCode().getCode());
         }
@@ -302,4 +390,16 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     public void setWebDTO(OSDesignDetailsWebDTO webDTO) {
         this.webDTO = webDTO;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        if (this.webDTO != null) {
+            this.webDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.webDTO.getPrimaryPurposeCode()));
+        }        
+    }
+  
 }

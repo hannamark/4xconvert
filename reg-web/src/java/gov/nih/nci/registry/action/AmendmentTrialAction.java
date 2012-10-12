@@ -96,6 +96,7 @@ import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -235,6 +236,11 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             if (otherIdsList != null) {
                 trialDTO.setSecondaryIdentifierAddList(otherIdsList);
             }
+            if (trialDTO.getSecondaryPurposeId() != null) {
+                trialDTO.setSecondaryPurposeName(PAServiceUtils
+                        .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
+                        .getName().getValue());
+            }            
         } catch (IOException e) {
             LOG.error(e.getMessage());
             addActionError(e.getMessage());

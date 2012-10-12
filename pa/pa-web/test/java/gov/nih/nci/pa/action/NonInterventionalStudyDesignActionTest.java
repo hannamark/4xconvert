@@ -16,20 +16,20 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class ObservationalStudyDesignActionTest extends AbstractPaActionTest {
+public class NonInterventionalStudyDesignActionTest extends AbstractPaActionTest {
 	
-	ObservationalStudyDesignAction observationalStudy;
+	NonInterventionalStudyDesignAction observationalStudy;
 	
 	@Before 
 	public void setUp() throws PAException {
-	  observationalStudy =  new ObservationalStudyDesignAction();	
+	  observationalStudy =  new NonInterventionalStudyDesignAction();	
 	  getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
 	 
 	}
 	
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.ObservationalStudyDesignAction#detailsQuery()}.
+	 * Test method for {@link gov.nih.nci.pa.action.NonInterventionalStudyDesignAction#detailsQuery()}.
 	 */
 	@Test
 	public void testDetailsQuery() {
@@ -37,7 +37,7 @@ public class ObservationalStudyDesignActionTest extends AbstractPaActionTest {
 	}
 
 	/**
-	 * Test method for {@link gov.nih.nci.pa.action.ObservationalStudyDesignAction#update()}.
+	 * Test method for {@link gov.nih.nci.pa.action.NonInterventionalStudyDesignAction#update()}.
 	 */
 	@Test
 	public void testUpdate() {

@@ -91,26 +91,11 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum SamplingMethodCode implements CodedEnum<String> {
 
+
     /**
-     * simple random sampling.
+     * Probability Sample.
      */
-    SIMPLE_RANDOM_SAMPLING("Simple Random Sampling"),
-    /**
-     * Systematic sampling.
-     */
-    SYSTEMATIC_SAMPLING("Systematic Sampling"),
-    /**
-     * Stratified random sampling.
-     */
-    STRATIFIED_RANDOM_SAMPLING("Stratified random sampling"),
-    /**
-     * Cluster sampling.
-     */
-    CLUSTER_SAMPLING("Cluster sampling"),
-    /**
-     * Consecutive patient sampling.
-     */
-    CONSECUTIVE_PATIENT_SAMPLING("Consecutive patient sampling"),
+    PROBABILITY_SAMPLE("Probability Sample"),
     /**
      * Non-Probability Sample.
      */

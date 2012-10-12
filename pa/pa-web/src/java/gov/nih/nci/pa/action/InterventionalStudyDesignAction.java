@@ -102,6 +102,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -223,6 +224,13 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         } else {
             ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(null));
         }
+        setPurpose(ispDTO);
+    }
+
+    /**
+     * @param ispDTO
+     */
+    private void setPurpose(InterventionalStudyProtocolDTO ispDTO) {
         ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.getByCode(
                 webDTO.getPrimaryPurposeCode())));
         if (PAUtil.isPrimaryPurposeCodeOther(webDTO.getPrimaryPurposeCode())) {
@@ -236,6 +244,12 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(webDTO.getPrimaryPurposeOtherText()));
         } else {
             ispDTO.setPrimaryPurposeOtherText(null);
+        }
+        if (webDTO.getSecondaryPurposeId() == null) {
+            ispDTO.setSecondaryPurpose(null);
+        } else {
+            ispDTO.setSecondaryPurpose(PAServiceUtils
+                    .getSecondaryPurpose(webDTO.getSecondaryPurposeId()));
         }
     }
 
@@ -284,7 +298,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         ISDesignDetailsWebDTO dto = new ISDesignDetailsWebDTO();
         if (ispDTO != null) {
             convertPhase(ispDTO, dto);
-            convertPrimaryPurpose(ispDTO, dto);
+            convertPurpose(ispDTO, dto);
             convertBlindingShemaCode(ispDTO, dto);
             convertDesignConfigurationCode(ispDTO, dto);
             convertAllocationCode(ispDTO, dto);
@@ -333,7 +347,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
     }
 
-    private void convertPrimaryPurpose(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+    private void convertPurpose(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
         if (ispDTO.getPrimaryPurposeCode() != null) {
             dto.setPrimaryPurposeCode(ispDTO.getPrimaryPurposeCode().getCode());
         }
@@ -343,6 +357,10 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
         if (ispDTO.getPrimaryPurposeOtherText() != null) {
             dto.setPrimaryPurposeOtherText(StConverter.convertToString(ispDTO.getPrimaryPurposeOtherText()));
+        }
+        if (ispDTO.getSecondaryPurpose() != null) {
+            dto.setSecondaryPurposeId(IiConverter.convertToLong(ispDTO
+                    .getSecondaryPurpose().getIdentifier()));
         }
     }
 

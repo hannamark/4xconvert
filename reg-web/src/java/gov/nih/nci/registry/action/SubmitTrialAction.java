@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -209,7 +210,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             }
             TrialUtil util = new TrialUtil();
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
-            StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
+            StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
 
@@ -312,6 +313,11 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             }
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             trialDTO.setDocDtos(getTrialDocuments());
+            if (trialDTO.getSecondaryPurposeId() != null) {
+                trialDTO.setSecondaryPurposeName(PAServiceUtils
+                        .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
+                        .getName().getValue());
+            }
 
             addIndIdesToTrialDto();
             addFundingToTrialDto();
@@ -419,6 +425,11 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             validateDocuments();
             final TrialDTO trialDTO = getTrialDTO();
             trialDTO.setDocDtos(getTrialDocuments());
+            if (trialDTO.getSecondaryPurposeId() != null) {
+                trialDTO.setSecondaryPurposeName(PAServiceUtils
+                        .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
+                        .getName().getValue());
+            }            
             setTrialDTO((TrialDTO) trialUtil.saveDraft(trialDTO));
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");

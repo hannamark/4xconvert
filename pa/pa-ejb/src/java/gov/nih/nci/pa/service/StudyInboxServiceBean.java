@@ -298,7 +298,24 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                     "Primary Purpose was changed." + SEPARATOR, comments);           
             recordChange(originalDTO.getPhaseCode(),
                     updatedDTO.getPhaseCode(),
-                    "Phase was changed." + SEPARATOR, comments);           
+                    "Phase was changed." + SEPARATOR, comments);    
+            recordChange(originalDTO.getStudySubtypeCode(),
+                    updatedDTO.getStudySubtypeCode(),
+                    "Non-interventional Trial Type was changed." + SEPARATOR, comments);
+            recordChange(originalDTO.getStudyModelCode(),
+                    updatedDTO.getStudyModelCode(),
+                    "Study Model Code was changed." + SEPARATOR, comments);
+            recordChange(originalDTO.getStudyModelOtherText(),
+                    updatedDTO.getStudyModelOtherText(),
+                    "Study Model Description was changed." + SEPARATOR, comments);            
+            recordChange(originalDTO.getTimePerspectiveCode(),
+                    updatedDTO.getTimePerspectiveCode(),
+                    "Time Perspective Code was changed." + SEPARATOR, comments);           
+            recordChange(originalDTO.getTimePerspectiveOtherText(),
+                    updatedDTO.getTimePerspectiveOtherText(),
+                    "Time Perspective Description was changed." + SEPARATOR, comments);          
+            
+            
         }
         return comments;
     }

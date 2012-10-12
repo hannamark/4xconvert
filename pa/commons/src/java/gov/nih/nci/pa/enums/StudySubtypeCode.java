@@ -76,175 +76,81 @@
 * 
 * 
 */
-package gov.nih.nci.pa.dto;
+package gov.nih.nci.pa.enums;
+
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 
 /**
- * @author Kalpana Guthikonda
- * @since 10/27/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author Denis G. Krylov
+ *
  */
-public class OSDesignDetailsWebDTO {
+public enum StudySubtypeCode implements CodedEnum<String> {
 
-    private String primaryPurposeCode;
-    private String primaryPurposeOtherText;
-    private String primaryPurposeAdditionalQualifierCode;
-    private String studySubtypeCode;
-    private String biospecimenDescription;
-    private String biospecimenRetentionCode;
-    private String numberOfGroups;
-    private String studyModelCode;
-    private String studyModelOtherText;
-    private String timePerspectiveCode;
-    private String timePerspectiveOtherText;
-    private String minimumTargetAccrualNumber;
     
+    /*** Observational. */
+    OBSERVATIONAL("Observational"),
     /**
-     * @return biospecimenDescription
+     * ANCILLARY_CORRELATIVE.
      */
-    public String getBiospecimenDescription() {
-        return biospecimenDescription;
-    }
-    /**
-     * @param biospecimenDescription biospecimenDescription
-     */
-    public void setBiospecimenDescription(String biospecimenDescription) {
-        this.biospecimenDescription = biospecimenDescription;
-    }
-    /**
-     * @return biospecimenRetentionCode
-     */
-    public String getBiospecimenRetentionCode() {
-        return biospecimenRetentionCode;
-    }
-    /**
-     * @param biospecimenRetentionCode biospecimenRetentionCode
-     */
-    public void setBiospecimenRetentionCode(String biospecimenRetentionCode) {
-        this.biospecimenRetentionCode = biospecimenRetentionCode;
-    }
-    /**
-     * @return numberOfGroups
-     */
-    public String getNumberOfGroups() {
-        return numberOfGroups;
-    }
-    /**
-     * @param numberOfGroups numberOfGroups
-     */
-    public void setNumberOfGroups(String numberOfGroups) {
-        this.numberOfGroups = numberOfGroups;
-    }
+    ANCILLARY_CORRELATIVE("Ancillary-Correlative");
     
+
+    private String code;
+
     /**
-     * @return studyModelCode
+     * Constructor for StudyTypeCode.
+     * @param code
      */
-    public String getStudyModelCode() {
-        return studyModelCode;
+    private StudySubtypeCode(String code) {
+        this.code = code;
+        register(this);
     }
+
     /**
-     * @param studyModelCode studyModelCode
+     * @return code coded value of enum
      */
-    public void setStudyModelCode(String studyModelCode) {
-        this.studyModelCode = studyModelCode;
+    @Override
+    public String getCode() {
+        return code;
     }
+
     /**
-     * @return studyModelOtherText
+     * @return String DisplayName
      */
-    public String getStudyModelOtherText() {
-        return studyModelOtherText;
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
     }
+
     /**
-     * @param studyModelOtherText studyModelOtherText
+     * @return String display name
      */
-    public void setStudyModelOtherText(String studyModelOtherText) {
-        this.studyModelOtherText = studyModelOtherText;
+    public String getName() {
+        return name();
     }
+
     /**
-     * @return timePerspectiveCode
+     * @param code code
+     * @return StudyTypeCode
      */
-    public String getTimePerspectiveCode() {
-        return timePerspectiveCode;
+    public static StudySubtypeCode getByCode(String code) {
+        return getByClassAndCode(StudySubtypeCode.class, code);
     }
+
     /**
-     * @param timePerspectiveCode timePerspectiveCode
+     * construct a array of display names for StudyTypeCode Enum.
+     * @return String[] display names for StudyTypeCode
      */
-    public void setTimePerspectiveCode(String timePerspectiveCode) {
-        this.timePerspectiveCode = timePerspectiveCode;
+    public static String[] getDisplayNames() {
+        StudySubtypeCode[] codes = StudySubtypeCode.values();
+        String[] codedNames = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            codedNames[i] = codes[i].getCode();
+        }
+        return codedNames;
     }
-    /**
-     * @return timePerspectiveOtherText
-     */
-    public String getTimePerspectiveOtherText() {
-        return timePerspectiveOtherText;
-    }
-    /**
-     * @param timePerspectiveOtherText timePerspectiveOtherText
-     */
-    public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
-        this.timePerspectiveOtherText = timePerspectiveOtherText;
-    }
-    /**
-     * @return the minimumTargetAccrualNumber
-     */
-    public String getMinimumTargetAccrualNumber() {
-        return minimumTargetAccrualNumber;
-    }
-    /**
-     * @param minimumTargetAccrualNumber the minimumTargetAccrualNumber to set
-     */
-    public void setMinimumTargetAccrualNumber(String minimumTargetAccrualNumber) {
-        this.minimumTargetAccrualNumber = minimumTargetAccrualNumber;
-    }
-    /**
-     * @return the primaryPurposeCode
-     */
-    public String getPrimaryPurposeCode() {
-        return primaryPurposeCode;
-    }
-    /**
-     * @param primaryPurposeCode the primaryPurposeCode to set
-     */
-    public void setPrimaryPurposeCode(String primaryPurposeCode) {
-        this.primaryPurposeCode = primaryPurposeCode;
-    }
-    /**
-     * @return the studySubtypeCode
-     */
-    public String getStudySubtypeCode() {
-        return studySubtypeCode;
-    }
-    /**
-     * @param studySubtypeCode the studySubtypeCode to set
-     */
-    public void setStudySubtypeCode(String studySubtypeCode) {
-        this.studySubtypeCode = studySubtypeCode;
-    }
-    /**
-     * @return the primaryPurposeOtherText
-     */
-    public String getPrimaryPurposeOtherText() {
-        return primaryPurposeOtherText;
-    }
-    /**
-     * @param primaryPurposeOtherText the primaryPurposeOtherText to set
-     */
-    public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
-        this.primaryPurposeOtherText = primaryPurposeOtherText;
-    }
-    /**
-     * @return the primaryPurposeAdditionalQualifierCode
-     */
-    public String getPrimaryPurposeAdditionalQualifierCode() {
-        return primaryPurposeAdditionalQualifierCode;
-    }
-    /**
-     * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
-     */
-    public void setPrimaryPurposeAdditionalQualifierCode(
-            String primaryPurposeAdditionalQualifierCode) {
-        this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
-    }
-    
+
 }

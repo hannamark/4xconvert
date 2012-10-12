@@ -90,7 +90,7 @@
                     </tr>
                 </s:if>
                 <tr>
-                    <td class="label"><s:label for="armDescription">Arm Description:</s:label><span class="required">*</span></td>
+                    <td class="label"><s:label for="armDescription">Description:</s:label><span class="required">*</span></td>
                     <td class="value">
                         <s:textarea name="armDescription" id="armDescription" rows="20" cssStyle="width:280px;"
                             maxlength="1000" cssClass="charcounter"/>

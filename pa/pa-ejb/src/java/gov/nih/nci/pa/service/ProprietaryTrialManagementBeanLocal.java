@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -229,7 +230,12 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             setPrimaryPurposeCode(studyProtocolDTO, spDto);
             spDto.setPhaseCode(studyProtocolDTO.getPhaseCode());
             setPhaseAdditionalQualifier(studyProtocolDTO, spDto);
-            studyProtocolService.updateStudyProtocol(spDto);
+            setNonInterventionalTrialFields(studyProtocolDTO, spDto);
+            if (spDto instanceof NonInterventionalStudyProtocolDTO) {
+                studyProtocolService.updateNonInterventionalStudyProtocol((NonInterventionalStudyProtocolDTO) spDto);
+            } else {
+                studyProtocolService.updateStudyProtocol(spDto);
+            }
             updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO), leadOrganizationIdentifier,
                     studyProtocolIi);
             updateNctIdentifier(nctIdentifier, studyProtocolIi);

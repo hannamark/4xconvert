@@ -80,7 +80,7 @@ package gov.nih.nci.pa.iso.convert;
 
 
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -177,8 +177,8 @@ public class StudyProtocolConverter {
     }
 
     private static void setStudyProtocolType(StudyProtocol studyProtocol, StudyProtocolDTO studyProtocolDTO) {
-        if (studyProtocol instanceof ObservationalStudyProtocol) {
-            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
+        if (studyProtocol instanceof NonInterventionalStudyProtocol) {
+            studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("NonInterventionalStudyProtocol"));
         } else if (studyProtocol instanceof InterventionalStudyProtocol) {
             studyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
         } else {

@@ -26,7 +26,7 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
         eligibilityCriteriaAction = new EligibilityCriteriaAction();
        
         spDTO = new StudyProtocolQueryDTO();
-        spDTO.setStudyProtocolType("ObservationalStudyProtocol");
+        spDTO.setStudyProtocolType("NonInterventionalStudyProtocol");
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);
         

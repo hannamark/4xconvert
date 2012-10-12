@@ -115,7 +115,7 @@
                                         <li class="hassubmenu">
                                             <fmt:message key="pamenu.scientific.observationalDesign"/>
                                             <ul id="part_sites">
-                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/observationalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign'}"/>
+                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/noninterventionalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign'}"/>
                                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/interventionalStudyDesignoutcomeQuery.action" labelKey="pamenu.scientific.outcome" selected="${requestScope.topic == 'abstractoutcome'}"/>
                                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/eligibilityCriteriaquery.action" labelKey="pamenu.scientific.eligibility" selected="${requestScope.topic == 'abstracteligibility'}"/>
                                             </ul>
@@ -133,7 +133,7 @@
                                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.arms" selected="${requestScope.topic == 'abstractarms'}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArmsobservational.action" labelKey="pamenu.scientific.groups"/>
+                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.groups"/>
                                     </c:otherwise>
                                 </c:choose>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/subGroupsquery.action" labelKey="pamenu.scientific.subGroups" selected="${requestScope.topic == 'abstractsubgroups'}"/>

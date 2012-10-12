@@ -83,7 +83,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -144,6 +144,7 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         }
 
         setStudyProtocolFields(studyProtocolDto, studyProtocol);
+        setNonInterventionalFields(studyProtocolDto, studyProtocol);
         setStudyResourcing(studyProtocolDto, studyProtocol);
         setOverallStatus(studyProtocolDto, studyProtocol);
         setInboxAndSubmissionType(studyProtocolDto, studyProtocol);
@@ -172,7 +173,26 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         return studyProtocolDto;
     }
 
+    private void setNonInterventionalFields(
+            StudyProtocolQueryDTO studyProtocolDto, StudyProtocol studyProtocol) {
+        if (studyProtocol instanceof NonInterventionalStudyProtocol) {
+            NonInterventionalStudyProtocol nonIntSp = (NonInterventionalStudyProtocol) studyProtocol;
+            studyProtocolDto
+                    .setStudySubtypeCode(nonIntSp.getStudySubtypeCode() != null ? nonIntSp
+                            .getStudySubtypeCode().getCode() : "");
+            studyProtocolDto
+                    .setStudyModelCode(nonIntSp.getStudyModelCode() != null ? nonIntSp
+                            .getStudyModelCode().getCode() : "");
+            studyProtocolDto.setStudyModelOtherText(nonIntSp
+                    .getStudyModelOtherText());
+            studyProtocolDto.setTimePerspectiveCode(nonIntSp
+                    .getTimePerspectiveCode() != null ? nonIntSp
+                    .getTimePerspectiveCode().getCode() : "");
+            studyProtocolDto.setTimePerspectiveOtherText(nonIntSp
+                    .getTimePerspectiveOtherText());
 
+        }
+    }
 
     /**
      * Set checkout user.
@@ -329,8 +349,8 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
      * @param studyProtocol trial domain object
      */
     private void setStudyProtocolFields(StudyProtocolQueryDTO studyProtocolDto, StudyProtocol studyProtocol) {
-        if (studyProtocol instanceof ObservationalStudyProtocol) {
-            studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
+        if (studyProtocol instanceof NonInterventionalStudyProtocol) {
+            studyProtocolDto.setStudyProtocolType("NonInterventionalStudyProtocol");
         } else {
             studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
         }

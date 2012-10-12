@@ -98,6 +98,8 @@ public class TSRReportEligibilityCriteria {
     private String gender;
     private String minimumAge;
     private String maximumAge;
+    private String sampleMethodCode;
+    private String studyPopulationDescription;
     private final List<String> otherCriteria = new ArrayList<String>();
     private final List<String> inclusionCriteria = new ArrayList<String>();
     private final List<String> exclusionCriteria = new ArrayList<String>();
@@ -177,6 +179,34 @@ public class TSRReportEligibilityCriteria {
      */
     public List<String> getExclusionCriteria() {
         return exclusionCriteria;
+    }
+
+    /**
+     * @return the sampleMethodCode
+     */
+    public String getSampleMethodCode() {
+        return sampleMethodCode;
+    }
+
+    /**
+     * @param sampleMethodCode the sampleMethodCode to set
+     */
+    public void setSampleMethodCode(String sampleMethodCode) {
+        this.sampleMethodCode = sampleMethodCode;
+    }
+
+    /**
+     * @return the studyPopulationDescription
+     */
+    public String getStudyPopulationDescription() {
+        return studyPopulationDescription;
+    }
+
+    /**
+     * @param studyPopulationDescription the studyPopulationDescription to set
+     */
+    public void setStudyPopulationDescription(String studyPopulationDescription) {
+        this.studyPopulationDescription = studyPopulationDescription;
     }
 
 }

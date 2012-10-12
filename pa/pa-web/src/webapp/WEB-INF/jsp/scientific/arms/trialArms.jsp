@@ -66,8 +66,12 @@ function handleCreateGroup(){
                     <li><pa:toggleDeleteBtn/></li>
                 </s:if>                
             </s:if>
-            <s:elseif test="%{currentAction == 'listGroup'}">
+            <s:elseif test="%{currentAction == 'listGroup'}">                
                 <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <s:if test="%{armList != null && !armList.isEmpty()}">
+                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected group(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected group(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><pa:toggleDeleteBtn/></li>
+                </s:if>
             </s:elseif>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
@@ -115,6 +119,10 @@ function handleCreateGroup(){
             </s:if>
             <s:elseif test="%{currentAction == 'listGroup'}">
                 <li><a href="javascript:void(0)" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+                <s:if test="%{armList != null && !armList.isEmpty()}">
+                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected group(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected group(s) from the study. Cancel to abort.', 'trialArmsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><pa:toggleDeleteBtn/></li>
+                </s:if>
             </s:elseif>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>

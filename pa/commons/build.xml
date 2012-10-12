@@ -6,7 +6,7 @@
 
 <project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <property file="${basedir}/../../build-pa/version.properties"/>
-    <property name="commons.coverage.line" value="54"/>
+    <property name="commons.coverage.line" value="53"/>
     <property name="commons.coverage.branch" value="43"/>
     <property name="commons.pmd.maxerrors" value="31"/>
 

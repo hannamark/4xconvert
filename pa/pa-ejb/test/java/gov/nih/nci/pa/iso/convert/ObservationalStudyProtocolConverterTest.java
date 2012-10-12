@@ -84,12 +84,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -108,13 +108,13 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
     public void convertFromDomainToDTOTest() {
         Session session = PaHibernateUtil.getCurrentSession();
 
-        ObservationalStudyProtocol osp = (ObservationalStudyProtocol) TestSchema
-            .createStudyProtocolObj(new ObservationalStudyProtocol());
+        NonInterventionalStudyProtocol osp = (NonInterventionalStudyProtocol) TestSchema
+            .createStudyProtocolObj(new NonInterventionalStudyProtocol());
 
         osp.setBiospecimenDescription("BiospecimenDescription");
-        osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.NONE);
+        osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.NONE_RETAINED);
         osp.setNumberOfGroups(Integer.valueOf(1));
-        osp.setSamplingMethodCode(SamplingMethodCode.CLUSTER_SAMPLING);
+        osp.setSamplingMethodCode(SamplingMethodCode.PROBABILITY_SAMPLE);
         osp.setStudyModelCode(StudyModelCode.CASE_CONTROL);
         osp.setStudyModelOtherText("studyModelOtherText");
         osp.setTimePerspectiveCode(TimePerspectiveCode.OTHER);
@@ -122,7 +122,7 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
         session.save(osp);
         // TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
-        ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        NonInterventionalStudyProtocolDTO ospDTO = NonInterventionalStudyProtocolConverter.convertFromDomainToDTO(osp);
 
         assertObservationalStudyProtocol(osp, ospDTO);
 
@@ -132,12 +132,12 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
     public void convertFromDTOToDomainTest() throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
 
-        ObservationalStudyProtocol osp = (ObservationalStudyProtocol) TestSchema
-            .createStudyProtocolObj(new ObservationalStudyProtocol());
+        NonInterventionalStudyProtocol osp = (NonInterventionalStudyProtocol) TestSchema
+            .createStudyProtocolObj(new NonInterventionalStudyProtocol());
         osp.setBiospecimenDescription("BiospecimenDescription");
-        osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.NONE);
+        osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.NONE_RETAINED);
         osp.setNumberOfGroups(Integer.valueOf(1));
-        osp.setSamplingMethodCode(SamplingMethodCode.CLUSTER_SAMPLING);
+        osp.setSamplingMethodCode(SamplingMethodCode.PROBABILITY_SAMPLE);
         osp.setStudyModelCode(StudyModelCode.CASE_CONTROL);
         osp.setStudyModelOtherText("studyModelOtherText");
         osp.setTimePerspectiveCode(TimePerspectiveCode.OTHER);
@@ -146,7 +146,7 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
         session.save(osp);
         // TestSchema.addUpdObject(osp);
         assertNotNull(osp.getId());
-        ObservationalStudyProtocolDTO ospDTO = ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
+        NonInterventionalStudyProtocolDTO ospDTO = NonInterventionalStudyProtocolConverter.convertFromDomainToDTO(osp);
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
         LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
@@ -156,7 +156,7 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
         when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
         when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
-        osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
+        osp = NonInterventionalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         assertObservationalStudyProtocol(osp, ospDTO);
     }
 
@@ -165,7 +165,7 @@ public class ObservationalStudyProtocolConverterTest extends AbstractHibernateTe
      * @param osp osp
      * @param ospDTO ospDTO
      */
-    public void assertObservationalStudyProtocol(ObservationalStudyProtocol osp, ObservationalStudyProtocolDTO ospDTO) {
+    public void assertObservationalStudyProtocol(NonInterventionalStudyProtocol osp, NonInterventionalStudyProtocolDTO ospDTO) {
         new BaseStudyProtocolConverterTest().assertStudyProtocol(osp, ospDTO);
         assertEquals(osp.getBiospecimenDescription(), ospDTO.getBiospecimenDescription().getValue());
         assertEquals(osp.getBiospecimenRetentionCode().getCode(), ospDTO.getBiospecimenRetentionCode().getCode());

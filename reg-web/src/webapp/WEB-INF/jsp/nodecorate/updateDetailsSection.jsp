@@ -6,6 +6,13 @@
         <s:hidden name="trialDTO.trialType" id="trialDTO.trialType"/>
         <s:hidden id="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode"/>
         <s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
+        <s:hidden id="trialDTO.secondaryPurposeId" name="trialDTO.secondaryPurposeId"/>
+        <s:hidden id="trialDTO.secondaryPurposeName" name="trialDTO.secondaryPurposeName"/>        
+		<s:hidden id="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode"/>
+		<s:hidden id="trialDTO.studyModelCode" name="trialDTO.studyModelCode"/>
+		<s:hidden id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"/>
+		<s:hidden id="trialDTO.timePerspectiveCode" name="trialDTO.timePerspectiveCode"/>
+		<s:hidden id="trialDTO.timePerspectiveOtherText" name="trialDTO.timePerspectiveOtherText"/>         
     </td>
 </tr>
 <tr>
@@ -49,7 +56,7 @@
             <fmt:message key="submit.trial.type"/><span class="required">*</span>
     </td>
     <td>
-         Interventional
+         <s:property value="trialDTO.trialType"/>
     </td>
 </tr>
 <tr>
@@ -72,6 +79,79 @@
             <span class="info">Required if Purpose equals &#39;Other&#39;</span>
         </td>
     </tr>
+</s:if>
+<s:if test="trialDTO.trialType == 'InterventionalStudyProtocol'">
+<tr>
+    <td  scope="row" class="label">
+        <label>
+            <fmt:message key="view.trial.secondaryPurpose"/>
+        </label>
+    </td>
+    <td>
+        <s:property value="trialDTO.secondaryPurposeName"/>
+    </td>
+</tr>
+</s:if>
+<s:if test="trialDTO.trialType != 'InterventionalStudyProtocol'">
+<tr>
+    <td  scope="row" class="label">
+        <label>
+            <fmt:message key="submit.trial.studySubtypeCode"/>
+        </label>
+    </td>
+    <td>
+        <s:property value="trialDTO.studySubtypeCode"/>
+    </td>
+</tr>
+<tr>
+    <td  scope="row" class="label">
+        <label>
+            <fmt:message key="submit.trial.studyModelCode"/>
+        </label>
+    </td>
+    <td>
+        <s:property value="trialDTO.studyModelCode"/>
+    </td>
+</tr>
+
+<s:if test="trialDTO.studyModelCode == 'Other'">
+	<tr>
+	    <td  scope="row" class="label">
+	        <label>
+	            <fmt:message key="submit.trial.studyModelOtherText"/>
+	        </label>
+	    </td>
+	    <td>
+	        <s:property value="trialDTO.studyModelOtherText"/>
+	    </td>
+	</tr>
+</s:if>
+
+<tr>
+    <td  scope="row" class="label">
+        <label>
+            <fmt:message key="submit.trial.timePerspectiveCode"/>
+        </label>
+    </td>
+    <td>
+        <s:property value="trialDTO.timePerspectiveCode"/>
+    </td>
+</tr>
+
+<s:if test="trialDTO.timePerspectiveCode == 'Other'">
+    <tr>
+        <td  scope="row" class="label">
+            <label>
+                <fmt:message key="submit.trial.timePerspectiveOtherText"/>
+            </label>
+        </td>
+        <td>
+            <s:property value="trialDTO.timePerspectiveOtherText"/>
+        </td>
+    </tr>
+</s:if>
+
+
 </s:if>
 <tr>
     <td colspan="2" class="space">&nbsp;</td>

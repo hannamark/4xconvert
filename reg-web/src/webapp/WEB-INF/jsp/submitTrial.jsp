@@ -354,7 +354,10 @@
             document.observe("dom:loaded", function() {
                                                displayTrialStatusDefinition('trialDTO_statusCode');
                                            });
-        
+            
+                       
+            Event.observe(window, "load", setDisplayBasedOnTrialType);
+            
         </script>
     </head>
     <body>

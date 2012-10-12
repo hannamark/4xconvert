@@ -98,6 +98,12 @@ public enum TimePerspectiveCode implements CodedEnum<String> {
      * Retrospective.
      */
     RETROSPECTIVE("Retrospective"),
+    
+    /**
+     * Cross-sectional.
+     */
+    CROSS_SECTION("Cross-sectional"),
+    
     /**
      * Other.
      */

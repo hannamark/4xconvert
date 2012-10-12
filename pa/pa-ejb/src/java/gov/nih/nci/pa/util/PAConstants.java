@@ -181,4 +181,14 @@ public class PAConstants {
      */
     public static final String NOT_ON_HOLD = "notonhold";
     
+    /**
+     * 
+     */
+    public static final String INTERVENTIONAL = "Interventional";
+    
+    /**
+     * 
+     */
+    public static final String NON_INTERVENTIONAL = "NonInterventional";
+    
 }
