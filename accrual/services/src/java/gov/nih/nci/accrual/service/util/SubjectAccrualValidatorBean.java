@@ -92,6 +92,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
@@ -173,11 +174,17 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
     }
 
     /**
+     * Validate that if an id is supplied that it is valid. Then validate not creating a duplicate
+     * patient with the same assigned identifier for a given site.
      * @param subjectAccrual Study Subject DTO
      * @param index index
      * @throws PAException exception thrown if validation fails
      */
     void validateNoStudySubjectDuplicates(SubjectAccrualDTO subjectAccrual, int index) throws PAException {
+        Ii ii = subjectAccrual.getIdentifier();
+        if (!ISOUtil.isIiNull(ii) && studySubjectService.get(ii) == null) {
+            throw new IndexedInputValidationException("Subject identifier not found.", index);
+        }
         StudySubject ssub = studySubjectService.get(new SubjectAccrualKey(
                 subjectAccrual.getParticipatingSiteIdentifier(), subjectAccrual.getAssignedIdentifier()));
         if (ssub != null 

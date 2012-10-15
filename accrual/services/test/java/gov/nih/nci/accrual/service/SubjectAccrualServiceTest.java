@@ -87,6 +87,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -313,7 +314,21 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         
         bean.manageSubjectAccruals(Arrays.asList(dto));
     }
-    
+
+    @Test
+    public void manageSubjectAccrualInvalidId() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        dto.setIdentifier(IiConverter.convertToIi(-1L));
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals("Subject identifier not found.", e.getMessage());
+        }
+    }
+
     private SubjectAccrualDTO loadStudyAccrualDto(Ii studySiteIi, Ii diseaseIi) {
         SubjectAccrualDTO dto = new SubjectAccrualDTO();
         dto.setAssignedIdentifier(StConverter.convertToSt("Patient-1"));

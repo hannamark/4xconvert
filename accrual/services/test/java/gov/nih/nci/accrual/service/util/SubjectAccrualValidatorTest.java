@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -123,6 +124,20 @@ public class SubjectAccrualValidatorTest {
     }
 
     @Test
+    public void validateInvalidIdFails() throws PAException {
+        StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
+        when(studySubjectService.get(any(Ii.class))).thenReturn(null);
+        bean.setStudySubjectService(studySubjectService);
+        SubjectAccrualDTO subjectAccrual = createSubjectAccrualDTO();
+        try {
+            bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals("Subject identifier not found.", e.getMessage());
+        }
+    }
+
+    @Test
     public void validateNoStudySubjectDuplicatesPasses() throws PAException {
         StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
         StudySubject subject = new StudySubject();
@@ -136,7 +151,7 @@ public class SubjectAccrualValidatorTest {
         when(studySubjectService.get(any(SubjectAccrualKey.class))).thenReturn(null);
         bean.validateNoStudySubjectDuplicates(subjectAccrual, 1);    
     }
-    
+
     @Test(expected=IndexedInputValidationException.class)
     public void validateNoStudySubjectDuplicatesFails() throws PAException {
         StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
