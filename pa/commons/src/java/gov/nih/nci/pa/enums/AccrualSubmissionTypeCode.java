@@ -16,8 +16,10 @@ public enum AccrualSubmissionTypeCode implements CodedEnum<String> {
     UI("Web Application"),
     /** Batch Upload. */
     BATCH("Batch"),
-    /** Batch Upload. */
-    SERVICE("Service");
+    /** Batch Submission Service. */
+    SERVICE("Service"),
+    /** Manage Subject Accruals Service. */
+    SERVICE_MSA("Service-MSA");
 
     private final String code;
 
