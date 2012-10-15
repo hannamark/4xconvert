@@ -27,7 +27,7 @@
            </tr>
             <tr>
             <td>
-            Reason:<s:select id="deleteReason" name="deleteReason" headerValue="-Select-" headerKey="" list="reasonsList"  />
+            <label>Reason:<s:select id="deleteReason" name="deleteReason" headerValue="-Select-" headerKey="" list="reasonsList"  /></label>
            </td>
            </tr>
            
