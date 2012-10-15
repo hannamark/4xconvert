@@ -47,9 +47,9 @@
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-j2ee"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.9-SNAPSHOT"           conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.9-SNAPSHOT"           conf="compile->master" changing="true"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"   conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"   conf="compile->master"  changing="true"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="${pa.clients.version}"   conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.8.1-SNAPSHOT"  force="true"   conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
@@ -62,7 +62,7 @@
     <!-- test -->
     <dependency org="junit"                  name="junit"                   rev="4.8.2"             conf="test->master"/>
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"    conf="test->master">
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"    conf="test->master"  changing="true">
         <artifact name="pa-commons" m:classifier="test"/>
     </dependency>
     <dependency org="net.sf.opencsv"         name="opencsv"                 rev="2.1"             conf="test->master"/>
