@@ -316,7 +316,7 @@
          />
 
     <cache
-        name="gov.nih.nci.pa.domain.ObservationalStudyProtocol"
+        name="gov.nih.nci.pa.domain.NonInterventionalStudyProtocol"
         maxElementsInMemory="300"
         eternal="true"
         overflowToDisk="false"
