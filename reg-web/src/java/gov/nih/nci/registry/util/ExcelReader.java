@@ -114,7 +114,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Vrushali
  *
  */
-public class ExcelReader {
+public class ExcelReader { // NOPMD
     private static final Logger LOG = Logger.getLogger(ExcelReader.class);
 
     /**
@@ -125,8 +125,8 @@ public class ExcelReader {
      * @return List
      */
     @SuppressWarnings("unchecked")
-    public List<StudyProtocolBatchDTO> convertToDTOFromExcelWorkbook(HSSFWorkbook wb, String orgName)
-            throws PAException {
+    public List<StudyProtocolBatchDTO> convertToDTOFromExcelWorkbook(HSSFWorkbook wb, String orgName) // NOPMD
+            throws PAException { 
         List<StudyProtocolBatchDTO> batchDtoList = new ArrayList<StudyProtocolBatchDTO>();
         StudyProtocolBatchDTO batchDto = null;
         if (wb == null) {
