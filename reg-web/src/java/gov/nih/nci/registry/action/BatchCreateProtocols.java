@@ -566,18 +566,20 @@ public class BatchCreateProtocols {
         return studyProtocolIi;
     }
 
-   /**
+    /**
      * @param listofDto
      */
     private boolean isOtherIdDuplicate(List<Ii> listOfOtherId, String newOtherId) {
-          //ignore duplicate other ids
-          for (Ii orgOId : listOfOtherId) {
-              if (orgOId.getExtension().equals(newOtherId)) {
-                 return true;
-              }
-          }
-          return false;
-     }
+        // ignore duplicate other ids
+        if (listOfOtherId != null) {
+            for (Ii orgOId : listOfOtherId) {
+                if (orgOId.getExtension().equals(newOtherId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /*
      * this method first look if title is there if not create new

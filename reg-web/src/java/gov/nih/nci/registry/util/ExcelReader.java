@@ -142,6 +142,30 @@ public class ExcelReader {
             LOG.error("There are no work sheets to process");
             throw new PAException(" There are no work sheets to process");
         }
+        
+        //Eliminate blank rows
+        boolean stop = false;
+        boolean nonBlankRowFound;
+        int c;
+        HSSFRow lastRow = null;
+        HSSFCell cell = null;
+
+        while (!stop) {
+            nonBlankRowFound = false;
+            lastRow = sheet.getRow(sheet.getLastRowNum());
+            for (c = lastRow.getFirstCellNum(); c <= lastRow.getLastCellNum(); c++) {
+                cell = lastRow.getCell(c);
+                if (cell != null && lastRow.getCell(c).getCellType() != HSSFCell.CELL_TYPE_BLANK) {
+                    nonBlankRowFound = true;
+                }
+            }
+            if (nonBlankRowFound) {
+                stop = true;
+            } else {
+                sheet.removeRow(lastRow);
+            }
+        }        
+
         // create a dynamic hashmap of the headers items
         Map<Integer, String> headerMap = new HashMap<Integer, String>();
         getHeaders(sheet, headerMap);
@@ -210,8 +234,8 @@ public class ExcelReader {
             if (HSSFDateUtil.isCellDateFormatted(cell)) {
                 result = convertDateToString(cell.getDateCellValue(), "MM/dd/yyyy");
             } else {
-                result = String.valueOf(cell.getNumericCellValue());
-                result = result.substring(0, result.indexOf('.'));
+                long x = (long) cell.getNumericCellValue();
+                result = Long.toString(x); 
             }
             break;
         case HSSFCell.CELL_TYPE_STRING:
@@ -225,7 +249,6 @@ public class ExcelReader {
         default:
             break;
         }
-
         return result;
     }
 
