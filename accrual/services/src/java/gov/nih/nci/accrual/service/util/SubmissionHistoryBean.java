@@ -46,11 +46,13 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     
     private static final String YES = "Yes";
     private static final String NO = "No";
-
+    
     @EJB
     private SearchTrialService searchTrialSvc;
     
     private static final int DATE_COL = 3;
+    private static final int TYPE_COL = 4;
+    private static final int AI_COL = 5;
     private static final long ONE_HOUR = 60 * 60 * 1000;
     private static final long ONE_DAY = 24 * ONE_HOUR;
     private static final String BATCH_HQL = "from AccrualCollections ac "
@@ -59,9 +61,11 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             + "where (ac.nciNumber in (:nciNumbers) "
             + "       or us.userId = :userId) ";
     private static final String GUI_COMPLETE_SQL = 
-            "select identifier, study_protocol_identifier, user_last_updated_id, date_last_updated "
+            "select identifier, study_protocol_identifier, user_last_updated_id, date_last_updated, "
+            + "submission_type, assigned_identifier "
             + "from study_subject "
-            + "where submission_type = '" + AccrualSubmissionTypeCode.UI.getName() + "' "
+            + "where submission_type in ('" 
+            + AccrualSubmissionTypeCode.UI.getName() + "','" + AccrualSubmissionTypeCode.SERVICE_MSA.getName() + "') "
             + "and status_code = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "' "
             + "and study_protocol_identifier in (:studyProtocolIdentifiers) ";
     private static final String GUI_ABBREVIATED_SQL =
@@ -153,8 +157,17 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setCompleteTrialId(trialId);
             row.setNciNumber(trials.get(trialId));
             row.setResult(YES);
-            row.setSubmissionType(AccrualSubmissionTypeCode.UI);
+            row.setSubmissionType(AccrualSubmissionTypeCode.valueOf((String) subm[TYPE_COL]));
             row.setUsername(getRegistryUsername(usernames, subm[2] == null ? null : ((Integer) subm[2]).longValue()));
+            row.setAssignedIdentifier((String) subm[AI_COL]);
+            Long ssId;
+            // required to handle different type returned by test harness
+            if (subm[0] instanceof BigInteger) {
+                ssId = ((BigInteger) subm[0]).longValue();
+            } else {
+                ssId = ((Integer) subm[0]).longValue();
+            }
+            row.setStudySubjectId(ssId);
             result.add(row);
         }
         return result;

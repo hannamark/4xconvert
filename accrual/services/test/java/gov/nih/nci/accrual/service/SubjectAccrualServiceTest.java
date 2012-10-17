@@ -283,7 +283,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
         SubjectAccrualDTO testDto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
                 IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        testDto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE));
+        testDto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE_MSA));
         validateSubjectAccrualDTO(testDto, results.get(0));
     }
     

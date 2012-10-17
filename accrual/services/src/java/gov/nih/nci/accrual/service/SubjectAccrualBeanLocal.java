@@ -287,7 +287,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 }
                 StudySiteDTO participatingSite = PaServiceLocator.getInstance().getStudySiteService().get(
                                 subject.getParticipatingSiteIdentifier());
-                subject.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE));
+                subject.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE_MSA));
                 SDCDiseaseDTO sdc = PaServiceLocator.getInstance().getDiseaseService()
                         .get(subject.getDiseaseIdentifier());
                 subject.getDiseaseIdentifier().setIdentifierName(sdc == null 

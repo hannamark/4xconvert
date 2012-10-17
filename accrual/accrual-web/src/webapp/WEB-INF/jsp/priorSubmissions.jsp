@@ -80,10 +80,11 @@
 	        <s:a href="%{viewDocUrl}"><s:property value="%{#attr.row.fileName}" /></s:a>
         </s:if>
 		<s:elseif test="%{#attr.row.completeTrialId != null}">
-		    <s:url id="completeTrialUrl" action="patients">
+		    <s:url id="completeTrialUrl" action="patientsretrieve">
                 <s:param name="studyProtocolId" value="%{#attr.row.completeTrialId}" />
+                <s:param name="selectedRowIdentifier" value="%{#attr.row.studySubjectId}" />
             </s:url>
-            <s:a href="%{completeTrialUrl}">Trial subjects</s:a>
+            <s:a href="%{completeTrialUrl}"><s:property value="%{#attr.row.assignedIdentifier}" /></s:a>
 		</s:elseif>
 		<s:elseif test="%{#attr.row.abbreviatedTrialId != null}">
 		    <s:url id="abbreviatedTrialUrl" action="industrialPatients">
@@ -97,7 +98,7 @@
             <s:property value="%{#attr.row.fileName}" />
         </s:if>
         <s:elseif test="%{#attr.row.completeTrialId != null}">
-            Trial subjects
+            <s:property value="%{#attr.row.assignedIdentifier}" />
         </s:elseif>
         <s:elseif test="%{#attr.row.abbreviatedTrialId != null}">
             Trial counts

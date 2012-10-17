@@ -25,6 +25,8 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
     private Long completeTrialId;
     private Long abbreviatedTrialId;
     private String fileName;
+    private String assignedIdentifier;
+    private Long studySubjectId;
 
     /**
      * @return the batchFileIdentifier
@@ -145,6 +147,30 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+    /**
+     * @return the assignedIdentifier
+     */
+    public String getAssignedIdentifier() {
+        return assignedIdentifier;
+    }
+    /**
+     * @param assignedIdentifier the assignedIdentifier to set
+     */
+    public void setAssignedIdentifier(String assignedIdentifier) {
+        this.assignedIdentifier = assignedIdentifier;
+    }
+    /**
+     * @return the studySubjectId
+     */
+    public Long getStudySubjectId() {
+        return studySubjectId;
+    }
+    /**
+     * @param studySubjectId the studySubjectId to set
+     */
+    public void setStudySubjectId(Long studySubjectId) {
+        this.studySubjectId = studySubjectId;
     }
     @Override
     public int compareTo(HistoricalSubmissionDto that) {
