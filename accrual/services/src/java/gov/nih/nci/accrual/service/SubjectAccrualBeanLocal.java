@@ -480,7 +480,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         String sdcString = "null";
         String icd9String = "null";
         Ii dii = dto.getDiseaseIdentifier();
-        if (!ICD9_DISEASE_IDENTIFIER_NAME.equals(dii.getIdentifierName())) {
+        if (dii != null && !ICD9_DISEASE_IDENTIFIER_NAME.equals(dii.getIdentifierName())) {
             sdcString = IiConverter.convertToString(dii);
         } else {
             icd9String = IiConverter.convertToString(dii);
