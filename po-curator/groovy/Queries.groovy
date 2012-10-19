@@ -59,4 +59,14 @@ public class Queries {
             a.country_id = c.id and
             ocr.id =
     """
+    
+    public static def duplicateOrgsSQL = """
+        select name, count(name) as numOccurrences
+            from Organization where status <> 'NULLIFIED'
+        GROUP BY name
+        HAVING ( COUNT(name) > 1 )
+    """
+    
+    public static def duplicateOrgIdsSQL = """select id from organization where status <> 'NULLIFIED' and name = ?"""
+    
 }

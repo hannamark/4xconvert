@@ -44,4 +44,28 @@ public final class ReportGenUtils {
         DateFormat format = new SimpleDateFormat(Constants.DATE_PATTERN, Locale.getDefault());
         return format.format(date);
     }
+    
+    
+    public static Map getOrgsMap() {
+        def orgSQL = """ 
+             select 
+                 org.id as poid,    
+                 org.name,
+                 ctepid.assigned_identifier_extension as ctepid,
+                 org.comments,
+                 org.status
+             from 
+                 Organization org
+                 left join identifiedorganization ctepid on ctepid.player_id = org.id and ctepid.assigned_identifier_root = '2.16.840.1.113883.3.26.6.2'
+             order by poid    
+             """
+
+        println "preloading orgs..."
+
+        def result = [:]
+        getPoSourceConnection().eachRow(orgSQL) { row ->
+            result.put(row.poid, row.toRowResult())
+        }
+        return result
+    }
 }
