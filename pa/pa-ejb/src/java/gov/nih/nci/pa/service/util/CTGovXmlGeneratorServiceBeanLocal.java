@@ -303,7 +303,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         XmlGenHelper
                 .createElement(
                         "study_type",
-                        spDTO instanceof NonInterventionalStudyProtocolDTO ? PAConstants.NON_INTERVENTIONAL
+                        spDTO instanceof NonInterventionalStudyProtocolDTO ? "Observational"
                                 : PAConstants.INTERVENTIONAL, doc, root);
     }
 
@@ -1187,7 +1187,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             XmlGenHelper.appendElement(studyDesign, createInterventional(spDTO, doc));
         } else if (spDTO.getStudyProtocolType().getValue().equalsIgnoreCase("NonInterventionalStudyProtocol")) {
             XmlGenHelper.appendElement(studyDesign, XmlGenHelper.createElementWithTextblock(
-                    "study_type", "NonInterventional", doc));
+                    "study_type", "Observational", doc));
             XmlGenHelper.appendElement(studyDesign, createNonInterventional(spDTO, doc));
         }
         return studyDesign;

@@ -442,7 +442,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     @Test
     public void testSpTypeObs() throws PAException {
         spDto.setStudyProtocolType(StConverter.convertToSt("NonInterventionalStudyProtocol"));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<study_type>NonInterventional</"));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<study_type>Observational</"));
     }
 
     @Test
