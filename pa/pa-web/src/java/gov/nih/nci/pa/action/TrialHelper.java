@@ -171,6 +171,9 @@ public class TrialHelper {
             saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getCtepIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);
             saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getDcpIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE);
         }
+        PaRegistry.getStudyProtocolService()
+                .updatePendingTrialAssociationsToActive(
+                        IiConverter.convertToLong(studyProtocolIi));
     }
 
     private void manageCtGovElement(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {

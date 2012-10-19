@@ -276,6 +276,9 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             String updatesList = studyInboxServiceLocal.create(documentDTOs, existingDocs,
                     studyProtocolIi, originalDTO, originalSummary4,
                     originalSites, savedDocs);
+            studyProtocolService
+                .updatePendingTrialAssociationsToActive(IiConverter
+                    .convertToLong(studyProtocolIi));
             mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi,
                     updatesList);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);

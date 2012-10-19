@@ -185,7 +185,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
     private final StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
     private final StudyOverallStatusBeanLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
@@ -208,6 +208,8 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         prop.setValue("ncictro@mail.nih.gov");
         TestSchema.addUpdObject(prop);
 
+        studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
+        
         studyOverallStatusService.setDocumentWorkFlowStatusService(documentWrkService);
         studyOverallStatusService.setStudyProtocolService(studyProtocolService);
 

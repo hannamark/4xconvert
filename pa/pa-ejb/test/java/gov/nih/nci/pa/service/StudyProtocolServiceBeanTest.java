@@ -103,8 +103,10 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -112,6 +114,7 @@ import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -121,6 +124,7 @@ import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -134,12 +138,16 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -158,6 +166,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -177,6 +186,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     
     private final RegistryUserServiceBean registryService = mock(MockRegistryUserServiceBean.class);
     private final MailManagerServiceLocal mailManagerServiceLocal = mock(MailManagerServiceLocal.class);
+    private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
         
     
     @Before
@@ -196,6 +206,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         
         bean.setRegistryUserService(registryService);
         bean.setMailManagerService(mailManagerServiceLocal);
+        bean.setProtocolQueryService(protocolQueryServiceLocal);
         
     }
 
@@ -964,6 +975,226 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         dsetSa.getItem().add(cdSas);
         ispDTO.setSummary4AnatomicSites(dsetSa);
         return ispDTO;
+    }
+    
+    @Test
+    public void testGetTrialAssociations() throws Exception {       
+        
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+        
+        InterventionalStudyProtocolDTO study2 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        Ii id2 = remoteEjb.createInterventionalStudyProtocol(study2);
+     
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocolAssociation spa = new StudyProtocolAssociation();
+        spa.setStudyProtocolA((StudyProtocol) session.get(StudyProtocol.class, IiConverter.convertToLong(id1)));
+        spa.setStudyProtocolB((StudyProtocol) session.get(StudyProtocol.class, IiConverter.convertToLong(id2)));
+        session.save(spa);
+        session.flush();
+        
+        List<StudyProtocolAssociationDTO> list = remoteEjb.getTrialAssociations(IiConverter.convertToLong(id1));
+        assertEquals(1, list.size());
+     
+        assertEquals(spa.getId(), IiConverter.convertToLong(list.get(0).getIdentifier()));
+
+        final StudyProtocolAssociationDTO spaDTO = list.get(0);
+        list = remoteEjb.getTrialAssociations(IiConverter.convertToLong(id2));
+        assertEquals(1, list.size());
+        assertEquals(spa.getId(), IiConverter.convertToLong(spaDTO.getIdentifier()));
+        assertEquals(IiConverter.convertToLong(id1), IiConverter.convertToLong(spaDTO.getStudyProtocolA()));
+        assertEquals(IiConverter.convertToLong(id2), IiConverter.convertToLong(spaDTO.getStudyProtocolB()));
+     
+    }
+    
+    @Test
+    public void testCreatePendingTrialAssociation() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.CTEP));
+        spa.setStudyIdentifier(StConverter.convertToSt("CTEP01"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        assertEquals(1, list.size());
+
+        final StudyProtocolAssociationDTO spaDTO = list.get(0);
+        assertEquals(IiConverter.convertToLong(id1),
+                IiConverter.convertToLong(spaDTO.getStudyProtocolA()));
+        assertTrue(ISOUtil.isIiNull(spaDTO.getStudyProtocolB()));
+        assertEquals("CTEP", spaDTO.getIdentifierType().getCode());
+        assertEquals("CTEP01", spaDTO.getStudyIdentifier().getValue());
+
+    }
+    
+    @Test
+    public void testDeleteTrialAssociation() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.CTEP));
+        spa.setStudyIdentifier(StConverter.convertToSt("CTEP01"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        assertEquals(1, list.size());
+        
+        final StudyProtocolAssociationDTO spaDTO = list.get(0);
+        remoteEjb.deleteTrialAssociation(spaDTO.getIdentifier());
+        list = remoteEjb.getTrialAssociations(IiConverter.convertToLong(id1));
+        Session session = PaHibernateUtil.getCurrentSession();
+        assertNull(session.get(StudyProtocolAssociation.class,
+                IiConverter.convertToLong(spaDTO.getIdentifier())));
+
+    }
+    
+    @Test
+    public void testGetTrialAssociation() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.CTEP));
+        spa.setStudyIdentifier(StConverter.convertToSt("CTEP01"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        final StudyProtocolAssociationDTO spaDTO1 = list.get(0);
+        final StudyProtocolAssociationDTO spaDTO2 = remoteEjb
+                .getTrialAssociation(IiConverter.convertToLong(spaDTO1
+                        .getIdentifier()));
+        assertEquals(spaDTO1.getIdentifier(), spaDTO2.getIdentifier());
+        assertEquals(spaDTO1.getIdentifierType(), spaDTO2.getIdentifierType());
+        assertEquals(spaDTO1.getStudyIdentifier(), spaDTO2.getStudyIdentifier());
+    }
+    
+    @Test
+    public void testUpdateTrialAssociation() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.CTEP));
+        spa.setStudyIdentifier(StConverter.convertToSt("CTEP01"));
+        spa.setOfficialTitle(StConverter.convertToSt("Title"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        final StudyProtocolAssociationDTO spaDTO1 = list.get(0);
+        spaDTO1.setIdentifierType(CdConverter.convertToCd(IdentifierType.NCI));
+        spaDTO1.setStudyIdentifier(StConverter.convertToSt("CTEP02"));
+        spaDTO1.setOfficialTitle(StConverter.convertToSt("Title2"));
+        spaDTO1.setStudyProtocolA(id1);        
+        remoteEjb.update(spaDTO1);
+        
+        list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        final StudyProtocolAssociationDTO spaDTO2 = list.get(0);
+        assertEquals(CdConverter.convertToCd(IdentifierType.NCI), spaDTO2.getIdentifierType());
+        assertEquals(StConverter.convertToSt("CTEP02"), spaDTO2.getStudyIdentifier());
+        assertEquals(StConverter.convertToSt("Title2"), spaDTO2.getOfficialTitle());
+    }
+    
+    @Test
+    public void testCreateActiveTrialAssociation() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);        
+        InterventionalStudyProtocolDTO study2 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        Ii id2 = remoteEjb.createInterventionalStudyProtocol(study2);        
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.CTEP));
+        spa.setStudyIdentifier(StConverter.convertToSt("CTEP01"));
+        spa.setOfficialTitle(StConverter.convertToSt("Title"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        final StudyProtocolAssociationDTO pending = list.get(0);
+        
+        remoteEjb.createActiveTrialAssociation(IiConverter.convertToLong(id1),
+                IiConverter.convertToLong(id2),
+                IiConverter.convertToLong(pending.getIdentifier()));
+        Session session = PaHibernateUtil.getCurrentSession();
+        assertNull(session.get(StudyProtocolAssociation.class,
+                IiConverter.convertToLong(pending.getIdentifier())));
+
+        list = remoteEjb.getTrialAssociations(IiConverter.convertToLong(id1));
+        assertEquals(1, list.size());
+
+        final StudyProtocolAssociationDTO spaDTO = list.get(0);
+        list = remoteEjb.getTrialAssociations(IiConverter.convertToLong(id2));
+        assertEquals(1, list.size());
+        assertEquals(IiConverter.convertToLong(id1),
+                IiConverter.convertToLong(spaDTO.getStudyProtocolA()));
+        assertEquals(IiConverter.convertToLong(id2),
+                IiConverter.convertToLong(spaDTO.getStudyProtocolB()));  
+        
+    }
+    
+    @Test
+    public void testUpdatePendingTrialAssociationsToActive() throws Exception {
+
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+
+        StudyProtocolAssociationDTO spa = new StudyProtocolAssociationDTO();
+        spa.setIdentifierType(CdConverter.convertToCd(IdentifierType.NCT));
+        spa.setStudyIdentifier(StConverter.convertToSt("NCT-1"));
+        spa.setStudyProtocolA(id1);
+        remoteEjb.createPendingTrialAssociation(spa);
+
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("NCT-1");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+
+        StudyProtocolQueryDTO value = new StudyProtocolQueryDTO();
+        value.setNctIdentifier("NCT-1");
+        
+        when(
+                protocolQueryServiceLocal
+                        .getTrialSummaryByStudyProtocolId(any(Long.class)))
+                .thenReturn(value);
+        PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
+        when(paServiceUtils.getStudyIdentifier(any(Ii.class), any(String.class))).thenReturn("NCT-1");
+        bean.setPaServiceUtils(paServiceUtils);
+        remoteEjb.updatePendingTrialAssociationsToActive(IiConverter
+                .convertToLong(spDTO.getIdentifier()));
+
+        List<StudyProtocolAssociationDTO> list = remoteEjb
+                .getTrialAssociations(IiConverter.convertToLong(id1));
+        assertEquals(1, list.size());
+
+        final StudyProtocolAssociationDTO spaDTO = list.get(0);
+        assertEquals(IiConverter.convertToLong(id1),
+                IiConverter.convertToLong(spaDTO.getStudyProtocolA()));
+        assertEquals(IiConverter.convertToLong(spDTO.getIdentifier()),
+                IiConverter.convertToLong(spaDTO.getStudyProtocolB()));
+
     }
 
 }

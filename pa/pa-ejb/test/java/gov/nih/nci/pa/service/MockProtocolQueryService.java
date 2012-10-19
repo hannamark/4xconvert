@@ -81,7 +81,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
                 return sp;
             }
         }
-        return null;
+        return new StudyProtocolQueryDTO();
     }
 
 

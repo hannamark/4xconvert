@@ -35,7 +35,8 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
     public void setUp() {
         spqAction = new StudyProtocolQueryAction();
         spqAction.setCorrelationUtils(new MockCorrelationUtils());
-        spqAction.prepare();
+        spqAction.setServletRequest(getRequest());
+        spqAction.prepare();       
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
         criteria.setCtgovXmlRequiredIndicator("");
@@ -74,6 +75,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
     @Test
     public void testAnyIdentifierTypeHandling() throws PAException {
         StudyProtocolQueryAction action = new StudyProtocolQueryAction();
+        action.setServletRequest(getRequest());
         action.prepare();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setIdentifierType("All");
@@ -94,6 +96,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
     @Test
     public void testIdentifiersValidation() throws PAException {
         StudyProtocolQueryAction action = new StudyProtocolQueryAction();
+        action.setServletRequest(getRequest());
         action.prepare();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setIdentifierType("");

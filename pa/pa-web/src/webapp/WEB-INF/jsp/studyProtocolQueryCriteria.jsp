@@ -79,6 +79,11 @@
             <s:form>
             <s:token/>
                 <pa:failureMessage/>
+                <c:if test="${isBare}">
+	                <p align="center" class="info">
+	                   Use this window to search for the trial you need. Once found, select the trial by clicking on its NCI ID hyperlink.
+	                </p>                    
+                </c:if>
                 <table class="form">
                     <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getCachingPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
                     <tr>

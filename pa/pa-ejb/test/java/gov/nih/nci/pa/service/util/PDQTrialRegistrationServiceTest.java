@@ -112,6 +112,7 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusBeanLocal;
 import gov.nih.nci.pa.service.MockPoClinicalResearchStaffCorrelationService;
 import gov.nih.nci.pa.service.MockPoHealthCareProviderCorrelationService;
 import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
+import gov.nih.nci.pa.service.MockProtocolQueryService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
 import gov.nih.nci.pa.service.StudyContactServiceBean;
@@ -251,7 +252,9 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc = new TrialRegistrationBeanLocal();
         trialRegistrationSvc.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
         trialRegistrationSvc.setStudyIndldeService(new StudyIndldeBeanLocal());
-        trialRegistrationSvc.setStudyProtocolService(new StudyProtocolServiceBean());
+        final StudyProtocolServiceBean studyProtocolService = new StudyProtocolServiceBean();
+        studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
+        trialRegistrationSvc.setStudyProtocolService(studyProtocolService);
         trialRegistrationSvc.setOcsr(orgCorrelationSvc);
         trialRegistrationSvc.setStudySiteService(new StudySiteServiceBean());
         trialRegistrationSvc.setRegistryUserServiceLocal(new MockRegistryUserServiceBean());
@@ -293,7 +296,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getStudyRegulatoryAuthorityService()).thenReturn(new StudyRegulatoryAuthorityBeanLocal());
         when(paSvcLoc.getRegulatoryInformationService()).thenReturn(new RegulatoryInformationBean());
         when(paSvcLoc.getStudySiteService()).thenReturn(new StudySiteServiceBean());
-        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolService);
         when(paSvcLoc.getStudyDiseaseService()).thenReturn(new StudyDiseaseServiceBean());
         when(paSvcLoc.getStudyObjectiveService()).thenReturn(new StudyObjectiveServiceBean());
         when(paSvcLoc.getStratumGroupService()).thenReturn(new StratumGroupBeanLocal());

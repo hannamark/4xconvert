@@ -309,6 +309,11 @@ function displaySelectBoxes() {
         }
     }
 }
+
+function showWidePopup(url, returnFunc, title) {
+    showPopWin(url, getViewportWidth()*0.9, getViewportHeight()*0.9, returnFunc, title);
+}
+
 function showPopup(url, returnFunc, title) {
     showPopWin(url, calculateMaxPopupWidth(), calculateMaxPopupHeight(), returnFunc, title);
 }

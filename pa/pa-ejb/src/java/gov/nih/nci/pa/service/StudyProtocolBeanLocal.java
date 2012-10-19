@@ -104,6 +104,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -111,34 +112,41 @@ import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.NonInterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.StudyProtocolAssociationConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -174,9 +182,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.annotation.IgnoreDependency;
 import org.joda.time.DateMidnight;
 
@@ -204,9 +214,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     
     @EJB
     @IgnoreDependency
-    private MailManagerServiceLocal mailManagerService;    
+    private MailManagerServiceLocal mailManagerService; 
     
-    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
+    
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -1023,5 +1036,219 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
         this.mailManagerService = mailManagerService;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<StudyProtocolAssociationDTO> getTrialAssociations(Long studyId)
+            throws PAException {
+        List<StudyProtocolAssociationDTO> list = new ArrayList<StudyProtocolAssociationDTO>();
+        StudyProtocolAssociationConverter converter = new StudyProtocolAssociationConverter();
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        Query query = session.createQuery("from "
+                + StudyProtocolAssociation.class.getSimpleName()
+                + " spa where spa.studyProtocolA.id=" + studyId
+                + " or spa.studyProtocolB.id=" + studyId);
+        List<StudyProtocolAssociation> associations = query.list();
+        for (StudyProtocolAssociation spa : associations) {
+            if (spa.getStudyProtocolB() == null) {
+                list.add(converter.convertFromDomainToDto(spa));
+            } else {
+                StudyProtocolAssociationDTO dto = converter
+                        .convertFromDomainToDto(spa);
+                StudyProtocol sp = spa.getStudyProtocolA().getId()
+                        .equals(studyId) ? spa.getStudyProtocolB() : spa
+                        .getStudyProtocolA();
+                populateAssociationDetails(dto, sp.getId());
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+
+    private void populateAssociationDetails(StudyProtocolAssociationDTO dto,
+            Long spId) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.clear();
+        StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class,
+                spId);
+        dto.setStudyIdentifier(StConverter.convertToSt(getTrialNciId(
+                Arrays.asList(sp.getId())).get(sp.getId())));
+        dto.setIdentifierType(CdConverter.convertToCd(IdentifierType.NCI));
+        dto.setStudyProtocolType(CdConverter
+                .convertToCd(sp instanceof NonInterventionalStudyProtocol ? StudyTypeCode.NON_INTERVENTIONAL
+                        : StudyTypeCode.INTERVENTIONAL));
+        dto.setStudySubtypeCode(CdConverter
+                .convertToCd(sp instanceof NonInterventionalStudyProtocol ? ((NonInterventionalStudyProtocol) sp)
+                        .getStudySubtypeCode() : null));
+        dto.setOfficialTitle(StConverter.convertToSt(sp.getOfficialTitle()));
+    }
+
+    @Override
+    public void createPendingTrialAssociation(
+            StudyProtocolAssociationDTO trialAssociation) throws PAException {
+
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            StudyProtocolAssociation bo = new StudyProtocolAssociationConverter()
+                    .convertFromDtoToDomain(trialAssociation);
+            session.save(bo);
+            session.flush();
+        } catch (ConstraintViolationException e) {
+            throw new PAValidationException("Association already exists");   // NOPMD         
+        }
+    }
+
+    @Override
+    public void deleteTrialAssociation(Ii id) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocolAssociation bo = (StudyProtocolAssociation) session.get(
+                StudyProtocolAssociation.class,
+                IiConverter.convertToLong(id));
+        if (bo != null) {
+            session.delete(bo);
+        }
+
+    }
+
+    @Override
+    public StudyProtocolAssociationDTO getTrialAssociation(long id)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocolAssociation bo = (StudyProtocolAssociation) session.get(
+                StudyProtocolAssociation.class, id);
+        if (bo != null) {
+            return new StudyProtocolAssociationConverter()
+                    .convertFromDomainToDto(bo);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void update(StudyProtocolAssociationDTO association)
+            throws PAException {
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            StudyProtocolAssociation bo = new StudyProtocolAssociationConverter()
+                    .convertFromDtoToDomain(association);
+            session.merge(bo);
+            session.flush();
+        } catch (ConstraintViolationException e) {
+            throw new PAValidationException("Association already exists");   // NOPMD         
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void createActiveTrialAssociation(Long trialA, Long trialB,
+            Long associationToReplace) throws PAException {
+        if (associationToReplace != null) {
+            deleteTrialAssociation(IiConverter
+                    .convertToIi(associationToReplace));
+        }
+        try {
+            Session session = PaHibernateUtil.getCurrentSession();
+            Query query = session.createQuery("from "
+                    + StudyProtocolAssociation.class.getSimpleName()
+                    + " spa where spa.studyProtocolA.id=" + trialA
+                    + " and spa.studyProtocolB.id=" + trialB);
+            if (CollectionUtils.isEmpty(query.list())) {
+                StudyProtocolAssociation bo = new StudyProtocolAssociation();
+                StudyProtocol studyProtocolA = new StudyProtocol();
+                studyProtocolA.setId(trialA);
+                StudyProtocol studyProtocolB = new StudyProtocol();
+                studyProtocolB.setId(trialB);
+                bo.setStudyProtocolA(studyProtocolA);
+                bo.setStudyProtocolB(studyProtocolB);
+                session.save(bo);
+                session.flush();
+            }
+        } catch (ConstraintViolationException e) {
+            throw new PAValidationException("Association already exists"); // NOPMD
+        }
+    }
+
+    @Override
+    public void updatePendingTrialAssociationsToActive(long studyId) {
+        try {
+            StudyProtocolQueryDTO queryDTO = protocolQueryService
+                    .getTrialSummaryByStudyProtocolId(studyId);
+            String nciID = queryDTO.getNciIdentifier();
+            String nctID = paServiceUtils.getStudyIdentifier(
+                    IiConverter.convertToStudyProtocolIi(studyId),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            String ctepID = null;
+            String dcpID = null;
+            List<String> otherIDs = new ArrayList<String>();
+            
+            if (!queryDTO.isProprietaryTrial()) {
+                dcpID = paServiceUtils.getStudyIdentifier(
+                        IiConverter.convertToStudyProtocolIi(studyId),
+                        PAConstants.DCP_IDENTIFIER_TYPE);
+                ctepID = paServiceUtils.getStudyIdentifier(
+                        IiConverter.convertToStudyProtocolIi(studyId),
+                        PAConstants.CTEP_IDENTIFIER_TYPE);
+                otherIDs = queryDTO.getOtherIdentifiers() != null ? queryDTO
+                        .getOtherIdentifiers() : otherIDs;
+            }
+            
+            updatePendingTrialAssociationsToActive(studyId, nciID, IdentifierType.NCI);
+            updatePendingTrialAssociationsToActive(studyId, nctID, IdentifierType.NCT);
+            updatePendingTrialAssociationsToActive(studyId, ctepID, IdentifierType.CTEP);
+            updatePendingTrialAssociationsToActive(studyId, dcpID, IdentifierType.DCP);
+            for (String otherID : otherIDs) {
+                updatePendingTrialAssociationsToActive(studyId, otherID, IdentifierType.OTHER_IDENTIFIER);    
+            }            
+        } catch (PAException e) {
+            LOG.error(e, e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updatePendingTrialAssociationsToActive(long studyId,
+            String identifier, IdentifierType idType) throws PAException {
+
+        if (StringUtils.isBlank(identifier)) {
+            return;
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session
+                .createQuery("from "
+                        + StudyProtocolAssociation.class.getSimpleName()
+                        + " spa where spa.studyProtocolB is null and spa.studyIdentifier=? and spa.identifierType=?");
+        query.setParameter(0, identifier);
+        query.setParameter(1, idType);
+        List<StudyProtocolAssociation> associations = query.list();
+        for (StudyProtocolAssociation spa : associations) {
+            createActiveTrialAssociation(spa.getStudyProtocolA().getId(),
+                    studyId, spa.getId());
+        }
+    }
+
+    /**
+     * @return the protocolQueryServiceLocal
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+    /**
+     * @param protocolQueryServiceLocal the protocolQueryServiceLocal to set
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryServiceLocal) {
+        this.protocolQueryService = protocolQueryServiceLocal;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
     }
 }

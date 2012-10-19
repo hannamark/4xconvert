@@ -191,7 +191,7 @@ public class ProprietaryTrialManagementBeanTest extends
     private final StudyIndldeServiceLocal studyIndldeService = new StudyIndldeBeanLocal();
     private final StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
     private final StudyOverallStatusBeanLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
     private final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
@@ -263,6 +263,8 @@ public class ProprietaryTrialManagementBeanTest extends
         TestSchema.addUpdObject(prop);
 
         studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(studySiteAccrualAccessServiceLocal);
+        
+        studyProtocolService.setProtocolQueryService(protocolQueryServiceLocal);
         
         studyOverallStatusService
                 .setDocumentWorkFlowStatusService(documentWrkService);

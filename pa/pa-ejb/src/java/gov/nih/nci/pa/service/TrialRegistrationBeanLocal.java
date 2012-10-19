@@ -305,6 +305,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
             saveAmenderInfo(studyProtocolDTO, amender);
+            studyProtocolService
+                    .updatePendingTrialAssociationsToActive(IiConverter
+                            .convertToLong(spIi));
             sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
             return studyProtocolDTO.getIdentifier();
         } catch (Exception e) {
@@ -576,7 +579,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             Collection<String> unmatchedEmails = new ArrayList<String>();
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
-            }            
+            }  
+            studyProtocolService
+                .updatePendingTrialAssociationsToActive(IiConverter
+                    .convertToLong(spIi));
             sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);            
             return spIi;
     }
@@ -686,6 +692,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             if (owners != null && owners.getItem() != null) {
                 unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
             }
+            studyProtocolService
+                    .updatePendingTrialAssociationsToActive(IiConverter
+                            .convertToLong(spIi));         
             sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);
             
             return spIi;
@@ -1313,6 +1322,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         
             // do not send the mail when its batch mode
             final String updatesList = createInboxProcessingComments(spIi, savedDocs);
+            studyProtocolService
+                .updatePendingTrialAssociationsToActive(IiConverter
+                    .convertToLong(spIi));
             sendMail(UPDATE, batchMode, spIi, new ArrayList<String>(),
                     updatesList);
 

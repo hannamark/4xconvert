@@ -17,6 +17,10 @@
         <pattern>/helpDocs/*</pattern>
     </excludes>
 
+    <decorator name="bare" page="bare.jsp">
+        <pattern>*/bare/*</pattern>
+    </decorator>
+
     <decorator name="main" page="main.jsp">
         <pattern>/*</pattern>
     </decorator>

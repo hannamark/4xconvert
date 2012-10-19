@@ -131,6 +131,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private static final long serialVersionUID = -2308994602660261367L;
     private static final String SHOW_VIEW = "view";
     private static final String SHOW_VIEW_REFRESH = "viewRefresh";
+    private static final String BARE = "/bare/";
     
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyCheckoutServiceLocal studyCheckoutService;
@@ -155,6 +156,13 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         studyCheckoutService = PaRegistry.getStudyCheckoutService();
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+
+        if (httpServletRequest.getServletPath().contains(BARE)) {
+            // we are in BARE mode, which is typically used just to look up and
+            // pick a trial in a pop-up
+            // window.
+            httpServletRequest.setAttribute("isBare", true);
+        }
     }
 
     /**

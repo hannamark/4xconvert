@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.Collection;
@@ -98,6 +99,7 @@ import java.util.Map;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public interface StudyProtocolService {
 
 
@@ -255,4 +257,65 @@ public interface StudyProtocolService {
      * @return {@link Map} map of Study protocol id and trial processing status code
      */
     Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs);
+    
+    /**
+     * Gets associations of the given trial.
+     * @param studyId Long
+     * @return List<StudyProtocolAssociationDTO>
+     * @throws PAException on error
+     */
+    List<StudyProtocolAssociationDTO> getTrialAssociations(Long studyId) throws PAException;
+
+
+    /**
+     * Creates a trial association to another trial that does not yet exist in CTRP.
+     * @param trialAssociation trialAssociation
+     * @throws PAException PAException
+     */
+    void createPendingTrialAssociation(
+            StudyProtocolAssociationDTO trialAssociation) throws PAException;
+
+
+    /**
+     * @param convertToIi Ii
+     * @throws PAException PAException
+     */
+    void deleteTrialAssociation(Ii convertToIi) throws PAException;
+
+
+    /**
+     * @param id id
+     * @return StudyProtocolAssociationDTO
+     * @throws PAException PAException
+     */
+    StudyProtocolAssociationDTO getTrialAssociation(long id) throws PAException;
+
+
+    /**
+     * @param association StudyProtocolAssociationDTO
+     * @throws PAException PAException
+     */
+    void update(StudyProtocolAssociationDTO association) throws PAException;
+
+
+    /**
+     * @param trialA ID of trial A
+     * @param trialB ID of trial B
+     * @param associationToReplace if this association is replacing an existing one, specify its ID.
+     * @throws PAException PAException
+     */
+    void createActiveTrialAssociation(Long trialA, Long trialB,
+            Long associationToReplace) throws PAException;
+    
+    /**
+     * Searches pending trial associations that can possibly indicate an association to the given trial, which
+     * perhaps has just been registered. If found, updates those associations from pending to active pointing to the
+     * given trial.
+     * @param studyId
+     *            studyId  
+     */
+    void updatePendingTrialAssociationsToActive(long studyId);
+    
+    
+    
 }

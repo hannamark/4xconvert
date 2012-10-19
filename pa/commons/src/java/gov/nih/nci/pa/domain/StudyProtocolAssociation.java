@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -76,114 +76,167 @@
 *
 *
 */
-package gov.nih.nci.pa.action;
+package gov.nih.nci.pa.domain;
 
-import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.enums.IdentifierType;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.test.util.MockServiceLocator;
-import gov.nih.nci.pa.util.AbstractMockitoTest;
-import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.MockPoServiceLocator;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import javax.servlet.http.HttpSession;
+import org.hibernate.validator.NotNull;
 
-import org.apache.struts2.ServletActionContext;
-import org.junit.After;
-import org.junit.Before;
-
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpServletResponse;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.config.Configuration;
-import com.opensymphony.xwork2.config.ConfigurationManager;
-import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.util.ValueStack;
-import com.opensymphony.xwork2.util.ValueStackFactory;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
- * @author hreinhart
- *
+ * Trial association.
+ * 
+ * @author Denis G. Krylov
  */
-public abstract class AbstractPaActionTest extends AbstractMockitoTest {
+@Entity
+@Table(name = "study_protocol_association")
+@org.hibernate.annotations.Table(appliesTo = "study_protocol_association")
+public class StudyProtocolAssociation extends AbstractEntity {
+
+    private static final long serialVersionUID = 1234567890L;
+
+    private StudyProtocol studyProtocolA;
+    private StudyProtocol studyProtocolB;
+    private IdentifierType identifierType;
+    private StudyTypeCode studyProtocolType;
+    private StudySubtypeCode studySubtypeCode;
+    private String officialTitle;
+    private String studyIdentifier;
 
     /**
-     * Creates the action context with a mock request.
+     * @return the studyProtocolA
      */
-    public static void initActionContext() {
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
-        Configuration config = configurationManager.getConfiguration();
-        Container container = config.getContainer();
-
-        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
-        stack.getContext().put(ActionContext.CONTAINER, container);
-        ActionContext.setContext(new ActionContext(stack.getContext()));
-
-        assertNotNull(ActionContext.getContext());
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServletPath("");
-        request.setSession(new MockHttpSession());
-        ServletActionContext.setRequest(request);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        ServletActionContext.setResponse(response);
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_a_id")
+    @NotNull
+    @Searchable(nested = true)
+    public StudyProtocol getStudyProtocolA() {
+        return studyProtocolA;
     }
 
     /**
-     * Set up services.
+     * @param studyProtocolA
+     *            the studyProtocolA to set
      */
-    @Before
-    public void setUpServices() {
-        PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+    public void setStudyProtocolA(StudyProtocol studyProtocolA) {
+        this.studyProtocolA = studyProtocolA;
     }
 
     /**
-     * Initialize the mock request.
+     * @return the studyProtocolB
      */
-    @Before
-    public void initMockRequest() {
-        initActionContext();
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        StudyProtocolQueryDTO protocolSessionBean = new StudyProtocolQueryDTO();
-        protocolSessionBean.setStudyProtocolId(1L);
-        session.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_b_id")
+    @Searchable(nested = true)
+    public StudyProtocol getStudyProtocolB() {
+        return studyProtocolB;
     }
 
     /**
-     * Clean out the action context to ensure one test does not impact another.
+     * @param studyProtocolB
+     *            the studyProtocolB to set
      */
-    @After
-    public void cleanUpActionContext() {
-        ActionContext.setContext(null);
+    public void setStudyProtocolB(StudyProtocol studyProtocolB) {
+        this.studyProtocolB = studyProtocolB;
     }
 
     /**
-     * @return MockHttpServletRequest
+     * @return the identifierType
      */
-    protected MockHttpServletRequest getRequest() {
-        return (MockHttpServletRequest) ServletActionContext.getRequest();
+    @Column(name = "identifier_type")
+    @Enumerated(EnumType.STRING)
+    @Searchable
+    public IdentifierType getIdentifierType() {
+        return identifierType;
     }
 
     /**
-     * @return MockHttpSession
+     * @param identifierType
+     *            the identifierType to set
      */
-    protected MockHttpSession getSession() {
-        return (MockHttpSession) ServletActionContext.getRequest().getSession();
+    public void setIdentifierType(IdentifierType identifierType) {
+        this.identifierType = identifierType;
     }
 
     /**
-     * Gets the response.
-     *
-     * @return the response
+     * @return the studyProtocolType
      */
-    protected MockHttpServletResponse getResponse() {
-        return (MockHttpServletResponse) ServletActionContext.getResponse();
+    @Column(name = "study_protocol_type")
+    @Enumerated(EnumType.STRING)
+    @Searchable
+    public StudyTypeCode getStudyProtocolType() {
+        return studyProtocolType;
     }
+
+    /**
+     * @param studyProtocolType
+     *            the studyProtocolType to set
+     */
+    public void setStudyProtocolType(StudyTypeCode studyProtocolType) {
+        this.studyProtocolType = studyProtocolType;
+    }
+
+    /**
+     * @return the studySubtypeCode
+     */
+    @Column(name = "STUDY_SUBTYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    @Searchable
+    public StudySubtypeCode getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+
+    /**
+     * @param studySubtypeCode
+     *            the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(StudySubtypeCode studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
+    }
+
+    /**
+     * @return the officialTitle
+     */
+    @Column(name = "official_title")
+    @Searchable
+    public String getOfficialTitle() {
+        return officialTitle;
+    }
+
+    /**
+     * @param officialTitle
+     *            the officialTitle to set
+     */
+    public void setOfficialTitle(String officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return the studyIdentifier
+     */
+    @Column(name = "study_identifier")
+    @Searchable    
+    public String getStudyIdentifier() {
+        return studyIdentifier;
+    }
+
+    /**
+     * @param studyIdentifier the studyIdentifier to set
+     */
+    public void setStudyIdentifier(String studyIdentifier) {
+        this.studyIdentifier = studyIdentifier;
+    }
+
 }

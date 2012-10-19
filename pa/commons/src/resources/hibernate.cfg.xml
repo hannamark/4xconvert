@@ -21,6 +21,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         
         <!-- mapping classes -->
         <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
+        <mapping class="gov.nih.nci.pa.domain.StudyProtocolAssociation" />
         <mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.StudyOverallStatus" />
         <mapping class="gov.nih.nci.pa.domain.DocumentWorkflowStatus" />

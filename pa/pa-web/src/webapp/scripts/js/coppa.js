@@ -209,3 +209,11 @@ function extractPhoneNumberExt(phone) {
 	}
 	return '';
 }
+
+
+function handleTrialSelect(trialId, trialNciId) {
+	window.top.hidePopWin(true); 
+	if (window.parent.trialSelected != undefined) {
+		window.parent.trialSelected(trialId, trialNciId);
+	}
+}

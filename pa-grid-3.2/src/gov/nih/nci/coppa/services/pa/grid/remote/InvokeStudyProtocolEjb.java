@@ -8,6 +8,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -217,5 +218,55 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public NonInterventionalStudyProtocolDTO getNonInterventionalStudyProtocol(
             Ii ii) throws PAException {
         throw new PAException("not supported via the grid service.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolAssociationDTO> getTrialAssociations(Long studyId) throws PAException {
+        throw new PAException("not supported via the grid service.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void createPendingTrialAssociation(
+            StudyProtocolAssociationDTO trialAssociation) throws PAException {  
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteTrialAssociation(Ii convertToIi) throws PAException {               
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolAssociationDTO getTrialAssociation(long id)
+            throws PAException {        
+        return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void update(StudyProtocolAssociationDTO association)
+            throws PAException {                
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void createActiveTrialAssociation(Long trialA, Long trialB,
+            Long associationToReplace) throws PAException {
+        
+        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void updatePendingTrialAssociationsToActive(long studyId) {               
     }
 }

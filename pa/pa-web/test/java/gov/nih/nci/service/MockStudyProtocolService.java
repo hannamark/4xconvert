@@ -96,6 +96,7 @@ import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -337,4 +338,54 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     public Map<Long, String> getTrialProcessingStatus(List<Long> studyProtocolIDs) { 
         return new HashMap<Long, String>();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolAssociationDTO> getTrialAssociations(Long studyId) throws PAException {
+        return new ArrayList<StudyProtocolAssociationDTO>();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void createPendingTrialAssociation(
+            StudyProtocolAssociationDTO trialAssociation) throws PAException {  
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteTrialAssociation(Ii convertToIi) throws PAException {               
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolAssociationDTO getTrialAssociation(long id)
+            throws PAException {        
+        return new StudyProtocolAssociationDTO();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void update(StudyProtocolAssociationDTO association)
+            throws PAException {                
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void createActiveTrialAssociation(Long trialA, Long trialB,
+            Long associationToReplace) throws PAException {
+        
+        
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void updatePendingTrialAssociationsToActive(long studyId) {               
+    }
+
 }
