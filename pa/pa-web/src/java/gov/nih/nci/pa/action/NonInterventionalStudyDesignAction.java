@@ -198,8 +198,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         validateBaseFields();
         validatePrimaryPurpose();        
         validateStudyModelCode();
-        validateTimePerspective();
-        validateBiospecimenRetentionCode();
+        validateTimePerspective();        
         validateNumberOfGroups();
         validateMinTargetAccrual();
     }
@@ -225,12 +224,6 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             addFieldError(fieldName, getText(errMsg));
         }
      }
-
-    private void validateBiospecimenRetentionCode() {
-        if (StringUtils.isEmpty(webDTO.getBiospecimenRetentionCode())) {
-            addFieldError("webDTO.biospecimenRetentionCode", getText("error.biospecimenRetentionCode"));
-        }
-    }
 
     private void validateStudyModelCode() {
         if (StringUtils.isEmpty(webDTO.getStudyModelCode())) {

@@ -1153,11 +1153,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         "If Time Perspective is 'Other', " + "please describe",
                         ErrorMessageTypeEnum.SCIENTIFIC);
             }
-        }
-        if (nonIntDTO.getBiospecimenRetentionCode().getCode() == null) {
-            messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Bio-specimen Retention must be Entered", 
-                    ErrorMessageTypeEnum.SCIENTIFIC);
-        }
+        }  
         if (nonIntDTO.getNumberOfGroups().getValue() == null) {
             messages.addError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Number of Groups/Cohorts must be Entered", 
                     ErrorMessageTypeEnum.SCIENTIFIC);

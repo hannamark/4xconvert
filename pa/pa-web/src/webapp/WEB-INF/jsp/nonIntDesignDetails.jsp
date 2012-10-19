@@ -165,7 +165,7 @@ function displayPrimaryPurposeOtherText(){
 	</tr>	 
     <tr>
 		<td scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.specimen.retention"/><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.specimen.retention"/></label></td>
 		<s:set name="biospecimenRetentionCodeValues" value="@gov.nih.nci.pa.enums.BiospecimenRetentionCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.biospecimenRetentionCode" list="#biospecimenRetentionCodeValues"  value="webDTO.biospecimenRetentionCode" cssStyle="width:150px" />
