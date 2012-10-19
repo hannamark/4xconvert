@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
@@ -387,5 +388,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
      */
     public void updatePendingTrialAssociationsToActive(long studyId) {               
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    public void changeStudyProtocolType(Ii studyProtocolIi,
+            StudyTypeCode interventional) throws PAException {
+       
+        
+    }
 }

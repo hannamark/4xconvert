@@ -36,7 +36,7 @@ function toggleFields(){
 	}
 
 function handleAction(){
- document.forms[0].action="noninterventionalStudyDesignupdate.action";
+ document.forms[0].action="noninterventionalStudyDesignupdateDesign.action";
  document.forms[0].submit(); 
 } 
 function tooltip() {
@@ -95,6 +95,21 @@ function displayPrimaryPurposeOtherText(){
                </span>
          </td>
       </tr>
+
+    <tr>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
+        <td>
+          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+                   value="webDTO.studyType" cssStyle="width:200px"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.studyType</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+
 
     <tr>
         <td  scope="row" class="label"><label>

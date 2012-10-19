@@ -135,6 +135,22 @@ function initialize() {
 <s:actionerror/>
 <h2><fmt:message key="isdesign.details.title"/></h2>
 <table class="form">
+
+    <tr>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
+        <td>
+          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+                   value="webDTO.studyType" cssStyle="width:200px"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.studyType</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+
+
 	<tr>
 	 	<td  scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>

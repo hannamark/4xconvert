@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -161,6 +163,11 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
         return "details";
     }
+    
+    @Override
+    public String execute() {
+        return detailsQuery();
+    }
 
     /**
      * @return res
@@ -173,8 +180,9 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            InterventionalStudyProtocolDTO ispDTO = PaRegistry.getStudyProtocolService()
-            .getInterventionalStudyProtocol(studyProtocolIi);
+            InterventionalStudyProtocolDTO ispDTO = PaRegistry
+                    .getStudyProtocolService().getInterventionalStudyProtocol(
+                            studyProtocolIi);
             setPhaseAndPurpose(ispDTO);
             ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.getByCode(
                     webDTO.getBlindingSchemaCode())));
@@ -196,8 +204,17 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
 
             PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO, "DesignDetails");
-            detailsQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            
+            if (PAConstants.NON_INTERVENTIONAL.equalsIgnoreCase(webDTO
+                    .getStudyType())) {
+                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
+                        studyProtocolIi, StudyTypeCode.NON_INTERVENTIONAL);
+                return "nisdesign";
+            }            
+            
+            detailsQuery();
+           
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -297,6 +314,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
     private ISDesignDetailsWebDTO setDesignDetailsDTO(InterventionalStudyProtocolDTO ispDTO) {
         ISDesignDetailsWebDTO dto = new ISDesignDetailsWebDTO();
         if (ispDTO != null) {
+            dto.setStudyType(PAConstants.INTERVENTIONAL);
             convertPhase(ispDTO, dto);
             convertPurpose(ispDTO, dto);
             convertBlindingShemaCode(ispDTO, dto);

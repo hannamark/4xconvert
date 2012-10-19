@@ -102,6 +102,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
     private String studyClassificationCode;
+    private String studyType;
 
     private OutcomeMeasureWebDTO outcomeMeasure = new OutcomeMeasureWebDTO();
 
@@ -371,6 +372,20 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
      */
     public void setSecondaryPurposeId(Long secondaryPurposeId) {
         this.secondaryPurposeId = secondaryPurposeId;
+    }
+
+    /**
+     * @return the studyType
+     */
+    public String getStudyType() {
+        return studyType;
+    }
+
+    /**
+     * @param studyType the studyType to set
+     */
+    public void setStudyType(String studyType) {
+        this.studyType = studyType;
     }
 
 }

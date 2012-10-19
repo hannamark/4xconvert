@@ -468,10 +468,21 @@
             <result name="details">/WEB-INF/jsp/scientific/isdesignDetails.jsp</result>
             <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
             <result name="outcomeAdd">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasureAdd.jsp</result>
+            <result name="nisdesign" type="redirectAction">
+                <param name="namespace">../protected</param>
+                <param name="actionName">noninterventionalStudyDesigndetailsQuery</param>                
+            </result>            
         </action>
         <action name="noninterventionalStudyDesign*" class="gov.nih.nci.pa.action.NonInterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">updateDesign</param>
+            </interceptor-ref>            
             <result name="details">/WEB-INF/jsp/nonIntDesignDetails.jsp</result>
+            <result name="isdesign" type="redirectAction">
+                <param name="namespace">../protected</param>
+                <param name="actionName">interventionalStudyDesign</param>                
+            </result>            
         </action>
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

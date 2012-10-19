@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -93,10 +94,12 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -112,6 +115,9 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     private static final long serialVersionUID = -3532986378452861444L;
     private OSDesignDetailsWebDTO webDTO =  new OSDesignDetailsWebDTO();
     private static final int MAXIMUM_CHAR = 200;
+    
+    private static final Logger LOG = Logger
+            .getLogger(NonInterventionalStudyDesignAction.class);
 
     /**
      * @return res
@@ -134,7 +140,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     /**
      * @return res
      */
-    public String update() { //NOPMD
+    public String updateDesign() { //NOPMD
         enforceBusinessRules();
         if (hasFieldErrors()) {
             return "details";
@@ -142,8 +148,9 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry.getStudyProtocolService()
-            .getNonInterventionalStudyProtocol(studyProtocolIi);
+            NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry
+                    .getStudyProtocolService()
+                    .getNonInterventionalStudyProtocol(studyProtocolIi);
             ospFromDatabaseDTO.setPrimaryPurposeCode(CdConverter
                     .convertToCd(PrimaryPurposeCode.getByCode(webDTO
                             .getPrimaryPurposeCode())));
@@ -180,19 +187,28 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             ospFromDatabaseDTO.setTimePerspectiveOtherText(
                     StConverter.convertToSt(webDTO.getTimePerspectiveOtherText()));
             ospFromDatabaseDTO.setBiospecimenDescription(
-                    StConverter.convertToSt(webDTO.getBiospecimenDescription()));
-           /* ospFromDatabaseDTO.setMaximumTargetAccrualNumber(
-                    IntConverter.convertToInt(webDTO.getMaximumTargetAccrualNumber()));*/
+                    StConverter.convertToSt(webDTO.getBiospecimenDescription()));           
             ospFromDatabaseDTO.setTargetAccrualNumber(
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
-            PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospFromDatabaseDTO);
-            detailsQuery();
+            PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospFromDatabaseDTO);          
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            
+            if (PAConstants.INTERVENTIONAL.equalsIgnoreCase(webDTO
+                    .getStudyType())) {
+                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
+                        studyProtocolIi, StudyTypeCode.INTERVENTIONAL);
+                return "isdesign";
+            }
+            
+            detailsQuery();
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            LOG.error(e, e);
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return "details";
     }
+
 
     private void enforceBusinessRules() {
         validateBaseFields();
@@ -315,6 +331,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         if (ospDTO.getStudySubtypeCode() != null) {
             dto.setStudySubtypeCode(ospDTO.getStudySubtypeCode().getCode());
         }
+        dto.setStudyType(PAConstants.NON_INTERVENTIONAL);
         
     }
 

@@ -90,6 +90,7 @@ public class OSDesignDetailsWebDTO {
     private String primaryPurposeCode;
     private String primaryPurposeOtherText;
     private String primaryPurposeAdditionalQualifierCode;
+    private String studyType;
     private String studySubtypeCode;
     private String biospecimenDescription;
     private String biospecimenRetentionCode;
@@ -245,6 +246,18 @@ public class OSDesignDetailsWebDTO {
     public void setPrimaryPurposeAdditionalQualifierCode(
             String primaryPurposeAdditionalQualifierCode) {
         this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
+    }
+    /**
+     * @return the studyType
+     */
+    public String getStudyType() {
+        return studyType;
+    }
+    /**
+     * @param studyType the studyType to set
+     */
+    public void setStudyType(String studyType) {
+        this.studyType = studyType;
     }
     
 }

@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
@@ -317,5 +318,11 @@ public interface StudyProtocolService {
     void updatePendingTrialAssociationsToActive(long studyId);
     
     
-    
+    /**
+     * @param studyProtocolIi studyProtocolIi
+     * @param interventional interventional
+     * @throws PAException PAException
+     */
+    void changeStudyProtocolType(Ii studyProtocolIi,
+            StudyTypeCode interventional) throws PAException;
 }

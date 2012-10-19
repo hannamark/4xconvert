@@ -51,7 +51,7 @@ public class NonInterventionalStudyDesignActionTest extends AbstractPaActionTest
 		webDTO.setTimePerspectiveCode("Prospective");
 		webDTO.setTimePerspectiveOtherText("timeText");
 		observationalStudy.setWebDTO(webDTO);
-		assertEquals("details", observationalStudy.update());
+		assertEquals("details", observationalStudy.updateDesign());
 	}
 
 }

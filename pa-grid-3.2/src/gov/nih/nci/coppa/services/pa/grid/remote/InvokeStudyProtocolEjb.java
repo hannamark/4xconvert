@@ -6,6 +6,7 @@ import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
@@ -268,5 +269,14 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      * {@inheritDoc}
      */
     public void updatePendingTrialAssociationsToActive(long studyId) {               
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void changeStudyProtocolType(Ii studyProtocolIi,
+            StudyTypeCode interventional) throws PAException {
+       
+        
     }
 }
