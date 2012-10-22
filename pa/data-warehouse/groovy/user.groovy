@@ -1,13 +1,34 @@
 import groovy.sql.Sql
 
-def sql = """select cu.user_id as user_id, 
-                    cu.login_name as login_name,
+def sql = """select ru.affiliated_org_id,
+                    cu.user_id, 
+                    cu.login_name,
                     CASE WHEN NULLIF(ru.first_name, '') is not null THEN ru.first_name || ' ' || ru.last_name
                       WHEN NULLIF(split_part(cu.login_name, 'CN=', 2), '') is null THEN cu.login_name
                       ELSE split_part(cu.login_name, 'CN=', 2) 
                     END as name,
-                    ru.first_name as first_name,
-                    ru.last_name as last_name
+                    ru.city,
+                    ru.country,
+                    ru.date_last_created,
+                    ru.date_last_updated,
+                    ru.email_address,
+                    ru.enable_emails,
+                    ru.first_name,
+                    ru.last_name,
+                    substr(ru.middle_name, 1, 1) as middle_initial,
+                    ru.phone,
+                    ru.postal_code,
+                    ru.prs_org_name,
+                    CASE WHEN (ru.affiliated_org_user_type = 'ADMIN') THEN 'Yes'
+                         WHEN (ru.affiliated_org_user_type = 'MEMBER') THEN 'No'
+                         WHEN (ru.affiliated_org_user_type = 'PENDING_ADMIN') THEN 'Pending Approval'
+                         ELSE 'Information Not Available'
+                    END as site_admin,
+                    ru.state,
+                    ru.address_line,
+                    split_part(cu.login_name, 'CN=', 2) as user_name,
+                    ru.user_last_created_id,
+                    ru.user_last_updated_id
 		from csm_user cu
 		left outer join registry_user as ru on ru.csm_user_id = cu.user_id 
                 """
@@ -21,11 +42,29 @@ def users = destinationConnection.dataSet("STG_DW_USER")
 
 sourceConnectionPa.eachRow(sql) { row ->
     users.add(
+        AFFILIATED_ORGANIZATION: row.affiliated_org_id,
 		CSM_USER_ID: row.user_id,
 		LOGIN_NAME: row.login_name,
 		NAME: row.name,
+		CITY: row.city,
+		COUNTRY: row.country,
+        CTRP_ACCESS_PRIVILEGES: '',
+        DATE_LAST_CREATED: row.date_last_created,
+        DATE_LAST_UPDATED: row.date_last_updated,
+        EMAIL: row.email_address,
+        EMAIL_NOTIFICATION_REQUIRED: row.enable_emails,
 		FIRST_NAME: row.first_name,
-		LAST_NAME: row.last_name
+		LAST_NAME: row.last_name,
+        MIDDLE_INITIAL: row.middle_initial,
+        PHONE: row.phone,
+        POSTAL_CODE: row.postal_code,
+        PRS_ORGANIZATION: row.prs_org_name,
+        SITE_ADMIN: row.site_admin,
+        STATE: row.state,
+        STREET_ADDRESS: row.address_line,
+        USER_NAME: row.user_name,
+        USER_NAME_LAST_CREATED: row.user_last_created_id,
+        USER_NAME_LAST_UPDATED: row.user_last_updated_id
 	)
 }
 
@@ -39,3 +78,20 @@ def removeDupsSql = """
     )    
     """
 destinationConnection.executeUpdate(removeDupsSql)
+
+def getPrivSql = """
+    select user_id, group_name 
+    from csm_user
+    join csm_user_group using (user_id)
+    join csm_group using (group_id)
+    order by user_id, group_name
+    """
+
+def setPrivSql = """
+    update STG_DW_USER set ctrp_access_privileges = ctrp_access_privileges || ? || '; '
+    where csm_user_id = ?
+    """
+
+sourceConnectionPa.eachRow(getPrivSql) { row ->
+    destinationConnection.executeUpdate(setPrivSql, [row.group_name, row.user_id])
+}
