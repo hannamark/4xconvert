@@ -25,6 +25,8 @@ function upload() {
                 </div>
                 <s:form action="import/ctep/org/uploadOrganizations" id="uploadForm" method="POST"
                         enctype="multipart/form-data" onsubmit="upload();">
+                    
+                    <s:token/>
                     <s:file name="file" label="File" />
                     <s:textfield name="ctepId" label="CTEP ID"/>
                     <input id="enableEnterSubmit" type="submit"/>
