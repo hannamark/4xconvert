@@ -274,6 +274,34 @@ CREATE INDEX DW_STUDY_ACCRUAL_COUNT_NCI_ID_IDX on dw_study_accrual_count(nci_id)
 CREATE INDEX DW_STUDY_ACCRUAL_COUNT_ORG_NAME_IDX on dw_study_accrual_count(org_name);
 CREATE INDEX DW_STUDY_ACCRUAL_COUNT_ORG_ORG_FAMILY_IDX on dw_study_accrual_count(org_org_family);
 
+CREATE INDEX DW_STUDY_IND_IDE_EXEMPT_INDICATOR on dw_study_ind_ide(exempt_indicator);
+CREATE INDEX DW_STUDY_IND_IDE_EXPANDED_ACCESS_INDICATOR on dw_study_ind_ide(expanded_access_indicator);
+CREATE INDEX DW_STUDY_IND_IDE_EXPANDED_ACCESS_STATUS_CODE on dw_study_ind_ide(expanded_access_status_code);
+CREATE INDEX DW_STUDY_IND_IDE_GRANTOR_CODE on dw_study_ind_ide(grantor_code);
+CREATE INDEX DW_STUDY_IND_IDE_HOLDER_TYPE_CODE on dw_study_ind_ide(holder_type_code);
+CREATE INDEX DW_STUDY_IND_IDE_IND_IDE_NUMBER on dw_study_ind_ide(ind_ide_number);
+CREATE INDEX DW_STUDY_IND_IDE_IND_IDE_TYPE_CODE on dw_study_ind_ide(ind_ide_type_code);
+CREATE INDEX DW_STUDY_IND_IDE_NCI_DIV_PROG_HOLDER_CODE on dw_study_ind_ide(nci_div_prog_holder_code);
+CREATE INDEX DW_STUDY_IND_IDE_NCI_ID on dw_study_ind_ide(nci_id);
+CREATE INDEX DW_STUDY_IND_IDE_NIH_INSTHOLDER_CODE on dw_study_ind_ide(nih_instholder_code);
+CREATE INDEX DW_STUDY_IND_IDE_NIH_INSTHOLDER_NAME on dw_study_ind_ide(nih_instholder_name);
+
+CREATE INDEX DW_USER_AFFILIATED_ORGANIZATION on dw_user(affiliated_organization);
+CREATE INDEX DW_USER_CITY on dw_user(city);
+CREATE INDEX DW_USER_COUNTRY on dw_user(country);
+CREATE INDEX DW_USER_EMAIL_NOTIFICATION_REQUIRED on dw_user(email_notification_required);
+CREATE INDEX DW_USER_POSTAL_CODE on dw_user(postal_code);
+CREATE INDEX DW_USER_PRS_ORGANIZATION on dw_user(prs_organization);
+CREATE INDEX DW_USER_SITE_ADMIN on dw_user(site_admin);
+CREATE INDEX DW_USER_STATE on dw_user(state);
+CREATE INDEX DW_USER_USER_NAME on dw_user(user_name);
+
+CREATE INDEX DW_ACCRUAL_BATCH_SUBMISSION_BATCH_FILE_IDENTIFIER on dw_accrual_batch_submission(batch_file_identifier);
+CREATE INDEX DW_ACCRUAL_BATCH_SUBMISSION_CHANGE_CODE on dw_accrual_batch_submission(change_code);
+CREATE INDEX DW_ACCRUAL_BATCH_SUBMISSION_CORRESPONDING_NCI_ID on dw_accrual_batch_submission(corresponding_nci_id);
+CREATE INDEX DW_ACCRUAL_BATCH_SUBMISSION_PASSED_VALIDATION on dw_accrual_batch_submission(passed_validation);
+CREATE INDEX DW_ACCRUAL_BATCH_SUBMISSION_STUDY_ID_SUBMITTED on dw_accrual_batch_submission(study_id_submitted);
+
 DROP INDEX IF EXISTS DW_ORGANIZATION_AUDIT_IDX;
 CREATE INDEX DW_ORGANIZATION_AUDIT_IDX on dw_organization_audit(internal_system_id);
 DROP INDEX IF EXISTS DW_PERSON_AUDIT_IDX;

@@ -62,6 +62,7 @@
             <transaction src="${basedir}/sql/study_site_accrual_access.sql"/>
             <transaction src="${basedir}/sql/study_accrual_count.sql"/>
             <transaction src="${basedir}/sql/study_site_accrual_details.sql"/>
+            <transaction src="${basedir}/sql/accrual_batch_submission.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -237,6 +238,11 @@
         <stopwatch name="timer1"/>
         <echo message = "Running study_site_accrual_details"/>
         <groovy src="groovy/study_site_accrual_details.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running accrual_batch_submission"/>
+        <groovy src="groovy/accrual_batch_submission.groovy"/>
         <stopwatch name="timer1" action="total"/>
     </target>
 

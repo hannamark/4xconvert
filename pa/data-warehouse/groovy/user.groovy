@@ -12,7 +12,7 @@ def sql = """select ru.affiliated_org_id,
                     ru.date_last_created,
                     ru.date_last_updated,
                     ru.email_address,
-                    ru.enable_emails,
+                    '3.9 data element' as enable_emails,
                     ru.first_name,
                     ru.last_name,
                     substr(ru.middle_name, 1, 1) as middle_initial,
@@ -42,7 +42,7 @@ def users = destinationConnection.dataSet("STG_DW_USER")
 
 sourceConnectionPa.eachRow(sql) { row ->
     users.add(
-        AFFILIATED_ORGANIZATION: row.affiliated_org_id,
+        AFFILIATED_ORGANIZATION_ID: row.affiliated_org_id,
 		CSM_USER_ID: row.user_id,
 		LOGIN_NAME: row.login_name,
 		NAME: row.name,
@@ -63,8 +63,8 @@ sourceConnectionPa.eachRow(sql) { row ->
         STATE: row.state,
         STREET_ADDRESS: row.address_line,
         USER_NAME: row.user_name,
-        USER_NAME_LAST_CREATED: row.user_last_created_id,
-        USER_NAME_LAST_UPDATED: row.user_last_updated_id
+        USER_LAST_CREATED_ID: row.user_last_created_id,
+        USER_LAST_UPDATED_ID: row.user_last_updated_id
 	)
 }
 
@@ -95,3 +95,11 @@ def setPrivSql = """
 sourceConnectionPa.eachRow(getPrivSql) { row ->
     destinationConnection.executeUpdate(setPrivSql, [row.group_name, row.user_id])
 }
+
+destinationConnection.execute("""UPDATE stg_dw_user absu
+                                 SET user_name_last_created = us.name 
+                                 FROM stg_dw_user us where absu.user_last_created_id = us.csm_user_id""");
+
+destinationConnection.execute("""UPDATE stg_dw_user absu
+                                 SET user_name_last_updated = us.name 
+                                 FROM stg_dw_user us where absu.user_last_updated_id = us.csm_user_id""");

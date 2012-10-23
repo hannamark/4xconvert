@@ -19,3 +19,10 @@ from
                 union
         select distinct org_name as org from dw_study_participating_site
         ) as orgs order by org asc) as unique_org;
+        
+--Put here instead of user.groovy because organization table not yet populated when user.groovy run
+UPDATE DW_USER USR 
+  SET AFFILIATED_ORGANIZATION = (SELECT DISTINCT NAME 
+                                 FROM DW_ORGANIZATION ORG 
+                                 WHERE ORG.INTERNAL_ID = USR.AFFILIATED_ORGANIZATION_ID)
+
