@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
@@ -92,6 +93,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -511,4 +513,38 @@ public class DSetConverter {
         return returnList;
     }
 
+    /**
+     * Convert dset of cd to list of strings.
+     * @param dSet dset of cd
+     * @return list of strings
+     */
+    public static List<String> convertDSetStToList(DSet<St> dSet) {
+        List<String> returnList = new ArrayList<String>();
+        if (dSet != null && CollectionUtils.isNotEmpty(dSet.getItem())) {
+            for (St st : dSet.getItem()) {
+                if (st.getNullFlavor() == null) {
+                    returnList.add(StConverter.convertToString(st));
+                }
+            }
+        }
+        return returnList;
+    }   
+    
+  
+    /**
+     * @param list
+     *            list
+     * @return DSet<St>
+     */
+    public static DSet<St> convertListStToDSet(List<String> list) {
+        DSet<St> dSet = new DSet<St>();
+        dSet.setItem(new LinkedHashSet<St>());
+        if (list == null || list.isEmpty()) {
+            return dSet;
+        }
+        for (String str : list) {
+            dSet.getItem().add(StConverter.convertToSt(str));
+        }
+        return dSet;
+    }    
 }

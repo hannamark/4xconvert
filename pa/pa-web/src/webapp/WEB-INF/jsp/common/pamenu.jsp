@@ -47,7 +47,7 @@
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/onhold.action" labelKey="pamenu.overview.onhold" selected="${requestScope.topic == 'trialonhold'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/manageAccrualAccess.action" labelKey="pamenu.overview.accrualaccess" selected="${requestScope.topic == 'accrualaccess'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/ajaxAbstractionCompletionviewTSR.action" labelKey="pamenu.overview.viewTsr"/>
-                        <pa:menuLink href="${pageContext.request.contextPath}/protected/assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership" selected="${requestScope.topic == 'assignownership'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/auditTrail.action" labelKey="pamenu.overview.auditTrail" selected="${requestScope.topic == 'auditTrail'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/checkOutHistory.action" labelKey="pamenu.overview.checkOutHistory" selected="${requestScope.topic == 'checkOutHistory'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialAssociationsquery.action" labelKey="pamenu.overview.trialAssociations" selected="${requestScope.topic == 'trialAssociations'}"/>

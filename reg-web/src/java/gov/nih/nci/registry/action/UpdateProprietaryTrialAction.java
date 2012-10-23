@@ -183,12 +183,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             if (hasActionErrors()) {
                 return ERROR;
             }
-            getTrialDTO().setDocDtos(getTrialDocuments());
-            if (getTrialDTO().getSecondaryPurposeId() != null) {
-                getTrialDTO().setSecondaryPurposeName(PAServiceUtils
-                        .getSecondaryPurpose(getTrialDTO().getSecondaryPurposeId())
-                        .getName().getValue());
-            }            
+            getTrialDTO().setDocDtos(getTrialDocuments());              
         } catch (IOException e) {
             addActionError(e.getMessage());
             return ERROR;

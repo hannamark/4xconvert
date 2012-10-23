@@ -85,7 +85,7 @@
                         </c:if>
                         <c:if test="${trialDTO.trialType != 'NonInterventionalStudyProtocol' && trialDTO.trialType != 'NonInterventional'}">
 	                        <reg-web:valueRow labelKey="view.trial.secondaryPurpose">
-	                            <c:out value="${trialDTO.secondaryPurposeName}"/> 
+	                            <c:out value="${trialDTO.secondaryPurposeAsReadableString}"/> 
 	                        </reg-web:valueRow>                        
                         </c:if>
                         <c:if test="${trialDTO.trialType == 'NonInterventionalStudyProtocol' || trialDTO.trialType == 'NonInterventional'}">

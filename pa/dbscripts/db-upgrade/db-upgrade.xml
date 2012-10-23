@@ -1113,4 +1113,8 @@
         <comment>Add a new table to store pending and active trial associations.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5576.sql"/>
      </changeSet>
+     <changeSet id="PO-5513-2" author="krylovd">
+        <comment>Added support for many secondary purposes on a trial.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513-2.sql"/>
+     </changeSet>     
 </databaseChangeLog>

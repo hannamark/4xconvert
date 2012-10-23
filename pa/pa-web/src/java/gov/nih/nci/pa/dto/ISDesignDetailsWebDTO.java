@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 /**
@@ -90,7 +93,7 @@ package gov.nih.nci.pa.dto;
 public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
 
     private String primaryPurposeCode;
-    private Long secondaryPurposeId;
+    private List<String> secondaryPurposes = new ArrayList<String>();
     private String phaseCode;
     private String designConfigurationCode;
     private String numberOfInterventionGroups;
@@ -360,19 +363,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
         return primaryPurposeOtherText;
     }
 
-    /**
-     * @return the secondaryPurposeId
-     */
-    public Long getSecondaryPurposeId() {
-        return secondaryPurposeId;
-    }
-
-    /**
-     * @param secondaryPurposeId the secondaryPurposeId to set
-     */
-    public void setSecondaryPurposeId(Long secondaryPurposeId) {
-        this.secondaryPurposeId = secondaryPurposeId;
-    }
+    
 
     /**
      * @return the studyType
@@ -386,6 +377,20 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
      */
     public void setStudyType(String studyType) {
         this.studyType = studyType;
+    }
+
+    /**
+     * @return the secondaryPurposes
+     */
+    public List<String> getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(List<String> secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
     }
 
 }

@@ -37,18 +37,13 @@
           
           <tr class="interventional">        
                 <td  scope="row" class="label">                    
-                   <label for="trialDTO.secondaryPurposeId"><fmt:message key="submit.trial.secondaryPurpose"/></label>                    
+                   <label for="trialDTO.secondaryPurposes"><fmt:message key="submit.trial.secondaryPurpose"/></label>                    
                 </td>
                 <s:set name="typeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
                 <td>
-                    <s:select headerKey="" headerValue="--Select--" id ="trialDTO.secondaryPurposeId" name="trialDTO.secondaryPurposeId" list="#typeCodeValues"  cssStyle="width:206px"
-                    listKey="identifier.extension" listValue="name.value" 
-                    value="trialDTO.secondaryPurposeId"/>
-                     <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>trialDTO.secondaryPurposeId</s:param>
-                       </s:fielderror>
-                     </span>
+                    <s:select id ="trialDTO.secondaryPurposes" name="trialDTO.secondaryPurposes" list="#typeCodeValues"  cssStyle="width:206px"
+                        value="trialDTO.secondaryPurposes" multiple="true"/>
+                      <p class="info">You can select more than one purpose by holding down the CTRL key and clicking on multiple items.</p>
                 </td>
           </tr>
           

@@ -121,12 +121,6 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         final ProprietaryTrialDTO trialDTO = getTrialDTO();
         trialDTO.setDocDtos(getTrialDocuments());
         
-        if (trialDTO.getSecondaryPurposeId() != null) {
-            trialDTO.setSecondaryPurposeName(PAServiceUtils
-                    .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
-                    .getName().getValue());
-        }        
-
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);
         ServletActionContext.getRequest().getSession()
@@ -325,12 +319,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             validateDocuments(); // this will make sure docs are in the session. PO-4914.            
             getTrialDTO().setDocDtos(getTrialDocuments());            
             setTrialDTO((ProprietaryTrialDTO) util.saveDraft(getTrialDTO()));
-            final ProprietaryTrialDTO trialDTO = getTrialDTO();
-            if (trialDTO.getSecondaryPurposeId() != null) {
-                trialDTO.setSecondaryPurposeName(PAServiceUtils
-                        .getSecondaryPurpose(trialDTO.getSecondaryPurposeId())
-                        .getName().getValue());
-            }            
+            final ProprietaryTrialDTO trialDTO = getTrialDTO();                      
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);

@@ -103,7 +103,6 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -116,6 +115,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
+import org.springframework.util.CollectionUtils;
 
 import com.opensymphony.xwork2.Preparable;
 /**
@@ -262,11 +262,11 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         } else {
             ispDTO.setPrimaryPurposeOtherText(null);
         }
-        if (webDTO.getSecondaryPurposeId() == null) {
-            ispDTO.setSecondaryPurpose(null);
+        if (CollectionUtils.isEmpty(webDTO.getSecondaryPurposes())) {
+            ispDTO.setSecondaryPurposes(null);
         } else {
-            ispDTO.setSecondaryPurpose(PAServiceUtils
-                    .getSecondaryPurpose(webDTO.getSecondaryPurposeId()));
+            ispDTO.setSecondaryPurposes(DSetConverter
+                    .convertListStToDSet(webDTO.getSecondaryPurposes()));
         }
     }
 
@@ -376,9 +376,9 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         if (ispDTO.getPrimaryPurposeOtherText() != null) {
             dto.setPrimaryPurposeOtherText(StConverter.convertToString(ispDTO.getPrimaryPurposeOtherText()));
         }
-        if (ispDTO.getSecondaryPurpose() != null) {
-            dto.setSecondaryPurposeId(IiConverter.convertToLong(ispDTO
-                    .getSecondaryPurpose().getIdentifier()));
+        if (ispDTO.getSecondaryPurposes() != null) {
+            dto.setSecondaryPurposes(DSetConverter.convertDSetStToList(ispDTO
+                    .getSecondaryPurposes()));
         }
     }
 

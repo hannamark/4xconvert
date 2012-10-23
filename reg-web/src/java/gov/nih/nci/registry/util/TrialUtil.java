@@ -130,11 +130,8 @@ public class TrialUtil extends TrialConvertUtils {
             }
             trialDTO.setSecondaryIdentifierList(listIi);
         }
-        if (spDTO.getSecondaryPurpose() != null) {
-            trialDTO.setSecondaryPurposeId(IiConverter.convertToLong(spDTO
-                    .getSecondaryPurpose().getIdentifier()));
-            trialDTO.setSecondaryPurposeName(StConverter.convertToString(spDTO
-                    .getSecondaryPurpose().getName()));
+        if (spDTO.getSecondaryPurposes() != null) {
+            trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
         }
         
         copyNonInterventionalTrialFields(spDTO, trialDTO);
@@ -915,12 +912,9 @@ public class TrialUtil extends TrialConvertUtils {
         copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi),
                 trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
-        if (spDTO.getSecondaryPurpose() != null) {
-            trialDTO.setSecondaryPurposeId(IiConverter.convertToLong(spDTO
-                    .getSecondaryPurpose().getIdentifier()));
-            trialDTO.setSecondaryPurposeName(StConverter.convertToString(spDTO
-                    .getSecondaryPurpose().getName()));
-        }
+        if (spDTO.getSecondaryPurposes() != null) {
+            trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
+        }        
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 

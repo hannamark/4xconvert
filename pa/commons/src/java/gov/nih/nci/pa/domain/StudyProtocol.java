@@ -95,6 +95,7 @@ import gov.nih.nci.pa.util.ValidIi;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -184,6 +185,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
     private Set<StudyInbox> studyInbox = new TreeSet<StudyInbox>(new StudyInboxComparator());
     private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
+    private Set<SecondaryPurpose> secondaryPurposes = new LinkedHashSet<SecondaryPurpose>();
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
 
@@ -816,6 +818,25 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     @Override
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
+    }
+    
+    /**
+     * @return the secondaryPurposes
+     */
+    @ManyToMany(targetEntity = SecondaryPurpose.class, fetch = FetchType.EAGER)
+    @JoinTable(name = "study_protocol_sec_purpose", joinColumns = 
+        @JoinColumn(name = "study_protocol_id"), inverseJoinColumns = @JoinColumn(name = "secondary_purpose_id"))
+    @ForeignKey(name = "study_protocol_sec_purpose_study_id", 
+        inverseName = "study_protocol_sec_purpose_secondary_purpose_id")
+    public Set<SecondaryPurpose> getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(Set<SecondaryPurpose> secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
     }
 
 }

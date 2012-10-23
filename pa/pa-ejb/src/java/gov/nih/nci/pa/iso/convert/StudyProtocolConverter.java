@@ -79,8 +79,11 @@
 package gov.nih.nci.pa.iso.convert;
 
 
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.SecondaryPurpose;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -95,6 +98,13 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+
+import java.util.LinkedHashSet;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Session;
+import org.hibernate.criterion.Example;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -136,6 +146,7 @@ public class StudyProtocolConverter {
     public static StudyProtocolDTO convertFromDomainToDTO(StudyProtocol studyProtocol,
             StudyProtocolDTO studyProtocolDTO) {
         AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocol, studyProtocolDTO);
+        convertSecondaryPurposeToDto(studyProtocol, studyProtocolDTO);
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
@@ -197,6 +208,7 @@ public class StudyProtocolConverter {
            StudyProtocol studyProtocol) throws PAException {
 
        AbstractStudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, studyProtocol);
+       convertSecondaryPurposeToDomain(studyProtocolDTO, studyProtocol);
        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
        setSecondaryIdentifiers(studyProtocolDTO, studyProtocol);
@@ -270,5 +282,46 @@ public class StudyProtocolConverter {
         if (studyProtocolDTO.getAmendmentDate() != null) {
             studyProtocol.setAmendmentDate(TsConverter.convertToTimestamp(studyProtocolDTO.getAmendmentDate()));
         }
+    }
+    
+    private static void convertSecondaryPurposeToDto(StudyProtocol bo,
+            StudyProtocolDTO dto) {
+        if (bo.getSecondaryPurposes() != null) {
+            DSet<St> dset = new DSet<St>();
+            dset.setItem(new LinkedHashSet<St>());
+            for (SecondaryPurpose secPurpose : bo.getSecondaryPurposes()) {
+                dset.getItem().add(
+                        StConverter.convertToSt(secPurpose.getName()));
+            }
+            dto.setSecondaryPurposes(dset);
+        }
+    }
+    
+    private static void convertSecondaryPurposeToDomain(
+            StudyProtocolDTO dto, StudyProtocol bo) {
+        if (dto.getSecondaryPurposes() != null
+                && CollectionUtils.isNotEmpty(dto.getSecondaryPurposes()
+                        .getItem())) {
+            bo.getSecondaryPurposes().clear();
+            for (St st : dto.getSecondaryPurposes().getItem()) {
+                bo.getSecondaryPurposes().add(
+                        getSecondaryPurpose(StConverter
+                                .convertToString(st)));
+            }
+        }
+    }
+    
+    /**
+     * @param name
+     *            name
+     * @return SecondaryPurpose
+     */
+    private static SecondaryPurpose getSecondaryPurpose(String name) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SecondaryPurpose example = new SecondaryPurpose();
+        example.setName(name);
+        return (SecondaryPurpose) session
+                .createCriteria(SecondaryPurpose.class)
+                .add(Example.create(example)).uniqueResult();
     }
 }

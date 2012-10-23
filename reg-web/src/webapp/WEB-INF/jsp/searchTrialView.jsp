@@ -163,12 +163,14 @@
                                 <c:out value="${trialDTO.primaryPurposeOtherText}"/>
                             </reg-web:valueRow>
                         </c:if>
-                        <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol'}">
-	                        <reg-web:valueRow labelKey="view.trial.secondaryPurpose">                            
-	                            <c:out value="${requestScope.trialSummary.secondaryPurpose.name.value}"/>
+                        <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol' || trialSummary.studyProtocolType.value=='Interventional'}">
+	                        <reg-web:valueRow labelKey="view.trial.secondaryPurpose">           
+	                           <c:forEach items="${requestScope.trialSummary.secondaryPurposes.item}" var="st">
+	                               <c:out value="${st.value}"/><br/>
+	                           </c:forEach>
 	                        </reg-web:valueRow>                        
                         </c:if>
-                        <c:if test="${trialSummary.studyProtocolType.value!='InterventionalStudyProtocol'}">
+                        <c:if test="${trialSummary.studyProtocolType.value!='InterventionalStudyProtocol' && trialSummary.studyProtocolType.value!='Interventional'}">
                             <reg-web:valueRow labelKey="submit.trial.studySubtypeCode">                            
                                 <c:out value="${trialSummary.studySubtypeCode.code}"/>
                             </reg-web:valueRow>  

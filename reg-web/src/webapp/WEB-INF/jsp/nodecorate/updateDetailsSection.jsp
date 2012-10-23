@@ -6,8 +6,7 @@
         <s:hidden name="trialDTO.trialType" id="trialDTO.trialType"/>
         <s:hidden id="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode"/>
         <s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
-        <s:hidden id="trialDTO.secondaryPurposeId" name="trialDTO.secondaryPurposeId"/>
-        <s:hidden id="trialDTO.secondaryPurposeName" name="trialDTO.secondaryPurposeName"/>        
+        <s:hidden id="trialDTO.secondaryPurposesAsString" name="trialDTO.secondaryPurposesAsString"/>                
 		<s:hidden id="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode"/>
 		<s:hidden id="trialDTO.studyModelCode" name="trialDTO.studyModelCode"/>
 		<s:hidden id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"/>
@@ -80,7 +79,7 @@
         </td>
     </tr>
 </s:if>
-<s:if test="trialDTO.trialType == 'InterventionalStudyProtocol'">
+<s:if test="trialDTO.trialType == 'InterventionalStudyProtocol' || trialDTO.trialType == 'Interventional'">
 <tr>
     <td  scope="row" class="label">
         <label>
@@ -88,11 +87,11 @@
         </label>
     </td>
     <td>
-        <s:property value="trialDTO.secondaryPurposeName"/>
+        <s:property value="trialDTO.secondaryPurposeAsReadableString"/>
     </td>
 </tr>
 </s:if>
-<s:if test="trialDTO.trialType != 'InterventionalStudyProtocol'">
+<s:if test="trialDTO.trialType != 'InterventionalStudyProtocol' && trialDTO.trialType != 'Interventional'">
 <tr>
     <td  scope="row" class="label">
         <label>

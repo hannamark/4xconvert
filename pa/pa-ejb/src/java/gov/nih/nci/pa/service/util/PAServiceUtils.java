@@ -109,13 +109,11 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
-import gov.nih.nci.pa.iso.convert.SecondaryPurposeConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
-import gov.nih.nci.pa.iso.dto.SecondaryPurposeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -2047,28 +2045,15 @@ public class PAServiceUtils {
     /**
      * @return List<SecondaryPurposeDTO>
      */
-    public static List<SecondaryPurposeDTO> getSecondaryPurposeList() {
-        List<SecondaryPurposeDTO> list = new ArrayList<SecondaryPurposeDTO>();
-        final SecondaryPurposeConverter secondaryPurposeConverter = new SecondaryPurposeConverter();
+    public static List<String> getSecondaryPurposeList() {
+        List<String> list = new ArrayList<String>();
         Session session = PaHibernateUtil.getCurrentSession();
         for (SecondaryPurpose purpose : (List<SecondaryPurpose>) session
                 .createQuery(" from " + SecondaryPurpose.class.getName())
                 .list()) {
-            list.add(secondaryPurposeConverter.convertFromDomainToDto(purpose));
+            list.add(purpose.getName());
         }
         return list;
-    }
-
-    /**
-     * @param id id
-     * @return SecondaryPurposeDTO
-     */
-    public static SecondaryPurposeDTO getSecondaryPurpose(long id) {
-        final SecondaryPurposeConverter secondaryPurposeConverter = new SecondaryPurposeConverter();
-        Session session = PaHibernateUtil.getCurrentSession();
-        SecondaryPurpose purpose = (SecondaryPurpose) session.get(
-                SecondaryPurpose.class, id);
-        return secondaryPurposeConverter.convertFromDomainToDto(purpose);
-    }
+    }  
     
 }

@@ -64,6 +64,7 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private Cd timePerspectiveCode;
     private St timePerspectiveOtherText;    
     private Cd studySubtypeCode;
+    private St secondaryPurposes;
 
     /**
      * @return the localProtocolIdentifier
@@ -526,6 +527,18 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setStudySubtypeCode(Cd studySubtypeCode) {
         this.studySubtypeCode = studySubtypeCode;
+    }
+    /**
+     * @return the secondaryPurposes
+     */
+    public St getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(St secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
     }
 
 }

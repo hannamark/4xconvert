@@ -177,7 +177,7 @@ public abstract class AbstractTrialRegistrationBean {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
             returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
         }
-        returnStudyProtocolDTO.setSecondaryPurpose(studyProtocolDTO.getSecondaryPurpose());
+        returnStudyProtocolDTO.setSecondaryPurposes(studyProtocolDTO.getSecondaryPurposes());
     }
     
     

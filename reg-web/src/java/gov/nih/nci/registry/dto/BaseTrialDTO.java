@@ -4,8 +4,10 @@
 package gov.nih.nci.registry.dto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
 
 /**
@@ -20,8 +22,6 @@ public class BaseTrialDTO { // NOPMD
     private String primaryPurposeCode;
     private String primaryPurposeAdditionalQualifierCode;
     private String primaryPurposeOtherText;
-    private Long secondaryPurposeId;
-    private String secondaryPurposeName;
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
@@ -43,6 +43,7 @@ public class BaseTrialDTO { // NOPMD
     private String studyModelOtherText;
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
+    private List<String> secondaryPurposes = new ArrayList<String>();
     
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
@@ -330,30 +331,7 @@ public class BaseTrialDTO { // NOPMD
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
     }
-    /**
-     * @return the secondaryPurposeId
-     */
-    public Long getSecondaryPurposeId() {
-        return secondaryPurposeId;
-    }
-    /**
-     * @param secondaryPurposeId the secondaryPurposeId to set
-     */
-    public void setSecondaryPurposeId(Long secondaryPurposeId) {
-        this.secondaryPurposeId = secondaryPurposeId;
-    }
-    /**
-     * @return the secondaryPurposeName
-     */
-    public String getSecondaryPurposeName() {
-        return secondaryPurposeName;
-    }
-    /**
-     * @param secondaryPurposeName the secondaryPurposeName to set
-     */
-    public void setSecondaryPurposeName(String secondaryPurposeName) {
-        this.secondaryPurposeName = secondaryPurposeName;
-    }
+   
     /**
      * @return the studySubtypeCode
      */
@@ -414,5 +392,42 @@ public class BaseTrialDTO { // NOPMD
     public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
     }
+    /**
+     * @return the secondaryPurposes
+     */
+    public List<String> getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(List<String> secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
+    }
+    
+    /**
+     * @return String
+     */
+    public String getSecondaryPurposesAsString() {
+        return secondaryPurposes != null ? StringUtils.join(secondaryPurposes,
+                ";") : "";
+    }
+    
+    /**
+     * @param str str
+     */
+    public void setSecondaryPurposesAsString(String str) {
+        secondaryPurposes = StringUtils.isNotBlank(str) ? Arrays.asList(str
+                .split(";")) : new ArrayList<String>();
+    }
+
+    /**
+     * @return SecondaryPurposeAsReadableString
+     */
+    public String getSecondaryPurposeAsReadableString() {
+        return secondaryPurposes != null ? StringUtils.join(secondaryPurposes,
+                ", ") : StringUtils.EMPTY;
+    }
+
 
 }

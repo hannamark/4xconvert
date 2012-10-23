@@ -135,8 +135,7 @@ public class AbstractStudyProtocolConverter {
      */
     public static void convertFromDomainToDTO(AbstractStudyProtocol bo, AbstractStudyProtocolDTO dto) {
         convertDatesToDto(bo.getDates(), dto);
-        convertPrimaryPurposeToDto(bo, dto);
-        convertSecondaryPurposeToDto(bo, dto);
+        convertPrimaryPurposeToDto(bo, dto);       
         dto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(bo
             .getDataMonitoringCommitteeAppointedIndicator()));
         dto.setDelayedpostingIndicator(BlConverter.convertToBl(bo.getDelayedpostingIndicator()));
@@ -188,13 +187,7 @@ public class AbstractStudyProtocolConverter {
     }
     
    
-    private static void convertSecondaryPurposeToDto(AbstractStudyProtocol bo,
-            AbstractStudyProtocolDTO dto) {
-        if (bo.getSecondaryPurpose() != null) {
-            dto.setSecondaryPurpose(new SecondaryPurposeConverter()
-                    .convertFromDomainToDto(bo.getSecondaryPurpose()));
-        }
-    }
+    
 
     /**
      * Converts a given AbstractStudyProtocolDTO to a AbstractStudyProtocol.
@@ -204,8 +197,7 @@ public class AbstractStudyProtocolConverter {
     public static void convertFromDTOToDomain(AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
         bo.setDates(convertDatesToDomain(dto));
         convertPrimaryPurposeToDomain(dto, bo);
-        convertSecondaryPurposeToDomain(dto, bo);
-
+        
         bo.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBoolean(dto
             .getDataMonitoringCommitteeAppointedIndicator()));
         bo.setDelayedpostingIndicator(BlConverter.convertToBoolean(dto.getDelayedpostingIndicator()));
@@ -269,14 +261,6 @@ public class AbstractStudyProtocolConverter {
         bo.setPrimaryPurposeOtherText(StConverter.convertToString(dto.getPrimaryPurposeOtherText()));
     }
     
-    private static void convertSecondaryPurposeToDomain(
-            AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
-        if (dto.getSecondaryPurpose() != null) {
-            bo.setSecondaryPurpose(new SecondaryPurposeConverter()
-                    .convertFromDtoToDomain(dto.getSecondaryPurpose()));
-        }
-    }
-
     private static void setUserLastCreated(AbstractStudyProtocolDTO abstractStudyProtocolDTO,
             AbstractStudyProtocol abstractStudyProtocol) {
         // this for change of ownership
@@ -293,4 +277,6 @@ public class AbstractStudyProtocolConverter {
             }
         }
     }
+   
+   
 }

@@ -87,6 +87,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private TimePerspectiveCode timePerspectiveCode;
     private String timePerspectiveOtherText;
     private StudySubtypeCode studySubtypeCode;
+    private String secondaryPurposes;
     
     
     /**
@@ -616,6 +617,20 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     @Override
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
+    }
+    
+    /**
+     * @return the secondaryPurposes
+     */
+    @Column(name = "secondary_purposes")
+    public String getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(String secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
     }
    
 }

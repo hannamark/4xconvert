@@ -78,8 +78,6 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
-import java.util.List;
-
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -90,6 +88,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+
+import java.util.List;
 
 
 /**
@@ -123,7 +123,8 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Int submissionNumber;
     private Ivl<Int> targetAccrualNumber;
     private List<DocumentWorkflowStatusCode> processingStatuses;
-
+    private DSet<St> secondaryPurposes = new DSet<St>();
+    
     /**
      *
      * @return acronym
@@ -434,4 +435,19 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
             List<DocumentWorkflowStatusCode> processingStatuses) {
         this.processingStatuses = processingStatuses;
     }
+    
+    /**
+     * @return the secondaryPurposes
+     */
+    public DSet<St> getSecondaryPurposes() {
+        return secondaryPurposes;
+    }
+
+    /**
+     * @param secondaryPurposes the secondaryPurposes to set
+     */
+    public void setSecondaryPurposes(DSet<St> secondaryPurposes) {
+        this.secondaryPurposes = secondaryPurposes;
+    }
+
 }

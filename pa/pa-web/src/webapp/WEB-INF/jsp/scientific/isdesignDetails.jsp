@@ -188,14 +188,9 @@ function initialize() {
         </td>
         <s:set name="secondaryPurposeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
         <td>
-          <s:select headerKey="" headerValue="" name="webDTO.secondaryPurposeId" id="webDTO.secondaryPurposeId" list="#secondaryPurposeCodeValues"  
-                listKey="identifier.extension" listValue="name.value" 
-                   value="webDTO.secondaryPurposeId" cssStyle="width:150px"/>
-	          <span class="formErrorMsg"> 
-	             <s:fielderror>
-	               <s:param>webDTO.secondaryPurposeId</s:param>
-	             </s:fielderror>                            
-	          </span>
+          <s:select name="webDTO.secondaryPurposes" id="webDTO.secondaryPurposes" list="#secondaryPurposeCodeValues"
+                   value="webDTO.secondaryPurposes" cssStyle="width:150px" multiple="true"/>
+                   <p class="info">You can select more than one purpose by holding down the CTRL key and clicking on multiple items.</p>
         </td>
     </tr>
       

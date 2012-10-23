@@ -98,7 +98,6 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.SecondaryPurposeDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
@@ -141,6 +140,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -247,11 +247,9 @@ public class TrialConvertUtils {
         } else {
             isoDto.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
         }
-        if (trialDTO.getSecondaryPurposeId() != null) {
-            SecondaryPurposeDTO secondaryPurposeDTO = new SecondaryPurposeDTO();
-            secondaryPurposeDTO.setIdentifier(IiConverter.convertToIi(trialDTO
-                    .getSecondaryPurposeId()));
-            isoDto.setSecondaryPurpose(secondaryPurposeDTO);
+        if (CollectionUtils.isNotEmpty(trialDTO.getSecondaryPurposes())) {
+            isoDto.setSecondaryPurposes(DSetConverter
+                    .convertListStToDSet(trialDTO.getSecondaryPurposes()));
         }
     }
 
@@ -933,11 +931,9 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        spStageDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
              PrimaryPurposeAdditionalQualifierCode.getByCode(trialDto.getPrimaryPurposeAdditionalQualifierCode())));
        spStageDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(trialDto.getPrimaryPurposeOtherText()));
-        if (trialDto.getSecondaryPurposeId() != null) {
-            SecondaryPurposeDTO secondaryPurpose = new SecondaryPurposeDTO();
-            secondaryPurpose.setIdentifier(IiConverter.convertToIi(trialDto
-                    .getSecondaryPurposeId()));
-            spStageDTO.setSecondaryPurpose(secondaryPurpose);
+        if (trialDto.getSecondaryPurposes() != null) {
+            spStageDTO.setSecondaryPurposes(StConverter.convertToSt(StringUtils.join(
+                    trialDto.getSecondaryPurposes(), ';')));
         }
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
@@ -1090,11 +1086,10 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        trialDto.setOfficialTitle(StConverter.convertToString(spStageDTO.getOfficialTitle()));
        convertPhaseAndPurposeToTrialDTO(spStageDTO, trialDto);
        trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
-       if (spStageDTO.getSecondaryPurpose() != null) {
-           trialDto.setSecondaryPurposeId(IiConverter.convertToLong(spStageDTO
-                   .getSecondaryPurpose().getIdentifier()));
-           trialDto.setSecondaryPurposeName(StConverter.convertToString(spStageDTO
-                   .getSecondaryPurpose().getName()));
+       if (!ISOUtil.isStNull(spStageDTO.getSecondaryPurposes())) {
+            trialDto.setSecondaryPurposes(Arrays.asList(StConverter
+                    .convertToString(spStageDTO.getSecondaryPurposes()).split(
+                            ";")));
        }       
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));

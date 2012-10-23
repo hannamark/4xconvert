@@ -95,8 +95,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -123,8 +121,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
 
     private PrimaryPurposeCode primaryPurposeCode;
-    private PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode;
-    private SecondaryPurpose secondaryPurpose;
+    private PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode;    
     private String primaryPurposeOtherText;
     private String officialTitle;
     private String programCodeText;
@@ -368,20 +365,6 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
     }
-
-    /**
-     * @return the secondaryPurpose
-     */
-    @ManyToOne
-    @JoinColumn(name = "secondary_purpose_id")        
-    public SecondaryPurpose getSecondaryPurpose() {
-        return secondaryPurpose;
-    }
-
-    /**
-     * @param secondaryPurpose the secondaryPurpose to set
-     */
-    public void setSecondaryPurpose(SecondaryPurpose secondaryPurpose) {
-        this.secondaryPurpose = secondaryPurpose;
-    }
+  
+    
 }
