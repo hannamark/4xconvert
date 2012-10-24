@@ -61,8 +61,10 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             + "where (ac.nciNumber in (:nciNumbers) "
             + "       or us.userId = :userId) ";
     private static final String GUI_COMPLETE_SQL = 
-            "select identifier, study_protocol_identifier, user_last_updated_id, date_last_updated, "
-            + "submission_type, assigned_identifier "
+            "select identifier, study_protocol_identifier,  "
+            + "     case when date_last_updated is null then user_last_created_id else user_last_updated_id end, "
+            + "     case when date_last_updated is null then date_last_created else date_last_updated end, "
+            + "     submission_type, assigned_identifier "
             + "from study_subject "
             + "where submission_type in ('" 
             + AccrualSubmissionTypeCode.UI.getName() + "','" + AccrualSubmissionTypeCode.SERVICE_MSA.getName() + "') "
