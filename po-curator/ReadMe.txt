@@ -1,4 +1,4 @@
-Generating Organization ChangeRequest Report (Developed as part of PO-5475 & PO-5495)
+Generating Organization ChangeRequest Report (Developed as part-I of PO-5475 & PO-5495)
 -------------------------------------------------------------------------------------
 1. Copy build.properties to local.properties,
 2. Provide PO database connection details in local.properties file,
@@ -8,8 +8,8 @@ Generating Organization ChangeRequest Report (Developed as part of PO-5475 & PO-
     The xlsx file will contain 3 sheets "Valid CRs-To be Reviewed", "Duplicate CRs" & "Invalid Or Phantom CRs"
     
     
-Process Duplicate & Invalid/Phantom Organization ChangeRequests
--------------------------------------------------------------------------------------
+Process Duplicate & Invalid/Phantom Organization ChangeRequests (Developed as Part-II of  PO-5475)
+--------------------------------------------------------------------------------------------------
 1. Copy build.properties to local.properties,
 2. Provide PO database connection details in local.properties file,
 3. Execute "ant process:duplicate:phantom:orgcr" command,
