@@ -235,6 +235,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
                  match='&lt;Connector SSLEnabled="true" clientAuth="false"'
                  replace='&lt;Connector SSLEnabled="true" clientAuth="false" maxSavePostSize="16384"'
                   />
+    <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+                 match='emptySessionPath="false" enableLookups="false" port="8009"'
+                 replace='emptySessionPath="false" enableLookups="false" port="8009" maxSavePostSize="16384"'
+                  />
   </target>
 
   <target name="install:pa-ear-jboss:app:re-configure" unless="exclude.pa-ear">
