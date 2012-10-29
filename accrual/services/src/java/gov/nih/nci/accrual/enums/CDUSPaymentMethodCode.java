@@ -115,7 +115,7 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     VETERANS("6B", PaymentMethodCode.VETERANS.getCode(), PaymentMethodCode.VETERANS),
     /** Self pay (no insurance). */
     SELF("7", PaymentMethodCode.SELF.getCode(), PaymentMethodCode.SELF),
-    /** Self pay (no insurance). */
+    /** No means of payment (no insurance). */
     NO_MEANS_OF_PAYMENT("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT.getCode(), PaymentMethodCode.NO_MEANS_OF_PAYMENT),
     /** Managed care. */
     MANAGED_CARE("9", PaymentMethodCode.MANAGED_CARE.getCode(), PaymentMethodCode.MANAGED_CARE),
@@ -124,7 +124,18 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     /** Other. */
     OTHER("98", PaymentMethodCode.OTHER.getCode(), PaymentMethodCode.OTHER),
     /** Unknown. */
-    UNKNOWN("99", PaymentMethodCode.UNKNOWN.getCode(), PaymentMethodCode.UNKNOWN);
+    UNKNOWN("99", PaymentMethodCode.UNKNOWN.getCode(), PaymentMethodCode.UNKNOWN),
+    /** Alternate Text for Military or Veterans Sponsored, Not Otherwise Specified (NOS). */
+    ALT_MILITARY_OR_VETERANS("Military or Veterans Sponsored, Not Otherwise Specified (NOS)", 
+            PaymentMethodCode.MILITARY_OR_VETERANS.getCode(), PaymentMethodCode.MILITARY_OR_VETERANS),
+    /** Alternate Text for Military Sponsored (including CHAMPUS or TRICARE). */
+    ALT_MILITARY("Military Sponsored (including CHAMPUS or TRICARE)",
+            PaymentMethodCode.MILITARY.getCode(), PaymentMethodCode.MILITARY),
+    /** Self pay (no insurance). */
+    ALT_SELF("Self pay (no insurance)", PaymentMethodCode.SELF.getCode(), PaymentMethodCode.SELF),
+    /** No means of payment (no insurance). */
+    ALT_NO_MEANS_OF_PAYMENT("No means of payment (no insurance)", 
+            PaymentMethodCode.NO_MEANS_OF_PAYMENT.getCode(), PaymentMethodCode.NO_MEANS_OF_PAYMENT);
 
     private String cdusCode;
     private String crfCode;

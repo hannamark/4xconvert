@@ -107,5 +107,9 @@ public class CDUSPaymentMethodCodeTest {
         assertEquals(PaymentMethodCode.NO_MEANS_OF_PAYMENT, CDUSPaymentMethodCode.getByCode("8").getValue());
         assertEquals(PaymentMethodCode.OTHER, CDUSPaymentMethodCode.getByCode("98").getValue());
         assertEquals(PaymentMethodCode.UNKNOWN, CDUSPaymentMethodCode.getByCode("99").getValue());
+        assertEquals(PaymentMethodCode.MILITARY_OR_VETERANS, CDUSPaymentMethodCode.getByCode("Military or Veterans Sponsored, Not Otherwise Specified (NOS)").getValue());
+        assertEquals(PaymentMethodCode.MILITARY, CDUSPaymentMethodCode.getByCode("Military Sponsored (including CHAMPUS or TRICARE)").getValue());
+        assertEquals(PaymentMethodCode.SELF, CDUSPaymentMethodCode.getByCode("Self pay (no insurance)").getValue());
+        assertEquals(PaymentMethodCode.NO_MEANS_OF_PAYMENT, CDUSPaymentMethodCode.getByCode("No means of payment (no insurance)").getValue());
     }
 }
