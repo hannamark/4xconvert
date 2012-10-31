@@ -14,6 +14,8 @@ CREATE TABLE STG_DW_STUDY_ON_HOLD_STATUS (
     FIRST_NAME_CREATED character varying(500),
     LAST_NAME_CREATED character varying(500),
     FIRST_NAME_LAST_UPDATED character varying(500),
-    LAST_NAME_LAST_UPDATED character varying(500)
+    LAST_NAME_LAST_UPDATED character varying(500),
+    USER_LAST_CREATED_ID integer,
+    USER_LAST_UPDATED_ID integer
 );
 
