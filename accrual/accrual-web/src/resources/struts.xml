@@ -133,5 +133,9 @@
         <action name="diseaseSearch" class="gov.nih.nci.accrual.accweb.action.PopUpAction">
             <result>/WEB-INF/jsp/diseaseSearch.jsp</result>
         </action>
+
+        <action name="accrualCounts*" class="gov.nih.nci.accrual.accweb.action.AccrualCountsAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/accrualCounts.jsp</result>
+        </action>
     </package>
 </struts>

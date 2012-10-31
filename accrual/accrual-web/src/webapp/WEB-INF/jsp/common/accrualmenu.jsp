@@ -58,6 +58,14 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
+                    <c:when test="${requestScope.topic == 'accrual_counts'}">
+                        <li><a href="accrualCounts.action" class="selected">Accrual Counts</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="accrualCounts.action">Accrual Counts</a></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:choose>
                     <c:when test="${requestScope.topic == 'disease_search'}">
                         <li><a href="diseaseSearch.action" class="selected">Disease Search</a></li> 
                     </c:when>

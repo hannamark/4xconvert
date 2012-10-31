@@ -76,127 +76,105 @@
 *
 *
 */
-package gov.nih.nci.accrual.accweb.util;
+package gov.nih.nci.accrual.dto.util;
 
-import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
+import java.sql.Timestamp;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 25, 2009
+ * @author Kalpana Guthikonda
+ * @since 10/24/2012
  */
-public class MockSearchTrialBean implements SearchTrialService {
-
-    public static final long NONINDUSTRIAL_STUDY_PROTOCOL_ID = 1l;
-    public static final long INDUSTRIAL_STUDY_PROTOCOL_ID = 3l;
-
-    /** mock data. */
-    public static List<SearchTrialResultDto> dtos;
-
-    static {
-        dtos = new ArrayList<SearchTrialResultDto>();
-        SearchTrialResultDto r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(NONINDUSTRIAL_STUDY_PROTOCOL_ID));
-        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00001"));
-        r.setLeadOrgName(StConverter.convertToSt("Duke"));
-        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE 001"));
-        r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
-        r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
-        r.setIndustrial(BlConverter.convertToBl(false));
-        dtos.add(r);
-
-        r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(2L));
-        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00002"));
-        r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
-        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
-        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
-        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
-        r.setIndustrial(BlConverter.convertToBl(false));
-        dtos.add(r);
-
-        r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(INDUSTRIAL_STUDY_PROTOCOL_ID));
-        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00003"));
-        r.setLeadOrgName(StConverter.convertToSt("Mayo"));
-        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("Mayo 001"));
-        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
-        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
-        r.setIndustrial(BlConverter.convertToBl(true));
-        dtos.add(r);
-    }
+public class AccrualCountsDto {
+    private String nciNumber;
+    private String leadOrgTrialIdentifier;
+    private String nctNumber;
+    private String leadOrgName;
+    private Long affiliateOrgCount;
+    private Long trialCount;
+    private Timestamp date;
 
     /**
-     * {@inheritDoc}
+     * @return the nciNumber
      */
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, Ii authUser) throws PAException {
-        List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
-        for (SearchTrialResultDto dto : dtos) {
-            if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())
-                && contains(dto.getLeadOrgTrialIdentifier(), criteria.getLeadOrgTrialIdentifier())
-                && contains(dto.getOfficialTitle(), criteria.getOfficialTitle())) {
-                result.add(dto);
-            }
-        }
-        return result;
+    public String getNciNumber() {
+        return nciNumber;
     }
-
     /**
-     * {@inheritDoc}
+     * @param nciNumber the nciNumber to set
      */
-    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException {
-        SearchTrialResultDto result = null;
-        for (SearchTrialResultDto dto : dtos) {
-            if (IiConverter.convertToLong(studyProtocolIi).equals(IiConverter.convertToLong(
-                    dto.getStudyProtocolIdentifier()))) {
-                result = dto;
-            }
-        }
-        return result;
+    public void setNciNumber(String nciNumber) {
+        this.nciNumber = nciNumber;
     }
-
-    private boolean contains(St value, St crit) {
-        boolean result = true;
-        String c = StConverter.convertToString(crit);
-        String v = StConverter.convertToString(value);
-        if (StringUtils.isNotEmpty(c) &&  !v.contains(c)) {
-            result = false;
-        }
-        return result;
-    }
-
     /**
-     * {@inheritDoc}
+     * @return the nctNumber
      */
-    public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
-        return BlConverter.convertToBl(true);
+    public String getNctNumber() {
+        return nctNumber;
     }
-
-    @Override
-    public Map<Long, String> getAuthorizedTrialMap(Long authorizedUser) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * @param nctNumber the nctNumber to set
+     */
+    public void setNctNumber(String nctNumber) {
+        this.nctNumber = nctNumber;
     }
-
-	@Override
-	public List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru)
-			throws PAException {
-		return new ArrayList<AccrualCountsDto>();
-	}
+    /**
+     * @return the affiliateOrgCount
+     */
+    public Long getAffiliateOrgCount() {
+        return affiliateOrgCount;
+    }
+    /**
+     * @param affiliateOrgCount the affiliateOrgCount to set
+     */
+    public void setAffiliateOrgCount(Long affiliateOrgCount) {
+        this.affiliateOrgCount = affiliateOrgCount;
+    }
+    /**
+     * @return the trialCount
+     */
+    public Long getTrialCount() {
+        return trialCount;
+    }
+    /**
+     * @param trialCount the trialCount to set
+     */
+    public void setTrialCount(Long trialCount) {
+        this.trialCount = trialCount;
+    }
+    /**
+     * @return the date
+     */
+    public Timestamp getDate() {
+        return date;
+    }
+    /**
+     * @param date the date to set
+     */
+    public void setDate(Timestamp date) {
+        this.date = date;
+    }
+    /**
+     * @return the leadOrgTrialIdentifier
+     */
+    public String getLeadOrgTrialIdentifier() {
+        return leadOrgTrialIdentifier;
+    }
+    /**
+     * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
+     */
+    public void setLeadOrgTrialIdentifier(String leadOrgTrialIdentifier) {
+        this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
+    }
+    /**
+     * @return the leadOrgName
+     */
+    public String getLeadOrgName() {
+        return leadOrgName;
+    }
+    /**
+     * @param leadOrgName the leadOrgName to set
+     */
+    public void setLeadOrgName(String leadOrgName) {
+        this.leadOrgName = leadOrgName;
+    }
 }

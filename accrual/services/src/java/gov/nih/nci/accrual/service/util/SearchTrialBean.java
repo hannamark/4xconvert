@@ -79,24 +79,33 @@
 package gov.nih.nci.accrual.service.util;
 
 
+import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,6 +124,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 /**
@@ -314,5 +324,109 @@ public class SearchTrialBean implements SearchTrialService {
             }
         }
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException {
+        List<AccrualCountsDto> result = new ArrayList<AccrualCountsDto>();
+        Long studyProtocolId = 0L;
+        Long studysiteId = 0L;
+        String sql = "select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"
+                + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
+                + " join study_site_accrual_access ssaa on (ss.identifier = ssaa.study_site_identifier)"
+                + " join healthcare_facility hcf on (ss.healthcare_facility_identifier = hcf.identifier)"
+                + " join organization org on (hcf.organization_identifier = org.identifier)"
+                + " where sp.status_code = 'ACTIVE'" + "  and ss.functional_code = 'TREATING_SITE'"
+                + "  and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'"
+                + "  and ssaa.registry_user_id =" + ru.getId() 
+                + " UNION"
+                + " select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"
+                + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
+                + " join study_site_accrual_access ssaa on (ss.identifier = ssaa.study_site_identifier)"
+                + " join research_organization ro on (ss.research_organization_identifier = ro.identifier)"
+                + " join organization org on (ro.organization_identifier = org.identifier)"
+                + " where sp.status_code = 'ACTIVE'" + "  and ss.functional_code = 'LEAD_ORGANIZATION'"
+                + "  and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'"
+                + "  and ssaa.registry_user_id = " + ru.getId(); 
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session.createSQLQuery(sql);
+        List<Object[]> queryList = query.list();
+        for (Object[] obj : queryList) {
+            studyProtocolId = Long.valueOf(((Number) obj[0]).longValue());
+            studysiteId =  Long.valueOf(((Number) obj[1]).longValue()); 
+            SearchTrialResultDto dto = getTrialSummaryByStudyProtocolIi(IiConverter.convertToIi(studyProtocolId));
+            AccrualCountsDto ac = new AccrualCountsDto();
+            ac.setNciNumber(StConverter.convertToString(dto.getAssignedIdentifier()));
+            ac.setLeadOrgTrialIdentifier(StConverter.convertToString(dto.getLeadOrgTrialIdentifier()));
+            ac.setNctNumber(getNCTNumber(studyProtocolId));
+            ac.setLeadOrgName(StConverter.convertToString(dto.getLeadOrgName()));
+            setCounts(studyProtocolId, studysiteId, session, dto, ac);
+            result.add(ac);            
+        }
+    return result;    
+    }
+
+    private void setCounts(Long studyProtocolId, Long studysiteId,
+        Session session, SearchTrialResultDto dto, AccrualCountsDto ac) {
+        if (dto.getIndustrial().getValue()) {
+            Query sqlCount = session.createSQLQuery("select accrual_count from study_site_subject_accrual_count"
+            + " where study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " 
+            + studysiteId);
+            String result = sqlCount.uniqueResult() != null ? sqlCount.uniqueResult().toString() : null;
+            if (result != null) {
+                ac.setAffiliateOrgCount(Long.valueOf(result));
+            }
+            sqlCount = session.createSQLQuery("select max(date_last_updated), sum(accrual_count) from "
+            + "study_site_subject_accrual_count where study_protocol_identifier = " + studyProtocolId);
+            setTrialCountAndMaxDate(ac, sqlCount);
+        } else {
+            Query sqlCount = session.createSQLQuery("select count(*) from study_subject where "
+            + "study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " + studysiteId);
+            ac.setAffiliateOrgCount(Long.valueOf(sqlCount.uniqueResult().toString()));
+            
+            sqlCount = session.createSQLQuery("select max(date_last_updated), count(*) from study_subject "
+            + "where study_protocol_identifier = " + studyProtocolId);
+            setTrialCountAndMaxDate(ac, sqlCount);
+        }
+    }
+
+    /**
+     * @param ac AccrualCountsDto 
+     * @param sqlCount query object
+     */
+    void setTrialCountAndMaxDate(AccrualCountsDto ac, Query sqlCount) {
+            List<Object[]> qList =  sqlCount.list();
+            for (Object[] row : qList) {
+                ac.setDate((java.sql.Timestamp) row[0]);
+                ac.setTrialCount(Long.valueOf(((Number) row[1]).longValue()));
+            }
+    }
+
+    private String getNCTNumber(Long studyProtocolId) throws PAException {
+        String retIdentifier = "";
+        StudySiteDTO identifierDto = new StudySiteDTO();
+        identifierDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+        identifierDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        String poOrgId = PaRegistry.getOrganizationCorrelationService()
+                .getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
+        final Ii poOrgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
+        identifierDto.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
+            .getPoResearchOrganizationByEntityIdentifier(poOrgIi));
+        LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<StudySiteDTO> spDtos;
+        try {
+            spDtos = PaServiceLocator.getInstance().getStudySiteService().search(identifierDto, pagingParams);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+
+        StudySiteDTO spDto = PAUtil.getFirstObj(spDtos);
+        if (spDto != null && !ISOUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+            retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
+        }
+        return retIdentifier;
     }
 }

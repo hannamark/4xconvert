@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -142,6 +143,7 @@ public class TestSchema {
     public static List<PerformedSubjectMilestone> performedSubjectMilestones;
     public static List<StudyOverallStatus> studyOverallStatuses;
     public static List<HealthCareFacility> healthCareFacilities;
+    public static List<ResearchOrganization> researchOrganizations;
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
     public static List<Country> countries;
@@ -178,6 +180,7 @@ public class TestSchema {
         studySubjects = new ArrayList<StudySubject>();
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
         healthCareFacilities = new ArrayList<HealthCareFacility>();
+        researchOrganizations = new ArrayList<ResearchOrganization>();
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
         countries = new ArrayList<Country>();
@@ -248,6 +251,15 @@ public class TestSchema {
         hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(hcf);
         healthCareFacilities.add(hcf);
+        
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier("po ro id");
+        ro.setOrganization(organizations.get(0));
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ro);
+        researchOrganizations.add(ro);
+        
 
         // StudyProtocol
         StudyProtocol sp = new StudyProtocol();
@@ -331,6 +343,7 @@ public class TestSchema {
         ssAccrualCount.setLocalStudyProtocolIdentifier("T1 Local SP 001");
         ssAccrualCount.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ssAccrualCount.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ssAccrualCount.setResearchOrganization(researchOrganizations.get(0));
         ssAccrualCount.setStudyProtocol(sp);
         addUpdObject(ssAccrualCount);
         
@@ -403,6 +416,7 @@ public class TestSchema {
         ss.setLocalStudyProtocolIdentifier("T1 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setResearchOrganization(researchOrganizations.get(0));
         ss.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(ss);
         studySites.add(ss);
@@ -429,6 +443,7 @@ public class TestSchema {
         ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setResearchOrganization(researchOrganizations.get(0));
         ss.setStudyProtocol(studyProtocols.get(1));
         addUpdObject(ss);
         studySites.add(ss);
@@ -446,6 +461,7 @@ public class TestSchema {
         ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setResearchOrganization(researchOrganizations.get(0));
         ss.setStudyProtocol(studyProtocols.get(2));
         addUpdObject(ss);
         studySites.add(ss);
@@ -688,6 +704,7 @@ public class TestSchema {
         ru.setEmailAddress("test@example.com");
         ru.setPhone("123-456-7890");
         ru.setCsmUser(user);
+        ru.setAffiliatedOrganizationId(organizations.get(0).getId());
         TestSchema.addUpdObject(ru);
         return ru;
     }

@@ -82,22 +82,40 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -106,7 +124,7 @@ import org.junit.Test;
  * @since Aug 25, 2009
  */
 public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialService> {
-    SearchTrialService bean;
+	SearchTrialBean bean;
 
     @Override
     @Before
@@ -231,5 +249,60 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         } catch (Exception ex) {
             // expected
         }
+    }
+    
+    @Test
+    public void getAccrualCountsForUser() throws Exception {
+    	bean = mock(SearchTrialBean.class);
+    	when(bean.getAccrualCountsForUser(any(RegistryUser.class))).thenCallRealMethod();
+    	when(bean.getTrialSummaryByStudyProtocolIi(any(Ii.class))).thenCallRealMethod();
+    	//when(bean.setTrialCountAndMaxDate(any(AccrualCountsDto.class), any(org.hibernate.Query.class)))
+    	
+    	OrganizationCorrelationServiceRemote ocsr = mock(OrganizationCorrelationServiceRemote.class);
+    	when(PaRegistry.getOrganizationCorrelationService()).thenReturn(ocsr);
+    	when(ocsr.getPOOrgIdentifierByIdentifierType(anyString())).thenReturn("1");
+    	when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenReturn(new Ii());
+    	ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+    	StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
+    	StudySiteDTO test = new StudySiteDTO();
+    	test.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Testing"));
+    	List<StudySiteDTO> result = new ArrayList<StudySiteDTO>();
+    	result.add(test);
+        when(studySiteSvc.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(result);
+        when(svcLocal.getStudySiteService()).thenReturn(studySiteSvc);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        
+        //((SearchTrialBean) bean).setDummyDateAndCounts(true);
+        List<AccrualCountsDto> resultList =  bean.getAccrualCountsForUser(TestSchema.registryUsers.get(1));
+        assertEquals(1, resultList.size());
+        assertNotNull(resultList.get(0).getNciNumber());
+        assertNotNull(resultList.get(0).getLeadOrgName());
+        assertNotNull(resultList.get(0).getAffiliateOrgCount());
+        assertNull(resultList.get(0).getDate());
+        assertNotNull(resultList.get(0).getLeadOrgTrialIdentifier());
+        assertNotNull(resultList.get(0).getNctNumber());
+        assertNull(resultList.get(0).getTrialCount());
+    	    	
+    	final Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol protocol = (StudyProtocol) session.get(
+                StudyProtocol.class, TestSchema.studyProtocols.get(0).getId());
+        protocol.setProprietaryTrialIndicator(true);
+        session.update(protocol);
+        session.flush();
+        
+        when(studySiteSvc.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(new ArrayList<StudySiteDTO>());
+        when(svcLocal.getStudySiteService()).thenReturn(studySiteSvc);
+        //((SearchTrialBean) bean).setDummyDateAndCounts(true);
+        assertEquals(1, bean.getAccrualCountsForUser(TestSchema.registryUsers.get(1)).size());
+        
+        when(studySiteSvc.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenThrow(new TooManyResultsException(0));
+        when(svcLocal.getStudySiteService()).thenReturn(studySiteSvc);
+        //((SearchTrialBean) bean).setDummyDateAndCounts(true);
+        try {
+        	bean.getAccrualCountsForUser(TestSchema.registryUsers.get(1));
+        	fail();
+        } catch (Exception e) {
+        	// expected
+        }        
     }
 }

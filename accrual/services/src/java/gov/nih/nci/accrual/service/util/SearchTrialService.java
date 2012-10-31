@@ -78,10 +78,12 @@
 */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
@@ -126,4 +128,12 @@ public interface SearchTrialService {
      * @throws PAException exception
      */
     Map<Long, String> getAuthorizedTrialMap(Long authorizedUser) throws PAException;
+    
+    /**
+     * Returns the trials accrual count for the logged in user's affiliated organization.
+     * @param ru registry user
+     * @return list of accrualcountdtos
+     * @throws PAException on error
+     */
+    List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException;
 }
