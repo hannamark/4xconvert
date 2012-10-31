@@ -20,8 +20,8 @@
     </path>
     
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="pocurator.classpath"/>
-    <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="pocurator.classpath" name="groovy"/> 
-    	
+    <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="pocurator.classpath" name="groovy"/>
+	
     <target name="generate:orgcr:report" description="Generates the Organization Change Request Report">
         <echo message = "Generating Organization Change Request Report..."/>
         <groovy src="groovy/OrganizationCRReportGenerator.groovy"/>
@@ -36,7 +36,16 @@
         <zip destfile="${output.dir}/Duplicate-Organization-Report-${TODAY}.zip" basedir="${temp.dir}"/>
         <delete quiet="true" file="${basedir}/resolved.build.properties"/>
         <delete dir="${temp.dir}"/>
-    </target>	
+    </target>
+	
+    <target name="generate:duplicate:org:role:report" description="Generates Duplicate HCF,RO,OrgContact and OrgOversightCommitte Report">
+        <echo message = "Generating Report..."/>
+        <groovy src="groovy/OrganizationRoleReportGenerator.groovy"/>
+        <zip destfile="${output.dir}/Organization-Role-Report-${TODAY}.zip" basedir="${temp.dir}"/>
+        <delete quiet="true" file="${basedir}/resolved.build.properties"/>
+        <delete dir="${temp.dir}"/>
+    </target>
+	
 	
     <target name="process:duplicate:phantom:orgcr" description="Mark duplicate and phantom Org CRs as processed">
         <echo message = "Processing Duplicate and Phantom Organization CRs..."/>
