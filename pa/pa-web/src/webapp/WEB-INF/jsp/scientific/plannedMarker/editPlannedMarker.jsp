@@ -15,7 +15,8 @@
             function callOnloadFunctions(){
                 setFocusToFirstControl();
                 toggleAssayTypeOtherText();
-                toggleAssayPurposeOtherText();
+                toggleEvalTypeOtherText();
+                toggleSpecimenTypeOtherText();
                 toggleHugoCode();
             }
             
@@ -26,21 +27,59 @@
                     $('hugoCodeRow').hide();
                 }
             }
-
-            function toggleAssayTypeOtherText(inputValue) { 
-                if (inputValue.value == 'Other' && inputValue.checked == true) {
-                    $('assayTypeOtherTextRow').show();
-                } else {
-                    $('assayTypeOtherTextRow').hide();
+            function toggleEvalTypeOtherText() {
+               var element = document.getElementsByName("plannedMarker.evaluationType");                
+                for (var i=0; i <= element.length; i++) {
+                    if (element[i].value == 'Other' && element[i].checked == true) {    
+                         $('evalTypeOtherTextRow').show();
+                         break; 
+                    } else {
+                        $('evalTypeOtherTextRow').hide(); 
+                    }     
                 }
+                return false;
             }
             
-            function toggleAssayPurposeOtherText(inputValue) {
-                if (inputValue.value == 'Other' && inputValue.checked == true) {
-                    $('assayPurposeOtherTextRow').show();
-                } else {
-                    $('assayPurposeOtherTextRow').hide();
-                }
+            function toggleAssayTypeOtherText() {
+            var element = document.getElementsByName("plannedMarker.assayType");
+                for (var i=0; i <= element.length; i++) {
+                    if (element[i].value == 'Other' && element[i].checked == true) {    
+                         $('assayTypeOtherTextRow').show();
+                         break;
+                         
+                    } else {
+                        $('assayTypeOtherTextRow').hide(); 
+                    }     
+                } 
+                return false;  
+            }
+            
+            function toggleAssayPurposeOtherText() {
+            var element = document.getElementsByName("plannedMarker.assayPurpose");
+                for (var i=0; i <= element.length; i++) {
+                    if (element[i].value == 'Other' && element[i].checked == true) {    
+                         $('assayPurposeOtherTextRow').show();
+                         break;
+                         return false;
+                    } else {
+                        $('assayPurposeOtherTextRow').hide(); 
+                    }     
+                } 
+            }
+            
+            function toggleSpecimenTypeOtherText() {
+            var element = document.getElementsByName("plannedMarker.tissueSpecimenType");
+            
+                for (var i=0; i <= element.length; i++) {
+                    if (element[i].value == 'Other' && element[i].checked == true) {  
+                         $('specimenTypeOtherTextRow').show();
+                         break;
+                         return false; 
+                    } else {
+                        $('specimenTypeOtherTextRow').hide(); 
+                    }     
+                } 
+                return false;
             }
             
             function cadsrLookup(){

@@ -83,8 +83,6 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.enums.AssayUseCode;
-import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -105,18 +103,22 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 public class PlannedMarker extends PlannedObservation {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_COLUMN_LENGTH = 200;
-
+    /** Maximum length of planned attribute column length . */
+    private static final int ATTRIBUTE_COLUMN_LENGTH = 200;
     private String name;
     private String longName;
     private String hugoBiomarkerCode;
     private String assayTypeCode;
     private String assayTypeOtherText;
-    private AssayUseCode assayUseCode;
+    private String assayUseCode;
     private String assayPurposeCode;
     private String assayPurposeOtherText;
     private String tissueSpecimenTypeCode;
-    private TissueCollectionMethodCode tissueCollectionMethodCode;
+    private String specimenTypeOtherText;
+    private String tissueCollectionMethodCode;
     private ActiveInactivePendingCode statusCode;
+    private String evaluationTypeCode;
+    private String evaluationTypeOtherText;
 
     /**
      * @return the name
@@ -168,7 +170,7 @@ public class PlannedMarker extends PlannedObservation {
     /**
      * @return the assayTypeCode
      */
-    @Column(name = "ASSAY_TYPE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
+    @Column(name = "ASSAY_TYPE_CODE", length = ATTRIBUTE_COLUMN_LENGTH, nullable = false)
    // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
@@ -203,17 +205,17 @@ public class PlannedMarker extends PlannedObservation {
      * @return the assayUseCode
      */
     @Column(name = "ASSAY_USE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
+   // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
-    public AssayUseCode getAssayUseCode() {
+    public String getAssayUseCode() {
         return assayUseCode;
     }
 
     /**
      * @param assayUseCode the assayUseCode to set
      */
-    public void setAssayUseCode(AssayUseCode assayUseCode) {
+    public void setAssayUseCode(String assayUseCode) {
         this.assayUseCode = assayUseCode;
     }
 
@@ -254,7 +256,7 @@ public class PlannedMarker extends PlannedObservation {
     /**
      * @return the tissueSpecimenTypeCode
      */
-    @Column(name = "TISSUE_SPECIMEN_TYPE_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
+    @Column(name = "TISSUE_SPECIMEN_TYPE_CODE", length = ATTRIBUTE_COLUMN_LENGTH, nullable = false)
    // @Enumerated(EnumType.STRING)
     @NotNull
     @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
@@ -273,16 +275,16 @@ public class PlannedMarker extends PlannedObservation {
      * @return the tissueCollectionMethodCode
      */
     @Column(name = "TISSUE_COLLECTION_METHOD_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     @NotNull
-    public TissueCollectionMethodCode getTissueCollectionMethodCode() {
+    public String getTissueCollectionMethodCode() {
         return tissueCollectionMethodCode;
     }
 
     /**
      * @param tissueCollectionMethodCode the tissueCollectionMethodCode to set
      */
-    public void setTissueCollectionMethodCode(TissueCollectionMethodCode tissueCollectionMethodCode) {
+    public void setTissueCollectionMethodCode(String tissueCollectionMethodCode) {
         this.tissueCollectionMethodCode = tissueCollectionMethodCode;
     }
 
@@ -303,4 +305,50 @@ public class PlannedMarker extends PlannedObservation {
    public void setStatusCode(ActiveInactivePendingCode statusCode) {
        this.statusCode = statusCode;
    }
+   /**
+    * @return the evaluationTypeCode
+    */
+   @Column(name = "Evaluation_Type_Code", length = ATTRIBUTE_COLUMN_LENGTH, nullable = false)
+   @NotNull
+    public String getEvaluationTypeCode() {
+        return evaluationTypeCode;
+    }
+   /**
+   *
+   * @param evaluationTypeCode evaluationTypeCode
+   */
+    public void setEvaluationTypeCode(String evaluationTypeCode) {
+        this.evaluationTypeCode = evaluationTypeCode;
+    }
+    /**
+     * @return the evaluationTypeOtherText
+     */
+    @Column(name = "EVALUATION_TYPE_OTHER_TEXT", length = DEFAULT_COLUMN_LENGTH)
+    @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
+    public String getEvaluationTypeOtherText() {
+        return evaluationTypeOtherText;
+    }
+    /**
+    *
+    * @param evaluationTypeOtherText evaluationTypeOtherText
+    */
+    public void setEvaluationTypeOtherText(String evaluationTypeOtherText) {
+        this.evaluationTypeOtherText = evaluationTypeOtherText;
+    }
+    /**
+     * @return the specimenTypeOtherText
+     */
+    @Column(name = "SPECIMEN_TYPE_OTHER_TEXT", length = DEFAULT_COLUMN_LENGTH)
+    @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
+    public String getSpecimenTypeOtherText() {
+        return specimenTypeOtherText;
+    }
+    /**
+    *
+    * @param specimenTypeOtherText specimenTypeOtherText
+    */
+    public void setSpecimenTypeOtherText(String specimenTypeOtherText) {
+        this.specimenTypeOtherText = specimenTypeOtherText;
+    }
+    
 }

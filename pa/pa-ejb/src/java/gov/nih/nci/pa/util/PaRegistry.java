@@ -81,6 +81,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -611,6 +612,13 @@ public final class PaRegistry {
      */
     public static PlannedMarkerServiceLocal getPlannedMarkerService() {
         return getInstance().getServiceLocator().getPlannedMarkerService();
+    }
+    
+    /**
+     * @return the Marker attributes service
+     */
+    public static MarkerAttributesServiceLocal getMarkerAttributesService() {
+        return getInstance().getServiceLocator().getMarkerAttributesService();
     }
 
     /**

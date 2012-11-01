@@ -85,10 +85,14 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
+import gov.nih.nci.pa.domain.AssayType;
+import gov.nih.nci.pa.domain.BiomarkerPurpose;
+import gov.nih.nci.pa.domain.BiomarkerUse;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.EvaluationType;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.ICD9Disease;
@@ -111,6 +115,8 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.SDCDisease;
+import gov.nih.nci.pa.domain.SpecimenCollection;
+import gov.nih.nci.pa.domain.SpecimenType;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyCheckout;
@@ -139,9 +145,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
-import gov.nih.nci.pa.enums.AssayTypeCode;
-import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -170,8 +173,6 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
-import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -199,9 +200,12 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 public class TestSchema {
     public static final Timestamp TODAY = new Timestamp(new Date().getTime());
-    public static final Timestamp YESTERDAY = new Timestamp(DateUtils.addDays(new Date(), -1).getTime());
-    public static final Timestamp TOMMORROW = new Timestamp(DateUtils.addDays(new Date(), 1).getTime());
-    public static final Timestamp ONE_YEAR_FROM_TODAY = new Timestamp(DateUtils.addYears(new Date(), 1).getTime());
+    public static final Timestamp YESTERDAY = new Timestamp(DateUtils.addDays(
+            new Date(), -1).getTime());
+    public static final Timestamp TOMMORROW = new Timestamp(DateUtils.addDays(
+            new Date(), 1).getTime());
+    public static final Timestamp ONE_YEAR_FROM_TODAY = new Timestamp(DateUtils
+            .addYears(new Date(), 1).getTime());
     public static List<Long> registryUserIds;
     public static List<Long> studyProtocolIds;
     public static List<Long> studySiteIds;
@@ -227,11 +231,14 @@ public class TestSchema {
     public static List<Country> countries;
     private static User user;
     public static Long inactiveProtocolId;
+    public static List<Long> assayTypeIds;
 
     /**
      * 
-     * @param <T> t
-     * @param obj o
+     * @param <T>
+     *            t
+     * @param obj
+     *            o
      */
     public static <T> void addUpdObject(T obj) {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -241,8 +248,10 @@ public class TestSchema {
 
     /**
      * 
-     * @param <T> t
-     * @param oList o
+     * @param <T>
+     *            t
+     * @param oList
+     *            o
      */
     public static <T> void addUpdObjects(ArrayList<T> oList) {
         for (T obj : oList) {
@@ -274,7 +283,8 @@ public class TestSchema {
         anatomicSiteIds = new ArrayList<Long>();
         studyDiseaseIds = new ArrayList<Long>();
         studyOnholdIds = new ArrayList<Long>();
-        
+        assayTypeIds = new ArrayList<Long>();
+
         User curator = getUser(true);
         addUpdObject(curator);
 
@@ -298,6 +308,18 @@ public class TestSchema {
         sp.setUserLastCreated(ru.getUserLastCreated());
         sp.setUserLastUpdated(ru.getUserLastUpdated());
 
+        AssayType at = createAssayType();
+        addUpdObject(at);
+        EvaluationType et = createEvaluationType();
+        addUpdObject(et);
+        BiomarkerPurpose bp = createBioPurposeType();
+        addUpdObject(bp);
+        BiomarkerUse bu = createBioUseType();
+        addUpdObject(bu);
+        SpecimenType spType = createSPType();
+        addUpdObject(spType);
+        SpecimenCollection spCollection = createSPCollectionType();
+        addUpdObject(spCollection);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
         spSecId.setExtension("NCI-2009-00001");
@@ -310,7 +332,7 @@ public class TestSchema {
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
-        
+
         StudyOverallStatus sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.APPROVED);
         sos.setStatusDate(YESTERDAY);
@@ -321,14 +343,15 @@ public class TestSchema {
         sos.setStatusDate(TODAY);
         sos.setStudyProtocol(sp);
         addUpdObject(sos);
-        
+
         StudyAccrualAccess studyAccrualAccess = new StudyAccrualAccess();
         studyAccrualAccess.setActionCode(AssignmentActionCode.ASSIGNED);
         studyAccrualAccess.setComments("TEST");
         studyAccrualAccess.setDateLastCreated(new Date());
         studyAccrualAccess.setRegistryUser(ru);
         studyAccrualAccess.setStatusCode(ActiveInactiveCode.ACTIVE);
-        studyAccrualAccess.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        studyAccrualAccess.setStatusDateRangeLow(new Timestamp(new Date()
+                .getTime()));
         studyAccrualAccess.setStudyProtocol(sp);
         studyAccrualAccess.setUserLastCreated(ru.getCsmUser());
         addUpdObject(studyAccrualAccess);
@@ -360,15 +383,18 @@ public class TestSchema {
         addUpdObject(per);
         personIds.add(per.getId());
 
-        HealthCareProvider hcp = TestSchema.createHealthCareProviderObj(per, org);
+        HealthCareProvider hcp = TestSchema.createHealthCareProviderObj(per,
+                org);
         addUpdObject(hcp);
         healthCareProviderIds.add(hcp.getId());
 
-        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(org, per);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(
+                org, per);
         addUpdObject(crs);
         clinicalResearchStaffIds.add(crs.getId());
 
-        OrganizationalContact orgContact = createOrganizationalContactObj(org, per);
+        OrganizationalContact orgContact = createOrganizationalContactObj(org,
+                per);
         orgContact.setIdentifier("abcd");
         addUpdObject(orgContact);
         organizationalContactIds.add(orgContact.getId());
@@ -379,7 +405,8 @@ public class TestSchema {
         sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
         sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         sPart.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
-        sPart.setAccrualDateRangeLow(ISOUtil.dateStringToTimestamp("03/11/2012"));
+        sPart.setAccrualDateRangeLow(ISOUtil
+                .dateStringToTimestamp("03/11/2012"));
         sPart.setStudyProtocol(sp);
         addUpdObject(sPart);
         studySiteIds.add(sPart.getId());
@@ -389,7 +416,7 @@ public class TestSchema {
         sPart2.setResearchOrganization(rOrg);
         sPart2.setLocalStudyProtocolIdentifier("Local SP ID 02");
         sPart2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        sPart2.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));        
+        sPart2.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
         sPart2.setStudyProtocol(sp);
         addUpdObject(sPart2);
         studySiteIds.add(sPart2.getId());
@@ -397,7 +424,8 @@ public class TestSchema {
         StudyResourcing summary4Resourcing = new StudyResourcing();
         summary4Resourcing.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         summary4Resourcing.setOrganizationIdentifier("1");
-        summary4Resourcing.setTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL);
+        summary4Resourcing
+                .setTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL);
         summary4Resourcing.setStudyProtocol(sp);
         addUpdObject(summary4Resourcing);
 
@@ -493,7 +521,8 @@ public class TestSchema {
         pa.setIntervention(inv);
         pa.setLeadProductIndicator(true);
         pa.setStudyProtocol(sp);
-        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
+        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT
+                .getCode());
         pa.setUserLastUpdated(curator);
         addUpdObject(pa);
         plannedActivityIds.add(pa.getId());
@@ -553,12 +582,12 @@ public class TestSchema {
         ssas.setStatusDate(TODAY);
         ssas.setStudySite(sPart);
         addUpdObject(ssas);
-        
+
         StudySiteAccrualStatus ssas2 = new StudySiteAccrualStatus();
         ssas2.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
         ssas2.setStatusDate(TODAY);
         ssas2.setStudySite(sPart2);
-        addUpdObject(ssas2);        
+        addUpdObject(ssas2);
 
         PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();
         pec.setCategoryCode(ActivityCategoryCode.ELIGIBILITY_CRITERION);
@@ -586,24 +615,30 @@ public class TestSchema {
 
         createAnatomicSites();
 
-        PDQDiseaseParent disPar1 = TestSchema.createPdqDiseaseParent(dis01, dis03);
+        PDQDiseaseParent disPar1 = TestSchema.createPdqDiseaseParent(dis01,
+                dis03);
         addUpdObject(disPar1);
-        PDQDiseaseParent disPar2 = TestSchema.createPdqDiseaseParent(dis02, dis03);
+        PDQDiseaseParent disPar2 = TestSchema.createPdqDiseaseParent(dis02,
+                dis03);
         addUpdObject(disPar2);
-        PDQDiseaseParent disPar3 = TestSchema.createPdqDiseaseParent(dis03, dis04);
+        PDQDiseaseParent disPar3 = TestSchema.createPdqDiseaseParent(dis03,
+                dis04);
         addUpdObject(disPar3);
 
-        PDQDiseaseAltername diseaseAltername = TestSchema.createPdqDiseaseAltername("Little Piggy Cancer", dis01);
+        PDQDiseaseAltername diseaseAltername = TestSchema
+                .createPdqDiseaseAltername("Little Piggy Cancer", dis01);
         addUpdObject(diseaseAltername);
 
         StudyDisease studyDisease = TestSchema.createStudyDiseaseObj(sp, dis01);
         addUpdObject(studyDisease);
         studyDiseaseIds.add(studyDisease.getId());
-        StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(sp, dis02);
+        StudyDisease studyDisease2 = TestSchema
+                .createStudyDiseaseObj(sp, dis02);
         addUpdObject(studyDisease2);
         studyDiseaseIds.add(studyDisease2.getId());
 
-        StudyMilestone studyMilestone = createStudyMilestoneObj("comment 01", sp);
+        StudyMilestone studyMilestone = createStudyMilestoneObj("comment 01",
+                sp);
         addUpdObject(studyMilestone);
         StudyMilestone studyMilestonetss1 = createTrialSummarySentStudyMilestoneObj(sp);
         addUpdObject(studyMilestonetss1);
@@ -649,24 +684,26 @@ public class TestSchema {
         PlannedMarker marker01 = new PlannedMarker();
         marker01.setStudyProtocol(sp);
         marker01.setName("Marker #1");
-        marker01.setAssayTypeCode(AssayTypeCode.PCR.getCode());
-        marker01.setAssayUseCode(AssayUseCode.RESEARCH);
-        marker01.setAssayPurposeCode(AssayPurposeCode.RESEARCH.getCode());
-        marker01.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        marker01.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA.getCode());
+        marker01.setAssayTypeCode("PCR");
+        marker01.setAssayUseCode("Integral");
+        marker01.setAssayPurposeCode("Research");
+        marker01.setTissueCollectionMethodCode("Mandatory");
+        marker01.setTissueSpecimenTypeCode("Plasma");
+        marker01.setEvaluationTypeCode("Level / Quantity");
         marker01.setStatusCode(ActiveInactivePendingCode.PENDING);
         addUpdObject(marker01);
 
         PlannedMarker marker02 = new PlannedMarker();
         marker02.setStudyProtocol(sp);
         marker02.setName("Marker #2");
-        marker02.setAssayTypeCode(AssayTypeCode.OTHER.getCode());
+        marker02.setAssayTypeCode("Other");
         marker02.setAssayTypeOtherText("Assay Type Other Text");
-        marker02.setAssayUseCode(AssayUseCode.RESEARCH);
-        marker02.setAssayPurposeCode(AssayPurposeCode.OTHER.getCode());
-        marker02.setAssayPurposeOtherText("Assay Purpose Other Text");
-        marker02.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        marker02.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.PLASMA.getCode());
+        marker02.setAssayUseCode("Integral");
+        marker02.setAssayPurposeCode("Response Assessment");
+        // marker02.setAssayPurposeOtherText("Assay Purpose Other Text");
+        marker02.setTissueCollectionMethodCode("Mandatory");
+        marker02.setTissueSpecimenTypeCode("Plasma");
+        marker02.setEvaluationTypeCode("Level / Quantity");
         marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
         addUpdObject(marker02);
 
@@ -702,7 +739,7 @@ public class TestSchema {
         ICD9Disease icd905 = TestSchema.createICD9Disease("code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
-        
+
         // Study On-Hold
         sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
@@ -732,7 +769,7 @@ public class TestSchema {
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         addUpdObject(sp);
         studyProtocolIds.add(sp.getId());
-        
+
         StudyOnhold onhold = new StudyOnhold();
         onhold.setStudyProtocol(sp);
         onhold.setOnholdReasonCode(OnholdReasonCode.SUBMISSION_INCOM);
@@ -777,7 +814,7 @@ public class TestSchema {
         studyProtocolIds.add(sp.getId());
         inactiveProtocolId = sp.getId();
         addAbstractedWorkflowStatus(inactiveProtocolId);
-        
+
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
     }
@@ -820,7 +857,8 @@ public class TestSchema {
         Country c = createCountryObj();
         TestSchema.addUpdObject(c);
 
-        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(
+                o, p);
         TestSchema.addUpdObject(crs);
 
         ResearchOrganization ro = new ResearchOrganization();
@@ -835,7 +873,8 @@ public class TestSchema {
         TestSchema.addUpdObject(nonpropTrial);
         IiConverter.convertToIi(nonpropTrial.getId());
 
-        StudyContact sc = TestSchema.createStudyContactObj(nonpropTrial, c, hcp, crs);
+        StudyContact sc = TestSchema.createStudyContactObj(nonpropTrial, c,
+                hcp, crs);
         TestSchema.addUpdObject(sc);
 
         StudySite spc = TestSchema.createStudySiteObj(nonpropTrial, hcf);
@@ -845,10 +884,12 @@ public class TestSchema {
         StudyRecruitmentStatus studyRecStatus = createStudyRecruitmentStatus(nonpropTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(nonpropTrial);
+        DocumentWorkflowStatus docWrk = TestSchema
+                .createDocumentWorkflowStatus(nonpropTrial);
         TestSchema.addUpdObject(docWrk);
 
-        StudyMilestone milestone = TestSchema.createStudyMilestoneObj("READY ", nonpropTrial);
+        StudyMilestone milestone = TestSchema.createStudyMilestoneObj("READY ",
+                nonpropTrial);
         milestone.setMilestoneCode(MilestoneCode.READY_FOR_TSR);
         TestSchema.addUpdObject(milestone);
 
@@ -865,12 +906,14 @@ public class TestSchema {
 
         prop = new PAProperties();
         prop.setName("tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
+        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("tsr.proprietary.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
+        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
@@ -880,12 +923,14 @@ public class TestSchema {
 
         prop = new PAProperties();
         prop.setName("xml.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}," +
+        		"(${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("noxml.tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
+        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         return IiConverter.convertToIi(nonpropTrial.getId());
@@ -949,7 +994,8 @@ public class TestSchema {
         return c1;
     }
 
-    public static StudyRecruitmentStatus createStudyRecruitmentStatus(StudyProtocol sp) {
+    public static StudyRecruitmentStatus createStudyRecruitmentStatus(
+            StudyProtocol sp) {
         StudyRecruitmentStatus create = new StudyRecruitmentStatus();
         create.setStudyProtocol(sp);
         create.setStatusCode(RecruitmentStatusCode.ACTIVE);
@@ -959,7 +1005,8 @@ public class TestSchema {
         return create;
     }
 
-    private static StudyMilestone createStudyMilestoneObj(String comment, StudyProtocol studyProtocol) {
+    private static StudyMilestone createStudyMilestoneObj(String comment,
+            StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setCommentText(comment);
         result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
@@ -968,7 +1015,8 @@ public class TestSchema {
         return result;
     }
 
-    private static StudyMilestone createTrialSummarySentStudyMilestoneObj(StudyProtocol studyProtocol) {
+    private static StudyMilestone createTrialSummarySentStudyMilestoneObj(
+            StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
         result.setMilestoneDate(TODAY);
@@ -976,7 +1024,8 @@ public class TestSchema {
         return result;
     }
 
-    private static StudyMilestone createTrialSummarySentStudyMilestoneObjFiveDays(StudyProtocol studyProtocol) {
+    private static StudyMilestone createTrialSummarySentStudyMilestoneObjFiveDays(
+            StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         Calendar offsetTime = Calendar.getInstance();
         offsetTime.set(2009, 12, 2);
@@ -986,7 +1035,8 @@ public class TestSchema {
         return result;
     }
 
-    public static StudyDisease createStudyDiseaseObj(StudyProtocol studyProtocol, PDQDisease disease) {
+    public static StudyDisease createStudyDiseaseObj(
+            StudyProtocol studyProtocol, PDQDisease disease) {
         StudyDisease create = new StudyDisease();
         create.setStudyProtocol(studyProtocol);
         create.setDisease(disease);
@@ -1022,8 +1072,8 @@ public class TestSchema {
         return create;
     }
 
-    public static StudyContact createStudyContactObj(StudyProtocol sp, Country c, HealthCareProvider hc,
-            ClinicalResearchStaff crs) {
+    public static StudyContact createStudyContactObj(StudyProtocol sp,
+            Country c, HealthCareProvider hc, ClinicalResearchStaff crs) {
         StudyContact sc = new StudyContact();
         sc.setPrimaryIndicator(Boolean.TRUE);
         sc.setAddressLine("1111, terra cotta circle");
@@ -1065,7 +1115,50 @@ public class TestSchema {
         return create;
     }
 
-    public static PDQDiseaseParent createPdqDiseaseParent(PDQDisease disease, PDQDisease parentDisease) {
+    public static AssayType createAssayType() {
+        AssayType assayType = new AssayType();      
+        assayType.setTypeCode("PCR");
+        assayType.setDescription("PCR");
+        return assayType;
+    }
+    
+    public static EvaluationType createEvaluationType() {
+        EvaluationType evaluationType = new EvaluationType();      
+        evaluationType.setTypeCode("Level / Quantity");
+        evaluationType.setDescription("Level / Quantity");
+        return evaluationType;
+    }
+    
+    public static BiomarkerPurpose createBioPurposeType() {
+        BiomarkerPurpose biomarkerPurpose = new BiomarkerPurpose();      
+        biomarkerPurpose.setTypeCode("Eligibility Criterion");
+        biomarkerPurpose.setDescription("Eligibility Criterion");
+        return biomarkerPurpose;
+    }
+    
+    public static BiomarkerUse createBioUseType() {
+        BiomarkerUse biomarkerUse = new BiomarkerUse();      
+        biomarkerUse.setTypeCode("Integral");
+        biomarkerUse.setDescription("Integral");
+        return biomarkerUse;
+    }
+    
+    public static SpecimenType createSPType() {
+        SpecimenType specimenType = new SpecimenType();      
+        specimenType.setTypeCode("Serum");
+        specimenType.setDescription("Serum");
+        return specimenType;
+    }
+    
+    public static SpecimenCollection createSPCollectionType() {
+        SpecimenCollection specimenCollection = new SpecimenCollection();      
+        specimenCollection.setTypeCode("Mandatory");
+        specimenCollection.setDescription("Mandatory");
+        return specimenCollection;
+    }
+    
+    public static PDQDiseaseParent createPdqDiseaseParent(PDQDisease disease,
+            PDQDisease parentDisease) {
         PDQDiseaseParent create = new PDQDiseaseParent();
         create.setDisease(disease);
         create.setParentDisease(parentDisease);
@@ -1079,7 +1172,8 @@ public class TestSchema {
         return create;
     }
 
-    public static PDQDiseaseAltername createPdqDiseaseAltername(String alternateName, PDQDisease disease) {
+    public static PDQDiseaseAltername createPdqDiseaseAltername(
+            String alternateName, PDQDisease disease) {
         PDQDiseaseAltername create = new PDQDiseaseAltername();
         create.setAlternateName(alternateName);
         create.setDisease(disease);
@@ -1103,20 +1197,22 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-    
+
     public static PlannedMarker createPlannedMarker() {
-        PlannedMarker result = new PlannedMarker(); 
+        PlannedMarker result = new PlannedMarker();
         result.setName("name");
-        result.setAssayTypeCode(AssayTypeCode.CGH.getCode());
-        result.setAssayUseCode(AssayUseCode.CORRELATIVE);
-        result.setAssayPurposeCode(AssayPurposeCode.ELIGIBILITY_CRITERION.getCode());
-        result.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
-        result.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.CITRATED_PLASMA.getCode());
-        result.setStatusCode(ActiveInactivePendingCode.ACTIVE);       
+        result.setAssayTypeCode("Flow Cytometry");
+        result.setAssayUseCode("Integrated");
+        result.setAssayPurposeCode("Eligibility Criterion");
+        result.setTissueCollectionMethodCode("Mandatory");
+        result.setTissueSpecimenTypeCode("Plasma");
+        result.setEvaluationTypeCode("Level / Quantity");
+        result.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         return result;
     }
 
-    public static ClinicalResearchStaff createClinicalResearchStaffObj(Organization o, Person p) {
+    public static ClinicalResearchStaff createClinicalResearchStaffObj(
+            Organization o, Person p) {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
         crs.setOrganization(o);
         crs.setPerson(p);
@@ -1125,7 +1221,8 @@ public class TestSchema {
         return crs;
     }
 
-    public static DocumentWorkflowStatus createDocumentWorkflowStatus(StudyProtocol sp) {
+    public static DocumentWorkflowStatus createDocumentWorkflowStatus(
+            StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         create.setStudyProtocol(sp);
         create.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
@@ -1135,8 +1232,9 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-    
-    public static DocumentWorkflowStatus createRejectedDocumentWorkflowStatus(StudyProtocol sp) {
+
+    public static DocumentWorkflowStatus createRejectedDocumentWorkflowStatus(
+            StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         create.setStudyProtocol(sp);
         create.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
@@ -1147,8 +1245,9 @@ public class TestSchema {
         return create;
     }
 
-    public static DocumentWorkflowStatus createOnHoldDocumentWorkflowStatus(StudyProtocol sp) {
-        DocumentWorkflowStatus create = new DocumentWorkflowStatus();        
+    public static DocumentWorkflowStatus createOnHoldDocumentWorkflowStatus(
+            StudyProtocol sp) {
+        DocumentWorkflowStatus create = new DocumentWorkflowStatus();
         create.setStudyProtocol(sp);
         create.setStatusCode(DocumentWorkflowStatusCode.ON_HOLD);
         create.setStatusDateRangeLow(TODAY);
@@ -1158,7 +1257,6 @@ public class TestSchema {
         return create;
     }
 
-
     public static HealthCareFacility createHealthCareFacilityObj(Organization o) {
         HealthCareFacility hc = new HealthCareFacility();
         hc.setOrganization(o);
@@ -1167,7 +1265,8 @@ public class TestSchema {
         return hc;
     }
 
-    public static HealthCareProvider createHealthCareProviderObj(Person p, Organization o) {
+    public static HealthCareProvider createHealthCareProviderObj(Person p,
+            Organization o) {
         HealthCareProvider hc = new HealthCareProvider();
         hc.setOrganization(o);
         hc.setPerson(p);
@@ -1176,7 +1275,8 @@ public class TestSchema {
         return hc;
     }
 
-    public static OrganizationalContact createOrganizationalContactObj(Organization o, Person p) {
+    public static OrganizationalContact createOrganizationalContactObj(
+            Organization o, Person p) {
         OrganizationalContact oc = new OrganizationalContact();
         oc.setOrganization(o);
         oc.setIdentifier("1");
@@ -1249,7 +1349,7 @@ public class TestSchema {
         sp.setRecordVerificationDate(TODAY);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        
+
         sp.setDateLastUpdated(TODAY);
         sp.setUserLastUpdated(user);
         sp.setDateLastCreated(TODAY);
@@ -1314,7 +1414,8 @@ public class TestSchema {
         return create;
     }
 
-    public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(InterventionalStudyProtocol isp) {
+    public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(
+            InterventionalStudyProtocol isp) {
         StudyProtocolDates dates = isp.getDates();
         dates.setStartDate(TODAY);
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
@@ -1334,7 +1435,8 @@ public class TestSchema {
         return isp;
     }
 
-    public static StudySite createStudySiteObj(StudyProtocol sp, HealthCareFacility hcf) {
+    public static StudySite createStudySiteObj(StudyProtocol sp,
+            HealthCareFacility hcf) {
         StudySite create = new StudySite();
         create.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
@@ -1346,18 +1448,18 @@ public class TestSchema {
         create.setHealthCareFacility(hcf);
         return create;
     }
-    
+
     public static StudySite createParticipatingSite(StudyProtocol sp) {
-        
+
         Organization org = createOrganizationObj();
         addUpdObject(org);
 
         HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
-        addUpdObject(hfc);                
-        
+        addUpdObject(hfc);
+
         StudySite site = new StudySite();
         site.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
-        site.setLocalStudyProtocolIdentifier(sp.getId()+"_SITE");
+        site.setLocalStudyProtocolIdentifier(sp.getId() + "_SITE");
         site.setUserLastUpdated(getUser());
         site.setDateLastUpdated(TODAY);
         site.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
@@ -1365,7 +1467,7 @@ public class TestSchema {
         site.setStudyProtocol(sp);
         site.setHealthCareFacility(hfc);
         addUpdObject(site);
-        
+
         StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
         ssas.setDateLastCreated(new Date());
         ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
@@ -1373,11 +1475,11 @@ public class TestSchema {
         ssas.setStudySite(site);
         ssas.setUserLastCreated(getUser());
         addUpdObject(ssas);
-        
+
         site.getStudySiteAccrualStatuses().add(ssas);
-        
+
         return site;
-    }    
+    }
 
     public static RegistryUser getRegistryUser() {
         User user = getUser();
@@ -1392,4 +1494,5 @@ public class TestSchema {
         TestSchema.addUpdObject(ru);
         return ru;
     }
+
 }

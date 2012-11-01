@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
@@ -829,7 +830,26 @@ public class MockServiceLocator implements ServiceLocator {
     public PDQTrialUploadService getPDQTrialUploadService() {
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MarkerAttributesServiceLocal getMarkerAttributesService() {
+        Map<String, String> values = new HashMap<String, String>();
+        MarkerAttributesServiceLocal msl = mock(MarkerAttributesServiceLocal.class);
+        values.put("ASSAY_TYPE1", "Other");
+        values.put("BIOMARKER_USE1", "Integral");
+        values.put("BIOMARKER_PURPOSE1", "Stratification Factor");
+        values.put("SPECIMEN_TYPE1", "Serum");
+        values.put("Unspecified1", "SPECIMEN_COLLECTION");
+        values.put("EVALUATION_TYPE1", "Subtyping");
+        try {
+            when(msl.getAllMarkerAttributes()).thenReturn(values);
+        } catch (PAException e) {
+          //Unreachable
+        }
+        return msl;
+    }
     /**
      * {@inheritDoc}
      */

@@ -87,7 +87,12 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.MethodCode" />
         <mapping class="gov.nih.nci.pa.domain.PlannedProcedure" />
         <mapping class="gov.nih.nci.pa.domain.PlannedMarker" />
-
+        <mapping class="gov.nih.nci.pa.domain.AssayType" />
+        <mapping class="gov.nih.nci.pa.domain.BiomarkerPurpose" />
+        <mapping class="gov.nih.nci.pa.domain.BiomarkerUse" />
+        <mapping class="gov.nih.nci.pa.domain.SpecimenCollection" />
+        <mapping class="gov.nih.nci.pa.domain.SpecimenType" />
+        <mapping class="gov.nih.nci.pa.domain.EvaluationType" />
         <mapping class="gov.nih.nci.pa.domain.ActivityRelationship" />
         <mapping class="gov.nih.nci.pa.domain.StudyProtocolStage" />
         <mapping class="gov.nih.nci.pa.domain.StudyFundingStage" />

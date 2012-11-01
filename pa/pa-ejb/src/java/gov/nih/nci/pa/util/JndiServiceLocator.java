@@ -83,6 +83,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -580,6 +581,15 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
         return (PlannedMarkerServiceLocal) JNDIUtil.lookupPa("/pa/PlannedMarkerServiceBean/local");
+    }
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MarkerAttributesServiceLocal getMarkerAttributesService() {
+        return (MarkerAttributesServiceLocal) JNDIUtil.lookupPa("/pa/MarkerAttributesBeanLocal/local");
     }
 
     /**

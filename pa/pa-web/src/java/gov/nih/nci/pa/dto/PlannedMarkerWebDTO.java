@@ -101,6 +101,7 @@ public class PlannedMarkerWebDTO {
     private String assayPurpose;
     private String assayPurposeOtherText;
     private String tissueSpecimenType;
+    private String specimenTypeOtherText;
     private String tissueCollectionMethod;
     private String status;
     private String trialStatus;
@@ -108,13 +109,15 @@ public class PlannedMarkerWebDTO {
     private boolean foundInHugo = false;
     private String fromEmail;
     private String message;
-
+    private String evaluationType;
+    private String evaluationTypeOtherText;
     private String nciIdentifier;
     private String csmUserEmailId;
     private String question;
     private List<String> selectedAssayType;
     private List<String> selectedAssayPurpose;
     private List<String> selectedTissueSpecType;
+    private List<String> selectedEvaluationType;
     /**
      * @return the id
      */
@@ -440,6 +443,62 @@ public class PlannedMarkerWebDTO {
      */
     public void setSelectedTissueSpecType(List<String> selectedTissueSpecType) {
         this.selectedTissueSpecType = selectedTissueSpecType;
+    }
+    /**
+     * 
+     * @return evaluationType
+     */
+    public String getEvaluationType() {
+        return evaluationType;
+    }
+    /**
+     * 
+     * @param evaluationType evaluationType
+     */
+    public void setEvaluationType(String evaluationType) {
+        this.evaluationType = evaluationType;
+    }
+    /**
+     * 
+     * @return selectedEvaluationType
+     */
+    public List<String> getSelectedEvaluationType() {
+        return selectedEvaluationType;
+    }
+    /**
+     * 
+     * @param selectedEvaluationType selectedEvaluationType
+     */
+    public void setSelectedEvaluationType(List<String> selectedEvaluationType) {
+        this.selectedEvaluationType = selectedEvaluationType;
+    }
+    /**
+     * 
+     * @return evaluationTypeOtherText
+     */
+    public String getEvaluationTypeOtherText() {
+        return evaluationTypeOtherText;
+    }
+    /**
+     * 
+     * @param evaluationTypeOtherText evaluationTypeOtherText
+     */
+    public void setEvaluationTypeOtherText(String evaluationTypeOtherText) {
+        this.evaluationTypeOtherText = evaluationTypeOtherText;
+    }
+    /**
+     * 
+     * @return specimenTypeOtherText
+     */
+    public String getSpecimenTypeOtherText() {
+        return specimenTypeOtherText;
+    }
+    /**
+     * 
+     * @param specimenTypeOtherText specimenTypeOtherText
+     */
+    public void setSpecimenTypeOtherText(String specimenTypeOtherText) {
+        this.specimenTypeOtherText = specimenTypeOtherText;
     }
     
 }

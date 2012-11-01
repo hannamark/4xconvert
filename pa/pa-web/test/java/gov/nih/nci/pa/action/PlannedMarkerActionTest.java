@@ -148,9 +148,10 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         webDTO.setName("Marker #1");
         webDTO.setAssayType("Other");
         webDTO.setAssayUse("Correlative");
-        webDTO.setAssayPurpose("Other");
+        webDTO.setAssayPurpose("Stratification Factor");
         webDTO.setTissueSpecimenType("Serum");
         webDTO.setTissueCollectionMethod("Unspecified");
+        webDTO.setEvaluationType("Subtyping");
         plannedMarkerAction.setPlannedMarker(webDTO);
 
         plannedMarkerAction.add();
@@ -158,7 +159,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         plannedMarkerAction.clearErrorsAndMessages();
 
         webDTO.setAssayTypeOtherText("More Text");
-        webDTO.setAssayPurposeOtherText("More Text");
+        
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.add());
     }
@@ -173,10 +174,10 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         webDTO.setName("Marker #1");
         webDTO.setAssayType("Other");
         webDTO.setAssayUse("Correlative");
-        webDTO.setAssayPurpose("Other");
+        webDTO.setAssayPurpose("Stratification Factor");
         webDTO.setTissueSpecimenType("Serum");
         webDTO.setTissueCollectionMethod("Unspecified");
-
+        webDTO.setEvaluationType("Subtyping");
         plannedMarkerAction.setPlannedMarker(webDTO);
 
         plannedMarkerAction.add();
@@ -184,7 +185,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals("edit", plannedMarkerAction.add());
         plannedMarkerAction.clearErrorsAndMessages();
         webDTO.setAssayTypeOtherText("More Text");
-        webDTO.setAssayPurposeOtherText("More Text");
+        
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.add());
 
@@ -198,11 +199,12 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         webDTO.setId(1L);
         webDTO.setName("Marker #1");
         webDTO.setAssayType("Other");
-        webDTO.setAssayUse("Correlative");
-        webDTO.setAssayPurpose("Other");
+        webDTO.setAssayUse("Integral");
+        webDTO.setAssayPurpose("Stratification Factor");
         webDTO.setTissueSpecimenType("Serum");
         webDTO.setTissueCollectionMethod("Unspecified");
         webDTO.setStatus("Pending");
+        webDTO.setEvaluationType("Subtyping");
         plannedMarkerAction.setPlannedMarker(webDTO);
 
         assertEquals("edit", plannedMarkerAction.update());
@@ -210,7 +212,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         plannedMarkerAction.clearErrorsAndMessages();
 
         webDTO.setAssayTypeOtherText("More Text");
-        webDTO.setAssayPurposeOtherText("More Text");
+        
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.update());
     }

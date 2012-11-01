@@ -85,11 +85,6 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
-import gov.nih.nci.pa.enums.AssayTypeCode;
-import gov.nih.nci.pa.enums.AssayUseCode;
-import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -113,13 +108,12 @@ public class PlannedMarkerConverterTest extends
         bo.setName("Biomarker");
         bo.setLongName("Biomarker long name");
         bo.setHugoBiomarkerCode("HUGO Biomarker Code");
-        bo.setAssayTypeCode(AssayTypeCode.OTHER.getCode());
+        bo.setAssayTypeCode("Other");
         bo.setAssayTypeOtherText("Assay Type Other Text");
-        bo.setAssayUseCode(AssayUseCode.RESEARCH);
-        bo.setAssayPurposeCode(AssayPurposeCode.OTHER.getCode());
-        bo.setAssayPurposeOtherText("Assay Purpose Other Text");
-        bo.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.TISSUE.getCode());
-        bo.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
+        bo.setAssayUseCode("Integral");
+        bo.setAssayPurposeCode("Eligibility Criterion");
+        bo.setTissueSpecimenTypeCode("Serum");
+        bo.setTissueCollectionMethodCode("Mandatory");
         bo.setStatusCode(ActiveInactivePendingCode.PENDING);
         return bo;
     }
@@ -135,13 +129,12 @@ public class PlannedMarkerConverterTest extends
         dto.setName(StConverter.convertToSt("Biomarker"));
         dto.setLongName(StConverter.convertToSt("Biomarker long name"));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
-        dto.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
+        dto.setAssayTypeCode(CdConverter.convertStringToCd("Other"));
         dto.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
-        dto.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
-        dto.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
-        dto.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
-        dto.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
-        dto.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));
+        dto.setAssayUseCode(CdConverter.convertStringToCd("Integral"));
+        dto.setAssayPurposeCode(CdConverter.convertStringToCd("Eligibility Criterion"));
+        dto.setTissueSpecimenTypeCode(CdConverter.convertStringToCd("Serum"));
+        dto.setTissueCollectionMethodCode(CdConverter.convertStringToCd("Mandatory"));
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
         return dto;
     }
@@ -157,11 +150,11 @@ public class PlannedMarkerConverterTest extends
         assertEquals("HUGO Biomarker Code", bo.getHugoBiomarkerCode());
         //assertEquals(AssayTypeCode.OTHER.getClass(), bo.getAssayTypeCode());
         assertEquals("Assay Type Other Text", bo.getAssayTypeOtherText());
-        assertEquals(AssayUseCode.RESEARCH, bo.getAssayUseCode());
-        assertEquals(AssayPurposeCode.OTHER.getCode(), bo.getAssayPurposeCode());
-        assertEquals("Assay Purpose Other Text", bo.getAssayPurposeOtherText());
-        assertEquals(TissueSpecimenTypeCode.TISSUE.getCode(), bo.getTissueSpecimenTypeCode());
-        assertEquals(TissueCollectionMethodCode.MANDATORY, bo.getTissueCollectionMethodCode());
+        assertEquals("Integral", bo.getAssayUseCode());
+        assertEquals("Eligibility Criterion", bo.getAssayPurposeCode());
+        
+        assertEquals("Serum", bo.getTissueSpecimenTypeCode());
+        assertEquals("Mandatory", bo.getTissueCollectionMethodCode());
         assertEquals(ActiveInactivePendingCode.PENDING, bo.getStatusCode());
     }
 
@@ -174,13 +167,13 @@ public class PlannedMarkerConverterTest extends
         assertEquals("Biomarker", dto.getName().getValue());
         assertEquals("Biomarker long name", dto.getLongName().getValue());
         assertEquals("HUGO Biomarker Code", dto.getHugoBiomarkerCode().getCode());
-        assertEquals(AssayTypeCode.OTHER.getCode(), dto.getAssayTypeCode().getCode());
+        assertEquals("Other", dto.getAssayTypeCode().getCode());
         assertEquals("Assay Type Other Text", dto.getAssayTypeOtherText().getValue());
-        assertEquals(AssayUseCode.RESEARCH.getCode(), dto.getAssayUseCode().getCode());
-        assertEquals(AssayPurposeCode.OTHER.getCode(), dto.getAssayPurposeCode().getCode());
-        assertEquals("Assay Purpose Other Text", dto.getAssayPurposeOtherText().getValue());
-        assertEquals(TissueSpecimenTypeCode.TISSUE.getCode(), dto.getTissueSpecimenTypeCode().getCode());
-        assertEquals(TissueCollectionMethodCode.MANDATORY.getCode(), dto.getTissueCollectionMethodCode().getCode());
+        assertEquals("Integral", dto.getAssayUseCode().getCode());
+        assertEquals("Eligibility Criterion", dto.getAssayPurposeCode().getCode());
+        //assertEquals("Assay Purpose Other Text", dto.getAssayPurposeOtherText().getValue());
+        assertEquals("Serum", dto.getTissueSpecimenTypeCode().getCode());
+        assertEquals("Mandatory", dto.getTissueCollectionMethodCode().getCode());
         assertEquals(ActiveInactivePendingCode.PENDING.getCode(), dto.getStatusCode().getCode());
     }
 }

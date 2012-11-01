@@ -8,6 +8,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
@@ -586,7 +587,14 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         // TODO Auto-generated method stub
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MarkerAttributesServiceLocal getMarkerAttributesService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     /**
      * {@inheritDoc}
      */
@@ -618,6 +626,8 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     public ParticipatingOrgServiceLocal getParticipatingOrgService() {
         // TODO Auto-generated method stub
         return null;
-    }   
+    }
+
+      
     
 }

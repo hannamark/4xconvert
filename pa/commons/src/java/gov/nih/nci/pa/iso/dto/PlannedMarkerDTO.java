@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.St;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class PlannedMarkerDTO extends PlannedActivityDTO {
     private static final long serialVersionUID = 1L;
 
@@ -104,11 +105,15 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private Cd assayPurposeCode;
     private St assayPurposeOtherText;
     private Cd tissueSpecimenTypeCode;
+    private St specimenTypeOtherText;
     private Cd tissueCollectionMethodCode;
     private Cd statusCode;
+    private Cd evaluationType;
+    private St evaluationTypeOtherText;
     private List<String> slectedAssayType;
     private List<String> selectedAssayPurpose;
     private List<String> selectedTissueSpecType;
+    private List<String> selectedEvaluationType;    
     /**
      * @return the name
      */
@@ -299,4 +304,59 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     public void setSelectedTissueSpecType(List<String> selectedTissueSpecType) {
         this.selectedTissueSpecType = selectedTissueSpecType;
     }
+    /**
+     * @return the evaluationType
+     */
+    public Cd getEvaluationType() {
+        return evaluationType;
+    }
+    /**
+     * @param evaluationType the evaluationType to set
+     */
+    public void setEvaluationType(Cd evaluationType) {
+        this.evaluationType = evaluationType;
+    }
+    /**
+     * 
+     * @return selectedEvaluationType
+     */
+    public List<String> getSelectedEvaluationType() {
+        return selectedEvaluationType;
+    }
+    /**
+     * 
+     * @param selectedEvaluationType selectedEvaluationType
+     */
+    public void setSelectedEvaluationType(List<String> selectedEvaluationType) {
+        this.selectedEvaluationType = selectedEvaluationType;
+    }
+    /**
+     * 
+     * @return evaluationTypeOtherText
+     */
+    public St getEvaluationTypeOtherText() {
+        return evaluationTypeOtherText;
+    }
+    /**
+     * 
+     * @param evaluationTypeOtherText evaluationTypeOtherText
+     */
+    public void setEvaluationTypeOtherText(St evaluationTypeOtherText) {
+        this.evaluationTypeOtherText = evaluationTypeOtherText;
+    }
+    /**
+     * 
+     * @return specimenTypeOtherText
+     */
+    public St getSpecimenTypeOtherText() {
+        return specimenTypeOtherText;
+    }
+    /**
+     * 
+     * @param specimenTypeOtherText specimenTypeOtherText
+     */
+    public void setSpecimenTypeOtherText(St specimenTypeOtherText) {
+        this.specimenTypeOtherText = specimenTypeOtherText;
+    }
+    
 }
