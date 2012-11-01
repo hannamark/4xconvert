@@ -179,6 +179,9 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         }
         if (hasActionErrors() || hasFieldErrors()) {
             saveReset = false;
+            PlannedMarkerDTO marker = populateDTO(false);
+            Map<String, String> values = markerAttributesService.getAllMarkerAttributes();   
+             plannedMarker = populateWebDTO(marker, values);
             return super.create();
         }
         return currentActionType();
@@ -218,7 +221,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 addActionError(e.getMessage());
             }
         }
-        if (hasActionErrors() || hasFieldErrors()) {      
+        if (hasActionErrors() || hasFieldErrors()) {
+            PlannedMarkerDTO marker = populateDTO(false);
+            Map<String, String> values = markerAttributesService.getAllMarkerAttributes();
+             plannedMarker = populateWebDTO(marker, values);
             return AR_EDIT;
         }
         return super.update();

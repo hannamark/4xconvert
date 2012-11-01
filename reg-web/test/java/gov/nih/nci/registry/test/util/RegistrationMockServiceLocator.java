@@ -37,6 +37,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
@@ -786,6 +787,12 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      */
     @Override
     public ParticipatingOrgServiceLocal getParticipatingOrgService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MarkerAttributesServiceLocal getMarkerAttributesService() {
         // TODO Auto-generated method stub
         return null;
     }
