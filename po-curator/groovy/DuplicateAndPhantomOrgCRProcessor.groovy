@@ -66,12 +66,12 @@ poSourceConnection.eachRow(Queries.orgsWithCRSQL) { orgsWithCR ->
         
         duplicateCRs.each {
             poSourceConnection.executeUpdate('update organizationcr set processed = true where id= ?', [it.getCrId()])
-            poSourceConnection.execute('insert into organizationcr_process_log (organizationcr_id, comments, date_processed) values (?, ? ,CURRENT_DATE)', [it.getCrId(),'Duplicate Organization ChangeRequest'])
+            poSourceConnection.execute('insert into organizationcr_process_log (organizationcr_id, comments, date_processed) values (?, ? ,CURRENT_DATE)', [it.getCrId(),'Phantom/Invalid Organization ChangeRequest'])
         }
         
         phantomList.each {
             poSourceConnection.executeUpdate('update organizationcr set processed = true where id= ?', [it.getCrId()])
-            poSourceConnection.execute('insert into organizationcr_process_log (organizationcr_id, comments, date_processed) values (?,?,CURRENT_DATE)', [it.getCrId(),'Phantom/Invalid Organization ChangeRequest'])
+            poSourceConnection.execute('insert into organizationcr_process_log (organizationcr_id, comments, date_processed) values (?,?,CURRENT_DATE)', [it.getCrId(),'Duplicate Organization ChangeRequest'])
         }
     }
 }
