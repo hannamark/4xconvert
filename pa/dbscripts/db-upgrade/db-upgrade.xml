@@ -1117,4 +1117,16 @@
         <comment>Added support for many secondary purposes on a trial.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513-2.sql"/>
      </changeSet>     
+     <changeSet id="PO-3477" author="Reshma">
+        <comment>Create new tables for Bio Marker attributes and inserts statements.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-3477.sql"/>
+     </changeSet>
+      <changeSet id="PO-5570" author="Reshma">
+        <comment>Alter planned marker column datatype </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5570.sql"/>
+     </changeSet>
+     <changeSet id="PO-5493" author="Reshma">
+        <comment>Add additional columns to planned marker table  </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5493.sql"/>
+     </changeSet>
 </databaseChangeLog>
