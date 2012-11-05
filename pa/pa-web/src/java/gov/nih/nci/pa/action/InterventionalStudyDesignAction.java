@@ -202,24 +202,39 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
                 addToCdToList(subject, cds);
             }
             ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(cds));
-
             PaRegistry.getStudyProtocolService().updateInterventionalStudyProtocol(ispDTO, "DesignDetails");
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-            
-            if (PAConstants.NON_INTERVENTIONAL.equalsIgnoreCase(webDTO
-                    .getStudyType())) {
-                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
-                        studyProtocolIi, StudyTypeCode.NON_INTERVENTIONAL);
-                return "nisdesign";
-            }            
-            
-            detailsQuery();
-           
+            detailsQuery();           
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return "details";
     }
+    
+    
+    /**
+     * @return String
+     * @throws PAException
+     */
+    public String changeStudyType() {
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                    .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            if (PAConstants.NON_INTERVENTIONAL.equalsIgnoreCase(webDTO
+                    .getStudyType())) {
+                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
+                        studyProtocolIi, StudyTypeCode.NON_INTERVENTIONAL);
+                ServletActionContext.getRequest().setAttribute(
+                        Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+                return "nisdesign";
+            }
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return "details";
+    }
+    
     /**
      *
      * @param input string

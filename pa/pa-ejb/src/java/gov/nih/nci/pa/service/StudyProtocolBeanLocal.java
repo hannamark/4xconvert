@@ -1178,6 +1178,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         try {
             StudyProtocolQueryDTO queryDTO = protocolQueryService
                     .getTrialSummaryByStudyProtocolId(studyId);
+            String leadID = queryDTO.getLocalStudyProtocolIdentifier();
             String nciID = queryDTO.getNciIdentifier();
             String nctID = paServiceUtils.getStudyIdentifier(
                     IiConverter.convertToStudyProtocolIi(studyId),
@@ -1197,6 +1198,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                         .getOtherIdentifiers() : otherIDs;
             }
             
+            updatePendingTrialAssociationsToActive(studyId, leadID, IdentifierType.LEAD_ORG);
             updatePendingTrialAssociationsToActive(studyId, nciID, IdentifierType.NCI);
             updatePendingTrialAssociationsToActive(studyId, nctID, IdentifierType.NCT);
             updatePendingTrialAssociationsToActive(studyId, ctepID, IdentifierType.CTEP);
@@ -1253,20 +1255,28 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     @Override
-    public void changeStudyProtocolType(Ii studyProtocolIi,
-            StudyTypeCode code) throws PAException {
-        
+    public void changeStudyProtocolType(Ii studyProtocolIi, StudyTypeCode code)
+            throws PAException {
+
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
 
-        session.createSQLQuery("update study_protocol set study_protocol_type='"
-                + (code == StudyTypeCode.INTERVENTIONAL ? InterventionalStudyProtocol.class
-                        .getSimpleName() : NonInterventionalStudyProtocol.class
-                        .getSimpleName())
-                + "' where identifier="
-                + IiConverter.convertToLong(studyProtocolIi)).executeUpdate();
+        final boolean interventional = code == StudyTypeCode.INTERVENTIONAL;
+        final Long id = IiConverter.convertToLong(studyProtocolIi);
+        session.createSQLQuery(
+                "update study_protocol set study_protocol_type='"
+                        + (interventional ? InterventionalStudyProtocol.class
+                                .getSimpleName()
+                                : NonInterventionalStudyProtocol.class
+                                        .getSimpleName())
+                        + "' where identifier=" + id).executeUpdate();
+        if (interventional) {
+            session.createSQLQuery(
+                    "update study_protocol set study_subtype_code = null"
+                            + " where identifier=" + id).executeUpdate();
+        }
         session.flush();
         session.clear();
-        
+
     }
 }

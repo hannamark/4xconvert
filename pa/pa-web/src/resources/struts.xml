@@ -463,7 +463,7 @@
         <action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">outcomecreate,outcomeupdate,detailsQuery</param>
+                <param name="includeMethods">outcomecreate,outcomeupdate,detailsQuery,changeStudyType</param>
             </interceptor-ref>
             <result name="details">/WEB-INF/jsp/scientific/isdesignDetails.jsp</result>
             <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
@@ -476,7 +476,7 @@
         <action name="noninterventionalStudyDesign*" class="gov.nih.nci.pa.action.NonInterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">updateDesign</param>
+                <param name="includeMethods">updateDesign,changeStudyType</param>
             </interceptor-ref>            
             <result name="details">/WEB-INF/jsp/nonIntDesignDetails.jsp</result>
             <result name="isdesign" type="redirectAction">

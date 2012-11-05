@@ -192,14 +192,6 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
             PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospFromDatabaseDTO);          
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-            
-            if (PAConstants.INTERVENTIONAL.equalsIgnoreCase(webDTO
-                    .getStudyType())) {
-                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
-                        studyProtocolIi, StudyTypeCode.INTERVENTIONAL);
-                return "isdesign";
-            }
-            
             detailsQuery();
         } catch (Exception e) {
             LOG.error(e, e);
@@ -209,6 +201,28 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         return "details";
     }
 
+    /**
+     * @return String
+     * @throws PAException
+     */
+    public String changeStudyType() {
+        try {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest()
+                    .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);            
+            if (PAConstants.INTERVENTIONAL.equalsIgnoreCase(webDTO
+                    .getStudyType())) {
+                PaRegistry.getStudyProtocolService().changeStudyProtocolType(
+                        studyProtocolIi, StudyTypeCode.INTERVENTIONAL);
+                ServletActionContext.getRequest().setAttribute(
+                        Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+                return "isdesign";
+            }
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return "details";
+    }
 
     private void enforceBusinessRules() {
         validateBaseFields();

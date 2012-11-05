@@ -39,6 +39,14 @@ function handleAction(){
  document.forms[0].action="noninterventionalStudyDesignupdateDesign.action";
  document.forms[0].submit(); 
 } 
+
+
+function changeStudyType() {
+    displayWaitPanel();
+    document.forms[0].action="noninterventionalStudyDesignchangeStudyType.action";
+    document.forms[0].submit(); 
+}
+
 function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
@@ -69,6 +77,48 @@ function displayPrimaryPurposeOtherText(){
 
     <tr>
         <td  scope="row" class="label"><label>
+            <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
+        <td>
+          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+                    onchange="changeStudyType();"
+                   value="webDTO.studyType" cssStyle="width:200px"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.studyType</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+
+ <tr>
+        <td style="padding: 0 0 0 0;"></td>
+        <td style="padding: 0 0 0 0;">
+            <p class="info" style="margin-top: 0px;">
+                Changing Study Type will immediately reload this page in order to display
+                data fields that apply to Interventional Trials. 
+            </p>
+        </td>
+    </tr>
+
+    <tr>
+        <td  scope="row" class="label"><label>
+            <fmt:message key="osdesign.details.study.subtype"/><span class="required">*</span></label></td>
+        <s:set name="StudySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
+        <td>
+          <s:select headerKey="" headerValue="" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
+                   value="webDTO.studySubtypeCode" cssStyle="width:200px" onchange="toggleFields()"/>
+          <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.studySubtypeCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+
+
+
+    <tr>
+        <td  scope="row" class="label"><label>
             <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
         <td>
@@ -96,35 +146,6 @@ function displayPrimaryPurposeOtherText(){
          </td>
       </tr>
 
-    <tr>
-        <td  scope="row" class="label"><label>
-            <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
-        <td>
-          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
-                   value="webDTO.studyType" cssStyle="width:200px"/>
-          <span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>webDTO.studyType</s:param>
-             </s:fielderror>                            
-          </span>
-        </td>
-    </tr>
-
-
-    <tr>
-        <td  scope="row" class="label"><label>
-            <fmt:message key="osdesign.details.study.subtype"/><span class="required">*</span></label></td>
-        <s:set name="StudySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
-        <td>
-          <s:select headerKey="" headerValue="" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
-                   value="webDTO.studySubtypeCode" cssStyle="width:200px" onchange="toggleFields()"/>
-          <span class="formErrorMsg"> 
-             <s:fielderror>
-               <s:param>webDTO.studySubtypeCode</s:param>
-             </s:fielderror>                            
-          </span>
-        </td>
-    </tr>
 
 	<tr>
 	 	<td  scope="row" class="label"><label>

@@ -98,6 +98,12 @@ function handleAction(){
  } 
 } 
 
+function changeStudyType() {
+	displayWaitPanel();
+	document.forms[0].action="interventionalStudyDesignchangeStudyType.action";
+	document.forms[0].submit();	
+}
+
 function tooltip() {
 	BubbleTips.activateTipOn("acronym");
 	BubbleTips.activateTipOn("dfn"); 
@@ -141,6 +147,7 @@ function initialize() {
             <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
         <td>
           <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+                   onchange="changeStudyType();"
                    value="webDTO.studyType" cssStyle="width:200px"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
@@ -149,7 +156,16 @@ function initialize() {
           </span>
         </td>
     </tr>
-
+    
+    <tr>
+        <td style="padding: 0 0 0 0;"></td>
+        <td style="padding: 0 0 0 0;">
+            <p class="info" style="margin-top: 0px;">
+                Changing Study Type will immediately reload this page in order to display
+                data fields that apply to Non-Interventional Trials. 
+            </p>
+        </td>
+    </tr>
 
 	<tr>
 	 	<td  scope="row" class="label"><label>
