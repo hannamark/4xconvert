@@ -104,7 +104,6 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -168,7 +167,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             Collection<Object> results = appService.search(DataElement.class, dataElement);
             DataElement de = (DataElement) results.iterator().next();
             String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
-
+            
             List<Object> permissibleValues = appService.query(constructSearchCriteria(vdId));
             List<CaDSRWebDTO> values = getSearchResults(permissibleValues);
             markers.addAll(values);
@@ -272,7 +271,12 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             if (newName.contains("-")) {
                  newName = getName().replaceAll("-", "");
             }
-            criteria.add(Expression.ilike("pv.value", newName, MatchMode.ANYWHERE));
+           criteria.add(Expression.or(Expression.or(
+                  Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                  Expression.ilike("pv.value", getName(), MatchMode.ANYWHERE)), 
+                  Expression.ilike("pv.value", newName, MatchMode.ANYWHERE)));
+           
+            
         }
         if (StringUtils.isNotEmpty(getMeaning())) {
             criteria.add(Expression.ilike("vm.longName", getMeaning(), MatchMode.ANYWHERE));
