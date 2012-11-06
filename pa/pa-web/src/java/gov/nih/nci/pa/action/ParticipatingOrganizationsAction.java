@@ -151,6 +151,7 @@ import java.util.Map;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -226,15 +227,20 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private List<StudyOverallStatusWebDTO> overallStatusList;
 
     // Cache for org list
-    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static CacheManager cacheManager;
     private static final String CACHE_KEY = "PARTICIPATING_ORG_CACHE_KEY";
     private static final int CACHE_MAX_ELEMENTS = 10;
     private static final long CACHE_TIME = 120;
-    static {
-        Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
-                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
-        CACHE_MANAGER.removeCache(CACHE_KEY);
-        CACHE_MANAGER.addCache(cache);
+
+    private Cache getPartSiteCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                    CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+            cacheManager.removeCache(CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(CACHE_KEY);
     }
 
     /**
@@ -283,7 +289,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException exception
      */
     public String create() throws PAException {
-        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
+        getPartSiteCache().remove(spIi);
         ServletActionContext.getRequest().getSession().removeAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         loadForm();
         setNewParticipation(true);
@@ -325,7 +331,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException exception
      */
     public void facilitySaveOrUpdate() throws PAException {
-        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
+        getPartSiteCache().remove(spIi);
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab != null) {
@@ -484,7 +490,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException  exception
      */
     public String edit() throws PAException {
-        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
+        getPartSiteCache().remove(spIi);
         setCurrentAction("edit");
         StudySiteDTO spDto = studySiteService.get(IiConverter.convertToIi(cbValue));
         editOrg = correlationUtils.getPAOrganizationByIi(spDto.getHealthcareFacilityIi());
@@ -528,7 +534,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @throws PAException  exception
      */
     public String delete() throws PAException {
-        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
+        getPartSiteCache().remove(spIi);
         clearErrorsAndMessages();
         try {
             deleteSelectedObjects();
@@ -553,7 +559,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
 
     @SuppressWarnings("unchecked")
     private void loadForm() throws PAException {
-        Element cachedOrgList = CACHE_MANAGER.getCache(CACHE_KEY).get(spIi);
+        Element cachedOrgList = getPartSiteCache().get(spIi);
         if (cachedOrgList != null) {
             setOrganizationList((List<PaOrganizationDTO>) cachedOrgList.getObjectValue());
             return;
@@ -613,7 +619,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             organizationList.add(orgWebDTO);
         }
         Element element = new Element(spIi, organizationList);
-        CACHE_MANAGER.getCache(CACHE_KEY).put(element);
+        getPartSiteCache().put(element);
     }
 
     private String convertInvestigators(List<PaPersonDTO> pis, List<PaPersonDTO> sis) throws PAException {
@@ -1468,7 +1474,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      * @return s
      */
    public String proprietarySave() {
-        CACHE_MANAGER.getCache(CACHE_KEY).remove(spIi);
+       getPartSiteCache().remove(spIi);
        clearErrorsAndMessages();
        enforceBusinessRulesForProprietary();
        if (hasErrors()) {

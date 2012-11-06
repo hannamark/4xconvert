@@ -135,6 +135,7 @@ import javax.interceptor.Interceptors;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -167,15 +168,20 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
 
     // Cache for disease Ii's
-    private static final CacheManager CACHE_MANAGER = CacheManager.create();
+    private static CacheManager cacheManager;
     private static final String DISEASE_CACHE_KEY = "BATCH_DISEASE_CACHE_KEY";
     private static final int CACHE_MAX_ELEMENTS = 500;
     private static final long CACHE_TIME = 43200;
-    static {
-        Cache cache = new Cache(DISEASE_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
-                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
-        CACHE_MANAGER.removeCache(DISEASE_CACHE_KEY);
-        CACHE_MANAGER.addCache(cache);
+
+    private Cache getDiseaseCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(DISEASE_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                    CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+            cacheManager.removeCache(DISEASE_CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(DISEASE_CACHE_KEY);
     }
 
     /**
@@ -365,7 +371,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (StringUtils.isEmpty(diseaseCode)) {
             return;
         }
-        Element element = CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).get(diseaseCode);
+        Element element = getDiseaseCache().get(diseaseCode);
         if (element == null) {
             Ii diseaseIi = null;
             SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
@@ -381,7 +387,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 }
             }
             element = new Element(diseaseCode, diseaseIi);
-            CACHE_MANAGER.getCache(DISEASE_CACHE_KEY).put(element);
+            getDiseaseCache().put(element);
         }
         saDTO.setDiseaseIdentifier((Ii) element.getValue());
     }
