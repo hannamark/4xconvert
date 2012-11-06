@@ -249,7 +249,11 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         return convertFromDomainToDTOs(getBosByStudySite(studySiteId));
     }
 
-    private StudySiteAccrualAccessDTO getByStudySiteAndUser(Long studySiteId,
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySiteAccrualAccessDTO getByStudySiteAndUser(Long studySiteId,
             Long registryUserId) throws PAException {
         final StudySiteAccrualAccess bo = getBosByStudySiteAndUser(studySiteId,
                 registryUserId);

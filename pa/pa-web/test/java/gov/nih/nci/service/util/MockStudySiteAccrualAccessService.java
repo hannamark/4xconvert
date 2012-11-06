@@ -267,4 +267,11 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
             throws PAException {
         return new ArrayList<AccrualAccessAssignmentByTrialDTO>();
     }
+
+	@Override
+	public StudySiteAccrualAccessDTO getByStudySiteAndUser(Long studySiteId,
+			Long registryUserId) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

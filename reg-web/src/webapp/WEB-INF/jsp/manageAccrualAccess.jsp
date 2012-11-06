@@ -153,6 +153,11 @@
     	});
     	rows.length = 0;
     }
+    
+    function assignUnassignSASubmitter(el) {
+        el.form.action='manageAccrualAccessassignUnAssignSASubmitter.action';
+        el.form.submit();
+    }
 
 </script>
 </head>
@@ -192,8 +197,11 @@
                        <s:select name="userId" id="userId" cssStyle="width:300px;"
                                 onchange="change(this);"
                                 list="model.users" 
-                                    listKey="id" listValue="%{lastName + ', ' +  firstName}"
-                                headerKey="" headerValue=" " value="model.user.id" /></td>
+                                    listKey="id"  
+                                    listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
+                                headerKey="" headerValue=" " value="model.user.id" />
+                     <input type="button" value="Assign/Un-Assign Site Accrual Submitter"
+                                                    onclick="assignUnassignSASubmitter(this);" />  </td> 
                 </tr>
                 <tr>
                     <td height="20px"> </td>

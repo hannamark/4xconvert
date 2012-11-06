@@ -136,6 +136,46 @@ public class ManageAccrualAccessAction extends ActionSupport implements
      * @return String
      * @throws PAException PAException
      */
+    public String assignUnAssignSASubmitter() throws PAException {
+        String msg = "";
+        RegistryUser rUser = registryUserService.getUserById(userId);
+        if (!rUser.getSiteAccrualSubmitter()) {
+            getAllTrialsForSiteAccrualSubmitter();
+            assignAll();
+            rUser.setSiteAccrualSubmitter(true);
+            msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now submit accrual for "
+                + rUser.getAffiliateOrg() 
+                + " Institutional, Externally Peer Reviewed, and Industrial trials where "
+                + rUser.getAffiliateOrg() + " is a lead organization or participating site";
+        } else {
+            getAllTrialsForSiteAccrualSubmitter(); 
+            unassignAll();
+            rUser.setSiteAccrualSubmitter(false);
+            msg = rUser.getFirstName() + " " + rUser.getLastName() + " can not submit accrual for "
+                    + rUser.getAffiliateOrg() 
+                    + " Institutional, Externally Peer Reviewed, and Industrial trials where "
+                    + rUser.getAffiliateOrg() + " is a lead organization or participating site";
+        }
+        registryUserService.updateUser(rUser);
+        RegistryUser criteria = new RegistryUser();
+        criteria.setAffiliatedOrganizationId(currentUser
+                .getAffiliatedOrganizationId());
+        model.setUsers(sort(registryUserService.search(criteria)));
+        model.setUser(registryUserService.getUserById(userId));
+        ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
+        return SUCCESS;
+    }
+
+    private void getAllTrialsForSiteAccrualSubmitter() throws PAException {
+        model.setUser(registryUserService.getUserById(userId));
+        model.setTrialCategory(TrialCategory.ALL);
+        loadTrials();
+    }
+    
+    /**
+     * @return String
+     * @throws PAException PAException
+     */
     public String assignAll() throws PAException {
         Collection<Long> trialIDs = new HashSet<Long>();
         for (Collection<StudyProtocolHolder> trialList : model

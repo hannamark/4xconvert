@@ -93,7 +93,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Calendar;
@@ -185,7 +187,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
         assertTrue(auditDetails.isEmpty());
 
         StudySiteDTO studySiteDTO = studySiteService.get(identifier);
-
+        CSMUserService.setInstance(new MockCSMUserService());
         studySiteDTO.setTargetAccrualNumber(IntConverter.convertToInt(100));
         studySiteDTO = studySiteService.update(studySiteDTO);
 

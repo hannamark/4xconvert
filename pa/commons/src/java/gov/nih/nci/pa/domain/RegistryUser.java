@@ -130,6 +130,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private Long affiliatedOrganizationId;
     private UserOrgType affiliatedOrgUserType;
     private Boolean enableEmails;
+    private Boolean siteAccrualSubmitter;
 
     /**
      * @return the csmUser
@@ -447,6 +448,21 @@ public class RegistryUser extends AbstractEntity implements Auditable {
      */
     public void setEnableEmails(Boolean enableEmails) {
         this.enableEmails = enableEmails;
+    }
+
+    /**
+     * @return the siteAccrualSubmitter
+     */
+    @Column(name = "SITE_ACCRUAL_SUBMITTER")
+    public Boolean getSiteAccrualSubmitter() {
+        return siteAccrualSubmitter;
+    }
+
+    /**
+     * @param siteAccrualSubmitter the siteAccrualSubmitter to set
+     */
+    public void setSiteAccrualSubmitter(Boolean siteAccrualSubmitter) {
+        this.siteAccrualSubmitter = siteAccrualSubmitter;
     }
 
 }

@@ -128,6 +128,15 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
     List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException;
     
     /**
+     * Return a study site accrual access objects by site id and registryUserId.
+     * @param studySiteId study site id
+     * @param registryUserId registry User id
+     * @return study site accrual access object
+     * @throws PAException exception
+     */
+    StudySiteAccrualAccessDTO getByStudySiteAndUser(Long studySiteId, Long registryUserId) throws PAException;
+    
+    /**
      * Returns all trials and participating sites to which the User can submit accrual data.
      * @param user user
      * @return List<AccrualSubmissionAccessDTO>
