@@ -162,6 +162,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean sdcCode;
     private boolean icd9Code;
     private boolean checkDisease;
+    private boolean patientCheck;
     private final Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
@@ -351,14 +352,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
-        if (lineNumber == 2 && StringUtils.equalsIgnoreCase("PATIENTS", key) && !sdcCode && !icd9Code) {
+        if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && !sdcCode && !icd9Code) {
             String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
-            SDCDiseaseDTO sdc = getDisease(code, new StringBuffer());
-            ICD9DiseaseDTO icd9 = getICD9Disease(code, new StringBuffer());
-            if (sdc != null && icd9 == null) {
-                sdcCode = true;
-            } else if (sdc == null && icd9 != null) {
-                icd9Code = true;
+            if (StringUtils.isNotEmpty(code)) {
+                SDCDiseaseDTO sdc = getDisease(code, new StringBuffer());
+                ICD9DiseaseDTO icd9 = getICD9Disease(code, new StringBuffer());
+                if (sdc != null && icd9 == null) {
+                    sdcCode = true;
+                } else if (sdc == null && icd9 != null) {
+                    icd9Code = true;
+                }
+                patientCheck = true;
             }
             try {
                 checkDisease = getSearchStudySiteService().isStudySiteHasDCPId(sp.getIdentifier());
