@@ -194,6 +194,9 @@ public class PDQTrialLoaderPreprocessor {
         prependObservational(document);
 
         removePartSites(document);
+        checkRespParty(document);
+        checkPrimaryCompDate(document);
+        checkIndStudy(document);
 
         FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
         XMLOutputter outputter = new XMLOutputter();
@@ -201,6 +204,63 @@ public class PDQTrialLoaderPreprocessor {
         String output = outputter.outputString(document);
         osw.write(output);
         osw.close();
+    }
+    
+    private void checkIndStudy(Document document) {
+    	Element indStudy = document.getRootElement().getChild("is_ind_study");
+    	if (indStudy!= null && !indStudy.getText().isEmpty()) {
+    		if ("yes".equalsIgnoreCase(indStudy.getText())) {
+    			Element fdaRegulated = document.getRootElement().getChild("is_fda_regulated");
+    			if (fdaRegulated == null) {
+    				fdaRegulated = new Element("is_fda_regulated");
+    			}
+				fdaRegulated.setText("yes");
+				document.getRootElement().addContent(fdaRegulated);
+    		}
+    	}        
+    }
+    
+    private void checkPrimaryCompDate(Document document) {
+        Element primaryComplDate = document.getRootElement().getChild("primary_compl_date");
+        if (primaryComplDate.getText().isEmpty()) {
+        	Element overallStatus = document.getRootElement().getChild("overall_status");
+        	if ("Completed".equalsIgnoreCase(overallStatus.getText())) {
+        		Element leadOrgStatusElmt = document.getRootElement().getChild("lead_org_status");                
+        		primaryComplDate.setText(leadOrgStatusElmt.getAttributeValue("status_date"));
+        		document.getRootElement().getChild("primary_compl_date_type").setText("Actual"); 
+        	} else {
+        		primaryComplDate.setText(DEFAULT_FUTURE_DATE);
+        		document.getRootElement().getChild("primary_compl_date_type").setText("Anticipated");
+        	}
+        }
+    }
+    
+    private void checkRespParty(Document document) {
+        Element respParty = document.getRootElement().getChild("sponsors").getChild("resp_party");
+        if (respParty == null) {
+            Element rp = new Element("resp_party");
+            rp.setAttribute("party-type", "organization");
+            
+            Element name = new Element("name_title");
+            name.setText("National Cancer Institute");
+            rp.addContent(name);
+            
+            Element org = new Element("organization");
+            org.setAttribute("ctep-id", "NCI");
+            org.setText("National Cancer Institute");
+            rp.addContent(org);
+            
+            Element phone = new Element("phone");
+            phone.setText("866-319-4357");
+            rp.addContent(phone);
+            
+            Element email = new Element("email");
+            email.setText("NCICTRO@mail.nih.gov");
+            rp.addContent(email);
+
+            Element sponsors = document.getRootElement().getChild("sponsors");
+            sponsors.addContent(rp);
+        }
     }
 
     private void checkOutcomeMeasure(Document document) {    	
