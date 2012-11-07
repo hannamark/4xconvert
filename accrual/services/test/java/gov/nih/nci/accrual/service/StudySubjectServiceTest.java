@@ -164,6 +164,12 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         dto.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.UI));
         StudySubjectDto r = bean.create(dto);
         assertNotNull(r);
+        try {
+	        bean.delete(r.getIdentifier());
+	        fail();
+	    } catch (Exception ex) {
+	        // expected
+	    }
     }
     @Test
     public void update() throws Exception {

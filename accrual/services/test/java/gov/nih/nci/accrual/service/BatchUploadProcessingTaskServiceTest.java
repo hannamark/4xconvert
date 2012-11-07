@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -178,6 +179,7 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
             File f2 = new File(filePath);
             bean.processBatchUploads(batchFile);
             assertEquals(f1.getCanonicalPath(), f2.getCanonicalPath());
+            assertNotNull(bean.getBatchFileSvc());            
         }
     }
 }

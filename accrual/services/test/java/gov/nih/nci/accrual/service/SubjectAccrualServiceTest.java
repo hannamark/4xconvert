@@ -152,6 +152,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -548,6 +549,12 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     	ss.setHealthCareFacility(TestSchema.healthCareFacilities.get(0));
     	ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
     	TestSchema.addUpdObject(ss);
+    	bean.createAccrualAccess(TestSchema.registryUsers.get(0), ss.getId());
+    	
+    	List<StudySiteAccrualAccess> ssasList = PaHibernateUtil.getCurrentSession().createCriteria(StudySiteAccrualAccess.class)
+    			.add(Restrictions.eq("studySite.id", ss.getId())).add(Restrictions.eq("registryUser.id", TestSchema.registryUsers.get(0).getId())).list(); 
+    	StudySiteAccrualAccess ssaa = ssasList.get(0);
+    	ssaa.setStatusCode(ActiveInactiveCode.INACTIVE);    	
     	bean.createAccrualAccess(TestSchema.registryUsers.get(0), ss.getId());
     }
     
