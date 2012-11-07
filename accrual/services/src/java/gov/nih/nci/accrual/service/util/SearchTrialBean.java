@@ -400,8 +400,8 @@ public class SearchTrialBean implements SearchTrialService {
     void setTrialCountAndMaxDate(AccrualCountsDto ac, Query sqlCount) {
             List<Object[]> qList =  sqlCount.list();
             for (Object[] row : qList) {
-                ac.setDate((java.sql.Timestamp) row[0]);
-                ac.setTrialCount(Long.valueOf(((Number) row[1]).longValue()));
+                ac.setDate(row[0] == null ? null : (java.sql.Timestamp) row[0]);
+                ac.setTrialCount(row[1] == null ? null : Long.valueOf(((Number) row[1]).longValue()));
             }
     }
 
