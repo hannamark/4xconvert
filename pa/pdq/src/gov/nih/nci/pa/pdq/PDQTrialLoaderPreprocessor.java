@@ -211,11 +211,14 @@ public class PDQTrialLoaderPreprocessor {
     	if (indStudy!= null && !indStudy.getText().isEmpty()) {
     		if ("yes".equalsIgnoreCase(indStudy.getText())) {
     			Element fdaRegulated = document.getRootElement().getChild("is_fda_regulated");
-    			if (fdaRegulated == null) {
+    			if (fdaRegulated != null && !fdaRegulated.getText().isEmpty()
+    					&& !fdaRegulated.getText().equalsIgnoreCase("yes")) {
+    				fdaRegulated.setText("yes"); 
+    			} else if (fdaRegulated == null) {
     				fdaRegulated = new Element("is_fda_regulated");
+    				fdaRegulated.setText("yes");
+    				document.getRootElement().addContent(fdaRegulated);
     			}
-				fdaRegulated.setText("yes");
-				document.getRootElement().addContent(fdaRegulated);
     		}
     	}        
     }
