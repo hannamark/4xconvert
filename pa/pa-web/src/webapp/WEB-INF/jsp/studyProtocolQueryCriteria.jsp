@@ -77,7 +77,9 @@
         </s:if>
         <div class="box" id="filters">
             <s:form>
-            <s:token/>
+            <c:if test="${empty isBare}">  
+                <s:token/>
+            </c:if>
                 <pa:failureMessage/>
                 <c:if test="${isBare}">
 	                <p align="center" class="info">

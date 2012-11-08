@@ -39,6 +39,6 @@
             <div class="clear"><br /></div>            
             <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
         </div>
-        <s:form id="xsrfForm"><s:token/></s:form>
+        <s:form id="xsrfForm"></s:form>
     </body>
 </html>

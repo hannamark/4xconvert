@@ -653,6 +653,6 @@
         </action>
     </package>
     
-    <package name="bare" namespace="/bare" extends="protected"/>
+    <package name="bare" namespace="/bare" extends="protected"/> 
     
 </struts>
