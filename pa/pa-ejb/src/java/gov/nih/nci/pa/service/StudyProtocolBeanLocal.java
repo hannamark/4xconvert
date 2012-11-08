@@ -1255,28 +1255,20 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     @Override
-    public void changeStudyProtocolType(Ii studyProtocolIi, StudyTypeCode code)
-            throws PAException {
-
+    public void changeStudyProtocolType(Ii studyProtocolIi,
+            StudyTypeCode code) throws PAException {
+        
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
 
-        final boolean interventional = code == StudyTypeCode.INTERVENTIONAL;
-        final Long id = IiConverter.convertToLong(studyProtocolIi);
-        session.createSQLQuery(
-                "update study_protocol set study_protocol_type='"
-                        + (interventional ? InterventionalStudyProtocol.class
-                                .getSimpleName()
-                                : NonInterventionalStudyProtocol.class
-                                        .getSimpleName())
-                        + "' where identifier=" + id).executeUpdate();
-        if (interventional) {
-            session.createSQLQuery(
-                    "update study_protocol set study_subtype_code = null"
-                            + " where identifier=" + id).executeUpdate();
-        }
+        session.createSQLQuery("update study_protocol set study_protocol_type='"
+                + (code == StudyTypeCode.INTERVENTIONAL ? InterventionalStudyProtocol.class
+                        .getSimpleName() : NonInterventionalStudyProtocol.class
+                        .getSimpleName())
+                + "' where identifier="
+                + IiConverter.convertToLong(studyProtocolIi)).executeUpdate();
         session.flush();
         session.clear();
-
+        
     }
 }
