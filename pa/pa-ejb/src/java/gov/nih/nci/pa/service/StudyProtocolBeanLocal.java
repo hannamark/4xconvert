@@ -112,6 +112,7 @@ import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -1098,6 +1099,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     .convertFromDtoToDomain(trialAssociation);
             session.save(bo);
             session.flush();
+            updatePendingTrialAssociationToActive(bo);
         } catch (ConstraintViolationException e) {
             throw new PAValidationException("Association already exists");   // NOPMD         
         }
@@ -1138,9 +1140,32 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     .convertFromDtoToDomain(association);
             session.merge(bo);
             session.flush();
+            updatePendingTrialAssociationToActive(bo);
         } catch (ConstraintViolationException e) {
             throw new PAValidationException("Association already exists");   // NOPMD         
         }
+    }
+
+    private void updatePendingTrialAssociationToActive(
+            StudyProtocolAssociation spa) throws PAException {
+        if (spa.getStudyProtocolB() != null) {
+            // already active.
+            return;
+        }
+        if (StringUtils.isNotBlank(spa.getStudyIdentifier())
+                && spa.getIdentifierType() != null) {
+            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+            criteria.setIdentifierType(spa.getIdentifierType().getCode());
+            criteria.setIdentifier(spa.getStudyIdentifier().trim());            
+            criteria.setMyTrialsOnly(false);
+            List<StudyProtocolQueryDTO> trials = protocolQueryService
+                    .getStudyProtocolByCriteria(criteria);
+            for (StudyProtocolQueryDTO trialDTO : trials) {
+                updatePendingTrialAssociationsToActive(trialDTO
+                        .getStudyProtocolId());
+            }
+        }
+
     }
 
     @SuppressWarnings("deprecation")
