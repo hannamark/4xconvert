@@ -220,6 +220,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
                 indDTO.setGrantorCode(CdConverter.convertStringToCd(getText(indInfoNodeElt, "ind_grantor")));
                 indDTO.setIndldeNumber(StConverter.convertToSt(getText(indInfoNodeElt, "ind_number")));
                 studyIndldeDTOs.add(indDTO);
+                studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(true));
             }
         }
     }
