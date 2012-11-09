@@ -58,6 +58,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     private Map<String, String> studyIdentifierMap;
     private PersonDTO responsiblePartyContact;
     private Map<String, String> regAuthMap;
+    private String respPartytype;
     private static final Map<String, String> PHASE_MAP = new HashMap<String, String>();
     private static final Logger LOG  = Logger.getLogger(PDQRegistrationXMLParser.class);
     static {
@@ -253,6 +254,10 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         sponsorOrganizationDTO.setName(EnOnConverter.convertToEnOn(sponsorOrgName));
         //resp party
         Element respParty = parent.getChild("resp_party");
+        if (respParty != null) {
+            respPartytype = respParty.getAttributeValue("party-type");  
+        }
+        
         String email = getText(respParty, "email");
         if (StringUtils.isEmpty(email)) {
             email = "PIO@ctep.nci.nih.gov";
@@ -461,6 +466,20 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     @Override
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
+    }
+
+    /**
+     * @return the respPartytype
+     */
+    public String getRespPartytype() {
+        return respPartytype;
+    }
+
+    /**
+     * @param respPartytype the respPartytype to set
+     */
+    public void setRespPartytype(String respPartytype) {
+        this.respPartytype = respPartytype;
     }
 
 

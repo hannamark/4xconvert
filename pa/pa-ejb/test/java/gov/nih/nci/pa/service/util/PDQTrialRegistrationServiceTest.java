@@ -145,9 +145,14 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -189,6 +194,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
     private final Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private final PersonDTO mockPerson = new PersonDTO();
+    private OrganizationalContactCorrelationServiceRemote orgContactSvc;
 
     @Before
     public void setUp() throws Exception {
@@ -325,17 +331,28 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.setPaServiceUtils(new MockPAServiceUtils());
     }
 
-    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
+    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException, CurationException, EntityValidationException, NullifiedRoleException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
         poPersonSvc = mock(PersonEntityServiceRemote.class);
+        orgContactSvc = mock(OrganizationalContactCorrelationServiceRemote.class);
 
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(new MockPoResearchOrganizationCorrelationService());
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(new MockPoClinicalResearchStaffCorrelationService());
         when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(new MockPoHealthCareProviderCorrelationService());
+        when(poSvcLoc.getOrganizationalContactCorrelationService()).thenReturn(orgContactSvc);
+        
+        when(orgContactSvc.search(any(OrganizationalContactDTO.class))).thenReturn(new ArrayList<OrganizationalContactDTO>());
+        
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.ORGANIZATIONAL_CONTACT_ROOT);
+        ii.setExtension("1");
+        when(orgContactSvc.createCorrelation(any(OrganizationalContactDTO.class))).thenReturn(ii);
+        
+        when(orgContactSvc.getCorrelation(any(Ii.class))).thenReturn(new OrganizationalContactDTO());
 
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<OrganizationDTO>>() {
             @Override

@@ -101,6 +101,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -108,6 +109,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -116,6 +118,10 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -154,6 +160,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
 
     private static final Logger LOG = Logger.getLogger(PDQTrialRegistrationServiceBean.class);
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private Ii responsiblePartyContactIi = null;
     private static final Map<String, String> OVERALL_STATUS_MAP = new HashMap<String, String>();
     static {
         OVERALL_STATUS_MAP.put("NOT YET RECRUITING", StudyStatusCode.APPROVED.getCode());
@@ -207,17 +214,28 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      * @throws PAException on error
      */
     private Ii registerTrial(PDQRegistrationXMLParser parser, String userName) throws PAException, IOException {
+        OrganizationDTO sponserOrg = findOrCreateEntity(parser.getSponsorOrganizationDTO());
+        StudySiteContactDTO studySiteContactDTO;
+        try {
+            studySiteContactDTO = getStudySiteContactDTO(
+                    parser.getResponsiblePartyContact(), parser.getRespPartytype(), sponserOrg);
+        } catch (EntityValidationException e) {
+            throw new PAException("EntityValidationException during updateTrial " , e);
+        } catch (CurationException e) {
+            throw new PAException("CurationException during updateTrial " , e);
+        }
         return PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
                 getStudyProtocol(parser.getStudyProtocolDTO(), userName, null),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
                 getDocumentDtos(parser.getUrl()), findOrCreateEntity(parser.getLeadOrganizationDTO()),
                 findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                sponserOrg,
                 parser.getLeadOrganizationSiteIdentifierDTO(), loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
-                getStudyContactDTO(parser.getResponsiblePartyContact()), null,
+                getStudyContactDTO(parser.getResponsiblePartyContact(), parser.getRespPartytype()), 
+                studySiteContactDTO, 
                 getSummary4OrganizationDTO(),
-                getSummary4StudyResourcingDTO(), null,
+                getSummary4StudyResourcingDTO(), responsiblePartyContactIi,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 BlConverter.convertToBl(Boolean.TRUE));
     }
@@ -252,6 +270,17 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
         getPaServiceUtils().handleUpdatedTrialDocuments(nciId);
         
         //Then create the new trial
+        OrganizationDTO sponserOrg = findOrCreateEntity(parser.getSponsorOrganizationDTO());
+        StudySiteContactDTO studySiteContactDTO;
+        try {
+            studySiteContactDTO = getStudySiteContactDTO(
+                    parser.getResponsiblePartyContact(), parser.getRespPartytype(), sponserOrg);
+        } catch (EntityValidationException e) {
+            throw new PAException("EntityValidationException during updateTrial " , e);
+        } catch (CurationException e) {
+            throw new PAException("CurationException during updateTrial " , e);
+        }
+        
         Ii newSpId = PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
                 getStudyProtocol(parser.getStudyProtocolDTO(), userName, nciId),
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
@@ -259,11 +288,13 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
                 allDocuments,
                 findOrCreateEntity(parser.getLeadOrganizationDTO()),
                 findOrCreateEntity(parser.getPrincipalInvestigatorDTO()),
-                findOrCreateEntity(parser.getSponsorOrganizationDTO()),
+                sponserOrg,
                 parser.getLeadOrganizationSiteIdentifierDTO(),
                 loadStudyIdentifierDTOs(parser.getStudyIdentifierMap()),
-                getStudyContactDTO(parser.getResponsiblePartyContact()), null, getSummary4OrganizationDTO(),
-                getSummary4StudyResourcingDTO(), null,
+                getStudyContactDTO(parser.getResponsiblePartyContact(), parser.getRespPartytype()), 
+                studySiteContactDTO, 
+                getSummary4OrganizationDTO(),
+                getSummary4StudyResourcingDTO(), responsiblePartyContactIi,
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 BlConverter.convertToBl(Boolean.TRUE));
 
@@ -351,14 +382,48 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      * @param responsiblePartyContact
      * @return
      */
-    private StudyContactDTO getStudyContactDTO(PersonDTO responsiblePartyContact) {
-        StudyContactDTO contactDTO = new StudyContactDTO();
-        if (!PAUtil.isDSetTelNull(responsiblePartyContact.getTelecomAddress())) {
-            contactDTO.setTelecomAddresses(responsiblePartyContact.getTelecomAddress());
-        } else {
-            contactDTO.setTelecomAddresses(getUnknownTelecomeAddress());
+    private StudyContactDTO getStudyContactDTO(PersonDTO responsiblePartyContact, String respPartytype) {
+        StudyContactDTO contactDTO = null;
+        if (respPartytype != null && !respPartytype.equalsIgnoreCase("organization") || respPartytype == null) {
+            contactDTO = new StudyContactDTO();
+            if (!PAUtil.isDSetTelNull(responsiblePartyContact.getTelecomAddress())) {
+                contactDTO.setTelecomAddresses(responsiblePartyContact.getTelecomAddress());
+            } else {
+                contactDTO.setTelecomAddresses(getUnknownTelecomeAddress());
+            }
         }
         return contactDTO;
+    }
+    
+    /**
+     * @param responsiblePartyContact
+     * @param sponserOrg 
+     * @return
+     */
+    private StudySiteContactDTO getStudySiteContactDTO(PersonDTO responsiblePartyContact, 
+            String respPartytype, OrganizationDTO sponserOrg) throws EntityValidationException, CurationException {
+        StudySiteContactDTO iso = null;
+        if (respPartytype != null && respPartytype.equalsIgnoreCase("organization")) {
+            iso = new StudySiteContactDTO();
+            iso.setTelecomAddresses(responsiblePartyContact.getTelecomAddress());
+            OrganizationalContactDTO contactDTO = new OrganizationalContactDTO();
+            contactDTO.setScoperIdentifier(sponserOrg.getIdentifier());
+            contactDTO.setTitle(StConverter.convertToSt(
+                    EnPnConverter.convertToLastCommaFirstName(responsiblePartyContact.getName())));
+            contactDTO.setTelecomAddress(responsiblePartyContact.getTelecomAddress());
+            contactDTO.setTypeCode(CdConverter.convertStringToCd("Responsible Party"));
+            List<OrganizationalContactDTO> isoDtoList = new ArrayList<OrganizationalContactDTO>();
+            isoDtoList = PoRegistry.getOrganizationalContactCorrelationService().search(contactDTO);
+            if (isoDtoList.isEmpty()) {
+                // create the title
+                responsiblePartyContactIi = 
+                        PoRegistry.getOrganizationalContactCorrelationService().createCorrelation(contactDTO);
+            } else {
+                responsiblePartyContactIi = DSetConverter.convertToIi(isoDtoList.get(0).getIdentifier());
+            }
+            
+        } 
+        return iso;
     }
 
 
@@ -513,5 +578,19 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      */
     public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
         this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @return the responsiblePartyContactIi
+     */
+    public Ii getResponsiblePartyContactIi() {
+        return responsiblePartyContactIi;
+    }
+
+    /**
+     * @param responsiblePartyContactIi the responsiblePartyContactIi to set
+     */
+    public void setResponsiblePartyContactIi(Ii responsiblePartyContactIi) {
+        this.responsiblePartyContactIi = responsiblePartyContactIi;
     }
 }

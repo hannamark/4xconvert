@@ -139,6 +139,8 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -147,6 +149,8 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -199,6 +203,7 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
     private final URL testInvalidLocationContactPhoneXMLUrl = this.getClass().getResource("/CDR64184-invalid-location-contact-phone.xml");
     private final URL testDoubleBlindXMLUrl = this.getClass().getResource("/CDR360805.xml");
     private final URL testNoLocationsXMLUrl = this.getClass().getResource("/CDR360805-no-locations.xml");
+    private OrganizationalContactCorrelationServiceRemote orgContactSvc;
 
     @Before
     public void setUp() throws Exception {
@@ -268,7 +273,7 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getStudyOverallStatusService()).thenReturn(studyOverallStatusSvc);
     }
 
-    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
+    private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException, CurationException, EntityValidationException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
@@ -276,12 +281,23 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
         poCrscSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         poHcpcSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        orgContactSvc = mock(OrganizationalContactCorrelationServiceRemote.class);
+        
 
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(poCrscSvc);
         when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(poHcpcSvc);
         when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
+        when(poSvcLoc.getOrganizationalContactCorrelationService()).thenReturn(orgContactSvc);
+        
+        when(orgContactSvc.search(any(OrganizationalContactDTO.class))).thenReturn(new ArrayList<OrganizationalContactDTO>());
+        
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.ORGANIZATIONAL_CONTACT_ROOT);
+        ii.setExtension("1");
+        when(orgContactSvc.createCorrelation(any(OrganizationalContactDTO.class))).thenReturn(ii);
+        
         List<HealthCareFacilityDTO> hcfDtos = new ArrayList<HealthCareFacilityDTO>();
         HealthCareFacilityDTO hcfDto = new HealthCareFacilityDTO();
         DSet<Ii> dset = new DSet<Ii>();
