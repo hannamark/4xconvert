@@ -574,7 +574,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                     </tr>   
                                     <tr>
                                         <td scope="row" class="label">Summary 4 Funding</td>
-                                        <td><c:out value="${func:capitalizeFully(queryDTO.summary4FundingSponsorType)}"></c:out>
+                                        <td><c:out value="${func:capitalizeFully(fn:replace(queryDTO.summary4FundingSponsorType, '_',' '))}"></c:out>
                                         </td>
                                     </tr>  
                                     <tr>
