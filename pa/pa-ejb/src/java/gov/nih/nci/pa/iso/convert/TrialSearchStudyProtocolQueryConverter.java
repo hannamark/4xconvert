@@ -82,9 +82,6 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -107,13 +104,17 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.CsmUserUtil;
-import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 
 
@@ -183,7 +184,15 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
 
     private void setMilestoneHistory(StudyProtocolQueryDTO dto, StudyProtocol sp) {
         Set<StudyMilestone> copy = new TreeSet<StudyMilestone>(
-                new LastCreatedComparator());
+                new Comparator<StudyMilestone>() {
+                    @Override
+                    public int compare(StudyMilestone o1, StudyMilestone o2) {
+                        return new CompareToBuilder()
+                                .append(o1.getMilestoneDate(),
+                                        o2.getMilestoneDate())
+                                .append(o1.getId(), o2.getId()).toComparison();
+                    }
+                });
         copy.addAll(sp.getStudyMilestones());
         for (StudyMilestone sm : copy) {
             MilestoneDTO mDTO = new MilestoneDTO();

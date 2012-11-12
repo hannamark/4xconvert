@@ -528,8 +528,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                         <td scope="row" class="label">CDR ID</td>
                                         <td><c:out value="${not empty summaryDTO.cdrId?summaryDTO.cdrId:'N/A'}"/></td>
                                         <td colspan="2" rowspan="16">
-                                            <display:table class="data" sort="list" uid="milestones"
-                                                defaultsort="2"                                             
+                                            <display:table class="data" sort="list" uid="milestones"                                                                                             
                                                 name="${summaryDTO.milestoneHistory}"
                                                 export="false">                                             
                                                 <display:column title="Milestone"
