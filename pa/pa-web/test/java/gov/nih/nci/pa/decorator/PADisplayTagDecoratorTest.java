@@ -76,5 +76,18 @@ public class PADisplayTagDecoratorTest extends AbstractPaActionTest {
 		tab.initRow(de, 1, 1);
 		assertNotNull(tab.getViewPublicId());
 	}
+	
+    @Test
+    public void getTrialCategory() {
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        tab.initRow(dto, 1, 1);
+        assertEquals("Abbreviated", tab.getTrialCategory());
+
+        dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(false);
+        tab.initRow(dto, 1, 1);
+        assertEquals("Complete", tab.getTrialCategory());
+    }
 
 }

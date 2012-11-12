@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service.search;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -92,8 +93,10 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.util.PAConstants;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -101,6 +104,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.NotNullPredicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -110,7 +114,12 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
 /**
  * @author Abraham J. Evans-EL
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCriteria<StudyProtocol> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4056363230689185168L;
     private final StudyProtocolOptions spo;
     private static final String JOIN_CLAUSE = " left outer join obj.documentWorkflowStatuses as dws  "
         + "left outer join obj.studyMilestones as sms "
@@ -201,6 +210,16 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String LEAD_ORG_FUNCTIONAL_CODE_PARAM = "leadOrgFunctionalCode";
         private static final String LEAD_ORG_IDS_PARAM = "leadOrgIds";
         private static final String CTGOV_XML_REQUIRED_INDICATOR = "ctgovXmlRequiredIndicator";
+        private static final String SUBMITTED_ON_OR_AFTER_PARAM = "submittedOnOrAfter";
+        private static final String SUBMITTED_ON_OR_BEFORE_PARAM = "submittedOnOrBefore";
+        private static final String AFFILIATE_ORG_ID_PARAM = "affiliatedOrganizationId";
+        private static final String SPONSOR_FUNCTIONAL_CODE_PARAM = "sponsorFuncCode";
+        private static final String CURRENT_OR_PREV_MILESTONE_PARAM = "currentOrPreviousMilestone";
+        private static final String MILESTONE_TO_EXCLUDE_PARAM = "milestoneToExclude";
+        private static final String ONHOLD_REASONS_PARAM = "onholdReasons";
+        private static final String ACTIVE_MILESTONES_PARAM = "activeMilestones";
+        private static final String INACTIVE_MILESTONES_PARAM = "inactiveMilestones";
+        private static final String PROCESSING_PRIORITY_PARAM = "processingPriorityParam";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
        
@@ -216,7 +235,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         @Override
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
-
+            
             if (CollectionUtils.isNotEmpty(sp.getStudyOverallStatuses())) {
                 String operator = determineOperator(whereClause);
                 StudyStatusCode sos = sp.getStudyOverallStatuses().iterator().next().getStatusCode();
@@ -238,14 +257,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(DWS_PARAM, statusCodes);
             }
 
-            if (CollectionUtils.isNotEmpty(sp.getStudyMilestones())) {
-                String operator = determineOperator(whereClause);
-                MilestoneCode sms = sp.getStudyMilestones().iterator().next().getMilestoneCode();
-                whereClause.append(String.format(" %s sms.milestoneCode = :%s ", operator, SMS_PARAM));
-                whereClause.append(String.format(" and sms.id = (select max(id) from %s.studyMilestones)",
-                        SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(SMS_PARAM, sms);
-            }
+            handleMilestones(whereClause, params);            
 
             if (spo.isExcludeRejectedTrials()) {
                 String operator = determineOperator(whereClause);
@@ -268,6 +280,84 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                          SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
                 params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
             }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        @SuppressWarnings("PMD.ExcessiveMethodLength")
+        private void handleMilestones(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(sp.getStudyMilestones())) {
+                String operator = determineOperator(whereClause);
+                Set<MilestoneCode> statusCodes = new HashSet<MilestoneCode>();
+                for (StudyMilestone status : sp.getStudyMilestones()) {
+                    statusCodes.add(status.getMilestoneCode());
+                }
+                whereClause
+                        .append(String.format(
+                                " %s (sms.milestoneCode in (:%s) ", operator,
+                                SMS_PARAM));
+                whereClause
+                        .append(String
+                                .format(" and sms.id = (select max(id) from %s.studyMilestones))",
+                                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(SMS_PARAM, statusCodes);
+            }
+            
+            if (spo.getCurrentOrPreviousMilestone() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause
+                        .append(String
+                                .format(" %s (select count(id) from %s.studyMilestones where milestoneCode=:%s) > 0",
+                                        operator,
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        CURRENT_OR_PREV_MILESTONE_PARAM));
+                params.put(CURRENT_OR_PREV_MILESTONE_PARAM,
+                        spo.getCurrentOrPreviousMilestone());
+            }
+            
+            if (CollectionUtils.isNotEmpty(spo.getMilestoneFilters())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s ( ", operator));
+                int cnt = 0;
+                for (MilestoneFilter filter : spo.getMilestoneFilters()) {
+                    whereClause.append(String.format(
+                            "(sms.milestoneCode in (:%s) ",
+                            ACTIVE_MILESTONES_PARAM + cnt));
+                    
+                    if (!filter.getMilestonesToExclude().isEmpty()) {
+                        whereClause.append(String.format(
+                                " and (select count(id) from %s.studyMilestones "
+                                        + "where milestoneCode in (:%s)) = 0 ",
+                                SearchableUtils.ROOT_OBJ_ALIAS,
+                                INACTIVE_MILESTONES_PARAM + cnt));
+                        params.put(INACTIVE_MILESTONES_PARAM + cnt,
+                                filter.getMilestonesToExclude());
+                    }
+                    
+                    whereClause.append(String.format(" and sms.id = "
+                            + "(select max(id) from %s.studyMilestones "
+                            + "where milestoneCode not in (:%s)))",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            INACTIVE_MILESTONES_PARAM));
+                    
+                    params.put(ACTIVE_MILESTONES_PARAM + cnt,
+                            filter.getActiveMilestones());
+                    params.put(INACTIVE_MILESTONES_PARAM, Arrays.asList(
+                            MilestoneCode.SUBMISSION_REACTIVATED,
+                            MilestoneCode.SUBMISSION_TERMINATED));
+                    
+                    if (spo.getMilestoneFilters().indexOf(filter) < spo
+                            .getMilestoneFilters().size() - 1) {
+                        whereClause.append(" OR ");
+                    }
+                    cnt++;
+                }
+                whereClause.append(" ) ");
+            }
+            
         }
         
         private void handlePhaseCodes(StringBuffer whereClause, Map<String, Object> params) {
@@ -398,48 +488,60 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
         }
 
+        @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {
-            if (spo.isSearchOnHoldTrials()) {
-                String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
-                        + "not null and offholdDate is null) > 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
-            } else if (spo.isSearchOffHoldTrials()) {
-                String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
-                        + "not null and offholdDate is null) = 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
-            }            
+            
+            handleOnHolds(whereClause, params);
+            handleSubmissionTypes(whereClause);
+            handleCheckouts(whereClause, params);
+            handleSubmissionDateRange(whereClause, params);            
+            handleNciSponsored(whereClause, params);
+            handleCTEPAndDCP(whereClause, params);            
 
-            if (spo.getTrialSubmissionType() == SubmissionTypeCode.A) {
+            if (spo.isInboxProcessing()) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String
-                    .format(" %s (%s.submissionNumber > 1 and %s.amendmentDate is not null "
-                                    + "and (select count(id) from %s.studyInbox where closeDate is null) = 0)",
-                            operator,
-                            SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
-                            SearchableUtils.ROOT_OBJ_ALIAS));
-            } else if (spo.getTrialSubmissionType() == SubmissionTypeCode.O) {
-                String operator = determineOperator(whereClause);
-                whereClause.append(String
-                    .format(" %s (%s.submissionNumber = 1 and %s.amendmentNumber is null "
-                                    + "and %s.amendmentDate is null and (select count(id) from %s.studyInbox where "
-                                    + "closeDate is null) = 0)", operator, SearchableUtils.ROOT_OBJ_ALIAS,
-                            SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
-                            SearchableUtils.ROOT_OBJ_ALIAS));
-            } else if (spo.getTrialSubmissionType() == SubmissionTypeCode.U) {
-                String operator = determineOperator(whereClause);
-                // A trial is considered update when it has at least one study inbox entry without a close date.
                 whereClause.append(String.format(" %s (select count(id) from %s.studyInbox where closeDate is null) "
                         + "> 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }
-
-            if (spo.isLockedTrials()) {
+            
+            if (CollectionUtils.isNotEmpty(spo.getBioMarkers())) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
-                        + "userIdentifier = :%s and checkInDate is null) > 0", operator,
-                        SearchableUtils.ROOT_OBJ_ALIAS, CHECKOUT_PARAM));
-                params.put(CHECKOUT_PARAM, spo.getLockedUser());
+                whereClause.append(String.format(" %s exists (select plm.id from PlannedMarker plm "
+                                                         + "where plm.studyProtocol.id = %s.id and plm.id in (:%s))",
+                                                 operator,
+                                                 SearchableUtils.ROOT_OBJ_ALIAS, BIOMARKERS_PARAM));
+                params.put(BIOMARKERS_PARAM, spo.getBioMarkers());
             }
+            
+            if (CollectionUtils.isNotEmpty(spo.getPdqDiseases())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String
+                    .format(" %s exists (select sd.id from StudyDisease sd "
+                                    + "where sd.studyProtocol.id = %s.id and sd.disease.id in (:%s))", operator,
+                            SearchableUtils.ROOT_OBJ_ALIAS, PDQDISEASES_PARAM));
+                params.put(PDQDISEASES_PARAM, spo.getPdqDiseases());
+            }
+            
+            if (CollectionUtils.isNotEmpty(spo.getProcessingPriority())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(
+                        " %s (%s.processingPriority in (:%s)) ", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        PROCESSING_PRIORITY_PARAM));
+                params.put(PROCESSING_PRIORITY_PARAM,
+                        spo.getProcessingPriority());
+            }
+            
+            searchByIntervention(whereClause, params);
+        }
 
+        /**
+         * @param whereClause
+         * @param params
+         */
+        @SuppressWarnings("PMD.ExcessiveMethodLength")
+        private void handleCTEPAndDCP(StringBuffer whereClause,
+                Map<String, Object> params) {
             final String dcpIdExistsClause = "exists (select ssdcp.id from StudySite ssdcp where "
                     + "ssdcp.studyProtocol.id = "
                     + SearchableUtils.ROOT_OBJ_ALIAS
@@ -483,33 +585,203 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
                 whereClause.append(String.format(" %s (" + ctepIdExistsClause
                         + " or " + dcpIdExistsClause + ") ", operator));
-            }            
+            }
+            
+            if (spo.isExcludeCtepDcpTrials()) {
+                String operator = determineOperator(whereClause);
+                params.put(ID_ASSIGNER_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                whereClause.append(String.format(" %s not " + ctepIdExistsClause
+                        + " and not " + dcpIdExistsClause + " ", operator));
+            }
+            
+        }
 
-            if (spo.isInboxProcessing()) {
+        /**
+         * @param whereClause
+         */
+        private void handleOnHolds(StringBuffer whereClause, Map<String, Object> params) {
+            if (spo.isSearchOnHoldTrials()) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (select count(id) from %s.studyInbox where closeDate is null) "
-                        + "> 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
+                whereClause.append(String.format(
+                        " %s (select count(id) from %s.studyOnholds where onholdDate is " //NOPMD
+                        + "not null and offholdDate is null) > 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
+            } else if (spo.isSearchOffHoldTrials()) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                        + "not null and offholdDate is null) = 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }
             
-            if (CollectionUtils.isNotEmpty(spo.getBioMarkers())) {
+            if (Boolean.TRUE.equals(spo.getHoldRecordExists())) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s exists (select plm.id from PlannedMarker plm "
-                                                         + "where plm.studyProtocol.id = %s.id and plm.id in (:%s))",
-                                                 operator,
-                                                 SearchableUtils.ROOT_OBJ_ALIAS, BIOMARKERS_PARAM));
-                params.put(BIOMARKERS_PARAM, spo.getBioMarkers());
+                whereClause.append(String.format(
+                        " %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                + "not null) > 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS));
+            } else if (Boolean.FALSE.equals(spo.getHoldRecordExists())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(
+                        " %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                + "not null) = 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS));
             }
             
-            if (CollectionUtils.isNotEmpty(spo.getPdqDiseases())) {
+            if (CollectionUtils.isNotEmpty(spo.getOnholdReasons())) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String
-                    .format(" %s exists (select sd.id from StudyDisease sd "
-                                    + "where sd.studyProtocol.id = %s.id and sd.disease.id in (:%s))", operator,
-                            SearchableUtils.ROOT_OBJ_ALIAS, PDQDISEASES_PARAM));
-                params.put(PDQDISEASES_PARAM, spo.getPdqDiseases());
+                if (spo.isSearchOnHoldTrials()
+                        && !Boolean.TRUE.equals(spo.getHoldRecordExists())) {
+                    whereClause
+                            .append(String
+                                    .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                            + "not null and offholdDate is null and onholdReasonCode in (:%s)) > 0",
+                                            operator,
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            ONHOLD_REASONS_PARAM));
+                } else {
+                    whereClause
+                            .append(String
+                                    .format(" %s (select count(id) from %s.studyOnholds where onholdDate is "
+                                            + "not null and onholdReasonCode in (:%s)) > 0",
+                                            operator,
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            ONHOLD_REASONS_PARAM));
+                }
+                params.put(ONHOLD_REASONS_PARAM, spo.getOnholdReasons());
             }
-            
-            searchByIntervention(whereClause, params);
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleNciSponsored(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (Boolean.TRUE.equals(spo.getNciSponsored())) {
+                addNciSponsoredClause(whereClause, params, false);
+            } else if (Boolean.FALSE.equals(spo.getNciSponsored())) {
+                addNciSponsoredClause(whereClause, params, true);
+            }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void addNciSponsoredClause(StringBuffer whereClause,
+                Map<String, Object> params, boolean negation) {
+            String operator = determineOperator(whereClause);
+            whereClause
+                    .append(String
+                            .format(" %s (%s exists (select sponsor.id from StudySite sponsor where "
+                                    + "sponsor.studyProtocol.id = %s.id and sponsor.functionalCode = :"
+                                    + SPONSOR_FUNCTIONAL_CODE_PARAM
+                                    + " and sponsor.researchOrganization.organization.name='"
+                                    + PAConstants.NCI_ORG_NAME + "')) ",
+                                    operator, (negation ? "not" : ""),
+                                    SearchableUtils.ROOT_OBJ_ALIAS));
+            params.put(SPONSOR_FUNCTIONAL_CODE_PARAM,
+                    StudySiteFunctionalCode.SPONSOR);
+        }
+
+        /**
+         * @param whereClause
+         */
+        private void handleSubmissionTypes(StringBuffer whereClause) {
+            CollectionUtils.filter(spo.getTrialSubmissionTypes(), NotNullPredicate.INSTANCE);
+            if (CollectionUtils.isNotEmpty(spo.getTrialSubmissionTypes())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (", operator));
+
+                if (spo.getTrialSubmissionTypes()
+                        .contains(SubmissionTypeCode.A)) {
+                    whereClause
+                            .append(String
+                                    .format("(%s.submissionNumber > 1 and %s.amendmentDate is not null "
+                                            + "and (select count(id) from %s.studyInbox where closeDate is null) = 0)"
+                                            + " or ",
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            SearchableUtils.ROOT_OBJ_ALIAS));
+                }
+                if (spo.getTrialSubmissionTypes()
+                        .contains(SubmissionTypeCode.O)) {
+                    whereClause
+                            .append(String
+                                    .format("(%s.submissionNumber = 1 and %s.amendmentNumber is null "
+                                            + "and %s.amendmentDate is null and (select count(id) from %s.studyInbox"
+                                            + " where "
+                                            + "closeDate is null) = 0) or ",
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            SearchableUtils.ROOT_OBJ_ALIAS,
+                                            SearchableUtils.ROOT_OBJ_ALIAS));
+                }
+                if (spo.getTrialSubmissionTypes()
+                        .contains(SubmissionTypeCode.U)) {
+                    // A trial is considered update when it has at least one
+                    // study inbox entry without a close date.
+                    whereClause.append(String.format(
+                            "((select count(id) from %s.studyInbox where closeDate is null) "
+                                    + "> 0) or ",
+                            SearchableUtils.ROOT_OBJ_ALIAS));
+                }
+
+                whereClause.append(" 1=2)");
+
+            }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleSubmissionDateRange(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (spo.getSubmittedOnOrAfter() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(
+                        " %s (%s.dateLastCreated >=:%s)", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        SUBMITTED_ON_OR_AFTER_PARAM));
+                params.put(SUBMITTED_ON_OR_AFTER_PARAM,
+                        spo.getSubmittedOnOrAfter());
+            }
+            if (spo.getSubmittedOnOrBefore() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(
+                        " %s (%s.dateLastCreated <=:%s)", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        SUBMITTED_ON_OR_BEFORE_PARAM));
+                params.put(SUBMITTED_ON_OR_BEFORE_PARAM,
+                        spo.getSubmittedOnOrBefore());
+            }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleCheckouts(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (spo.isLockedTrials()) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
+                        + "userIdentifier = :%s and checkInDate is null) > 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS, CHECKOUT_PARAM));
+                params.put(CHECKOUT_PARAM, spo.getLockedUser());
+            }
+            if (Boolean.TRUE.equals(spo.getCheckedOut())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
+                        + "userIdentifier is not null and checkInDate is null) > 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS));                
+            }
+            if (Boolean.FALSE.equals(spo.getCheckedOut())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s (select count(id) from %s.studyCheckout where "
+                        + "userIdentifier is not null and checkInDate is null) = 0", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS));                
+            }
         }
 
         private void searchByIntervention(StringBuffer whereClause, Map<String, Object> params) {
@@ -600,6 +872,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
             handleOtherIdentifiers(whereClause);
             handleMyTrialsOnly(whereClause, params);
+            handleSubmitterAffiliation(whereClause, params);
         }
 
         /**
@@ -675,6 +948,26 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         operator, STUDY_OWNER_PARAM, STUDY_OWNER_PARAM, STUDY_OWNER_DWS_PARAM));
                 params.put(STUDY_OWNER_PARAM, spo.getUserId());
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.SUBMITTED);
+            }
+        }
+        
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleSubmitterAffiliation(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (StringUtils.isNotBlank(spo.getSubmitterAffiliateOrgId())) {
+                String operator = determineOperator(whereClause);
+                whereClause
+                        .append(String
+                                .format(" %s (exists (select id from RegistryUser where "
+                                        + "str(affiliatedOrganizationId) = :%s "
+                                        + "and csmUser.userId=%s.userLastCreated.userId))",
+                                        operator, AFFILIATE_ORG_ID_PARAM,
+                                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(AFFILIATE_ORG_ID_PARAM,
+                        spo.getSubmitterAffiliateOrgId());
             }
         }
 

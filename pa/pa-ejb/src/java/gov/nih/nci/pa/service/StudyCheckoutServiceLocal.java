@@ -107,4 +107,12 @@ public interface StudyCheckoutServiceLocal extends StudyPaService<StudyCheckoutD
     * @throws PAException exception
     */
     void checkIn(Ii studyProtocolIi, Cd type, St user, St comment) throws PAException;
+
+    /**
+     * Assigning a trial to an abstractor is equal to checking the trial out in that abstractor's name.
+     * Changes the study check out accordingly.
+     * @param studyProtocolId studyProtocolId
+     * @throws PAException PAException
+     */
+    void handleTrialAssigneeChange(Long studyProtocolId) throws PAException;
 }

@@ -82,13 +82,30 @@
  */
 package gov.nih.nci.pa.enums;
 
+import static gov.nih.nci.pa.enums.MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.ADMINISTRATIVE_QC_COMPLETE;
+import static gov.nih.nci.pa.enums.MilestoneCode.INITIAL_ABSTRACTION_VERIFY;
+import static gov.nih.nci.pa.enums.MilestoneCode.LATE_REJECTION_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION;
+import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE;
+import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_QC_COMPLETE;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_ACCEPTED;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_REACTIVATED;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_RECEIVED;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_REJECTED;
+import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_TERMINATED;
+import static gov.nih.nci.pa.enums.MilestoneCode.TRIAL_SUMMARY_FEEDBACK;
+import static gov.nih.nci.pa.enums.MilestoneCode.TRIAL_SUMMARY_SENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 /**
  * Tests for the MilestoneCode enum.
@@ -139,6 +156,22 @@ public class MilestoneCodeTest {
         for (int i = 0; i < result.size(); i++) {
             assertEquals(values[i].getCode(), result.get(i));
         }
+    }
+    
+    @Test
+    public void testGetMilestoneCodesForReporting() {
+        List<MilestoneCode> list = MilestoneCode
+                .getMilestoneCodesForReporting();
+        List<MilestoneCode> expectedList = Arrays.asList(SUBMISSION_RECEIVED,
+                SUBMISSION_ACCEPTED, SUBMISSION_REJECTED,
+                SUBMISSION_TERMINATED, SUBMISSION_REACTIVATED,
+                ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                ADMINISTRATIVE_QC_COMPLETE,
+                SCIENTIFIC_PROCESSING_COMPLETED_DATE, SCIENTIFIC_QC_COMPLETE,
+                TRIAL_SUMMARY_SENT, TRIAL_SUMMARY_FEEDBACK,
+                INITIAL_ABSTRACTION_VERIFY, ONGOING_ABSTRACTION_VERIFICATION,
+                LATE_REJECTION_DATE);
+        assertTrue(CollectionUtils.isEqualCollection(list, expectedList));
     }
 
 }

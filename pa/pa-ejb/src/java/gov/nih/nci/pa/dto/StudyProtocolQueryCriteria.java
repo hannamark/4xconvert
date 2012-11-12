@@ -79,14 +79,20 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.IdentifierType;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -140,8 +146,10 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Boolean excludeRejectProtocol;
     // for Registry trial search
     private Boolean myTrialsOnly;    
-    private String studyMilestone;
+    private List<String> studyMilestone = new ArrayList<String>();
     private String submissionType;
+    private List<SubmissionTypeCode> trialSubmissionTypes = new ArrayList<SubmissionTypeCode>();
+    private Boolean nciSponsored;
 
     // for Inbox Processing
     private Boolean inBoxProcessing;
@@ -171,10 +179,19 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<String> phaseCodes = new ArrayList<String>();
     private List<String> states = new ArrayList<String>();
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
+    private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();
     
     private String familyId = "0";
     private String participatingSiteFamilyId = "0";
     private String submitter;
+    private Boolean checkedOut;
+    private List<String> processingPriority = new ArrayList<String>();
+    private Date submittedOnOrAfter;
+    private Date submittedOnOrBefore;  
+    private String submitterAffiliateOrgId;
+    private Boolean holdRecordExists;
+    private MilestoneCode currentOrPreviousMilestone;          
+    private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
     
     /**
      * @return the inBoxProcessing
@@ -440,16 +457,22 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param studyMilestone the studyMilestone to set
+     * @param studyMilestone
+     *            the studyMilestone to set
      */
-    public void setStudyMilestone(String studyMilestone) {
+    public void setStudyMilestone(List<String> studyMilestone) {
         this.studyMilestone = studyMilestone;
+        CollectionUtils.filter(studyMilestone, new Predicate() {
+            public boolean evaluate(Object obj) {
+                return !StringUtils.EMPTY.equals(obj);
+            }
+        });
     }
 
     /**
      * @return the studyMilestone
      */
-    public String getStudyMilestone() {
+    public List<String> getStudyMilestone() {
         return studyMilestone;
     }
 
@@ -904,7 +927,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public String getUniqueCriteriaKey() { // NOPMD
         StringBuilder builder = new StringBuilder();
         builder.append("StudyProtocolQueryCriteria [studyProtocolId=")
-                .append(studyProtocolId).append(", anyTypeIdentifier=")
+                .append(studyProtocolId).append(", studyProtocolType=")
+                .append(studyProtocolType).append(", studySubtypeCode=")
+                .append(studySubtypeCode).append(", anyTypeIdentifier=")
                 .append(anyTypeIdentifier).append(", nciIdentifier=")
                 .append(nciIdentifier).append(", dcpIdentifier=")
                 .append(dcpIdentifier).append(", ctepIdentifier=")
@@ -927,12 +952,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(excludeRejectProtocol).append(", myTrialsOnly=")
                 .append(myTrialsOnly).append(", studyMilestone=")
                 .append(studyMilestone).append(", submissionType=")
-                .append(submissionType).append(", inBoxProcessing=")
+                .append(submissionType).append(", trialSubmissionTypes=")
+                .append(trialSubmissionTypes).append(", nciSponsored=")
+                .append(nciSponsored).append(", inBoxProcessing=")
                 .append(inBoxProcessing).append(", studyLockedBy=")
-                .append(studyLockedBy).append(", trialCategory=")                
-                .append(trialCategory).append(", holdStatus=")                
-                .append(holdStatus).append(", ctepDcpCategory=")
-                .append(ctepDcpCategory).append(", userId=").append(userId)
+                .append(studyLockedBy).append(", trialCategory=")
+                .append(trialCategory).append(", ctepDcpCategory=")
+                .append(ctepDcpCategory).append(", holdStatus=")
+                .append(holdStatus).append(", userId=").append(userId)
                 .append(", ctgovXmlRequiredIndicator=")
                 .append(ctgovXmlRequiredIndicator)
                 .append(", summ4FundingSourceId=").append(summ4FundingSourceId)
@@ -952,12 +979,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", pdqDiseases=").append(pdqDiseases)
                 .append(", phaseCodes=").append(phaseCodes).append(", states=")
                 .append(states).append(", summary4AnatomicSites=")
-                .append(summary4AnatomicSites).append(", familyId=")
-                .append(familyId).append(", participatingSiteFamilyId=")
+                .append(summary4AnatomicSites).append(", onholdReasons=")
+                .append(onholdReasons).append(", familyId=").append(familyId)
+                .append(", participatingSiteFamilyId=")
                 .append(participatingSiteFamilyId).append(", submitter=")
-                .append(submitter).append(", studyProtocolType=")
-                .append(studyProtocolType).append(", studySubtypeCode=")
-                .append(studySubtypeCode).append("]");
+                .append(submitter).append(", checkedOut=").append(checkedOut)
+                .append(", processingPriority=").append(processingPriority)
+                .append(", submittedOnOrAfter=").append(submittedOnOrAfter)
+                .append(", submittedOnOrBefore=").append(submittedOnOrBefore)
+                .append(", milestoneFilters=").append(milestoneFilters)
+                .append(", submitterAffiliateOrgId=")
+                .append(submitterAffiliateOrgId).append(", holdRecordExists=")
+                .append(holdRecordExists)
+                .append(", currentOrPreviousMilestone=")
+                .append(currentOrPreviousMilestone).append("]");
         return builder.toString();
     }
 
@@ -1043,6 +1078,164 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setStudySubtypeCode(String studySubtypeCode) {
         this.studySubtypeCode = studySubtypeCode;
-    }    
+    }
+
+    /**
+     * @return the checkedOut
+     */
+    public Boolean getCheckedOut() {
+        return checkedOut;
+    }
+
+    /**
+     * @param checkedOut the checkedOut to set
+     */
+    public void setCheckedOut(Boolean checkedOut) {
+        this.checkedOut = checkedOut;
+    }
+
+    /**
+     * @return the submittedOnOrAfter
+     */
+    public Date getSubmittedOnOrAfter() {
+        return submittedOnOrAfter;
+    }
+
+    /**
+     * @param submittedOnOrAfter the submittedOnOrAfter to set
+     */
+    public void setSubmittedOnOrAfter(Date submittedOnOrAfter) {
+        this.submittedOnOrAfter = submittedOnOrAfter;
+    }
+
+    /**
+     * @return the submittedOnOrBefore
+     */
+    public Date getSubmittedOnOrBefore() {
+        return submittedOnOrBefore;
+    }
+
+    /**
+     * @param submittedOnOrBefore the submittedOnOrBefore to set
+     */
+    public void setSubmittedOnOrBefore(Date submittedOnOrBefore) {
+        this.submittedOnOrBefore = submittedOnOrBefore;
+    }
+
+    /**
+     * @return the submitterAffiliateOrgId
+     */
+    public String getSubmitterAffiliateOrgId() {
+        return submitterAffiliateOrgId;
+    }
+
+    /**
+     * @param submitterAffiliateOrgId the submitterAffiliateOrgId to set
+     */
+    public void setSubmitterAffiliateOrgId(String submitterAffiliateOrgId) {
+        this.submitterAffiliateOrgId = submitterAffiliateOrgId;
+    }
+
+    /**
+     * @return the trialSubmissionTypes
+     */
+    public List<SubmissionTypeCode> getTrialSubmissionTypes() {
+        return trialSubmissionTypes;
+    }
+
+    /**
+     * @param trialSubmissionTypes the trialSubmissionTypes to set
+     */
+    public void setTrialSubmissionTypes(
+            List<SubmissionTypeCode> trialSubmissionTypes) {
+        this.trialSubmissionTypes = trialSubmissionTypes;
+    }
+
+    /**
+     * @return the nciSponsored
+     */
+    public Boolean getNciSponsored() {
+        return nciSponsored;
+    }
+
+    /**
+     * @param nciSponsored the nciSponsored to set
+     */
+    public void setNciSponsored(Boolean nciSponsored) {
+        this.nciSponsored = nciSponsored;
+    }
+
+    /**
+     * @return the holdRecordExists
+     */
+    public Boolean getHoldRecordExists() {
+        return holdRecordExists;
+    }
+
+    /**
+     * @param holdRecordExists the holdRecordExists to set
+     */
+    public void setHoldRecordExists(Boolean holdRecordExists) {
+        this.holdRecordExists = holdRecordExists;
+    }
+
+    /**
+     * @return the onholdReasons
+     */
+    public List<OnholdReasonCode> getOnholdReasons() {
+        return onholdReasons;
+    }
+
+    /**
+     * @param onholdReasons the onholdReasons to set
+     */
+    public void setOnholdReasons(List<OnholdReasonCode> onholdReasons) {
+        this.onholdReasons = onholdReasons;
+    }
+
+    /**
+     * @return the currentOrPreviousMilestone
+     */
+    public MilestoneCode getCurrentOrPreviousMilestone() {
+        return currentOrPreviousMilestone;
+    }
+
+    /**
+     * @param currentOrPreviousMilestone the currentOrPreviousMilestone to set
+     */
+    public void setCurrentOrPreviousMilestone(
+            MilestoneCode currentOrPreviousMilestone) {
+        this.currentOrPreviousMilestone = currentOrPreviousMilestone;
+    }
+
+    
+    /**
+     * @return the milestoneFilters
+     */
+    public List<MilestoneFilter> getMilestoneFilters() {
+        return milestoneFilters;
+    }
+
+    /**
+     * @param milestoneFilters the milestoneFilters to set
+     */
+    public void setMilestoneFilters(List<MilestoneFilter> milestoneFilters) {
+        this.milestoneFilters = milestoneFilters;
+    }
+
+    /**
+     * @return the processingPriority
+     */
+    public List<String> getProcessingPriority() {
+        return processingPriority;
+    }
+
+    /**
+     * @param processingPriority the processingPriority to set
+     */
+    public void setProcessingPriority(List<String> processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+        
     
 }

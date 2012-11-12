@@ -1050,7 +1050,7 @@
     <changeSet id="PO-5142" author="Kalpana">
         <comment>Add column to study_subject for delete reason and add a new row in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5142.sql"/>
-     </changeSet>
+     </changeSet> 
     <changeSet id="PO-5158" author="Hugh">
         <comment>Add column to study_site_subject_accrual_count for submission method.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5158.sql"/>
@@ -1062,7 +1062,7 @@
     <changeSet id="PO-5309" author="Kalpana">
         <comment>updated subject delete reasons value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5309.sql"/>
-     </changeSet>
+     </changeSet>  
      <changeSet id="PO-5206" author="krylovd">
         <comment>Added study_accrual_access table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5206.sql"/>
@@ -1074,7 +1074,7 @@
     <changeSet id="PO-5319-2" author="Kalpana">
         <comment>updated accrual changecode email in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5319-2.sql"/>
-     </changeSet>
+     </changeSet> 
     <changeSet id="PO-5380" author="Kalpana">
         <comment>updated registry batch upload email in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5380.sql"/>
@@ -1104,7 +1104,7 @@
      <changeSet id="PO-5545" author="monishd">
         <comment>New property trial.onhold.email.body added to pa_properties.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5545.sql"/>
-     </changeSet>
+     </changeSet>  
      <changeSet id="PO-5513" author="krylovd">
         <comment>Added support for non-interventional trials.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513.sql"/>
@@ -1116,7 +1116,7 @@
      <changeSet id="PO-5513-2" author="krylovd">
         <comment>Added support for many secondary purposes on a trial.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513-2.sql"/>
-     </changeSet>
+     </changeSet>  
      <changeSet id="PO-3477" author="Reshma">
         <comment>Create new tables for Bio Marker attributes and inserts statements.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-3477.sql"/>
@@ -1140,5 +1140,9 @@
      <changeSet id="study_protocol.pti.notnull" author="Hugh">
         <comment>Not null constraint to prevent corruption found on Stage tier.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/study_protocol.pti.notnull.sql"/>
+     </changeSet>
+     <changeSet id="PO-3376" author="krylovd">
+        <comment>Added processing priority and processing comments to study_protocol.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-3376.sql"/>
      </changeSet>
 </databaseChangeLog>

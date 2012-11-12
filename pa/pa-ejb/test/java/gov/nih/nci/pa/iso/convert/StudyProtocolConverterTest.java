@@ -198,6 +198,10 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         assertEquals(sp.getScientificDescription(), spDTO.getScientificDescription().getValue());
         assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
+        assertEquals(sp.getComments() ,spDTO.getComments().getValue());
+        assertEquals(sp.getProcessingPriority() ,spDTO.getProcessingPriority().getValue());
+        assertEquals(sp.getAssignedUser().getUserId().toString() ,spDTO.getAssignedUser().getExtension());
+        
     }
 
     @Test

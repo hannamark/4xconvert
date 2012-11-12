@@ -83,10 +83,13 @@
 package gov.nih.nci.pa.service.search;
 
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -96,14 +99,15 @@ import org.apache.commons.lang.StringUtils;
  * @author Abraham J. Evans-EL
  *
  */
-@SuppressWarnings({"PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.ExcessiveClassLength",
+        "PMD.TooManyMethods" })
 public class StudyProtocolOptions {
 
     private boolean excludeRejectedTrials;
     private boolean myTrialsOnly;
     private boolean searchOnHoldTrials;   
     private boolean searchOffHoldTrials;
-    private SubmissionTypeCode trialSubmissionType;
+    private List<SubmissionTypeCode> trialSubmissionTypes = new ArrayList<SubmissionTypeCode>();
     private boolean lockedTrials;
     private boolean searchCTEPTrials;
     private boolean searchDCPTrials;    
@@ -125,6 +129,17 @@ public class StudyProtocolOptions {
     private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
     private Boolean ctgovXmlRequiredIndicator; 
     private String anyTypeIdentifier;
+    private Boolean checkedOut;
+    private Date submittedOnOrAfter;
+    private Date submittedOnOrBefore;
+    private String submitterAffiliateOrgId;
+    private Boolean nciSponsored;
+    private Boolean holdRecordExists;
+    private boolean excludeCtepDcpTrials;
+    private MilestoneCode currentOrPreviousMilestone;  
+    private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();    
+    private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();    
+    private List<Integer> processingPriority = new ArrayList<Integer>();
     
     /**
      * @return excludeRejectedTrials
@@ -167,20 +182,7 @@ public class StudyProtocolOptions {
     public void setSearchOnHoldTrials(boolean searchOnHoldTrials) {
         this.searchOnHoldTrials = searchOnHoldTrials;
     }
-
-    /**
-     * @return trialSubmissionType
-     */
-    public SubmissionTypeCode getTrialSubmissionType() {
-        return trialSubmissionType;
-    }
-
-    /**
-     * @param trialSubmissionType the trial submission type
-     */
-    public void setTrialSubmissionType(SubmissionTypeCode trialSubmissionType) {
-        this.trialSubmissionType = trialSubmissionType;
-    }
+    
 
     /**
      * @return lockedTrials
@@ -518,6 +520,229 @@ public class StudyProtocolOptions {
     public void setAnyTypeIdentifier(String anyTypeIdentifier) {
         this.anyTypeIdentifier = anyTypeIdentifier;
     }
+
+    /**
+     * @return the checkedOut
+     */
+    public Boolean getCheckedOut() {
+        return checkedOut;
+    }
+
+    /**
+     * @param checkedOut the checkedOut to set
+     */
+    public void setCheckedOut(Boolean checkedOut) {
+        this.checkedOut = checkedOut;
+    }
+
+    /**
+     * @return the submittedOnOrAfter
+     */
+    public Date getSubmittedOnOrAfter() {
+        return submittedOnOrAfter;
+    }
+
+    /**
+     * @param submittedOnOrAfter the submittedOnOrAfter to set
+     */
+    public void setSubmittedOnOrAfter(Date submittedOnOrAfter) {
+        this.submittedOnOrAfter = submittedOnOrAfter;
+    }
+
+    /**
+     * @return the submittedOnOrBefore
+     */
+    public Date getSubmittedOnOrBefore() {
+        return submittedOnOrBefore;
+    }
+
+    /**
+     * @param submittedOnOrBefore the submittedOnOrBefore to set
+     */
+    public void setSubmittedOnOrBefore(Date submittedOnOrBefore) {
+        this.submittedOnOrBefore = submittedOnOrBefore;
+    }
+
+    /**
+     * @return the submitterAffiliateOrgId
+     */
+    public String getSubmitterAffiliateOrgId() {
+        return submitterAffiliateOrgId;
+    }
+
+    /**
+     * @param submitterAffiliateOrgId the submitterAffiliateOrgId to set
+     */
+    public void setSubmitterAffiliateOrgId(String submitterAffiliateOrgId) {
+        this.submitterAffiliateOrgId = submitterAffiliateOrgId;
+    }
+
+    /**
+     * @return the trialSubmissionTypes
+     */
+    public List<SubmissionTypeCode> getTrialSubmissionTypes() {
+        return trialSubmissionTypes;
+    }
+
+    /**
+     * @param trialSubmissionTypes the trialSubmissionTypes to set
+     */
+    public void setTrialSubmissionTypes(
+            List<SubmissionTypeCode> trialSubmissionTypes) {
+        this.trialSubmissionTypes = trialSubmissionTypes;
+    }
     
+    /**
+     * @param code SubmissionTypeCode
+     */
+    public void setTrialSubmissionType(SubmissionTypeCode code) {
+        this.trialSubmissionTypes.add(code);
+    }
+
+    /**
+     * @return the nciSponsored
+     */
+    public Boolean getNciSponsored() {
+        return nciSponsored;
+    }
+
+    /**
+     * @param nciSponsored the nciSponsored to set
+     */
+    public void setNciSponsored(Boolean nciSponsored) {
+        this.nciSponsored = nciSponsored;
+    }
+
+    /**
+     * @return the holdRecordExists
+     */
+    public Boolean getHoldRecordExists() {
+        return holdRecordExists;
+    }
+
+    /**
+     * @param holdRecordExists the holdRecordExists to set
+     */
+    public void setHoldRecordExists(Boolean holdRecordExists) {
+        this.holdRecordExists = holdRecordExists;
+    }
+
+    /**
+     * @return the excludeCtepDcpTrials
+     */
+    public boolean isExcludeCtepDcpTrials() {
+        return excludeCtepDcpTrials;
+    }
+
+    /**
+     * @param excludeCtepDcpTrials the excludeCtepDcpTrials to set
+     */
+    public void setExcludeCtepDcpTrials(boolean excludeCtepDcpTrials) {
+        this.excludeCtepDcpTrials = excludeCtepDcpTrials;
+    }
+
+    /**
+     * @return the currentOrPreviousMilestone
+     */
+    public MilestoneCode getCurrentOrPreviousMilestone() {
+        return currentOrPreviousMilestone;
+    }
+
+    /**
+     * @param currentOrPreviousMilestone the currentOrPreviousMilestone to set
+     */
+    public void setCurrentOrPreviousMilestone(
+            MilestoneCode currentOrPreviousMilestone) {
+        this.currentOrPreviousMilestone = currentOrPreviousMilestone;
+    }
+
+    /**
+     * @return the onholdReasons
+     */
+    public List<OnholdReasonCode> getOnholdReasons() {
+        return onholdReasons;
+    }
+
+    /**
+     * @param onholdReasons the onholdReasons to set
+     */
+    public void setOnholdReasons(List<OnholdReasonCode> onholdReasons) {
+        this.onholdReasons = onholdReasons;
+    }
+    
+    /**
+     * @author Denis G. Krylov
+     *
+     */
+    public static final class MilestoneFilter {
+        
+        private List<MilestoneCode> activeMilestones = new ArrayList<MilestoneCode>();
+        private List<MilestoneCode> milestonesToExclude = new ArrayList<MilestoneCode>();
+        
+        
+        
+        /**
+         * @param activeMilestones activeMilestones
+         * @param milestonesToExclude milestonesToExclude
+         */
+        public MilestoneFilter(List<MilestoneCode> activeMilestones,
+                List<MilestoneCode> milestonesToExclude) {
+            this.activeMilestones = activeMilestones;
+            this.milestonesToExclude = milestonesToExclude;
+        }
+        /**
+         * @return the activeMilestones
+         */
+        public List<MilestoneCode> getActiveMilestones() {
+            return activeMilestones;
+        }
+        /**
+         * @param activeMilestones the activeMilestones to set
+         */
+        public void setActiveMilestones(List<MilestoneCode> activeMilestones) {
+            this.activeMilestones = activeMilestones;
+        }
+        /**
+         * @return the milestonesToExclude
+         */
+        public List<MilestoneCode> getMilestonesToExclude() {
+            return milestonesToExclude;
+        }
+        /**
+         * @param milestonesToExclude the milestonesToExclude to set
+         */
+        public void setMilestonesToExclude(List<MilestoneCode> milestonesToExclude) {
+            this.milestonesToExclude = milestonesToExclude;
+        }        
+    }
+
+    /**
+     * @return the milestoneFilters
+     */
+    public List<MilestoneFilter> getMilestoneFilters() {
+        return milestoneFilters;
+    }
+
+    /**
+     * @param milestoneFilters the milestoneFilters to set
+     */
+    public void setMilestoneFilters(List<MilestoneFilter> milestoneFilters) {
+        this.milestoneFilters = milestoneFilters;
+    }
+
+    /**
+     * @return the processingPriority
+     */
+    public List<Integer> getProcessingPriority() {
+        return processingPriority;
+    }
+
+    /**
+     * @param processingPriority the processingPriority to set
+     */
+    public void setProcessingPriority(List<Integer> processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
     
 }

@@ -117,4 +117,9 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             throws PAException {
         return null;
     }
+
+    @Override
+    public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
+            throws PAException { 
+    }
 }

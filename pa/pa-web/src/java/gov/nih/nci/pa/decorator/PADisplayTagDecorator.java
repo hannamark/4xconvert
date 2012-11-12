@@ -147,4 +147,21 @@ public class PADisplayTagDecorator extends TableDecorator {
             return "<a href='" + link + "' target='_blank'>" + publicId + "</a>";
     }
 
+    /**
+     * 
+     * @return st
+     */
+    public String getTrialCategory() {
+        String trialCat = "";
+
+        boolean isProprietaryTrial = ((StudyProtocolQueryDTO) this
+                .getCurrentRowObject()).isProprietaryTrial();
+        if (isProprietaryTrial) {
+            trialCat = "Abbreviated";
+        } else {
+            trialCat = "Complete";
+        }
+        return trialCat;
+    }
+    
 }

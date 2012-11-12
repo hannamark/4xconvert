@@ -164,6 +164,7 @@ import org.hibernate.Session;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity",
         "PMD.ExcessiveClassLength" })
 public class PADomainUtils {
+    private static final String CDR_ID_PREFIX = "CDR";
     private static final String PARTICIPATING_SITE = "Participating Site";
     private static final String LEAD_ORGANIZATION = "Lead Organization";
     private static final String HEALTHCARE_FACILITY = "Healthcare Facility";
@@ -523,6 +524,24 @@ public class PADomainUtils {
         }
         return results;
     }
+    
+    /**
+     * Returns trial's CDR ID. 
+     * 
+     * @param sp
+     *            the study protocol to get the other identifier extensions for
+     * @return trial's CDR ID. 
+     */
+    public static String getCDRId(StudyProtocol sp) {
+        if (CollectionUtils.isNotEmpty(sp.getOtherIdentifiers())) {
+            for (Ii id : sp.getOtherIdentifiers()) {
+                if (StringUtils.startsWith(id.getExtension(), CDR_ID_PREFIX)) {
+                    return id.getExtension();
+                }
+            }
+        }
+        return null;
+    }    
 
     /**
      * Returns a listing of a disease names associated with a studyProtocol.

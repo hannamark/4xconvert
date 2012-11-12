@@ -216,7 +216,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     @Test
     public void testEmptyCriteria() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("At least one criteria is required.");
+        thrown.expectMessage("At least one criteria is required");
 
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         localEjb.getStudyProtocolByCriteria(criteria);
@@ -300,15 +300,15 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals("Size does not match.", 1, results.size());
         criteria.setSubmissionType(null);
 
-        criteria.setStudyMilestone("Submission Received Date");
+        criteria.getStudyMilestone().add("Submission Received Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
-        criteria.setStudyMilestone(null);
+        criteria.setStudyMilestone(new ArrayList<String>());
 
-        criteria.setStudyMilestone("Submission Acceptance Date");
+        criteria.getStudyMilestone().add("Submission Acceptance Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        criteria.setStudyMilestone(null);
+        criteria.setStudyMilestone(new ArrayList<String>());
 
         criteria.getLeadOrganizationIds().add(123L);
         results = localEjb.getStudyProtocolByCriteria(criteria);

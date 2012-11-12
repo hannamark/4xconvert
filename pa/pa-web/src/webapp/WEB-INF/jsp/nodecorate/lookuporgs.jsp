@@ -15,8 +15,8 @@
                 document.getElementById("createOrgJsp").style.display="";
             }
             
-            function submitform(orgid) {
-                top.window.setorgid(orgid);
+            function submitform(orgid, orgname) {
+                top.window.setorgid(orgid, orgname);
                 top.window.loadDiv(orgid);
                 window.top.hidePopWin(true); 
             }

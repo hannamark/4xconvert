@@ -14,11 +14,13 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +28,7 @@ import org.junit.rules.ExpectedException;
 
 public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
 
-    private final StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
+    private final StudyCheckoutServiceBean localEjb = new StudyCheckoutServiceBean();
     Ii pid;
 
     @Rule
@@ -88,6 +90,33 @@ public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void checkInScientific() throws Exception {
         checkInTest(CheckOutType.SCIENTIFIC);
+    }
+    
+    @Test
+    public void testHandleTrialAssigneeChange() throws Exception {
+        if (getCurrentCheckout(pid, CheckOutType.ADMINISTRATIVE) != null) {
+            localEjb.checkIn(pid, CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE), StConverter.convertToSt("user1"), null);
+        }
+        localEjb.handleTrialAssigneeChange(new Long(pid.getExtension()));
+        StudyCheckoutDTO dto = getCurrentCheckout(pid, CheckOutType.ADMINISTRATIVE);
+        assertNotNull(dto);
+        assertEquals(IiConverter.convertToString(pid), IiConverter.convertToString(dto.getStudyProtocolIdentifier()));
+        assertEquals(CheckOutType.ADMINISTRATIVE,
+                CdConverter.convertCdToEnum(CheckOutType.class, dto.getCheckOutTypeCode()));        
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery("update study_protocol set assigned_user_id=null where identifier="+pid.getExtension()).executeUpdate();
+        session.flush();
+        
+        localEjb.handleTrialAssigneeChange(new Long(pid.getExtension()));
+        
+        List<StudyCheckoutDTO> dtos = localEjb.getByStudyProtocol(pid);        
+        for (StudyCheckoutDTO dto2 : dtos) {
+            if (ISOUtil.isTsNull(dto2.getCheckInDate())) {
+                fail();
+            }
+        }
+               
     }
 
     private void checkOutTest(CheckOutType type) throws Exception {

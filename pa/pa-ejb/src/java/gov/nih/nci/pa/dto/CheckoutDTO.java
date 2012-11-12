@@ -84,6 +84,10 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.util.CsmUserUtil;
 
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mshestopalov
  *
@@ -91,8 +95,13 @@ import gov.nih.nci.pa.util.CsmUserUtil;
 public class CheckoutDTO {
 
     private String checkoutBy;
-    private String checkoutByUsername;
+    private String checkoutByUsername;    
     private Long checkoutId;
+    private String csmFirstName;
+    private String csmLastName;
+    private String registryFirstName;
+    private String registryLastName;
+    private Date checkoutDate;
    
     /**
      * @return the checkoutBy
@@ -132,7 +141,79 @@ public class CheckoutDTO {
         this.checkoutBy = checkoutBy;
         this.checkoutByUsername = CsmUserUtil.getGridIdentityUsername(checkoutBy);
     }
-
-
-
+    /**
+     * @return the csmFirstName
+     */
+    public String getCsmFirstName() {
+        return csmFirstName;
+    }
+    /**
+     * @param csmFirstName the csmFirstName to set
+     */
+    public void setCsmFirstName(String csmFirstName) {
+        this.csmFirstName = csmFirstName;
+    }
+    /**
+     * @return the csmLastName
+     */
+    public String getCsmLastName() {
+        return csmLastName;
+    }
+    /**
+     * @param csmLastName the csmLastName to set
+     */
+    public void setCsmLastName(String csmLastName) {
+        this.csmLastName = csmLastName;
+    }
+    /**
+     * @return the registryFirstName
+     */
+    public String getRegistryFirstName() {
+        return registryFirstName;
+    }
+    /**
+     * @param registryFirstName the registryFirstName to set
+     */
+    public void setRegistryFirstName(String registryFirstName) {
+        this.registryFirstName = registryFirstName;
+    }
+    /**
+     * @return the registryLastName
+     */
+    public String getRegistryLastName() {
+        return registryLastName;
+    }
+    /**
+     * @param registryLastName the registryLastName to set
+     */
+    public void setRegistryLastName(String registryLastName) {
+        this.registryLastName = registryLastName;
+    }
+    
+    /**
+     * @return FullName
+     */
+    public String getFullName() {
+        String lastName = StringUtils.defaultIfEmpty(getCsmLastName(),
+                StringUtils.defaultString(getRegistryLastName()));
+        String firstName = StringUtils.defaultIfEmpty(getCsmFirstName(),
+                StringUtils.defaultString(getRegistryFirstName()));
+        String loginName = getCheckoutByUsername();
+        String fullName = StringUtils.isBlank(lastName) ? loginName : (lastName
+                + ", " + firstName);
+        return fullName;
+    }
+    /**
+     * @return the checkoutDate
+     */
+    public Date getCheckoutDate() {
+        return checkoutDate;
+    }
+    /**
+     * @param checkoutDate the checkoutDate to set
+     */
+    public void setCheckoutDate(Date checkoutDate) {
+        this.checkoutDate = checkoutDate;
+    }
+    
 }

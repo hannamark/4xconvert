@@ -78,17 +78,22 @@
 */
 package gov.nih.nci.pa.action;
 
+import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -97,6 +102,7 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -125,7 +131,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  *
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods",
+        "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware, 
                                                             ServletRequestAware {
     private static final long serialVersionUID = -2308994602660261367L;
@@ -136,6 +143,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyCheckoutServiceLocal studyCheckoutService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private StudyProtocolService studyProtocolService;
     
     private List<StudyProtocolQueryDTO> records;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
@@ -148,6 +156,10 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     private String identifier;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
     
+    private Long assignedTo;
+    private String newProcessingPriority;
+    private String processingComments;
+    
     /**
      * {@inheritDoc}
      */
@@ -156,6 +168,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         studyCheckoutService = PaRegistry.getStudyCheckoutService();
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
 
         if (httpServletRequest.getServletPath().contains(BARE)) {
             // we are in BARE mode, which is typically used just to look up and
@@ -183,19 +196,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      * @throws PAException exception
      */
     public String showCriteria() throws PAException {
-        boolean isAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.ABSTRACTOR);
-        boolean isSuAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR);
-        boolean isScientificAbstractor =
-            ServletActionContext.getRequest().isUserInRole(Constants.SCIENTIFIC_ABSTRACTOR);
-        boolean isAdminAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.ADMIN_ABSTRACTOR);
-        boolean isReportViewer = ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_ABSTRACTOR, isAbstractor);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, isSuAbstractor);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_ADMIN_ABSTRACTOR, isAdminAbstractor);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
-                isScientificAbstractor);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
-        if (isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer) {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        ActionUtils.setUserRolesInSession(request);
+        if (ActionUtils.isUserRoleInSession(request.getSession())) {
             return "criteriaProtected";
         } 
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
@@ -337,60 +340,11 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         }
     }
     
-    private void setCheckoutCommands(StudyProtocolQueryDTO spqDTO) {
+    
+
+    private void setCheckoutCommands(StudyProtocolQueryDTO studyProtocolQueryDTO) {
         checkoutCommands = new ArrayList<String>();
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
-        setAdminCheckoutCommands(spqDTO, suAbs);
-        setScientificCheckoutCommands(spqDTO, suAbs);
-        setSuperAbstractorCommands(spqDTO, suAbs);
-    }
-
-    /**
-     * Super abstractors have a button that does both check-outs at the same
-     * time.
-     * 
-     * @param spqDTO
-     * @param suAbs
-     * @see https://tracker.nci.nih.gov/browse/PO-3966
-     */
-    private void setSuperAbstractorCommands(StudyProtocolQueryDTO spqDTO,
-            boolean suAbs) {
-        
-        // for both uses by this super abstractor.
-        if (spqDTO.getAdminCheckout().getCheckoutBy() != null && suAbs) {   
-        checkoutCommands.add("adminAndScientificCheckIn");
-        } else if (suAbs) {
-        checkoutCommands.add("adminAndScientificCheckOut");
-        }
-    }
-
-    private void setAdminCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
-        if (spqDTO.getAdminCheckout().getCheckoutBy() != null) {
-            if (spqDTO.getAdminCheckout().getCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
-                checkoutCommands.add("adminCheckIn");
-            }
-        } else {
-            HttpSession session = ServletActionContext.getRequest().getSession();
-            boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
-            if (adminAbs || suAbs) {
-                checkoutCommands.add("adminCheckOut");
-            }
-        }
-    }
-
-    private void setScientificCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
-        if (spqDTO.getScientificCheckout().getCheckoutBy() != null) {
-            if (spqDTO.getScientificCheckout().getCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
-                checkoutCommands.add("scientificCheckIn");
-            }
-        } else {
-            HttpSession session = ServletActionContext.getRequest().getSession();
-            boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
-            if (scAbs || suAbs) {
-                checkoutCommands.add("scientificCheckOut");
-            }
-        }
+        ActionUtils.setCheckoutCommands(studyProtocolQueryDTO, checkoutCommands);
     }
 
     /**
@@ -527,6 +481,49 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         }
         return SHOW_VIEW_REFRESH;
     }
+    
+    /**
+     * @return String
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("deprecation")
+    public String save() throws PAException {
+        try {
+            StudyProtocolDTO studyDTO = studyProtocolService.getStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+            final Ii assignedUser = studyDTO.getAssignedUser();
+            final Ii newAssignedUser = IiConverter.convertToIi(assignedTo);
+            
+            studyDTO.setComments(StConverter.convertToSt(processingComments));
+            if (isInRole(IS_SU_ABSTRACTOR)) {
+                studyDTO.setProcessingPriority(IntConverter.convertToInt(newProcessingPriority));            
+                studyDTO.setAssignedUser(newAssignedUser);
+            }
+            studyProtocolService.updateStudyProtocol(studyDTO);
+            
+            // if assigned user's changed, check out the trial in that name.
+            if (isInRole(IS_SU_ABSTRACTOR) && ((ISOUtil.isIiNull(assignedUser) && !ISOUtil
+                    .isIiNull(newAssignedUser))
+                    || (!ISOUtil.isIiNull(assignedUser) && ISOUtil
+                            .isIiNull(newAssignedUser))
+                    || (!ISOUtil.isIiNull(assignedUser)
+                            && !ISOUtil.isIiNull(newAssignedUser) && !assignedUser
+                            .getExtension().equals(
+                                    newAssignedUser.getExtension())))) {
+                studyCheckoutService.handleTrialAssigneeChange(studyProtocolId);
+            }
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                    getText("dashboard.save.success"));            
+            return view();
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return SHOW_VIEW_REFRESH;
+    }
+    
+    private boolean isInRole(String roleFlag) {
+        return Boolean.TRUE.equals(ServletActionContext.getRequest()
+                .getSession().getAttribute(roleFlag));
+    }
 
     /**
      * 
@@ -656,5 +653,61 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
      */
     public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
         this.correlationUtils = correlationUtils;
+    }
+
+    /**
+     * @return the assignedTo
+     */
+    public Long getAssignedTo() {
+        return assignedTo;
+    }
+
+    /**
+     * @param assignedTo the assignedTo to set
+     */
+    public void setAssignedTo(Long assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    /**
+     * @return the newProcessingPriority
+     */
+    public String getNewProcessingPriority() {
+        return newProcessingPriority;
+    }
+
+    /**
+     * @param newProcessingPriority the newProcessingPriority to set
+     */
+    public void setNewProcessingPriority(String newProcessingPriority) {
+        this.newProcessingPriority = newProcessingPriority;
+    }
+
+    /**
+     * @return the processingComments
+     */
+    public String getProcessingComments() {
+        return processingComments;
+    }
+
+    /**
+     * @param processingComments the processingComments to set
+     */
+    public void setProcessingComments(String processingComments) {
+        this.processingComments = processingComments;
+    }
+
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolService getStudyProtocolService() {
+        return studyProtocolService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolService studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 }

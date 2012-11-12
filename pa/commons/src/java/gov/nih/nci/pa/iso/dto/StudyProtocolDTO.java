@@ -124,6 +124,9 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Ivl<Int> targetAccrualNumber;
     private List<DocumentWorkflowStatusCode> processingStatuses;
     private DSet<St> secondaryPurposes = new DSet<St>();
+    private St comments;
+    private Int processingPriority;
+    private Ii assignedUser;    
     
     /**
      *
@@ -448,6 +451,48 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setSecondaryPurposes(DSet<St> secondaryPurposes) {
         this.secondaryPurposes = secondaryPurposes;
+    }
+
+    /**
+     * @return the comments
+     */
+    public St getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(St comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @return the processingPriority
+     */
+    public Int getProcessingPriority() {
+        return processingPriority;
+    }
+
+    /**
+     * @param processingPriority the processingPriority to set
+     */
+    public void setProcessingPriority(Int processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
+    /**
+     * @return the assignedUser
+     */
+    public Ii getAssignedUser() {
+        return assignedUser;
+    }
+
+    /**
+     * @param assignedUser the assignedUser to set
+     */
+    public void setAssignedUser(Ii assignedUser) {
+        this.assignedUser = assignedUser;
     }
 
 }

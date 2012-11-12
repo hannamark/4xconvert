@@ -892,6 +892,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         } else {
             createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
             createStudyProtocolDTO.setIdentifier(null);
+            createStudyProtocolDTO.setProcessingPriority(IntConverter.convertToInt(2));
         }
         createStudyProtocolDTO.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
@@ -1171,6 +1172,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         getPAServiceUtils().executeSql(sql);
         sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
         getPAServiceUtils().executeSql(sql);
+        studyProtocolDTO.setProcessingPriority(IntConverter.convertToInt(2));
         studyProtocolDTO.setAmendmentReasonCode(null);
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(getPAServiceUtils()
             .generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));

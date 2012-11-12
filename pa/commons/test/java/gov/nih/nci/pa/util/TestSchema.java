@@ -329,6 +329,9 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setProcessingPriority(3);
+        sp.setComments("Comments");
+        sp.setAssignedUser(ru.getUserLastCreated());
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
@@ -1362,6 +1365,9 @@ public class TestSchema {
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setProcessingPriority(1);
+        sp.setComments("Comments");
+        sp.setAssignedUser(user);
         StudyProtocolDates dates = sp.getDates();
         dates.setStartDate(TODAY);
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);

@@ -62,7 +62,7 @@ FIELDSET
 FIELDSET FIELDSET LEGEND
 { line-height:10px }
 LEGEND
-{ font-size:120%; font-weight:bold; color:#6A8989; padding:3px 7px;  }
+{font-weight:bold; color:#333333; padding:3px 7px;  }
 :lang(en) LEGEND
 { margin-bottom:1px }
 
@@ -702,4 +702,29 @@ UL#maintabs LI A:focus
     font-weight: bold;
     height: 1.3em;
     padding: 5px 5px 5px 5px;
+}
+
+fieldset label {
+	font-weight: normal !important;
+	position: relative;
+	top: -2px;	
+}
+
+table.milestone_matrix {
+	border:0px solid #999999;	
+}
+
+table.milestone_matrix tr td {
+    border: 1px solid #999999;
+    border-collapse: separate;
+    text-align: center;
+    font-size: 92%;
+}
+
+td.noborder {
+	border:0px solid #999999 !important;
+}
+
+td.this_trial_is{
+	white-space: pre; 
 }

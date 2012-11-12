@@ -82,9 +82,10 @@
  */
 package gov.nih.nci.pa.dto;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.enums.IdentifierType;
 
@@ -92,6 +93,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -225,6 +227,7 @@ public class StudyProtocolQueryCriteriaTest {
     @Test
     public void testGetUniqueCriteriaKey() throws IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
+        Date date = new Date();
         Collection<String> usedKeys = new HashSet<String>();
         StudyProtocolQueryCriteria c1 = new StudyProtocolQueryCriteria();
         StudyProtocolQueryCriteria c2 = new StudyProtocolQueryCriteria();
@@ -377,9 +380,9 @@ public class StudyProtocolQueryCriteriaTest {
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());
 
-        PropertyUtils.setSimpleProperty(c1, "studyMilestone", "TEST STRING");
+        PropertyUtils.setSimpleProperty(c1, "studyMilestone", Arrays.asList("TEST STRING"));
         assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
-        PropertyUtils.setSimpleProperty(c2, "studyMilestone", "TEST STRING");
+        PropertyUtils.setSimpleProperty(c2, "studyMilestone", Arrays.asList("TEST STRING"));
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());
@@ -603,6 +606,62 @@ public class StudyProtocolQueryCriteriaTest {
         assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
         assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
         usedKeys.add(c1.getUniqueCriteriaKey());        
+        
+        PropertyUtils.setSimpleProperty(c1, "onholdReasons", Arrays.asList("TEST STRING"));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "onholdReasons", Arrays.asList("TEST STRING"));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "processingPriority", Arrays.asList("TEST STRING"));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "processingPriority", Arrays.asList("TEST STRING"));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "milestoneFilters", Arrays.asList("TEST STRING"));
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "milestoneFilters", Arrays.asList("TEST STRING"));
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+
+        PropertyUtils.setSimpleProperty(c1, "submitterAffiliateOrgId", "TEST STRING");
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "submitterAffiliateOrgId", "TEST STRING");
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());    
+        
+        PropertyUtils.setSimpleProperty(c1, "submittedOnOrAfter", date);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "submittedOnOrAfter", date);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+        
+        PropertyUtils.setSimpleProperty(c1, "submittedOnOrBefore", date);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "submittedOnOrBefore", date);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());
+        
+        PropertyUtils.setSimpleProperty(c1, "checkedOut", true);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "checkedOut", true);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());  
+        
+        PropertyUtils.setSimpleProperty(c1, "holdRecordExists", true);
+        assertFalse(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        PropertyUtils.setSimpleProperty(c2, "holdRecordExists", true);
+        assertTrue(c1.getUniqueCriteriaKey().equals(c2.getUniqueCriteriaKey()));
+        assertFalse(usedKeys.contains(c1.getUniqueCriteriaKey()));
+        usedKeys.add(c1.getUniqueCriteriaKey());  
         
 
     }

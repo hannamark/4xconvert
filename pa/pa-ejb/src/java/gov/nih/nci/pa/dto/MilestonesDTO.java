@@ -92,6 +92,8 @@ public class MilestonesDTO {
     private MilestoneDTO studyMilestone = new MilestoneDTO();
     private MilestoneDTO adminMilestone = new MilestoneDTO();
     private MilestoneDTO scientificMilestone = new MilestoneDTO();
+    private MilestoneDTO lastMilestone = new MilestoneDTO();
+    private MilestoneDTO activeMilestone = new MilestoneDTO();
    
     /**
      * @param studyMilestone the studyMilestone to set
@@ -133,6 +135,34 @@ public class MilestonesDTO {
      */
     public MilestoneDTO getScientificMilestone() {
         return scientificMilestone;
+    }
+
+    /**
+     * @return the lastMilestone
+     */
+    public MilestoneDTO getLastMilestone() {
+        return lastMilestone;
+    }
+
+    /**
+     * @param lastMilestone the lastMilestone to set
+     */
+    public void setLastMilestone(MilestoneDTO lastMilestone) {
+        this.lastMilestone = lastMilestone;
+    }
+
+    /**
+     * @return the activeMilestone
+     */
+    public MilestoneDTO getActiveMilestone() {
+        return activeMilestone;
+    }
+
+    /**
+     * @param activeMilestone the activeMilestone to set
+     */
+    public void setActiveMilestone(MilestoneDTO activeMilestone) {
+        this.activeMilestone = activeMilestone;
     }
     
     

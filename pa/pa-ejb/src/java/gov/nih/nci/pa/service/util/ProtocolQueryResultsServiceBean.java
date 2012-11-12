@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
@@ -156,7 +157,13 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "summary4fundingSponsor_type,sponsor_name,responsible_party_organization_name,"
             + "responsible_party_PI_first_name,responsible_party_PI_last_name,user_last_updated_login, "
             + "user_last_updated_first,user_last_updated_last,primary_completion_date,"
-            + "study_protocol_type,study_subtype_code"
+            + "study_protocol_type,study_subtype_code, submitter_org_name, current_admin_milestone_date, "
+            + "current_scientific_milestone_date, current_other_milestone_date, processing_priority, "
+            + "last_milestone, last_milestone_date, active_milestone, active_milestone_date, "            
+            + "admin_checkout_csm_fname, admin_checkout_csm_lname, admin_checkout_reg_fname, admin_checkout_reg_lname, "
+            + "scientific_checkout_csm_fname, scientific_checkout_csm_lname, scientific_checkout_reg_fname, "
+            + "scientific_checkout_reg_lname, onhold_reason_code, onhold_date, offhold_date, cdr_id, amendment_number,"
+            + "admin_checkout_date, scientific_checkout_date, comments"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -231,6 +238,35 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int PRIMARY_COMPLETION_DATE_IDX = 43;
     private static final int STUDY_PROTOCOL_TYPE = 44;
     private static final int STUDY_SUBTYPE_CODE = 45;
+    private static final int SUBMITTER_ORG_NAME_IDX = 46;
+    private static final int CURRENT_ADMIN_MILESTONE_DATE_IDX = 47;
+    private static final int CURRENT_SCIENTIFIC_MILESTONE_DATE_IDX = 48;
+    private static final int CURRENT_OTHER_MILESTONE_DATE_IDX = 49;
+    private static final int PROCESSING_PRIORITY_IDX = 50;
+    private static final int LAST_MILESTONE_IDX = 51;
+    private static final int LAST_MILESTONE_DATE_IDX = 52;
+    private static final int ACTIVE_MILESTONE_IDX = 53;
+    private static final int ACTIVE_MILESTONE_DATE_IDX = 54;
+    
+    private static final int ADMIN_CHECKOUT_CSM_FNAME = 55;
+    private static final int ADMIN_CHECKOUT_CSM_LNAME = 56;
+    private static final int ADMIN_CHECKOUT_REG_FNAME = 57;
+    private static final int ADMIN_CHECKOUT_REG_LNAME = 58;
+    private static final int SCIENTIFIC_CHECKOUT_CSM_FNAME = 59;
+    private static final int SCIENTIFIC_CHECKOUT_CSM_LNAME = 60;
+    private static final int SCIENTIFIC_CHECKOUT_REG_FNAME = 61;
+    private static final int SCIENTIFIC_CHECKOUT_REG_LNAME = 62;   
+    
+    private static final int ONHOLD_REASON_CODE = 63;
+    private static final int ONHOLD_DATE = 64;
+    private static final int OFFHOLD_DATE = 65;
+    
+    private static final int CDR_ID_IDX = 66;
+    private static final int AMENDMENT_NUMBER_IDX = 67;
+    private static final int ADMIN_CHECKOUT_DATE_IDX = 68;
+    private static final int SCIENTIFIC_CHECKOUT_DATE_IDX = 69;
+    private static final int COMMENTS_IDX = 70;
+    
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
@@ -467,6 +503,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         }
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     private void loadGeneralData(StudyProtocolQueryDTO dto, Object[] row) {
         dto.setOfficialTitle((String) row[OFFICIAL_TITLE_IDX]);
         dto.setCtgovXmlRequiredIndicator((Boolean) row[CTGOV_XML_REQUIRED_INDICATOR_IDX]);
@@ -481,6 +518,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setLocalStudyProtocolIdentifier((String) row[LEAD_ORG_SP_IDENTIFIER_IDX]);
         dto.setNciIdentifier((String) row[NCI_NUMBER_IDX]);
         dto.setNctIdentifier((String) row[NCT_NUMBER_IDX]);
+        dto.setCdrId((String) row[CDR_ID_IDX]);
         String piFirst = (String) row[STUDY_PI_FIRST_NAME_IDX];
         String piLast = (String) row[STUDY_PI_LAST_NAME_IDX];
         dto.setPiFullName(piLast + (StringUtils.isEmpty(piFirst) ? "" : ", " + piFirst));
@@ -514,13 +552,43 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setStudySubtypeCode(studySubtypeCode != null ? studySubtypeCode
                 .getCode() : "");
         
+        loadAmendmentData(dto, row, amendmentDate);
+        
+        dto.setProcessingPriority((Integer) row[PROCESSING_PRIORITY_IDX]);
+        dto.setProcessingComments((String) row[COMMENTS_IDX]);
+        dto.setSubmitterOrgName((String) row[SUBMITTER_ORG_NAME_IDX]);
+        
+        loadRecentHoldData(dto, row);
+    }
+
+    /**
+     * @param dto
+     * @param row
+     * @param amendmentDate
+     */
+    private void loadAmendmentData(StudyProtocolQueryDTO dto, Object[] row,
+            final Date amendmentDate) {
         if (amendmentDate != null) {
             User updatedUser = new User();
             updatedUser.setFirstName((String) row[USER_LAST_UPDATED_FIRST_IDX]);
             updatedUser.setLastName((String) row[USER_LAST_UPDATED_LAST_IDX]);
             updatedUser.setLoginName((String) row[USER_LAST_UPDATED_LOGIN_IDX]);
             dto.setLastUpdatedUserDisplayName(CsmUserUtil.getDisplayUsername(updatedUser));
+            dto.setAmendmentNumber((String) row[AMENDMENT_NUMBER_IDX]);
         }
+    }
+
+    /**
+     * @param dto
+     * @param row
+     */
+    private void loadRecentHoldData(StudyProtocolQueryDTO dto, Object[] row) {
+        // Most recent on-hold.
+        final OnholdReasonCode reasonCode = getEnumFromString(
+                OnholdReasonCode.class, (String) row[ONHOLD_REASON_CODE]);
+        dto.setRecentHoldReason(reasonCode != null ? reasonCode.getCode() : "");
+        dto.setRecentOffHoldDate((Date) row[OFFHOLD_DATE]);
+        dto.setRecentOnHoldDate((Date) row[ONHOLD_DATE]);
     }
 
     private void loadSubmissionType(StudyProtocolQueryDTO dto, Object[] row) {
@@ -540,12 +608,30 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setDocumentWorkflowStatusCode(getEnumFromString(DocumentWorkflowStatusCode.class, tstr));
         dto.setViewTSR(!BaseStudyProtocolQueryConverter.NON_TSR_DWF.contains(dto.getDocumentWorkflowStatusCode()));
         dto.setDocumentWorkflowStatusDate((Date) row[CURRENT_DWF_STATUS_DATE_IDX]);
+        
         tstr = (String) row[CURRENT_ADMIN_MILESTONE_IDX];
         dto.getMilestones().getAdminMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
+        dto.getMilestones().getAdminMilestone().setMilestoneDate((Date) row[CURRENT_ADMIN_MILESTONE_DATE_IDX]);
+        
         tstr = (String) row[CURRENT_SCIENTIFIC_MILESTONE_IDX];
         dto.getMilestones().getScientificMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
+        dto.getMilestones()
+                .getScientificMilestone()
+                .setMilestoneDate(
+                        (Date) row[CURRENT_SCIENTIFIC_MILESTONE_DATE_IDX]);
+        
         tstr = (String) row[CURRENT_OTHER_MILESTONE_IDX];
         dto.getMilestones().getStudyMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
+        dto.getMilestones().getStudyMilestone().setMilestoneDate((Date) row[CURRENT_OTHER_MILESTONE_DATE_IDX]);
+        
+        tstr = (String) row[LAST_MILESTONE_IDX];
+        dto.getMilestones().getLastMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
+        dto.getMilestones().getLastMilestone().setMilestoneDate((Date) row[LAST_MILESTONE_DATE_IDX]);
+        
+        tstr = (String) row[ACTIVE_MILESTONE_IDX];
+        dto.getMilestones().getActiveMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
+        dto.getMilestones().getActiveMilestone().setMilestoneDate((Date) row[ACTIVE_MILESTONE_DATE_IDX]);
+        
         tstr = (String) row[CURRENT_STUDY_OVERALL_STATUS_IDX];
         dto.setStudyStatusCode(tstr == null ? null : StudyStatusCode.valueOf(tstr));
     }
@@ -561,8 +647,21 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         Integer adminCid = (Integer) row[ADMIN_CHECKOUT_IDENTIFIER_IDX];
         dto.getAdminCheckout().setCheckoutId(adminCid == null ? null : adminCid.longValue());
         dto.getAdminCheckout().setCheckoutBy((String) row[ADMIN_CHECKOUT_USER_IDX]);
+        dto.getAdminCheckout().setCsmFirstName((String) row[ADMIN_CHECKOUT_CSM_FNAME]);
+        dto.getAdminCheckout().setCsmLastName((String) row[ADMIN_CHECKOUT_CSM_LNAME]);
+        dto.getAdminCheckout().setRegistryFirstName((String) row[ADMIN_CHECKOUT_REG_FNAME]);
+        dto.getAdminCheckout().setRegistryLastName((String) row[ADMIN_CHECKOUT_REG_LNAME]);
+        dto.getAdminCheckout().setCheckoutDate((Date) row[ADMIN_CHECKOUT_DATE_IDX]);
+
+        
         Integer scientificCid = (Integer) row[SCIENTIFIC_CHECKOUT_IDENTIFIER_IDX];
         dto.getScientificCheckout().setCheckoutId(scientificCid == null ? null : scientificCid.longValue());
         dto.getScientificCheckout().setCheckoutBy((String) row[SCIENTIFIC_CHECKOUT_USER_IDX]);
+        dto.getScientificCheckout().setCsmFirstName((String) row[SCIENTIFIC_CHECKOUT_CSM_FNAME]);
+        dto.getScientificCheckout().setCsmLastName((String) row[SCIENTIFIC_CHECKOUT_CSM_LNAME]);
+        dto.getScientificCheckout().setRegistryFirstName((String) row[SCIENTIFIC_CHECKOUT_REG_FNAME]);
+        dto.getScientificCheckout().setRegistryLastName((String) row[SCIENTIFIC_CHECKOUT_REG_LNAME]);
+        dto.getScientificCheckout().setCheckoutDate((Date) row[SCIENTIFIC_CHECKOUT_DATE_IDX]);
+        
     }
 }

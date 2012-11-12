@@ -93,6 +93,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -133,6 +134,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -1200,4 +1202,72 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
             bean.create(getMilestoneDTO(code));
         }
     }
+    
+    @Test
+    public void testResetProcessingPriority() throws Exception {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "update study_protocol set processing_priority=1 where identifier="
+                        + spIi.getExtension()).executeUpdate();
+        PaHibernateUtil.getCurrentSession().flush();        
+        bean.setMailManagerService(mock(MailManagerBeanLocal.class)); 
+        
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));            
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT));
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
+        assertEquals(
+                2,
+                ((StudyProtocol) session.get(StudyProtocol.class,
+                        new Long(spIi.getExtension()))).getProcessingPriority().intValue());
+    }
+    
+    @Test
+    public void testProtocolQueryServiceBean_populateMilestoneHistory()
+            throws Exception {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "delete from study_milestone where study_protocol_identifier="
+                        + spIi.getExtension()).executeUpdate();
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        List<StudyProtocolQueryDTO> trials = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
+        queryDTO.setStudyProtocolId(new Long(spIi.getExtension()));
+        trials.add(queryDTO);
+        new ProtocolQueryServiceBean().populateMilestoneHistory(trials);
+
+        assertEquals(3, queryDTO.getMilestoneHistory().size());
+        assertEquals(MilestoneCode.SUBMISSION_RECEIVED, queryDTO
+                .getMilestoneHistory().get(0).getMilestone());
+        assertEquals(MilestoneCode.SUBMISSION_TERMINATED, queryDTO
+                .getMilestoneHistory().get(1).getMilestone());
+        assertEquals(MilestoneCode.SUBMISSION_REACTIVATED, queryDTO
+                .getMilestoneHistory().get(2).getMilestone());
+
+    }
+    
+
 }

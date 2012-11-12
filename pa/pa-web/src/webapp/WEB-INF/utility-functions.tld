@@ -32,4 +32,22 @@
         <function-signature>java.lang.String join(java.util.Collection, java.lang.String)</function-signature>
         <example>'${func:join(stringCollection, separator)}'</example>
     </function>
+
+    <function>
+        <description>Converts all the whitespace separated words in a String into capitalized words, that is each word is made up of a titlecase character and then a series of lowercase characters.</description>
+        <name>capitalizeFully</name>
+        <function-class>org.apache.commons.lang.WordUtils</function-class>
+        <function-signature>java.lang.String capitalizeFully(java.lang.String)</function-signature>
+        <example>'${func:capitalizeFully(str)}'</example>
+    </function>
+
+    <function>
+        <description>Formats a date/time into a specific pattern.</description>
+        <name>format</name>
+        <function-class>org.apache.commons.lang.time.DateFormatUtils</function-class>
+        <function-signature>java.lang.String format(java.util.Date, java.lang.String)</function-signature>
+        <example>N/A</example>
+    </function>
+
+    
 </taglib>

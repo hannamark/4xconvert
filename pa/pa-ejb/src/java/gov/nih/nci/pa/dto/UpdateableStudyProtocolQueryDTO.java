@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author mshestopalov
@@ -100,6 +102,7 @@ public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
     private Date updatedDate;
     private String statusChangeLinkText;
     private LastCreatedDTO lastCreated = new LastCreatedDTO();
+    private List<MilestoneDTO> milestoneHistory = new ArrayList<MilestoneDTO>();
     
     
     /**
@@ -242,4 +245,20 @@ public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
     public String getStatusChangeLinkText() {
         return statusChangeLinkText;
     }
+
+    /**
+     * @return the milestoneHistory
+     */
+    public List<MilestoneDTO> getMilestoneHistory() {
+        return milestoneHistory;
+    }
+
+    /**
+     * @param milestoneHistory the milestoneHistory to set
+     */
+    public void setMilestoneHistory(List<MilestoneDTO> milestoneHistory) {
+        this.milestoneHistory = milestoneHistory;
+    }
+
+      
 }

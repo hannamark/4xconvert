@@ -94,6 +94,31 @@ public class MilestoneDTO {
 
     private MilestoneCode milestone;
     private Date milestoneDate;
+    private String creator;
+    private Date createDate;
+    
+    /**
+     * MilestoneDTO.
+     */
+    public MilestoneDTO() { //NOPMD    
+    }
+    
+    /**
+     * @param milestone milestone
+     * @param milestoneDate milestoneDate
+     * @param creator creator
+     * @param createDate createDate
+     */
+    public MilestoneDTO(MilestoneCode milestone, Date milestoneDate,
+            String creator, Date createDate) {
+        this.milestone = milestone;
+        this.milestoneDate = milestoneDate;
+        this.creator = creator;
+        this.createDate = createDate;
+    }
+
+
+
     /**
      * @param milestone the milestone to set
      */
@@ -117,5 +142,42 @@ public class MilestoneDTO {
      */
     public Date getMilestoneDate() {
         return milestoneDate;
+    }
+    /**
+     * @return the creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+    /**
+     * @param creator the creator to set
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+    /**
+     * @return the createDate
+     */
+    public Date getCreateDate() {
+        return createDate;
+    }
+    /**
+     * @param createDate the createDate to set
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("MilestoneDTO [milestone=").append(milestone)
+                .append(", milestoneDate=").append(milestoneDate)
+                .append(", creator=").append(creator).append(", createDate=")
+                .append(createDate).append("]");
+        return builder.toString();
     }
 }

@@ -82,7 +82,9 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.Group;
@@ -91,12 +93,17 @@ import gov.nih.nci.security.dao.GroupSearchCriteria;
 import gov.nih.nci.security.exceptions.CSConfigurationException;
 import gov.nih.nci.security.exceptions.CSException;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
  * Service for managing csm users (create, retrieve and update).
@@ -112,6 +119,14 @@ public class CSMUserService implements CSMUserUtil {
      * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
     private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
+    private static final String GET_ABSTRACTORS_QUERY = "select cu.user_id, cu.first_name, cu.last_name, ru.first_name,"
+            + " ru.last_name, cu.login_name from csm_user cu "
+            + "inner join csm_user_group cug on cug.user_id=cu.user_id inner join csm_group cg on "
+            + "cg.group_id=cug.group_id left join registry_user ru on ru.csm_user_id=cu.user_id "
+            + "where cg.group_name in ('Abstractor', 'AdminAbstractor', 'ScientificAbstractor', 'SuAbstractor') "
+            + "order by CASE WHEN cu.last_name is null or cu.last_name='' "
+            + "THEN upper(ru.last_name) ELSE upper(cu.last_name) END,"
+            + "upper(substr(cu.login_name, position('CN=' in cu.login_name)+3))";
 
     static {
         AbstractStudyProtocolConverter.setCsmUserUtil(instance);
@@ -354,6 +369,28 @@ public class CSMUserService implements CSMUserUtil {
      */
     public static void setInstance(CSMUserUtil service) {
         instance = service;
+    }
+
+    // CHECKSTYLE:OFF
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<Long, String> getAbstractors() throws PAException {
+        Map<Long, String> map = new LinkedHashMap<Long, String>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session.createSQLQuery(GET_ABSTRACTORS_QUERY);
+        List<Object[]> list = query.list();
+        for (Object[] row : list) {
+            Long key = ((BigInteger) row[0]).longValue();
+            String lastName = StringUtils.defaultIfEmpty((String) row[4],
+                    StringUtils.defaultString((String) row[2]));
+            String firstName = StringUtils.defaultIfEmpty((String) row[3],
+                    StringUtils.defaultString((String) row[1]));
+            String loginName = (String) row[5];
+            String fullName = StringUtils.isBlank(lastName + firstName) ? CsmUserUtil.getGridIdentityUsername(loginName)
+                    : (lastName + ", " + firstName);
+            map.put(key, fullName);
+        }
+        return map;
     }
 
 

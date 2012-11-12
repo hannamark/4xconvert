@@ -98,7 +98,9 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.LinkedHashSet;
 
@@ -143,6 +145,7 @@ public class StudyProtocolConverter {
      * @param studyProtocolDTO spDTO
      * @return StudyProtocolDTO sp
      */
+    @SuppressWarnings({ "deprecation", "PMD.ExcessiveMethodLength" })
     public static StudyProtocolDTO convertFromDomainToDTO(StudyProtocol studyProtocol,
             StudyProtocolDTO studyProtocolDTO) {
         AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocol, studyProtocolDTO);
@@ -184,6 +187,18 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
+        
+        studyProtocolDTO.setComments(StConverter.convertToSt(studyProtocol
+                .getComments()));
+        studyProtocolDTO.setProcessingPriority(IntConverter
+                .convertToInt(studyProtocol.getProcessingPriority()));
+        if (studyProtocol.getAssignedUser() != null) {
+            studyProtocolDTO.setAssignedUser(IiConverter
+                    .convertToIi(studyProtocol.getAssignedUser().getUserId()));
+        } else {
+            studyProtocolDTO.setAssignedUser(IiConverter
+                    .convertToIi((Long) null));
+        }
         return studyProtocolDTO;
     }
 
@@ -204,6 +219,7 @@ public class StudyProtocolConverter {
     * @return StudyProtocol StudyProtocol
     * @throws PAException when error.
     */
+   @SuppressWarnings({ "deprecation", "PMD.ExcessiveMethodLength" })
    public static StudyProtocol convertFromDTOToDomain(StudyProtocolDTO studyProtocolDTO ,
            StudyProtocol studyProtocol) throws PAException {
 
@@ -250,6 +266,19 @@ public class StudyProtocolConverter {
            studyProtocol.setSubmissionNumber(
                IntConverter.convertToInteger(studyProtocolDTO.getSubmissionNumber()));
        }
+       
+        studyProtocol.setComments(StConverter.convertToString(studyProtocolDTO
+                .getComments()));
+        studyProtocol.setProcessingPriority(IntConverter
+                .convertToInteger(studyProtocolDTO.getProcessingPriority()));
+        if (!ISOUtil.isIiNull(studyProtocolDTO.getAssignedUser())) {
+            User user = new User();
+            user.setUserId(IiConverter.convertToLong(studyProtocolDTO
+                    .getAssignedUser()));
+            studyProtocol.setAssignedUser(user);
+        } else {
+            studyProtocol.setAssignedUser(null);
+        }
        return studyProtocol;
    }
 

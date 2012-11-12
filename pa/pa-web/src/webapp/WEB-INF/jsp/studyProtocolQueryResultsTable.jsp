@@ -23,7 +23,9 @@
             
             <display:column class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
-            </display:column>    
+            </display:column>
+            <display:column escapeXml="false" titleKey="studyProtocol.processingPriority" property="processingPriority"
+                sortable="true" headerClass="sortable"/>                
             <display:column escapeXml="true" titleKey="studyProtocol.ctepIdentifier" property="ctepId"
                 sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.dcpIdentifier" property="dcpId"
@@ -51,7 +53,7 @@
             </display:column>
             <display:column escapeXml="false" titleKey="studyProtocol.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>
-            <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
+            <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdDates" property="onHoldDate" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
             
             <c:if test="${empty isBare}">

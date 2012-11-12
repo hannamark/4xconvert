@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -176,4 +177,16 @@ public interface CSMUserUtil {
      * @throws PAException exception
      */
     List<String> getUserGroups(String loginName) throws PAException;
+    
+    /**
+     * Performance-oriented methods that quickly returns all PA Abstractors in
+     * the system. Map key is the user's ID; map value is of form 'Last Name,
+     * First Name'.
+     * 
+     * @return all PA Abstractors in the system
+     * @throws PAException
+     *             PAException
+     */
+    Map<Long, String> getAbstractors() throws PAException;
+    
 }

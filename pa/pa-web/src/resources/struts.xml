@@ -148,8 +148,11 @@
         </action>        
         <action name="disClaimerAction*" class="gov.nih.nci.pa.action.DisclaimerAction" method="{1}">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
-            <result>/WEB-INF/jsp/disclaimer.jsp</result>
-            <result name="acceptView" type="redirectAction">/report/studyProtocolshowCriteria.action</result>
+            <result>/WEB-INF/jsp/disclaimer.jsp</result>            
+            <result name="acceptView" type="redirectAction">
+                <param name="namespace">../protected</param>
+                <param name="actionName">dashboard</param>                
+            </result>             
         </action>
         <action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
@@ -202,6 +205,20 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="report">
+    
+        <action name="dashboard*" class="gov.nih.nci.pa.action.DashboardAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">save</param>
+                <param name="excludeMethods">execute, search</param>
+            </interceptor-ref>
+            <result name="suAbstractorLanding">/WEB-INF/jsp/dashboard.jsp</result>
+            <result name="abstractorLanding">/WEB-INF/jsp/dashboard.jsp</result>
+            <result name="nonAbstractorLanding" type="redirectAction">
+                <param name="namespace">../report</param>
+                <param name="actionName">studyProtocolshowCriteria</param>                
+            </result> 
+        </action>    
     
         <action name="organizationsSearch*" class="gov.nih.nci.pa.action.OrganizationSearchAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />            

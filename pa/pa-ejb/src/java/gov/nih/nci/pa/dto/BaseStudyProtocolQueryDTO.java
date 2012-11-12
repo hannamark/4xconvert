@@ -89,6 +89,8 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mshestopalov
  *
@@ -115,6 +117,7 @@ public class BaseStudyProtocolQueryDTO {
     private String nctIdentifier;
     private String ctepId;
     private String dcpId;
+    private String cdrId;
     
     
     /**
@@ -374,4 +377,26 @@ public class BaseStudyProtocolQueryDTO {
     public void setLeadOrganizationPOId(Long leadOrganizationPOId) {
         this.leadOrganizationPOId = leadOrganizationPOId;
     }
+    
+    /**
+     * @return NciIdentifierTruncated
+     */
+    public String getNciIdentifierTruncated() {
+        return StringUtils.replace(getNciIdentifier(), "NCI-", "");
+    }
+
+    /**
+     * @return the cdrId
+     */
+    public String getCdrId() {
+        return cdrId;
+    }
+
+    /**
+     * @param cdrId the cdrId to set
+     */
+    public void setCdrId(String cdrId) {
+        this.cdrId = cdrId;
+    }
+    
 }

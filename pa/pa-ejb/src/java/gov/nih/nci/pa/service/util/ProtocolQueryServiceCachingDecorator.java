@@ -110,4 +110,10 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
             throws PAException {
         return serviceLocal.getOfficialTitles(matchString);
     }
+
+    @Override
+    public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
+            throws PAException {
+        serviceLocal.populateMilestoneHistory(trials);        
+    }
 }

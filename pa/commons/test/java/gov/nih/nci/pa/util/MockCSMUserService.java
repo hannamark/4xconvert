@@ -88,11 +88,14 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
+
 
 /**
  * @author vrushali
@@ -123,6 +126,16 @@ public class MockCSMUserService implements CSMUserUtil {
         user.setPhoneNumber("1231231234");
         user.setUserId(3L);
         users.add(user);
+        
+        user = new User();
+        user.setLoginName("suAbstractor");
+        user.setFirstName("Super");
+        user.setLastName("Abstractor");
+        user.setOrganization("Organization");
+        user.setEmailId("user1@mail.nih.gov");
+        user.setPhoneNumber("1231231234");
+        user.setUserId(4L);
+        users.add(user);        
     }
 
     /**
@@ -188,7 +201,8 @@ public class MockCSMUserService implements CSMUserUtil {
      * {@inheritDoc}
      */
     public boolean isUserInGroup(String loginName, String groupName) throws PAException {
-        return false;
+        return loginName != null && loginName.startsWith("Abstractor:")
+                && groupName != null && groupName.equals("AdminAbstractor");
     }
 
     @Override
@@ -202,5 +216,10 @@ public class MockCSMUserService implements CSMUserUtil {
     @Override
     public User updateCSMUser(User csmUser) throws PAException {
         return csmUser;
+    }
+
+    @Override
+    public Map<Long, String> getAbstractors() throws PAException {       
+        return new HashMap<Long, String>();
     }
 }

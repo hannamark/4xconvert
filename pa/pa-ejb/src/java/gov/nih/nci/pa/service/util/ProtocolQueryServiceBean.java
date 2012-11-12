@@ -100,6 +100,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -130,6 +131,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -175,6 +177,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
+    private static final String EXCLUDE_CTEP_DCP = "exclude";
+
     @EJB
     private DataAccessServiceLocal dataAccessService;
 
@@ -196,7 +200,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {
         if (isCriteriaEmpty(spsc)) {
-            throw new PAException("At least one criteria is required.");
+            throw new PAException("At least one criteria is required");
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Long> queryList = getStudyProtocolIdQueryResults(spsc);
@@ -217,7 +221,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria criteria)
             throws PAException {
         if (isCriteriaEmpty(criteria)) {
-            throw new PAException("At least one criteria is required.");
+            throw new PAException("At least one criteria is required");
         }
         lookupBiomarkerIds(criteria);
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
@@ -394,12 +398,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     private void populateOnHoldData(List<StudyProtocolQueryDTO> spDtos, Map<Long, List<StudyOnhold>> onHold) {
         List<StudyOnhold> sohLists = null;
         StringBuffer sb = new StringBuffer();
-        StringBuffer sbDate = new StringBuffer();
+        StringBuffer sbDate = new StringBuffer();        
         for (StudyProtocolQueryDTO spqDto : spDtos) {
             if (onHold.containsKey(spqDto.getStudyProtocolId())) {
                 sohLists = onHold.get(spqDto.getStudyProtocolId());
                 sb = new StringBuffer();
                 sbDate = new StringBuffer();
+                String offHoldDate = "";
                 for (StudyOnhold studyOnhold : sohLists) {
                     if (sb.length() == 0) {
                         sb.append(studyOnhold.getOnholdReasonCode().getCode());
@@ -408,9 +413,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     }
                     sbDate.append(PAUtil.normalizeDateString((
                                 studyOnhold.getOnholdDate()).toString())).append(PAConstants.WHITESPACE);
+                    offHoldDate = studyOnhold.getOffholdDate() != null ? PAUtil
+                            .normalizeDateString((studyOnhold.getOffholdDate())
+                                    .toString()) : "";                  
                 }
                 spqDto.setOnHoldReasons(sb.toString());
-                spqDto.setOffHoldDates(sbDate.toString());
+                spqDto.setOnHoldDate(sbDate.toString());
+                spqDto.setOffHoldDate(offHoldDate);
             }
         }
     }
@@ -423,6 +432,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return spIds;
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     private StudyProtocolQueryBeanSearchCriteria getExampleCriteria(StudyProtocolQueryCriteria criteria) 
             throws PAException {
         StudyProtocol example = instantiateExampleObject(criteria);
@@ -434,9 +444,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setSearchCTEPTrials(includeCTEP(criteria));
         options.setSearchDCPTrials(includeDCP(criteria));
         options.setSearchCTEPAndDCPTrials(includeDCPAndCTEP(criteria));
-        options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
+        options.setExcludeCtepDcpTrials(excludeDCPAndCTEP(criteria));
+        options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));        
         options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
-        options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));        
+        options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
+        options.getTrialSubmissionTypes().addAll(criteria.getTrialSubmissionTypes());
+        options.setNciSponsored(criteria.getNciSponsored());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
         options.setPhaseCodesByValues(criteria.getPhaseCodes());
         options.setCountryName(criteria.getCountryName());
@@ -450,6 +463,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionTypes(criteria.getInterventionTypes());
         options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
         options.setAnyTypeIdentifier(criteria.getAnyTypeIdentifier());
+        options.setCheckedOut(criteria.getCheckedOut());
+        options.setHoldRecordExists(criteria.getHoldRecordExists());
+        options.setOnholdReasons(criteria.getOnholdReasons());
+        options.setSubmittedOnOrAfter(criteria.getSubmittedOnOrAfter());
+        options.setSubmittedOnOrBefore(criteria.getSubmittedOnOrBefore());
+        options.setSubmitterAffiliateOrgId(criteria.getSubmitterAffiliateOrgId());       
+        options.setMilestoneFilters(criteria.getMilestoneFilters());  
+        options.setProcessingPriority(toIntegerList(criteria.getProcessingPriority()));
         if (criteria.getCtgovXmlRequiredIndicator() != null && !criteria.getCtgovXmlRequiredIndicator().equals("")) {
             options.setCtgovXmlRequiredIndicator(Boolean.valueOf((criteria.getCtgovXmlRequiredIndicator())));
         } else {
@@ -461,9 +482,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         } else if (StringUtils.equalsIgnoreCase(criteria.getHoldStatus(), PAConstants.NOT_ON_HOLD)) { 
             options.setSearchOffHoldTrials(true);
         }        
+        options.setCurrentOrPreviousMilestone(criteria.getCurrentOrPreviousMilestone());
         
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
+    }
+
+    private List<Integer> toIntegerList(List<String> list) {
+        List<Integer> intList = new ArrayList<Integer>();
+        for (String str : list) {
+            if (StringUtils.isNotBlank(str)) {
+                intList.add(Integer.valueOf(str));
+            }
+        }
+        return intList;
     }
 
     /**
@@ -499,7 +531,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     
     private boolean includeDCPAndCTEP(StudyProtocolQueryCriteria criteria) {
         return CTEP_DCP.equals(criteria.getCtepDcpCategory());
-    }   
+    }  
+    
+    private boolean excludeDCPAndCTEP(StudyProtocolQueryCriteria criteria) {
+        return EXCLUDE_CTEP_DCP.equals(criteria.getCtepDcpCategory());
+    } 
 
 
     @SuppressWarnings("unchecked")
@@ -613,7 +649,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) throws PAException {
         sp.setId(crit.getStudyProtocolId());
-        sp.setOfficialTitle(crit.getOfficialTitle());
+        sp.setOfficialTitle(crit.getOfficialTitle());        
         sp.setPhaseAdditionalQualifierCode(
                 PhaseAdditionalQualifierCode.getByCode(crit.getPhaseAdditionalQualifierCode()));
         if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
@@ -718,11 +754,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     }
 
-    private void populateExampleStudyMilestones(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        if (StringUtils.isNotEmpty(crit.getStudyMilestone())) {
-            StudyMilestone sm = new StudyMilestone();
-            sm.setMilestoneCode(MilestoneCode.getByCode(crit.getStudyMilestone()));
-            sp.getStudyMilestones().add(sm);
+    private void populateExampleStudyMilestones(
+            StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        for (String code : crit.getStudyMilestone()) {
+            if (StringUtils.isNotEmpty(code)) {
+                StudyMilestone sm = new StudyMilestone();
+                sm.setMilestoneCode(MilestoneCode.getByCode(code));
+                sp.getStudyMilestones().add(sm);
+            }
         }
     }
 
@@ -749,10 +788,17 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         populateExampleStudyContacts(crit, sp);
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
         return (StringUtils.isEmpty(criteria.getNciIdentifier())
                 && StringUtils.isEmpty(criteria.getCtgovXmlRequiredIndicator())
-                && criteria.getStudyProtocolId() == null
+                && criteria.getStudyProtocolId() == null                
+                && criteria.getSubmittedOnOrAfter() == null
+                && criteria.getSubmittedOnOrBefore() == null
+                && criteria.getNciSponsored() == null
+                && criteria.getHoldRecordExists() == null
+                && criteria.getCurrentOrPreviousMilestone() == null               
+                && StringUtils.isEmpty(criteria.getSubmitterAffiliateOrgId())
                 && StringUtils.isEmpty(criteria.getOfficialTitle())
                 && StringUtils.isEmpty(criteria.getSubmitter())
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
@@ -760,7 +806,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
-                && StringUtils.isEmpty(criteria.getStudyMilestone())
+                && CollectionUtils.isEmpty(criteria.getStudyMilestone())
+                && CollectionUtils.isEmpty(criteria.getMilestoneFilters())
+                && CollectionUtils.isEmpty(criteria.getProcessingPriority())
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
@@ -768,7 +816,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getAnyTypeIdentifier())
                 && StringUtils.isEmpty(criteria.getCountryName())
                 && StringUtils.isEmpty(criteria.getCity())
-                && CollectionUtils.isEmpty(criteria.getDocumentWorkflowStatusCodes())
+                && CollectionUtils.isEmpty(criteria.getDocumentWorkflowStatusCodes())                
+                && CollectionUtils.isEmpty(criteria.getOnholdReasons())
                 && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())
@@ -776,8 +825,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
+                && CollectionUtils.isEmpty(criteria.getTrialSubmissionTypes())
                 && StringUtils.isEmpty(criteria.getHoldStatus())
                 && !criteria.isStudyLockedBy()
+                && criteria.getCheckedOut() == null
                 && StringUtils.isEmpty(criteria.getCtepDcpCategory())
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
@@ -890,4 +941,50 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     public void setProtocolQueryResultsService(ProtocolQueryResultsServiceLocal protocolQueryResultsService) {
         this.protocolQueryResultsService = protocolQueryResultsService;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
+            throws PAException {
+        if (trials.isEmpty()) {
+            return;
+        }
+        List<Long> ids = new ArrayList<Long>();
+        Map<Long, List<MilestoneDTO>> map = new HashMap<Long, List<MilestoneDTO>>();
+        Map<Long, String> users = CSMUserService.getInstance().getAbstractors();
+
+        for (StudyProtocolQueryDTO dto : trials) {
+            ids.add(dto.getStudyProtocolId());
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session
+                .createQuery("select sm.studyProtocol.id, sm.milestoneDate, sm.milestoneCode, sm.dateLastCreated, "
+                        + "sm.userLastCreated.userId from "
+                        + StudyMilestone.class.getSimpleName()
+                        + " sm where sm.studyProtocol.id in (:ids) order by sm.studyProtocol.id, sm.id asc");
+
+        query.setParameterList("ids", ids);
+        // CHECKSTYLE:OFF
+        for (Object[] row : (List<Object[]>) query.list()) {
+            Long studyId = ((Long) row[0]);
+            Date milestoneDate = (Date) row[1];
+            MilestoneCode code = (MilestoneCode) row[2];
+            Date dateCreated = (Date) row[3];
+            Long userId = (Long) row[4];
+
+            List<MilestoneDTO> mstones = map.get(studyId);
+            if (mstones == null) {
+                mstones = new ArrayList<MilestoneDTO>();
+                map.put(studyId, mstones);
+            }
+            mstones.add(new MilestoneDTO(code, milestoneDate, StringUtils
+                    .defaultString(users.get(userId)), dateCreated));
+        }
+        for (StudyProtocolQueryDTO dto : trials) {
+            dto.setMilestoneHistory(map.get(dto.getStudyProtocolId()));
+        }
+    }
+    
+    
 }

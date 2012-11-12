@@ -722,4 +722,15 @@ public class PAUtilTest {
         assertFalse(PAUtil.isBusinessDay(DateUtils.parseDate("12/25/2013", pattern)));
         
     }
+    
+    
+    @Test
+    public void endOfDay() {
+        assertNull(PAUtil.endOfDay(null));
+        Date date = new Date();
+        Date endOfDay = PAUtil.endOfDay(date);
+        assertTrue(DateUtils.isSameDay(date, endOfDay));
+        assertFalse(DateUtils.isSameDay(date,
+                DateUtils.addMilliseconds(endOfDay, 1)));
+    }
 }

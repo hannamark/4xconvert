@@ -82,13 +82,19 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudyCheckout;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.iso.convert.StudyCheckoutConverter;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Date;
 import java.util.List;
@@ -97,6 +103,13 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
+
 
 /**
  * @author Kalpana Guthikonda
@@ -175,4 +188,49 @@ implements StudyCheckoutServiceLocal {
     public StudyCheckoutDTO update(StudyCheckoutDTO dto) throws PAException {
         throw new PAException("Updates disabled. Use checkIn() and checkOut().");
     }
+
+    
+    @SuppressWarnings("deprecation")
+    @Override
+    public void handleTrialAssigneeChange(Long studyProtocolId)
+            throws PAException {
+        CSMUserUtil csmService = CSMUserService.getInstance();
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class,
+                studyProtocolId);
+        User newAssignee = sp.getAssignedUser();
+        if (newAssignee != null) {
+            final String login = newAssignee.getLoginName();
+            if (csmService.isUserInGroup(login, ADMIN_ABSTRACTOR_ROLE)) {
+                checkInAndOut(studyProtocolId, CheckOutType.ADMINISTRATIVE,
+                        login);
+            }
+            if (csmService.isUserInGroup(login, SCIENTIFIC_ABSTRACTOR_ROLE)) {
+                checkInAndOut(studyProtocolId, CheckOutType.SCIENTIFIC, login);
+            }
+        } else {
+            checkIn(IiConverter.convertToIi(studyProtocolId),
+                    CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE),
+                    StConverter.convertToSt(UsernameHolder.getUser()),
+                    StConverter.convertToSt(StringUtils.EMPTY));
+            checkIn(IiConverter.convertToIi(studyProtocolId),
+                    CdConverter.convertToCd(CheckOutType.SCIENTIFIC),
+                    StConverter.convertToSt(UsernameHolder.getUser()),
+                    StConverter.convertToSt(StringUtils.EMPTY));
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void checkInAndOut(Long studyProtocolId, CheckOutType type,
+            String login) throws PAException {
+        checkIn(IiConverter.convertToIi(studyProtocolId),
+                CdConverter.convertToCd(type), StConverter.convertToSt(login),
+                StConverter.convertToSt(StringUtils.EMPTY));
+        checkOut(IiConverter.convertToIi(studyProtocolId),
+                CdConverter.convertToCd(type), StConverter.convertToSt(login));
+
+    }
+    
 }

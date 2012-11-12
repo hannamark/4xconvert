@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -155,6 +156,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -372,6 +374,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
+        
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);        
+        assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+
     }
 
     @Test
@@ -1266,6 +1272,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         assertEquals(2, studyProtocolDTO.getSecondaryIdentifiers().getItem().size());
+        assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
         assertEquals(userCreated, studyProtocolDTO.getUserLastCreated());
     }
     

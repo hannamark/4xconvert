@@ -197,5 +197,10 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     public List<String> getOfficialTitles(String matchString)
             throws PAException {
         return null;
-    }    
+    }   
+    
+    @Override
+    public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
+            throws PAException { 
+    }
 }

@@ -95,6 +95,7 @@ import java.util.TreeSet;
  * @author mshestopalov
  *
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQueryDTO {
 
     private DocumentWorkflowStatusCode lastOffHollStatusCode;
@@ -105,7 +106,8 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     private String primaryPurpose;
     private String primaryPurposeOtherText;
     private String onHoldReasons;
-    private String offHoldDates;
+    private String onHoldDate;
+    private String offHoldDate;
     private Boolean ctgovXmlRequiredIndicator;
     private SubmissionTypeCode submissionTypeCode;
     private List<String> otherIdentifiers = new ArrayList<String>();
@@ -117,6 +119,11 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     private String studyModelOtherText;
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
+    private String submitterOrgName;
+    
+    private Integer processingPriority;
+    private String processingComments;
+    private Long assignedUserId;
     
     
     /**
@@ -281,16 +288,16 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
      * 
      * @return offHoldDates
      */
-    public String getOffHoldDates() {
-        return offHoldDates;
+    public String getOnHoldDate() {
+        return onHoldDate;
     }
 
     /**
      * 
      * @param offHoldDates offHoldDates
      */
-    public void setOffHoldDates(String offHoldDates) {
-        this.offHoldDates = offHoldDates;
+    public void setOnHoldDate(String offHoldDates) {
+        this.onHoldDate = offHoldDates;
     }
 
     /**
@@ -417,5 +424,75 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
      */
     public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
+    }
+
+    /**
+     * @return the submitterOrgName
+     */
+    public String getSubmitterOrgName() {
+        return submitterOrgName;
+    }
+
+    /**
+     * @param submitterOrgName the submitterOrgName to set
+     */
+    public void setSubmitterOrgName(String submitterOrgName) {
+        this.submitterOrgName = submitterOrgName;
+    }
+
+    /**
+     * @return the processingPriority
+     */
+    public Integer getProcessingPriority() {
+        return processingPriority;
+    }
+
+    /**
+     * @param processingPriority the processingPriority to set
+     */
+    public void setProcessingPriority(Integer processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
+    /**
+     * @return the offHoldDate
+     */
+    public String getOffHoldDate() {
+        return offHoldDate;
+    }
+
+    /**
+     * @param offHoldDate the offHoldDate to set
+     */
+    public void setOffHoldDate(String offHoldDate) {
+        this.offHoldDate = offHoldDate;
+    }
+
+    /**
+     * @return the processingComments
+     */
+    public String getProcessingComments() {
+        return processingComments;
+    }
+
+    /**
+     * @param processingComments the processingComments to set
+     */
+    public void setProcessingComments(String processingComments) {
+        this.processingComments = processingComments;
+    }
+
+    /**
+     * @return the assignedUserId
+     */
+    public Long getAssignedUserId() {
+        return assignedUserId;
+    }
+
+    /**
+     * @param assignedUserId the assignedUserId to set
+     */
+    public void setAssignedUserId(Long assignedUserId) {
+        this.assignedUserId = assignedUserId;
     }
 }

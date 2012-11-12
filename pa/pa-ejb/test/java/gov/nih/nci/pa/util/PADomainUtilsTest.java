@@ -89,6 +89,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
@@ -346,4 +347,22 @@ public class PADomainUtilsTest {
         list = PADomainUtils.searchPoPersons(p);
         assertEquals(0, list.size());
     }    
+    
+    
+    @Test
+    public void getCDRId() {
+        StudyProtocol sp = new StudyProtocol();
+        
+        Ii notcdr = new Ii();
+        notcdr.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        notcdr.setExtension("ABC11111111111111");
+        sp.getOtherIdentifiers().add(notcdr);
+        
+        Ii cdr = new Ii();
+        cdr.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        cdr.setExtension("CDR11111111111111");
+        sp.getOtherIdentifiers().add(cdr);
+        
+        assertEquals("CDR11111111111111", PADomainUtils.getCDRId(sp));
+    }
 }

@@ -143,4 +143,22 @@ public interface ProtocolQueryServiceLocal {
      * @throws PAException on error.
      */
     List<String> getOfficialTitles(String matchString) throws PAException;
+    
+    /**
+     * For each trial within the given list, populates
+     * {@link gov.nih.nci.pa.dto.UpdateableStudyProtocolQueryDTO.milestoneHistory}
+     * collection. Does so by using a single query to avoid N+1.
+     * {@link #getStudyProtocolByCriteria(StudyProtocolQueryCriteria)} method
+     * will not populate milestones so by default due to performance reasons and
+     * because not every search screen needs milestone history. Dashboard screen
+     * will use this method in addition to
+     * {@link #getStudyProtocolByCriteria(StudyProtocolQueryCriteria)} in order
+     * to display milestone history in Excel sheet.
+     * 
+     * @param trials List<StudyProtocolQueryDTO>
+     * @throws PAException PAException
+     */
+    void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
+            throws PAException;
+    
 }

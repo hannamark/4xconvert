@@ -35,6 +35,7 @@
     </head>
     <body>
         <c:set var="topic" scope="request" value="trialdetails"/>
+        <c:set scope="request" var="suAbs" value="${sessionScope.isSuAbstractor==true}"></c:set>
         <h1>Trial Identification</h1>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">
@@ -188,7 +189,69 @@
 	                      </ul>
 	                  </del>
 	                 </div>     
-                 </c:if>           
+                 </c:if>  
+                 
+                 <div class="line"></div>
+                 <table class="form">
+                         <tr>
+                             <td scope="row" class="label"><label for="assignedTo">Assigned To</label></td>
+                             <td> 
+                                 <s:set name="abstractorsList"
+                                     value="@gov.nih.nci.pa.service.util.CSMUserService@getInstance().abstractors" />
+                                 <s:select id="assignedTo" name="assignedTo"
+                                     list="#abstractorsList" headerKey="" headerValue="Unassigned"
+                                     value="#session.trialSummary.assignedUserId" cssStyle="width:206px" />                                        
+                             </td>
+                         </tr>
+                         <tr>
+                             <td scope="row" class="label"><label for="newProcessingPriority">Processing Priority</label></td>
+                             <td> 
+                                 <s:select id="newProcessingPriority"
+                                     name="newProcessingPriority"
+                                     list="#{'1':'1 - High','2':'2 - Normal','3':'3 - Low'}"                                               
+                                     value="#session.trialSummary.processingPriority" cssStyle="width:206px" />    
+                                 
+                                 <c:if test="${!suAbs}">
+                                       <script type="text/javascript">
+                                             Event.observe(window, "load", function () {
+                                                 $('assignedTo').disabled = true;
+                                                 $('newProcessingPriority').disabled = true;
+                                             });
+                                       </script>
+                                  </c:if>                                        
+                                                                     
+                             </td>
+                         </tr>  
+                         <tr>
+                             <td scope="row" class="label" colspan="2"><label for="processingComments">Trial Processing Comments</label></td>
+                         </tr>
+                         <tr>
+                             <td colspan="2">
+                                 <s:textarea id="processingComments" name="processingComments"    
+                                     maxlength="4000" cssClass="charcounter"                                        
+                                     cssStyle="width: 100%;" rows="5">
+                                     <s:param name="value">
+                                         <s:property value="#session.trialSummary.processingComments"/>
+                                     </s:param>                                            
+                                 </s:textarea> 
+                             </td>                                        
+                         </tr>
+                         <tr>
+                             <td colspan="2" align="center">
+                                 <div class="actionsrow">
+                                     <del class="btnwrapper">
+                                         <ul class="btnrow">
+                                             <li><s:a href="javascript:void(0)" cssClass="btn"
+                                                     onclick="handleAction('save');">
+                                                     <span class="btn_img"><span class="search">Save</span></span>
+                                                 </s:a></li>
+                                         </ul>
+                                     </del>
+                                 </div>                                        
+                             </td>
+                         </tr>  
+                 </table>
+                          
             </s:form>
         </div>
     </body>

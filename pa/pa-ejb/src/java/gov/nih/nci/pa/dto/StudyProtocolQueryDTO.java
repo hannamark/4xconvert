@@ -79,12 +79,19 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 
 /**
@@ -92,7 +99,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Naveen Amiruddin
  * @since 07/22/2007
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.TooManyFields", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.TooManyFields",
+        "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO implements Serializable {
 
     private static final long serialVersionUID = 8200069337460780484L;
@@ -115,6 +123,10 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String lastUpdatedUserDisplayName;
     
     private String lastUpdaterDisplayName;
+    
+    private String recentHoldReason;
+    private Date recentOnHoldDate;
+    private Date recentOffHoldDate;
     
     /**
      * Whether this trial permits self-registration of participating sites. 
@@ -489,5 +501,165 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
             || getShowSendXml().booleanValue() 
             || isCurrentUserCanAddSite() 
             || isCurrentUserCanEditSite();
+    }
+  
+    /**
+     * @return CtepOrDcp
+     */
+    public String getCtepOrDcp() {
+        if (StringUtils.isNotBlank(getCtepId())
+                && StringUtils.isBlank(getDcpId())) { 
+            return "CTEP";
+        }
+        if (StringUtils.isNotBlank(getDcpId())) {
+            return "DCP";
+        }
+        return "";
+    }
+    
+    
+    /**
+     * @return the checkedOutByMe
+     */
+    public boolean isCheckedOutByMe() {
+        return UsernameHolder.getUser().equalsIgnoreCase(
+                getAdminCheckout().getCheckoutBy())
+                || UsernameHolder.getUser().equalsIgnoreCase(
+                        getScientificCheckout().getCheckoutBy());
+    } 
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isReadyForAdminProcessing() {
+        return MilestoneCode.SUBMISSION_ACCEPTED == getMilestones()
+                .getActiveMilestone().getMilestone();
+    }
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isReadyForAdminQC() {
+        return MilestoneCode.ADMINISTRATIVE_READY_FOR_QC == getMilestones()
+                .getActiveMilestone().getMilestone();
+    }
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isReadyForTSRSubmission() {
+        return MilestoneCode.READY_FOR_TSR == getMilestones()
+                .getActiveMilestone().getMilestone();
+    }
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isSubmittedNotAccepted() {
+        return MilestoneCode.SUBMISSION_RECEIVED == getMilestones()
+                .getActiveMilestone().getMilestone();
+    }
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isReadyForScientificProcessing() {
+        return MilestoneCode.READY_FOR_SCIENTIFIC_PROCESSING_LIST
+                .contains(getMilestones().getActiveMilestone().getMilestone())
+                && findMilestoneInHistory(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE) == null;
+    }
+    
+    /**
+     * @return isReadyForAdminProcessing
+     */
+    public boolean isReadyForScientificQC() {
+        return MilestoneCode.SCIENTIFIC_READY_FOR_QC == getMilestones()
+                .getActiveMilestone().getMilestone();
+    }
+
+    /**
+     * @return the recentHoldReason
+     */
+    public String getRecentHoldReason() {
+        return recentHoldReason;
+    }
+
+    /**
+     * @param recentHoldReason the recentHoldReason to set
+     */
+    public void setRecentHoldReason(String recentHoldReason) {
+        this.recentHoldReason = recentHoldReason;
+    }
+
+    /**
+     * @return the recentOnHoldDate
+     */
+    public Date getRecentOnHoldDate() {
+        return recentOnHoldDate;
+    }
+
+    /**
+     * @param recentOnHoldDate the recentOnHoldDate to set
+     */
+    public void setRecentOnHoldDate(Date recentOnHoldDate) {
+        this.recentOnHoldDate = recentOnHoldDate;
+    }
+
+    /**
+     * @return the recentOffHoldDate
+     */
+    public Date getRecentOffHoldDate() {
+        return recentOffHoldDate;
+    }
+
+    /**
+     * @param recentOffHoldDate the recentOffHoldDate to set
+     */
+    public void setRecentOffHoldDate(Date recentOffHoldDate) {
+        this.recentOffHoldDate = recentOffHoldDate;
+    }
+    
+    /**
+     * @return MilestoneListForReporting
+     */
+    public List<MilestoneDTO> getMilestoneListForReporting() {
+        List<MilestoneDTO> list = new ArrayList<MilestoneDTO>();
+        for (MilestoneCode code : MilestoneCode.getMilestoneCodesForReporting()) {
+            MilestoneDTO historicMilestone = findMilestoneInHistory(code);
+            if (historicMilestone != null) {
+                list.add(historicMilestone);
+            } else {
+                MilestoneDTO dto = new MilestoneDTO();
+                dto.setMilestone(code);
+                list.add(dto);
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * @param code
+     *            MilestoneCode
+     * @return MilestoneDTO
+     */
+    public MilestoneDTO getMilestoneForReporting(final MilestoneCode code) {
+        return (MilestoneDTO) CollectionUtils.find(getMilestoneListForReporting(),
+                new Predicate() {
+                    @Override
+                    public boolean evaluate(Object obj) {
+                        return code == ((MilestoneDTO) obj).getMilestone();
+                    }
+                });
+    }
+
+    private MilestoneDTO findMilestoneInHistory(final MilestoneCode code) {
+        return (MilestoneDTO) CollectionUtils.find(getMilestoneHistory(),
+                new Predicate() {
+                    @Override
+                    public boolean evaluate(Object mstone) {
+                        return code.equals(((MilestoneDTO) mstone)
+                                .getMilestone());
+                    }
+                });
     }
 }

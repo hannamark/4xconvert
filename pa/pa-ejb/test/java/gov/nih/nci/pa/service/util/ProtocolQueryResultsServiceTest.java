@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.math.BigInteger;
@@ -87,18 +88,59 @@ public class ProtocolQueryResultsServiceTest {
     Date primaryCompletionDate = new Date();
     String studyProtocolType = "InterventionalStudyProtocol";
     String studySubtypeCode = "OBSERVATIONAL";
+    
+    private String submitter_org_name; 
+    private Date current_admin_milestone_date;
+    private Date current_scientific_milestone_date; 
+    private Date current_other_milestone_date;
+    private Integer processing_priority; 
+    private String last_milestone; 
+    private Date last_milestone_date;
+    private String active_milestone; 
+    private Date active_milestone_date;
+    private String admin_checkout_csm_fname;
+    private String  admin_checkout_csm_lname;
+    private String admin_checkout_reg_fname;
+    private String admin_checkout_reg_lname;
+    private String scientific_checkout_csm_fname;
+    private String scientific_checkout_csm_lname;
+    private String scientific_checkout_reg_fname;
+    private String scientific_checkout_reg_lname;
+    private String onhold_reason_code;
+    private Date onhold_date;
+    private Date offhold_date;
+    private String cdr_id; 
+    private String amendment_number;
+    private Date admin_checkout_date;
+    private Date scientific_checkout_date;
+    private String comments;    
         
-    Object[] qryResult = { studyProtocolIdentifier, officialTitle, proprietaryTrialIndicator, recordVerificationDate
-            , ctgovXmlRequiredIndicator, updating, dateLastCreated, submissionNumber, nciNumber, nctNumber, leadOrgPoid
-            , leadOrgName, leadOrgSpIdentifier, currentDwfStatusCode, currentDwfStatusDate, currentStudyOverallStatus
-            , currentAdminMilestone, currentScientificMilestone, currentOtherMilestone, adminCheckoutIdentifier
-            , adminCheckoutUser, scientificCheckoutIdentifiER, scientificCheckoutUser, studyPiFirstName,
-            studyPiLastName
-            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId, amendmentDate, updatedDate 
-            , phase, primaryPusrpose, startDate
-            , summary4fundingSponsor,sponsor,responsiblePartyOrganizationName
-            , responsiblePartyPIFirstName,responsiblePartyPILastName,userLastCreatedLogin,userLastCreatedFirst,userLastCreatedLast,primaryCompletionDate,
-            studyProtocolType,studySubtypeCode};
+    Object[] qryResult = { studyProtocolIdentifier, officialTitle,
+            proprietaryTrialIndicator, recordVerificationDate,
+            ctgovXmlRequiredIndicator, updating, dateLastCreated,
+            submissionNumber, nciNumber, nctNumber, leadOrgPoid, leadOrgName,
+            leadOrgSpIdentifier, currentDwfStatusCode, currentDwfStatusDate,
+            currentStudyOverallStatus, currentAdminMilestone,
+            currentScientificMilestone, currentOtherMilestone,
+            adminCheckoutIdentifier, adminCheckoutUser,
+            scientificCheckoutIdentifiER, scientificCheckoutUser,
+            studyPiFirstName, studyPiLastName, userLastCreatedLogin,
+            userLastCreatedFirst, userLastCreatedLast, dcpId, ctepId,
+            amendmentDate, updatedDate, phase, primaryPusrpose, startDate,
+            summary4fundingSponsor, sponsor, responsiblePartyOrganizationName,
+            responsiblePartyPIFirstName, responsiblePartyPILastName,
+            userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast,
+            primaryCompletionDate, studyProtocolType, studySubtypeCode,
+            submitter_org_name, current_admin_milestone_date,
+            current_scientific_milestone_date, current_other_milestone_date,
+            processing_priority, last_milestone, last_milestone_date,
+            active_milestone, active_milestone_date, admin_checkout_csm_fname,
+            admin_checkout_csm_lname, admin_checkout_reg_fname,
+            admin_checkout_reg_lname, scientific_checkout_csm_fname,
+            scientific_checkout_csm_lname, scientific_checkout_reg_fname,
+            scientific_checkout_reg_lname, onhold_reason_code, onhold_date,
+            offhold_date, cdr_id, amendment_number, admin_checkout_date,
+            scientific_checkout_date, comments };
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before
@@ -166,6 +208,7 @@ public class ProtocolQueryResultsServiceTest {
         params1.put("ids", ids1);
         qryMain1.setParameters(params1);
         List<Object> result1 = new ArrayList<Object>();
+        result1.add(new Object[] {studyProtocolIdentifier, "OTHER_ID", IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME});
         when(daMock.findByQuery(qryMain1)).thenReturn(result1);
         
         // fetch last updated date
@@ -178,6 +221,8 @@ public class ProtocolQueryResultsServiceTest {
         params2.put("ids", ids2);
         qryMain2.setParameters(params2);
         List<Object> result2 = new ArrayList<Object>();
+        result2.add(new Object[] { studyProtocolIdentifier, "Test", "Test",
+                "Test", new Date() });
         when(daMock.findByQuery(qryMain1)).thenReturn(result2);
         
     }

@@ -156,11 +156,12 @@ public class StudyMilestoneBeanLocal
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
         updateRecordVerificationDates(resultDto);
+        resetProcessingPriority(resultDto);
         createReadyForTSRMilestone(resultDto);
         // Send TSR e-mail for the appropriate milestone
         attachTSRToTrialDocs(workDto);
         sendTSREmail(workDto);
-        sendLateRejectionEmail(workDto);         
+        sendLateRejectionEmail(workDto);                
         checkSiteAccrualSubmitter(resultDto);
         return resultDto;
     }
@@ -264,6 +265,19 @@ public class StudyMilestoneBeanLocal
             ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
             ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
             accrualAccessService.update(ssaa);
+        }
+    }
+
+    private void resetProcessingPriority(StudyMilestoneDTO dto) {
+        MilestoneCode newCode = MilestoneCode.getByCode(CdConverter
+                .convertCdToString(dto.getMilestoneCode()));
+        if (newCode == MilestoneCode.TRIAL_SUMMARY_SENT) {
+            Ii spIi = dto.getStudyProtocolIdentifier();
+            Session session = PaHibernateUtil.getCurrentSession();
+            session.createQuery(
+                    "update " + StudyProtocol.class.getSimpleName()
+                            + " set processingPriority=2 where id="
+                            + IiConverter.convertToLong(spIi)).executeUpdate();
         }
     }
 

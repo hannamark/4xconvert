@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.StudyContactComparator;
 import gov.nih.nci.pa.util.StudyInboxComparator;
 import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.ValidIi;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -112,6 +113,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -168,6 +170,9 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Timestamp amendmentDate;
     private AmendmentReasonCode amendmentReasonCode;
     private Integer submissionNumber;
+    private String comments;
+    private Integer processingPriority;
+    private User assignedUser;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -837,6 +842,53 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setSecondaryPurposes(Set<SecondaryPurpose> secondaryPurposes) {
         this.secondaryPurposes = secondaryPurposes;
+    }
+
+    /**
+     * @return the comments
+     */
+    @Column(name = "comments")
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @return the processingPriority
+     */
+    @Column(name = "processing_priority")
+    @Searchable
+    public Integer getProcessingPriority() {
+        return processingPriority;
+    }
+
+    /**
+     * @param processingPriority the processingPriority to set
+     */
+    public void setProcessingPriority(Integer processingPriority) {
+        this.processingPriority = processingPriority;
+    }
+
+    /**
+     * @return the assignedUser
+     */
+    @ManyToOne
+    @JoinColumn(name = "assigned_user_id")    
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    /**
+     * @param assignedUser the assignedUser to set
+     */
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
     }
 
 }

@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -90,10 +93,12 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -102,6 +107,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -153,6 +159,7 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         setDocumentWorkflowStatus(studyProtocolDto, studyProtocol);
         studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
         studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
+        studyProtocolDto.setCdrId(PADomainUtils.getCDRId(studyProtocol));
         studyProtocolDto.setDiseaseNames(PADomainUtils.getDiseaseNames(studyProtocol));
         studyProtocolDto.setInterventionType(PADomainUtils.getInterventionTypes(studyProtocol));
         if (studyProtocol.getUserLastCreated() != null) {
@@ -166,11 +173,27 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
 
         PAUtil.convertMilestonesToDTO(studyProtocolDto.getMilestones(),
                 studyProtocol.getStudyMilestones());
+        setMilestoneHistory(studyProtocolDto, studyProtocol);
 
         String nctNumber = getPaServiceUtils().getStudyIdentifier(IiConverter
                 .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.NCT_IDENTIFIER_TYPE);
         studyProtocolDto.setNctNumber(nctNumber);
         return studyProtocolDto;
+    }
+
+    private void setMilestoneHistory(StudyProtocolQueryDTO dto, StudyProtocol sp) {
+        Set<StudyMilestone> copy = new TreeSet<StudyMilestone>(
+                new LastCreatedComparator());
+        copy.addAll(sp.getStudyMilestones());
+        for (StudyMilestone sm : copy) {
+            MilestoneDTO mDTO = new MilestoneDTO();
+            mDTO.setMilestone(sm.getMilestoneCode());
+            mDTO.setMilestoneDate(sm.getMilestoneDate());
+            mDTO.setCreateDate(sm.getDateLastCreated());
+            mDTO.setCreator(CsmUserUtil.getDisplayUsername(sm
+                    .getUserLastCreated()));
+            dto.getMilestoneHistory().add(mDTO);
+        }
     }
 
     private void setNonInterventionalFields(
@@ -368,5 +391,14 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
         studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
         studyProtocolDto.getLastCreated().setDateLastCreated(studyProtocol.getDateLastCreated());
+        
+        studyProtocolDto.setProcessingPriority(studyProtocol
+                .getProcessingPriority());
+        studyProtocolDto.setProcessingComments(studyProtocol.getComments());
+        if (studyProtocol.getAssignedUser() != null) {
+            studyProtocolDto.setAssignedUserId(studyProtocol.getAssignedUser()
+                    .getUserId());
+        }
+        
     }
 }

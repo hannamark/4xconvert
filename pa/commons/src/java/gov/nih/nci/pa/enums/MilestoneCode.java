@@ -171,6 +171,23 @@ public enum MilestoneCode implements CodedEnum<String> {
                 MilestoneCode.SCIENTIFIC_READY_FOR_QC, 
                 MilestoneCode.SCIENTIFIC_QC_START,
                 MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+    
+    /**
+     * List of milestones indicating Trial Ready for Scientific Processing.
+     * Trial Ready for Scientific Processing = trial that does not have a
+     * 'Scientific Processing Start' milestone AND its most recent 'Active
+     * milestone' * is any of the following: ('Submission Acceptance',
+     * 'Administrative Processing Start', 'Administrative Processing Completed',
+     * 'Ready for Administrative QC', 'Administrative QC Start', 'Administrative
+     * QC Completed')
+     */
+    public static final List<MilestoneCode> READY_FOR_SCIENTIFIC_PROCESSING_LIST = Arrays
+            .asList(MilestoneCode.SUBMISSION_ACCEPTED,
+                    MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
+                    MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                    MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
+                    MilestoneCode.ADMINISTRATIVE_QC_COMPLETE,
+                    MilestoneCode.ADMINISTRATIVE_QC_START);
     static {
         Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp = 
             new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
@@ -232,6 +249,10 @@ public enum MilestoneCode implements CodedEnum<String> {
 
         ALLOWED_DWF_STATUSES = Collections.unmodifiableMap(tmp);
     }
+    
+    private static final String READY_FOR = "ready for";
+
+    private static final String START = "start";
 
     /**
      * Constructor for MilestoneCode.
@@ -375,5 +396,19 @@ public enum MilestoneCode implements CodedEnum<String> {
             }
         }
         return milestoneCodes;
+    }
+    
+    /**
+     * @return MilestoneCodesForReporting
+     */
+    public static List<MilestoneCode> getMilestoneCodesForReporting() {
+        List<MilestoneCode> list = new ArrayList<MilestoneCode>();
+        for (MilestoneCode code : values()) {
+            if (!code.getCode().toLowerCase().contains(START)
+                    && !code.getCode().toLowerCase().contains(READY_FOR)) {
+                list.add(code);
+            }
+        }
+        return list;
     }
 }

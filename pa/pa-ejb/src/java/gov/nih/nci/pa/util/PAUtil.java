@@ -1419,5 +1419,18 @@ public class PAUtil {
         }
         return "";
     }
+
+    /**
+     * Sets this date to the very last instant of the day it represents.
+     * 
+     * @param date
+     *            date, e.g. 01/01/2012
+     * @return Date, e.g. 01/01/2012 23:59:59.999
+     */
+    public static Date endOfDay(Date date) {
+        return date!=null?DateUtils.setMilliseconds(DateUtils.setSeconds(
+                DateUtils.setMinutes(DateUtils.setHours(date, 23), 59), 59),
+                999):null;
+    }
     
 }
