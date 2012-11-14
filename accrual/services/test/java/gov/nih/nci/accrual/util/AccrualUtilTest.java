@@ -95,6 +95,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -146,6 +147,7 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         bo.setStudySite(TestSchema.studySites.get(0));
         bo.setStatusCode(ActiveInactiveCode.INACTIVE);
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         TestSchema.addUpdObject(bo);
         assertFalse(AccrualUtil.isUserAllowedAccrualAccess(
                 IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
@@ -172,6 +174,7 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         bo2.setStudySite(ss);
         bo2.setStatusCode(ActiveInactiveCode.ACTIVE);
         bo2.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo2.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         TestSchema.addUpdObject(bo2);
         
         assertFalse(AccrualUtil.isUserAllowedAccrualAccess(

@@ -98,6 +98,7 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -500,6 +501,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(1));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
 
@@ -508,6 +510,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(2));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
 
@@ -516,6 +519,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(4));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
         
@@ -524,6 +528,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(6));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
         
@@ -532,6 +537,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(7));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
         
@@ -540,6 +546,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(8));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
         
@@ -551,6 +558,7 @@ public class TestSchema {
         ssaa.setStudySite(studySites.get(1));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
 

@@ -117,6 +117,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -403,6 +404,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         ssAccAccess.setRegistryUser(TestSchema.registryUsers.get(0));
         ssAccAccess.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssAccAccess.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssAccAccess.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         TestSchema.addUpdObject(ssAccAccess);
         return ss;
     }
