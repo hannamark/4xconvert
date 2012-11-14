@@ -97,6 +97,7 @@ public class StudySiteAccrualAccessDTO extends SiteDTO {
     private Cd statusCode;
     private Ts statusDate;
     private Ii registryUserIdentifier;
+    private Cd source;
     private St requestDetails;
 
     /**
@@ -125,6 +126,20 @@ public class StudySiteAccrualAccessDTO extends SiteDTO {
      */
     public void setStatusDate(Ts statusDate) {
         this.statusDate = statusDate;
+    }
+
+    /**
+     * @return the source
+     */
+    public Cd getSource() {
+        return source;
+    }
+
+    /**
+     * @param source the source to set
+     */
+    public void setSource(Cd source) {
+        this.source = source;
     }
 
     /**

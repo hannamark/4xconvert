@@ -50,6 +50,7 @@ function handleEdit(rowId){
                 <display:column escapeXml="true" property="siteName" sortable="true" titleKey="manageAccrualAccess.siteName"/>
                 <display:column escapeXml="true" property="siteRecruitmentStatus" sortable="true" titleKey="manageAccrualAccess.siteRecruitmentStatus"/>
                 <display:column escapeXml="true" property="statusCode" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
+                <display:column escapeXml="true" property="source" sortable="true" titleKey="manageAccrualAccess.source"/>
                 <pa:displayWhenCheckedOut>
                     <display:column titleKey="manageAccrualAccess.edit" headerClass="centered" class="action">
                         <s:a href="javascript:void(0)" onclick="handleEdit(%{#attr.row.identifier})">

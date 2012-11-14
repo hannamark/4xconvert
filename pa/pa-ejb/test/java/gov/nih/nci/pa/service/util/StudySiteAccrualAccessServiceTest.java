@@ -99,6 +99,7 @@ import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -184,6 +185,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         dto.setRequestDetails(StConverter.convertToSt(REQUEST_DETAILS));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(ssId));
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        dto.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.PA_SITE_REQUEST));
         assertNull(dto.getIdentifier());
         CSMUserService.setInstance(new MockCSMUserService());
         StudySiteAccrualAccessDTO r = bean.create(dto);
@@ -290,8 +292,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
                 .createStudyRecruitmentStatus(sp);
         TestSchema.addUpdObject(recruitmentStatus);
 
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", user);
 
         // Make sure study level access has been provisioned with correct
         // values.
@@ -310,7 +312,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(saa.getStudyProtocol().getId(), sp.getId());
         assertEquals(saa.getUserLastCreated().getUserId(), user.getCsmUser()
                 .getUserId());
-        
+        assertEquals(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, saa.getSource());
+
         // Make sure site-level access has been provisioned automatically as well.
         List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
                 "from " + StudySiteAccrualAccess.class.getName()
@@ -319,6 +322,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
 
         assertEquals(1, siteAccessList.size());
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, ssaa.getSource());
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
         assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
                 .getUserId());
@@ -341,14 +345,15 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         StudySiteAccrualAccess inactive = new StudySiteAccrualAccess();        
         inactive.setDateLastCreated(new Date());
         inactive.setRegistryUser(user);
+        inactive.setSource(AccrualAccessSourceCode.REG_ADMIN_PROVIDED);
         inactive.setStatusCode(ActiveInactiveCode.INACTIVE);
         inactive.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         inactive.setStudySite(site);
         TestSchema.addUpdObject(inactive);
         
         
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", user);
         
         // Make sure site-level access has been provisioned automatically as well.
         List<StudySiteAccrualAccess> siteAccessList = session.createQuery(
@@ -358,6 +363,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
 
         assertEquals(1, siteAccessList.size());
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, ssaa.getSource());
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
         assertEquals(ssaa.getId(), inactive.getId());
     }
@@ -383,8 +389,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         recruitmentStatus.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
         TestSchema.addUpdObject(recruitmentStatus);
 
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE,
+                Arrays.asList(sp.getId()), "TEST", user);
 
         // Make sure study level access has been provisioned with correct
         // values.
@@ -417,8 +423,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
                 .createStudyRecruitmentStatus(sp);
         TestSchema.addUpdObject(recruitmentStatus);
 
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE,
+                Arrays.asList(sp.getId()), "TEST", user);
 
         // Make sure study level access has been provisioned with correct
         // values.
@@ -448,6 +454,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
 
         assertEquals(1, siteAccessList.size());
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
+        assertEquals(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, ssaa.getSource());
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
         assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
                 .getUserId());
@@ -467,8 +474,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
                 .createStudyRecruitmentStatus(sp);
         TestSchema.addUpdObject(recruitmentStatus);
 
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", user);
 
         // Make sure study level access has been provisioned with correct
         // values.
@@ -487,10 +494,11 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(1, siteAccessList.size());
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
+        assertEquals(ssaa.getSource(), AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
         
         // now un-assign.
-        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST", user);
+        bean.unassignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE,
+                Arrays.asList(sp.getId()), "TEST", user);
         trialLevelAccessList = session.createQuery(
                 "from " + StudyAccrualAccess.class.getName()
                         + " saa where saa.registryUser.id = " + user.getId()
@@ -502,11 +510,13 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         StudyAccrualAccess saa1 = trialLevelAccessList.get(0);
         assertEquals(saa1.getActionCode(), AssignmentActionCode.ASSIGNED);
         assertEquals(saa1.getStatusCode(), ActiveInactiveCode.INACTIVE);
+        assertEquals(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, saa1.getSource());
 
         StudyAccrualAccess saa2 = trialLevelAccessList.get(1);
         assertEquals(saa2.getActionCode(), AssignmentActionCode.UNASSIGNED);
         assertEquals(saa2.getStatusCode(), ActiveInactiveCode.INACTIVE);
-        
+        assertEquals(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, saa1.getSource());
+
         // Make sure site-level access has been cancelled.
         siteAccessList = session.createQuery(
                 "from " + StudySiteAccrualAccess.class.getName()
@@ -536,11 +546,11 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         TestSchema.addUpdObject(recruitmentStatus);
 
         // assign
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST-ASSIGN", user);        
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_ADMIN_PROVIDED,
+                Arrays.asList(sp.getId()), "TEST-ASSIGN", user);        
         // now un-assign.
-        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST-UNASSIGN", user);
+        bean.unassignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_ADMIN_PROVIDED,
+                Arrays.asList(sp.getId()), "TEST-UNASSIGN", user);
 
         // Mock user service
         RegistryUserServiceLocal userServiceLocal = mock(RegistryUserServiceLocal.class);
@@ -582,8 +592,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         TestSchema.addUpdObject(recruitmentStatus);
 
         // assign
-        bean.assignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST-ASSIGN", user);        
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_ADMIN_PROVIDED,
+                Arrays.asList(sp.getId()), "TEST-ASSIGN", user);
 
         // Mock user service
         RegistryUserServiceLocal userServiceLocal = mock(RegistryUserServiceLocal.class);
@@ -594,8 +604,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(1, list.size());
         
         // now un-assign.
-        bean.unassignTrialLevelAccrualAccess(user, Arrays.asList(sp.getId()),
-                "TEST-UNASSIGN", user);        
+        bean.unassignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_ADMIN_PROVIDED,
+                Arrays.asList(sp.getId()), "TEST-UNASSIGN", user);
 
         list = bean.getAccrualAccessAssignmentByTrial();
         assertEquals(0, list.size());

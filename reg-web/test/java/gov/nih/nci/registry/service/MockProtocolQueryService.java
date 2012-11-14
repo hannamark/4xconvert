@@ -11,6 +11,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang.SerializationUtils;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
@@ -67,8 +66,9 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setOfficialTitle("officialTitle");
         spQueryDTO.setStudyStatusCode(StudyStatusCode.ACTIVE);
         spQueryDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
-        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
+        spQueryDTO.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INSTITUTIONAL.getName());
         list.add(spQueryDTO);
         
         // bump up the list to go over a single page of results.
@@ -87,6 +87,9 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             spQueryDTO
                     .setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
             spQueryDTO.setCtgovXmlRequiredIndicator(true);
+            if (i != 15) { // leave one null to test handling of nulls
+                spQueryDTO.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.NATIONAL.getName());
+            }
             list.add(spQueryDTO);
         }
         
@@ -110,7 +113,10 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
                     && sp.getNciIdentifier().equalsIgnoreCase(sc.getNciIdentifier())) {
                 returnList.add(sp);
             }
-            if (sc.isMyTrialsOnly()) {
+            if(sc.getLeadOrganizationIds() != null && sc.getLeadOrganizationIds().contains(sp.getLeadOrganizationId())) {
+                returnList.add(sp);
+            }
+            if (sc.isMyTrialsOnly() != null && sc.isMyTrialsOnly()) {
                return list;
             }
         }

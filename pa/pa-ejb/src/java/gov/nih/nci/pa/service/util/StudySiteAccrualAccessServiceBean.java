@@ -89,6 +89,7 @@ import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -118,6 +119,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -337,6 +339,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         checkNull(dto.getRegistryUserIdentifier(), "User Name must be set.");
         checkNull(dto.getStudySiteIdentifier(), "Accessing Site must be set.");
         checkNull(dto.getStatusCode(), "Access Status must be set.");
+        checkNull(dto.getSource(), "Access Source must be set.");
         dto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
     }
 
@@ -486,25 +489,26 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void assignTrialLevelAccrualAccess(RegistryUser user,
+    public void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comments, RegistryUser creator)
             throws PAException {
         List<Long> currentTrialAccess = getActiveTrialLevelAccrualAccess(user);
         List<AccrualSubmissionAccessDTO> siteLevelAccess = getAccrualSubmissionAccess(user);
         for (Long trialID : trialIDs) {
             if (!currentTrialAccess.contains(trialID)) {
-                assignTrialLevelAccrualAccess(user, trialID, comments, creator, siteLevelAccess);
+                assignTrialLevelAccrualAccess(user, source, trialID, comments, creator, siteLevelAccess);
             }
         }
     }
 
     @SuppressWarnings(DEPRECATION)
-    private void assignTrialLevelAccrualAccess(RegistryUser user, Long trialID,
+    private void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source, Long trialID,
             String comments, RegistryUser creator, List<AccrualSubmissionAccessDTO> userCurrentSiteLevelAccess) 
                     throws PAException {
         StudyAccrualAccessDTO dto = new StudyAccrualAccessDTO();
         dto.setActionCode(CdConverter
                 .convertToCd(AssignmentActionCode.ASSIGNED));
+        dto.setSource(CdConverter.convertToCd(source));
         dto.setComments(StConverter.convertToSt(StringUtils.left(comments,
                 32768)));
         dto.setLastCreatedDate(TsConverter.convertToTs(new Date()));
@@ -521,7 +525,6 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         session.save(bo);
         
         breakDownTrialLevelAccrualAccessIntoSites(user, dto, userCurrentSiteLevelAccess);
-        
     }
 
     @SuppressWarnings(DEPRECATION)
@@ -532,10 +535,12 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         
         final Long trialID = IiConverter.convertToLong(accessDTO
                 .getStudyProtocolIdentifier());     
+        AccrualAccessSourceCode source = CdConverter.convertCdToEnum(AccrualAccessSourceCode.class, 
+                accessDTO.getSource());
         List<ParticipatingOrgDTO> sites = new ArrayList<ParticipatingOrgDTO>(
                 participatingOrgServiceLocal.getTreatingSites(trialID)); 
         
-        breakDownTrialLevelAccrualAccessIntoSites(user,
+        breakDownTrialLevelAccrualAccessIntoSites(user, source,
                 userCurrentSiteLevelAccess, trialID, sites);
     }
 
@@ -547,7 +552,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
      * @throws PAException
      */
     private void breakDownTrialLevelAccrualAccessIntoSites(
-            final RegistryUser user,
+            final RegistryUser user, AccrualAccessSourceCode source,
             List<AccrualSubmissionAccessDTO> userCurrentSiteLevelAccess,
             final Long trialID, List<ParticipatingOrgDTO> sites)
             throws PAException {
@@ -571,7 +576,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         for (ParticipatingOrgDTO site : sites) {
             if (!hasAccrualAccess(site.getStudySiteId(),
                     userCurrentSiteLevelAccess)) {
-                createStudySiteAccrualIfEligible(registryUserIdentifier, site);
+                createStudySiteAccrualIfEligible(registryUserIdentifier, site, source);
             }
         }
     }
@@ -590,9 +595,9 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             List<ParticipatingOrgDTO> sites = Arrays.asList(site);
             Long trialID = site.getStudyProtocolId();
 
-            List<RegistryUser> users = new ArrayList<RegistryUser>();
+            Map<RegistryUser, AccrualAccessSourceCode> users = new HashMap<RegistryUser, AccrualAccessSourceCode>();
             
-            String hql = "select saa.registryUser from "
+            String hql = "select saa.registryUser, saa.source from "
                     + StudyAccrualAccess.class.getName()
                     + " saa where saa.studyProtocol.id = :spId "
                     + "and saa.statusCode = :statusCode and saa.actionCode = :actionCode";
@@ -601,12 +606,13 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
             query.setParameter(ACTION_CODE, AssignmentActionCode.ASSIGNED);
             for (Object obj : query.list()) {
-                users.add(((RegistryUser) obj));
+                Object[] row = (Object[]) obj;
+                users.put(((RegistryUser) row[0]), (AccrualAccessSourceCode) row[1]);
             }
 
-            for (RegistryUser user : users) {
+            for (RegistryUser user : users.keySet()) {
                 List<AccrualSubmissionAccessDTO> siteLevelAccess = getAccrualSubmissionAccess(user);
-                breakDownTrialLevelAccrualAccessIntoSites(user, siteLevelAccess,
+                breakDownTrialLevelAccrualAccessIntoSites(user, users.get(user), siteLevelAccess,
                         trialID, sites);
             }
         } catch (Exception e) {
@@ -617,11 +623,12 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     /**
      * @param registryUserIdentifier
      * @param site
+     * @param source
      * @throws PAException
      */
     @SuppressWarnings(DEPRECATION)
     private void createStudySiteAccrualIfEligible(
-            final Ii registryUserIdentifier, ParticipatingOrgDTO site)
+            final Ii registryUserIdentifier, ParticipatingOrgDTO site, AccrualAccessSourceCode source)
             throws PAException {
         StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
                 .getCurrentStudySiteAccrualStatusByStudySite(IiConverter
@@ -641,11 +648,13 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
                             .convertToSt(StringUtils.EMPTY));
                     dto.setStudySiteIdentifier(IiConverter.convertToIi(site
                             .getStudySiteId()));
+                    dto.setSource(CdConverter.convertToCd(source));
                     dto.setStatusCode(CdConverter
                             .convertToCd(ActiveInactiveCode.ACTIVE));
                     dto.setStatusDate(TsConverter.convertToTs(new Date()));
                     create(dto);
                 } else {
+                    dto.setSource(CdConverter.convertToCd(source));
                     dto.setStatusCode(CdConverter
                             .convertToCd(ActiveInactiveCode.ACTIVE));
                     dto.setStatusDate(TsConverter.convertToTs(new Date()));
@@ -684,19 +693,19 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void unassignTrialLevelAccrualAccess(RegistryUser user,
+    public void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator)
             throws PAException {
         List<Long> currentTrialAccess = getActiveTrialLevelAccrualAccess(user);        
         for (Long trialID : trialIDs) {
             if (currentTrialAccess.contains(trialID)) {
-                unassignTrialLevelAccrualAccess(user, trialID, comment, creator);
+                unassignTrialLevelAccrualAccess(user, source, trialID, comment, creator);
             }
         }        
     }
 
     @SuppressWarnings({ UNCHECKED_STR, DEPRECATION })
-    private void unassignTrialLevelAccrualAccess(RegistryUser user,
+    private void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Long trialID, String comment, RegistryUser creator) throws PAException {
 
         Session session = PaHibernateUtil.getCurrentSession();
@@ -720,6 +729,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         StudyAccrualAccessDTO dto = new StudyAccrualAccessDTO();
         dto.setActionCode(CdConverter
                 .convertToCd(AssignmentActionCode.UNASSIGNED));
+        dto.setSource(CdConverter.convertToCd(source));
         dto.setComments(StConverter.convertToSt(StringUtils.left(comment,
                 32768)));
         dto.setLastCreatedDate(TsConverter.convertToTs(new Date()));
@@ -731,10 +741,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
                 .getUserId()));    
         session.save(converter.convertFromDtoToDomain(dto));        
         
-        removeStudySiteAccrualAccess(user, trialID);
+        removeStudySiteAccrualAccess(user, trialID, source);
     }
 
-    private void removeStudySiteAccrualAccess(RegistryUser user, Long trialID)
+    private void removeStudySiteAccrualAccess(RegistryUser user, Long trialID, AccrualAccessSourceCode source)
             throws PAException {
         List<StudySiteAccrualAccessDTO> list = getByStudyProtocol(trialID);
         for (StudySiteAccrualAccessDTO dto : list) {
@@ -743,6 +753,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
                     && user.getId().equals(
                             IiConverter.convertToLong(dto
                                     .getRegistryUserIdentifier()))) {
+                dto.setSource(CdConverter.convertToCd(source));
                 dto.setStatusCode(CdConverter
                         .convertToCd(ActiveInactiveCode.INACTIVE));
                 dto.setStatusDate(TsConverter.convertToTs(new Date()));

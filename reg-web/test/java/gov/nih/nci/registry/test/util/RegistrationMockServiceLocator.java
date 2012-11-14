@@ -132,6 +132,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new MockStudySiteAccrualStatusService();
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
 
+    public static StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = mock(StudySiteAccrualAccessServiceLocal.class);
+
     private static List<CountryRegAuthorityDTO> regAuthorityCountries;
     static {
         regAuthorityCountries = new ArrayList<CountryRegAuthorityDTO>();
@@ -631,7 +633,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
-        return mock(StudySiteAccrualAccessServiceLocal.class);
+        return studySiteAccrualAccessService;
     }
 
     /**

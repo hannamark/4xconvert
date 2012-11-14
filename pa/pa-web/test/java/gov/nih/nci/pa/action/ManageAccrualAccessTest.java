@@ -84,10 +84,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -124,6 +124,8 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
     private final Long testRegUserId = MockStudySiteAccrualAccessService.regUsers.get(0).getId();
     private final Long testStudySiteId = IiConverter.convertToLong(MockStudySiteService.dtos.get(2).getIdentifier());
     private final String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
+    private final String origSourceCode = AccrualAccessSourceCode.REG_ADMIN_PROVIDED.getCode();
+    private final String updSourceCode = AccrualAccessSourceCode.PA_SITE_REQUEST.getCode();
     private final String testRequestDetails = "test request details";
     private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class); 
     private StudySiteAccrualAccessServiceLocal ssAccSvc = null;
@@ -186,6 +188,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         act.getAccess().setRegistryUserId(testRegUserId);
         act.getAccess().setStudySiteId(testStudySiteId);
         act.getAccess().setStatusCode(testStatusCode);
+        act.getAccess().setSource(origSourceCode);
         act.getAccess().setRequestDetails(testRequestDetails);
         assertEquals(AbstractListEditAction.AR_LIST, act.add());
         assertFalse(act.hasActionErrors());
@@ -194,6 +197,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         assertEquals(testRegUserId, dto.getRegistryUserId());
         assertEquals(testStudySiteId, dto.getStudySiteId());
         assertEquals(testStatusCode, dto.getStatusCode());
+        assertEquals(updSourceCode, dto.getSource());
         assertEquals(testRequestDetails, dto.getRequestDetails());
     }
 
@@ -205,6 +209,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         act.getAccess().setRegistryUserId(testRegUserId);
         act.getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
         act.getAccess().setStatusCode(testStatusCode);
+        act.getAccess().setSource(origSourceCode);
 
         loadTreatingSitesForProtocol();
 
@@ -234,6 +239,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         act.getAccess().setRegistryUserId(testRegUserId);
         act.getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
         act.getAccess().setStatusCode(testStatusCode);
+        act.getAccess().setSource(origSourceCode);
 
         loadTreatingSitesForProtocol();
         when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));

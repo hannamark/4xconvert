@@ -135,6 +135,7 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -357,6 +358,7 @@ public class TestSchema {
                 .getTime()));
         studyAccrualAccess.setStudyProtocol(sp);
         studyAccrualAccess.setUserLastCreated(ru.getCsmUser());
+        studyAccrualAccess.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(studyAccrualAccess);
 
         Organization org = TestSchema.createOrganizationObj();

@@ -373,6 +373,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         webDTO.setIdentifier(IiConverter.convertToLong(dto.getIdentifier()));
         webDTO.setStudySiteId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
         webDTO.setRegistryUserId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
+        webDTO.setSource(CdConverter.convertCdToString(dto.getSource()));
         webDTO.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
         webDTO.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
         try {

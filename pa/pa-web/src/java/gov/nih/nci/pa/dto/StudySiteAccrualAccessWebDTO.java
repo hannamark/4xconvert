@@ -88,7 +88,6 @@ package gov.nih.nci.pa.dto;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class StudySiteAccrualAccessWebDTO {
-    private static final long serialVersionUID = 1L;
 
     private Long identifier;
     private Long studySiteId;
@@ -99,6 +98,7 @@ public class StudySiteAccrualAccessWebDTO {
     private String phoneNumber;
     private String siteName;
     private String siteRecruitmentStatus;
+    private String source;
     private String requestDetails;
     private String statusCode;
 
@@ -198,6 +198,20 @@ public class StudySiteAccrualAccessWebDTO {
      */
     public void setSiteRecruitmentStatus(String siteRecruitmentStatus) {
         this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+
+    /**
+     * @return the source
+     */
+    public String getSource() {
+        return source;
+    }
+
+    /**
+     * @param source the source to set
+     */
+    public void setSource(String source) {
+        this.source = source;
     }
 
     /**

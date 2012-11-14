@@ -1,6 +1,3 @@
-/**
- * 
- */
 package gov.nih.nci.registry.action;
 
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
@@ -12,6 +9,7 @@ import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -139,9 +137,14 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     public String assignUnAssignSASubmitter() throws PAException {
         String msg = "";
         RegistryUser rUser = registryUserService.getUserById(userId);
+        if (rUser == null) {
+            ServletActionContext.getRequest().setAttribute(FAILURE_MSG, 
+                    getText("manage.accrual.access.user.not.found.error"));
+            return SUCCESS;
+        }
         if (!rUser.getSiteAccrualSubmitter()) {
             getAllTrialsForSiteAccrualSubmitter();
-            assignAll();
+            assignAll(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
             rUser.setSiteAccrualSubmitter(true);
             msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now submit accrual for "
                 + rUser.getAffiliateOrg() 
@@ -149,7 +152,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 + rUser.getAffiliateOrg() + " is a lead organization or participating site";
         } else {
             getAllTrialsForSiteAccrualSubmitter(); 
-            unassignAll();
+            unassignAll(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
             rUser.setSiteAccrualSubmitter(false);
             msg = rUser.getFirstName() + " " + rUser.getLastName() + " can not submit accrual for "
                     + rUser.getAffiliateOrg() 
@@ -171,12 +174,17 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         model.setTrialCategory(TrialCategory.ALL);
         loadTrials();
     }
-    
+
     /**
+     * Assign all trials setting the source to "Admin Provided".
      * @return String
      * @throws PAException PAException
      */
     public String assignAll() throws PAException {
+        return assignAll(AccrualAccessSourceCode.REG_ADMIN_PROVIDED);
+    }
+
+    private String assignAll(AccrualAccessSourceCode source) throws PAException {
         Collection<Long> trialIDs = new HashSet<Long>();
         for (Collection<StudyProtocolHolder> trialList : model
                 .getUnassignedTrials().values()) {
@@ -187,25 +195,29 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 }
             }
         }
-        return assign(trialIDs);
+        return assign(trialIDs, source);
     }
-    
+
     /**
+     * Remove assignment for all trials setting the source to "Admin Provided".
      * @return String
      * @throws PAException PAException
      */
     public String unassignAll() throws PAException {
+        return unassignAll(AccrualAccessSourceCode.REG_ADMIN_PROVIDED);
+    }
+
+    private String unassignAll(AccrualAccessSourceCode source) throws PAException {
         Collection<Long> trialIDs = new HashSet<Long>();
         for (Collection<StudyProtocolQueryDTO> trialList : model
                 .getAssignedTrials().values()) {
             for (StudyProtocolQueryDTO trial : trialList) {
-                trialIDs.add(trial.getStudyProtocolId());
+               trialIDs.add(trial.getStudyProtocolId());
             }
         }
-        return unassign(trialIDs);
+        return unassign(trialIDs, source);
     }
-    
-    
+
     /**
      * @return String
      * @throws PAException PAException
@@ -215,7 +227,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         for (String trialIdStr : this.trialsToAssign.split(";")) {
             trialIDs.add(Long.parseLong(trialIdStr));
         }
-        return assign(trialIDs);
+        return assign(trialIDs, AccrualAccessSourceCode.REG_ADMIN_PROVIDED);
     }
     
     /**
@@ -227,19 +239,14 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         for (String trialIdStr : this.trialsToUnassign.split(";")) {
             trialIDs.add(Long.parseLong(trialIdStr));
         }
-        return unassign(trialIDs);
+        return unassign(trialIDs, AccrualAccessSourceCode.REG_ADMIN_PROVIDED);
     }
     
 
-    /**
-     * @param trialIDs
-     * @return
-     * @throws PAException
-     */
-    private String assign(Collection<Long> trialIDs) throws PAException {
+    private String assign(Collection<Long> trialIDs, AccrualAccessSourceCode source) throws PAException {
         try {
             studySiteAccrualAccessService.assignTrialLevelAccrualAccess(
-                    model.getUser(), trialIDs, comments, currentUser);
+                    model.getUser(), source, trialIDs, comments, currentUser);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                     getText("manage.accrual.access.trialsAssigned"));
         } catch (PAException e) {
@@ -249,16 +256,11 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         }
         return change();
     }
-    
-    /**
-     * @param trialIDs
-     * @return
-     * @throws PAException
-     */
-    private String unassign(Collection<Long> trialIDs) throws PAException {
+
+    private String unassign(Collection<Long> trialIDs, AccrualAccessSourceCode source) throws PAException {
         try {
             studySiteAccrualAccessService.unassignTrialLevelAccrualAccess(
-                    model.getUser(), trialIDs, comments, currentUser);
+                    model.getUser(), source, trialIDs, comments, currentUser);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                     getText("manage.accrual.access.trialsUnassigned"));
         } catch (PAException e) {
@@ -625,7 +627,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         
         private StudyProtocolQueryDTO protocolDTO;
         private boolean selectable = true;
-        
+        private AccrualAccessSourceCode accrualAccessSource;
         
         
         /**
@@ -660,6 +662,18 @@ public class ManageAccrualAccessAction extends ActionSupport implements
          */
         public void setSelectable(boolean selectable) {
             this.selectable = selectable;
+        }
+        /**
+         * @return the accrualAccessSource
+         */
+        public AccrualAccessSourceCode getAccrualAccessSource() {
+            return accrualAccessSource;
+        }
+        /**
+         * @param accrualAccessSource the accrualAccessSource to set
+         */
+        public void setAccrualAccessSource(AccrualAccessSourceCode accrualAccessSource) {
+            this.accrualAccessSource = accrualAccessSource;
         }
         
         

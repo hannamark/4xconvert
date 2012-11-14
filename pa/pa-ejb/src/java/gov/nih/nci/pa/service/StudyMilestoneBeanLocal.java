@@ -12,6 +12,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -236,11 +237,12 @@ public class StudyMilestoneBeanLocal
         List<Object[]> ssList = query.list();
         if (ssList != null & !ssList.isEmpty()) {
             if (!isIndustrialTrial(trialId, session)) {
-            accrualAccessService.assignTrialLevelAccrualAccess(ru, Arrays.asList(trialId), StringUtils.EMPTY, ru);
-          } else {
-            // affiliated org is TREATING_SITE then access to just the affiliated org site
-              setAccrualAccessForTreatingSite(resultDto, session, ru);
-          }
+                accrualAccessService.assignTrialLevelAccrualAccess(ru, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                        Arrays.asList(trialId), StringUtils.EMPTY, ru);
+            } else {
+                // affiliated org is TREATING_SITE then access to just the affiliated org site
+                setAccrualAccessForTreatingSite(resultDto, session, ru);
+            }
         }
     }
 
@@ -256,12 +258,14 @@ public class StudyMilestoneBeanLocal
         if (ssaa == null) {
             ssaa = new StudySiteAccrualAccessDTO();
             ssaa.setRegistryUserIdentifier(IiConverter.convertToIi(ru.getId()));
+            ssaa.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE));
             ssaa.setRequestDetails(StConverter.convertToSt(StringUtils.EMPTY));
             ssaa.setStudySiteIdentifier(IiConverter.convertToIi(siteId));
             ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
             ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
             accrualAccessService.create(ssaa);
         } else {
+            ssaa.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE));
             ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
             ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
             accrualAccessService.update(ssaa);

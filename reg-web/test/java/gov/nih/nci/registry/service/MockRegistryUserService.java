@@ -18,7 +18,7 @@ import java.util.Set;
  *
  */
 public class MockRegistryUserService implements RegistryUserServiceLocal {
-    static List<RegistryUser> userList;
+    public static List<RegistryUser> userList;
     static {
         userList = new ArrayList<RegistryUser>();
         RegistryUser dto = new RegistryUser();
@@ -27,13 +27,16 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setId(1L);
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
+
         dto = new RegistryUser();
         dto.setFirstName("affiliated Org");
         dto.setLastName("lastName");
         dto.setId(2L);
         dto.setAffiliatedOrganizationId(2L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
 
         // add three members.
@@ -43,6 +46,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setId(3L);
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -51,6 +55,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setId(4L);
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -59,13 +64,16 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setId(5L);
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
+
         dto = new RegistryUser();
         dto.setFirstName("userLastCreated");
         dto.setLastName("lastName");
         dto.setId(1L);
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        dto.setSiteAccrualSubmitter(false);
         userList.add(dto);
     }
 
@@ -114,6 +122,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      */
     @Override
     public RegistryUser getUserById(Long userId) {
+        for (RegistryUser usrDto : userList) {
+            if (usrDto.getId().equals(userId)) {
+                return usrDto;
+            }
+        }
         return null;
     }
 

@@ -84,6 +84,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -112,6 +113,7 @@ public class StudySiteAccrualAccessConverterTest
         bo.setId(ID);
         bo.setStudySite(getStudySite());
         bo.setRegistryUser(getRegistryUser());
+        bo.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         bo.setRequestDetails("Request Details");
         bo.setStatusCode(ActiveInactiveCode.ACTIVE);
         bo.setStatusDateRangeLow(new Timestamp(now.getTime()));
@@ -128,6 +130,7 @@ public class StudySiteAccrualAccessConverterTest
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(now));
         dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(STUDY_SITE_ID));
+        dto.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.PA_SITE_REQUEST));
         dto.setRequestDetails(StConverter.convertToSt("Request Details"));
         dto.setRegistryUserIdentifier(IiConverter.convertToIi(REGISTRY_USER_ID));
         return dto;
@@ -141,6 +144,7 @@ public class StudySiteAccrualAccessConverterTest
         assertEquals(ID, bo.getId());
         assertEquals(STUDY_SITE_ID, bo.getStudySite().getId());
         assertEquals(REGISTRY_USER_ID, bo.getRegistryUser().getId());
+        assertEquals(AccrualAccessSourceCode.PA_SITE_REQUEST, bo.getSource());
         assertEquals("Request Details", bo.getRequestDetails());
         assertEquals(ActiveInactiveCode.ACTIVE, bo.getStatusCode());
         assertEquals(now, bo.getStatusDateRangeLow());
@@ -156,6 +160,7 @@ public class StudySiteAccrualAccessConverterTest
         assertEquals(REGISTRY_USER_ID, IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
         assertEquals(ActiveInactiveCode.ACTIVE.getCode(), dto.getStatusCode().getCode());
         assertEquals(now, dto.getStatusDate().getValue());
+        assertEquals(AccrualAccessSourceCode.PA_SITE_REQUEST.getCode(), dto.getSource().getCode());
         assertEquals("Request Details", StConverter.convertToString(dto.getRequestDetails()));
     }
 

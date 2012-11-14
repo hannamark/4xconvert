@@ -85,6 +85,7 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -118,6 +119,7 @@ public class StudySiteAccrualAccessConverter
     public StudySiteAccrualAccessDTO convertFromDomainToDto(StudySiteAccrualAccess bo) {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setSource(CdConverter.convertToCd(bo.getSource()));
         dto.setRequestDetails(StConverter.convertToSt(bo.getRequestDetails()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
@@ -145,6 +147,7 @@ public class StudySiteAccrualAccessConverter
             ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
             access.setRegistryUser(ru);
         }
+        access.setSource(AccrualAccessSourceCode.getByCode(CdConverter.convertCdToString(dto.getSource())));
         access.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
         access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         access.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDate()));

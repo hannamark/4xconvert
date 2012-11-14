@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 
@@ -106,6 +107,7 @@ public class StudyAccrualAccess extends AbstractEntityWithStatusCode<ActiveInact
 
     private RegistryUser registryUser;
     private StudyProtocol studyProtocol;
+    private AccrualAccessSourceCode source;
     private String comments;
     private AssignmentActionCode actionCode;
 
@@ -124,6 +126,21 @@ public class StudyAccrualAccess extends AbstractEntityWithStatusCode<ActiveInact
         this.registryUser = registryUser;
     }
 
+    /**
+     * @return the source
+     */
+    @Column(name = "SOURCE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public AccrualAccessSourceCode getSource() {
+        return source;
+    }
+    /**
+     * @param source the source to set
+     */
+    public void setSource(AccrualAccessSourceCode source) {
+        this.source = source;
+    }
     /**
      * @return the comments
      */

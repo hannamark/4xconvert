@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -115,7 +116,7 @@ public class ManageAccrualAccessHelper {
         this.accrualAccessService = accrualAccessService;
     }
     /**
-     * Add multiple instances of study site accrual access.
+     * Add multiple instances of study site accrual access setting the source as"Site Request".
      * @param webDto dto holding site and user data.
      * @param sites list of current treating sites in trial.
      * @throws PAException on error.
@@ -147,7 +148,7 @@ public class ManageAccrualAccessHelper {
     }
 
     /**
-     * Add a single instance of treating site accrual accees.
+     * Add a single instance of treating site accrual access setting the source as"Site Request".
      * @param webDto dto storing site and user data.
      * @throws PAException on error.
      */
@@ -171,6 +172,7 @@ public class ManageAccrualAccessHelper {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
         dto.setIdentifier(IiConverter.convertToIi(webDTO.getIdentifier()));
         dto.setRegistryUserIdentifier(IiConverter.convertToIi(webDTO.getRegistryUserId()));
+        dto.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.PA_SITE_REQUEST));
         dto.setRequestDetails(StConverter.convertToSt(webDTO.getRequestDetails()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(webDTO.getStudySiteId()));
         dto.setStatusCode(CdConverter.convertStringToCd(webDTO.getStatusCode()));

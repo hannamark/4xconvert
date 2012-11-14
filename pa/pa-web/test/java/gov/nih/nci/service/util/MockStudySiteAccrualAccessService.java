@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -142,6 +143,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         bo.setId(seq++);
         bo.setRegistryUser(new RegistryUser());
         bo.getRegistryUser().setId(IiConverter.convertToLong(access.getRegistryUserIdentifier()));
+        bo.setSource(CdConverter.convertCdToEnum(AccrualAccessSourceCode.class, access.getSource()));
         bo.setRequestDetails(StConverter.convertToString(access.getRequestDetails()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(access.getStatusCode())));
         for (StudySiteDTO ss : MockStudySiteService.dtos) {
@@ -239,13 +241,13 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     }
 
   
-    public void assignTrialLevelAccrualAccess(RegistryUser user,
+    public void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comments, RegistryUser creator) throws PAException {
               
     }
 
     
-    public void unassignTrialLevelAccrualAccess(RegistryUser user,
+    public void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator)
             throws PAException {        
     }

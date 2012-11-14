@@ -79,10 +79,13 @@
 
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -101,7 +104,9 @@ public class StudySiteAccrualAccess extends AbstractEntityWithStatusCode<ActiveI
 
     private RegistryUser registryUser;
     private StudySite studySite;
+    private AccrualAccessSourceCode source;
     private String requestDetails;
+
 
     /**
      * @return the registryUser
@@ -118,6 +123,21 @@ public class StudySiteAccrualAccess extends AbstractEntityWithStatusCode<ActiveI
         this.registryUser = registryUser;
     }
 
+    /**
+     * @return the source
+     */
+    @Column(name = "SOURCE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    public AccrualAccessSourceCode getSource() {
+        return source;
+    }
+    /**
+     * @param source the source to set
+     */
+    public void setSource(AccrualAccessSourceCode source) {
+        this.source = source;
+    }
     /**
      * @return the requestDetails
      */

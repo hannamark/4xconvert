@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.PAException;
@@ -156,23 +157,25 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
     /**
      * Assigns trial-level access to the given trials for the given user.
      * @param user RegistryUser
+     * @param source the source of the assignment
      * @param trialIDs Collection<Long>
      * @param comment comment
      * @param creator creator
      * @throws PAException PAException
      */
-    void assignTrialLevelAccrualAccess(RegistryUser user,
+    void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
     
     /**
      * Un-assigns trial-level access to the given trials from the given user.
      * @param user RegistryUser
+     * @param source the source of the assignment
      * @param trialIDs Collection<Long>
      * @param comment comment
      * @param creator creator
      * @throws PAException PAException
      */
-    void unassignTrialLevelAccrualAccess(RegistryUser user,
+    void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
     
     /**

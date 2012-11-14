@@ -85,6 +85,7 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.iso.dto.StudyAccrualAccessDTO;
@@ -121,6 +122,7 @@ public class StudyAccrualAccessConverter extends
     public StudyAccrualAccessDTO convertFromDomainToDto(StudyAccrualAccess bo) {
         StudyAccrualAccessDTO dto = new StudyAccrualAccessDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setSource(CdConverter.convertToCd(bo.getSource()));
         dto.setComments(StConverter.convertToSt(bo.getComments()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setActionCode(CdConverter.convertToCd(bo.getActionCode()));
@@ -156,6 +158,7 @@ public class StudyAccrualAccessConverter extends
             ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
             access.setRegistryUser(ru);
         }
+        access.setSource(AccrualAccessSourceCode.getByCode(CdConverter.convertCdToString(dto.getSource())));
         access.setComments(StConverter.convertToString(dto.getComments()));
         access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter
                 .convertCdToString(dto.getStatusCode())));
