@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
@@ -103,6 +104,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
+import org.hibernate.validator.AssertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -157,5 +159,13 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
         return markerDTO;
     }
-
+    
+    
+    @Test
+    public void getPendingPlannedMarkersShortName() throws PAException {
+        String name = "Marker #1";
+        constructPlannedMarker();
+        List<PlannedMarkerDTO> markers = bean.getPendingPlannedMarkersShortName(name);
+        assertTrue(markers.size() > 0);
+    }
 }

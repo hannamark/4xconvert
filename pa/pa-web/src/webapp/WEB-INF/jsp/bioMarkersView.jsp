@@ -12,6 +12,18 @@
 	src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript"
 	src="<c:url value='/scripts/js/prototype.js'/>"></script>
+	<script type="text/javascript" language="javascript">
+            function handleAction() {     
+                 var extensionValue = document.forms[0].trialId.value;
+                 var name = document.forms[0].markerName.value;  
+                 document.forms[0].action="bioMarkerssearch.action";
+                 document.forms[0].submit();
+            }
+            function resetValues() {
+                $("trialId").value="";
+                $("markerName").value="";
+            }
+   </script>
 </head>
 <body>
 	<h1>
@@ -25,19 +37,49 @@
 			</div>
 		</s:if>
 		<s:form name="diseaseForm">
-			<table class="form">
-				<tr>
-					<td colspan="2"><s:set name="plannedMarkerList"
-							value="plannedMarkerList" scope="request" /> <display:table
+		 <h1><fmt:message key="plannedMarker.search.header"/></h1>
+		<table  class="form">
+		
+            <tr>
+                <td  scope="row" class="label">
+                   <label for="trialId"> <fmt:message key="plannedMarker.protocolId"/></label>
+                </td>
+                <td>
+                    <s:textfield id="trialId" name="trialId" maxlength="200" size="100" cssStyle="width:200px"  />
+                </td>
+            
+                <td  scope="row" class="label">
+                   <label for="markerName"> <fmt:message key="plannedMarker.markerName"/></label>
+                </td>
+                <td>
+                    <s:textfield id="markerName" name="markerName" maxlength="200" size="100" cssStyle="width:200px"  />
+                </td>
+            </tr>
+        </table>
+        <div class="actionsrow">
+                    <del class="btnwrapper">
+                        <ul class="btnrow">
+                            <li>
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction();return false"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                            </li>
+                        </ul>
+                    </del>
+                </div>
+			 <table class="form">
+			 <tr>
+                    <td colspan="2">
+                    <s:set name="plannedMarkerList" value="plannedMarkerList" scope="request" /> 
+							<display:table
 							name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
-							class="data" sort="list" pagesize="200"
+							class="data" defaultsort="1" sort="list" pagesize="200"
 							requestURI="bioMarkersexecute.action">
 							<display:column escapeXml="true" property="nciIdentifier"
-								sortable="false" titleKey="plannedMarker.protocolId"
-								headerClass="sortable" />
+								sortable="true" titleKey="plannedMarker.protocolId"
+								headerClass="sortable"/>
 							<display:column escapeXml="true" property="trialStatus" sortable="false" 
 							titleKey="plannedMarker.TrialStatus" headerClass="sortable"/>
-							<display:column escapeXml="true" property="name" sortable="false"
+							<display:column escapeXml="true" property="name" sortable="true"
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
 							<display:column titleKey="plannedMarker.edit"
 								headerClass="centered" class="action">

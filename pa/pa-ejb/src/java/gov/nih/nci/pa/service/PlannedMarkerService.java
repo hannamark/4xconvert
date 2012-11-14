@@ -113,5 +113,13 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      * @return list of planned markers
      * @throws PAException exception
      */
-    List<PlannedMarkerDTO> getPendingPlannedMarkersWithName(String longName) throws PAException; 
+    List<PlannedMarkerDTO> getPendingPlannedMarkersWithName(String longName) throws PAException;
+    
+    /**
+     * 
+     * @param name name
+     * @return list of planned markers
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPendingPlannedMarkersShortName(String name) throws PAException;
 }

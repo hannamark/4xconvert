@@ -82,11 +82,13 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -102,9 +104,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
 import java.util.Map;
-
-
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -132,6 +133,8 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private StudyProtocolService studyProtocolService;
     private String selectedRowIdentifier;
+    private String trialId;
+    private String markerName;
 
     @Override
     public void prepare() {
@@ -172,7 +175,43 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         plannedMarker = populateWebDTO(marker, null, null);
         return MARKER_EDIT;
     }
-
+    /**
+     * 
+     * @return string marker Success jsp
+     * @throws PAException exception
+     */
+    public String search() throws PAException {
+        List<PlannedMarkerWebDTO> pmList = new ArrayList<PlannedMarkerWebDTO>();
+        List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
+        String nciIdentifier = getTrialId();
+        String markerNames =  getMarkerName();
+        if (!StringUtils.isBlank(nciIdentifier)) {        
+            Ii ii = IiConverter.convertToIi(nciIdentifier);
+            ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+            StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(ii);
+            markers = plannedMarkerService.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+        }
+        if (!StringUtils.isBlank(markerNames)) {
+            markers.addAll(plannedMarkerService.getPendingPlannedMarkersShortName(markerNames));
+        }
+        List<Long> identifiersList = new ArrayList<Long>();
+        if (!markers.isEmpty()) {
+            for (PlannedMarkerDTO dto : markers) {
+                identifiersList.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+            }
+            Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
+            Map<Long, String> trialStatusList = studyProtocolService.getTrialProcessingStatus(identifiersList);
+            for (PlannedMarkerDTO dto : markers) {
+                if (dto.getUserLastCreated() != null 
+                        && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
+                                .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))) {
+                        pmList.add(populateWebDTO(dto, identifierMap, trialStatusList));    
+                }         
+            } 
+            setPlannedMarkerList(pmList);
+        }
+        return SUCCESS;
+    }
     /**
      * 
      * @return string submit marker question jsp
@@ -411,6 +450,38 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public void setSelectedRowIdentifier(String selectedRowIdentifier) {
         this.selectedRowIdentifier = selectedRowIdentifier;
     }
+    
+    
+    /**
+     * 
+     * @return trialId
+     */
+    public String getTrialId() {
+        return trialId;
+    }
+    /**
+     * 
+     * @param trialId trialId
+     */
+    public void setTrialId(String trialId) {
+        this.trialId = trialId;
+    }
+
+    /**
+     * 
+     * @return markerName
+     */
+    public String getMarkerName() {
+        return markerName;
+    }
+    /**
+     * 
+     * @param markerName markerName
+     */
+    public void setMarkerName(String markerName) {
+        this.markerName = markerName;
+    }
+
     /**
      * 
      * @return studyProtocolService

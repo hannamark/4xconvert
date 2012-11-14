@@ -206,5 +206,21 @@ implements PlannedMarkerServiceLocal {
         List<PlannedMarker> markers = query.list();
         return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
     }
+    
+    /**
+     * returns list of plannedMarkers with the matching name with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param name name
+     * @throws PAException exception
+     */
+    public List<PlannedMarkerDTO> getPendingPlannedMarkersShortName(String name) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.name like :name";
+        Query query = session.createQuery(hql);
+        query.setParameter("name", "%" + name + "%");
+        List<PlannedMarker> markers = query.list();
+        return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
+    }
 
 }
