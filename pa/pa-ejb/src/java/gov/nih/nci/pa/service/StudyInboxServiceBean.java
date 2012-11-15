@@ -361,10 +361,15 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      */
     @Override
     public List<StudyInboxDTO> getOpenInboxEntries(Ii studyProtocolIi) throws PAException {
-        Criteria crit =
-            PaHibernateUtil.getCurrentSession().createCriteria(StudyInbox.class).add(Restrictions.isNull("closeDate"))
-            .addOrder(Order.desc("openDate"))
-            .createCriteria("studyProtocol").add(Restrictions.eq("id", IiConverter.convertToLong(studyProtocolIi)));
+        Criteria crit = PaHibernateUtil
+                .getCurrentSession()
+                .createCriteria(StudyInbox.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.isNull("closeDate"))
+                .addOrder(Order.desc("openDate"))
+                .createCriteria("studyProtocol")
+                .add(Restrictions.eq("id",
+                        IiConverter.convertToLong(studyProtocolIi)));
         try {
             @SuppressWarnings("unchecked")
             List<StudyInbox> entries = crit.list();
@@ -510,6 +515,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         Criteria crit = PaHibernateUtil
                 .getCurrentSession()
                 .createCriteria(StudyInbox.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Restrictions.eq("typeCode", StudyInboxTypeCode.UPDATE))
                 .createCriteria("studyProtocol")
                 .add(Restrictions.eq("id",

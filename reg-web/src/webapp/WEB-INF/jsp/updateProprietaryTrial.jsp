@@ -86,8 +86,6 @@
               $(it).style.display = (vis == "block") ? "none" : "block";
             }
             
-            Event.observe(window, "load", setDisplayBasedOnTrialType);
-            Event.observe(window, "load", disableTrialTypeChangeRadios);
         </script>
     </head>
     <body>
@@ -120,105 +118,92 @@
                     <reg-web:valueRow labelKey="view.trial.identifier" noLabelTag="true">
                         <s:property value="trialDTO.assignedIdentifier"/>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.leadOrganizationName" labelKey="view.trial.leadOrganization" required="true">
-                        <div id="loadOrgField">
-                            <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
-                        </div>
+                    <reg-web:valueRow labelFor="trialDTO.leadOrganizationName" labelKey="view.trial.leadOrganization">
+                       <s:property value="trialDTO.leadOrganizationName" />
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true">
-                        <s:textfield id="trialDTO.leadOrgTrialIdentifier" name="trialDTO.leadOrgTrialIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
-                        <span class="formErrorMsg">
-                            <s:fielderror>
-                                <s:param>trialDTO.leadOrgTrialIdentifier</s:param>
-                            </s:fielderror>
-                        </span>
+                    <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier">
+                        <s:property value="trialDTO.leadOrgTrialIdentifier" />                        
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.nctIdentifier" labelKey="submit.trial.nctNumber">
-                        <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier" maxlength="200" size="100" cssStyle="width:200px" />
-                        <span class="info">(Mandatory if Exists)</span>
-                        <span class="formErrorMsg">
-                            <s:fielderror>
-                                <s:param>trialDTO.nctIdentifier</s:param>
-                            </s:fielderror>
-                        </span>
+                        <s:property value="trialDTO.nctIdentifier"/>
                     </reg-web:valueRow>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
-                    <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title" required="true">
-                        <s:textarea id="trialDTO.officialTitle" name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>
-                        
-                        <span class="formErrorMsg">
-                            <s:fielderror>
-                                <s:param>trialDTO.officialTitle</s:param>
-                            </s:fielderror>
-                        </span>
+                    <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title">
+                        <s:property value="trialDTO.officialTitle"/>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialType" labelKey="submit.trial.type" required="true">          
-	        			<input type="radio" name="trialDTO.trialType" value="Interventional" id="trialDTO.trialType.Interventional"
-				            ${trialDTO.trialType!='NonInterventional'?'checked=checked':''}        
-				            > <label for = "trialDTO.trialType.Interventional">Interventional</label>
-				        <input type="radio" name="trialDTO.trialType" value="NonInterventional" id="trialDTO.trialType.Noninterventional"
-				            ${trialDTO.trialType=='NonInterventional'?'checked=checked':''}
-				            ><label for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
-				        <span class="formErrorMsg">
-				            <s:fielderror>
-				                <s:param>trialDTO.trialType</s:param>
-				            </s:fielderror>
-				        </span>                        
+                    <reg-web:valueRow labelFor="trialType" labelKey="submit.trial.type">
+                        <c:out value="${trialDTO.trialType!='NonInterventional'?'Interventional':'Non-interventional'}"></c:out>
                     </reg-web:valueRow>
                     
-					<tr class="non-interventional">        
-					      <td  scope="row" class="label">                    
-					         <label for="trialDTO.studySubtypeCode"><fmt:message key="submit.trial.studySubtypeCode"/><span class="required">*</span></label>                    
-					      </td>
-					      <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
-					      <td>
-					          <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues"  cssStyle="width:206px" 
-					                    value="trialDTO.studySubtypeCode"/>
-					           <span class="formErrorMsg">
-					              <s:fielderror>
-					              <s:param>trialDTO.studySubtypeCode</s:param>
-					             </s:fielderror>
-					           </span>
-					      </td>
-					</tr>
+                    <c:if test="${trialDTO.trialType=='NonInterventional'}">
+						<reg-web:valueRow labelFor="trialDTO.studySubtypeCode" labelKey="submit.trial.studySubtypeCode">
+						     <s:property value="trialDTO.studySubtypeCode"/>						      
+						</reg-web:valueRow>                   
+                    </c:if>
+        
+                    <reg-web:valueRow labelFor="trialDTO.primaryPurposeCode" labelKey="submit.trial.purpose">
+                        <s:property value="trialDTO.primaryPurposeCode" />
+                    </reg-web:valueRow>
+          
+		            <c:if test="${trialDTO.primaryPurposeOtherText=='Other'}">	       
+		                <reg-web:valueRow labelFor="submit.trial.otherPurposeText" labelKey="submit.trial.otherPurposeText">
+		                    <s:property value="trialDTO.primaryPurposeOtherText"/>
+		                </reg-web:valueRow>
+		            </c:if>
+          
+		          <c:if test="${trialDTO.trialType!='NonInterventional'}">	    
+		                <reg-web:valueRow labelFor="submit.trial.secondaryPurpose" labelKey="submit.trial.secondaryPurpose">
+		                    <s:property value="trialDTO.secondaryPurposesAsString" />
+		                </reg-web:valueRow>                      
+		          </c:if>
+          
+                 <c:if test="${trialDTO.trialType=='NonInterventional'}">
+		             <reg-web:valueRow labelFor="submit.trial.studyModelCode" labelKey="submit.trial.studyModelCode">
+		                 <s:property value="trialDTO.studyModelCode"/>
+		             </reg-web:valueRow>
+	    
+		             <c:if test="${trialDTO.studyModelCode=='Other'}">  
+			             <reg-web:valueRow labelFor="submit.trial.studyModelOtherText" labelKey="submit.trial.studyModelOtherText">
+			                <s:property value="trialDTO.studyModelOtherText"/>
+			             </reg-web:valueRow>
+			         </c:if>
+
+		             <reg-web:valueRow labelFor="submit.trial.timePerspectiveCode" labelKey="submit.trial.timePerspectiveCode">
+		                    <s:property value="trialDTO.timePerspectiveCode"/>
+		             </reg-web:valueRow>
+      
+			        <c:if test="${trialDTO.timePerspectiveCode=='Other'}">
+			              <reg-web:valueRow labelFor="submit.trial.timePerspectiveOtherText" labelKey="submit.trial.timePerspectiveOtherText">
+			                <s:property value="trialDTO.timePerspectiveOtherText"/>
+			              </reg-web:valueRow>
+			        </c:if>        
+                </c:if>
+                    
+                <reg-web:valueRow labelFor="submit.trial.phase" labelKey="submit.trial.phase">
+                    <s:property value="trialDTO.phaseCode" />
+                </reg-web:valueRow>
+                    
+	            <c:if test="${trialDTO.phaseCode=='NA'}">                    
+	               <reg-web:valueRow labelFor="submit.trial.otherPhaseText" labelKey="submit.trial.otherPhaseText">
+	                  <s:property value="trialDTO.phaseAdditionalQualifier"/>
+	               </reg-web:valueRow>
+	            </c:if>
                     
                     
-                    <%@ include file="/WEB-INF/jsp/nodecorate/primaryPurposeOther.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/phase.jsp" %>
                     <reg-web:spaceRow/>
                     <reg-web:spaceRow/>
                     <!--  summary4 information -->
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
                     <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory">
-                        <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                        <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
-                             <s:select headerKey="" headerValue="--Select--"
-                                name="trialDTO.summaryFourFundingCategoryCode"
-                                id="trialDTO.summaryFourFundingCategoryCode"
-                                list="#summaryFourFundingCategoryCodeValues"
-                                cssStyle="width:206px"
-                                disabled="true"/>
-                        </c:if>
-                        <c:if test="${empty trialDTO.summaryFourFundingCategoryCode}">
-                             <s:select headerKey="" headerValue="--Select--"
-                                name="trialDTO.summaryFourFundingCategoryCode"
-                                list="#summaryFourFundingCategoryCodeValues"
-                                cssStyle="width:206px" />
-                         </c:if>
-                         <span class="formErrorMsg">
-                             <s:fielderror>
-                                 <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
-                             </s:fielderror>
-                         </span>
+                               <s:property value="trialDTO.summaryFourFundingCategoryCode" />                    
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
-                        <div id="loadSummary4FundingSponsorField">
-                            <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
-                        </div>
+                        <s:property value="trialDTO.summaryFourOrgName" />
                     </reg-web:valueRow>
                     <reg-web:spaceRow/>
                     <reg-web:spaceRow/>
+                    
                     <table class="data2">
                          <tr>
                             <th colspan="2">Participating Sites</th>
@@ -288,6 +273,7 @@
                 </div>
                 
                 <div id="uploadDocDiv">
+                    <c:set var="disableDocumentDeletion" value="${true}" scope="request"/>
                     <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
                 </div>
                 <p align="center" class="info">

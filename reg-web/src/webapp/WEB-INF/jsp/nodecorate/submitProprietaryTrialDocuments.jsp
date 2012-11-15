@@ -27,7 +27,9 @@
     <td class="value">
       <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">
         <s:property value="%{#session.protocolDoc.fileName}"/>
-        <input id="protocolDoc" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
+        <c:if test="${!(disableDocumentDeletion==true)}">
+            <input id="protocolDoc" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
+        </c:if>
       </s:if>
       <s:else>
         <s:file id="protocolDoc" name="protocolDoc" value="true" cssStyle="width:270px"/>
@@ -44,12 +46,14 @@
   <tr>
     <td scope="row" class="label">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <fmt:message key="submit.trial.otherDocument"/>
+        <label><fmt:message key="submit.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
     </td>
     <td class="value">   
         <c:out value="${doc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('Other',${varStatus.index})"/>      
+        <c:if test="${!(disableDocumentDeletion==true)}">
+            <input type="button" value="Remove" onclick="deleteDocument('Other',${varStatus.index})"/>
+        </c:if>      
     </td>
   </tr>
   </c:forEach>

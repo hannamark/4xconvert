@@ -33,6 +33,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -43,6 +44,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -275,6 +277,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLeadOrganizationName("leadOrganizationName");
         trialDTO.setLeadOrgTrialIdentifier("leadOrgTrialIdentifier");
         trialDTO.setIdentifier("1");
+        trialDTO.setStudyProtocolId("1");
         trialDTO.setSummaryFourOrgIdentifier("1");
         trialDTO.setNctIdentifier("nctIdentifier");
 
@@ -287,6 +290,29 @@ public abstract class AbstractRegWebTest {
         trialDTO.setSiteProgramCodeText("siteProgramCodeTxt");
         trialDTO.setLocalSiteIdentifier("localSiteIdentifier");
         trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
+        
+        List<SubmittedOrganizationDTO> paOrgList = new ArrayList<SubmittedOrganizationDTO>();
+        SubmittedOrganizationDTO paOrgDto = new SubmittedOrganizationDTO();
+        paOrgDto.setName("SITE01");
+        paOrgDto.setRecruitmentStatus("ACTIVE");
+        paOrgDto.setRecruitmentStatusDate("01/01/2012");
+        paOrgDto.setSiteLocalTrialIdentifier("SITE01");
+        paOrgList.add(paOrgDto);
+        
+        paOrgDto = new SubmittedOrganizationDTO();
+        paOrgDto.setName("SITE02");
+        paOrgDto.setRecruitmentStatus("ACTIVE");
+        paOrgDto.setSiteLocalTrialIdentifier("SITE02");
+        Date now = new Date();  
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy");  
+        String currentDate = df.format(now);
+        paOrgDto.setRecruitmentStatusDate(currentDate);
+        paOrgDto.setSiteLocalTrialIdentifier("SITE02");
+        paOrgDto.setDateOpenedforAccrual(currentDate);
+        paOrgDto.setDateClosedforAccrual(currentDate);
+        paOrgList.add(paOrgDto);
+        trialDTO.setParticipatingSitesList(paOrgList);        
+        
         return trialDTO;
     }
     /**

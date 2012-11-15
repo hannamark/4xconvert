@@ -108,13 +108,12 @@ import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -135,10 +134,10 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
 
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
-    private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
-    private final TrialUtil  util = new TrialUtil();
+    private TrialUtil  util = new TrialUtil();
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
     private String currentUser;
-    private List<TrialDocumentWebDTO> existingDocuments = new ArrayList<TrialDocumentWebDTO>();
+    private final List<TrialDocumentWebDTO> existingDocuments = new ArrayList<TrialDocumentWebDTO>();
 
     /**
      * View.
@@ -173,6 +172,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     public String review() {
         clearErrorsAndMessages();
         try {
+            updateEditableFields();
             enforceBusinessRules();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
@@ -184,15 +184,29 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
                 return ERROR;
             }
             getTrialDTO().setDocDtos(getTrialDocuments());              
-        } catch (IOException e) {
+        } catch (Exception e) {
             addActionError(e.getMessage());
             return ERROR;
         }
-        ServletActionContext.getRequest().getSession().removeAttribute(
+        final HttpSession session = ServletActionContext.getRequest().getSession();
+        session.removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, getTrialDTO());
+        session.removeAttribute(DocumentTypeCode.OTHER.getShortName());
+        session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, getTrialDTO());
         return "review";
+    }
+
+    private void updateEditableFields() throws NullifiedRoleException,
+            PAException {
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long
+                .valueOf(getTrialDTO().getStudyProtocolId()));
+        ProprietaryTrialDTO currentDTO = new ProprietaryTrialDTO();
+        util.getProprietaryTrialDTOFromDb(studyProtocolIi, currentDTO);
+        currentDTO.setParticipatingSitesList(getTrialDTO()
+                .getParticipatingSitesList());
+        setTrialDTO(currentDTO);
+        ServletActionContext.getRequest().getSession()
+                .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, currentDTO);
     }
 
     /**
@@ -276,40 +290,13 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     /**
      * Enforce business rules.
      */
-    private void enforceBusinessRules() throws IOException {
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        final ProprietaryTrialDTO trialDTO = getTrialDTO();
-        if (StringUtils.isEmpty(trialDTO.getOfficialTitle())) {
-            addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitle"));
-        } else if (trialDTO.getOfficialTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
-            addFieldError("trialDTO.officialTitle", getText("error.submit.trialTitleLength"));
-        }
-        if (StringUtils.isEmpty(trialDTO.getNctIdentifier()) && StringUtils.isEmpty(trialDTO.getPhaseCode())
-                && StringUtils.isEmpty(trialDTO.getPrimaryPurposeCode())) {
-            //if the nct Number is not present throw error phase code and primary purpose codes
-            addFieldError("trialDTO.phaseCode", getText("error.submit.trialPhase"));
-            addFieldError("trialDTO.primaryPurposeCode", getText("error.submit.trialPurpose"));
-        }
-        checkSummary4Funding();
-        checkNctAndDoc(session);
+    private void enforceBusinessRules() throws IOException {                
         validateDocuments();
         validateProtocolDocUpdate();        
         checkSubmittingOrgRules();
-        checkNonInterventionalFields();
     }
 
-    
-
-    private void checkNonInterventionalFields() {
-        Map<String, String> errMap = new HashMap<String, String>();
-        final ProprietaryTrialDTO trialDTO = getTrialDTO();
-        new TrialValidator()
-                .validateNonInterventionalTrialDTO(trialDTO, errMap);
-        addErrors(errMap);
-    }
-
-    private void checkSubmittingOrgRules() {
-        PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private void checkSubmittingOrgRules() {        
         for (SubmittedOrganizationDTO dto : getTrialDTO().getParticipatingSitesList()) {
             if (StringUtils.isEmpty(dto.getSiteLocalTrialIdentifier())) {
                 addActionError("For " + dto.getName() + " Organization cannot have a null Local Trial Identifier ");
@@ -401,6 +388,20 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
      */
     public List<TrialDocumentWebDTO> getExistingDocuments() {
         return existingDocuments;
+    }
+
+    /**
+     * @param util the util to set
+     */
+    public void setUtil(TrialUtil util) {
+        this.util = util;
+    }
+    
+    /**
+     * @param paServiceUtils paServiceUtils
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
     }
     
 }
