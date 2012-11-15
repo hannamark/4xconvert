@@ -601,6 +601,7 @@
         </action>
 
         <action name="import/ctep/org/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
+            <interceptor-ref name="poDefaultStack" />
             <interceptor-ref name="tokenSession">
                 <param name="includeMethods">uploadOrganizations</param>
             </interceptor-ref>
@@ -609,6 +610,7 @@
         </action>
 
         <action name="import/ctep/person/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
+            <interceptor-ref name="poDefaultStack" />
             <interceptor-ref name="tokenSession">
                 <param name="includeMethods">uploadPeople</param>
             </interceptor-ref>
