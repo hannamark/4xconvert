@@ -32,3 +32,14 @@
         </div>
     </body>
 </html>
+<% 
+	 // In case the exception is not caught by the Struts2 exception interceptor for some reason,
+	 // we write the stack trace to the log file here as well, even if this leads to duplicate
+	 // stack traces in the log (better than not having a trace at all).
+	 if (exception != null) { 
+	     org.apache.log4j.Logger.getLogger("error.jsp").error(exception, exception);
+	 } else if (request.getAttribute("javax.servlet.error.exception") != null) { 
+	    Exception ex = ((Exception)request.getAttribute("javax.servlet.error.exception"));
+	    org.apache.log4j.Logger.getLogger("error.jsp").error(ex, ex);
+	 } 
+%>

@@ -95,11 +95,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     @Override
     public String execute() throws PAException {
         model.setTrialCategory(TrialCategory.ALL);
-
-        RegistryUser criteria = new RegistryUser();
-        criteria.setAffiliatedOrganizationId(currentUser
-                .getAffiliatedOrganizationId());
-        model.setUsers(sort(registryUserService.search(criteria)));
+        model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser
+                .getAffiliatedOrganizationId())));
         model.setUser(null);
 
         loadTrials();
@@ -160,10 +157,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                     + rUser.getAffiliateOrg() + " is a lead organization or participating site";
         }
         registryUserService.updateUser(rUser);
-        RegistryUser criteria = new RegistryUser();
-        criteria.setAffiliatedOrganizationId(currentUser
-                .getAffiliatedOrganizationId());
-        model.setUsers(sort(registryUserService.search(criteria)));
+        model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser
+                .getAffiliatedOrganizationId())));
         model.setUser(registryUserService.getUserById(userId));
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
         return SUCCESS;

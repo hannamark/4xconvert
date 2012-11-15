@@ -299,4 +299,16 @@ public interface RegistryUserService {
      */
     void setEmailNotificationsPreference(Long userId, Long trialId,
             boolean enableEmails) throws PAException;   
+    
+    
+    /**
+     * Returns all users affiliated with the given organization and having a
+     * non-empty link to a CSM User. I.e. users that have not completed account
+     * activation won't be included.
+     * 
+     * @param orgId orgId
+     * @return  List<RegistryUser>
+     * @throws PAException PAException
+     */
+    List<RegistryUser> findByAffiliatedOrg(Long orgId) throws PAException;
 }

@@ -26,7 +26,11 @@
             </interceptor>            
             <interceptor-stack name="paDefaultInterceptor">
                 <interceptor-ref name="showDisclaimer" />
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.pa</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="params">
@@ -63,7 +67,11 @@
             </interceptor-stack>
 
             <interceptor-stack name="paNoDisclaimerDefaultInterceptor">
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.pa</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
@@ -97,7 +105,11 @@
 
             <interceptor-stack name="paPreventDuplicateStudyInterceptor">
                 <interceptor-ref name="showDisclaimer" />
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.pa</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->

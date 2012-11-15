@@ -709,4 +709,17 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<RegistryUser> findByAffiliatedOrg(Long orgId)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class,
+                "regUser");
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        addCriteria(criteria, orgId, "regUser.affiliatedOrganizationId");
+        criteria.add(Restrictions.isNotNull("regUser.csmUser"));
+        return criteria.list();
+    }
+
 }

@@ -384,7 +384,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             }
             webDTO.setEmailAddress(ru.getEmailAddress());
             webDTO.setPhoneNumber(ru.getPhone());
-            webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(ru.getCsmUser().getLoginName()));
+            webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(ru
+                    .getCsmUser() != null ? ru.getCsmUser().getLoginName() : ""));
         } catch (PAException e) {
             LOG.error("Error retrieving registry user with id " + webDTO.getRegistryUserId() + ".");
         }
