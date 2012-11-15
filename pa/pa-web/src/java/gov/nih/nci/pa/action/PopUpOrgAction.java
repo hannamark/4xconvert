@@ -237,8 +237,10 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
                 }
             });
             return retvalue;
-        } catch (Exception e) {
-            return ERROR;
+        } catch (Exception e) {           
+            orgs = null;
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,  e.getMessage());
+            return retvalue;
         }
     }
     
