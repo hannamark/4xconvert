@@ -413,10 +413,10 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
      * @return success or fail
      */
     public String partialSave() {
+        final TrialDTO trialDTO = getTrialDTO();
         try {
             addSecondaryIdsToTrialDto();
-            validateDocuments();
-            final TrialDTO trialDTO = getTrialDTO();
+            validateDocuments();          
             trialDTO.setDocDtos(getTrialDocuments());                      
             setTrialDTO((TrialDTO) trialUtil.saveDraft(trialDTO));
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
@@ -426,6 +426,8 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         } catch (PAException e) {
             LOG.error(e.getMessage());
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
+            TrialSessionUtil.addSessionAttributes(trialDTO);
+            trialUtil.populateRegulatoryList(trialDTO);            
             return ERROR;
         } catch (IOException e) {
             LOG.error(e.getMessage());
