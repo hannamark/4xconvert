@@ -257,7 +257,7 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         return false;
     }
 
-    @Override
+    
     public List<RegistryUser> findByAffiliatedOrg(Long orgId)
             throws PAException {
         return new ArrayList<RegistryUser>();
