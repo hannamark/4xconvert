@@ -183,6 +183,7 @@
         </td>
         
     </tr>
+     <tr> <td>  </td> </tr>
     <tr id="assayPurposeOtherTextRow" style="display: none;">
         <td class="label">
             <s:label for="plannedMarker.assayPurposeOtherText"><fmt:message key="plannedMarker.assayPurposeOtherText" />:</s:label><span class="required">*</span>
