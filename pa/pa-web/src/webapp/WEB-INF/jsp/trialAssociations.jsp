@@ -50,7 +50,7 @@ function callOnloadFunctions(){
 				<ul class="btnrow">                                           
 					   <li><s:a href="javascript:void(0);" onclick="submitXsrfForm('trialAssociationsinput.action');" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                         <s:if test="%{!trialAssociations.isEmpty()}">
-                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected trial associations. Cancel to abort.', 'trialAssociationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected associated trials. Cancel to abort.', 'trialAssociationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                             <li><pa:toggleDeleteBtn/></li>
                         </s:if>
 				</ul>
