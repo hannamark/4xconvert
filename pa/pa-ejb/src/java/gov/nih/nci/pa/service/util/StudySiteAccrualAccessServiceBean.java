@@ -121,6 +121,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -537,7 +538,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
                 .getStudyProtocolIdentifier());     
         AccrualAccessSourceCode source = CdConverter.convertCdToEnum(AccrualAccessSourceCode.class, 
                 accessDTO.getSource());
-        List<ParticipatingOrgDTO> sites = new ArrayList<ParticipatingOrgDTO>(
+        List<ParticipatingOrgDTO> sites = new LinkedList<ParticipatingOrgDTO>(
                 participatingOrgServiceLocal.getTreatingSites(trialID)); 
         
         breakDownTrialLevelAccrualAccessIntoSites(user, source,
@@ -592,7 +593,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         try {
             ParticipatingOrgDTO site = participatingOrgServiceLocal
                     .getTreatingSite(studySiteId);
-            List<ParticipatingOrgDTO> sites = Arrays.asList(site);
+            List<ParticipatingOrgDTO> sites = new LinkedList<ParticipatingOrgDTO>(Arrays.asList(site));
             Long trialID = site.getStudyProtocolId();
 
             Map<RegistryUser, AccrualAccessSourceCode> users = new HashMap<RegistryUser, AccrualAccessSourceCode>();
