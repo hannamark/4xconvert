@@ -266,6 +266,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
+            studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
             StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
@@ -903,6 +904,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
         createStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
         createStudyProtocolDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+        createStudyProtocolDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());
+        createStudyProtocolDTO.setCompletionDateTypeCode(studyProtocolDTO.getCompletionDateTypeCode());        
         createStudyProtocolDTO.setStudyProtocolType(studyProtocolDTO.getStudyProtocolType());
         createStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
         createStudyProtocolDTO.setFdaRegulatedIndicator(studyProtocolDTO.getFdaRegulatedIndicator());
