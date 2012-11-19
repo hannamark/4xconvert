@@ -1149,4 +1149,8 @@
         <comment>Added source column to study site accrual access.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5627.sql"/>
      </changeSet>
+     <changeSet id="PO-5586" author="Reshma">
+        <comment>Map old BioMarker atrribute values to new Biomarker attribute values.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5586.sql" splitStatements="false"/>
+     </changeSet>
 </databaseChangeLog>
