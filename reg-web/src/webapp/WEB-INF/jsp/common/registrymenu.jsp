@@ -5,9 +5,18 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 
 <c:url value="/protected/ajaxselectTrialselectTypeOfTrial.action" var="selectTrial"/>
+<c:url value="/home.action" var="logoutURL"/>
 <script>
 function selectTrialType(){
-    showPopWin('${selectTrial}', 950, 400, '', 'Select a Trial Submission Category')
+    showPopWin('${selectTrial}', 950, 400, '', 'Select a Trial Submission Category');
+    var frame = $('popupFrame');
+    if (frame!=null && frame.contentWindow != null) {
+        Event.observe(frame.contentWindow, "load", function() {
+        	if (frame.contentDocument.getElementById('newSessionMarker')!=null) {
+        		frame.ownerDocument.location.href = '${logoutURL}';
+        	}
+        });	
+    }
 }
 </script>
         <li class="stdnav"><div>NCI CTRP</div>

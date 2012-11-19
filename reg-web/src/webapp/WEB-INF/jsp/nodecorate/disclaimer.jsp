@@ -53,7 +53,7 @@ function submitForm(btnSelected){
 <li><a href="javascript:void(0)" class="btn" onclick="submitForm('decline');" id="rejectDisclaimer"><span class="btn_img"><span class="decline">Reject</span></span></a></li>
                                         </ul>    
                                     </del>
-                                </div>
+                                </div><div id="newSessionMarker"></div>
 
 </s:form>
 </body>

@@ -114,7 +114,7 @@
                 </ul>
             </del>
 
-        </div>
+        </div><div id="newSessionMarker"></div>
         </form>
 </div>
 </body>
