@@ -165,6 +165,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toDto(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toDto(input.getPhaseCode()));
         result.setPrimaryCompletionDateTypeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryCompletionDateTypeCode()));
+        result.setCompletionDateTypeCode(CDTransformer.INSTANCE.toDto(input.getCompletionDateTypeCode()));
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
         result.setStartDateTypeCode(CDTransformer.INSTANCE.toDto(input.getStartDateTypeCode()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
@@ -182,6 +183,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toDto(input.getAmendmentDate()));
         result.setPrimaryCompletionDate(TSTransformer.INSTANCE.toDto(input.getPrimaryCompletionDate()));
+        result.setCompletionDate(TSTransformer.INSTANCE.toDto(input.getCompletionDate()));
         result.setRecordVerificationDate(TSTransformer.INSTANCE.toDto(input.getRecordVerificationDate()));
         result.setStartDate(TSTransformer.INSTANCE.toDto(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toDto(input.getStatusDate()));
@@ -238,6 +240,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toXml(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toXml(input.getPhaseCode()));
         result.setPrimaryCompletionDateTypeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryCompletionDateTypeCode()));
+        result.setCompletionDateTypeCode(CDTransformer.INSTANCE.toXml(input.getCompletionDateTypeCode()));
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryPurposeCode()));
         result.setPrimaryPurposeAdditionalQualifierCode(CDTransformer.INSTANCE.toXml(
              input.getPrimaryPurposeAdditionalQualifierCode()));
@@ -250,6 +253,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         // TS
         result.setAmendmentDate(TSTransformer.INSTANCE.toXml(input.getAmendmentDate()));
         result.setPrimaryCompletionDate(TSTransformer.INSTANCE.toXml(input.getPrimaryCompletionDate()));
+        result.setCompletionDate(TSTransformer.INSTANCE.toXml(input.getCompletionDate()));
         result.setRecordVerificationDate(TSTransformer.INSTANCE.toXml(input.getRecordVerificationDate()));
         result.setStartDate(TSTransformer.INSTANCE.toXml(input.getStartDate()));
         result.setStatusDate(TSTransformer.INSTANCE.toXml(input.getStatusDate()));
