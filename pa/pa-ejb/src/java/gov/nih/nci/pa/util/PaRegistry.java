@@ -116,6 +116,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -640,5 +641,12 @@ public final class PaRegistry {
      */
     public static ParticipatingOrgServiceLocal getParticipatingOrgService() {
         return getInstance().getServiceLocator().getParticipatingOrgService();
+    }
+
+    /**
+     * @return the participating org service
+     */
+    public static FamilyServiceLocal getFamilyService() {
+        return getInstance().getServiceLocator().getFamilyService();
     }
 }

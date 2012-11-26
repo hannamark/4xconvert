@@ -91,7 +91,6 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -112,13 +111,13 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceBean;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -128,7 +127,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -169,8 +167,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
     private final StudyOnholdServiceBean ohs = new StudyOnholdServiceBean();
     private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
-    private final StudySiteAccrualAccessServiceBean accessSrv = new StudySiteAccrualAccessServiceBean();
-    private final StudySiteAccrualStatusServiceLocal statusSvc = new StudySiteAccrualStatusServiceBean();
+    private final FamilyServiceLocal familySvc = mock(FamilyServiceLocal.class);
     
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorServiceRemote = mock(TSRReportGeneratorServiceRemote.class);
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
@@ -201,8 +198,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReportGeneratorServiceRemote);
         bean.setProtocolQueryService(protocolQueryServiceLocal);
         bean.setDocumentService(documentServiceLocal);
-        bean.setAccrualAccessService(accessSrv);
-        accessSrv.setStudySiteAccrualStatusService(statusSvc);
+        bean.setFamilyService(familySvc);
 
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
@@ -1146,19 +1142,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         DocumentWorkflowStatusDTO dwfsDTO = getDocWrkStatusDTO();
         dwfsDTO.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
         // milestone triggers change of date
-        StudyMilestoneDTO dto = bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
-        RegistryUser ru = new RegistryUser();
-        ru.setId(TestSchema.registryUserIds.get(0));
-        ru.setAffiliatedOrganizationId(1L);
-        ru.setCsmUser(new User());
-        ru.getCsmUser().setUserId(1L);
-        bean.setAccrualAccess(dto, getCurrentSession(), ru);
-        try {
-            bean.setAccrualAccessForTreatingSite(dto, getCurrentSession(), ru);
-            fail();
-        } catch (Exception e) {
-        }
-        
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         sp = sps.getStudyProtocol(spIi);
         String recordVerificationDate = TsConverter.convertToString(sp.getRecordVerificationDate());
         assertTrue(ISOUtil.normalizeDateString(getDate(0).toString()).equals(recordVerificationDate));

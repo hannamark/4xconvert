@@ -80,6 +80,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -191,20 +192,32 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings(UNCHECKED_STR)
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
+        Map<Long, Organization> orgMap = getTreatingOrganizations(studyProtocolId);
+        Map<Long, String> result = new HashMap<Long, String>();
+        for (Map.Entry<Long, Organization> org : orgMap.entrySet()) {
+            result.put(org.getKey(), org.getValue().getName());
+        }
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings(UNCHECKED_STR)
+    public Map<Long, Organization> getTreatingOrganizations(Long studyProtocolId) throws PAException {
         Session session = null;
         List<Object[]> queryList = null;
         session = PaHibernateUtil.getCurrentSession();
         Query query = null;
-        String hql = "select ss.id, org.name from StudyProtocol sp join sp.studySites ss "
+        String hql = "select ss.id, org from StudyProtocol sp join sp.studySites ss "
             + " join ss.healthCareFacility hcf join hcf.organization org where sp.id = :spId "
             + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
             + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);
         queryList = query.list();
-        Map<Long, String> result = new LinkedHashMap<Long, String>();
+        Map<Long, Organization> result = new LinkedHashMap<Long, Organization>();
         for (Object[] oArr : queryList) {
             StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
             .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteIi((Long) oArr[0]));
@@ -213,11 +226,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             if (ssas != null) {
                 recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
                 if (recruitmentStatus.isEligibleForAccrual()) {
-                    result.put((Long) oArr[0], (String) oArr[1]);
+                    result.put((Long) oArr[0], (Organization) oArr[1]);
                 }
             }
         }
-
         return result;
     }
 
@@ -263,6 +275,14 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         return bo != null ? convertFromDomainToDto(bo) : null;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySiteAccrualAccessDTO> getActiveByUser(Long registryUserId) throws PAException {
+        return  convertFromDomainToDTOs(getActiveBosByUser(registryUserId));
+    }
 
     /**
      * {@inheritDoc}
@@ -321,6 +341,20 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         query.setParameter(USER_ID, registryUserId);
         List<StudySiteAccrualAccess> queryList = query.list();
         return queryList.isEmpty() ? null : queryList.get(0);
+    }
+
+    @SuppressWarnings(UNCHECKED_STR)
+    private List<StudySiteAccrualAccess> getActiveBosByUser(Long registryUserId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select ssaa from StudySite ss join ss.studySiteAccrualAccess ssaa "
+                + "where ssaa.registryUser.id = :userId "
+                + "  and ssaa.statusCode = :statusCode "
+                + "order by ss.id, ssaa.id ";
+        Query query = session.createQuery(hql);
+        query.setParameter(USER_ID, registryUserId);
+        query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
+        List<StudySiteAccrualAccess> queryList = query.list();
+        return queryList;
     }
 
     private void validateElibibleForCreate(StudySiteAccrualAccessDTO access) throws PAException {
@@ -437,11 +471,11 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
                 + "from StudyProtocol sp "
                 + "inner join sp.studySites ss "
                 + "inner join ss.studySiteAccrualAccess ssaa "
-                + "where ssaa.registryUser.id = :userId and ssaa.statusCode = :status "
+                + "where ssaa.registryUser.id = :userId and ssaa.statusCode = :statusCode "
                 + "and ss.functionalCode = :fcode";
         Query query = session.createQuery(hql);
         query.setParameter(USER_ID, user.getId());
-        query.setParameter("status", ActiveInactiveCode.ACTIVE);
+        query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
         query.setParameter("fcode", StudySiteFunctionalCode.TREATING_SITE);
                                                                                                        // CHECKSTYLE:OFF
         for (Object row : query.list()) {
@@ -639,30 +673,37 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             recruitmentStatus = RecruitmentStatusCode.getByCode(ssas
                     .getStatusCode().getCode());
             if (recruitmentStatus.isEligibleForAccrual()) {
-                StudySiteAccrualAccessDTO dto = getByStudySiteAndUser(
-                        site.getStudySiteId(),
-                        IiConverter.convertToLong(registryUserIdentifier));
-                if (dto == null) {
-                    dto = new StudySiteAccrualAccessDTO();
-                    dto.setRegistryUserIdentifier(registryUserIdentifier);
-                    dto.setRequestDetails(StConverter
-                            .convertToSt(StringUtils.EMPTY));
-                    dto.setStudySiteIdentifier(IiConverter.convertToIi(site
-                            .getStudySiteId()));
-                    dto.setSource(CdConverter.convertToCd(source));
-                    dto.setStatusCode(CdConverter
-                            .convertToCd(ActiveInactiveCode.ACTIVE));
-                    dto.setStatusDate(TsConverter.convertToTs(new Date()));
-                    create(dto);
-                } else {
-                    dto.setSource(CdConverter.convertToCd(source));
-                    dto.setStatusCode(CdConverter
-                            .convertToCd(ActiveInactiveCode.ACTIVE));
-                    dto.setStatusDate(TsConverter.convertToTs(new Date()));
-                    update(dto);
-                }
+                createStudySiteAccrualAccess(IiConverter.convertToLong(registryUserIdentifier), 
+                        site.getStudySiteId(), source);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createStudySiteAccrualAccess(Long registryUserId, Long siteId, AccrualAccessSourceCode source)
+            throws PAException {
+            StudySiteAccrualAccessDTO ssaa = getByStudySiteAndUser(siteId, registryUserId);
+            if (ssaa == null) {
+                ssaa = new StudySiteAccrualAccessDTO();
+                ssaa.setRegistryUserIdentifier(IiConverter.convertToIi(registryUserId));
+                ssaa.setSource(CdConverter.convertToCd(source));
+                ssaa.setRequestDetails(StConverter.convertToSt(StringUtils.EMPTY));
+                ssaa.setStudySiteIdentifier(IiConverter.convertToIi(siteId));
+                ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+                ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
+                create(ssaa);
+            } else {
+                if (StringUtils.equals(ActiveInactiveCode.INACTIVE.getCode(), 
+                        CdConverter.convertCdToString(ssaa.getStatusCode()))) {
+                    ssaa.setSource(CdConverter.convertToCd(source));
+                    ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+                    ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
+                    update(ssaa);
+                }
+            }
     }
 
     private boolean isIndustrialTrial(Long trialID) {
@@ -748,6 +789,12 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     private void removeStudySiteAccrualAccess(RegistryUser user, Long trialID, AccrualAccessSourceCode source)
             throws PAException {
         List<StudySiteAccrualAccessDTO> list = getByStudyProtocol(trialID);
+        removeStudySiteAccrualAccess(user, list, source);
+    }
+
+
+    public void removeStudySiteAccrualAccess(RegistryUser user, List<StudySiteAccrualAccessDTO> list, 
+            AccrualAccessSourceCode source) throws PAException {
         for (StudySiteAccrualAccessDTO dto : list) {
             if (ActiveInactiveCode.ACTIVE.name().equalsIgnoreCase(
                     dto.getStatusCode().getCode())

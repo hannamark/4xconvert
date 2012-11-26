@@ -51,6 +51,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -628,6 +629,9 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         return null;
     }
 
-      
-    
+    @Override
+    public FamilyServiceLocal getFamilyService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

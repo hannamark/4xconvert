@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
@@ -108,10 +109,17 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
 
     /**
      * @param studyProtocolId protocol id
-     * @return list of treating sites
+     * @return map of treating site identifiers and names
      * @throws PAException exception
      */
     Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
+
+    /**
+     * @param studyProtocolId protocol id
+     * @return map of treating site identifiers and organization objects
+     * @throws PAException exception 
+     */
+    Map<Long, Organization> getTreatingOrganizations(Long studyProtocolId) throws PAException;
 
     /**
      * @param studyProtocolId study site pkey
@@ -136,7 +144,16 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      * @throws PAException exception
      */
     StudySiteAccrualAccessDTO getByStudySiteAndUser(Long studySiteId, Long registryUserId) throws PAException;
+
     
+    /**
+     * Return a study site accrual access objects by registryUserId.
+     * @param registryUserId registry User id
+     * @return list of access
+     * @throws PAException exception
+     */
+    List<StudySiteAccrualAccessDTO> getActiveByUser(Long registryUserId) throws PAException;
+
     /**
      * Returns all trials and participating sites to which the User can submit accrual data.
      * @param user user
@@ -165,7 +182,7 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      */
     void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
+
     /**
      * Un-assigns trial-level access to the given trials from the given user.
      * @param user RegistryUser
@@ -177,7 +194,28 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      */
     void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
-    
+
+    /**
+     * Create or set active site accrual access.
+     * @param registryUserId the user to get access
+     * @param siteId the site
+     * @param source source of the access
+     * @throws PAException exception
+     */
+    void createStudySiteAccrualAccess(Long registryUserId, Long siteId, AccrualAccessSourceCode source) 
+            throws PAException;
+
+    /**
+     * Remove study site access to a given list.
+     * @param user Registry User
+     * @param list list of existing access
+     * @param source the source
+     * @throws PAException exception
+     */
+    void removeStudySiteAccrualAccess(RegistryUser user, List<StudySiteAccrualAccessDTO> list, 
+            AccrualAccessSourceCode source) throws PAException;
+
+
     /**
      * This method is supposed to be invoked after a change is made to a participating site or a new participating
      * site is created. It checks trial-level accrual access records to see if a site-level accrual access needs to be

@@ -28,6 +28,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -37,6 +38,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(2L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
 
         // add three members.
@@ -47,6 +49,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -56,6 +59,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -65,6 +69,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
 
         dto = new RegistryUser();
@@ -74,6 +79,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
+        dto.setFamilyAccrualSubmitter(false);
         userList.add(dto);
     }
 

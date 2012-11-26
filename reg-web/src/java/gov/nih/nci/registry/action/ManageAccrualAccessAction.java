@@ -7,6 +7,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
+import gov.nih.nci.pa.dto.OrgFamilyDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
@@ -14,6 +15,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -35,6 +37,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -57,7 +60,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             .getLogger(ManageAccrualAccessAction.class);
     
     private static final String SUCCESS_MSG = "successMessage";
-    private static final String FAILURE_MSG = "failureMessage";    
+    static final String FAILURE_MSG = "failureMessage";
 
     private AccrualAccessModel model;
 
@@ -81,7 +84,15 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
     private PAOrganizationServiceRemote paOrganizationService;
 
+    private FamilyServiceLocal familyService;
+
     private Long userId;
+
+    private Long ofUserId;
+
+    private String families;
+
+    private Organization organization;
 
     /**
      * 
@@ -94,10 +105,25 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
     @Override
     public String execute() throws PAException {
+        Long orgId = currentUser.getAffiliatedOrganizationId();
+        Organization criteria = new Organization();
+        criteria.setIdentifier(orgId.toString());
+        setOrganization(paOrganizationService.getOrganizationByIndetifers(criteria));
+        setFamilies("");
+        List<OrgFamilyDTO> famList = familyService.getByOrgId(orgId);
+        boolean bFirst = true;
+        for (OrgFamilyDTO fam : famList) {
+            if (bFirst) {
+                bFirst = false;
+            } else {
+                setFamilies(getFamilies() + " | "); 
+            }
+            setFamilies(getFamilies() + fam.getName()); 
+        }
         model.setTrialCategory(TrialCategory.ALL);
-        model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser
-                .getAffiliatedOrganizationId())));
+        model.setUsers(sort(registryUserService.findByAffiliatedOrg(orgId)));
         model.setUser(null);
+        populateFamilyDd();
 
         loadTrials();
 
@@ -115,6 +141,17 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         return users;
     }
 
+    private void populateFamilyDd() throws PAException {
+        List<RegistryUser> result = new ArrayList<RegistryUser>();
+        List<Long> orgList = familyService.getAllRelatedOrgs(currentUser.getAffiliatedOrganizationId());
+        for (Long org : orgList) {
+            for (RegistryUser user : registryUserService.findByAffiliatedOrg(org)) {
+                result.add(user);
+            }
+        }
+        model.setOfUsers(sort((result)));
+    }
+
     /**
      * @return String
      * @throws PAException
@@ -126,7 +163,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         loadTrials();
         return SUCCESS;
     }
-    
+
     /**
      * @return String
      * @throws PAException PAException
@@ -160,6 +197,42 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser
                 .getAffiliatedOrganizationId())));
         model.setUser(registryUserService.getUserById(userId));
+        ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
+        return SUCCESS;
+    }
+
+    /**
+     * Assign or UnAssign the registry user as Org Family Accrual Submitter.
+     * @return action result
+     * @throws PAException exception
+     */
+    public String assignUnAssignOFSubmitter() throws PAException {
+        RegistryUser rUser = registryUserService.getUserById(getOfUserId());
+        if (rUser == null) {
+            ServletActionContext.getRequest().setAttribute(FAILURE_MSG, 
+                    getText("manage.accrual.access.user.not.found.error"));
+            return SUCCESS;
+        }
+        String msg = "";
+        if (rUser.getFamilyAccrualSubmitter()) {
+           if (ObjectUtils.equals(getUserId(), getOfUserId())) {
+               getAllTrialsForSiteAccrualSubmitter(); 
+               unassignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+           }
+           familyService.unassignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+           msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now no longer submit accrual.";
+        } else {
+            if (ObjectUtils.equals(getUserId(), getOfUserId())) {
+                getAllTrialsForSiteAccrualSubmitter(); 
+                assignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+            }
+            familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+            msg = (rUser.getFirstName() + " " + rUser.getLastName() + " can now now submit accrual for "
+                  + getOrganization().getName() + " and any of " + getFamilies()
+                  + " family member org's Institutional, Externally Peer Reviewed, "
+                  + "and Industrial tirals where the org is a lead organization or a participating site.");
+        }
+        populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
         return SUCCESS;
     }
@@ -468,6 +541,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
         private List<RegistryUser> users = new ArrayList<RegistryUser>();
 
+        private List<RegistryUser> ofUsers = new ArrayList<RegistryUser>();
+
         private RegistryUser user = new RegistryUser();
 
         private Map<String, List<StudyProtocolQueryDTO>> assignedTrials = 
@@ -607,6 +682,19 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             this.byTrial = byTrial;
         }
 
+        /**
+         * @return the ofUsers
+         */
+        public List<RegistryUser> getOfUsers() {
+            return ofUsers;
+        }
+
+        /**
+         * @param ofUsers the ofUsers to set
+         */
+        public void setOfUsers(List<RegistryUser> ofUsers) {
+            this.ofUsers = ofUsers;
+        }
     }
     
     /**
@@ -765,6 +853,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 .getStudySiteAccrualAccessService());
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
         setPaOrganizationService(PaRegistry.getPAOrganizationService());
+        setFamilyService(PaRegistry.getFamilyService());
         currentUser = registryUserService.getUser(UsernameHolder.getUser());
     }
 
@@ -814,6 +903,13 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     public void setRegistryUserService(
             RegistryUserServiceLocal registryUserService) {
         this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @param familyService the familyService to set
+     */
+    public void setFamilyService(FamilyServiceLocal familyService) {
+        this.familyService = familyService;
     }
 
     /**
@@ -891,4 +987,45 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         this.trialsToUnassign = trialsToUnassign;
     }
 
+    /**
+     * @return the organization
+     */
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    /**
+     * @param organization the organization to set
+     */
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    /**
+     * @return the families
+     */
+    public String getFamilies() {
+        return families;
+    }
+
+    /**
+     * @param families the families to set
+     */
+    public void setFamilies(String families) {
+        this.families = families;
+    }
+
+    /**
+     * @return the ofUserId
+     */
+    public Long getOfUserId() {
+        return ofUserId;
+    }
+
+    /**
+     * @param ofUserId the ofUserId to set
+     */
+    public void setOfUserId(Long ofUserId) {
+        this.ofUserId = ofUserId;
+    }
 }

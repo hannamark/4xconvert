@@ -79,6 +79,7 @@
 package gov.nih.nci.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -276,4 +277,30 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public Map<Long, Organization> getTreatingOrganizations(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<StudySiteAccrualAccessDTO> getActiveByUser(Long registryUserId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void createStudySiteAccrualAccess(Long registryUserId, Long siteId, AccrualAccessSourceCode source)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void removeStudySiteAccrualAccess(RegistryUser user, List<StudySiteAccrualAccessDTO> list,
+            AccrualAccessSourceCode source) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

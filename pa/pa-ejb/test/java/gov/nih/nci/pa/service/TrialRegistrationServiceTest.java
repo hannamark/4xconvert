@@ -90,7 +90,6 @@ import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.PAProperties;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -117,6 +116,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
@@ -156,7 +156,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -274,6 +273,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         studyMilestoneSvc.setStudyInboxService(studyInboxSvc);
         studyMilestoneSvc.setStudyOnholdService(studyOnholdSvc);
         studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
+        studyMilestoneSvc.setFamilyService(mock(FamilyServiceLocal.class));
 
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
         when(paSvcLoc.getStudyIndldeService()).thenReturn(studyIndldeService);

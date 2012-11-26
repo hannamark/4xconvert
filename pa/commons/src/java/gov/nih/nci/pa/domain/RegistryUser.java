@@ -131,6 +131,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private UserOrgType affiliatedOrgUserType;
     private Boolean enableEmails;
     private Boolean siteAccrualSubmitter;
+    private Boolean familyAccrualSubmitter;
 
     /**
      * @return the csmUser
@@ -465,4 +466,18 @@ public class RegistryUser extends AbstractEntity implements Auditable {
         this.siteAccrualSubmitter = siteAccrualSubmitter;
     }
 
+    /**
+     * @return the familyAccrualSubmitter
+     */
+    @Column(name = "FAMILY_ACCRUAL_SUBMITTER")
+    public Boolean getFamilyAccrualSubmitter() {
+        return familyAccrualSubmitter;
+    }
+
+    /**
+     * @param familyAccrualSubmitter the familyAccrualSubmitter to set
+     */
+    public void setFamilyAccrualSubmitter(Boolean familyAccrualSubmitter) {
+        this.familyAccrualSubmitter = familyAccrualSubmitter;
+    }
 }

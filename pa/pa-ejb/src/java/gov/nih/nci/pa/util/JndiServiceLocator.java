@@ -118,6 +118,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -614,5 +615,13 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public ParticipatingOrgServiceLocal getParticipatingOrgService() {
         return (ParticipatingOrgServiceLocal) JNDIUtil.lookupPa("/pa/ParticipatingOrgServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FamilyServiceLocal getFamilyService() {
+        return (FamilyServiceLocal) JNDIUtil.lookupPa("/pa/FamilyServiceBeanLocal/local");
     }
 }

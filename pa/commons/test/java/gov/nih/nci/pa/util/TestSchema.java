@@ -1499,6 +1499,7 @@ public class TestSchema {
         ru.setCsmUser(user);
         ru.setUserLastCreated(user);
         ru.setUserLastUpdated(user);
+        ru.setFamilyAccrualSubmitter(false);
         TestSchema.addUpdObject(ru);
         return ru;
     }

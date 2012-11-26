@@ -7,13 +7,10 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -24,7 +21,6 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
@@ -35,9 +31,9 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -49,7 +45,6 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -61,6 +56,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -129,10 +125,10 @@ public class StudyMilestoneBeanLocal
     
     @EJB 
     private DocumentServiceLocal documentService;
-    
+
     @EJB
-    private StudySiteAccrualAccessServiceLocal accrualAccessService;
-    
+    private FamilyServiceLocal familyService;
+
     /** For testing purposes only. Set to false to bypass abstraction validations. */
     private boolean validateAbstractions = true;
     
@@ -175,100 +171,14 @@ public class StudyMilestoneBeanLocal
         Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
         query.setMaxResults(1);
-        DocumentWorkflowStatus dws = query.list() != null ? (DocumentWorkflowStatus) query.list().get(0) : null;
-        if (dws.getStatusCode().isEligibleForAccrual()) {
-            List<RegistryUser> usersList = getSiteAccrualSubmitters(session);
-            
-            for (RegistryUser ru : usersList) {
-                if (ru.getAffiliatedOrganizationId() != null) {
-                    // check the studyprotocol has affiliated org as LEAD_ORGANIZATION then give access to all sites
-                    setAccrualAccess(resultDto, session, ru);                    
-                }
+        @SuppressWarnings("unchecked")
+        List<DocumentWorkflowStatus> qryList = query.list();
+        if (CollectionUtils.isNotEmpty(qryList)) {
+            DocumentWorkflowStatus dws = qryList.get(0);
+            if (dws.getStatusCode().isEligibleForAccrual()) {
+                familyService.updateSiteAndFamilyPermissions(
+                        IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
             }
-        }
-    }
-
-    List<RegistryUser> getSiteAccrualSubmitters(Session session) {
-        String hql = "from RegistryUser where siteAccrualSubmitter = true";
-        Query query = session.createQuery(hql);
-        return query.list();
-    }
-
-    void setAccrualAccessForTreatingSite(StudyMilestoneDTO resultDto,
-            Session session, RegistryUser ru) throws PAException {
-        String hql = "select ss.identifier from study_protocol sp"
-            + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
-            + " join healthcare_facility hcf on (ss.healthcare_facility_identifier = hcf.identifier)"
-            + " join organization org on (hcf.organization_identifier = org.identifier)"
-            + " where sp.identifier = " 
-            + IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier())
-            + " and ss.functional_code = 'TREATING_SITE'"
-            + " and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'";
-        Query query = session.createSQLQuery(hql);
-        List<Integer> queryList = query.list();
-        List<Long> ssite = new ArrayList<Long>();
-        for (Integer row : queryList) {
-            ssite.add(Long.valueOf(row.longValue()));
-        }
-        if (ssite != null & !ssite.isEmpty()) {
-            Set<Long> ssites = accrualAccessService.getTreatingSites(
-                    IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier())).keySet();
-            for (Long siteId : ssites) {
-                if (siteId.equals(ssite.get(0))) {
-                    createStudySiteAccrualAccess(ru, ssite.get(0), resultDto.getStudyProtocolIdentifier());
-                    break;
-                }
-            }
-        }
-    }
-
-    void setAccrualAccess(
-            StudyMilestoneDTO resultDto, Session session, RegistryUser ru) throws PAException {
-        Long trialId = IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier());
-        String hql = "select ss.identifier as ssid from study_protocol sp"
-            + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
-            + " join research_organization ro on (ss.research_organization_identifier = ro.identifier)"
-            + " join organization org on (ro.organization_identifier = org.identifier)"
-            + " where sp.identifier = " 
-            + trialId  
-            + " and ss.functional_code = 'LEAD_ORGANIZATION'"
-            + " and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'";
-        Query query = session.createSQLQuery(hql);
-        List<Object[]> ssList = query.list();
-        if (ssList != null & !ssList.isEmpty()) {
-            if (!isIndustrialTrial(trialId, session)) {
-                accrualAccessService.assignTrialLevelAccrualAccess(ru, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
-                        Arrays.asList(trialId), StringUtils.EMPTY, ru);
-            } else {
-                // affiliated org is TREATING_SITE then access to just the affiliated org site
-                setAccrualAccessForTreatingSite(resultDto, session, ru);
-            }
-        }
-    }
-
-    private boolean isIndustrialTrial(Long trialID, Session session) {
-        return (Boolean) session.createQuery(
-                        "select sp.proprietaryTrialIndicator from "
-                                + StudyProtocol.class.getName()
-                                + " sp where sp.id=" + trialID).uniqueResult();
-    }
-
-    void createStudySiteAccrualAccess(RegistryUser ru, Long siteId, Ii trialId) throws PAException {
-        StudySiteAccrualAccessDTO ssaa = accrualAccessService.getByStudySiteAndUser(siteId, ru.getId());
-        if (ssaa == null) {
-            ssaa = new StudySiteAccrualAccessDTO();
-            ssaa.setRegistryUserIdentifier(IiConverter.convertToIi(ru.getId()));
-            ssaa.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE));
-            ssaa.setRequestDetails(StConverter.convertToSt(StringUtils.EMPTY));
-            ssaa.setStudySiteIdentifier(IiConverter.convertToIi(siteId));
-            ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
-            accrualAccessService.create(ssaa);
-        } else {
-            ssaa.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE));
-            ssaa.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            ssaa.setStatusDate(TsConverter.convertToTs(new Date()));
-            accrualAccessService.update(ssaa);
         }
     }
 
@@ -983,12 +893,12 @@ public class StudyMilestoneBeanLocal
     public void setDocumentService(DocumentServiceLocal documentService) {
         this.documentService = documentService;
     }
-    
+
     /**
-     * @param accrualAccessService the accrualAccessService to set
+     * @param familyService the familyService to set
      */
-    public void setAccrualAccessService(StudySiteAccrualAccessServiceLocal accrualAccessService) {
-        this.accrualAccessService = accrualAccessService;
+    public void setFamilyService(FamilyServiceLocal familyService) {
+        this.familyService = familyService;
     }
 
 }

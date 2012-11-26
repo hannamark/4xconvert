@@ -1153,4 +1153,8 @@
         <comment>Map old BioMarker atrribute values to new Biomarker attribute values.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5586.sql" splitStatements="false"/>
      </changeSet>
+     <changeSet id="PO-5629" author="Hugh">
+        <comment>Added family accrual submitter columns to user table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5629.sql"/>
+     </changeSet>
 </databaseChangeLog>

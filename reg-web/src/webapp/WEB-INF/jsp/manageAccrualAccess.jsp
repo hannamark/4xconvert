@@ -159,6 +159,11 @@
         el.form.submit();
     }
 
+    function assignUnassignOFSubmitter(el) {
+        el.form.action='manageAccrualAccessassignUnAssignOFSubmitter.action';
+        el.form.submit();
+    }
+
 </script>
 </head>
 <body>
@@ -177,7 +182,12 @@
 		    <s:token/>
 		    <s:hidden name="trialsToAssign" value=""/>
 		    <s:hidden name="trialsToUnassign" value=""/>
+            <s:hidden name="families"/>
+            <s:hidden name="organization.name"/>
 			<table class="form">
+			    <tr><td><label>Site: </label><c:out value="${organization.name}"/></td>
+			        <td><label>Organization Family: </label><c:out value="${families}"/></td>
+			    </tr>
 				<tr>
 					<td scope="row" class="label"><label
 						for="trialCategory"> <fmt:message
@@ -202,6 +212,18 @@
                                 headerKey="" headerValue=" " value="model.user.id" />
                      <input type="button" value="Assign/Un-Assign Site Accrual Submitter"
                                                     onclick="assignUnassignSASubmitter(this);" />  </td> 
+                </tr>
+                <tr>
+                    <td scope="row" class="label"><label
+                        for="ofUserId"> <fmt:message key="manage.accrual.access.family.selectUser" /></label></td>
+                    <td>                       
+                       <s:select name="ofUserId" id="ofUserId" cssStyle="width:300px;"
+                                list="model.ofUsers" 
+                                listKey="id"  
+                                listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
+                                headerKey="" headerValue=" " value="ofUserId" />
+                       <input type="button" value="Assign/Un-Assign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);" />
+                    </td> 
                 </tr>
                 <tr>
                     <td height="20px"> </td>

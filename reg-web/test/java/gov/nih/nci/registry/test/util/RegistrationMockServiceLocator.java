@@ -73,6 +73,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -133,6 +134,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     private final StudyProtocolStageServiceLocal studyProtocolStageService = new MockStudyProtocolStageService();
 
     public static StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = mock(StudySiteAccrualAccessServiceLocal.class);
+    public static FamilyServiceLocal familyService = mock(FamilyServiceLocal.class);
 
     private static List<CountryRegAuthorityDTO> regAuthorityCountries;
     static {
@@ -799,4 +801,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FamilyServiceLocal getFamilyService() {
+        return familyService;
+    }
 }
