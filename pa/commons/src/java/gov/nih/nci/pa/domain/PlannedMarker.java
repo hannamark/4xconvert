@@ -274,9 +274,7 @@ public class PlannedMarker extends PlannedObservation {
     /**
      * @return the tissueCollectionMethodCode
      */
-    @Column(name = "TISSUE_COLLECTION_METHOD_CODE", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    //@Enumerated(EnumType.STRING)
-    @NotNull
+    @Column(name = "TISSUE_COLLECTION_METHOD_CODE", length = DEFAULT_COLUMN_LENGTH)
     public String getTissueCollectionMethodCode() {
         return tissueCollectionMethodCode;
     }

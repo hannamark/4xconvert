@@ -61,7 +61,7 @@
                                 <display:column escapeXml="true" property="assayUse" sortable="true" titleKey="plannedMarker.assayUse" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="assayPurpose" sortable="true" titleKey="plannedMarker.assayPurpose" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="tissueSpecimenType" sortable="true" titleKey="plannedMarker.tissueSpecimenType" headerClass="sortable"/>
-                                <display:column escapeXml="true" property="tissueCollectionMethod" sortable="true" titleKey="plannedMarker.tissueCollectionMethod" headerClass="sortable"/>
+                                
                                 <display:column escapeXml="true" property="status" sortable="true" titleKey="plannedMarker.status" headerClass="sortable" />
                                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="plannedMarker.edit" headerClass="centered" class="action">

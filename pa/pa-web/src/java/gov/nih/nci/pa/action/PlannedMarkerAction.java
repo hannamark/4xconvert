@@ -301,7 +301,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             markerDTO.setAssayPurposeCode(null);
             markerDTO.setAssayUseCode(null);
             markerDTO.setTissueSpecimenTypeCode(null);
-            markerDTO.setTissueCollectionMethodCode(null);
+           
             markerDTO.setAssayPurposeOtherText(null);
             markerDTO.setAssayTypeOtherText(null);
             plannedMarker = populateWebDTO(markerDTO, null);
@@ -327,10 +327,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (StringUtils.isEmpty(getPlannedMarker().getAssayPurpose())) {
             addFieldError("plannedMarker.assayPurpose", getText("error.plannedMarker.assayPurpose"));
         }
-        if (StringUtils.isEmpty(getPlannedMarker().getTissueCollectionMethod())) {
-            addFieldError("plannedMarker.tissueCollectionMethod", 
-                          getText("error.plannedMarker.tissueCollectionMethod"));
-        }
+
         if (StringUtils.isEmpty(getPlannedMarker().getEvaluationType())) {
             addFieldError("plannedMarker.evaluationType", getText("error.plannedMarker.evaluationType"));
         }
@@ -356,11 +353,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
            addFieldError("plannedMarker.evaluationTypeOtherText",                 
            getText("error.plannedMarker.evaluationTypeOtherText"));
         }
-       if (StringUtils.equals(otherTextPresent(getPlannedMarker().getTissueSpecimenType(), 
-               getPlannedMarker().getSpecimenTypeOtherText()), EMPTY)) {
-           addFieldError("plannedMarker.specimenTypeOtherText",                 
-           getText("error.plannedMarker.tissueSpecimenType"));
-        }
+
         if (StringUtils.isEmpty(getPlannedMarker().getTissueSpecimenType())) {
             addFieldError("plannedMarker.tissueSpecimenType", getText("error.plannedMarker.tissueSpecimenType"));
         }
@@ -426,7 +419,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             webDTO.setSelectedEvaluationType(evalTypeList);
         }
         webDTO.setEvaluationTypeOtherText(StConverter.convertToString(markerDTO.getEvaluationTypeOtherText()));
-        webDTO.setTissueCollectionMethod(CdConverter.convertCdToString(markerDTO.getTissueCollectionMethodCode()));
+     
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
         return webDTO;
     }
@@ -476,8 +469,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 getPlannedMarker().getSpecimenTypeOtherText()), OTHER)) {
             marker.setSpecimenTypeOtherText(StConverter.convertToSt(getPlannedMarker().getSpecimenTypeOtherText()));
         }
-        marker.setTissueCollectionMethodCode(CdConverter.convertStringToCd(getPlannedMarker()
-            .getTissueCollectionMethod()));
         marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
         if (StringUtils.equals(otherTextPresent(getPlannedMarker().getEvaluationType(), 
                 getPlannedMarker().getEvaluationTypeOtherText()), OTHER)) {

@@ -1157,4 +1157,8 @@
         <comment>Added family accrual submitter columns to user table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5629.sql"/>
      </changeSet>
+     <changeSet id="PO-5652" author="Reshma">
+        <comment>To drop a not null constraint use for tissue_collection_method_code.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5652.sql"/>
+     </changeSet>
 </databaseChangeLog>

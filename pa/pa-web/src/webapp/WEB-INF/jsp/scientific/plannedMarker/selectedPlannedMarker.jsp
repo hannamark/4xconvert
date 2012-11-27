@@ -233,21 +233,7 @@
             </span>
         </td>
     </tr>
-    <tr>
-        <td class="label">
-            <s:label for="plannedMarker.tissueCollectionMethod"><fmt:message key="plannedMarker.tissueCollectionMethod" />:</s:label><span class="required">*</span>
-        </td>
-        <td style="width: 250px">
-            <s:set name="tissueCollectionMethodValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@SPECIMEN_COLLECTION)" />
-            <s:select headerKey="" headerValue="" name="plannedMarker.tissueCollectionMethod" id="tissueCollectionMethod"
-                list="#tissueCollectionMethodValues" />
-            <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>plannedMarker.tissueCollectionMethod</s:param>
-                </s:fielderror> 
-            </span>
-        </td>
-    </tr>
+    
     <tr>
         <td class="label">
             <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
