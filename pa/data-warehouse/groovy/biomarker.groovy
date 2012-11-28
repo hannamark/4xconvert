@@ -17,7 +17,7 @@ def biomarkers = destinationConnection.dataSet("STG_DW_STUDY_BIOMARKER");
 sourceConnection.eachRow(sql) { row ->
     biomarkers.add(assay_purpose: row.assay_purpose_code, assay_purpose_description: row.assay_purpose_other_text, assay_type_code: row.assay_type_code,
             assay_type_description: row.assay_type_other_text, assay_use:row.assay_use_code, internal_system_id: row.identifier,
-            name:row.long_name, long_name: row.name, nci_id: row.extension, status_code: row.status_code,
+            long_name:row.long_name, name: row.name, nci_id: row.extension, status_code: row.status_code,
             tissue_collection_method_code: row.tissue_collection_method_code, tissue_specimen_type_code: row.tissue_specimen_type_code)
 }
 
