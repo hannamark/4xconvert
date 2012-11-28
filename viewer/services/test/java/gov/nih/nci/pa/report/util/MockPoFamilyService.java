@@ -82,11 +82,6 @@
  */
 package gov.nih.nci.pa.report.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -96,6 +91,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author moweis
@@ -183,6 +183,12 @@ public class MockPoFamilyService implements FamilyServiceRemote {
      * {@inheritDoc}
      */
     public Map<Ii, FamilyDTO> getFamilies(Set<Ii> arg0) {
+        return null;
+    }
+
+    @Override
+    public FamilyOrganizationRelationshipDTO getFamilyOrganizationRelationship(Ii arg0) {
+        // TODO Auto-generated method stub
         return null;
     }
 
