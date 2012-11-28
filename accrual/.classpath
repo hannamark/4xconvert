@@ -17,7 +17,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/log4j-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/test/junit-4.8.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/runtime/ognl-2.6.11.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/po-services-client-3.8.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/po-services-client-3.9-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/dom4j-1.6.1.jar"/>
