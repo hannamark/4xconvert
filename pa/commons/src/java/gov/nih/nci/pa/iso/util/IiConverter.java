@@ -387,6 +387,12 @@ public class IiConverter {
      */
     public static final String PO_PATIENT_ROOT = "2.16.840.1.113883.3.26.4.5.6";
 
+   /** The identifier name for family organization relationship. */
+   public static final String PO_FAMILY_ORG_REL_IDENTIFIER_NAME = "Family Organization Relationship identifier";
+
+   /** The ii root value for family organization relationship. */
+   public static final String PO_FAMILY_ORG_REL_ROOT = "2.16.840.1.113883.3.26.4.6.2";
+
 
     /**
      * Convert to ii.
@@ -598,6 +604,18 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(FAMILY_IDENTIFIER_NAME);
         ii.setRoot(FAMILY_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Po Family Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii convertToPoFamilyOrgRelationshipIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(PO_FAMILY_ORG_REL_IDENTIFIER_NAME);
+        ii.setRoot(PO_FAMILY_ORG_REL_ROOT);
         return ii;
     }
 
