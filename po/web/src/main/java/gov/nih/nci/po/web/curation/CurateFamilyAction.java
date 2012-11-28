@@ -7,6 +7,8 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import org.apache.commons.collections.set.ListOrderedSet;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
@@ -45,9 +47,10 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
     
     /**
      * @return submit form
+     * @throws JMSException exception
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "family") })
-    public String submit() {
+    public String submit() throws JMSException {
         PoRegistry.getFamilyService().updateEntity(family);
         if (FamilyStatus.INACTIVE.equals(family.getStatusCode())) {
             ActionHelper.saveMessage(getText("family.inactivate.success", new String[] {family.getName()}));

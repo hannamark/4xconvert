@@ -398,7 +398,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         famOrgRel.setFamily(savedFam);
         famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         famOrgRel.setStartDate(savedFam.getStartDate());
-        familyOrgRelServiceLocal.create(famOrgRel);
+        familyOrgRelServiceLocal.createEntity(famOrgRel);
         
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -408,7 +408,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         famOrgRel2.setFamily(savedFam);
         famOrgRel2.setFunctionalType(FamilyFunctionalType.CONTRACTUAL);
         famOrgRel2.setStartDate(savedFam.getStartDate());
-        familyOrgRelServiceLocal.create(famOrgRel2);
+        familyOrgRelServiceLocal.createEntity(famOrgRel2);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         

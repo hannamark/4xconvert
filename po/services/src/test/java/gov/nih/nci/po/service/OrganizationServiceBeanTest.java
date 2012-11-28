@@ -1013,8 +1013,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         famOrgRelTwo.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         famOrgRelTwo.setStartDate(familyTwo.getStartDate());
 
-        familyOrgRelServiceLocal.create(famOrgRelOne);
-        familyOrgRelServiceLocal.create(famOrgRelTwo);
+        familyOrgRelServiceLocal.createEntity(famOrgRelOne);
+        familyOrgRelServiceLocal.createEntity(famOrgRelTwo);
 
         StrutsOrganizationSearchCriteria criteria = new StrutsOrganizationSearchCriteria();
         criteria.getOrganization().getFamilyOrganizationRelationships().iterator().next().getFamily().setName("test");

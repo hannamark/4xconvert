@@ -87,6 +87,7 @@ import gov.nih.nci.po.data.bo.Family;
 import java.util.Date;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -114,8 +115,10 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
     /**
      * update the given family.
      * @param updatedEntity the entity to save.
+     * @param updatedEntity
+     * @throws JMSException exception
      */
-    void updateEntity(Family updatedEntity);
+    void updateEntity(Family updatedEntity) throws JMSException;
 
     /**
      * Get latest allowable start date for a Family based on existing relationships.

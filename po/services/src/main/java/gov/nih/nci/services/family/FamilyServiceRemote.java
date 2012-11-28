@@ -132,4 +132,11 @@ public interface FamilyServiceRemote {
       * @return map of families for each family organization relationship ii.
       */
       Map<Ii, FamilyDTO> getFamilies(Set<Ii> familyOrgRelationshipIis);
+
+      /**
+       * Get the family organization relationship by identifier.
+       * @param ii identifier.
+       * @return family organization relationship dto.
+       */
+      FamilyOrganizationRelationshipDTO getFamilyOrganizationRelationship(Ii ii);
 }

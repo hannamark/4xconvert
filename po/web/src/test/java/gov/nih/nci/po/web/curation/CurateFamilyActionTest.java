@@ -146,7 +146,7 @@ public class CurateFamilyActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testSubmit() {
+    public void testSubmit() throws Exception {
         Family family = new Family();
         family.setStatusCode(FamilyStatus.ACTIVE);
         family.setId(1L);

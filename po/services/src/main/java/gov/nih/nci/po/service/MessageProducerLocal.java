@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
-
 import javax.jms.JMSException;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *
@@ -95,11 +95,11 @@ public interface MessageProducerLocal {
      * @param e entity to send update announcement for
      * @throws JMSException on error
      */
-    void sendUpdate(Class<?> c, Curatable<?, ?> e) throws JMSException;
+    void sendUpdate(Class<?> c, PersistentObject e) throws JMSException;
     /**
      * @param c the class of the entity being updated.
      * @param e entity to send update announcement for
      * @throws JMSException on error
      */
-    void sendCreate(Class<?> c, Curatable<?, ?> e) throws JMSException;
+    void sendCreate(Class<?> c, PersistentObject e) throws JMSException;
 }

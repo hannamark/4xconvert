@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import gov.nih.nci.po.util.EjbInterceptorHandler;
@@ -119,6 +118,8 @@ import javax.jms.JMSException;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * @author Scott Miller
@@ -436,14 +437,14 @@ public class EjbTestHelper {
                  * {@inheritDoc}
                  */
                 @Override
-                public void sendCreate(Class c, Curatable entity) throws JMSException {
+                public void sendCreate(Class c, PersistentObject entity) throws JMSException {
                        throw new JMSException("operation is not supported");
                 }
                 /**
                  * {@inheritDoc}
                  */
                  @Override
-                 public  void sendUpdate(Class c, Curatable entity) throws JMSException {
+                 public  void sendUpdate(Class c, PersistentObject entity) throws JMSException {
                      throw new JMSException("operation is not supported.");
                  }
             };
@@ -454,7 +455,9 @@ public class EjbTestHelper {
     }
 
     public static FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
-        return new FamilyOrganizationRelationshipServiceBean();
+        FamilyOrganizationRelationshipServiceBean bean = new FamilyOrganizationRelationshipServiceBean();
+        bean.setPublisher(getMessageProducer());
+        return bean;
     }
 
     public static OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {

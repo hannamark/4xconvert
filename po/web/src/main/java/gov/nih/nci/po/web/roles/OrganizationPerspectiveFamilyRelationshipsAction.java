@@ -8,6 +8,8 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.jms.JMSException;
+
 import org.apache.commons.lang.time.DateUtils;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
@@ -49,8 +51,9 @@ public class OrganizationPerspectiveFamilyRelationshipsAction extends ActionSupp
     /**
      * Removes the family organization relationship by setting its end date.
      * @return success
+     * @throws JMSException exception
      */
-    public String remove() {
+    public String remove() throws JMSException {
         FamilyOrganizationRelationship familyOrganizationRelationship =
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getSelectedFamilyOrgRelId());
         familyOrganizationRelationship.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));

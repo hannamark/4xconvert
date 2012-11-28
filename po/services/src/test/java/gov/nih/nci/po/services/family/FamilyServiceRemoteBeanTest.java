@@ -83,6 +83,7 @@
 package gov.nih.nci.po.services.family;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -181,6 +182,7 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         famMap.put(famOrgRel1.getId(), fam1);
         famMap.put(famOrgRel3.getId(), fam2);
         when(localFamOrgRel.getFamilies(any(Set.class))).thenReturn(famMap);
+        when(localFamOrgRel.getById(anyLong())).thenReturn(famOrgRel1);
         remote = famBean;
     }
 
@@ -262,5 +264,14 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         for (Ii ii : retMap.keySet()) {
             assertEquals(IdConverter.FAMILY_ORG_REL_ROOT, ii.getRoot());
         }
+    }
+
+    @Test
+    public void testGetFamilyOrganizationRelationship() throws EntityValidationException, TooManyResultsException, JMSException {
+        Ii forIi = new Ii();
+        forIi.setRoot(IdConverter.FAMILY_ORG_REL_ROOT);
+        forIi.setIdentifierName(IdConverter.FAMILY_ORG_REL_IDENTIFIER_NAME);
+        forIi.setExtension("1");
+        assertNotNull(remote.getFamilyOrganizationRelationship(forIi));
     }
 }

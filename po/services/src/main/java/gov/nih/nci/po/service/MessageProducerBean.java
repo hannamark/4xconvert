@@ -83,7 +83,6 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
@@ -106,6 +105,7 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
@@ -198,18 +198,21 @@ public class MessageProducerBean implements MessageProducerLocal {
     /**
      * {@inheritDoc}
      */
-    public void sendUpdate(Class c, Curatable entity) throws JMSException {
+    @Override
+    public void sendUpdate(Class<?> c, PersistentObject entity) throws JMSException {
         sendMessage(c, entity, msgUpdate);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void sendCreate(Class c, Curatable entity) throws JMSException {
+    @Override
+    public void sendCreate(Class<?> c, PersistentObject entity) throws JMSException {
         sendMessage(c, entity, msgCreate);
     }
 
-    private void sendMessage(Class c, Curatable entity, ObjectMessageAdjusterCallback callback) throws JMSException {
+    private void sendMessage(Class c, PersistentObject entity, ObjectMessageAdjusterCallback callback) 
+            throws JMSException {
         Ii ii = IdConverterRegistry.find(c).convertToIi(entity.getId());
         SubscriberUpdateMessage msg = new SubscriberUpdateMessage(ii);
         send(msg, callback);

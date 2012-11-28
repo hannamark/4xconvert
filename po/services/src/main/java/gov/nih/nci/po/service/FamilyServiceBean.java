@@ -94,6 +94,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 import org.apache.commons.lang.time.DateUtils;
 
@@ -126,8 +127,9 @@ public class FamilyServiceBean extends AbstractAdminServiceBean<Family> implemen
 
     /**
      * {@inheritDoc}
+     * @throws JMSException 
      */
-    public void updateEntity(Family updateFamilyEntity) {
+    public void updateEntity(Family updateFamilyEntity) throws JMSException {
         if (isNotActiveStatus(updateFamilyEntity)) {
             if (updateFamilyEntity.getEndDate() == null) {
                 updateFamilyEntity.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
@@ -145,7 +147,7 @@ public class FamilyServiceBean extends AbstractAdminServiceBean<Family> implemen
                || FamilyStatus.NULLIFIED.equals(updateFamilyEntity.getStatusCode());
     }
     
-    private void cascadeEndDate(Family updateFamilyEntity) {
+    private void cascadeEndDate(Family updateFamilyEntity) throws JMSException {
         if (isNotActiveStatus(updateFamilyEntity)) {
             List<FamilyOrganizationRelationship> famOrgSet = familyOrgRelService.getActiveRelationships(
                     updateFamilyEntity.getId());

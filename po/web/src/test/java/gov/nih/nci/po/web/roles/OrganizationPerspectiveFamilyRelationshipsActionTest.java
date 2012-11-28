@@ -139,7 +139,7 @@ public class OrganizationPerspectiveFamilyRelationshipsActionTest extends Abstra
     }
 
     @Test
-    public void testRemove() {
+    public void testRemove() throws Exception {
         action.setSelectedFamilyOrgRelId(1L);
         assertEquals(Action.SUCCESS, action.remove());
     }

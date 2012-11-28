@@ -98,6 +98,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -105,7 +106,7 @@ import org.hibernate.Query;
 
 /**
  * @author mshestopalov
- * 
+ *
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -115,6 +116,8 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
     private static final String FAMORGREL_FAMILY_ID_EXP = " famOrgRel where famOrgRel.family.id = :" + FAMILY_ID_PARAM;
     @EJB
     private OrganizationRelationshipServiceLocal orgRelService;
+    @EJB
+    private MessageProducerLocal publisher;
 
     /**
      * {@inheritDoc}
@@ -125,8 +128,9 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
 
     /**
      * {@inheritDoc}
+     * @throws JMSException
      */
-    public void updateEntity(FamilyOrganizationRelationship updateEntity) {
+    public void updateEntity(FamilyOrganizationRelationship updateEntity) throws JMSException {
         if (updateEntity.getEndDate() != null) {
             String hql = "update OrganizationRelationship set endDate = :endDate "
                     + "where family.id = :familyId and (organization.id = :orgId or relatedOrganization.id = :orgId)"
@@ -136,8 +140,19 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
             query.setLong(FAMILY_ID_PARAM, updateEntity.getFamily().getId());
             query.setLong("orgId", updateEntity.getOrganization().getId());
             query.executeUpdate();
+            getPublisher().sendCreate(FamilyOrganizationRelationship.class, updateEntity);
         }
         super.update(updateEntity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long createEntity(FamilyOrganizationRelationship famOrgRel) throws JMSException {
+        long result = super.create(famOrgRel);
+        getPublisher().sendCreate(FamilyOrganizationRelationship.class, famOrgRel);
+        return result;
     }
 
     /**
@@ -226,14 +241,14 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
         if (CollectionUtils.isEmpty(familyOrgRelationshipIds)) {
             return retMap;
         }
-        
+
         for (FamilyOrganizationRelationship relationship : this.getByIds(familyOrgRelationshipIds
                 .toArray(new Long[familyOrgRelationshipIds.size()]))) {
             retMap.put(relationship.getId(), relationship.getFamily());
         }
         return retMap;
     }
-    
+
     /**
      * @param orgRelService OrganizationRelationshipServiceLocal
      */
@@ -246,5 +261,19 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
      */
     public OrganizationRelationshipServiceLocal getOrgRelService() {
         return orgRelService;
+    }
+
+    /**
+     * @return the publisher
+     */
+    public MessageProducerLocal getPublisher() {
+        return publisher;
+    }
+
+    /**
+     * @param publisher the publisher to set
+     */
+    public void setPublisher(MessageProducerLocal publisher) {
+        this.publisher = publisher;
     }
 }

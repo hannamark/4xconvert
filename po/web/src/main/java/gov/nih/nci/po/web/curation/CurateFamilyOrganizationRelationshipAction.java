@@ -97,6 +97,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.jms.JMSException;
+
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -157,9 +159,10 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     /**
      * Updates the family organization relationship.
      * @return success
+     * @throws JMSException exception
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
-    public String submit() {
+    public String submit() throws JMSException {
         PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
         initializeCollection();
         if (getFamilyOrgRelationship().getEndDate() == null) {
@@ -174,8 +177,9 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     /**
      * Removes the family organization relationship by setting its end date.
      * @return success
+     * @throws JMSException exception
      */
-    public String remove() {
+    public String remove() throws JMSException {
         setFamilyOrgRelationship(
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
         getFamilyOrgRelationship().setEndDate(new Date());

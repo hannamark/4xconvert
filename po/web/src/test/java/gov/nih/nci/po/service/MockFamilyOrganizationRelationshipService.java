@@ -110,7 +110,7 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     /**
      * {@inheritDoc}
      */
-    public long create(FamilyOrganizationRelationship famOrgRel) {
+    public long createEntity(FamilyOrganizationRelationship famOrgRel) {
         if (famOrgRel.getId() == null) {
             currentId++;
             famOrgRel.setId(currentId);

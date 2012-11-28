@@ -155,7 +155,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     }
 
     @Test
-    public void testSubmit() {
+    public void testSubmit() throws Exception {
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
         famOrgRel.setId(1L);
         Family fam = new Family();
@@ -171,7 +171,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     }
 
     @Test
-    public void testSubmitWithEndDate() {
+    public void testSubmitWithEndDate() throws Exception {
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
         famOrgRel.setId(1L);
         Family fam = new Family();
@@ -200,7 +200,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     }
 
     @Test
-    public void testRemove() {
+    public void testRemove() throws Exception {
         action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
         action.getFamilyOrgRelationship().setId(1L);
         assertEquals("parent", action.remove());

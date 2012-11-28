@@ -159,7 +159,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     }
     
     @Test
-    public void testFamily() throws EntityValidationException {
+    public void testFamily() throws Exception {
         long id = createFamily();
         Family saved = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         assertNotNull(saved.getName());

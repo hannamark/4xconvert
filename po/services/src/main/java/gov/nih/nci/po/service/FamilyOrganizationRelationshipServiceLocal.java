@@ -90,6 +90,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
@@ -99,12 +101,6 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  */
 public interface FamilyOrganizationRelationshipServiceLocal
     extends GenericSearchService<FamilyOrganizationRelationship, SearchCriteria<FamilyOrganizationRelationship>> {
-    /**
-     * Create a Family Organization Relationship.
-     * @param famOrgRel new family organization relationship
-     * @return id
-     */
-    long create(FamilyOrganizationRelationship famOrgRel);
 
     /**
      * Get Family Organization Relationship by id.
@@ -116,10 +112,19 @@ public interface FamilyOrganizationRelationshipServiceLocal
     /**
      * Update Family Organization Relationship.
      * @param updatedEntity the entity to save.
+     * @throws JMSException exception
      */
-    void updateEntity(FamilyOrganizationRelationship updatedEntity);
+    void updateEntity(FamilyOrganizationRelationship updatedEntity) throws JMSException;
 
-   /**
+    /**
+     * Create a Family Organization Relationship.
+     * @param famOrgRel new family organization relationship
+     * @return id
+     * @throws JMSException exception
+     */
+    long createEntity(FamilyOrganizationRelationship famOrgRel) throws JMSException;
+
+    /**
      * Gets the list of active (i.e. no end date) family organization relationships by family id.
      * @param familyId the id of the family
      * @return the active relationships

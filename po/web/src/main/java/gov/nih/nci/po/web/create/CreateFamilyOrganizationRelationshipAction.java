@@ -92,6 +92,8 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.Date;
 
+import javax.jms.JMSException;
+
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
@@ -139,11 +141,12 @@ public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrga
     /**
      * Creates a family organization relationship.
      * @return success
+     * @throws JMSException exception
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
-    public String create() {
+    public String create() throws JMSException {
         getFamilyOrgRelationship().setId(
-                PoRegistry.getFamilyOrganizationRelationshipService().create(getFamilyOrgRelationship()));
+                PoRegistry.getFamilyOrganizationRelationshipService().createEntity(getFamilyOrgRelationship()));
         ActionHelper.saveMessage(getText("familyOrgRelationship.create.success"));
         return SUCCESS;
     }

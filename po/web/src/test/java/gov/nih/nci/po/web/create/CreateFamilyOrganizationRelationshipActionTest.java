@@ -127,7 +127,7 @@ public class CreateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     }
     
     @Test
-    public void testCreate() {
+    public void testCreate() throws Exception {
         action.setSelectedOrgId(1L);
         assertEquals(Action.SUCCESS, action.create());
     }

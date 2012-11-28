@@ -107,7 +107,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -132,6 +131,7 @@ import org.junit.Test;
 public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBeanTest {
     private FamilyOrganizationRelationshipServiceBean familyOrgRelServiceLocal;
     private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
+    private MessageProducerLocal messageProducerLocal = mock(MessageProducerLocal.class);
     private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
     private Date oldDate;
     private final Country country = new Country("testorg", "996", "IJ", "IJI");
@@ -141,6 +141,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         familyOrgRelServiceLocal = (FamilyOrganizationRelationshipServiceBean) EjbTestHelper
                 .getFamilyOrganizationRelationshipService();
         familyOrgRelServiceLocal.setOrgRelService(orgRelServiceLocal);
+        familyOrgRelServiceLocal.setPublisher(messageProducerLocal);
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
