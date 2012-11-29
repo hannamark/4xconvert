@@ -102,6 +102,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.validator.AssertTrue;
@@ -166,6 +167,15 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         String name = "Marker #1";
         constructPlannedMarker();
         List<PlannedMarkerDTO> markers = bean.getPendingPlannedMarkersShortName(name);
+        assertTrue(markers.size() > 0);
+    }
+    @Test
+    public void getPendingPlannedMarkersWithProtocolId() throws PAException {
+        List<Long> listOfIds = new ArrayList<Long>();
+        listOfIds.add(1L);
+        listOfIds.add(2L);
+        constructPlannedMarker();
+        List<PlannedMarkerDTO> markers = bean.getPendingPlannedMarkersWithProtocolId(listOfIds);
         assertTrue(markers.size() > 0);
     }
 }

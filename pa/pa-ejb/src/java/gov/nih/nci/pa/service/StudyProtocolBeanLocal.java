@@ -997,6 +997,41 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     
     }
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> getProtocolIdsWithNCIId(String nciId) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<Long> resultSet = new ArrayList<Long>();
+        List<Object> queryList = null;
+        SQLQuery query = session
+        .createSQLQuery("select DISTINCT(so.study_protocol_id) " 
+                + " from study_otheridentifiers as so " 
+                + " join study_protocol as sp on sp.identifier=so.study_protocol_id "
+                + " join planned_activity as pa on pa.study_protocol_identifier= sp.identifier"
+                + " join planned_marker as pm on pm.identifier = pa.identifier" 
+                + " where sp.status_code ='ACTIVE'"
+                + " and UPPER(so.extension) like UPPER(:nciId)"
+                + " and so.root = '"
+                + IiConverter.STUDY_PROTOCOL_ROOT
+                + "'");
+       
+        query.setParameter("nciId", "%" + nciId + "%");
+        queryList = query.list();
+        for (Object oArr : queryList) {
+            BigInteger ret = null;
+            if (oArr instanceof BigInteger) { 
+                ret =  (BigInteger) oArr;
+                if (oArr != null) {
+                    resultSet.add(ret.longValue());
+                }
+            }       
+        }
+        return resultSet;
+    }
+    
+    /**
      * @param studyIndldeService the studyIndldeService to set
      */
     public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {

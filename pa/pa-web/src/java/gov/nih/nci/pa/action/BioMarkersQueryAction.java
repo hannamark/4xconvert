@@ -82,13 +82,12 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
+
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -185,16 +184,17 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
         String nciIdentifier = getTrialId();
         String markerNames =  getMarkerName();
-        if (!StringUtils.isBlank(nciIdentifier)) {        
-            Ii ii = IiConverter.convertToIi(nciIdentifier);
-            ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-            StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(ii);
-            markers = plannedMarkerService.getByStudyProtocol(studyProtocolDTO.getIdentifier());
+        List<Long> protocolIds = new ArrayList<Long>();
+        List<Long> identifiersList = new ArrayList<Long>();
+        if (!StringUtils.isBlank(nciIdentifier)) {
+            protocolIds = studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier);
+            markers = plannedMarkerService.getPendingPlannedMarkersWithProtocolId(protocolIds);
         }
+       
         if (!StringUtils.isBlank(markerNames)) {
             markers.addAll(plannedMarkerService.getPendingPlannedMarkersShortName(markerNames));
         }
-        List<Long> identifiersList = new ArrayList<Long>();
+       
         if (!markers.isEmpty()) {
             for (PlannedMarkerDTO dto : markers) {
                 identifiersList.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));

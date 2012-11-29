@@ -122,4 +122,12 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      * @throws PAException exception
      */
     List<PlannedMarkerDTO> getPendingPlannedMarkersShortName(String name) throws PAException;
+
+    /**
+     * 
+     * @param listOfIds listOfIds
+     * @return list of planned markers
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPendingPlannedMarkersWithProtocolId(List<Long> listOfIds) throws PAException;
 }

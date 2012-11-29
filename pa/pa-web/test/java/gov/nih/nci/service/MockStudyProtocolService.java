@@ -396,4 +396,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
        
         
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> getProtocolIdsWithNCIId(String nciId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

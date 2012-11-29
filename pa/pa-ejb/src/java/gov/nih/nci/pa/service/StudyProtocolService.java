@@ -325,4 +325,11 @@ public interface StudyProtocolService {
      */
     void changeStudyProtocolType(Ii studyProtocolIi,
             StudyTypeCode interventional) throws PAException;
+    /**
+     * Gets list of protocol ids  based on matching partial NCI Identifier.
+     * @param nciId String
+     * @return List<Long>
+     */
+    List<Long> getProtocolIdsWithNCIId(String nciId);
+    
 }
