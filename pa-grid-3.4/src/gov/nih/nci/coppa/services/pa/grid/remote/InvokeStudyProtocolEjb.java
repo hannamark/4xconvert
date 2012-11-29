@@ -270,4 +270,12 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
        
         
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> getProtocolIdsWithNCIId(String nciId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
