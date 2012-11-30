@@ -5,8 +5,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message
-    key="arms.details.title" /></title>
+<title><s:if test="%{currentAction == 'editArm'}">
+        <fmt:message key="arms.edit.title" /></s:if>
+    <s:elseif test="%{currentAction == 'editNewArm'}">
+        <fmt:message key="arms.add.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editGroup'}">
+        <fmt:message key="arms.obs.edit.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editNewGroup'}">
+        <fmt:message key="arms.obs.add.title" /></s:elseif></title>
 <s:head />
 <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
 
@@ -41,7 +47,14 @@
 
 </head>
 <body>
-<h1><fmt:message key="arms.details.title" /></h1>
+<h1><s:if test="%{currentAction == 'editArm'}">
+        <fmt:message key="arms.edit.title" /></s:if>
+    <s:elseif test="%{currentAction == 'editNewArm'}">
+        <fmt:message key="arms.add.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editGroup'}">
+        <fmt:message key="arms.obs.edit.title" /></s:elseif>
+    <s:elseif test="%{currentAction == 'editNewGroup'}">
+        <fmt:message key="arms.obs.add.title" /></s:elseif></h1>
 <c:set var="topic" scope="request" value="abstractarms"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /> <s:if

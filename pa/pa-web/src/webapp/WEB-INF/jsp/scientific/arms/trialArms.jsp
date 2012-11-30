@@ -5,7 +5,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><fmt:message key="arms.details.title" /></title>
+<title><s:if test="%{currentAction == 'listArm'}">
+        <fmt:message key="arms.details.title" /></s:if>
+    <s:elseif test="%{currentAction == 'listGroup'}">
+        <fmt:message key="arms.obs.details.title" /></s:elseif></title>
 <s:head />
 
 </head>
@@ -36,8 +39,11 @@ function handleCreateGroup(){
 }
 </SCRIPT>
 
-<body>
-<h1><fmt:message key="arms.details.title" /></h1>
+<body> 
+<h1><s:if test="%{currentAction == 'listArm'}">
+        <fmt:message key="arms.details.title" /></s:if>
+    <s:elseif test="%{currentAction == 'listGroup'}">
+        <fmt:message key="arms.obs.details.title" /></s:elseif></h1>
 <c:set var="topic" scope="request" value="abstractarms"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /><pa:failureMessage/> <s:if
