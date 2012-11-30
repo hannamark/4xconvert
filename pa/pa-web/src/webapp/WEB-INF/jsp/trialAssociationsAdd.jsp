@@ -26,14 +26,13 @@ function handleAction(){
  	} 
 } 
 
+function cancelAdd() {
+	document.forms[0].action="trialAssociationsquery.action";
+    document.forms[0].submit();  
+}
+
 function lookUpTrial() {
-	showWidePopup('/pa/bare/studyProtocolexecute.action', null, 'Select a Trial');		
-	/**if($('popCloseBox') != null) {
-		Event.observe($('popCloseBox'), 'click', function () {
-			document.forms[0].action="trialAssociationsinput.action";
-	        document.forms[0].submit(); 
-	    });
-	}**/
+	showWidePopup('/pa/bare/studyProtocolexecute.action', null, 'Select a Trial');
 }
 
 function trialSelected(trialId, trialNciId) {
@@ -170,12 +169,12 @@ function trialSelected(trialId, trialNciId) {
 			<div class="actionsrow">
 	            <del class="btnwrapper">
 	                <ul class="btnrow">
-	                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>                
+	                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+	                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="cancelAdd()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a></li>                
 	                </ul>   
 	            </del>
-	        </div> 
-        </c:if>
-                   
+	        </div>
+        </c:if>                   
     </s:form>
    </div>
  </body>
