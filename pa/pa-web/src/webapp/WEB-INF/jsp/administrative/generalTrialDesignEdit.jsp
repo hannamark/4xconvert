@@ -92,12 +92,18 @@
             }
 
             function loadDiv(orgid) {
-                $('gtdDTO.centralContactName').value = "";
-                $('gtdDTO.centralContactTitle').value = "";
-                $('gtdDTO.centralContactIdentifier').value =  "";
-                $("gtdDTO.centralContactEmail").value = "";
-                $("gtdDTO.centralContactPhone").value = "";
-                $("gtdDTO.centralContactPhoneExtn").value = "";
+            	clearValue('gtdDTO.centralContactName');
+            	clearValue('gtdDTO.centralContactTitle');
+            	clearValue('gtdDTO.centralContactIdentifier');
+            	clearValue("gtdDTO.centralContactEmail");
+            	clearValue("gtdDTO.centralContactPhone");
+            	clearValue("gtdDTO.centralContactPhoneExtn");
+            }
+            
+            function clearValue(elID) {
+            	if ($(elID)!=null) {
+            		$(elID).value = "";
+            	}
             }
 
             function loadPersDiv(persid, func) {
