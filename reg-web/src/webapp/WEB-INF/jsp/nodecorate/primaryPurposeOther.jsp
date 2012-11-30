@@ -25,7 +25,8 @@
                     </reg-web:displayTooltip>
                 </td>
                  <td>
-                    <s:textarea id="trialDTO.primaryPurposeOtherText" name="trialDTO.primaryPurposeOtherText"  cols="50" rows="2" />
+                    <s:textarea id="trialDTO.primaryPurposeOtherText" name="trialDTO.primaryPurposeOtherText"  cols="50" rows="2"
+                        maxlength="200" cssClass="charcounter" /><br/>
                     <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                     <span class="formErrorMsg"> 
                         <s:fielderror>
@@ -69,7 +70,8 @@
                     <fmt:message key="submit.trial.studyModelOtherText"/></label>                
             </td>
              <td class="non-interventional">
-                <s:textarea id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"  cols="50" rows="2" />
+                <s:textarea id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"  cols="50" rows="2" 
+                    maxlength="200" cssClass="charcounter" /><br/>
                 <span class="info">Required if Study Model equals &#39;Other&#39;</span>
                 <span class="formErrorMsg"> 
                     <s:fielderror>
@@ -103,7 +105,8 @@
                     <fmt:message key="submit.trial.timePerspectiveOtherText"/></label>                
             </td>
              <td class="non-interventional">
-                <s:textarea id="trialDTO.timePerspectiveOtherText" name="trialDTO.timePerspectiveOtherText"  cols="50" rows="2" />
+                <s:textarea id="trialDTO.timePerspectiveOtherText" name="trialDTO.timePerspectiveOtherText"  cols="50" rows="2" 
+                    maxlength="200" cssClass="charcounter" /><br/>
                 <span class="info">Required if Time Perspective equals &#39;Other&#39;</span>
                 <span class="formErrorMsg"> 
                     <s:fielderror>
