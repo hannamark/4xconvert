@@ -83,8 +83,9 @@ import gov.nih.nci.pa.domain.MessageLog;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PersonSynchronizationServiceRemote;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.service.util.FamilySynchronizationServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
 import java.util.Date;
@@ -147,6 +148,8 @@ public class PAMessageDrivenBean implements MessageListener {
                     PersonSynchronizationServiceRemote perRemote =
                             (PersonSynchronizationServiceRemote) JNDIUtil
                                     .lookupPa("/pa/PersonSynchronizationServiceBean/remote");
+                    FamilySynchronizationServiceLocal familyLocal = (FamilySynchronizationServiceLocal) JNDIUtil.
+                                    lookupPa("/pa/FamilySynchronizationServiceBean/local");
                     if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
                         orgRemote.synchronizeOrganization(updateMessage.getId());
                     }
@@ -170,6 +173,10 @@ public class PAMessageDrivenBean implements MessageListener {
                     }
                     if (identifierName.equals(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME)) {
                         perRemote.synchronizeOrganizationalContact(updateMessage.getId());
+                    }
+                    if (identifierName.equals(IiConverter.PO_FAMILY_ORG_REL_IDENTIFIER_NAME)) {
+                        familyLocal.synchronizeFamilyOrganizationRelationship(IiConverter.
+                                convertToLong(updateMessage.getId()));
                     }
                     updateExceptionAuditMessageLog(msgId, "Processed", null, true);
                 } catch (PAException paex) {

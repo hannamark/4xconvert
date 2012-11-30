@@ -56,7 +56,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -159,23 +158,24 @@ public class StudyMilestoneBeanLocal
         attachTSRToTrialDocs(workDto);
         sendTSREmail(workDto);
         sendLateRejectionEmail(workDto);                
-        checkSiteAccrualSubmitter(resultDto);
+        checkSiteAndFamilyAccrualSubmitter(resultDto);
         return resultDto;
     }
 
-    private void checkSiteAccrualSubmitter(StudyMilestoneDTO resultDto) throws PAException {
+    private void checkSiteAndFamilyAccrualSubmitter(StudyMilestoneDTO resultDto) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         String hql = "from DocumentWorkflowStatus dws "
                 + "where dws.studyProtocol.id = :studyProtocolId "
                 + " order by dws.id desc";
         Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
-        query.setMaxResults(1);
+        query.setMaxResults(2);
         @SuppressWarnings("unchecked")
         List<DocumentWorkflowStatus> qryList = query.list();
-        if (CollectionUtils.isNotEmpty(qryList)) {
+        if (qryList.size() > 1) {
             DocumentWorkflowStatus dws = qryList.get(0);
-            if (dws.getStatusCode().isEligibleForAccrual()) {
+            DocumentWorkflowStatus priorDws = qryList.get(1);
+            if (dws.getStatusCode().isEligibleForAccrual() && !priorDws.getStatusCode().isEligibleForAccrual()) {
                 familyService.updateSiteAndFamilyPermissions(
                         IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
             }

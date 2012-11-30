@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -311,4 +312,16 @@ public interface RegistryUserService {
      * @throws PAException PAException
      */
     List<RegistryUser> findByAffiliatedOrg(Long orgId) throws PAException;
+
+    /**
+     * Returns all users affiliated with the given organizations and having a
+     * non-empty link to a CSM User. I.e. users that have not completed account
+     * activation won't be included.
+     * 
+     * @param orgIds the organization id's
+     * @return  List<RegistryUser>
+     * @throws PAException PAException
+     */
+    List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds) throws PAException;
+
 }

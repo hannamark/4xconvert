@@ -86,9 +86,8 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -99,12 +98,12 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -498,4 +497,21 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
                                 + userId).list().get(0).equals(Boolean.TRUE));
     }
 
+    @Test
+    public void findByAffiliatedOrgsTest() throws Exception {
+        assertEquals(0, remoteEjb.findByAffiliatedOrg(null).size());
+        assertEquals(0, remoteEjb.findByAffiliatedOrgs(null).size());
+
+        PaHibernateUtil.getCurrentSession().createSQLQuery("DELETE FROM registry_user").executeUpdate();
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser ru = createRegisterUser(csmUser);
+        ru.setAffiliatedOrganizationId(TestRegistryUserSchema.orgId);
+        Long id = remoteEjb.createUser(ru).getId();
+        List<RegistryUser> ruList = remoteEjb.findByAffiliatedOrg(TestRegistryUserSchema.orgId);
+        assertEquals(1, ruList.size());
+        assertEquals(id, ruList.get(0).getId());
+        ruList = remoteEjb.findByAffiliatedOrgs(Arrays.asList(TestRegistryUserSchema.orgId));
+        assertEquals(1, ruList.size());
+        assertEquals(id, ruList.get(0).getId());
+    }
 }

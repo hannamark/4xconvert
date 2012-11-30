@@ -135,6 +135,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -170,7 +171,6 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     private RegistryUserServiceLocal registryUserService;
     @EJB
     private ParticipatingOrgServiceLocal participatingOrgServiceLocal;
-    
     
     private static final Logger LOG = Logger.getLogger(StudySiteAccrualAccessServiceBean.class);
     
@@ -537,9 +537,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(new Date()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(trialID));
-        dto.setUserLastCreatedIdentifier(IiConverter.convertToIi(creator.getCsmUser()
-                .getUserId()));
-        
+        if (creator != null && creator.getCsmUser() != null) {
+            dto.setUserLastCreatedIdentifier(IiConverter.convertToIi(creator.getCsmUser()
+                    .getUserId()));
+        }
         StudyAccrualAccessConverter converter = new StudyAccrualAccessConverter();
         StudyAccrualAccess bo =  converter.convertFromDtoToDomain(dto);
         Session session = PaHibernateUtil.getCurrentSession();
@@ -584,15 +585,31 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             // accruals for their affiliated org,
             // an entry in the existing table shall be used which is as-is
             // functionality.
-            CollectionUtils.filter(sites, new Predicate() {
-                @Override
-                public boolean evaluate(Object arg) {
-                    ParticipatingOrgDTO site = (ParticipatingOrgDTO) arg;
-                    return StringUtils.equals(user
-                            .getAffiliatedOrganizationId().toString(), site
-                            .getPoId());
-                }
-            });
+            if (ObjectUtils.equals(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, source)) {
+                CollectionUtils.filter(sites, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object arg) {
+                        ParticipatingOrgDTO site = (ParticipatingOrgDTO) arg;
+                        try {
+                            List<Long> orgIds = FamilyHelper.getAllRelatedOrgs(Long.valueOf(site.getPoId()));
+                            Long affiliatedOrgId = user.getAffiliatedOrganizationId();
+                            return orgIds.contains(affiliatedOrgId);
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                CollectionUtils.filter(sites, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object arg) {
+                        ParticipatingOrgDTO site = (ParticipatingOrgDTO) arg;
+                        return StringUtils.equals(user
+                                .getAffiliatedOrganizationId().toString(), site
+                                .getPoId());
+                    }
+                });
+            }
         }
         for (ParticipatingOrgDTO site : sites) {
             if (!hasAccrualAccess(site.getStudySiteId(),
@@ -732,12 +749,11 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         }        
     }
 
-    @SuppressWarnings({ UNCHECKED_STR, DEPRECATION })
+    @SuppressWarnings(UNCHECKED_STR)
     private void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Long trialID, String comment, RegistryUser creator) throws PAException {
 
         Session session = PaHibernateUtil.getCurrentSession();
-        StudyAccrualAccessConverter converter = new StudyAccrualAccessConverter();
         
         // De-activate current access first.        
         String hql = "select saa from StudyAccrualAccess saa where saa.registryUser.id = :userId "
@@ -752,8 +768,16 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             studyAccrualAccess.setStatusCode(ActiveInactiveCode.INACTIVE);
             session.saveOrUpdate(studyAccrualAccess);
         }
-        
-        // For history purposes write an additional entry into "public"."study_accrual_access"
+
+        createTrialAccessHistory(user, source, trialID, comment, creator);
+        removeStudySiteAccrualAccess(user, trialID, source);
+    }
+
+    @SuppressWarnings(DEPRECATION)
+    public void createTrialAccessHistory(RegistryUser user, AccrualAccessSourceCode source,
+            Long trialID, String comment, RegistryUser creator) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyAccrualAccessConverter converter = new StudyAccrualAccessConverter();
         StudyAccrualAccessDTO dto = new StudyAccrualAccessDTO();
         dto.setActionCode(CdConverter
                 .convertToCd(AssignmentActionCode.UNASSIGNED));
@@ -765,11 +789,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.INACTIVE));
         dto.setStatusDate(TsConverter.convertToTs(new Date()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(trialID));
-        dto.setUserLastCreatedIdentifier(IiConverter.convertToIi(creator.getCsmUser()
-                .getUserId()));    
-        session.save(converter.convertFromDtoToDomain(dto));        
-        
-        removeStudySiteAccrualAccess(user, trialID, source);
+        if (creator != null && creator.getCsmUser() != null) {
+            dto.setUserLastCreatedIdentifier(IiConverter.convertToIi(creator.getCsmUser().getUserId()));
+        }
+        session.save(converter.convertFromDtoToDomain(dto));
     }
 
     private void removeStudySiteAccrualAccess(RegistryUser user, Long trialID, AccrualAccessSourceCode source)
@@ -881,6 +904,9 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     }
 
     private String getUserName(User user) throws PAException {
+        if (user == null) {
+            return "";
+        }
         RegistryUser ru = registryUserService.getUser(user.getLoginName());
         if (ru != null) {
             return ru.getFullName();

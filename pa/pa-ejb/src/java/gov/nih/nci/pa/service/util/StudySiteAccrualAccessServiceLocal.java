@@ -206,6 +206,17 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
             throws PAException;
 
     /**
+     * Add a history record to the study site accrual access.
+     * @param user the user who had access removed
+     * @param source the source of the removal
+     * @param trialID the trial
+     * @param comment comment
+     * @param creator creator
+     */
+    void createTrialAccessHistory(RegistryUser user, AccrualAccessSourceCode source, Long trialID, 
+            String comment, RegistryUser creator);
+
+    /**
      * Remove study site access to a given list.
      * @param user Registry User
      * @param list list of existing access

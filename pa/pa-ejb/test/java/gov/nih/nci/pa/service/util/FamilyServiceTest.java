@@ -68,18 +68,18 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void getByOrgIdNullTest() throws Exception {
-        assertTrue(ejb.getByOrgId(null).isEmpty());
+        assertTrue(FamilyHelper.getByOrgId(null).isEmpty());
     }
 
     @Test
     public void getByOrgIdNotFoundTest() throws Exception {
-        assertTrue(ejb.getByOrgId(1L).isEmpty());
+        assertTrue(FamilyHelper.getByOrgId(1L).isEmpty());
     }
 
     @Test(expected = PAException.class)
     public void getByOrgIdTooManyResultsTest() throws Exception {
         when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenThrow(new TooManyResultsException(1));
-        ejb.getByOrgId(1L);
+        FamilyHelper.getByOrgId(1L);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
         result.add(org);
         when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(result);
-        assertTrue(ejb.getByOrgId(1L).isEmpty());
+        assertTrue(FamilyHelper.getByOrgId(1L).isEmpty());
 
         // one family
         Set<Ii> familySet = new HashSet<Ii>();
@@ -100,28 +100,28 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
         familyMap.put(IiConverter.convertToPoFamilyIi("1"), getPoFamilyDTO(1L));
         when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
-        assertEquals(1, ejb.getByOrgId(1L).size());
+        assertEquals(1, FamilyHelper.getByOrgId(1L).size());
 
         // n results
         familySet.add(IiConverter.convertToPoFamilyIi("2"));
         familyMap.put(IiConverter.convertToPoFamilyIi("2"), getPoFamilyDTO(2L));
-        assertEquals(2, ejb.getByOrgId(1L).size());
+        assertEquals(2, FamilyHelper.getByOrgId(1L).size());
     }
 
     @Test
     public void getAllRelatedOrgsNull() throws Exception {
-        assertTrue(ejb.getAllRelatedOrgs(null).isEmpty());
+        assertTrue(FamilyHelper.getAllRelatedOrgs((Long) null).isEmpty());
     }
 
     @Test
     public void getAllRelatedOrgsNotFound() throws Exception {
-        assertTrue(ejb.getAllRelatedOrgs(1L).isEmpty());
+        assertTrue(FamilyHelper.getAllRelatedOrgs(1L).isEmpty());
     }
 
     @Test(expected = PAException.class)
     public void getAllRelatedOrgsTooManyResultsTest() throws Exception {
         when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenThrow(new TooManyResultsException(1));
-        ejb.getAllRelatedOrgs(1L);
+        FamilyHelper.getAllRelatedOrgs((Long) 1L);
     }
 
 
@@ -145,11 +145,11 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         // 2 families 1 common org and 1 unique per family
         when(fs.getActiveRelationships(1L)).thenReturn(getRelationships(new Long[] {1L, 2L}));
         when(fs.getActiveRelationships(2L)).thenReturn(getRelationships(new Long[] {1L, 3L}));
-        assertEquals(3, ejb.getAllRelatedOrgs(1L).size());
+        assertEquals(3, FamilyHelper.getAllRelatedOrgs(1L).size());
 
         // 2 families with the same 2 members
         when(fs.getActiveRelationships(2L)).thenReturn(getRelationships(new Long[] {1L, 2L}));
-        assertEquals(2, ejb.getAllRelatedOrgs(1L).size());
+        assertEquals(2, FamilyHelper.getAllRelatedOrgs(1L).size());
     }
 
     private FamilyDTO getPoFamilyDTO(Long id) {
@@ -171,38 +171,19 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void assignFamilyAccrualAccessNullUserTest() throws Exception {
-        ejb.assignFamilyAccrualAccess(null, ru);
+        ejb.assignFamilyAccrualAccess(null, ru, null);
     }
 
-    @Test(expected = PAException.class)
+    @Test
     public void assignFamilyAccrualAccessNullCreatorTest() throws Exception {
-        ejb.assignFamilyAccrualAccess(ru, null);
+        ejb.assignFamilyAccrualAccess(ru, null, null);
     }
 
     @Test
     public void assignFamilyAccrualAccessTest() throws Exception {
         assertFalse(ru.getFamilyAccrualSubmitter());
-        ejb.assignFamilyAccrualAccess(ru, ru);
+        ejb.assignFamilyAccrualAccess(ru, ru, null);
         assertTrue(ru.getFamilyAccrualSubmitter());
-    }
-
-    @Test
-    public void unassignFamilyAccrualAccessNullUserTest() throws Exception {
-        ejb.unassignFamilyAccrualAccess(null, ru);
-    }
-
-    @Test(expected = PAException.class)
-    public void unassignFamilyAccrualAccessNullCreatorTest() throws Exception {
-        ejb.unassignFamilyAccrualAccess(ru, null);
-    }
-
-    @Test
-    public void unassignFamilyAccrualAccessTest() throws Exception {
-        ru.setFamilyAccrualSubmitter(true);
-        ru.setSiteAccrualSubmitter(true);
-        ejb.unassignFamilyAccrualAccess(ru, ru);
-        assertFalse(ru.getFamilyAccrualSubmitter());
-        assertFalse(ru.getSiteAccrualSubmitter());
     }
 
     @Test

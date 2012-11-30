@@ -98,6 +98,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -109,6 +111,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -709,15 +712,22 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<RegistryUser> findByAffiliatedOrg(Long orgId)
             throws PAException {
+        return findByAffiliatedOrgs(Arrays.asList(new Long[] {orgId}));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds) throws PAException {
+        if (CollectionUtils.isEmpty(orgIds)) {
+            return new ArrayList<RegistryUser>();
+        }
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(RegistryUser.class,
-                "regUser");
+        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        addCriteria(criteria, orgId, "regUser.affiliatedOrganizationId");
+        criteria.add(Restrictions.in("affiliatedOrganizationId", orgIds));
         criteria.add(Restrictions.isNotNull("regUser.csmUser"));
         return criteria.list();
     }

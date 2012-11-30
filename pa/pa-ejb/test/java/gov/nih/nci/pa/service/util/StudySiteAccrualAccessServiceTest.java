@@ -326,6 +326,24 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
         assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
                 .getUserId());
+
+    
+    }
+    @Test
+    public void assignTrialLevelAccrualAccessNullCreator() throws Exception {
+        Session session = PaHibernateUtil.getCurrentSession();
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", null);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", new RegistryUser());
     }
 
     @SuppressWarnings("unchecked")
@@ -528,7 +546,27 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.INACTIVE);        
         
     }
-    
+
+    @Test
+    public void unassignTrialLevelAccrualAccessNullCreator() throws Exception {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+
+        RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", null);
+        bean.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", new RegistryUser());
+
+    }
+
     @Test
     public void getAccrualAccessAssignmentHistory() throws Exception {
 

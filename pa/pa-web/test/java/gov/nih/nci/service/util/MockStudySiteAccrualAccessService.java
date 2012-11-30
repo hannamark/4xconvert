@@ -303,4 +303,14 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         // TODO Auto-generated method stub
         
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createTrialAccessHistory(RegistryUser user, AccrualAccessSourceCode source, Long trialID,
+            String comment, RegistryUser creator) {
+        // TODO Auto-generated method stub
+        
+    }
 }
