@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserService;
@@ -140,6 +141,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     private OrganizationCorrelationServiceRemote organizationCorrelationService;
     private OrganizationEntityServiceRemote organizationEntityService;
     private RegistryUserService registryUserService;
+    private FamilyServiceLocal familyService;
+
     
     private RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
     private UserWebDTO userWebDTO = new UserWebDTO();
@@ -155,6 +158,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         organizationCorrelationService = PaRegistry.getOrganizationCorrelationService();
         organizationEntityService = PoRegistry.getOrganizationEntityService();
         registryUserService = PaRegistry.getRegistryUserService();
+        familyService = PaRegistry.getFamilyService();
     }
 
     /**
@@ -399,6 +403,13 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         } catch (Exception e) {
            LOG.error("ERROR COPYING PROPERTIES.", e);
            return Constants.APPLICATION_ERROR;
+        }
+        if (affiliatedOrgUpdated) {
+            try {
+                familyService.unassignAllAccrualAccess(registryUser, registryUser);
+            } catch (PAException e) {
+                LOG.error("ERROR REMOVING ACCRUAL ACCESS.", e);
+            }
         }
         if (registryUserWebDTO.isRequestAdminAccess()) {
             registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);

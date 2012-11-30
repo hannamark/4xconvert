@@ -153,7 +153,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
                 anyCollectionOf(Long.class), 
                 anyString(), 
                 any(RegistryUser.class));
-        verify(fs, times(1)).assignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class));
+        verify(fs, times(1)).assignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class), anyString());
     }
 
     @Test
@@ -169,7 +169,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
                 anyCollectionOf(Long.class), 
                 anyString(), 
                 any(RegistryUser.class));
-        verify(fs, times(1)).assignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class));
+        verify(fs, times(1)).assignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class), anyString());
     }
 
 
@@ -190,7 +190,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
                 anyCollectionOf(Long.class), 
                 anyString(), 
                 any(RegistryUser.class));
-        verify(fs, times(1)).unassignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class));
+        verify(fs, times(1)).unassignAllAccrualAccess(any(RegistryUser.class), any(RegistryUser.class));
     }
 
 }

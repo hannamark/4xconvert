@@ -185,8 +185,8 @@
             <s:hidden name="families"/>
             <s:hidden name="organization.name"/>
 			<table class="form">
-			    <tr><td><label>Site: </label><c:out value="${organization.name}"/></td>
-			        <td><label>Organization Family: </label><c:out value="${families}"/></td>
+			    <tr><td><label>Affiliated Site: </label><c:out value="${organization.name}"/></td>
+			        <td><label>Member of Family(s): </label><c:out value="${families}"/></td>
 			    </tr>
 				<tr>
 					<td scope="row" class="label"><label

@@ -15,6 +15,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -109,11 +110,12 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         Organization criteria = new Organization();
         criteria.setIdentifier(orgId.toString());
         setOrganization(paOrganizationService.getOrganizationByIndetifers(criteria));
-        setFamilies("");
-        List<OrgFamilyDTO> famList = familyService.getByOrgId(orgId);
+        List<OrgFamilyDTO> famList = FamilyHelper.getByOrgId(orgId);
+        setFamilies("NONE");
         boolean bFirst = true;
         for (OrgFamilyDTO fam : famList) {
             if (bFirst) {
+                setFamilies("");
                 bFirst = false;
             } else {
                 setFamilies(getFamilies() + " | "); 
@@ -143,13 +145,13 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
     private void populateFamilyDd() throws PAException {
         List<RegistryUser> result = new ArrayList<RegistryUser>();
-        List<Long> orgList = familyService.getAllRelatedOrgs(currentUser.getAffiliatedOrganizationId());
+        List<Long> orgList = FamilyHelper.getAllRelatedOrgs(currentUser.getAffiliatedOrganizationId());
         for (Long org : orgList) {
             for (RegistryUser user : registryUserService.findByAffiliatedOrg(org)) {
                 result.add(user);
             }
         }
-        model.setOfUsers(sort((result)));
+        model.setOfUsers(sort(result));
     }
 
     /**
@@ -185,8 +187,10 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 + " Institutional, Externally Peer Reviewed, and Industrial trials where "
                 + rUser.getAffiliateOrg() + " is a lead organization or participating site";
         } else {
-            getAllTrialsForSiteAccrualSubmitter(); 
-            unassignAll(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
+            if (!rUser.getFamilyAccrualSubmitter()) {
+                getAllTrialsForSiteAccrualSubmitter(); 
+                unassignAll(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
+            }
             rUser.setSiteAccrualSubmitter(false);
             msg = rUser.getFirstName() + " " + rUser.getLastName() + " can not submit accrual for "
                     + rUser.getAffiliateOrg() 
@@ -219,14 +223,15 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                getAllTrialsForSiteAccrualSubmitter(); 
                unassignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
            }
-           familyService.unassignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+           familyService.unassignAllAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+           model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser.getAffiliatedOrganizationId())));
            msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now no longer submit accrual.";
         } else {
             if (ObjectUtils.equals(getUserId(), getOfUserId())) {
                 getAllTrialsForSiteAccrualSubmitter(); 
                 assignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
             }
-            familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+            familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser, null);
             msg = (rUser.getFirstName() + " " + rUser.getLastName() + " can now now submit accrual for "
                   + getOrganization().getName() + " and any of " + getFamilies()
                   + " family member org's Institutional, Externally Peer Reviewed, "
