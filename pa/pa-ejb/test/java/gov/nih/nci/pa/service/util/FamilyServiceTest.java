@@ -11,8 +11,14 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -27,21 +33,26 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
 public class FamilyServiceTest extends AbstractHibernateTestCase {
 
-    private FamilyServiceLocal ejb;
+    private FamilyServiceBeanLocal ejb;
     private OrganizationEntityServiceRemote oes;
     private FamilyServiceRemote fs;
+    RegistryUserBeanLocal registryUserEjb;
+    StudySiteAccrualAccessServiceBean siteAccessEjb;
+    ParticipatingOrgServiceBean partOrgEjb;
     private RegistryUser ru;
     Session sess;
 
@@ -58,12 +69,15 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         ru = (RegistryUser) sess.get(RegistryUser.class, TestSchema.registryUserIds.get(0));
 
         CSMUserService.setInstance(new MockCSMUserService());
-        FamilyServiceBeanLocal fEjb = new FamilyServiceBeanLocal();
-        RegistryUserBeanLocal ruEjb = new RegistryUserBeanLocal();
-        StudySiteAccrualAccessServiceBean ssaas = new StudySiteAccrualAccessServiceBean();
-        fEjb.setRegistryUserService(ruEjb);
-        fEjb.setStudySiteAccess(ssaas);
-        ejb = fEjb;
+        ejb = new FamilyServiceBeanLocal();
+        registryUserEjb = new RegistryUserBeanLocal();
+        siteAccessEjb = new StudySiteAccrualAccessServiceBean();
+        partOrgEjb = new ParticipatingOrgServiceBean();
+        siteAccessEjb.setParticipatingOrgServiceLocal(partOrgEjb);
+        ejb.setRegistryUserService(registryUserEjb);
+        ejb.setStudySiteAccess(siteAccessEjb);
+        ejb.setDwsService(mock(DocumentWorkflowStatusServiceLocal.class));
+        ejb.setParticipatingOrgService(partOrgEjb);
     }
 
     @Test
@@ -180,10 +194,64 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void assignFamilyAccrualAccessTest() throws Exception {
+    public void assignFamilyAccrualAccessNoTrialsTest() throws Exception {
         assertFalse(ru.getFamilyAccrualSubmitter());
         ejb.assignFamilyAccrualAccess(ru, ru, null);
         assertTrue(ru.getFamilyAccrualSubmitter());
+    }
+
+    @Test
+    public void unassignAllAccrualAccessNullUserTest() throws Exception {
+        ejb.unassignAllAccrualAccess(null, ru);
+    }
+
+    @Test(expected = PAException.class)
+    public void unassignAllAccrualAccessNullCreatorTest() throws Exception {
+        ejb.unassignAllAccrualAccess(ru, null);
+    }
+
+    @Test
+    public void unassignAllAccrualAccessNoExistingAccessTest() throws Exception {
+        ru.setFamilyAccrualSubmitter(true);
+        ru.setSiteAccrualSubmitter(true);
+        registryUserEjb.updateUser(ru);
+        RegistryUser updated = registryUserEjb.getUserById(ru.getId());
+        assertTrue(updated.getFamilyAccrualSubmitter());
+        assertTrue(updated.getSiteAccrualSubmitter());
+        ejb.unassignAllAccrualAccess(ru, ru);
+        updated = registryUserEjb.getUserById(ru.getId());
+        assertFalse(updated.getFamilyAccrualSubmitter());
+        assertFalse(updated.getSiteAccrualSubmitter());
+    }
+
+    @Test
+    public void unassignAllAccrualAccessExistingAccessCompleteTest() throws Exception {
+        StudyProtocol sp = createComplete();
+        assignAccess(sp);
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+        ejb.unassignAllAccrualAccess(ru, ru);
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+    }
+
+    @Test
+    public void unassignAllAccrualAccessExistingAccessAbbreviatedTest() throws Exception {
+        StudyProtocol sp = createAbbreviated();
+        assignAccess(sp);
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+        ejb.unassignAllAccrualAccess(ru, ru);
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
     }
 
     @Test
@@ -194,5 +262,35 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     @Test
     public void updateSiteAndFamilyPermissionsTest() throws Exception {
         ejb.updateSiteAndFamilyPermissions(TestSchema.studyProtocolIds.get(0));
+    }
+
+    private StudyProtocol createComplete() throws Exception {
+        sess.createQuery("DELETE FROM StudySiteAccrualAccess").executeUpdate();
+        sess.createQuery("DELETE FROM StudyAccrualAccess").executeUpdate();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudyRecruitmentStatus recruitmentStatus = TestSchema
+                .createStudyRecruitmentStatus(sp);
+        TestSchema.addUpdObject(recruitmentStatus);
+        return sp;
+    }
+
+    private StudyProtocol createAbbreviated() throws Exception {
+        StudyProtocol sp = createComplete();
+        sp.setProprietaryTrialIndicator(true);
+        TestSchema.addUpdObject(sp);
+        return sp;
+    }
+
+    private void assignAccess(StudyProtocol sp) throws Exception {
+        siteAccessEjb.assignTrialLevelAccrualAccess(ru, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                Arrays.asList(sp.getId()), "TEST", ru);
+    }
+
+    private long studyAccessCount(ActiveInactiveCode statusCode, AssignmentActionCode actionCode) throws Exception {
+        Query qry = sess.createQuery("FROM StudyAccrualAccess saa "
+                + "WHERE saa.statusCode = :statusCode AND saa.actionCode = :actionCode");
+        qry.setParameter("actionCode", actionCode);
+        qry.setParameter("statusCode", statusCode);
+        return qry.list().size();
     }
 }
