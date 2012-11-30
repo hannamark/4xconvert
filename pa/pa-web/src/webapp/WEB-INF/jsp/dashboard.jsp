@@ -374,6 +374,9 @@
                                         media="excel csv xml"/>
                                     <display:column  title="On Hold Reason" property="recentHoldReason"
                                         media="excel csv xml"/>
+                                    <display:column  title="On Hold Description" property="recentHoldDescription"
+                                        media="excel csv xml"/>
+
                                         
 						            <display:column titleKey="studyProtocol.trialtype" media="excel csv xml">
 						                <c:out value="${results.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>

@@ -125,6 +125,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String lastUpdaterDisplayName;
     
     private String recentHoldReason;
+    private String recentHoldDescription;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
     
@@ -661,5 +662,19 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
                                 .getMilestone());
                     }
                 });
+    }
+
+    /**
+     * @return the recentHoldDescription
+     */
+    public String getRecentHoldDescription() {
+        return recentHoldDescription;
+    }
+
+    /**
+     * @param recentHoldDescription the recentHoldDescription to set
+     */
+    public void setRecentHoldDescription(String recentHoldDescription) {
+        this.recentHoldDescription = recentHoldDescription;
     }
 }

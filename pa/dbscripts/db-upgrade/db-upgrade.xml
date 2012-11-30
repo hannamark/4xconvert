@@ -1164,5 +1164,9 @@
      <changeSet id="PO-5656" author="krylovd">
         <comment>Added CTRO Override flag to trials.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5656.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-5663" author="krylovd">
+        <comment>Updated "public"."rv_search_results" to include on hold comments.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5663.sql"/>
+     </changeSet>
 </databaseChangeLog>
