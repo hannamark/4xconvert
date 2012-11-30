@@ -12,6 +12,7 @@ import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -259,6 +260,12 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
 
     
     public List<RegistryUser> findByAffiliatedOrg(Long orgId)
+            throws PAException {
+        return new ArrayList<RegistryUser>();
+    }
+
+   
+    public List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds)
             throws PAException {
         return new ArrayList<RegistryUser>();
     }
