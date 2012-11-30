@@ -1169,4 +1169,8 @@
         <comment>Updated "public"."rv_search_results" to include on hold comments.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5663.sql"/>
      </changeSet>
+     <changeSet id="PO-5659" author="krylovd">
+        <comment>Change text of email sent to mismatched users by trial registration service.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5659.sql"/>
+     </changeSet>     
 </databaseChangeLog>
