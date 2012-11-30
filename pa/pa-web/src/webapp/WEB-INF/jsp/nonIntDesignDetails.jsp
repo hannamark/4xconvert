@@ -136,7 +136,7 @@ function displayPrimaryPurposeOtherText(){
             <label><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
          </td>
          <td>
-               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" />
+               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" maxlength="200" cssClass="charcounter"/><br/>
                <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                <span class="formErrorMsg"> 
                <s:fielderror>
