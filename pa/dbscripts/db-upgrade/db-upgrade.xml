@@ -1161,4 +1161,8 @@
         <comment>To drop a not null constraint use for tissue_collection_method_code.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5652.sql"/>
      </changeSet>
+     <changeSet id="PO-5656" author="krylovd">
+        <comment>Added CTRO Override flag to trials.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5656.sql"/>
+     </changeSet>     
 </databaseChangeLog>

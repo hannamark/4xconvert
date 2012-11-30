@@ -157,6 +157,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
@@ -202,6 +203,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -931,6 +933,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public FamilyServiceLocal getFamilyService() {
         return null;
+    }
+
+    @Override
+    public CTGovUploadServiceLocal getCTGovUploadService() {        
+        return Mockito.mock(CTGovUploadServiceLocal.class);
     }
 
 }

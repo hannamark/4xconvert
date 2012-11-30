@@ -110,6 +110,8 @@ import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -184,10 +186,13 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
@@ -205,6 +210,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -215,6 +221,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.mockito.invocation.InvocationOnMock;
@@ -267,6 +274,8 @@ public class AbstractMockitoTest {
     protected StratumGroupServiceLocal stratumGroupSvc;
     protected PlannedMarkerServiceLocal plannedMarkerSvc;
     protected MailManagerServiceLocal mailManagerSvc;
+    protected ProtocolQueryServiceLocal protocolQueryServiceLocal;
+    protected CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorServiceLocal;
 
     protected Ii spId;
     protected StudyProtocolDTO spDto;
@@ -321,6 +330,7 @@ public class AbstractMockitoTest {
     protected List<PlannedMarkerDTO> plannedMarkerDtoList;
     protected List<IdentifiedPersonDTO> identifiedPersonDtoList;
     protected IdentifiedPersonDTO identifiedPersonDto;
+    protected List<StudyProtocolQueryDTO> queryDTOList = new ArrayList<StudyProtocolQueryDTO>();
 
     @Before
     public void setUp() throws Exception {
@@ -760,7 +770,7 @@ public class AbstractMockitoTest {
         spDto.setSecondaryIdentifiers(secondaryIdentifiers);
     }
 
-    private void setupMocks() throws PAException, NullifiedRoleException, NullifiedEntityException {
+    private void setupMocks() throws PAException, NullifiedRoleException, NullifiedEntityException, IOException {
         setupSpSvcMock();
         setupSsSvcMock();
         setupRegSvcMock();
@@ -786,8 +796,41 @@ public class AbstractMockitoTest {
         setupStudyResSvc();
         setupDocSvc();
         setupMailMgrSvc();
+        setupProtocolQueryServiceMock();
+        setupCtGovXmlMock();
 
         setupPaRegistry();
+
+    }
+
+    private void setupCtGovXmlMock() throws PAException, IOException {
+        ctGovXmlGeneratorServiceLocal = mock(CTGovXmlGeneratorServiceLocal.class);
+        when(
+                ctGovXmlGeneratorServiceLocal.generateCTGovXml(any(Ii.class),
+                        any(CTGovXmlGeneratorOptions[].class))).thenReturn(
+                IOUtils.toString(getClass().getResourceAsStream(
+                        "/CDR360805.xml")));
+    }
+
+    private void setupProtocolQueryServiceMock() throws PAException {
+        protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
+        when(
+                protocolQueryServiceLocal
+                        .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
+                .thenReturn(queryDTOList);
+        
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2012-0001");
+        dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0001");
+        dto.setStudyProtocolId(1L);
+        queryDTOList.add(dto);
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2012-0002");
+        dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0002");
+        dto.setStudyProtocolId(2L);
+        queryDTOList.add(dto);
+        
 
     }
 
@@ -815,6 +858,7 @@ public class AbstractMockitoTest {
         when(lookupSvc.getCountryByName(anyString())).thenReturn(cnt);
         when(lookupSvc.searchCountry(any(Country.class))).thenReturn(countryList);
         when(lookupSvc.getPropertyValue("rss.leadOrgs")).thenReturn("American College of Surgeons Oncology Trials Group");
+        when(lookupSvc.getPropertyValue("ctep.ccr.trials")).thenReturn("LEAD_ORG_ID_0002");
         PDQXmlGeneratorServiceRemote pdqXmlGeneratorSvc = mock(PDQXmlGeneratorServiceRemote.class);
         when(pdqXmlGeneratorSvc.generatePdqXml(any(Ii.class))).thenReturn("<pdq></pdq>");
 

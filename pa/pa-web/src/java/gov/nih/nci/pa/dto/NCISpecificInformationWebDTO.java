@@ -91,6 +91,7 @@ public class NCISpecificInformationWebDTO {
     private String organizationName;
     private String organizationIi;
     private String programCodeText;
+    private Boolean ctroOverride;
 
     /**
      * 
@@ -165,6 +166,20 @@ public class NCISpecificInformationWebDTO {
      */
     public void setProgramCodeText(String programCodeText) {
         this.programCodeText = programCodeText;
+    }
+
+    /**
+     * @return the ctroOverride
+     */
+    public Boolean getCtroOverride() {
+        return ctroOverride;
+    }
+
+    /**
+     * @param ctroOverride the ctroOverride to set
+     */
+    public void setCtroOverride(Boolean ctroOverride) {
+        this.ctroOverride = ctroOverride;
     }
 
 }

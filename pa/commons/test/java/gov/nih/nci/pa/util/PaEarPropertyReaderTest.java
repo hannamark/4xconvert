@@ -104,6 +104,7 @@ public class PaEarPropertyReaderTest {
         assertEquals("cteprss", PaEarPropertyReader.getRssUser());
         assertEquals("prefix", PaEarPropertyReader.getNciLdapPrefix());
         assertEquals("trialStatusRulesURL", PaEarPropertyReader.getStateTransitionDiagramUrl());
+        assertEquals("ftp://ctrppa:ctrppa@localhost:51239/", PaEarPropertyReader.getCTGovFtpURL());
     }
 
     @Test

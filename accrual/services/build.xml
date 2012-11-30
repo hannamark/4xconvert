@@ -15,7 +15,7 @@
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
-    <property name="checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
+    <property name="checkstyle.url" value="${resource.dir}/checkstyle.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
 
@@ -294,7 +294,7 @@
 
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
-        <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
+        <checkstyle config="${checkstyle.url}" failOnViolation="true">
             <fileset dir="src">
                     <include name="**/accrual/**/*.java"/>
             </fileset>

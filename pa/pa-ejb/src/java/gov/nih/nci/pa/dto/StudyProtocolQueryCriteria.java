@@ -192,6 +192,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Boolean holdRecordExists;
     private MilestoneCode currentOrPreviousMilestone;          
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
+    private Boolean ctroOverride;
     
     /**
      * @return the inBoxProcessing
@@ -1235,6 +1236,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setProcessingPriority(List<String> processingPriority) {
         this.processingPriority = processingPriority;
+    }
+
+    /**
+     * @return the ctroOverride
+     */
+    public Boolean getCtroOverride() {
+        return ctroOverride;
+    }
+
+    /**
+     * @param ctroOverride the ctroOverride to set
+     */
+    public void setCtroOverride(Boolean ctroOverride) {
+        this.ctroOverride = ctroOverride;
     }
         
     

@@ -12,7 +12,7 @@
     <property file="${pa.dir}/build.properties"/>
     <property name="resourceDir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resourceDir}/viewerPmd.xml"/>
-    <property name="checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
+    <property name="checkstyle.url" value="${resourceDir}/checkstyle.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
 
@@ -224,7 +224,7 @@
 
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
-        <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
+        <checkstyle config="${checkstyle.url}" failOnViolation="true">
             <classpath>
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>

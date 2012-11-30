@@ -179,6 +179,8 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setKeywordText(StConverter.convertToSt(studyProtocol.getKeywordText()));
         studyProtocolDTO.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(
                 studyProtocol.getAcceptHealthyVolunteersIndicator()));
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(
+                studyProtocol.getCtroOverride()));        
         setStudyProtocolType(studyProtocol, studyProtocolDTO);
         studyProtocolDTO.setStatusCode(CdConverter.convertToCd(studyProtocol.getStatusCode()));
         studyProtocolDTO.setStatusDate(TsConverter.convertToTs(studyProtocol.getStatusDate()));
@@ -259,7 +261,10 @@ public class StudyProtocolConverter {
        }
        studyProtocol.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBoolean(
                studyProtocolDTO.getAcceptHealthyVolunteersIndicator()));
+       studyProtocol.setCtroOverride(BlConverter.convertToBoolean(
+               studyProtocolDTO.getCtroOverride()));
 
+       
        setStatusFields(studyProtocolDTO, studyProtocol);
        setAmendmentFields(studyProtocolDTO, studyProtocol);
        if (studyProtocolDTO.getSubmissionNumber() != null) {

@@ -17,7 +17,7 @@
     <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
-    <property name="pa.checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
+    <property name="pa.checkstyle.url" value="${pa.resourceDir}/checkstyle.xml"/>
 
     <property name="jboss.server.jndi.port" value="1099" />
     <property name="java.major.version" value="1.6"/>
@@ -191,7 +191,8 @@
                 <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
                 <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
                 <filter token="wikiHelp.baseUrl.viewer" value="${wikiHelp.baseUrl.viewer}" />
-            	<filter token="wikiHelp.baseUrl.trialStatusRules" value="${wikiHelp.baseUrl.trialStatusRules}" />
+            	<filter token="wikiHelp.baseUrl.trialStatusRules" value="${wikiHelp.baseUrl.trialStatusRules}" />            	
+            	<filter token="ctgov.ftp.url" value="${ctgov.ftp.url}"/>
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/ejb-jar.xml"
@@ -336,7 +337,7 @@
 
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
-        <checkstyle configurl="${pa.checkstyle.url}" failOnViolation="true">
+        <checkstyle config="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
                 <pathelement location="${pa-ejb.build.outputDir}"/>
                 <path refid="compile.classpath"/>

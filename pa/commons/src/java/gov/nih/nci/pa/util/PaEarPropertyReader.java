@@ -113,6 +113,7 @@ public class PaEarPropertyReader {
     private static final String VIEWER_HELP_URL = "wikiHelp.baseUrl.viewer";
     private static final String NCI_LDAP_PREFIX = "nci.ldap.prefix";
     private static final String STATE_TRANSITION_DIAGRAM_URL = "wikiHelp.baseUrl.trialStatusRules";
+    private static final String CTGOV_FTP_URL = "ctgov.ftp.url";
 
     private static final String NO_VALUE = "does not have a value in paear.properties";
 
@@ -270,6 +271,14 @@ public class PaEarPropertyReader {
      */    
     public static String getStateTransitionDiagramUrl() throws PAException {
         return getPropTemplate(STATE_TRANSITION_DIAGRAM_URL);
+    }
+    
+    /**
+     * @return CTGOV_FTP_URL
+     * @throws PAException PAException
+     */
+    public static String getCTGovFtpURL() throws PAException {
+        return getPropTemplate(CTGOV_FTP_URL);
     }
 
     /**

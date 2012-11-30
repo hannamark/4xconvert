@@ -76,7 +76,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/log4j-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jbossall-client-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/jboss-ejb3x-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate3-4.0.5.GA.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/hibernate3-4.0.5.GA.jar" sourcepath="/ROOT/Misc/JarSrc/hibernate-3.2.0.ga-sources.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/coppa-commons-1.3.9-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/itext-rtf-2.1.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/compile/commons-io-1.4.jar"/>
@@ -91,6 +91,9 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
+        <classpathentry kind="var" path="PA_LIB/pa-ejb/test/MockFtpServer-2.4.jar"/>
+        <classpathentry kind="var" path="PA_LIB/pa-ejb/test/slf4j-api-1.6.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/commons-lang-2.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/commons/compile/ws-core-client-4.0.3.jar"/>

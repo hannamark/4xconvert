@@ -195,6 +195,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 /**
@@ -2055,5 +2056,22 @@ public class PAServiceUtils {
         }
         return list;
     }  
+    
+    /**
+     * Returns NCI ID of the given trial.
+     * @param id ID
+     * @return NCI ID
+     */
+    public String getTrialNciId(Long id) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select extension from study_otheridentifiers where study_protocol_id="
+                        + id
+                        + " and root='"
+                        + IiConverter.STUDY_PROTOCOL_ROOT
+                        + "'");
+        List<String> list = query.list();
+        return list.isEmpty() ? "" : list.get(0);
+    }
     
 }

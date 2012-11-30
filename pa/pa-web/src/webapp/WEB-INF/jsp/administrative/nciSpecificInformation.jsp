@@ -126,6 +126,19 @@
                             </span>
                         </td>
                     </tr>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="ctroOverride"><fmt:message key="studyProtocol.ctroOverride"/></label>
+                        </td>
+                        <td class="value">
+                            <s:checkbox name="nciSpecificInformationWebDTO.ctroOverride" />
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>nciSpecificInformationWebDTO.ctroOverride</s:param>
+                                </s:fielderror>                            
+                            </span>
+                        </td>
+                    </tr>                    
                 </table> 
                 <div class="actionsrow">
                     <del class="btnwrapper">

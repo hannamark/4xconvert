@@ -664,6 +664,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
+        sp.setCtroOverride(crit.getCtroOverride());
         populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
     }
 
@@ -797,6 +798,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && criteria.getSubmittedOnOrBefore() == null
                 && criteria.getNciSponsored() == null
                 && criteria.getHoldRecordExists() == null
+                && criteria.getCtroOverride() == null
                 && criteria.getCurrentOrPreviousMilestone() == null               
                 && StringUtils.isEmpty(criteria.getSubmitterAffiliateOrgId())
                 && StringUtils.isEmpty(criteria.getOfficialTitle())

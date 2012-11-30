@@ -84,5 +84,10 @@ wikiHelp.baseUrl.accrual=https://wiki.nci.nih.gov/x/yALTAg#NCICTRPAccrualHelpTop
 wikiHelp.baseUrl.viewer=https://wiki.nci.nih.gov/x/xgLTAg#NCICTRPViewerHelpTopics-
 wikiHelp.baseUrl.trialStatusRules=https://wiki.nci.nih.gov/x/A6RiAw
 
+#####################
+## CT.Gov Properties #
+#####################
+ctgov.ftp.url=ftp://ctrppa:ctrppa@localhost:21/
+
 maven.username=uploaded
 maven.password=password

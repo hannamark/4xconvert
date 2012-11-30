@@ -267,6 +267,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
             studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+            studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
             StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
@@ -527,7 +528,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                        leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
                                        studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
+            
             studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+            studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+            
             List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
             listOfDTOToCreateInPO.add(leadOrganizationDTO);
 
@@ -653,6 +657,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         setPhaseAdditionalQualifier(studyProtocolDTO, studyProtocolDTO);
         setPrimaryPurposeCode(studyProtocolDTO, studyProtocolDTO);
         studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
                                               leadOrganizationDTO, studySiteInvestigatorDTO,
@@ -914,6 +919,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(studyProtocolDTO
                 .getDataMonitoringCommitteeAppointedIndicator());
         createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
+        createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator() == null) {

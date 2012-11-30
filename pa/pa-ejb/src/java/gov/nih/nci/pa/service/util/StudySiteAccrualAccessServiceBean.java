@@ -139,7 +139,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 
@@ -486,23 +485,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             dto.setParticipatingSiteOrgName((String) objArr[2]);
             dto.setParticipatingSitePoOrgId((String) objArr[3]);
             dto.setStudySiteId((Long) objArr[4]);
-            dto.setTrialNciId(getTrialNciId((Long) objArr[0]));            
+            dto.setTrialNciId(new PAServiceUtils().getTrialNciId((Long) objArr[0]));            
             list.add(dto);            
         }
         return list;
-    }
-
-    @SuppressWarnings(UNCHECKED_STR)
-    private String getTrialNciId(Long id) {
-        Session session = PaHibernateUtil.getCurrentSession();
-        SQLQuery query = session
-                .createSQLQuery("select extension from study_otheridentifiers where study_protocol_id="
-                        + id
-                        + " and root='"
-                        + IiConverter.STUDY_PROTOCOL_ROOT
-                        + "'");
-        List<String> list = query.list();
-        return list.isEmpty() ? "" : list.get(0);
     }
 
     @Override
@@ -828,7 +814,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             dto.setComments(saa.getComments());
             dto.setDate(DateFormatUtils.format(saa.getDateLastCreated(),
                     PAUtil.DATE_FORMAT));
-            dto.setTrialNciId(getTrialNciId(saa.getStudyProtocol().getId()));
+            dto.setTrialNciId(new PAServiceUtils().getTrialNciId(saa.getStudyProtocol().getId()));
             list.add(dto);
         }
         return list;
@@ -849,7 +835,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         List<StudyAccrualAccess> accessList = query.list();
         for (StudyAccrualAccess saa : accessList) {
             final StudyProtocol protocol = saa.getStudyProtocol();
-            String trialNciId = getTrialNciId(protocol.getId());
+            String trialNciId = new PAServiceUtils().getTrialNciId(protocol.getId());
             String title = protocol.getOfficialTitle();
             String submitter = saa.getRegistryUser().getFullName();
             SummaryFourFundingCategoryCode code = Boolean.TRUE.equals(protocol

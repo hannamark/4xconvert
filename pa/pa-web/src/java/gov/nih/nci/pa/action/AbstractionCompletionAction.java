@@ -82,13 +82,16 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +121,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
 
     private AbstractionCompletionServiceRemote abstractionCompletionService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;
+    private CTGovUploadServiceLocal ctGovUploadServiceLocal;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
 
     private List<AbstractionCompletionDTO> abstractionList;
@@ -138,6 +142,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     public void prepare() {
         abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
         ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService();
+        ctGovUploadServiceLocal = PaRegistry.getCTGovUploadService();
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
     }
 
@@ -198,6 +203,20 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
         }
         return NONE;
     }
+    
+    /**
+     * @return res
+     * @throws IOException IOException
+     * @throws PAException PAException
+     */
+    public String triggerCTGovUpload() throws PAException, IOException {
+        if (ServletActionContext.getRequest().isUserInRole(
+                Constants.SUABSTRACTOR)) {
+            ctGovUploadServiceLocal.uploadToCTGov();
+        }
+        return NONE;
+    }
+    
 
     /**
      * @return res

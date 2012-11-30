@@ -115,6 +115,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private St scientificDescription;
     private St keywordText;
     private Bl acceptHealthyVolunteersIndicator;
+    private Bl ctroOverride;
     private Cd statusCode;
     private Ts statusDate;
     private St amendmentNumber;
@@ -493,6 +494,20 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setAssignedUser(Ii assignedUser) {
         this.assignedUser = assignedUser;
+    }
+
+    /**
+     * @return the ctroOverride
+     */
+    public Bl getCtroOverride() {
+        return ctroOverride;
+    }
+
+    /**
+     * @param ctroOverride the ctroOverride to set
+     */
+    public void setCtroOverride(Bl ctroOverride) {
+        this.ctroOverride = ctroOverride;
     }
 
 }

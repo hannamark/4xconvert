@@ -173,6 +173,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private String comments;
     private Integer processingPriority;
     private User assignedUser;
+    private Boolean ctroOverride;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -889,6 +890,22 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setAssignedUser(User assignedUser) {
         this.assignedUser = assignedUser;
+    }
+
+    /**
+     * @return the ctroOverride
+     */
+    @Column(name = "ctro_override")
+    @Searchable
+    public Boolean getCtroOverride() {
+        return ctroOverride;
+    }
+
+    /**
+     * @param ctroOverride the ctroOverride to set
+     */
+    public void setCtroOverride(Boolean ctroOverride) {
+        this.ctroOverride = ctroOverride;
     }
 
 }

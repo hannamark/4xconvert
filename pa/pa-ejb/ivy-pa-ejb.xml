@@ -89,6 +89,9 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.hsqldb"             name="hsqldb"                  rev="1.8.0.10"        conf="test->master"/>
     <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>
     <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
+    <dependency org="org.mockftpserver"            name="MockFtpServer"             rev="2.4"           conf="test->master"/>
+    <dependency org="org.slf4j"            name="slf4j-api"             rev="1.6.0"           conf="test->master"/>
+    <dependency org="org.slf4j"            name="slf4j-log4j12"             rev="1.6.0"           conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"           rev="5.0"             conf="test-checkstyle->master,runtime"/>

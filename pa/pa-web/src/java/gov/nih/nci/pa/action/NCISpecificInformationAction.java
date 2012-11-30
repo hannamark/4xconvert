@@ -211,6 +211,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
+            spDTO.setCtroOverride(BlConverter.convertToBl(nciSpecificInformationWebDTO.getCtroOverride()));
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
@@ -329,6 +330,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         if (spDTO.getProgramCodeText() != null) {
             nciSpDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         }
+        nciSpDTO.setCtroOverride(BlConverter.convertToBoolean(spDTO.getCtroOverride()));
     }
 
     /**

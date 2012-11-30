@@ -50,6 +50,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
@@ -78,6 +79,8 @@ import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemo
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
+import org.mockito.Mockito;
 
 
 /**
@@ -633,5 +636,10 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     public FamilyServiceLocal getFamilyService() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public CTGovUploadServiceLocal getCTGovUploadService() {        
+        return Mockito.mock(CTGovUploadServiceLocal.class);
     }
 }
