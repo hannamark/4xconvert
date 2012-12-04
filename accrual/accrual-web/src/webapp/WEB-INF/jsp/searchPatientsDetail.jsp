@@ -46,6 +46,10 @@
                 submitForm("patientsedit.action" + urlParameters);
             }
             
+            function handleUpdateAction() {
+                submitForm("patientsupdate.action" +  urlParameters);
+            }
+            
             function submitForm(action) {
                 var form = document.forms[0];
                 form.action = action;
@@ -76,9 +80,8 @@
                 </div>
             </s:if>
             <s:form name="detailForm">
-                <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
-                    <s:token/>
-                </s:if>
+                <s:token/>
+                <s:hidden name = "selectedRowIdentifier"/>
                 <s:hidden name = "patient.patientId" />
                 <s:hidden name = "patient.studySubjectId" />
                 <s:hidden name = "patient.studyProtocolId" />
@@ -309,6 +312,7 @@
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="back">Back</span></span></s:a>
+                                <s:a href="#" cssClass="btn" onclick="handleUpdateAction()"><span class="btn_img"><span class="edit">Update</span></span></s:a>
                             </s:elseif>
                             <s:elseif test="%{currentAction == 'update'}">
                                 <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
