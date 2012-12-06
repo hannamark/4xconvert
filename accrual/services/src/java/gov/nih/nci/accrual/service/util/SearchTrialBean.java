@@ -334,6 +334,7 @@ public class SearchTrialBean implements SearchTrialService {
         List<AccrualCountsDto> result = new ArrayList<AccrualCountsDto>();
         Long studyProtocolId = 0L;
         Long studysiteId = 0L;
+        Map<Long, Long> ids = new HashMap<Long, Long>();
         String sql = "select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"
                 + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
                 + " join study_site_accrual_access ssaa on (ss.identifier = ssaa.study_site_identifier)"
@@ -341,29 +342,38 @@ public class SearchTrialBean implements SearchTrialService {
                 + " join organization org on (hcf.organization_identifier = org.identifier)"
                 + " where sp.status_code = 'ACTIVE'" + "  and ss.functional_code = 'TREATING_SITE'"
                 + "  and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'"
-                + "  and ssaa.registry_user_id =" + ru.getId() 
+                + "  and ssaa.registry_user_id =" + ru.getId() + " and ssaa.status_code = 'ACTIVE'"
                 + " UNION"
-                + " select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"
-                + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
-                + " join study_site_accrual_access ssaa on (ss.identifier = ssaa.study_site_identifier)"
-                + " join research_organization ro on (ss.research_organization_identifier = ro.identifier)"
+                + " select distinct sp.identifier as spid, sstreating.identifier as ssid from study_protocol sp"
+                + " join study_site sstreating on (sstreating.study_protocol_identifier = sp.identifier)"
+                + " join study_site_accrual_access ssaa on (sstreating.identifier = ssaa.study_site_identifier)"
+                + " join study_site sslead on (sslead.study_protocol_identifier = sp.identifier)"
+                + " join research_organization ro on (sslead.research_organization_identifier = ro.identifier)"
                 + " join organization org on (ro.organization_identifier = org.identifier)"
-                + " where sp.status_code = 'ACTIVE'" + "  and ss.functional_code = 'LEAD_ORGANIZATION'"
+                + " where sp.status_code = 'ACTIVE'" + " and sstreating.functional_code = 'TREATING_SITE'"
+                + " and sslead.functional_code = 'LEAD_ORGANIZATION'"
+                + "  and ssaa.registry_user_id = " + ru.getId()                
                 + "  and org.assigned_identifier ='" + ru.getAffiliatedOrganizationId() + "'"
-                + "  and ssaa.registry_user_id = " + ru.getId(); 
+                + " and ssaa.status_code = 'ACTIVE'"; 
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery query = session.createSQLQuery(sql);
         List<Object[]> queryList = query.list();
         for (Object[] obj : queryList) {
             studyProtocolId = Long.valueOf(((Number) obj[0]).longValue());
-            studysiteId =  Long.valueOf(((Number) obj[1]).longValue()); 
-            SearchTrialResultDto dto = getTrialSummaryByStudyProtocolIi(IiConverter.convertToIi(studyProtocolId));
+            studysiteId =  Long.valueOf(((Number) obj[1]).longValue());
+            if (!ids.containsKey(studyProtocolId)) {
+                ids.put(studyProtocolId, studysiteId);
+            }
+        }
+        
+        for (Map.Entry<Long, Long> entry : ids.entrySet()) {
+            SearchTrialResultDto dto = getTrialSummaryByStudyProtocolIi(IiConverter.convertToIi(entry.getKey()));
             AccrualCountsDto ac = new AccrualCountsDto();
             ac.setNciNumber(StConverter.convertToString(dto.getAssignedIdentifier()));
             ac.setLeadOrgTrialIdentifier(StConverter.convertToString(dto.getLeadOrgTrialIdentifier()));
-            ac.setNctNumber(getNCTNumber(studyProtocolId));
+            ac.setNctNumber(getNCTNumber(entry.getKey()));
             ac.setLeadOrgName(StConverter.convertToString(dto.getLeadOrgName()));
-            setCounts(studyProtocolId, studysiteId, session, dto, ac);
+            setCounts(entry.getKey(), entry.getValue(), session, dto, ac);
             result.add(ac);            
         }
     return result;    
@@ -384,11 +394,13 @@ public class SearchTrialBean implements SearchTrialService {
             setTrialCountAndMaxDate(ac, sqlCount);
         } else {
             Query sqlCount = session.createSQLQuery("select count(*) from study_subject where "
-            + "study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " + studysiteId);
+            + "study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " + studysiteId
+            + " and status_code <> 'NULLIFIED'");
             ac.setAffiliateOrgCount(Long.valueOf(sqlCount.uniqueResult().toString()));
             
             sqlCount = session.createSQLQuery("select max(date_last_updated), count(*) from study_subject "
-            + "where study_protocol_identifier = " + studyProtocolId);
+            + "where study_protocol_identifier = " + studyProtocolId
+            + " and status_code <> 'NULLIFIED'");
             setTrialCountAndMaxDate(ac, sqlCount);
         }
     }
