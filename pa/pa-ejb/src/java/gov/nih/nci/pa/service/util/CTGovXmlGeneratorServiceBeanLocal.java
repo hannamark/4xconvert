@@ -243,7 +243,11 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             createIndInfo(spDTO, doc, root);
             XmlGenHelper.createElement("brief_title", spDTO.getPublicTitle().getValue(), doc, root);
             XmlGenHelper.createElement("acronym", spDTO.getAcronym().getValue(), doc, root);
-            XmlGenHelper.createElement("official_title", spDTO.getOfficialTitle().getValue(), doc, root);
+            String officialTitle = replaceXMLCharacters(spDTO.getOfficialTitle().getValue());
+            Element officialTitleElement = XmlGenHelper.createElement("official_title", officialTitle, doc);
+            if (officialTitleElement != null) {
+                root.appendChild(officialTitleElement);
+            }
             createSponsors(spDTO.getIdentifier(), doc, root, spDTO);
             createOversightInfo(spDTO, doc, root);
             createTextBlock("brief_summary", StringUtils.substring(StConverter.convertToString(
