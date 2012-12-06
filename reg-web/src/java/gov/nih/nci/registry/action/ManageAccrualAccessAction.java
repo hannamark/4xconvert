@@ -231,11 +231,22 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 getAllTrialsForSiteAccrualSubmitter(); 
                 assignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
             }
+            List<OrgFamilyDTO> famList = FamilyHelper.getByOrgId(ofUserId);
+            StringBuffer famString = new StringBuffer();
+            boolean bFirst = true;
+            for (OrgFamilyDTO fam : famList) {
+                if (bFirst) {
+                    bFirst = false;
+                } else {
+                    famString.append(" | "); 
+                }
+                famString.append(fam.getName()); 
+            }
             familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser, null);
             msg = (rUser.getFirstName() + " " + rUser.getLastName() + " can now now submit accrual for "
-                  + getOrganization().getName() + " and any of " + getFamilies()
+                  + getOrganization().getName() + " and any of " + famString.toString()
                   + " family member org's Institutional, Externally Peer Reviewed, "
-                  + "and Industrial tirals where the org is a lead organization or a participating site.");
+                  + "and Industrial trials where the org is a lead organization or a participating site.");
         }
         populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
@@ -478,13 +489,13 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         }
     }
     
-    
     /**
      * @return String
      * @throws PAException PAException
      */
     public String assignmentHistory() throws PAException {
-        model.setHistory(studySiteAccrualAccessService.getAccrualAccessAssignmentHistory());
+        Collection<Long> trialIds = familyService.getSiteAccrualTrials(currentUser.getAffiliatedOrganizationId());
+        model.setHistory(studySiteAccrualAccessService.getAccrualAccessAssignmentHistory(trialIds));
         return HISTORY;
     }
     

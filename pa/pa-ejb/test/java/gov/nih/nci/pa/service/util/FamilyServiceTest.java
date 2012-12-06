@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -10,16 +11,22 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusBeanLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -40,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
@@ -53,6 +61,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     RegistryUserBeanLocal registryUserEjb;
     StudySiteAccrualAccessServiceBean siteAccessEjb;
     ParticipatingOrgServiceBean partOrgEjb;
+    DocumentWorkflowStatusServiceLocal dwsEjb;
     private RegistryUser ru;
     Session sess;
 
@@ -73,10 +82,14 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         registryUserEjb = new RegistryUserBeanLocal();
         siteAccessEjb = new StudySiteAccrualAccessServiceBean();
         partOrgEjb = new ParticipatingOrgServiceBean();
+        partOrgEjb.setStudySiteAccrualStatusService(mock(StudySiteAccrualStatusServiceLocal.class));
+        partOrgEjb.setPaHealthCareProviderService(mock(PAHealthCareProviderRemote.class));
         siteAccessEjb.setParticipatingOrgServiceLocal(partOrgEjb);
+        siteAccessEjb.setStudySiteAccrualStatusService(mock(StudySiteAccrualStatusServiceLocal.class));
+        dwsEjb = new DocumentWorkflowStatusBeanLocal();
         ejb.setRegistryUserService(registryUserEjb);
         ejb.setStudySiteAccess(siteAccessEjb);
-        ejb.setDwsService(mock(DocumentWorkflowStatusServiceLocal.class));
+        ejb.setDwsService(dwsEjb);
         ejb.setParticipatingOrgService(partOrgEjb);
     }
 
@@ -201,6 +214,73 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
+    public void assignFamilyAccrualAccessTest() throws Exception {
+        sess.createQuery("delete from StudyAccrualAccess").executeUpdate();
+        Long orgId = getCompleteTrialLeadOrgId();
+        ru.setAffiliatedOrganizationId(orgId);
+        TestSchema.addUpdObject(ru);
+        OrganizationDTO org  = new OrganizationDTO();
+        org.setIdentifier(IiConverter.convertToPoOrganizationIi(orgId.toString()));
+        DSet<Ii> dset = new DSet<Ii>();
+        Set<Ii> familySet = new HashSet<Ii>();
+        dset.setItem(familySet);
+        familySet.add(IiConverter.convertToPoFamilyIi("1"));
+        org.setFamilyOrganizationRelationships(dset);
+        List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
+        result.add(org);
+        when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(result);
+        Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+        familyMap.put(IiConverter.convertToPoFamilyIi("1"), getPoFamilyDTO(1L));
+        when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
+        when(fs.getActiveRelationships(1L)).thenReturn(getRelationships(new Long[] {1L}));
+
+        // not eligible for accrual, no dws
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+        
+        // not eligible for accrual
+        TestSchema.addAbstractedWorkflowStatus(TestSchema.studyProtocolIds.get(0));
+        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+
+        // eligible for accrual
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        for (DocumentWorkflowStatus dws : sp.getDocumentWorkflowStatuses()) {
+            dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+            sess.update(dws);
+        }
+        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        assertEquals(1, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
+        assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+    }
+
+;    @Test
+    public void getSiteAccrualTrialsTestNoTrialsTest() throws Exception {
+        assertEquals(0, ejb.getSiteAccrualTrials(null).size());
+        assertEquals(0, ejb.getSiteAccrualTrials(-1L).size());
+    }
+
+    @Test
+    public void getSiteAccrualTrialsTest() throws Exception {
+        Long orgId = getCompleteTrialLeadOrgId();
+        assertEquals(1, ejb.getSiteAccrualTrials(orgId).size());
+        convertToAbbreviateTrial();
+        assertEquals(1, ejb.getSiteAccrualTrials(orgId).size());
+    }
+
+    @Test
     public void unassignAllAccrualAccessNullUserTest() throws Exception {
         ejb.unassignAllAccrualAccess(null, ru);
     }
@@ -292,5 +372,27 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         qry.setParameter("actionCode", actionCode);
         qry.setParameter("statusCode", statusCode);
         return qry.list().size();
+    }
+
+    private Long getCompleteTrialLeadOrgId() {
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, spId);
+        assertFalse(sp.getProprietaryTrialIndicator());
+        Set<StudySite> sss = sp.getStudySites();
+        StudySite leadOrg = null;
+        for (StudySite ss : sss) {
+            if (ObjectUtils.equals(StudySiteFunctionalCode.LEAD_ORGANIZATION, ss.getFunctionalCode())) {
+                leadOrg = ss;
+            }
+        }
+        assertNotNull(leadOrg);
+        return Long.valueOf(leadOrg.getResearchOrganization().getOrganization().getIdentifier());
+    }
+
+    private void convertToAbbreviateTrial() {
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, spId);
+        sp.setProprietaryTrialIndicator(true);
+        sess.save(sp);
     }
 }

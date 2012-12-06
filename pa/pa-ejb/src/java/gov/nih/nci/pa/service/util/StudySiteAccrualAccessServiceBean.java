@@ -821,24 +821,27 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory()
+    public List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory(Collection<Long> trialIds)
             throws PAException {
         List<AccrualAccessAssignmentHistoryDTO> list = new ArrayList<AccrualAccessAssignmentHistoryDTO>();
-        Session session = PaHibernateUtil.getCurrentSession();
-        final Query query = session.createQuery("from "
-                + StudyAccrualAccess.class.getName() + " order by id desc");
-        query.setMaxResults(MAX_HISTORY_RECORDS);
-        final List<StudyAccrualAccess> boList = query.list();
-        for (StudyAccrualAccess saa : boList) {
-            AccrualAccessAssignmentHistoryDTO dto = new AccrualAccessAssignmentHistoryDTO();
-            dto.setAction(saa.getActionCode().getCode());
-            dto.setAssignee(saa.getRegistryUser().getFullName());
-            dto.setAssigner(getUserName(saa.getUserLastCreated()));
-            dto.setComments(saa.getComments());
-            dto.setDate(DateFormatUtils.format(saa.getDateLastCreated(),
-                    PAUtil.DATE_FORMAT));
-            dto.setTrialNciId(new PAServiceUtils().getTrialNciId(saa.getStudyProtocol().getId()));
-            list.add(dto);
+        if (CollectionUtils.isNotEmpty(trialIds)) {
+            Session session = PaHibernateUtil.getCurrentSession();
+            final Query query = session.createQuery("from " + StudyAccrualAccess.class.getName()
+                    + " saa where saa.studyProtocol.id in (:trialIds) order by id desc");
+            query.setMaxResults(MAX_HISTORY_RECORDS);
+            query.setParameterList("trialIds", trialIds);
+            final List<StudyAccrualAccess> boList = query.list();
+            for (StudyAccrualAccess saa : boList) {
+                AccrualAccessAssignmentHistoryDTO dto = new AccrualAccessAssignmentHistoryDTO();
+                dto.setAction(saa.getActionCode().getCode());
+                dto.setAssignee(saa.getRegistryUser().getFullName());
+                dto.setAssigner(getUserName(saa.getUserLastCreated()));
+                dto.setComments(saa.getComments());
+                dto.setDate(DateFormatUtils.format(saa.getDateLastCreated(),
+                        PAUtil.DATE_FORMAT));
+                dto.setTrialNciId(new PAServiceUtils().getTrialNciId(saa.getStudyProtocol().getId()));
+                list.add(dto);
+            }
         }
         return list;
     }

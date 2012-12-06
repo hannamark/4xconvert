@@ -3,6 +3,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.Set;
+
 import javax.ejb.Local;
 
 /**
@@ -36,4 +38,12 @@ public interface FamilyServiceLocal {
      * @throws PAException exception
      */
     void updateSiteAndFamilyPermissions(Long trialId) throws PAException;
+
+    /**
+     * Get a list of all trials for accrual.
+     * @param poOrgId the PO organization id of the site
+     * @return collection of study protocol ids
+     * @throws PAException exception
+     */
+    Set<Long> getSiteAccrualTrials(Long poOrgId) throws PAException;
 }

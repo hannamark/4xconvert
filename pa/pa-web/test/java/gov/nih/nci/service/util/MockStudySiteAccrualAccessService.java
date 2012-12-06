@@ -259,9 +259,9 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         
     }
 
-   
-    public List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory()
-            throws PAException {   
+
+    public List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory(Collection<Long> trialIds)
+            throws PAException {
         return new ArrayList<AccrualAccessAssignmentHistoryDTO>();
     }
 

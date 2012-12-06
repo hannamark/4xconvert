@@ -193,4 +193,8 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
         verify(fs, times(1)).unassignAllAccrualAccess(any(RegistryUser.class), any(RegistryUser.class));
     }
 
+    @Test
+    public void assignmentHistoryTest() throws Exception {
+        assertEquals("history", action.assignmentHistory());
+    }
 }

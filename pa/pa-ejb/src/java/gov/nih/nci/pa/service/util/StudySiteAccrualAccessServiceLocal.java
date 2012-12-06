@@ -238,12 +238,13 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
     
     /**
      * Gets Accrual Access Assignment History.
+     * @param trialIds the trials to search for
      * @return List<AccrualAccessAssignmentHistoryDTO>
      * @throws PAException PAException
      */
-    List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory() throws PAException;
-    
-    
+    List<AccrualAccessAssignmentHistoryDTO> getAccrualAccessAssignmentHistory(Collection<Long> trialIds) 
+            throws PAException;
+
     /**
      * @return List<AccrualAccessAssignmentByTrialDTO>
      * @throws PAException PAException

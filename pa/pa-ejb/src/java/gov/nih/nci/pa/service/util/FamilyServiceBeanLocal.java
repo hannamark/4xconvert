@@ -16,6 +16,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,6 +43,8 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyServiceBeanLocal implements FamilyServiceLocal {
+
+    private static final String ORG_IDS = "orgIds";
 
     @EJB
     private StudySiteAccrualAccessServiceLocal studySiteAccess;
@@ -105,38 +108,71 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         }
         List<Long> poOrgIds =  FamilyHelper.getAllRelatedOrgs(user.getAffiliatedOrganizationId());
         if (CollectionUtils.isNotEmpty(poOrgIds)) {
-            assignFamilyAccess(poOrgIds, user, creator, HQL_COMPLETE, StudySiteFunctionalCode.LEAD_ORGANIZATION, 
-                    comment);
-            assignFamilyAccess(poOrgIds, user, creator, HQL_ABBR, StudySiteFunctionalCode.TREATING_SITE, comment);
+            Set<Long> trialIds = getSiteAccrualTrials(poOrgIds);
+            assignFamilyAccess(trialIds, user, creator, comment);
         }
         user.setFamilyAccrualSubmitter(true);
         registryUserService.updateUser(user);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Long> getSiteAccrualTrials(Long poOrgId) throws PAException {
+        List<Long> poOrgList = poOrgId == null ? new ArrayList<Long>() : Arrays.asList(poOrgId);
+        return getSiteAccrualTrials(poOrgList);
+    }
+
     @SuppressWarnings("unchecked")
-    private void assignFamilyAccess(List<Long> poOrgIds, RegistryUser user, RegistryUser creator, //NOPMD
-            String hql, StudySiteFunctionalCode siteType, String comment) throws PAException {
+    private Set<Long> getSiteAccrualTrials(List<Long> poOrgIds) throws PAException {
+        Set<Long> result = new HashSet<Long>();
         if (CollectionUtils.isNotEmpty(poOrgIds)) {
             Session session = PaHibernateUtil.getCurrentSession();
-            Query  query = session.createQuery(hql);
+            Query  query = session.createQuery(HQL_COMPLETE);
             query.setParameter("statusCode", ActStatusCode.ACTIVE);
             query.setParameter("excludeType", SummaryFourFundingCategoryCode.NATIONAL);
-            query.setParameter("siteCode", siteType);
-            query.setParameterList("orgIds", convertPoOrgIdsToStrings(poOrgIds));
+            query.setParameter("siteCode", StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            query.setParameterList(ORG_IDS, convertPoOrgIdsToStrings(poOrgIds));
             List<Long> queryList = query.list();
-            Set<Long> trialIds = new HashSet<Long>();
             for (Long trialId : queryList) {
-                DocumentWorkflowStatusDTO dws = dwsService.getCurrentByStudyProtocol(
-                        IiConverter.convertToStudyProtocolIi(trialId));
-                DocumentWorkflowStatusCode code = CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, 
-                        dws.getStatusCode());
-                if (code.isEligibleForAccrual()) {
-                    trialIds.add(trialId);
-                }
+                result.add(trialId);
             }
-            studySiteAccess.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
-                    trialIds, comment, creator);
+            query = session.createQuery(HQL_ABBR);
+            query.setParameter("statusCode", ActStatusCode.ACTIVE);
+            query.setParameter("excludeType", SummaryFourFundingCategoryCode.NATIONAL);
+            query.setParameter("siteCode", StudySiteFunctionalCode.TREATING_SITE);
+            query.setParameterList(ORG_IDS, convertPoOrgIdsToStrings(poOrgIds));
+            queryList = query.list();
+            for (Long trialId : queryList) {
+                result.add(trialId);
+            }
         }
+        return result;
+    }
+
+    private void assignFamilyAccess(Set<Long> trialIds, RegistryUser user, RegistryUser creator, String comment)
+            throws PAException {
+        Set<Long> idsForAccess = new HashSet<Long>();
+        for (Long trialId : trialIds) {
+            if (isEligibleForAccrual(trialId)) {
+                idsForAccess.add(trialId);
+            }
+        }
+        studySiteAccess.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
+                idsForAccess, comment, creator);
+    }
+
+    private boolean isEligibleForAccrual(Long trialId) throws PAException {
+        boolean result = false;
+        DocumentWorkflowStatusDTO dws = dwsService.getCurrentByStudyProtocol(
+                IiConverter.convertToStudyProtocolIi(trialId));
+        if (dws != null) {
+            DocumentWorkflowStatusCode code = CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, 
+                    dws.getStatusCode());
+            result = code.isEligibleForAccrual();
+        }
+        return result;
     }
 
     static Set<String> convertPoOrgIdsToStrings(List<Long> poOrgIds) throws PAException {
@@ -227,7 +263,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         if (CollectionUtils.isNotEmpty(orgIds)) {
             Session session = PaHibernateUtil.getCurrentSession();
             Query query = session.createQuery(HQL_SITE_TRIAL_SUBMITTERS);
-            query.setParameterList("orgIds", orgIds);
+            query.setParameterList(ORG_IDS, orgIds);
             List<RegistryUser> queryList = query.list();
             for (RegistryUser user : queryList) {
                 result.put(user, AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE);
@@ -235,7 +271,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             Collection<Long> relatedOrgs = FamilyHelper.getAllRelatedOrgs(orgIds);
             if (CollectionUtils.isNotEmpty(relatedOrgs)) {
                 query = session.createQuery(HQL_FAMILY_TRIAL_SUBMITTERS);
-                query.setParameterList("orgIds", relatedOrgs);
+                query.setParameterList(ORG_IDS, relatedOrgs);
                 queryList = query.list();
                 for (RegistryUser user : queryList) {
                     result.put(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);

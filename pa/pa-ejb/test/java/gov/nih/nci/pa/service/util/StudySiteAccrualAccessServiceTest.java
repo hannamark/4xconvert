@@ -595,7 +595,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         when(userServiceLocal.getUser(any(String.class))).thenReturn(user);
         bean.setRegistryUserService(userServiceLocal);        
         
-        List<AccrualAccessAssignmentHistoryDTO>  list = bean.getAccrualAccessAssignmentHistory();
+        List<AccrualAccessAssignmentHistoryDTO>  list = bean.getAccrualAccessAssignmentHistory(Arrays.asList(sp.getId()));
         assertEquals(2, list.size());
         
         AccrualAccessAssignmentHistoryDTO unassign = list.get(0);
