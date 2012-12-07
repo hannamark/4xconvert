@@ -164,8 +164,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean checkDisease;
     private boolean patientCheck;
     private final Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
+
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
+
     /**
      * {@inheritDoc}
      */
@@ -204,7 +206,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                             results.setChangeCode(cc);
                         }
                     }
-                    sp = getStudyProtocol(protocolId);
+                    sp = getStudyProtocol(protocolId, errMsg);
                     if (sp != null) {
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
                         results.setNciIdentifier(ii.getExtension());

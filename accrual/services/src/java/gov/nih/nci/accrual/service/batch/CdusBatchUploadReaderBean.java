@@ -268,7 +268,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         List<String[]> lines = validationResult.getValidatedLines();
         String[] studyLine = BatchUploadUtils.getStudyLine(lines);
         String studyProtocolId = studyLine[1];
-        StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
+        StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, errMsg);
         Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
         importResult.setNciIdentifier(ii.getExtension());
         if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {

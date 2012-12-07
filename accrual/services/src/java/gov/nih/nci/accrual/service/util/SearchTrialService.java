@@ -136,4 +136,11 @@ public interface SearchTrialService {
      * @throws PAException on error
      */
     List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException;
+
+    /**
+     * Validate that there are no duplicate treating sites.
+     * @param studyProtocolId the internal id of the protocol
+     * @throws PAException descriptive error message
+     */
+    void validate(Long studyProtocolId) throws PAException;
 }

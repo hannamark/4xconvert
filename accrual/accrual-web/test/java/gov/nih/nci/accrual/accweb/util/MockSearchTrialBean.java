@@ -199,4 +199,9 @@ public class MockSearchTrialBean implements SearchTrialService {
 			throws PAException {
 		return new ArrayList<AccrualCountsDto>();
 	}
+
+    @Override
+    public void validate(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+    }
 }

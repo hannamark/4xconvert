@@ -317,7 +317,7 @@ public class SearchTrialBean implements SearchTrialService {
                             + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') ";
             Query query = session.createQuery(hql);
             query.setParameterList("studyProtocolIdentifiers", trials);
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query.list();
             for (Object[] trial : queryList) {
                 result.put((Long) trial[1], (String) trial[0]);
@@ -329,7 +329,7 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException {
         List<AccrualCountsDto> result = new ArrayList<AccrualCountsDto>();
         Long studyProtocolId = 0L;
@@ -377,6 +377,21 @@ public class SearchTrialBean implements SearchTrialService {
             result.add(ac);            
         }
     return result;    
+    }
+
+    @Override
+    @SuppressWarnings(UNCHECKED)
+    public void validate(Long studyProtocolId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery("SELECT org.identifier FROM StudyProtocol sp JOIN sp.studySites ss "
+                + "JOIN ss.healthCareFacility hf JOIN hf.organization org WHERE sp.id = :trialId "
+                + "AND ss.functionalCode = :siteCode GROUP BY org.identifier HAVING count(*) > 1");
+        query.setParameter("siteCode", StudySiteFunctionalCode.TREATING_SITE);
+        query.setParameter("trialId", studyProtocolId);
+        List<Object> queryList = query.list();
+        if (!queryList.isEmpty()) {
+            throw new PAException("Duplicate treating sites.");
+        }
     }
 
     private void setCounts(Long studyProtocolId, Long studysiteId,

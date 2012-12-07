@@ -247,14 +247,13 @@ public class BaseBatchUploadReader {
     @EJB
     private SearchTrialService searchTrialService;
 
-    
-    
     /**
      * Gets the study protocol with the given id, be it NCI, CTEP or DCP identifier.
      * @param protocolId the protocol id
+     * @param errMsg buffer for saving errors
      * @return the study protocol with the given id or null if no such study exists
      */
-    protected StudyProtocolDTO getStudyProtocol(String protocolId) {
+    protected StudyProtocolDTO getStudyProtocol(String protocolId, StringBuffer errMsg) {
         StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance().getStudyProtocolService();
         StudyProtocolDTO foundStudy = null;
         Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
@@ -268,9 +267,19 @@ public class BaseBatchUploadReader {
             protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
             foundStudy = foundStudy != null ? foundStudy : spSvc.loadStudyProtocol(protocolIi);
         }
+        if (foundStudy == null) {
+            errMsg.append("Study " + protocolId + " not found in CTRP.");
+        } else {
+            try {
+                getSearchTrialService().validate(IiConverter.convertToLong(foundStudy.getIdentifier()));
+            } catch (PAException e) {
+                errMsg.append("Please contact CTRO to correct data error in trial " + protocolId + ": "
+                        + e.getMessage());
+            }
+        }
         return foundStudy;
     }
-    
+
     /**
      * Loads the disease with the given meddra code, returning null if no such disease can be found.
      * @param meddraCode the meddra code of the disease to retrieve
@@ -340,63 +349,54 @@ public class BaseBatchUploadReader {
     public StudySubjectServiceLocal getStudySubjectService() {
         return studySubjectService;
     }
-    
     /**
      * @param studySubjectService the studySubjectService to set
      */
     public void setStudySubjectService(StudySubjectServiceLocal studySubjectService) {
         this.studySubjectService = studySubjectService;
     }
-    
     /**
      * @return the patientService
      */
     public PatientServiceLocal getPatientService() {
         return patientService;
     }
-    
     /**
      * @param patientService the patientService to set
      */
     public void setPatientService(PatientServiceLocal patientService) {
         this.patientService = patientService;
     }
-    
     /**
      * @return the countryService
      */
     public CountryService getCountryService() {
         return countryService;
     }
-    
     /**
      * @param countryService the countryService to set
      */
     public void setCountryService(CountryService countryService) {
         this.countryService = countryService;
     }
-    
     /**
      * @return the performedActivityService
      */
     public PerformedActivityServiceLocal getPerformedActivityService() {
         return performedActivityService;
     }
-    
     /**
      * @param performedActivityService the performedActivityService to set
      */
     public void setPerformedActivityService(PerformedActivityServiceLocal performedActivityService) {
         this.performedActivityService = performedActivityService;
     }
-    
     /**
      * @return the searchStudySiteService
      */
     public SearchStudySiteService getSearchStudySiteService() {
         return searchStudySiteService;
     }
-    
     /**
      * @param searchStudySiteService the searchStudySiteService to set
      */

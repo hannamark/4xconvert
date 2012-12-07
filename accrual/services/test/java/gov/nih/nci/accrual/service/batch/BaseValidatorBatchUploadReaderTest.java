@@ -82,17 +82,31 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hsqldb.lib.StringUtil;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -102,11 +116,90 @@ public class BaseValidatorBatchUploadReaderTest {
    
     private static final String CODE = "code";
     private static final List<String> valueList = createValueList();
+    BaseValidatorBatchUploadReader bean;
+    StudyProtocolServiceRemote spSvc;
+    SearchTrialService stSvc;
+
+    @Before
+    public void setUp() {
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        spSvc = mock(StudyProtocolServiceRemote.class);
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
+        bean = mock(BaseValidatorBatchUploadReader.class);
+        stSvc = mock(SearchTrialService.class);
+        when(bean.getSearchTrialService()).thenReturn(stSvc);
+    }
+
+    @Test
+    public void getStudyProtocol() throws PAException {
+        String nciStr = "NCI-0000-00000";
+        Ii nciIi = IiConverter.convertToAssignedIdentifierIi(nciStr);
+        String ctepStr = "xyzzy";
+        Ii ctepIi = IiConverter.convertToAssignedIdentifierIi(ctepStr);
+        ctepIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        String dcpStr = "abccb";
+        Ii dcpIi = IiConverter.convertToAssignedIdentifierIi(dcpStr);
+        dcpIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, new StringBuffer());
+        doCallRealMethod().when(bean).getStudyProtocol(dcpStr, new StringBuffer());
+
+        // not found
+        StringBuffer errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).getStudyProtocol(null, errMsg);
+        StudyProtocolDTO dto = bean.getStudyProtocol(null, errMsg);
+        assertNull(dto);
+        assertEquals("Study null not found in CTRP.", errMsg.toString());
+
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).getStudyProtocol(nciStr, errMsg);
+        dto = bean.getStudyProtocol(nciStr, errMsg);
+        assertNull(dto);
+        assertEquals("Study " + nciStr + " not found in CTRP.", errMsg.toString());
+
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
+        dto = bean.getStudyProtocol(ctepStr, errMsg);
+        assertNull(dto);
+        assertEquals("Study " + ctepStr + " not found in CTRP.", errMsg.toString());
+
+        // NCI number
+        errMsg = new StringBuffer();
+        StudyProtocolDTO resultDto = new StudyProtocolDTO();
+        when(spSvc.loadStudyProtocol(nciIi)).thenReturn(resultDto);
+        doCallRealMethod().when(bean).getStudyProtocol(nciStr, errMsg);
+        dto = bean.getStudyProtocol(nciStr, errMsg);
+        assertNotNull(dto);
+        assertEquals("", errMsg.toString());
+        when(spSvc.loadStudyProtocol(nciIi)).thenReturn(null);
+
+        // CTEP number
+        errMsg = new StringBuffer();
+        when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(resultDto);
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
+        dto = bean.getStudyProtocol(ctepStr, errMsg);
+        assertNotNull(dto);
+        assertEquals("", errMsg.toString());
+        when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(null);
+
+        // DCP number
+        errMsg = new StringBuffer();
+        when(spSvc.loadStudyProtocol(dcpIi)).thenReturn(resultDto);
+        doCallRealMethod().when(bean).getStudyProtocol(dcpStr, errMsg);
+        dto = bean.getStudyProtocol(dcpStr, errMsg);
+        assertNotNull(dto);
+        assertEquals("", errMsg.toString());
+
+        // PA data not valid
+        doThrow(new PAException("xyz")).when(stSvc).validate(anyLong());
+        dto = bean.getStudyProtocol(dcpStr, errMsg);
+        assertNotNull(dto);
+        assertEquals("Please contact CTRO to correct data error in trial " + dcpStr + ": xyz", errMsg.toString());
+    }
 
     @Test
     public void validateDiseaseCodeICD9ValidationFails() {
         StringBuffer errMsg = new StringBuffer();
-        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         when(bean.getDisease(CODE, errMsg)).thenReturn(null);
         when(bean.getICD9Disease(CODE, errMsg)).thenReturn(null);
@@ -120,7 +213,6 @@ public class BaseValidatorBatchUploadReaderTest {
     @Test
     public void validateDiseaseCodeICD9ValidationPasses() {
         StringBuffer errMsg = new StringBuffer();
-        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
         when(bean.getDisease(CODE, errMsg)).thenReturn(null);
         when(bean.getICD9Disease(CODE, errMsg)).thenReturn(new ICD9DiseaseDTO());

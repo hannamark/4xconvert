@@ -101,6 +101,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -304,5 +307,25 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         } catch (Exception e) {
         	// expected
         }        
+    }
+
+    @Test
+    public void validate() throws Exception {
+        bean.validate(-1L);
+        bean.validate(TestSchema.studyProtocols.get(0).getId());
+        StudyProtocol sp = TestSchema.studyProtocols.get(0);
+        StudySite duplicateSite = new StudySite();
+        duplicateSite.setLocalStudyProtocolIdentifier("SWOG");
+        duplicateSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        duplicateSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        duplicateSite.setHealthCareFacility(TestSchema.healthCareFacilities.get(0));
+        duplicateSite.setStudyProtocol(sp);
+        TestSchema.addUpdObject(duplicateSite);
+        try {
+            bean.validate(TestSchema.studyProtocols.get(0).getId());
+            fail();
+        } catch (PAException e) {
+            // good
+        }
     }
 }

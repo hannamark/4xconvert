@@ -178,14 +178,13 @@ public class SearchStudySiteBean implements SearchStudySiteService {
             Object[] site = qArr;
             StudySiteAccrualStatusDTO ssas = accrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(
                     IiConverter.convertToIi((Long) site[0]));
-            if (ssas != null) {
-                if (RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode()).isEligibleForAccrual()) {
-                    SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
-                    dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
-                    dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
-                    dto.setOrganizationIi(IiConverter.convertToIi((String) site[2]));
-                    result.add(dto);
-                }
+            if (ssas != null 
+                    && RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode()).isEligibleForAccrual()) {
+                SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
+                dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
+                dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
+                dto.setOrganizationIi(IiConverter.convertToIi((String) site[2]));
+                result.add(dto);
             }
         }
         return result;
