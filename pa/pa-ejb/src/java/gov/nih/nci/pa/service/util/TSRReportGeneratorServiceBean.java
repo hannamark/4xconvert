@@ -759,12 +759,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         List<StudyResourcingDTO> funds = studyResourcingService
                 .getStudyResourcingByStudyProtocol(studyProtocolDto.getIdentifier());
         for (StudyResourcingDTO fund : funds) {
-            TSRReportNihGrant nihGrant = new TSRReportNihGrant();
-            nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
-            nihGrant.setNihInstitutionCode(getValue(fund.getNihInstitutionCode()));
-            nihGrant.setSerialNumber(getValue(fund.getSerialNumber()));
-            nihGrant.setProgramCode(getValue(fund.getNciDivisionProgramCode()));
-            nihGrants.add(nihGrant);
+            if (!ISOUtil.isBlNull(fund.getActiveIndicator())) {
+                TSRReportNihGrant nihGrant = new TSRReportNihGrant();
+                nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
+                nihGrant.setNihInstitutionCode(getValue(fund.getNihInstitutionCode()));
+                nihGrant.setSerialNumber(getValue(fund.getSerialNumber()));
+                nihGrant.setProgramCode(getValue(fund.getNciDivisionProgramCode()));
+                nihGrants.add(nihGrant);
+            }
         }
         tsrReportGenerator.setNihGrants(nihGrants);
     }

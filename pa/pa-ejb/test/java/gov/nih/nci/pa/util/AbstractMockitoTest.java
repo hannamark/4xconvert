@@ -684,6 +684,7 @@ public class AbstractMockitoTest {
         studyResDto.setNihInstitutionCode(cd);
         studyResDto.setNciDivisionProgramCode(cd);
         studyResDto.setSerialNumber(StConverter.convertToSt("177"));
+        studyResDto.setActiveIndicator(BlConverter.convertToBl(true));
         studyResourcingDtoList.add(studyResDto);
     }
 

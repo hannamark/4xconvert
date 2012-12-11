@@ -841,16 +841,18 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             .getStudyResourcingByStudyProtocol(spDTO.getIdentifier());
 
         for (StudyResourcingDTO srDto : srDtos) {
-            Element grantId = doc.createElement("secondary_id");
-            StringBuilder id = new StringBuilder();
-            id.append(srDto.getFundingMechanismCode().getCode());
-            id.append(srDto.getNihInstitutionCode().getCode());
-            id.append(srDto.getSerialNumber().getValue());
-            XmlGenHelper.appendElement(grantId, XmlGenHelper.createElementWithTextblock("id", id.toString(), doc));
-            XmlGenHelper.appendElement(grantId, XmlGenHelper.createElementWithTextblock(
-                    "id_type", "NIH Grant Number", doc));
+            if (!ISOUtil.isBlNull(srDto.getActiveIndicator())) {
+                Element grantId = doc.createElement("secondary_id");
+                StringBuilder id = new StringBuilder();
+                id.append(srDto.getFundingMechanismCode().getCode());
+                id.append(srDto.getNihInstitutionCode().getCode());
+                id.append(srDto.getSerialNumber().getValue());
+                XmlGenHelper.appendElement(grantId, XmlGenHelper.createElementWithTextblock("id", id.toString(), doc));
+                XmlGenHelper.appendElement(grantId, XmlGenHelper.createElementWithTextblock(
+                        "id_type", "NIH Grant Number", doc));
 
-            XmlGenHelper.appendElement(idInfoNode, grantId);
+                XmlGenHelper.appendElement(idInfoNode, grantId);
+            }
         }
 
 
