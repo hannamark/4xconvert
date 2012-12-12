@@ -745,6 +745,17 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 XmlGenHelper.createElementWithTextblock("id_domain", "CTRP (Clinical Trial Reporting Program)", doc));
         XmlGenHelper.appendElement(idInfo, assignedId);
 
+        boolean isProprietaryTrial = !ISOUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
+                && BlConverter.convertToBoolean(spDTO.getProprietaryTrialIndicator());
+        if (!isProprietaryTrial) {
+            List<Ii> otherIdentifierIis = PAUtil.getOtherIdentifiers(spDTO);
+            for (Ii otherIdIi : otherIdentifierIis) {
+                Element otherIdentifier = doc.createElement("secondary_id");
+                XmlGenHelper.appendElement(otherIdentifier,
+                        XmlGenHelper.createElementWithTextblock("id", otherIdIi.getExtension(), doc));                
+                XmlGenHelper.appendElement(idInfo, otherIdentifier);
+            }
+        }
         addTrialSecondaryIdInfo(spDTO, doc, idInfo);
 
         addGrantInfo(spDTO, doc, idInfo);
