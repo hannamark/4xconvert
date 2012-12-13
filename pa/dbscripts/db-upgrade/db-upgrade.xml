@@ -1177,4 +1177,8 @@
         <comment>Added CCR trial list.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5656-2.sql"/>
      </changeSet>          
+     <changeSet id="PO-5653" author="krylovd">
+        <comment>Add birth month flag to Patient.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5653.sql"/>
+     </changeSet>          
 </databaseChangeLog>
