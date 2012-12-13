@@ -116,7 +116,6 @@ import org.apache.log4j.Logger;
  */
 public class BatchUploadUtils {
     private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
-    private static final String DOB_DATE_FORMAT = "yyyyMM";
     private static final String FULL_DATE_FORMAT = "yyyyMMdd";
     /**
      * Index of a patients race code from the PATIENT_RACE line.
@@ -138,16 +137,7 @@ public class BatchUploadUtils {
      * The unique identifier of a patient on a PATIENT_RACE line.
      */
     private static final int PATIENT_ID_INDEX = 2;
-   
-    /**
-     * Returns the patient date of birth from the given dob string.
-     * @param dob the dob string in year/month format
-     * @return the parsed date or null if the date is unparseable
-     */
-    public static Date getPatientDOB(String dob) {
-        return formatDate(dob, DOB_DATE_FORMAT);
-    }
-    
+
     /**
      * Returns a date from the given date string (yyyyMMdd).
      * @param date the date to parse

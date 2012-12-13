@@ -3,7 +3,6 @@ package gov.nih.nci.accrual.dto;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class SearchSSPCriteriaDto implements Serializable {
     private List<Long> studySiteIds = new ArrayList<Long>();
     private FunctionalRoleStatusCode  studySubjectStatusCode;
     private String studySubjectAssignedIdentifier;
-    private Timestamp patientBirthDate;
+    private String patientBirthDate;
 
     /**
      * @return the studySiteIds
@@ -60,13 +59,13 @@ public class SearchSSPCriteriaDto implements Serializable {
     /**
      * @return the patientBirthDate
      */
-    public Timestamp getPatientBirthDate() {
+    public String getPatientBirthDate() {
         return patientBirthDate;
     }
     /**
      * @param patientBirthDate the patientBirthDate to set
      */
-    public void setPatientBirthDate(Timestamp patientBirthDate) {
+    public void setPatientBirthDate(String patientBirthDate) {
         this.patientBirthDate = patientBirthDate;
     }
 }

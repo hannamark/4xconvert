@@ -721,6 +721,13 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     }
 
     @Test
+    public void birthDateYearOnlyOr000000() throws Exception {
+        File file = new File(this.getClass().getResource("/CDUS_Complete-BirthDates.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
+        assertTrue(results.get(0).isPassedValidation());
+    }
+
+    @Test
     public void testIndustrialTrialWithpatients() throws Exception {
         assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
         setStudyProtocolSvc();

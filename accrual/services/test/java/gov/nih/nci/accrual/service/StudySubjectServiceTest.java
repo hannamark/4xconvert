@@ -97,6 +97,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -309,10 +310,10 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         criteria.setStudySubjectAssignedIdentifier(TestSchema.studySubjects.get(0).getAssignedIdentifier());
         boList = bean.search(criteria);
         assertEquals(1, boList.size());
-        criteria.setPatientBirthDate(new Timestamp(new Date().getTime()));
+        criteria.setPatientBirthDate("01/1801");
         boList = bean.search(criteria);
         assertTrue(boList.isEmpty());
-        criteria.setPatientBirthDate(TestSchema.patients.get(0).getBirthDate());
+        criteria.setPatientBirthDate(AccrualUtil.timestampToYearMonthString(TestSchema.patients.get(0).getBirthDate(), TestSchema.patients.get(0).getBirthMonthExcluded()));
         boList = bean.search(criteria);
         assertEquals(1, boList.size());
         criteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.SUSPENDED);
@@ -469,19 +470,47 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         assertFalse(l.isEmpty());
         assertEquals(2, l.size());
 
-        // get one based on birth date
-        criteria.setPatientBirthDate(TestSchema.studySubjects.get(1).getPatient().getBirthDate());
-        l = bean.searchFast(criteria);
-        assertFalse(l.isEmpty());
-        assertEquals(1, l.size());
-        assertEquals(TestSchema.studySubjects.get(1).getAssignedIdentifier(), l.get(0).getAssignedIdentifier());
-        criteria.setPatientBirthDate(null);
-
-        // get one based on birth date
-        criteria.setPatientBirthDate(TestSchema.studySubjects.get(1).getPatient().getBirthDate());
+        // get based on different type birth dates
+        Patient patient = TestSchema.studySubjects.get(1).getPatient();
+        String yrMoStr = AccrualUtil.timestampToYearMonthString(patient.getBirthDate(), false);
+        String yrStr = AccrualUtil.timestampToYearMonthString(patient.getBirthDate(), true);
+        String nullStr = "000000";
+        // yearMonth
+        criteria.setPatientBirthDate(yrMoStr);
         l = bean.searchFast(criteria);
         assertEquals(1, l.size());
         assertEquals(TestSchema.studySubjects.get(1).getAssignedIdentifier(), l.get(0).getAssignedIdentifier());
+        criteria.setPatientBirthDate(yrStr);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        criteria.setPatientBirthDate(nullStr);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        // year
+        patient.setBirthMonthExcluded(true);
+        TestSchema.addUpdObject(patient);
+        criteria.setPatientBirthDate(yrMoStr);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        criteria.setPatientBirthDate(yrStr);
+        l = bean.searchFast(criteria);
+        assertEquals(1, l.size());
+        criteria.setPatientBirthDate(nullStr);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        // null (i.e. 000000)
+        patient.setBirthMonthExcluded(false);
+        patient.setBirthDate(null);
+        criteria.setPatientBirthDate(yrMoStr);
+        TestSchema.addUpdObject(patient);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        criteria.setPatientBirthDate(yrStr);
+        l = bean.searchFast(criteria);
+        assertEquals(0, l.size());
+        criteria.setPatientBirthDate(nullStr);
+        l = bean.searchFast(criteria);
+        assertEquals(1, l.size());
         criteria.setPatientBirthDate(null);
 
         // get none based on status

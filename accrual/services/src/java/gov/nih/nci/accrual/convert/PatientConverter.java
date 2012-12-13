@@ -92,6 +92,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
+import java.text.SimpleDateFormat;
+
 /**
  * @author Hugh Reinhart
  * @since Aug 28, 2009
@@ -105,7 +107,13 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     public PatientDto convertFromDomainToDto(Patient bo) {
         PatientDto dto = new PatientDto();
         if (bo.getBirthDate() != null) {
-            dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
+            if (!bo.getBirthMonthExcluded()) {
+                dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat();
+                sdf.applyPattern("yyyy");
+                dto.setBirthDate(AccrualUtil.yearMonthStringToTs(sdf.format(bo.getBirthDate())));
+            }
         }
         dto.setCountryIdentifier(IiConverter.convertToIi(bo.getCountry().getId()));
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
@@ -124,7 +132,7 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
     public Patient convertFromDtoToDomain(PatientDto dto) {
         Patient bo = new Patient();
         bo.setBirthDate(AccrualUtil.yearMonthTsToTimestamp(dto.getBirthDate()));
-        
+        bo.setBirthMonthExcluded(AccrualUtil.isYearOnly(dto.getBirthDate()));
         Country country = new Country();
         country.setId(IiConverter.convertToLong(dto.getCountryIdentifier()));
         bo.setCountry(country);

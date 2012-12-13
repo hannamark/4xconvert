@@ -163,7 +163,9 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 if (StringUtils.isEmpty(pBirthDate)) {
                     errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
                     .append(appendLineNumber(lineNumber)).append("\n");
-                } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
+                } else if (!AccrualUtil.YR_MO_NULL.equals(pBirthDate)
+                        && !new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())
+                        && !new DateValidator().isValid(pBirthDate, "yyyy", Locale.getDefault())) {
                     errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
                 }

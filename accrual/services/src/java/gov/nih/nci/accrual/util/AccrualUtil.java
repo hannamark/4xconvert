@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.iso21090.EdText;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -99,11 +100,13 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -117,34 +120,29 @@ import au.com.bytecode.opencsv.CSVParser;
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class AccrualUtil {
     private static final int YR_MO_FORMAT_IDX = 5;
+    private static final int YR_MO_BATCH_FORMAT_IDX = 7;
+    private static final int YR_FORMAT_IDX = 8;
     private static final CSVParser PARSER = new CSVParser();
-
-
-    /**
-     * Private class used to decode and normalize date strings.
-     */
-    private static class ValidYearMonthFormat {
-        private final String pattern;
-        private final int endIndex;
-        public ValidYearMonthFormat(String pattern) {
-            this.pattern = pattern;
-            endIndex = pattern.length();
-        }
-    }
+    /** Length for birth date indicating year only data. */
+    public static final int YR_LEN = 4;
+    /** String equivalent of a null birth date. */
+    public static final String YR_MO_NULL = "000000";
 
     /**
      * Static ordered list of valid date format patterns.
      */
-    private static ValidYearMonthFormat[] yearMonthFormats;
+    private static String[] yearMonthFormats;
     static {
-        yearMonthFormats = new ValidYearMonthFormat[] {
-                new ValidYearMonthFormat("MM/dd/yyyy"),
-                new ValidYearMonthFormat("yyyy-MM-dd HH:mm:ss"),
-                new ValidYearMonthFormat("yyyy-MM-dd"),
-                new ValidYearMonthFormat("yyyy/MM/dd"),
-                new ValidYearMonthFormat("MM-dd-yyyy HH:mm:ss"),
-                new ValidYearMonthFormat("MM/yyyy"),
-                new ValidYearMonthFormat("MM-yyyy")
+        yearMonthFormats = new String[] {
+                "MM/dd/yyyy",
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd",
+                "yyyy/MM/dd",
+                "MM-dd-yyyy HH:mm:ss",
+                "MM/yyyy",
+                "MM-yyyy",
+                "yyyyMM",
+                "yyyy"
         };
     }
 
@@ -155,25 +153,25 @@ public class AccrualUtil {
      * @return Date
      */
     private static Date yearMonthStringToDate(String inDate) {
-        if (inDate == null) {
+        if (StringUtils.isEmpty(inDate)) {
             return null;
         }
         Date outDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat();
-        for (ValidYearMonthFormat fm : yearMonthFormats) {
-            sdf.applyPattern(fm.pattern);
-            sdf.setLenient(false);
+        sdf.setLenient(false);
+        int startIndex = StringUtils.isNumeric(inDate.trim()) ? YR_MO_BATCH_FORMAT_IDX : 0;
+        for (int idx = startIndex; idx < yearMonthFormats.length; idx++) {
+            sdf.applyPattern(yearMonthFormats[idx]);
             try {
-                int endIndex = inDate.trim().length() < fm.endIndex ? inDate.trim().length() : fm.endIndex;
-                inDate.trim().substring(0, endIndex);
-                outDate = sdf.parse(inDate);  //dateToParse);
+                outDate = sdf.parse(inDate.trim());
                 break;
             } catch (ParseException e) {
-               continue; //best effort to try the other date format(s).
+                continue; //best effort to try the other date format(s).
             }
         }
         return outDate;
     }
+
     /**
      * Convert an input string to a normalized year month string.
      * The output format is determined by the first element in
@@ -185,10 +183,17 @@ public class AccrualUtil {
     public static String normalizeYearMonthString(String inDate) {
         Date outDate = yearMonthStringToDate(inDate);
         if (outDate == null) {
+            if (StringUtils.equals(StringUtils.trim(inDate), YR_MO_NULL)) {
+                return YR_MO_NULL;
+            }
             return null;
         }
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern(yearMonthFormats[YR_MO_FORMAT_IDX].pattern);
+        if (StringUtils.length(StringUtils.trim(inDate)) == YR_LEN) {
+            sdf.applyPattern(yearMonthFormats[YR_FORMAT_IDX]);
+        } else {
+            sdf.applyPattern(yearMonthFormats[YR_MO_FORMAT_IDX]);
+        }
         return sdf.format(outDate);
     }
 
@@ -197,7 +202,17 @@ public class AccrualUtil {
      * @return timestamp represented as a string in MM/YYYY format
      */
     public static String tsToYearMonthString(Ts ts) {
-        return normalizeYearMonthString(TsConverter.convertToString(ts));
+        if (ISOUtil.isTsNull(ts)) {
+            return YR_MO_NULL;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        EdText edt = ts.getOriginalText();
+        if (edt != null && StringUtils.length(edt.getValue()) == YR_LEN) {
+            sdf.applyPattern(yearMonthFormats[YR_FORMAT_IDX]);
+        } else {
+            sdf.applyPattern(yearMonthFormats[YR_MO_FORMAT_IDX]);
+        }
+        return sdf.format(ts.getValue());
     }
 
     /**
@@ -205,12 +220,36 @@ public class AccrualUtil {
      * @return Ts representation of string
      */
     public static Ts yearMonthStringToTs(String yrMonthString) {
-        Date dt = yearMonthStringToDate(normalizeYearMonthString(yrMonthString));
-        if (dt == null) {
+        String str = normalizeYearMonthString(yrMonthString);
+        if (str == null || YR_MO_NULL.equals(str)) {
             return null;
         }
+        EdText edt = new EdText();
+        edt.setValue(str);
+        Date dt = yearMonthStringToDate(str);
         Timestamp ts = new Timestamp(dt.getTime());
-        return TsConverter.convertToTs(ts);
+        Ts result = TsConverter.convertToTs(ts);
+        result.setOriginalText(edt);
+        return result;
+    }
+
+    /**
+     * Convert timestamp to a year or a year and month string.
+     * @param tstamp the timestamp
+     * @param monthExcluded flag to return year only
+     * @return the string
+     */
+    public static String timestampToYearMonthString(Timestamp tstamp, boolean monthExcluded) {
+        if (tstamp == null) {
+            return YR_MO_NULL;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        if (monthExcluded) {
+            sdf.applyPattern(yearMonthFormats[YR_FORMAT_IDX]);
+        } else {
+            sdf.applyPattern(yearMonthFormats[YR_MO_FORMAT_IDX]);
+        }
+        return sdf.format(tstamp);
     }
 
     /**
@@ -218,21 +257,34 @@ public class AccrualUtil {
      * @return Timestamp
      */
     public static Timestamp yearMonthTsToTimestamp(Ts yrMonthTs) {
-        Date dt = yearMonthStringToDate(normalizeYearMonthString(TsConverter.convertToString(yrMonthTs)));
-        if (dt == null) {
+        if (ISOUtil.isTsNull(yrMonthTs)) {
             return null;
         }
-        return new Timestamp(dt.getTime());
+        Date date =  DateUtils.truncate(yrMonthTs.getValue(), isYearOnly(yrMonthTs) ? Calendar.YEAR : Calendar.MONTH);
+        return new Timestamp(date.getTime());
     }
+
     /**
      * @param dateString year month date string
      * @return timestamp
      */
     public static Timestamp yearMonthStringToTimestamp(String dateString) {
         Date dt = yearMonthStringToDate(dateString);
-        return dt == null ? null : new Timestamp(yearMonthStringToDate(dateString).getTime());
+        return dt == null ? null : new Timestamp(dt.getTime());
     }
-    
+
+    /**
+     * Checks if a Ts represents only year.
+     * @param ts the Ts object
+     * @return boolean
+     */
+    public static boolean isYearOnly(Ts ts) {
+        if (ts == null || ts.getOriginalText() == null) {
+            return false;
+        }
+        return YR_LEN == StringUtils.length(ts.getOriginalText().getValue());
+    }
+
     /**
      * Checks that user has accrual access to site with id provided.
      * @param studySiteIi site ii
@@ -248,7 +300,7 @@ public class AccrualUtil {
        
         return isUserAllowedAccrualAccess(studySiteIi, regUser);
     }
-    
+
     /**
      * Checks that user has accrual access to site with id provided.
      * @param studySiteIi site ii

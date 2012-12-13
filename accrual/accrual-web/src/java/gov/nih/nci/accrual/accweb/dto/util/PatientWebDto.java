@@ -178,7 +178,7 @@ public class PatientWebDto {
         if (!action.hasActionErrors() && StringUtils.isNotEmpty(dto.getRegistrationDate())) {
             Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(dto.getRegistrationDate());
             Timestamp birth = AccrualUtil.yearMonthStringToTimestamp(dto.getBirthDate());
-            if (birth.after(registration)) {
+            if (birth != null && birth.after(registration)) {
                 action.addActionError("The birth date must be less then or equal to the registration date.");
             }
         }
@@ -241,8 +241,7 @@ public class PatientWebDto {
         loadRaces(p.getRaceCode());
         genderCode = AccrualUtil.getCode(p.getSexCode());
         ethnicCode = AccrualUtil.getCode(p.getEthnicCode());
-        birthDate = p.getBirthDate() == null ? null 
-                : AccrualUtil.normalizeYearMonthString(p.getBirthDate().toString());
+        birthDate = AccrualUtil.timestampToYearMonthString(p.getBirthDate(), p.getBirthMonthExcluded());
         countryIdentifier = p.getCountry().getId();
         countryName = p.getCountry().getName();
         zip = p.getZip();

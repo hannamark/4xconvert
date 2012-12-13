@@ -84,7 +84,6 @@ package gov.nih.nci.accrual.service.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -102,14 +101,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -156,16 +153,7 @@ public class BatchUploadUtilsTest {
         });
         when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
     }
-    
-    @Test
-    public void testDOBConversion() {
-        Date today = DateUtils.truncate(new Date(), Calendar.MONTH);
-        String dob = FastDateFormat.getInstance("yyyyMM").format(today);
-        assertEquals(today, BatchUploadUtils.getPatientDOB(dob));
-        assertNull(BatchUploadUtils.getPatientDOB(""));
-        assertNull(BatchUploadUtils.getPatientDOB("abcd"));
-    }
-    
+
     @Test
     public void testGetDate() { 
         String dateStr = "19850420";

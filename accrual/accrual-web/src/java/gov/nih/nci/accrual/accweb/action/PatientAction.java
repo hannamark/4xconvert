@@ -88,7 +88,6 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
-import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
@@ -365,7 +364,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     public void loadDisplayList() {
         try {
             SearchSSPCriteriaDto searchCriteria = new SearchSSPCriteriaDto();
-            searchCriteria.setPatientBirthDate(AccrualUtil.yearMonthStringToTimestamp(getCriteria().getBirthDate()));
+            searchCriteria.setPatientBirthDate(getCriteria().getBirthDate());
             searchCriteria.setStudySubjectAssignedIdentifier(getCriteria().getAssignedIdentifier());
             searchCriteria.setStudySubjectStatusCode(FunctionalRoleStatusCode.ACTIVE);
             if (getCriteria().getStudySiteId() != null) {

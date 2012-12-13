@@ -80,18 +80,13 @@
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.accrual.dto.util.PatientDto;
-import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
-
-import java.sql.Timestamp;
 
 import org.junit.Test;
 
@@ -108,7 +103,7 @@ public class PatientConverterTest extends AbstractConverterTest {
     @Test
     public void conversionTest() throws Exception {
         PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/2/2009")));
+        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
         dto.setCountryIdentifier(iiVal);
         dto.setEthnicCode(cdVal);
         dto.setGenderCode(cdVal);
@@ -118,42 +113,29 @@ public class PatientConverterTest extends AbstractConverterTest {
 
         Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
         // must strip days
-        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), bo.getBirthDate());
+        assertEquals(PAUtil.dateStringToTimestamp("2/1/2009"), bo.getBirthDate());
+        assertFalse(bo.getBirthMonthExcluded());
 
-        bo.setBirthDate(PAUtil.dateStringToTimestamp("1/2/2009"));
+        // strip days
+        bo.setBirthDate(PAUtil.dateStringToTimestamp("2/2/2009"));
+        bo.setBirthMonthExcluded(false);
         PatientDto r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-
-        // must strip days
-        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
+        assertEquals(PAUtil.dateStringToTimestamp("2/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
         assertTrue(iiTest(r.getCountryIdentifier()));
         assertTrue(cdTest(r.getEthnicCode()));
         assertTrue(cdTest(r.getGenderCode()));
         assertTrue(iiTest(r.getIdentifier()));
         assertTrue(dsetTest(r.getRaceCode()));
         assertTrue(stTest(r.getZip()));
-        
+
+        // strip days and month
+        bo.setBirthMonthExcluded(true);
+        r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
+        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
+
+        // test null
         bo.setBirthDate(null);
         dto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
         assertNull(dto.getBirthDate());
     }
-
-    @Test
-    public void accrualCheck() throws Exception {
-        AccrualUtil au = new AccrualUtil();
-        assertNotNull(au);
-        
-        String str = AccrualUtil.tsToYearMonthString(null);
-        assertNull(str);
-        
-        Ts tst = AccrualUtil.yearMonthStringToTs(null);
-        assertNull(tst);
-        
-        Timestamp stm = AccrualUtil.yearMonthTsToTimestamp(null);
-        assertNull(stm);
-        
-        stm = AccrualUtil.yearMonthStringToTimestamp("04/2002");
-        assertNotNull(stm);
-    }
-
-
 }

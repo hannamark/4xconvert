@@ -165,6 +165,7 @@ import net.sf.ehcache.Status;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -440,21 +441,23 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             result = ids[1];
             sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code, "
                     + "birth_date=:birth_date, status_code='ACTIVE', date_last_updated=now(), "
-                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id "
+                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id, "
+                    + "birth_month_excluded = :birth_month_excluded "
                     + "WHERE identifier= :identifier";
         } else {
             result = getNextId(session);
             sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code, " 
-                    + "date_last_created, country_identifier, zip, user_last_created_id) " 
+                    + "date_last_created, country_identifier, zip, user_last_created_id, birth_month_excluded) " 
                     + "VALUES (:identifier, :race_code, :sex_code, :ethnic_code, :birth_date,'ACTIVE', "
-                    + "now(), :country_identifier, :zip, :user_id)";
+                    + "now(), :country_identifier, :zip, :user_id, :birth_month_excluded)";
         }
         queryObject = session.createSQLQuery(sql);
         queryObject.setParameter(IDENTIFIER, result);
         queryObject.setParameter("race_code", p.getRaceCode());
         queryObject.setParameter("sex_code", p.getSexCode().getName());
         queryObject.setParameter("ethnic_code", p.getEthnicCode().getName());
-        queryObject.setParameter("birth_date", p.getBirthDate());
+        queryObject.setParameter("birth_date", p.getBirthDate(), Hibernate.TIMESTAMP);
+        queryObject.setParameter("birth_month_excluded", p.getBirthMonthExcluded());
         queryObject.setParameter("country_identifier", p.getCountry().getId());
         queryObject.setParameter("zip", p.getZip());
         queryObject.setParameter("user_id", userId);

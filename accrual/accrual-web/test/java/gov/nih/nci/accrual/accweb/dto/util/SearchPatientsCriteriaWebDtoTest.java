@@ -78,8 +78,8 @@
 */
 package gov.nih.nci.accrual.accweb.dto.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import gov.nih.nci.accrual.util.AccrualUtil;
 
 import org.junit.Before;
@@ -97,7 +97,7 @@ public class SearchPatientsCriteriaWebDtoTest {
     public void initDto() {
      searchPatientsCriteriaWebDto = new SearchPatientsCriteriaWebDto();
      searchPatientsCriteriaWebDto.setAssignedIdentifier("assignedIdentifier");
-     searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1978/08"));
+     searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1978"));
      searchPatientsCriteriaWebDto.setStudySiteId(Long.valueOf(1));
     }
 
@@ -108,7 +108,7 @@ public class SearchPatientsCriteriaWebDtoTest {
 
     @Test
     public void birthDatePropertyTest() {
-      assertNull(searchPatientsCriteriaWebDto.getBirthDate());
+      assertEquals("1978", searchPatientsCriteriaWebDto.getBirthDate());
     }
 
     @Test

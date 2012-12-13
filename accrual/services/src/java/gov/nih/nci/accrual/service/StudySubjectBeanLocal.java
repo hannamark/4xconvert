@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -424,18 +425,26 @@ public class StudySubjectBeanLocal extends
         return result;
     }
 
+    private static final String[] HQL_COLS = {"ssite.id", "assignedIdentifier", "statusCode", 
+        "birthDate", "birthMonthExcluded"};
+    private static final String[] SQL_COLS = {"ssub.study_site_identifier", "assigned_identifier", "status_code",
+        "birth_date", "birth_month_excluded"};
     private String getSearchWhereClause(SearchSSPCriteriaDto criteria, boolean hql) {
-        StringBuffer result = new StringBuffer("where " + (hql ? "ssite.id" : "ssub.study_site_identifier")
-                + " in (:studySiteIds) ");
+        String[] cols = hql ? HQL_COLS : SQL_COLS;
+        StringBuffer result = new StringBuffer("where " + cols[0] + " in (:studySiteIds) ");
         if (!StringUtils.isEmpty(criteria.getStudySubjectAssignedIdentifier())) {
-            result.append("and upper(ssub." + (hql ? "assignedIdentifier" : "assigned_identifier") 
-                    + ") like upper(:assignedId) ");
+            result.append("and upper(ssub." + cols[1] + ") like upper(:assignedId) ");
         }
         if (criteria.getStudySubjectStatusCode() != null) {
-            result.append("and ssub." + (hql ? "statusCode" : "status_code") + " = :statusCode ");
+            result.append("and ssub." + cols[2] + " = :statusCode ");
         }
-        if (criteria.getPatientBirthDate() != null) {
-            result.append("and pat." + (hql ? "birthDate" : "birth_date") + " = :birthDate ");
+        if (StringUtils.isNotEmpty(criteria.getPatientBirthDate())) {
+            if (AccrualUtil.YR_MO_NULL.equals(criteria.getPatientBirthDate())) {
+                result.append("and pat." + cols[THREE] + " is null ");
+            } else {
+                result.append("and pat." + cols[THREE] + " = :birthDate "
+                            + "and pat." + cols[FOUR] + " = :birthMonthExcluded ");
+            }
         }
         return result.toString();
     }
@@ -449,8 +458,10 @@ public class StudySubjectBeanLocal extends
             FunctionalRoleStatusCode status = criteria.getStudySubjectStatusCode();
             query.setParameter("statusCode", hql ? status : status.getName());
         }
-        if (criteria.getPatientBirthDate() != null) {
-            query.setParameter("birthDate", criteria.getPatientBirthDate());
+        if (StringUtils.isNotEmpty(criteria.getPatientBirthDate()) 
+                && !AccrualUtil.YR_MO_NULL.equals(criteria.getPatientBirthDate())) {
+            query.setParameter("birthDate", AccrualUtil.yearMonthStringToTimestamp(criteria.getPatientBirthDate()));
+            query.setParameter("birthMonthExcluded", criteria.getPatientBirthDate().length() == AccrualUtil.YR_LEN);
         }
     }
 
@@ -535,7 +546,7 @@ public class StudySubjectBeanLocal extends
                     + "ssub.study_site_identifier, ssub.date_last_created, ssub.date_last_updated, "
                     + "pa.registration_date "
                     + "from study_subject ssub ");
-            if (criteria.getPatientBirthDate() != null) {
+            if (StringUtils.isNotEmpty(criteria.getPatientBirthDate())) {
                 sql.append("join patient pat on (ssub.patient_identifier = pat.identifier) ");
             }
             sql.append("join performed_activity pa on (ssub.identifier = pa.study_subject_identifier) ");

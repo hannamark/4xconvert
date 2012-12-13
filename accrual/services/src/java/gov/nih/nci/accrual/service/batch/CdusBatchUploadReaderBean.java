@@ -115,7 +115,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -341,8 +340,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         saDTO.setRegistrationDate(
                 TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
         saDTO.setZipCode(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
-        saDTO.setBirthDate(TsConverter.convertToTs(new Timestamp(
-                BatchUploadUtils.getPatientDOB(line[BatchFileIndex.PATIENT_DOB_INDEX]).getTime())));
+        saDTO.setBirthDate(AccrualUtil.yearMonthStringToTs(line[BatchFileIndex.PATIENT_DOB_INDEX]));
         saDTO.setGender(CdConverter.convertToCd(
                 CDUSPatientGenderCode.getByCode(line[BatchFileIndex.PATIENT_GENDER_INDEX]).getValue()));
         saDTO.setEthnicity(CdConverter.convertToCd(
