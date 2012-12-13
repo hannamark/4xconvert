@@ -113,6 +113,7 @@ public class Patient extends AbstractEntity implements Auditable {
     private Country country;
     private String zip;
     private StructuralRoleStatusCode  statusCode;
+    private Boolean birthMonthExcluded;
 
     /**
      * @return the country
@@ -214,6 +215,22 @@ public class Patient extends AbstractEntity implements Auditable {
      */
     public void setStatusCode(StructuralRoleStatusCode statusCode) {
         this.statusCode = statusCode;
+    }
+
+    /**
+     * @return the birthMonthExcluded
+     */
+    @Column(name = "BIRTH_MONTH_EXCLUDED")
+    @NotNull
+    public Boolean getBirthMonthExcluded() {
+        return birthMonthExcluded;
+    }
+
+    /**
+     * @param birthMonthExcluded the birthMonthExcluded to set
+     */
+    public void setBirthMonthExcluded(Boolean birthMonthExcluded) {
+        this.birthMonthExcluded = birthMonthExcluded;
     }
 
 }
