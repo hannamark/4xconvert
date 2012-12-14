@@ -932,6 +932,9 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         if (!NumberUtils.isNumber(maximumValue)) {
             addFieldError("maximumValue", getText("error.numeric"));
         }
+        if (StringUtils.isNotEmpty(maximumValue) && !maximumValue.matches("\\d+(\\.0*)?")) {
+            addFieldError("maximumValue", getText("error.wholenumber.maximumValue"));
+        }
         if (StringUtils.isEmpty(minValueUnit)) {
             addFieldError("minValueUnit", getText("error.valueUnit"));
         }
@@ -944,6 +947,9 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         }
         if (!NumberUtils.isNumber(minimumValue)) {
             addFieldError(strMinVal, getText("error.numeric"));
+        }
+        if (StringUtils.isNotEmpty(minimumValue) && !minimumValue.matches("\\d+(\\.0*)?")) {
+            addFieldError(strMinVal, getText("error.wholenumber.minimumValue"));
         }
         if (StringUtils.isNotEmpty(minValueUnit) && StringUtils.isNotEmpty(maxValueUnit)
                 && NumberUtils.isNumber(minimumValue) && NumberUtils.isNumber(maximumValue)) {
