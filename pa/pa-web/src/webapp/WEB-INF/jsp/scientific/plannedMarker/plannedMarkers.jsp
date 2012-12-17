@@ -17,7 +17,7 @@
     </head>
     <body>
         <h1><fmt:message key="plannedMarker.details.title"/></h1>
-        <c:set var="topic" scope="request" value="abstractmarkers"/>
+        <c:set var="topic" scope="request" value="plannedmarker"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage/>

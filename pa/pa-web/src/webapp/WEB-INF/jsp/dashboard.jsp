@@ -113,7 +113,16 @@
 	<h1>
 	    <c:out value="${dashboardTitle}" escapeXml="false"/>		
 	</h1>
-	<c:set var="topic" scope="request" value="dashboard" />
+	<c:set var="topic" scope="request" value="dashboard_admin-sci" />
+	<c:if test="${suAbs}">
+	<c:set var="topic" scope="request" value="dashboard_super" />
+	</c:if>
+    <c:if test="${admAbs}">
+    <c:set var="topic" scope="request" value="dashboard_admin" />
+    </c:if>
+    <c:if test="${sciAbs}">
+    <c:set var="topic" scope="request" value="dashboard_sci" />
+    </c:if>
 	<jsp:useBean id="currentDate" class="java.util.Date" scope="request"></jsp:useBean>
 	<div class="box" id="filters">
 		<s:form id="dashboardForm">

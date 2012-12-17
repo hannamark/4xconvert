@@ -16,6 +16,7 @@
         </script>
     </head>
     <body>
+    <c:set var="topic" scope="request" value="login"/>
         <s:form name="disclaimer" method="POST" action="disClaimerActionaccept.action">
         <s:token/>
             <!-- main content begins-->

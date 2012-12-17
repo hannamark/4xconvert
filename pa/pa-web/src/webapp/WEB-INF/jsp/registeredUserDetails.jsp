@@ -64,7 +64,7 @@
     <body>
     <!-- main content begins-->
         <h1><fmt:message key="registeredUserDetails.title"/></h1>
-        <c:set var="topic" scope="request" value="registeredUserDetails"/>
+        <c:set var="topic" scope="request" value="userdetails"/>
         <div class="box" id="filters">
             <div class="fixedTopHeader">
             <s:form id="registeredUserDetailsForm">        

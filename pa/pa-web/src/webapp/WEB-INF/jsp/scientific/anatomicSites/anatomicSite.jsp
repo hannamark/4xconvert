@@ -29,7 +29,7 @@ function handleCreate(){
 </head>
 <body>
 <h1><fmt:message key="anatomicSite.details.title"/></h1>
-<c:set var="topic" scope="request" value="abstractanatomicsite"/>
+<c:set var="topic" scope="request" value="anatomicsite"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box">
     <pa:sucessMessage />

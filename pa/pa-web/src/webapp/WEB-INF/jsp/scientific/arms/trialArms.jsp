@@ -41,10 +41,11 @@ function handleCreateGroup(){
 
 <body> 
 <h1><s:if test="%{currentAction == 'listArm'}">
-        <fmt:message key="arms.details.title" /></s:if>
+        <fmt:message key="arms.details.title" />
+<c:set var="topic" scope="request" value="abstractarms"/></s:if>
     <s:elseif test="%{currentAction == 'listGroup'}">
-        <fmt:message key="arms.obs.details.title" /></s:elseif></h1>
-<c:set var="topic" scope="request" value="abstractarms"/>
+        <fmt:message key="arms.obs.details.title" />
+<c:set var="topic" scope="request" value="abstractcohort"/></s:elseif></h1>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <div class="box"><pa:sucessMessage /><pa:failureMessage/> <s:if
     test="hasActionErrors()">

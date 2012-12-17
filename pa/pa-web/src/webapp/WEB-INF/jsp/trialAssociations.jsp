@@ -17,7 +17,7 @@ function callOnloadFunctions(){
 }
 </SCRIPT>
  <body>
- <c:set var="topic" scope="request" value="trialAssociations"/>
+ <c:set var="topic" scope="request" value="associate_trial"/>
  <h1><fmt:message key="trialAssociations.title"/></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
  <div class="box">

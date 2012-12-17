@@ -29,7 +29,7 @@
     <body>
     <!-- main content begins-->
         <h1><fmt:message key="userAccountDetails.title"/></h1>
-        <c:set var="topic" scope="request" value="userAccountDetails"/>
+        <c:set var="topic" scope="request" value="account_details"/>
         <div class="box" id="filters">
             <div class="fixedTopHeader">
             <s:form id="userAccountDetailsForm">

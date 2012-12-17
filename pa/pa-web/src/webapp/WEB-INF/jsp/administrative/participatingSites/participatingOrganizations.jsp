@@ -33,7 +33,7 @@ function handleEdit(studyResourcingId){
 
 <body>
 <h1><fmt:message key="participatingOrganizations.title" /></h1>
-<c:set var="topic" scope="request" value="abstractsite"/>
+<c:set var="topic" scope="request" value="reviewparticipatingsites"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
     <pa:sucessMessage/>

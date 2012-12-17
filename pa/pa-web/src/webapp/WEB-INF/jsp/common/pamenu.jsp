@@ -15,9 +15,9 @@
                     <pa:menuLink href="${pageContext.request.contextPath}/protected/organizationsSearchexecute.action" id="organizationSearchMenuOption" labelKey="pamenu.abstraction.search.organizations" selected="${requestScope.topic == 'searchorganization'}"/>
 	            </ul>            
             </li>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/userAccountDetailsexecute.action" id="userAccountDetailsMenuOption" labelKey="pamenu.abstraction.useraccountdetails" selected="${requestScope.topic == 'userAccountDetails'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'registeredUserDetails'}"/>            
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxprocess' || requestScope.topic == 'inboxaccess'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/userAccountDetailsexecute.action" id="userAccountDetailsMenuOption" labelKey="pamenu.abstraction.useraccountdetails" selected="${requestScope.topic == 'account_details'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'userdetails'}"/>            
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>            
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
@@ -50,10 +50,10 @@
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/onhold.action" labelKey="pamenu.overview.onhold" selected="${requestScope.topic == 'trialonhold'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/manageAccrualAccess.action" labelKey="pamenu.overview.accrualaccess" selected="${requestScope.topic == 'accrualaccess'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/ajaxAbstractionCompletionviewTSR.action" labelKey="pamenu.overview.viewTsr"/>
-                        <pa:menuLink href="${pageContext.request.contextPath}/protected/assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership" selected="${requestScope.topic == 'assignownership'}"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership" selected="${requestScope.topic == 'record_ownership'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/auditTrail.action" labelKey="pamenu.overview.auditTrail" selected="${requestScope.topic == 'auditTrail'}"/>
-                        <pa:menuLink href="${pageContext.request.contextPath}/protected/checkOutHistory.action" labelKey="pamenu.overview.checkOutHistory" selected="${requestScope.topic == 'checkOutHistory'}"/>
-                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialAssociationsquery.action" labelKey="pamenu.overview.trialAssociations" selected="${requestScope.topic == 'trialAssociations'}"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/checkOutHistory.action" labelKey="pamenu.overview.checkOutHistory" selected="${requestScope.topic == 'checkout_history'}"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialAssociationsquery.action" labelKey="pamenu.overview.trialAssociations" selected="${requestScope.topic == 'associate_trial'}"/>
                     </ul>
                 </li>
                 <c:if test="${menuStatus == 'submitted'}">
@@ -62,7 +62,7 @@
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialDocumentquery.action" labelKey="pamenu.admin.documents" selected="${requestScope.topic == 'reviewdocs'}"/>
                         <c:choose>
                             <c:when test="${sessionScope.trialSummary.proprietaryTrial}">
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action?trialType=proprietary" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>
+                                <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action?trialType=proprietary" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'reviewparticipatingsites'}"/>
                             </c:when>
                             <c:otherwise>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'reviewstatus'}"/>
@@ -119,17 +119,17 @@
                                         <li class="hassubmenu">
                                             <fmt:message key="pamenu.scientific.observationalDesign"/>
                                             <ul id="part_sites">
-                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/noninterventionalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign'}"/>
-                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/interventionalStudyDesignoutcomeQuery.action" labelKey="pamenu.scientific.outcome" selected="${requestScope.topic == 'abstractoutcome'}"/>
-                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/eligibilityCriteriaquery.action" labelKey="pamenu.scientific.eligibility" selected="${requestScope.topic == 'abstracteligibility'}"/>
+                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/noninterventionalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign_noninterventional'}"/>
+                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/interventionalStudyDesignoutcomeQuery.action" labelKey="pamenu.scientific.outcome" selected="${requestScope.topic == 'abstractoutcome_noninterventional'}"/>
+                                                <pa:menuLink href="${pageContext.request.contextPath}/protected/eligibilityCriteriaquery.action" labelKey="pamenu.scientific.eligibility" selected="${requestScope.topic == 'abstracteligibility_noninterventional'}"/>
                                             </ul>
                                         </li>
                                     </c:otherwise>
                                 </c:choose>
                             </c:if>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/disease.action" labelKey="pamenu.scientific.disease" selected="${requestScope.topic == 'abstractdisease'}"/>
-                            <pa:menuLink href="${pageContext.request.contextPath}/protected/anatomicSite.action" labelKey="pamenu.scientific.anatomicSite" selected="${requestScope.topic == 'abstractanatomicsite'}"/>
-                            <pa:menuLink href="${pageContext.request.contextPath}/protected/plannedMarker.action" labelKey="pamenu.scientific.markers" selected="${requestScope.topic == 'abstractmarkers'}"/>
+                            <pa:menuLink href="${pageContext.request.contextPath}/protected/anatomicSite.action" labelKey="pamenu.scientific.anatomicSite" selected="${requestScope.topic == 'anatomicsite'}"/>
+                            <pa:menuLink href="${pageContext.request.contextPath}/protected/plannedMarker.action" labelKey="pamenu.scientific.markers" selected="${requestScope.topic == 'plannedmarker'}"/>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/trialInterventions.action" labelKey="pamenu.scientific.interventions" selected="${requestScope.topic == 'abstractinterventions'}"/>
                             <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                                 <c:choose>
@@ -137,7 +137,7 @@
                                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.arms" selected="${requestScope.topic == 'abstractarms'}"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.groups"/>
+                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.groups" selected="${requestScope.topic == 'abstractcohort'}"/>
                                     </c:otherwise>
                                 </c:choose>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/subGroupsquery.action" labelKey="pamenu.scientific.subGroups" selected="${requestScope.topic == 'abstractsubgroups'}"/>
