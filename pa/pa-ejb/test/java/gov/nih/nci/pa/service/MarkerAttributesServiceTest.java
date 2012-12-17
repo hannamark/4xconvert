@@ -7,6 +7,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,39 +66,22 @@ public class MarkerAttributesServiceTest extends AbstractHibernateTestCase {
         assertTrue(StringUtils.equals(resultspeCol.get(0), "Mandatory"));
     }
 
-//    @Test
-//    public void getBioUseTest() throws PAException {
-//        List<String> result = MarkerAttributesBeanLocal.getBioUseValues();
-//        assertTrue(result.size() > 0);
-//        assertTrue(StringUtils.equals(result.get(0), "Integral"));
-//    }
-//
-//    @Test
-//    public void getBioPurposeTest() throws PAException {
-//        List<String> result = MarkerAttributesBeanLocal.getBioPurposeValues();
-//        assertTrue(result.size() > 0);
-//        assertTrue(StringUtils.equals(result.get(0), "Eligibility Criterion"));
-//    }
-//
-//    @Test
-//    public void getEvaluationTest() throws PAException {
-//        List<String> result = MarkerAttributesBeanLocal
-//                .getEvaluationTypesValues();
-//        assertTrue(result.size() > 0);
-//        assertTrue(StringUtils.equals(result.get(0), "Level / Quantity"));
-//    }
-//
-//    @Test
-//    public void getSpecimenTypeTest() throws PAException {
-//        List<String> result = MarkerAttributesBeanLocal.getSpecimenTypeValues();
-//        assertTrue(result.size() > 0);
-//        assertTrue(StringUtils.equals(result.get(0), "Serum"));
-//    }
-//
-//    @Test
-//    public void getSpecimenCollectionTest() throws PAException {
-//        List<String> result = MarkerAttributesBeanLocal.getSpecimenCollValues();
-//        assertTrue(result.size() > 0);
-//        assertTrue(StringUtils.equals(result.get(0), "Mandatory"));
-//    }
+    @Test
+    public void updateMarkerTest() throws PAException {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("PCR", "PCR");
+        map.put("MicroArray", "MicroArray");
+        bean.updateMarker(BioMarkerAttributesCode.ASSAY_TYPE, map);
+        List<String> result = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.ASSAY_TYPE);
+        assertTrue(result.size() == 2);
+        map.clear();
+        map.put("Retrospective Research", "Retrospective Research");
+        map.put("Treatment Assignment", "Treatment Assignment");
+        map.put("Other (specify)", "Other");
+        bean.updateMarker(BioMarkerAttributesCode.BIOMARKER_PURPOSE, map);
+        result.clear();
+        result = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.BIOMARKER_PURPOSE);
+        assertTrue(result.size() == 3);
+    }
+
 }

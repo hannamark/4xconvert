@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
+
 import java.util.Map;
 /**
  * 
@@ -96,5 +98,12 @@ public interface MarkerAttributesServiceRemote {
      * @throws PAException on error.
      */
     Map<String, String> getAllMarkerAttributes() throws PAException;
-
+    /**
+     * Delete the Biomarker attribute tables and sync with the CaDSR values
+     * 
+     * @param valueType valueType
+     * @param map map
+     * @throws PAException on error.
+     */
+    void updateMarker(BioMarkerAttributesCode valueType, Map<String, String> map) throws PAException;
 }

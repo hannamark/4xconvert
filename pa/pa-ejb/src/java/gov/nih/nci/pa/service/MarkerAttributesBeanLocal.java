@@ -6,6 +6,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +95,31 @@ public class MarkerAttributesBeanLocal implements MarkerAttributesServiceLocal {
             }
         }
         return returnValue;
+    }
+    /**
+     * Delete the Biomarker attribute tables and sync with the CaDSR values
+     * 
+     * @param valueType valueType
+     * @param map map
+     * @throws PAException on error.
+     */
+    public void updateMarker(BioMarkerAttributesCode valueType, Map<String, String> map) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+    
+        SQLQuery query = session
+                .createSQLQuery("Delete from " 
+                        + valueType.getName());    
+        query.executeUpdate();
+        Iterator<Map.Entry<String, String>> itr = map.entrySet().iterator();
+        while (itr.hasNext()) {
+            Map.Entry<String, String> entry = itr.next();
+            SQLQuery query1 = session
+            .createSQLQuery("insert into " 
+                    + valueType.getName() + "(type_code, DESCRIPTION_TEXT) values (:typeCode, :descriptionText)");
+            query1.setParameter("typeCode", entry.getKey().toString());
+            query1.setParameter("descriptionText", entry.getValue().toString());
+            query1.executeUpdate();
+        } 
     }
 
 }
