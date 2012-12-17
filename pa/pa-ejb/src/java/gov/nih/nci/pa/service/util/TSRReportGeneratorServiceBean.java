@@ -619,9 +619,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         statusDate.setTrialStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                 studyProtocolDto.getStartDate()).toString())
                 + "-" + getValue(studyProtocolDto.getStartDateTypeCode()));
-        statusDate.setPrimaryCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                studyProtocolDto.getPrimaryCompletionDate()).toString())
-                + "-" + getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));
+        if (studyProtocolDto.getPrimaryCompletionDate().getNullFlavor() == null) {
+            statusDate.setPrimaryCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                    studyProtocolDto.getPrimaryCompletionDate()).toString())
+                    + "-" + getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));
+        } else {
+            statusDate.setPrimaryCompletionDate(getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));
+        }
         tsrReportGenerator.setStatusDate(statusDate);
     }
 
