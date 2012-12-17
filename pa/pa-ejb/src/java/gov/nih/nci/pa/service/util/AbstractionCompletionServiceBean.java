@@ -184,6 +184,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             + " Design under Scientific Data menu.";
     private static final String SELECT_TRIAL_DESCRIPTION = "Select Trial Description from Scientific Data menu.";
     private static final String SELECT_TRIAL_DETAILS = "Select General Trial Details from Administrative Data menu.";
+    private static final String SELECT_TRIAL_STATUS = "Select Trial Status from Administrative Data menu.";
     private static final String YES = "Yes";
     private static final String NO = "No";
 
@@ -640,18 +641,29 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         StudyOverallStatusDTO sos = studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolDTO
             .getIdentifier());
         if (sos == null) {
-            messages.addError("Select Trial Status from Administrative Data menu.",
+            messages.addError(SELECT_TRIAL_STATUS,
                               "No Trial Status exists for the trial.", ErrorMessageTypeEnum.ADMIN);
         }
-        if (studyProtocolDTO.getStartDate().getValue() == null
-                && studyProtocolDTO.getStartDateTypeCode().getCode() == null
-                && studyProtocolDTO.getPrimaryCompletionDate().getValue() == null
-                && studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode() == null) {
-
-            messages.addError("Select Trial Status from Administrative Data menu.",
-                              "StartDate/StartDateType and PrimaryCompletionDate/PrimaryCompletionDateType "
-                                      + "must be Entered.", ErrorMessageTypeEnum.ADMIN);
+        if (studyProtocolDTO.getStartDate() == null || studyProtocolDTO.getStartDate().getValue() == null) {
+            messages.addError(SELECT_TRIAL_STATUS,
+                              "StartDate must be Entered.", ErrorMessageTypeEnum.ADMIN);
         }
+        if (studyProtocolDTO.getStartDateTypeCode() == null
+                || studyProtocolDTO.getStartDateTypeCode().getCode() == null) {
+            messages.addError(SELECT_TRIAL_STATUS,
+                              "StartDateType must be Entered.", ErrorMessageTypeEnum.ADMIN);
+        }
+        if (studyProtocolDTO.getPrimaryCompletionDate() == null
+                || studyProtocolDTO.getPrimaryCompletionDate().getValue() == null) {
+            messages.addError(SELECT_TRIAL_STATUS,
+                              "PrimaryCompletionDate must be Entered.", ErrorMessageTypeEnum.ADMIN);
+        }
+        if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() == null
+                || studyProtocolDTO.getPrimaryCompletionDateTypeCode()
+                        .getCode() == null) {
+            messages.addError(SELECT_TRIAL_STATUS,
+                              "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN);
+        }        
     }
 
     private void enforceTrialINDIDE(StudyProtocolDTO studyProtocolDto, AbstractionMessageCollection messages)
