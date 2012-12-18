@@ -175,7 +175,7 @@
                 <s:hidden name="trialDTO.xmlRequired" id="trialDTO.xmlRequired" />
                 <s:hidden name="page" />
                 <s:hidden name="uuidhidden"/>
-                <p>Update trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
+                <p>Use this form to update trial information. You can not change the information in certain fields, including the trial title.</p>
                 <table class="form">
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateIdentifiersSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
