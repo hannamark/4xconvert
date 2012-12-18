@@ -80,8 +80,17 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.service; // NOPMD
 
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.RO_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -90,6 +99,7 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
@@ -97,12 +107,15 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,8 +126,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  *
@@ -122,8 +141,11 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",
+        "PMD.TooManyMethods" })
 public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
         OrganizationServiceLocal {
+    private static final String ORDER_BY = " ORDER BY ";
     private static final String UNCHECKED = "unchecked";
     private MergeOrganizationHelper mergeOrganizationHelper;
 
@@ -325,6 +347,396 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 service.curate(x);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrganizationSearchDTO> search(
+            OrganizationSearchCriteria criteria,
+            PageSortParams<OrganizationSearchDTO> pageSortParams) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        List<OrganizationSearchDTO> results = new ArrayList<OrganizationSearchDTO>();        
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.OrganizationServiceBean.search")
+                .getQueryString());
+        appendWhere(sql, criteria);
+        appendOrderBy(sql, pageSortParams);
+        appendPagination(sql, pageSortParams);
+        SQLQuery query = s.createSQLQuery(sql.toString());
+        for (Object[] row : (List<Object[]>) query.list()) {
+            results.add(convert(row));
+        }
+        return results;
+    }
+
+    // CHECKSTYLE:OFF
+    private OrganizationSearchDTO convert(Object[] row) {
+        OrganizationSearchDTO dto = new OrganizationSearchDTO();
+        dto.setId(row[0].toString());
+        dto.setName((String) row[1]);
+        dto.setFamilyName((String) row[2]);
+        dto.setRoCtepId((String) row[3]);
+        dto.setHcfCtepId((String) row[4]);
+        dto.setChangeRequests(((BigInteger) row[5]).intValue());
+        dto.setPendingROs(((BigInteger) row[6]).intValue());
+        dto.setPendingHCFs(((BigInteger) row[7]).intValue());
+        dto.setStatusCode((String) row[8]);
+        dto.setStatusDate((Date) row[9]);
+        dto.setTotalROs(((BigInteger) row[10]).intValue());
+        dto.setTotalHCFs(((BigInteger) row[11]).intValue());
+        dto.setTotalIdOrgs(((BigInteger) row[12]).intValue());
+        dto.setTotalOversightCommitees(((BigInteger) row[13]).intValue());
+        dto.setTotalOrgContacts(((BigInteger) row[14]).intValue());
+        dto.setAddress1((String) row[15]);
+        dto.setAddress2((String) row[16]);
+        dto.setCity((String) row[17]);
+        dto.setState((String) row[18]);
+        dto.setCountry((String) row[19]);
+        dto.setZipCode((String) row[20]);
+        dto.setComments((String) row[21]);
+        dto.setEmailAddresses((String) row[22]);
+        dto.setPhones((String) row[23]);
+        dto.setDuplicateOf(((BigInteger) row[24]));
+        return dto;
+    }
+    // CHECKSTYLE:ON
+
+    private void appendPagination(StringBuilder sql,
+            PageSortParams<OrganizationSearchDTO> pageSortParams) {
+        sql.append(" LIMIT " + pageSortParams.getPageSize());
+        if (pageSortParams.getIndex() > 0) {
+            sql.append(" OFFSET " + pageSortParams.getIndex());
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void appendOrderBy(StringBuilder sql,
+            PageSortParams<OrganizationSearchDTO> params) {
+        if (params.getSortCriterion() != null) {
+            throw new RuntimeException(//NOPMD
+                    "SortCriterion is not supported for SQL queries."); //NOPMD
+        }
+        if (CollectionUtils.isNotEmpty(params.getDynamicSortCriteria())) {
+            for (String sort : params.getDynamicSortCriteria()) {
+                OrganizationSearchSortEnum sortEnum = OrganizationSearchSortEnum
+                        .valueOf(sort);
+                appendOrderBy(sql, sortEnum);
+            }
+        }
+        if (params.isDesc()) {
+            sql.append(" DESC");
+        }
+    }
+
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+    private void appendOrderBy(StringBuilder sql,
+            OrganizationSearchSortEnum sortEnum) {
+        if (sql.toString().contains(ORDER_BY)) {
+            sql.append(", ");
+        } else {
+            sql.append(ORDER_BY);
+        }        
+        if (ID == sortEnum) {
+            sql.append("o.id");
+        }
+        if (NAME == sortEnum) {
+            sql.append("o.name");
+        }
+        if (FAMILY == sortEnum) {
+            sql.append("familyName");
+        }
+        if (RO_CTEP_ID == sortEnum) {
+            sql.append("roCtepId");
+        }
+        if (HCF_CTEP_ID == sortEnum) {
+            sql.append("hcfCtepId");
+        }
+        if (CR == sortEnum) {
+            sql.append("changeRequests");
+        }
+        if (PENDING_RO == sortEnum) {
+            sql.append("pendingROs");
+        }
+        if (PENDING_HCF == sortEnum) {
+            sql.append("pendingHCFs");
+        }        
+        if (STATUS == sortEnum) {
+            sql.append("o.status");
+        }
+    }
+
+    private void appendWhere(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        sql.append(" WHERE o.status <> 'NULLIFIED' ");
+        if (!criteria.isEmpty()) {
+            appendCtepIdClause(sql, criteria);
+            appendOrgIdClause(sql, criteria);
+            appendStatusClause(sql, criteria);
+            appendOrgNameClause(sql, criteria);
+            appendFamilyClause(sql, criteria);
+            appendCrClause(sql, criteria);
+            appendPendingHcfClause(sql, criteria);
+            appendPendingRoClause(sql, criteria);
+            appendCountryClause(sql, criteria);
+            appendAddr1Clause(sql, criteria);
+            appendAddr2Clause(sql, criteria);
+            appendCityClause(sql, criteria);
+            appendStateClause(sql, criteria);
+            appendZipCodeClause(sql, criteria);
+        }
+    }
+    
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendZipCodeClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getPostalCode())) {
+            sql.append(String.format(
+                    " AND lower(a.postalcode) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getPostalCode().toLowerCase()) + "%"));
+        }
+    }
+    
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendStateClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStateOrProvince())) {
+            sql.append(String.format(
+                    " AND lower(a.stateorprovince) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getStateOrProvince().toLowerCase())
+                            + "%"));
+        }
+    }
+    
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCityClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getCityOrMunicipality())) {
+            sql.append(String.format(
+                    " AND lower(a.cityormunicipality) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getCityOrMunicipality().toLowerCase())
+                            + "%"));
+        }
+    }
+    
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendAddr2Clause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getDeliveryAddressLine())) {
+            sql.append(String.format(
+                    " AND lower(a.deliveryaddressline) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria.getDeliveryAddressLine()
+                                    .toLowerCase()) + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendAddr1Clause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStreetAddressLine())) {
+            sql.append(String.format(
+                    " AND lower(a.streetaddressline) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria.getStreetAddressLine()
+                                    .toLowerCase()) + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCountryClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (criteria.getCountryId() != null) {
+            sql.append(String.format(" AND c.id=%s ", criteria.getCountryId()));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendPendingRoClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingRoRoles())) {
+            sql.append(" AND (select count(id) from researchorganization ro where"
+                    + " ro.player_id=o.id and ro.status='PENDING') > 0");
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendPendingHcfClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingHcfRoles())) {
+            sql.append(" AND (select count(id) from healthcarefacility ro "
+                    + "where ro.player_id=o.id and ro.status='PENDING') > 0");
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCrClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasChangeRequests())) {
+            sql.append(" AND (select count(id) from organizationcr ocr where ocr.target=o.id "
+                    + "and ocr.processed=false) > 0");
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendFamilyClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getFamilyName())) {
+            sql.append(String
+                    .format(" AND exists (select fam.name from family fam inner join "
+                            + "familyorganizationrelationship rel on "
+                            + "rel.family_id=fam.id and rel.organization_id=o.id where rel.enddate is null and "
+                            + "fam.statuscode='ACTIVE' and lower(fam.name) like '%s') ",
+                            "%"
+                                    + StringEscapeUtils.escapeSql(criteria
+                                            .getFamilyName().toLowerCase())
+                                    + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendOrgNameClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getName())) {
+            sql.append(String.format(
+                    " AND lower(o.name) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria.getName()
+                                    .toLowerCase()) + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendStatusClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStatusCode())) {
+            sql.append(String.format(" AND o.status='%s' ",
+                    StringEscapeUtils.escapeSql(criteria.getStatusCode())));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendOrgIdClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            sql.append(String.format(" AND o.id=%s ",
+                    StringEscapeUtils.escapeSql(criteria.getId())));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCtepIdClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getCtepID())) {
+            sql.append(String
+                    .format(" AND (exists (select ro_oi.extension from ro_otheridentifier ro_oi inner join "
+                            + "researchorganization ro on ro_oi.ro_id=ro.id and ro.player_id=o.id and ro.status <> "
+                            + "'NULLIFIED' and ro_oi.root='%s' and lower(ro_oi.extension) like '%s') or exists "
+                            + "(select hcf_oi.extension from hcf_otheridentifier hcf_oi inner join healthcarefacility "
+                            + "hcf on hcf_oi.hcf_id=hcf.id and hcf.player_id=o.id and hcf.status <> 'NULLIFIED' and"
+                            + " hcf_oi.root='%s' and lower(hcf_oi.extension) like '%s')) ",
+                            CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
+                                    + StringEscapeUtils.escapeSql(criteria.getCtepID()).toLowerCase() + "%",
+                            CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
+                                    + StringEscapeUtils.escapeSql(criteria.getCtepID()).toLowerCase() + "%"));
+        }
+    }
+
+    @Override
+    public long count(OrganizationSearchCriteria criteria) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.OrganizationServiceBean.search")
+                .getQueryString());
+        appendWhere(sql, criteria);
+        SQLQuery query = s.createSQLQuery("select count(*) from ("
+                + sql.toString() + ") as cnt");
+        return ((Number) query.uniqueResult()).longValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<OrganizationSearchDTO> getInboxOrgs(
+            PageSortParams<OrganizationSearchDTO> pageSortParams) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        List<OrganizationSearchDTO> results = new ArrayList<OrganizationSearchDTO>();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.OrganizationServiceBean.getInboxOrgs")
+                .getQueryString());
+        appendOrderBy(sql, pageSortParams);
+        appendPagination(sql, pageSortParams);
+        SQLQuery query = s.createSQLQuery(sql.toString());
+        for (Object[] row : (List<Object[]>) query.list()) {
+            results.add(convert(row));
+        }
+        return results;
+    }
+
+    @Override
+    public long countInboxOrgs() {
+        Session s = PoHibernateUtil.getCurrentSession();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.OrganizationServiceBean.getInboxOrgs")
+                .getQueryString());
+        SQLQuery query = s.createSQLQuery("select count(*) from ("
+                + sql.toString() + ") as cnt");
+        return ((BigInteger) query.uniqueResult()).longValue();
+    }
+
+    @Override
+    public void removeChangeRequest(OrganizationCR cr) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        OrganizationCR crToRemove = (OrganizationCR) s.get(
+                OrganizationCR.class, cr.getId());
+        crToRemove.setProcessed(true);
+        s.update(crToRemove);
     }
 
 }

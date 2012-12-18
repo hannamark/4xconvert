@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateOrganizationAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Set;
 
@@ -38,9 +39,10 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
     /**
      * @return success
      * @throws JMSException if an error occurred while publishing the announcement
+     * @throws CSException  CSException
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
-    public String create() throws JMSException {
+    public String create() throws JMSException, CSException {
         String result = super.curate();
         ActionHelper.getMessages().clear();
         ActionHelper.saveMessage(getText("organization.create.success"));

@@ -84,7 +84,9 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,6 +157,36 @@ public class MockOrganizationService implements OrganizationServiceLocal {
 
     public Set<Correlation> getAssociatedScopedRoles(Organization o) {
         return null;
+    }
+
+    @Override
+    public List<OrganizationSearchDTO> search(
+            OrganizationSearchCriteria criteria,
+            PageSortParams<OrganizationSearchDTO> pageSortParams) {       
+        return new ArrayList<OrganizationSearchDTO>();
+    }
+
+    @Override
+    public long count(OrganizationSearchCriteria criteria) {       
+        return 0;
+    }
+
+    @Override
+    public List<OrganizationSearchDTO> getInboxOrgs(
+            PageSortParams<OrganizationSearchDTO> pageSortParams) {
+        return new ArrayList<OrganizationSearchDTO>();
+    }
+
+    @Override
+    public long countInboxOrgs() {
+       
+        return 0;
+    }
+
+    @Override
+    public void removeChangeRequest(OrganizationCR cr) {
+      
+        
     }
 
 }

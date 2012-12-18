@@ -90,10 +90,15 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrganizationSearchCriteria;
+import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
@@ -118,7 +123,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
-public class NullifiedEntityInterceptorTest {
+public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
     NullifiedEntityInterceptor interceptor;
     TestInvocationContext testContext;
 
@@ -130,7 +135,7 @@ public class NullifiedEntityInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingOrganizationDTO() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         OrganizationEntityServiceBean oesb = new OrganizationEntityServiceBean();
         OSvcBean svcLocal = new OSvcBean();
         oesb.setOrganizationServiceBean(svcLocal);
@@ -159,7 +164,7 @@ public class NullifiedEntityInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingPersonDTO() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         PersonEntityServiceBean oesb = new PersonEntityServiceBean();
         PSvcBean svcLocal = new PSvcBean();
         oesb.setPersonServiceBean(svcLocal);
@@ -194,7 +199,7 @@ public class NullifiedEntityInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCollectionContainingNonSupportedTypes() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         TestInvocationContext testCxt = new TestInvocationContext();
         ArrayList<String> list = new ArrayList<String>();
         list.add("notused");
@@ -204,7 +209,7 @@ public class NullifiedEntityInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCollectionContainingSupportedTypePersonDTO() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         TestInvocationContext testCxt = new TestInvocationContext();
         PersonEntityServiceBean oesb = new PersonEntityServiceBean();
         PSvcBean svcLocal = new PSvcBean();
@@ -243,7 +248,7 @@ public class NullifiedEntityInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCollectionContainingSupportedTypeOrganizationDTO() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         OrganizationEntityServiceBean oesb = new OrganizationEntityServiceBean();
         OSvcBean svcLocal = new OSvcBean();
         oesb.setOrganizationServiceBean(svcLocal);
@@ -369,6 +374,36 @@ public class NullifiedEntityInterceptorTest {
 
         public Set<Correlation> getAssociatedScopedRoles(Organization o) {
             return null;
+        }
+
+        @Override
+        public List<OrganizationSearchDTO> search(
+                OrganizationSearchCriteria criteria,
+                PageSortParams<OrganizationSearchDTO> pageSortParams) {           
+            return new ArrayList<OrganizationSearchDTO>();
+        }
+
+        @Override
+        public long count(OrganizationSearchCriteria criteria) {          
+            return 0;
+        }
+        
+        @Override
+        public List<OrganizationSearchDTO> getInboxOrgs(
+                PageSortParams<OrganizationSearchDTO> pageSortParams) {
+            return new ArrayList<OrganizationSearchDTO>();
+        }
+
+        @Override
+        public long countInboxOrgs() {
+           
+            return 0;
+        }
+
+        @Override
+        public void removeChangeRequest(OrganizationCR cr) {
+          
+            
         }
     }
 }

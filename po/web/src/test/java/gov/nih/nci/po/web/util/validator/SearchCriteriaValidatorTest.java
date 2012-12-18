@@ -3,7 +3,7 @@ package gov.nih.nci.po.web.util.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
+import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.selector.SelectOrganizationAction;
 
@@ -19,13 +19,13 @@ import com.opensymphony.xwork2.validator.ValidatorContext;
 
 public class SearchCriteriaValidatorTest extends AbstractPoTest {
 
-    SearchCriteriaValidator validator;
+    OrganizationSearchCriteriaValidator validator;
     String fieldName = "criteria";
     ValidatorContext validatorContext = new DelegatingValidatorContext(new SelectOrganizationAction());
     
     @Before
     public void init() {
-        validator = new SearchCriteriaValidator();
+        validator = new OrganizationSearchCriteriaValidator();
         validator.setValidatorContext(validatorContext);
         
     }
@@ -33,7 +33,7 @@ public class SearchCriteriaValidatorTest extends AbstractPoTest {
     @Test
     public void validate() throws ValidationException {
         ValueStack valueStack = ActionContext.getContext().getValueStack();
-        valueStack.set(fieldName, new StrutsOrganizationSearchCriteria());
+        valueStack.set(fieldName, new OrganizationSearchCriteria());
         validator.setValueStack(valueStack);
         validator.setFieldName(fieldName);
         validator.validate(null);

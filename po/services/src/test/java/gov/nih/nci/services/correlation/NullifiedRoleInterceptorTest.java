@@ -89,6 +89,8 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.PoDto;
@@ -102,9 +104,7 @@ import javax.interceptor.InvocationContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.util.HibernateUtil;
-
-public class NullifiedRoleInterceptorTest {
+public class NullifiedRoleInterceptorTest extends AbstractServiceBeanTest {
     NullifiedRoleInterceptor interceptor;
     TestInvocationContext testContext;
 
@@ -116,7 +116,7 @@ public class NullifiedRoleInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCorrelationDTO() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
 
         OversightCommittee o1 = new OversightCommittee();
         o1.setId(-1L);
@@ -148,7 +148,7 @@ public class NullifiedRoleInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCollectionWithSupportedTypes() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         OversightCommittee o1 = new OversightCommittee();
         o1.setId(-1L);
         o1.setStatus(RoleStatus.PENDING);
@@ -180,7 +180,7 @@ public class NullifiedRoleInterceptorTest {
 
     @Test
     public void checkForNullifiedUsingCollectionWithUnsupportedTypes() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         ArrayList<String> list = new ArrayList<String>();
         list.add("notused");
         testContext.returnValue = list;

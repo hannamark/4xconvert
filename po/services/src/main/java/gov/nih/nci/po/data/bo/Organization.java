@@ -83,8 +83,8 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipFamilyComparator;
-import gov.nih.nci.po.util.NotEmpty;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -95,7 +95,6 @@ import java.util.TreeSet;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -147,9 +146,8 @@ public class Organization extends AbstractOrganization
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
     private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships =
         new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipFamilyComparator());
-
-    private String comments;
-
+    private List<Comment> comments = new ArrayList<Comment>();
+    
     /**
      * Create a new, empty org.
      */
@@ -170,11 +168,9 @@ public class Organization extends AbstractOrganization
             inverseJoinColumns = @JoinColumn(name = "email_id")
     )
     @IndexColumn(name = INDEX_NAME)
-    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")
-    @Valid
+    @ForeignKey(name = "ORG_EMAIL_FK", inverseName = "EMAIL_ORG_FK")    
     @Override
-    @Searchable(nested = true)
-    @NotEmpty(message = "{validator.notEmpty.collection}")
+    @Searchable(nested = true)    
     public List<Email> getEmail() {
         return super.getEmail();
     }
@@ -486,21 +482,7 @@ public class Organization extends AbstractOrganization
             SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
         this.familyOrganizationRelationships = familyOrganizationRelationships;
     }
-
-    /**
-     * @return comments
-     */
-    @Lob
-    public String getComments() {
-        return comments;
-    }
-
-    /**
-     * @param comments comments
-     */
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
+    
 
     /**
      * Checks if HCF or RO associated w/ this org are from ctep.
@@ -520,5 +502,30 @@ public class Organization extends AbstractOrganization
             }
         }
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_comment",
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = "comment_id")
+    )    
+    @IndexColumn(name = INDEX_NAME)    
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments
+     *            the comments to set
+     */
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

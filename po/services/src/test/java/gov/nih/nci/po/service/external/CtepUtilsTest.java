@@ -180,8 +180,7 @@ public class CtepUtilsTest {
         Organization o1 = new Organization();
         Organization o2 = new Organization();
 
-        o1.setId(1L);
-        o1.setComments("comments");
+        o1.setId(1L);        
         o1.setDuplicateOf(new Organization());
         o1.setStatusCode(EntityStatus.NULLIFIED);
         o1.setStatusDate(new Date());
@@ -216,8 +215,7 @@ public class CtepUtilsTest {
         o1.setPostalAddress(new Address());
         o1.getPostalAddress().setCityOrMunicipality("city");
         // fields thot should not be copied
-        o1.setId(1L);
-        o1.setComments("comments");
+        o1.setId(1L);       
         o1.setDuplicateOf(new Organization());
         o1.setStatusCode(EntityStatus.NULLIFIED);
         o1.setStatusDate(new Date());

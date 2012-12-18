@@ -90,9 +90,10 @@ import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
+import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
-import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
+import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 
 import java.io.Serializable;
@@ -231,7 +232,7 @@ public class PoHttpSessionUtil {
      * @param criteria the organization search criteria to add to the session
      * @return the key used to add the objects
      */
-    public static String addAttribute(StrutsOrganizationSearchCriteria criteria) {
+    public static String addAttribute(OrganizationSearchCriteria criteria) {
         return addUniqueAttribute("sosc", criteria);
     }
 
@@ -286,5 +287,14 @@ public class PoHttpSessionUtil {
      */
     public static String addAttribute(ResearchOrganization role) {
         return addUniqueAttribute("ro", role);
+    }
+    
+    /**
+     * Adds a OversightCommittee role to the http session with a unique key.
+     * @param role the person role to add to the session
+     * @return the key used to add the objects
+     */
+    public static String addAttribute(OversightCommittee role) {
+        return addUniqueAttribute("committee", role);
     }
 }

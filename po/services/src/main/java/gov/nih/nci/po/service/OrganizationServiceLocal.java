@@ -85,13 +85,16 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
@@ -139,5 +142,49 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @return associated scoped roles
      */
     Set<Correlation> getAssociatedScopedRoles(Organization o); 
+    
+    /**
+     * Searches for organizations by the given criteria. High performance search
+     * that avoids Hibernate.
+     * 
+     * @param criteria
+     *            OrganizationSearchCriteria
+     * @param pageSortParams pageSortParams 
+     * @return List<OrganizationSearchDTO>
+     */
+    List<OrganizationSearchDTO> search(OrganizationSearchCriteria criteria,
+            PageSortParams<OrganizationSearchDTO> pageSortParams);
+
+    /**
+     * Counts organizations by the given criteria. High performance search
+     * that avoids Hibernate.
+     * @param criteria OrganizationSearchCriteria
+     * @return int count
+     */
+    long count(OrganizationSearchCriteria criteria);
+    
+    /**
+     * Searches for inbox organizations. High performance search
+     * that avoids Hibernate.
+     * 
+     * 
+     * @param pageSortParams pageSortParams 
+     * @return List<OrganizationSearchDTO>
+     */
+    List<OrganizationSearchDTO> getInboxOrgs(PageSortParams<OrganizationSearchDTO> pageSortParams);
+
+    /**
+     * Counts inbox organizations. High performance search
+     * that avoids Hibernate.
+     * 
+     * @return int count
+     */
+    long countInboxOrgs();  
+    
+    /**
+     * Removes the given {@link OrganizationCR} from the change requests list.
+     * @param cr OrganizationCR
+     */
+    void removeChangeRequest(OrganizationCR cr);
 
 }

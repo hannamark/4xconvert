@@ -272,3 +272,30 @@ function switchContactNumberFormats(country) {
         }
     }
 }
+
+function displayWaitPanel() {	
+	if ($('progress_indicator_panel')==null) {
+		return;
+	}
+	
+	// retrieve required dimensions	
+	var eltDims     = $('progress_indicator_panel').getDimensions();
+	var browserDims = $(document).viewport.getDimensions();
+	var scrollOffset = $(document).viewport.getScrollOffsets();
+	 
+	// calculate the center of the page using the browser and element dimensions
+	var y  = (browserDims.height - eltDims.height) / 2 + scrollOffset.top;
+	var x = (browserDims.width - eltDims.width) / 2;	
+	
+	$('progress_indicator_panel').absolutize();	
+	$('progress_indicator_panel').style.left = x + 'px';
+	$('progress_indicator_panel').style.top = y + 'px';
+	$('progress_indicator_panel').show();
+}
+
+function hideWaitPanel() {
+	if ($('progress_indicator_panel')==null) {
+		return;
+	}
+	$('progress_indicator_panel').hide();
+}

@@ -7,7 +7,7 @@
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
         <display:setProperty name="pagination.pagenumber.param" value="results.pageNumber" />
 
-        <display:column titleKey="organization.id" sortable="true" sortProperty="ORGANIZATION_ID" >
+        <display:column titleKey="organization.id" sortable="true" sortProperty="ID" >
             <c:url var="viewDetailsUrl" value="/protected/ajax/selector/organization/detail.action">
                 <c:param name="organization.id" value="${row.id}"/>
             </c:url>
@@ -15,22 +15,15 @@
                 ${row.id}
             </a>
         </display:column>
-        <display:column titleKey="organization.name" property="name" sortable="true" sortProperty="ORGANIZATION_NAME" />
-        <display:column titleKey="family.name" sortable="false" >
-            <c:forEach items="${row.familyOrganizationRelationships}" var="famOrgRel">
-                <li><c:out value="${famOrgRel.family.name}"/> (<c:out value="${famOrgRel.functionalType}"/>)</li> 
-            </c:forEach>
-        </display:column>
-        <display:column titleKey="organization.statusCode" sortable="true" sortProperty="ORGANIZATION_STATUS" >
+        <display:column titleKey="organization.name" property="name" sortable="true" sortProperty="NAME" />
+        <display:column titleKey="family.name" property="familyName"
+            sortable="true" sortProperty="FAMILY" />
+        <display:column titleKey="organization.statusCode" sortable="true" sortProperty="STATUS" >
             ${row.statusCode}
         </display:column>
-        <display:column titleKey="organization.changeRequests" >
-            <c:choose>
-            <c:when test="${fn:length(row.changeRequests) > 0}">
-               <div class="difference_found">${fn:length(row.changeRequests)}</div>
-            </c:when>
-            <c:otherwise><fmt:message key="none"/></c:otherwise>
-            </c:choose>
+        <display:column titleKey="organization.changeRequests" sortable="true" media="html"
+            sortProperty="CR">
+                ${row.changeRequests==0?'':row.changeRequests}
         </display:column>
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>

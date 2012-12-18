@@ -22,6 +22,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaff" />
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />
         <mapping class="gov.nih.nci.po.data.bo.Country" />
+        <mapping class="gov.nih.nci.po.data.bo.Comment" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
         <mapping class="gov.nih.nci.po.data.bo.Family"/>
         <mapping class="gov.nih.nci.po.data.bo.FamilyOrganizationRelationship"/>
@@ -55,6 +56,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
 
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
+        
+        <mapping resource="queries.xml" />
 
         <event type="pre-update">
             <listener class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>

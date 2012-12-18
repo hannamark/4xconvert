@@ -498,18 +498,15 @@ public class DSetConverter {
 
         List<String> returnList = new ArrayList<String>();
 
-        if (dset == null || CollectionUtils.isEmpty(dset.getItem())) {
-            return null;
-        }
-        Set<? extends Tel> telList = dset.getItem();
-
-        for (Tel item  : telList) {
+        if (!(dset == null || CollectionUtils.isEmpty(dset.getItem()))) {
+            Set<? extends Tel> telList = dset.getItem();
+            for (Tel item : telList) {
                 String value = item.getValue().toString();
                 if (!StringUtils.isEmpty(value) && value.startsWith(type)) {
                     returnList.add(value.replaceFirst(type, ""));
                 }
+            }
         }
-
         return returnList;
     }
 

@@ -102,7 +102,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @MappedSuperclass
-public abstract class AbstractOversightCommittee extends AbstractOrganizationRole {
+public abstract class AbstractOversightCommittee extends AbstractContactableOrganizationRole {
 
     private static final long serialVersionUID = 1L;
 

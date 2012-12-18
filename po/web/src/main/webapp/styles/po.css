@@ -147,6 +147,8 @@ field_xs,.field_s,fieldbox_m,fieldbox_l,fieldbox_xl,fieldbox_xxl
 { border:1px solid #acacac; padding:3px; background:#eaeaea url("../images/bg_h1.gif") repeat-x; width:390px ; cursor:default }
 SPAN.required
 { color:#c00; font-weight:bold;  }
+SPAN.changed
+{ color:green; font-weight:bold;  }
 DIV.required INPUT, DIV.required SELECT
 { background:#fffbdf url("../images/bg_formfield_required.gif") repeat-x  }
 INPUT.no_border
@@ -302,3 +304,87 @@ a.tooltip:hover span{display:inline; position:absolute;
 	KHTMLOpacity: 0.90;
 	MozOpacity: 0.90;
 	opacity: 0.90;}
+	
+/* Comments */
+div.comment_box {
+	background: none repeat scroll 0 0 #FFFFFF;   
+    line-height: 1.4em;
+    padding: 7px;
+    border-top: 1px dotted  gray;
+}
+
+div.comment_txt {
+	white-space: pre-wrap;
+	color: #555555;
+}
+
+/* Control.Tabs */
+
+#tabboxwrapper
+{ clear:both; padding:5px; background:#5d7ba2 url("../images/bg_tabboxwrapper.gif") repeat-x; border:1px solid #475b82; border-top:0; height:1%; }
+UL#maintabs
+{ height:2.3em; margin:10px 0 0 0; font-weight:bold; list-style:none; padding-left:3px; clear:both; font-size:110%;}
+:lang(en) UL#maintabs
+{ height:1.6em; }
+
+UL#maintabs LI
+{ float:left;    margin:0; padding:0 0 0 3px; text-align:center; background:none }
+UL#maintabs LI A
+{ font-size:70%; text-decoration:none !important; display:block; margin:0; padding:5px 8px; background:#e4e4e4 url("../images/bg_h2.gif") repeat-x 0 -10px; color:#475b82; text-decoration:none; border-top:2px solid #efefef;  border-right:1px solid #ccc;  }
+UL#maintabs LI A:hover
+{    color:#333;    background:#efefef; text-decoration:none !important; }
+UL#maintabs LI A.active, UL#maintabs LI A.active:hover
+{ outline:none; color:#fff; background-color:#5d7ba2; border-top:3px solid #475b82; border-left:1px solid #475b82; border-right:0;  background-image:none }
+UL#maintabs LI.active
+{ color:#333; background-color:#5d7ba2; }
+UL#maintabs LI A:focus
+{ -moz-outline-style:none; }
+
+.tabbox {
+    background: url("../images/bg_fadepanel.gif") repeat-x scroll center top #FFFFFF;
+    border-top: 1px dotted #CACACA;
+    margin: 0;
+    padding: 5px 5px 0;
+    font-size: 90% !important;
+}
+
+.tabbox div div.pagingtop {
+	 font-size: 100% !important;
+}
+
+div#tabboxwrapper div div.btnwrapper {
+	padding: 0 0 0 0;
+	border-top: 0 solid white;
+	margin-top: 0px;
+	margin-bottom:10px;
+}
+
+.actionstoprow
+{ margin-top:20px; padding:5px 5px 5px 5px; clear:both; text-decoration:none; text-align:center; border-bottom:1px dotted #aeaeae}
+
+
+#progress_indicator_panel {
+    text-align: center;
+    font-weight: bold;
+    font-size: 110%;
+    padding: 5px 5px 5px 5px;
+    border-color: #808080;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    width: 240px !important;
+    height: 60px !important;
+    background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;
+    z-index: 100;
+    white-space: nowrap !important;
+    -moz-box-shadow: 10px 10px 5px #888;
+    -webkit-box-shadow: 10px 10px 5px #888;
+    box-shadow: 10px 10px 5px #888;    
+}
+
+#progress_indicator_panel div {
+    padding: 2px 2px 2px 2px;
+}
+
+div#io.tabbox div#ioRoleSearchResults {
+    overflow: auto;
+}

@@ -53,6 +53,7 @@
                 <s:token/>
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
+                <s:hidden key="rootKey"/>
                 <s:if test="%{isNotCreate}"><s:hidden key="role.id" /></s:if>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
                 <s:set name="codeValueClass" value="@gov.nih.nci.po.data.bo.OversightCommitteeType@class"/>
@@ -100,6 +101,20 @@
                 </c:if>
             </div>
         </div>
+        
+        <div class="boxouter">
+            <h2>Address Information</h2>
+            <po:addresses readonly="${role.ctepOwned}"/>
+        </div>
+
+        <div class="boxouter_nobottom">
+            <h2>Contact Information</h2>
+            <div class="box_white">
+                <div class="clear"></div>
+                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" readonly="${role.ctepOwned}"/>
+            </div>
+        </div>
+        
     </div>
 </div>
 

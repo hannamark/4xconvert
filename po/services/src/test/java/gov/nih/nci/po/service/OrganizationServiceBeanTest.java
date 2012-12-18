@@ -1016,9 +1016,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         familyOrgRelServiceLocal.createEntity(famOrgRelOne);
         familyOrgRelServiceLocal.createEntity(famOrgRelTwo);
 
-        StrutsOrganizationSearchCriteria criteria = new StrutsOrganizationSearchCriteria();
-        criteria.getOrganization().getFamilyOrganizationRelationships().iterator().next().getFamily().setName("test");
-
+        OrganizationSearchCriteria criteria = new OrganizationSearchCriteria();
+       
         assertEquals(1L, getOrgServiceBean().count(criteria));
     }
 

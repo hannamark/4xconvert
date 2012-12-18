@@ -32,4 +32,12 @@
         <function-signature>java.lang.String join(java.util.Collection, java.lang.String)</function-signature>
         <example>'${func:join(stringCollection, separator)}'</example>
     </function>
+    
+    <function>
+        <description>Wraps given Collection into PaginatedList using default page/sorting settings.</description>
+        <name>wrapInPaginated</name>
+        <function-class>gov.nih.nci.po.web.util.Functions</function-class>
+        <function-signature>com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList wrapInPaginated(java.util.Collection)</function-signature>
+        <example>N/A</example>
+    </function>    
 </taglib>

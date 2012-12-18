@@ -286,7 +286,6 @@ public class OrganizationalContactAction extends
             Organization scoper = new Organization();
             scoper.setId(getOrganization().getId());
             boCrit.setScoper(scoper);
-            boCrit.setTitle("%");
         }
         return criteria;
     }

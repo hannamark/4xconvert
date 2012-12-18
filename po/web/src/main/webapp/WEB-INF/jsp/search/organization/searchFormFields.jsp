@@ -4,25 +4,35 @@
                 <div class="boxouter" style="float:left;margin-right: 10px;">
                     <h2>Basic Identifying Information</h2>
                     <div class="box_white">
+                    
+                    <po:inputRow>
+                        <po:inputRowElement>
+                            <s:textfield label="%{getText('organization.ctepId')}" name="criteria.ctepID" size="10"/>                         
+                        </po:inputRowElement>
+                    </po:inputRow>
+                    
                     <po:inputRow>
                     <po:inputRowElement>
-                        <s:textfield label="%{getText('organization.id')}" name="criteria.organization.id" size="10"/>
+                        <s:textfield label="%{getText('organization.id')}" name="criteria.id" size="10"/>
                     </po:inputRowElement>
                     <po:inputRowElement>
                         <s:set name="statusValues" value="@gov.nih.nci.po.data.bo.EntityStatus@getAllowedSearchable()" />
                            <s:select
                         label="%{getText('organization.statusCode')}"
-                        name="criteria.organization.statusCode"
+                        name="criteria.statusCode"
                         list="#statusValues"
                         listKey="name()"
                         listValue="name()"
-                        value="criteria.organization.statusCode" 
+                        value="criteria.statusCode" 
                         headerKey="" headerValue="--Select a Status--" 
                         /> 
                     </po:inputRowElement>
                     </po:inputRow>
-                        <s:textfield label="%{getText('organization.name')}" name="criteria.organization.name" size="70"/>
-                        <s:textfield label="%{getText('family.name')}" name="criteria.organization.familyOrganizationRelationships.iterator.next.family.name" size="70"/>
+                        <s:textfield label="%{getText('organization.name')}" name="criteria.name" size="70"/>
+                        <s:textfield label="%{getText('family.name')}" name="criteria.familyName" size="70"/>
+                        <s:checkbox label="%{getText('organization.hasChangeRequests')}" name="criteria.hasChangeRequests" labelposition="right" />
+                        <s:checkbox label="%{getText('organization.hasPendingHcfRoles')}" name="criteria.hasPendingHcfRoles" labelposition="right" />
+                        <s:checkbox label="%{getText('organization.hasPendingRoRoles')}" name="criteria.hasPendingRoRoles" labelposition="right" />
                         <div class="clear"></div>
                     </div>
                 </div>

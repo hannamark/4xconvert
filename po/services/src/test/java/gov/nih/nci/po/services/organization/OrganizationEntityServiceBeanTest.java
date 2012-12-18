@@ -212,10 +212,9 @@ public class OrganizationEntityServiceBeanTest extends OrganizationServiceBeanTe
     public void validate() {
         OrganizationDTO dto = new OrganizationDTO();
         Map<String, String[]> errors = remote.validate(dto);
-        assertEquals(3, errors.size());
+        assertEquals(2, errors.size());
         assertTrue(errors.containsKey("name"));
-        assertTrue(errors.containsKey("postalAddress"));
-        assertTrue(errors.containsKey("email"));
+        assertTrue(errors.containsKey("postalAddress"));        
    }
 
     private Organization createOrg(String name, String addr1, String addr2, String city, String state, String zip,

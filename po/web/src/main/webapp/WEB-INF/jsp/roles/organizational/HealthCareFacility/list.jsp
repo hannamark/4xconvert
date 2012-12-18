@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
 <c:url value="/protected/ajax/roles/organizational/HealthCareFacility/results/list.action" var="sortUrl" />
-<ajax:displayTag id="roleSearchResults" tableClass="data">
-    <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row" name="results" requestURI="${sortUrl}" >
+<ajax:displayTag id="hcfRoleSearchResults" tableClass="data">
+    <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="hcf_row" name="results" requestURI="${sortUrl}" >
         <po:displayTagProperties/>
         <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />
         <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
@@ -11,21 +11,21 @@
         <display:column titleKey="healthCareFacility.name" property="name" sortable="true" sortProperty="NAME"/>
         <display:column titleKey="healthCareFacility.status" sortable="true" sortProperty="ROLE_STATUS">
             <c:choose>
-            <c:when test="${fn:length(row.changeRequests) > 0}">
-               ${row.status} <br/>
-                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
+            <c:when test="${fn:length(hcf_row.changeRequests) > 0}">
+               ${hcf_row.status} <br/>
+                <div class="difference_found">Change Requests (${fn:length(hcf_row.changeRequests)})</div>
             </c:when>
-            <c:otherwise>${row.status}</c:otherwise>
+            <c:otherwise>${hcf_row.status}</c:otherwise>
             </c:choose>
         </display:column>
         <display:column titleKey="healthCareFacility.statusDate" property="statusDate" sortable="true" sortProperty="STATUS_DATE" format="{0,date,yyyy-MM-dd}" />
         <display:column titleKey="th.action" class="action">
             <c:url var="editUrl" value="/protected/roles/organizational/HealthCareFacility/input.action">
                 <c:param name="organization" value="${organization.id}"/>
-                <c:param name="role.id" value="${row.id}"/>
+                <c:param name="role.id" value="${hcf_row.id}"/>
             </c:url>
             <po:buttonRow>
-                <po:button href="${editUrl}" style="edit" text="Edit" id="edit_healthCareFacility_id_${row.id}"/>
+                <po:button href="${editUrl}" style="edit" text="Edit" id="edit_healthCareFacility_id_${hcf_row.id}"/>
             </po:buttonRow>
         </display:column>
     </display:table>

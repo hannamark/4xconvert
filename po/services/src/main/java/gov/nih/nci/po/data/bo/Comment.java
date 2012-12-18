@@ -80,88 +80,128 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.CsmUserUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
+import org.hibernate.annotations.ForeignKey;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
- * Criteria to find Organizations to curate.
+ * Represents a comment.
+ * 
+ * @author Denis G. Krylov
  */
-public final class CurateOrganizationSearchCriteria extends AbstractEntitySearchCriteria<Organization> {
+@Entity
+@Table(name = "comment")
+public class Comment implements PersistentObject {
+    private static final long serialVersionUID = 7991318155036413255L;
+
+    private Long id;
+    private String value;
+    private Date createDate;
+    private User user;
 
     /**
      * {@inheritDoc}
      */
-    protected Class<Organization> getRootObjectType() {
-        return Organization.class;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
     }
 
     /**
-     * {@inheritDoc}
+     * @param id
+     *            id
      */
-    @Override
-    public String getRootAlias() {
-        return "o";
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the value
      */
-    @Override
-    public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        final String prehql =
-                " from Organization o"
-                + " LEFT OUTER JOIN o.changeRequests as ocr"
-                + " LEFT OUTER JOIN o.researchOrganizations as ro"
-                + " LEFT OUTER JOIN ro.changeRequests as rocr"
-                + " LEFT OUTER JOIN o.oversightCommittees as oc"
-                + " LEFT OUTER JOIN oc.changeRequests as occr"
-                + " LEFT OUTER JOIN o.healthCareFacilities as hcf"
-                + " LEFT OUTER JOIN hcf.changeRequests as hcfcr"
-                + " LEFT OUTER JOIN o.identifiedOrganizations as io"
-                + " LEFT OUTER JOIN io.changeRequests as iocr "
-                + " where (o.statusCode != '" + EntityStatus.NULLIFIED + "') AND ("
-                + " o.statusCode = 'PENDING' "
-                + " or ocr.processed = 'false'"
-                + " or ro.status = 'PENDING'"
-                + " or rocr.processed = 'false'"
-                + " or oc.status = 'PENDING'"
-                + " or occr.processed = 'false'"
-                + " or hcf.status = 'PENDING'"
-                + " or hcfcr.processed = 'false'"
-                + " or io.status = 'PENDING'"
-                + " or iocr.processed = 'false' )";
-
-        StringBuffer hql = new StringBuffer("select ");
-
-        if (isCountOnly) {
-            hql.append("COUNT(DISTINCT o)");
-        } else {
-            hql.append("DISTINCT o");
-        }
-        hql.append(prehql);
-        if (!isCountOnly) {
-            hql.append(orderByProperty);
-        }
-
-        return PoHibernateUtil.getCurrentSession().createQuery(hql.toString());
+    @Column(name = "value")
+    @Lob
+    public String getValue() {
+        return value;
     }
 
     /**
-     * {@inheritDoc}
+     * @param value
+     *            the value to set
      */
-    public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
-        if (StringUtils.isNotBlank(leftJoinClause)) {
-            throw new IllegalArgumentException("The use of the left join clause is currently not supported."
-                    + " Please ref jira issues PO-1115, PO-1116, PO-1118");
-        }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-        return getQuery(orderByProperty, isCountOnly);
+    /**
+     * @return the createDate
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_date")
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    /**
+     * @param createDate
+     *            the createDate to set
+     */
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
+    @ForeignKey(name = "comment_user_id")
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @param user
+     *            the user to set
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getUserName() {
+        String name = "";
+        if (user != null) {
+            name = StringUtils
+                    .isBlank(user.getLastName() + user.getFirstName()) ? CsmUserUtil
+                    .getGridIdentityUsername(user.getLoginName()) : (user
+                    .getFirstName() + " " + user.getLastName());
+        }
+        return name;
     }
 
 }

@@ -12,8 +12,10 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.OSvcBean;
 import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.PSvcBean;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -30,7 +32,7 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
 
-public class NullifiedEntityNodeInterceptorTest {
+public class NullifiedEntityNodeInterceptorTest extends AbstractServiceBeanTest {
     NullifiedEntityNodeInterceptor interceptor;
     TestInvocationContext testContext;
 
@@ -42,7 +44,7 @@ public class NullifiedEntityNodeInterceptorTest {
 
     @Test(expected = NullifiedEntityException.class)
     public void testCheckForNullifiedWithOrgEntity() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         
         EntityNodeDto entityNodeDto = new EntityNodeDto();
 
@@ -90,7 +92,7 @@ public class NullifiedEntityNodeInterceptorTest {
 
     @Test(expected = NullifiedEntityException.class)
     public void testCheckForNullifiedWithPersonEntity() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         EntityNodeDto entityNodeDto = new EntityNodeDto();
 
         Person dup = new Person();
@@ -133,7 +135,7 @@ public class NullifiedEntityNodeInterceptorTest {
     
     @Test
     public void testCheckForNullifiedSuccess() throws Exception {
-        HibernateUtil.getHibernateHelper().beginTransaction();
+        PoHibernateUtil.getCurrentSession().beginTransaction();
         BusinessServiceBean bsb = new BusinessServiceBean();
         OSvcBean svcLocal = new OSvcBean();
         bsb.setOrganizationServiceBean(svcLocal);

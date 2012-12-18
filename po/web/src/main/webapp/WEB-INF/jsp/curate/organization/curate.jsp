@@ -46,6 +46,7 @@
     <s:else>
        <s:set name="formAction" value="'organization/curate/curate.action'"/>
     </s:else>
+    <c:url value="/protected/organization/curate/removeCR.action" var="removeCrUrl" scope="request"/>
     <s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
         <s:token/>
         <input id="enableEnterSubmit" type="submit"/>
@@ -141,14 +142,14 @@
             </div>
         </div>
 
-        <s:hidden key="organization.comments" id="curateEntityForm.organization.comments"/>
+        <s:hidden key="comments" id="curateEntityForm.organization.comments"/>
     </s:form>
 
         <div class="boxouter_nobottom">
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="organization"/>
+                <po:contacts contactableKeyBase="organization" emailRequired="false"/>
             </div>
         </div>
 <s:if test="%{isNotCreate}">
@@ -169,29 +170,126 @@
                 </c:url>
                 <c:url var="manageOrganizationalContacts" value="/protected/roles/organizational/OrganizationalContact/start.action">
                     <c:param name="organization" value="${organization.id}"/>
-                </c:url>
-                <c:url var="manageFamilies" value="/protected/roles/organizational/familyRelationships/start.action">
-                    <c:param name="organization" value="${organization.id}"/>
-                </c:url>
+                </c:url>               
                 <c:url var="manageOrganizationRelationships" value="/protected/roles/organizational/organizationRelationships/start.action">
                     <c:param name="organization" value="${organization.id}"/>
-                </c:url>
-                <ul>
-                    <li><a href="${manageResearchOrgs}"><s:text name="researchOrganization.manage.title"/></a> (${fn:length(organization.researchOrganizations)}) <c:if test="${hotResearchOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageIdentifiedOrgs}"><s:text name="identifiedOrganization.manage.title"/></a> (${fn:length(organization.identifiedOrganizations)}) <c:if test="${hotIdentifiedOrganizationCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageOversightComms}"><s:text name="oversightCommittee.manage.title"/></a> (${fn:length(organization.oversightCommittees)}) <c:if test="${hotOversightCommitteeCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageHcf}"><s:text name="healthCareFacility.manage.title"/></a> (${fn:length(organization.healthCareFacilities)}) <c:if test="${hotHealthCareFacilityCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageOrganizationalContacts}"><s:text name="organizationalContact.manage.title"/></a> (${fn:length(organization.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageFamilies}"><s:text name="familyOrganizationRelationships.manage.title"/></a> (${fn:length(organization.familyOrganizationRelationships)})</li>
+                </c:url>                                
+                <ul id="maintabs" class="roletabs">
+                     <li><a href="#hcf">HCF (${fn:length(organization.healthCareFacilities)}) <c:if test="${hotHealthCareFacilityCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#ro">RO (${fn:length(organization.researchOrganizations)}) <c:if test="${hotResearchOrganizationCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#oc">Oversight Committee (${fn:length(organization.oversightCommittees)}) <c:if test="${hotOversightCommitteeCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#io">Identified Org (${fn:length(organization.identifiedOrganizations)}) <c:if test="${hotIdentifiedOrganizationCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#octc">Org Contact (${fn:length(organization.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
                 </ul>
-                <div class="clear"></div>
+                <script type="text/javascript">
+                                //<![CDATA[
+                                Event.observe(window,'load',function() {
+                                    $$('.roletabs').each(function(tabs) {
+                                        new Control.Tabs(tabs);
+                                    });
+                                });
+                                //]]>
+                </script>                
+                <div id="tabboxwrapper">
+                      <div id="hcf" class="tabbox"> 
+	                        <c:set var="results" value="${func:wrapInPaginated(organization.healthCareFacilities)}" scope="request"/>
+	                        <%@include file="/WEB-INF/jsp/roles/organizational/HealthCareFacility/list.jsp" %>
+				            <c:url var="addUrl" value="/protected/roles/organizational/HealthCareFacility/input.action">
+				                <c:param name="organization" value="${organization.id}"/>
+				            </c:url>
+				            <div class="btnwrapper">
+					            <po:buttonRow>
+					                <po:button id="add_button_hcf" href="${addUrl}" style="add" text="Add Health Care Facility"/>
+					            </po:buttonRow>	                                    
+				            </div>               
+                      </div>
+                      <div id="ro" class="tabbox" style="display:none;">   
+                            <c:set var="results" value="${func:wrapInPaginated(organization.researchOrganizations)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/organizational/ResearchOrganization/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/organizational/ResearchOrganization/input.action">
+                                <c:param name="organization" value="${organization.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_ro" href="${addUrl}" style="add" text="Add Research Organization"/>
+                                </po:buttonRow>                                     
+                            </div>       
+                      </div>
+                      <div id="oc" class="tabbox" style="display:none;">
+                            <c:set var="results" value="${func:wrapInPaginated(organization.oversightCommittees)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/organizational/OversightCommittee/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/organizational/OversightCommittee/input.action">
+                                <c:param name="organization" value="${organization.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_oc" href="${addUrl}" style="add" text="Add Oversight Committee"/>
+                                </po:buttonRow>                                     
+                            </div>          
+                      </div>
+                      <div id="io" class="tabbox" style="display:none;">
+                            <c:set var="results" value="${func:wrapInPaginated(organization.identifiedOrganizations)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/organizational/IdentifiedOrganization/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/organizational/IdentifiedOrganization/input.action">
+                                <c:param name="organization" value="${organization.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_io" href="${addUrl}" style="add" text="Add Identified Organization"/>
+                                </po:buttonRow>                                     
+                            </div>          
+                      </div>
+                      <div id="octc" class="tabbox" style="display:none;">
+                            <c:set var="results" value="${func:wrapInPaginated(organization.organizationalContacts)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/OrganizationalContact/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/organizational/OrganizationalContact/input.action">
+                                <c:param name="organization" value="${organization.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_octc" href="${addUrl}" style="add" text="Add Organizational Contact"/>
+                                </po:buttonRow>                                     
+                            </div>          
+                      </div>
+                </div>
             </div>
+        </div>
+        <div class="boxouter">
+            <h2>Organization Family</h2>
+             <div class="box_white">
+                    <c:url var="manageFamilies" value="/protected/roles/organizational/familyRelationships/start.action">
+	                    <c:param name="organization" value="${organization.id}"/>
+	                </c:url>
+	                <ul>
+	                    <li><a href="${manageFamilies}"><s:text name="familyOrganizationRelationships.manage.title"/></a> (${fn:length(organization.familyOrganizationRelationships)})</li>
+	                </ul>
+	                <div class="clear"></div>	                
+             </div>
         </div>
 </s:if>
         <div class="boxouter">
         <h2>Curator Comment(s)</h2>
+            <c:forEach items="${organization.comments}" var="comment">
+                <div class="comment_box">
+                    <div class="comment_hdr">
+		                <b><c:out value="${not empty comment.userName?comment.userName:'Unknown user'}"></c:out></b>
+		                <fmt:message key="organization.comments.addedBy"/>
+		                <b>
+		                <c:choose>
+		                    <c:when test="${comment.createDate==null}">
+		                        unknown date:
+		                    </c:when>    
+		                    <c:otherwise>
+		                        <fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd hh:mm aaa"/>:
+		                    </c:otherwise>                
+		                </c:choose>
+		                </b>
+	                </div>
+	                <div class="comment_txt"><c:out value="${comment.value}" escapeXml="false"/></div>
+                </div>
+            </c:forEach>
             <div class="box_white">
-                <s:textarea id="curateEntityForm.organization.commentsText" label="%{getText('organization.comments')}" cols="50" rows="8" cssStyle="resize: none;" value="%{organization.comments}" />
+                <s:textarea id="curateEntityForm.organization.commentsText" label="%{getText('organization.comments.add')}" cols="50" rows="8" cssStyle="resize: none;" value="%{comments}" />
             </div>
         </div>
     </div>

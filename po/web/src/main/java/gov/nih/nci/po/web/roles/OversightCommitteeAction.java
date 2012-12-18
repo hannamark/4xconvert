@@ -89,6 +89,7 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
 
 import java.util.ArrayList;
@@ -117,6 +118,7 @@ public class OversightCommitteeAction extends
     private OversightCommittee role = new OversightCommittee();
     private OversightCommittee duplicateOf = new OversightCommittee();
     private OversightCommitteeCR cr = new OversightCommitteeCR();
+    private String rootKey;
 
     /**
      * default constructor.
@@ -191,6 +193,9 @@ public class OversightCommitteeAction extends
     @Override
     public void prepare() {
         super.prepare();
+        if (getRootKey() != null) {
+            role = (OversightCommittee) getSession().getAttribute(getRootKey());
+        }        
         if (getRole() == null) {
             setRole(new OversightCommittee());
         }
@@ -328,6 +333,37 @@ public class OversightCommitteeAction extends
      */
     @Override
     public boolean isUsOrCanadaFormat() {
-        return false;
+        return role.isUsOrCanadaAddress();    
     }
+    
+    
+    /**
+    *
+    * @return the session key of the root object (org or person)
+    */
+   public String getRootKey() {
+       return rootKey;
+   }
+
+   /**
+    *
+    * @param rootKey the session key of the root object.
+    */
+   public void setRootKey(String rootKey) {
+       PoHttpSessionUtil.validateSessionKey(rootKey);
+       this.rootKey = rootKey;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String input() {
+       String result = super.input();
+       initializeCollections(getRole());
+       initialize(getRole());
+       setRootKey(PoHttpSessionUtil.addAttribute(getRole()));
+       return result;
+   }
+   
 }

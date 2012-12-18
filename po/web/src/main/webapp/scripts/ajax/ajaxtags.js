@@ -51,16 +51,25 @@ AjaxJspTag.PreFunctionUpdateInvoke = Class.create();
 AjaxJspTag.PreFunctionUpdateInvoke.prototype = Object.extend(new AjaxJspTag.Base(), {
 
   initialize: function(ajaxupdateData) {
-  this.preFunction = ajaxupdateData.preFunction;
-  if (isFunction(this.preFunction))
-  { 
-  	this.preFunction();
-  }
-  if (this.cancelExecution) {
-	    	this.cancelExecution = false;
-	    	return ;
-      	}
-  var thisCall = new Ajax.Updater(ajaxupdateData.id,ajaxupdateData.href,{onComplete: ajaxupdateData.postFunction});
+	  this.preFunction = ajaxupdateData.preFunction;
+	  if (isFunction(this.preFunction))
+	  { 
+	  	this.preFunction();
+	  }
+	  if (this.cancelExecution) {
+    	this.cancelExecution = false;
+    	return ;
+	  }
+	  
+	  displayWaitPanel();
+	  var thisCall = new Ajax.Updater(ajaxupdateData.id,ajaxupdateData.href,
+			  {
+		  		onComplete: ajaxupdateData.postFunction, 
+		  		onSuccess: hideWaitPanel,
+		  		onFailure: hideWaitPanel,
+		  		onException: hideWaitPanel
+		  	  }
+	  );
   }
 
 

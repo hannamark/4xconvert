@@ -1,4 +1,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+
+<script type="text/javascript">
+            function removeChangeRequest(crId) {
+            	if (confirm('<s:text name="organization.changeRequest.remove"/>')) {
+            		$('curateEntityForm').action = '${func:escapeJavaScript(removeCrUrl)}';
+            		$('curateEntityForm').submit();
+            	}
+            }
+</script>
+
     <div class="boxouter_nobottom">
     <h2>Change Request Information</h2>
     <s:form action="ajax/organization/curate/no.action" id="curateOrgCrForm" theme="css_xhtml_readonly">
@@ -9,18 +19,30 @@
 	        ${cr.id} 
 	        </po:field>
             
+            <c:if test="${cr.noChange}">
+                <po:removeButton id="remove_curateEntityForm_organization_statusCode" onclick="removeChangeRequest();"
+                    buttonStyle="float:right;"/>                                
+            </c:if>
+            
 	        <po:copyButton id="copy_curateEntityForm_organization_statusCode" onclick="selectValueInSelectField('${func:escapeJavaScript(cr.statusCode)}', 'curateEntityForm.organization.statusCode');"
 	            bodyStyle="float:left;" buttonStyle="float:right;">
-	            <po:field labelKey="organization.statusCode">
+	            <po:field labelKey="organization.statusCode" fieldChanged="${cr.statusCodeChanged}">
 		            ${cr.statusCode}
 	            </po:field>
 	        </po:copyButton>
-            
+	        
+	        <c:if test="${cr.noChange}">
+                <po:removeButton id="remove_curateEntityForm_organization_name" onclick="removeChangeRequest();"
+                    buttonStyle="float:right; clear:left"/>                                
+            </c:if>
+	        
             <po:copyButton id="copy_curateEntityForm_organization_name" onclick="copyValueToTextField('${func:escapeJavaScript(cr.name)}', 'curateEntityForm_organization_name');" 
-                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-                <s:textfield name="cr.name" label="%{getText('organization.name')}" required="false" cssClass="required" size="70"/>
+                bodyStyle="clear:left; float:left;" buttonStyle="float:right;">
+                <po:field labelKey="organization.name" fieldChanged="${cr.nameChanged}">
+                    ${cr.name}
+                </po:field>
             </po:copyButton>
-            
+                        
             <div class="clear"></div>
         </div>
     </div>
@@ -39,8 +61,14 @@
             	copyValueToTextField('${func:escapeJavaScript(cr.postalAddress.postalCode)}', 'curateEntityForm_organization_postalAddress_postalCode');
             }
             </script>
+            
+            <c:if test="${cr.noChange}">
+                <po:removeButton id="remove_curateEntityForm_organization_postalAddress" onclick="removeChangeRequest();"
+                    buttonStyle="float:right;"/>                                
+            </c:if>
+            
             <po:copyButton id="copy_curateEntityForm_organization_postalAddress" onclick="copyPostalAddressField();" bodyStyle="clear:left;float:left;" buttonStyle="float:right;">
-                <po:address address="${cr.postalAddress}"/>
+                <po:address address="${cr.postalAddress}" cr="${cr}"/>
             </po:copyButton>
             <div class="clear"></div>
         </div>

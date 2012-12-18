@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -90,7 +92,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -103,6 +107,7 @@ import org.hibernate.validator.Valid;
  * @author gax
  */
 @Entity
+@SuppressWarnings("PMD.TooManyMethods")
 public class OrganizationCR extends AbstractOrganization implements ChangeRequest<Organization> {
     private static final String INDEX_NAME = "idx";
     private static final String JOIN_COLUMN = "org_cr_id";
@@ -263,4 +268,146 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     public void setTarget(Organization target) {
         this.target = target;
     }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStatusCodeChanged() {
+        return getStatusCode() != target.getStatusCode();
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNameChanged() {
+        return !StringUtils.equals(getName(), target.getName());
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isCountryChanged() {
+        return !StringUtils.equals(getPostalAddress().getCountry().getName(),
+                target.getPostalAddress().getCountry().getName());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStreetAddressLineChanged() {
+        return !StringUtils.equals(getPostalAddress().getStreetAddressLine(),
+                target.getPostalAddress().getStreetAddressLine());
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isDeliveryAddressLineChanged() {
+        return !StringUtils.equals(getPostalAddress().getDeliveryAddressLine(),
+                target.getPostalAddress().getDeliveryAddressLine());
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isCityOrMunicipalityChanged() {
+        return !StringUtils.equals(getPostalAddress().getCityOrMunicipality(),
+                target.getPostalAddress().getCityOrMunicipality());
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStateOrProvinceChanged() {
+        return !StringUtils.equals(getPostalAddress().getStateOrProvince(),
+                target.getPostalAddress().getStateOrProvince());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isPostalCodeChanged() {
+        return !StringUtils.equals(getPostalAddress().getPostalCode(),
+                target.getPostalAddress().getPostalCode());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isEmailChanged() {
+        return isContactChanged(target.getEmail(), getEmail());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isUrlChanged() {
+        return isContactChanged(target.getUrl(), getUrl());
+
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isPhoneChanged() {
+        return isContactChanged(target.getPhone(), getPhone());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isFaxChanged() {
+        return isContactChanged(target.getFax(), getFax());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isTtyChanged() {
+        return isContactChanged(target.getTty(), getTty());
+    }
+
+
+    private boolean isContactChanged(List<? extends Contact> oldContacts,
+            List<? extends Contact> newContacts) {
+        TreeSet<Contact> set = new TreeSet<Contact>(new Comparator<Contact>() {
+            public int compare(Contact o1, Contact o2) {
+                return StringUtils.equalsIgnoreCase(o1.getValue(),
+                        o2.getValue()) ? 0 : -1;
+            }
+        });
+        set.addAll(oldContacts);
+        set.addAll(newContacts);
+        if (set.size() != oldContacts.size()) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNoChange() { 
+        return !isCityOrMunicipalityChanged() && !isCountryChanged()
+                && !isDeliveryAddressLineChanged() && !isEmailChanged()
+                && !isFaxChanged() && !isNameChanged() && !isPhoneChanged()
+                && !isPostalCodeChanged() && !isStateOrProvinceChanged()
+                && !isStatusCodeChanged() && !isStreetAddressLineChanged()
+                && !isTtyChanged() && !isUrlChanged();
+    }
+    
 }

@@ -291,12 +291,13 @@
         
         <!-- Organization -> Inbox && Person -> Inbox -->
         <action name="curate/search/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{1}">
-            <result name="success">/WEB-INF/jsp/curate/{1}.jsp</result>
+            <result name="success">/WEB-INF/jsp/curate/{1}.jsp</result>            
             <result name="list" type="redirectAction">listAll</result>
         </action>
         <action name="ajax/curate/search/*/*" class="gov.nih.nci.po.web.curation.CurateAction" method="{2}">
             <result name="success">/WEB-INF/jsp/curate/{1}/list.jsp</result>
             <result name="list" type="redirectAction">listAll</result>
+            <result name="exportOrgs">/WEB-INF/jsp/curate/organization/listTable.jsp</result>
         </action>
         
         <!-- Family -> List/Search -->
@@ -511,6 +512,7 @@
         <action name="ajax/search/organization/results/*" class="gov.nih.nci.po.web.search.SearchOrganizationAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/search/organization/results.jsp</result>
+            <result name="export">/WEB-INF/jsp/search/organization/resultsTable.jsp</result>
         </action>
 
         <!-- Person -> Search -->

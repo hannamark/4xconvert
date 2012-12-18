@@ -7,7 +7,7 @@ import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.StrutsOrganizationSearchCriteria;
+import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
@@ -50,8 +50,8 @@ public class PoHttpSessionUtilTest extends AbstractPoTest {
 
     @Test
     public void testAddAttribute_SOSC() {
-        StrutsOrganizationSearchCriteria x = new StrutsOrganizationSearchCriteria();
-        StrutsOrganizationSearchCriteria y = new StrutsOrganizationSearchCriteria();
+        OrganizationSearchCriteria x = new OrganizationSearchCriteria();
+        OrganizationSearchCriteria y = new OrganizationSearchCriteria();
         String resultX = PoHttpSessionUtil.addAttribute(x);
         String resultY = PoHttpSessionUtil.addAttribute(y);
         assertFalse(resultX.equals(resultY));

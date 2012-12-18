@@ -1,6 +1,6 @@
 package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.data.bo.Contactable;
+import gov.nih.nci.po.data.bo.Comment;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.service.CurateEntityValidationException;
@@ -12,7 +12,10 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.exceptions.CSException;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -21,7 +24,9 @@ import javax.ejb.EJBException;
 import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.struts2.ServletActionContext;
 import org.hibernate.exception.ExceptionUtils;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
@@ -53,6 +58,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     private String rootKey;
     private OrganizationCR cr = new OrganizationCR();
     private Organization duplicateOf = new Organization();
+    private String comments;
 
     /**
      * {@inheritDoc}
@@ -90,21 +96,25 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
       org.getHealthCareFacilities().size();
       org.getResearchOrganizations().size();
       org.isAssociatedWithCtepRoles();
-
     }
 
-    private void initializeCollections(Contactable contactable) {
-        contactable.getEmail().size();
-        contactable.getFax().size();
-        contactable.getPhone().size();
-        contactable.getTty().size();
-        contactable.getUrl().size();
+    private void initializeCollections(Organization org) {
+        org.getEmail().size();
+        org.getFax().size();
+        org.getPhone().size();
+        org.getTty().size();
+        org.getUrl().size();
+        org.getComments().size();
     }
 
     /**
      * Curate method w/ struts validation.
+     * 
      * @return success
-     * @throws JMSException if an error occurred while publishing the announcement
+     * @throws JMSException
+     *             if an error occurred while publishing the announcement
+     * @throws CSException
+     *             CSException
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization"),
             @CustomValidator(type = "duplicateOfNullifiedOrg", fieldName = "duplicateOf",
@@ -116,7 +126,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
             @CustomValidator(type = "usOrCanadaPhone", fieldName = "organization.tty",
                     message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
-    public String curate() throws JMSException {
+    public String curate() throws JMSException, CSException {
         // PO-1196 - We are using a struts validator to make sure that when an org with associated ctep roles
         // is nullified, it must have a duplicateOf set. The reason we are using a struts validator instead of a
         // hibernate validator is the comment below.
@@ -125,7 +135,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
         if (duplicateOf != null && duplicateOf.getId() != null) {
             getOrganization().setDuplicateOf(duplicateOf);
         }
-
+        addCommentToOrg();
         try {
             PoRegistry.getOrganizationService().curate(getOrganization());
         } catch (EJBException e) {
@@ -147,6 +157,17 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
 
         ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
+    }
+
+    private void addCommentToOrg() throws CSException {
+        if (StringUtils.isNotBlank(comments)) {
+            Comment c = new Comment();
+            c.setCreateDate(new Date());           
+            c.setValue(comments);
+            c.setUser(SecurityServiceProvider.getUserProvisioningManager("po")
+                    .getUser(ServletActionContext.getRequest().getRemoteUser()));
+            getOrganization().getComments().add(c);
+        }
     }
 
     /**
@@ -206,6 +227,15 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     public String changeCurrentChangeRequest() {
         findAndSetCr(getCr().getId());
         return CHANGE_CURRENT_CHANGE_REQUEST_RESULT;
+    }
+    
+    /**
+     * @return success
+     */
+    public String removeCR() {
+        PoRegistry.getOrganizationService().removeChangeRequest(getCr());   
+        ActionHelper.saveMessage(getText("organization.removeCR.success")); 
+        return start();
     }
 
     /**
@@ -306,5 +336,19 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
             return this.getDuplicateOf().getId().toString();
         }
         return "";
+    }
+
+    /**
+     * @return the comments
+     */
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

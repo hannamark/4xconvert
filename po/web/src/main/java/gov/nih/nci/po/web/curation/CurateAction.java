@@ -82,19 +82,26 @@
  */
 package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.CurateOrganizationSearchCriteria;
 import gov.nih.nci.po.service.CuratePersonSearchCriteria;
-import gov.nih.nci.po.service.OrganizationSortCriterion;
+import gov.nih.nci.po.service.OrganizationSearchDTO;
+import gov.nih.nci.po.service.OrganizationSearchSortEnum;
+import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.apache.commons.lang.NumberUtils;
+import org.apache.struts2.ServletActionContext;
+import org.displaytag.properties.MediaTypeEnum;
 import org.displaytag.properties.SortOrderEnum;
+import org.displaytag.tags.TableTagParameters;
+import org.displaytag.util.ParamEncoder;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -107,9 +114,13 @@ public class CurateAction extends ActionSupport {
     private final PaginatedList<Person> persons = new PaginatedList<Person>(0, new ArrayList<Person>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(),
             SortOrderEnum.ASCENDING);
-    private final PaginatedList<Organization> orgs = new PaginatedList<Organization>(0, new ArrayList<Organization>(),
-            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, OrganizationSortCriterion.ORGANIZATION_ID.name(),
-            SortOrderEnum.ASCENDING);
+    private final PaginatedList<OrganizationSearchDTO> orgs = new PaginatedList<OrganizationSearchDTO>(
+            0, new ArrayList<OrganizationSearchDTO>(),
+            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+            OrganizationSearchSortEnum.ID.name(), SortOrderEnum.ASCENDING);
+    
+    private static final String EXPORT_ORGS = "exportOrgs";
+    private static final String RESULTS_TABLE_UID = "row";
 
     /**
      * Initialize all lists.
@@ -127,9 +138,39 @@ public class CurateAction extends ActionSupport {
      * @return success
      */
     public String listOrgs() {
-        GenericSearchServiceUtil.search(PoRegistry.getOrganizationService(),
-                new CurateOrganizationSearchCriteria(), getOrgs(), OrganizationSortCriterion.class);
-        return SUCCESS;
+        String returnValue = SUCCESS;
+        ParamEncoder encoder = new ParamEncoder(RESULTS_TABLE_UID);
+        String exportParamName = encoder
+                .encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE);
+        String exportParamValue = ServletActionContext.getRequest()
+                .getParameter(exportParamName);
+        if (NumberUtils.isNumber(exportParamValue)) {
+            MediaTypeEnum mediaType = MediaTypeEnum.fromCode(Integer
+                    .parseInt(exportParamValue));
+            if (mediaType == MediaTypeEnum.EXCEL
+                    || mediaType == MediaTypeEnum.CSV) {
+                returnValue = EXPORT_ORGS;
+                orgs.setPageNumber(1);
+                orgs.setObjectsPerPage(Integer.MAX_VALUE);
+            }
+        }
+        searchOrgs();
+        return returnValue;
+    }
+
+    /**
+     * 
+     */
+    private void searchOrgs() {
+        OrganizationServiceLocal orgService = PoRegistry
+                .getOrganizationService();
+        PageSortParams<OrganizationSearchDTO> pageSortParams = new PageSortParams<OrganizationSearchDTO>(
+                orgs.getObjectsPerPage(), (orgs.getPageNumber() - 1)
+                        * orgs.getObjectsPerPage(), null, orgs
+                        .getSortDirection().equals(SortOrderEnum.DESCENDING),
+                Arrays.asList(orgs.getSortCriterion()));
+        orgs.setList(orgService.getInboxOrgs(pageSortParams));
+        orgs.setFullListSize((int) orgService.countInboxOrgs());
     }
 
     /**
@@ -144,7 +185,7 @@ public class CurateAction extends ActionSupport {
     /**
      * @return list of orgs to curate
      */
-    public PaginatedList<Organization> getOrgs() {
+    public PaginatedList<OrganizationSearchDTO> getOrgs() {
         return orgs;
     }
 

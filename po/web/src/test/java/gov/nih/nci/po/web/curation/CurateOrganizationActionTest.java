@@ -93,6 +93,7 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Map;
 
@@ -154,12 +155,12 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testCurate() throws JMSException {
+    public void testCurate() throws JMSException, CSException {
         assertEquals(Action.SUCCESS, action.curate());
     }
 
     @Test
-    public void testCurateWithDuplicate() throws JMSException {
+    public void testCurateWithDuplicate() throws JMSException, CSException {
         Organization o = new Organization();
         action.setDuplicateOf(o);
         assertEquals(Action.SUCCESS, action.curate());
