@@ -319,21 +319,6 @@ public class OrganizationTelecomAddressTest extends AbstractOrganizationEntitySe
 
     }
 
-    @Test
-    public void createTelcomAddressOnlyByEmailNotValid() throws CurationException {
-        List<String> email = Arrays.asList(new String[] {"test"});
-        DSet<Tel> telecomAddress = TestConvertHelper.convertToDSetTel(email, null, null, null, null);
-        try {
-            remoteCreateAndCatalog(createOrgDTO("In valid email id", TestConvertHelper.createAd("123 abc ave.", null,
-                    "mycity", "MD", "12345", "USA"), telecomAddress));
-            fail();
-        } catch (EntityValidationException e) {
-            assertEquals("email[0].value=[is not a well-formed email address]", e.getErrorMessages());
-        } catch (URISyntaxException e) {
-            System.out.println("URI msg" + e.getMessage());
-        }
-    }
-
     // JIRA PO-833 -This test case needs to fails bcoz entering junk value in phone -
     @Test
     public void createTelcomAddressOnlyByPhoneNotValid() throws CurationException {
