@@ -52,7 +52,6 @@ public final class ReportGenUtils {
                  org.id as poid,    
                  org.name,
                  ctepid.assigned_identifier_extension as ctepid,
-                 org.comments,
                  org.status
              from 
                  Organization org
