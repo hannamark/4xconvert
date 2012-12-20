@@ -25,7 +25,6 @@ Map getOrgsMap() {
              add.cityormunicipality,
              country.name as country_name,
              ctepid.assigned_identifier_extension as ctep_id,
-             org.comments,
              org.id as org_poid,
              org.status,
              org.statusdate,
