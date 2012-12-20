@@ -344,8 +344,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         StringUtils.substring(StConverter.convertToString(spDTO
                                 .getKeywordText()), 0,
                                 PAAttributeMaxLen.KEYWORD))
-                .replace("\r\n", " ").replace("\r", " ").replace("\n", " ")
-                .replaceAll("\\s+", " ").trim();
+                  .replaceAll(",", "\r\n").replaceAll(";", "\r\n").trim();
         String wrapped = WordUtils.wrap(keywords,
                 PAAttributeMaxLen.PRS_KEYWORD, "\r", true);
         String[] lines = wrapped.split("\\r");
