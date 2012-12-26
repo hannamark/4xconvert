@@ -7,7 +7,7 @@ def sql = """select
 			 add.cityormunicipality,
 			 country.name as country_name,
 			 ctepid.assigned_identifier_extension as ctep_id,
-			 org.comments,
+			 c.value as comments,
 			 org.id,
 			 org.status,
 			 org.statusdate,
@@ -27,6 +27,8 @@ def sql = """select
 			 left outer join country on country.id = add.country_id
 			 left outer join organization_email o_e on o_e.organization_id = org.id
 			 left outer join email e on e.id = o_e.email_id
+             left outer join organization_comment o_c on o_c.organization_id = org.id
+             left outer join comment c on c.id = o_c.comment_id
 			 left outer join organization_fax o_f on o_f.organization_id = org.id
 			 left outer join phonenumber fax on fax.id = o_f.fax_id
 			 left outer join organization_phone o_ph on o_ph.organization_id = org.id
