@@ -3,7 +3,7 @@
 <c:if test="${fn:length(mailable.postalAddresses) == 0}">
 No Postal Address(es) found.
 </c:if>
-<c:set var="showUsFormattedTel" value="${usOrCanadaFormat}"/>
+<c:set var="showUsFormattedTel" value="${usOrCanadaFormat && !usOrCanadaFormatForValidationOnly}"/>
 <c:forEach items="${mailable.postalAddresses}" var="addy" varStatus="e">
 <fieldset id="postalAddress${e.index}">
     <legend>Address ${e.index + 1}</legend>
@@ -14,10 +14,12 @@ No Postal Address(es) found.
     <c:url var="removeAction" value="../../mailable/remove.action">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="index" value="${e.index}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
     </c:url>
     <c:url var="addAddressUrl" value="../../popup/address/input.action">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="index" value="${e.index}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
     </c:url>
     <div>
         <po:buttonRow>
@@ -39,10 +41,10 @@ No Postal Address(es) found.
     <c:url value="../../popup/address/input.action" var="addAddressUrl">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="index" value="-1"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
     </c:url>
     <po:buttonRow>
-    <po:button id="add_address" href="javascript://noop/" onclick="addEditAddressPopup('${addAddressUrl}');" style="add_contact" text="Add Postal Address"/>
-    <%-- po:button id="refresh_address" href="javascript://noop/" onclick="showPopupAddAddressCallback();" style="refresh" text="Refresh"/ --%>
+    <po:button id="add_address" href="javascript://noop/" onclick="addEditAddressPopup('${addAddressUrl}');" style="add_contact" text="Add Postal Address"/>    
     </po:buttonRow>
 </div>
 </c:if>

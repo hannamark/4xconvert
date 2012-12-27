@@ -32,6 +32,7 @@ public class ManageMailableAction extends ActionSupport implements Addressable, 
     private boolean readonly;
     private Address address = new Address();
     private Integer index = -1;
+    private boolean usOrCanadaFormatForValidationOnly;
 
     /**
      * {@inheritDoc}
@@ -216,5 +217,20 @@ public class ManageMailableAction extends ActionSupport implements Addressable, 
      */
     public boolean isUsOrCanadaFormat() {
         return mailable.isUsOrCanadaAddress();
+    }
+
+    /**
+     * @return the usOrCanadaFormatForValidationOnly
+     */
+    public boolean isUsOrCanadaFormatForValidationOnly() {
+        return usOrCanadaFormatForValidationOnly;
+    }
+
+    /**
+     * @param usOrCanadaFormatForValidationOnly the usOrCanadaFormatForValidationOnly to set
+     */
+    public void setUsOrCanadaFormatForValidationOnly(
+            boolean usOrCanadaFormatForValidationOnly) {
+        this.usOrCanadaFormatForValidationOnly = usOrCanadaFormatForValidationOnly;
     }
 }

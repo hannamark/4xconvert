@@ -21,6 +21,7 @@
     <validator name="hibernate" class="com.fiveamsolutions.nci.commons.web.struts2.validator.HibernateValidator" />
     <validator name="searchcriteria" class="gov.nih.nci.po.web.util.validator.SearchCriteriaValidator" />
     <validator name="orgsearchcriteria" class="gov.nih.nci.po.web.util.validator.OrganizationSearchCriteriaValidator" />
+    <validator name="personsearchcriteria" class="gov.nih.nci.po.web.util.validator.PersonSearchCriteriaValidator" />
     <validator name="duplicateOfNullifiedOrg" class="gov.nih.nci.po.web.util.validator.DuplicateOfNullifiedOrgValidator" />  
     <validator name="usOrCanadaPhone" class="gov.nih.nci.po.web.util.validator.UsOrCanadaPhoneValidator" />    
 </validators>

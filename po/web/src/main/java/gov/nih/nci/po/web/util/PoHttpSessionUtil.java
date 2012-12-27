@@ -94,7 +94,7 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
-import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
+import gov.nih.nci.po.service.PersonSearchCriteria;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -241,7 +241,7 @@ public class PoHttpSessionUtil {
      * @param criteria the person search criteria to add to the session
      * @return the key used to add the objects
      */
-    public static String addAttribute(StrutsPersonSearchCriteria criteria) {
+    public static String addAttribute(PersonSearchCriteria criteria) {
         return addUniqueAttribute("spsc", criteria);
     }
 

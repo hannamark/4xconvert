@@ -1,6 +1,6 @@
 package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.data.bo.Contactable;
+import gov.nih.nci.po.data.bo.Comment;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
@@ -10,7 +10,10 @@ import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.exceptions.CSException;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -18,7 +21,9 @@ import java.util.TreeMap;
 import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
@@ -49,6 +54,7 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
     private String rootKey;
     private PersonCR cr = new PersonCR();
     private Person duplicateOf = new Person();
+    private String comments;
 
     /**
      * {@inheritDoc}
@@ -80,17 +86,19 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
         return CURATE_RESULT;
     }
 
-    private void initializeCollections(Contactable contactable) {
-        contactable.getEmail().size();
-        contactable.getFax().size();
-        contactable.getPhone().size();
-        contactable.getTty().size();
-        contactable.getUrl().size();
+    private void initializeCollections(Person p) {
+        p.getEmail().size();
+        p.getFax().size();
+        p.getPhone().size();
+        p.getTty().size();
+        p.getUrl().size();
+        p.getComments().size();
     }
 
     /**
      * @return success
      * @throws JMSException if an error occurred while publishing the announcement
+     * @throws CSException CSException
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person"),
             @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.phone",
@@ -100,15 +108,27 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
             @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.tty",
                     message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
-    public String curate() throws JMSException {
+    public String curate() throws JMSException, CSException {
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
         // set person.duplicateOf.id directly, so we're setting it manually
         if (duplicateOf != null && duplicateOf.getId() != null) {
             getPerson().setDuplicateOf(duplicateOf);
         }
+        addCommentToOrg();
         PoRegistry.getPersonService().curate(getPerson());
         ActionHelper.saveMessage(getText("person.curate.success"));
         return SUCCESS;
+    }
+    
+    private void addCommentToOrg() throws CSException {
+        if (StringUtils.isNotBlank(comments)) {
+            Comment c = new Comment();
+            c.setCreateDate(new Date());           
+            c.setValue(comments);
+            c.setUser(SecurityServiceProvider.getUserProvisioningManager("po")
+                    .getUser(ServletActionContext.getRequest().getRemoteUser()));
+            getPerson().getComments().add(c);
+        }
     }
 
     /**
@@ -237,5 +257,19 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
      */
     public boolean isUsOrCanadaFormat() {
         return this.person.isUsOrCanadaAddress();
+    }
+    
+    /**
+     * @return the comments
+     */
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

@@ -3,6 +3,11 @@
 <head>
     <title><fmt:message key="person.search.title"/></title>
     <%@include file="../selectAndClose.jsp" %>
+    <style type="text/css">
+        .po_form LABEL {
+            display: inherit !important;            
+        }        
+    </style>
 </head>
 <body>
 <c:set var="isResults" value="${fn:length(results.list) > 0}" />

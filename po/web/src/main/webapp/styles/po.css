@@ -385,6 +385,11 @@ div#tabboxwrapper div div.btnwrapper {
     padding: 2px 2px 2px 2px;
 }
 
-div#io.tabbox div#ioRoleSearchResults {
+div#io.tabbox div#ioRoleSearchResults,  div#opi.tabbox div#ipRoleSearchResults {
     overflow: auto;
+}
+
+span.pending {
+	color: red;	
+	font-style: italic;
 }

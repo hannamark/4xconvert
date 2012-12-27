@@ -131,4 +131,12 @@ public abstract class AbstractPersonRoleAction<ROLE extends Correlation, ROLECR 
      * @return bool
      */
     public abstract boolean isUsOrCanadaFormat();
+    
+    @Override
+    public void prepare() {
+        super.prepare();
+        if (getPerson() != null) {
+            initializeCollections(getPerson());
+        }
+    }
 }

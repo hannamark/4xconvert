@@ -97,6 +97,8 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.PersonSearchCriteria;
+import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -324,6 +326,30 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
 
         public void curate(Person curatedPerson) throws JMSException {
 
+        }
+        @Override
+        public List<PersonSearchDTO> search(PersonSearchCriteria criteria,
+                PageSortParams<PersonSearchDTO> pageSortParams) {       
+            return new ArrayList<PersonSearchDTO>();
+        }
+
+        @Override
+        public int count(PersonSearchCriteria criteria) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<PersonSearchDTO> getInboxPersons(
+                PageSortParams<PersonSearchDTO> pageSortParams) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int countInboxPersons() {
+            // TODO Auto-generated method stub
+            return 0;
         }
     }
 

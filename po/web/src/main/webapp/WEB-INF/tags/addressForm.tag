@@ -3,6 +3,7 @@
 <%@ attribute name="addressKeyBase" type="java.lang.String" required="true" %>
 <%@ attribute name="address" type="gov.nih.nci.po.data.bo.Address" required="true" %>
 <%@ attribute name="required" type="java.lang.Boolean" required="false" %>
+<%@ attribute name="noPhoneFormatSwitch" type="java.lang.Boolean" required="false" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
@@ -37,7 +38,9 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v, flagRequired) 
             fieldRequired: flagRequired
             }
     });
+    <s:if test="%{#attr.noPhoneFormatSwitch == null || #attr.noPhoneFormatSwitch == false}">
     switchContactNumberFormats('${formNameBase}.${addressKeyBase}.country');
+    </s:if>
 }
 
 --></script>

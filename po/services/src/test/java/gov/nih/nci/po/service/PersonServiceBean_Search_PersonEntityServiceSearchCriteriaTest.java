@@ -196,22 +196,19 @@ public class PersonServiceBean_Search_PersonEntityServiceSearchCriteriaTest exte
     }
 
     private void createPeopleWithAddresses() throws EntityValidationException, JMSException {
-        Person p = getBasicPerson();
-        p.setComments("This is Person 1");
+        Person p = getBasicPerson();        
         Address pa = new Address("P.O. Box 12345", "New-City", "VA", "12345-6789", getDefaultCountry());
         pa.setDeliveryAddressLine("c/o Mark Wild");
         p.setPostalAddress(pa);
         createPerson(p);
 
-        p = getBasicPerson();
-        p.setComments("This is Person 11");
+        p = getBasicPerson();        
         pa = new Address("4567 First Ave.", "Harper's Ferry", "WV", "98765-4321", getDefaultCountry());
         pa.setDeliveryAddressLine("c/o John Doe");
         p.setPostalAddress(pa);
         createPerson(p);
 
-        p = getBasicPerson();
-        p.setComments("This is Person 22222");
+        p = getBasicPerson();        
         pa = new Address("P.O. Box 12346", "Old-City", "PA", "12346-6789", getDefaultCountry());
         p.setPostalAddress(pa);
         createPerson(p);

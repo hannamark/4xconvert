@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.NotEmpty;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -93,7 +94,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -134,7 +134,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
 
-    private String comments;
+    private List<Comment> comments = new ArrayList<Comment>();
 
      /**
      * Create a new, empty person.
@@ -394,19 +394,28 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     }
 
     /**
-     * @return comments
+     * {@inheritDoc}
      */
-    @Lob
-    public String getComments() {
+    @OneToMany
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "person_comment",
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = "comment_id")
+    )    
+    @IndexColumn(name = INDEX_NAME)    
+    public List<Comment> getComments() {
         return comments;
     }
 
     /**
-     * @param comments comment
+     * @param comments
+     *            the comments to set
      */
-    public void setComments(String comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
-
 
 }

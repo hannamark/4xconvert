@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <po:errorMessages />
 <c:choose>
-    <c:when test="${usOrCanadaFormat}">
+    <c:when test="${usOrCanadaFormat && !usOrCanadaFormatForValidationOnly}">
         <c:set var="divUsOrCanadaFormatDisplayStyle" value="display:block"/>
         <c:set var="divNoFormatDisplayStyle" value="display:none"/>
     </c:when>
@@ -17,7 +17,8 @@
         <c:url var="removeAction" value="../../contactable/phone/remove.action">
             <c:param name="phoneEntry.value" value="${value}"/>
             <c:param name="rootKey" value="${rootKey}"/>
-            <c:param name="usOrCanadaFormat" value="false"/>
+            <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
+            <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
         </c:url>
         <li id="phone-entry-${e.index}">
             ${value}
@@ -30,7 +31,8 @@
 <c:if test="${not readonly}">
     <c:url var="addAction" value="../../contactable/phone/add.action">
         <c:param name="rootKey" value="${rootKey}"/>
-        <c:param name="usOrCanadaFormat" value="false"/>
+        <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
     </c:url>
     <li>
         <s:textfield key="phoneEntry.value" onkeypress="return submitDivOnReturn(event, 'phone-add');">

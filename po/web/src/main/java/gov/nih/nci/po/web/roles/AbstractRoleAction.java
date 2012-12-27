@@ -104,6 +104,7 @@ import javax.jms.JMSException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
@@ -159,6 +160,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     @Override
     @SuppressWarnings(UNCHECKED)
     public String input() {
+        ServletActionContext.getRequest().setAttribute(INPUT, true);
         if (getBaseRole().getId() == null) {
             getBaseRole().setStatus(RoleStatus.PENDING);
         }
@@ -345,14 +347,17 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     /**
-     * @param contactable initialize Contactable
+     * @param contactable
+     *            initialize Contactable
      */
     protected void initializeCollections(Contactable contactable) {
-        contactable.getEmail().size();
-        contactable.getFax().size();
-        contactable.getPhone().size();
-        contactable.getTty().size();
-        contactable.getUrl().size();
+        if (contactable != null) {
+            contactable.getEmail().size();
+            contactable.getFax().size();
+            contactable.getPhone().size();
+            contactable.getTty().size();
+            contactable.getUrl().size();
+        }
     }
 
     /**

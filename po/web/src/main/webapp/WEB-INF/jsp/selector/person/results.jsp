@@ -16,51 +16,22 @@
                 ${row.id}
             </a>
         </display:column>
-        <display:column title="CTEP ID" sortable="false">
-            <ul>
-                <c:forEach items="${row.identifiedPersons}" var="e">
-                    <c:if test="${e.assignedIdentifier.root == ctepRoot}">
-                        <li>${e.assignedIdentifier.extension}</li>
-                    </c:if>
-                </c:forEach>
-            </ul>
-        </display:column>
+        <display:column title="CTEP ID" sortable="true" property="ctepID" sortProperty="CTEP_ID"/> 
 		<display:column titleKey="person.firstName" property="firstName" sortable="true" sortProperty="PERSON_FIRSTNAME" maxLength="30"/>
 		<display:column titleKey="person.lastName" property="lastName" sortable="true" sortProperty="PERSON_LASTNAME" maxLength="30"/>
-        <display:column titleKey="person.email" sortable="false">
-            <ul>
-                <c:forEach items="${row.email}" var="e">
-                    <li>${e.value}</li>
-                </c:forEach>
-            </ul>
+        <display:column titleKey="person.email" sortable="true" property="emailAddresses" sortProperty="EMAIL"/>
+        <display:column title="Organization Affiliation" sortable="false" class="orgNameColumn" media="html">
+            <c:forEach items="${row.affiliation}" var="e">
+                ${e.group} &mdash; <c:out value="${e.orgName}"/>
+                <c:if test="${e.pending}">
+                    <span class="pending">(P)</span>
+                </c:if>
+                <br/>
+            </c:forEach>        
         </display:column>
-        <display:column title="Organization Affiliation" sortable="false" class="orgNameColumn" >
-            <ul>
-                <c:forEach items="${row.organizationalContacts}" var="e">
-                    <li>${e.scoper.name}</li>
-                </c:forEach>
-                <c:forEach items="${row.clinicalResearchStaff}" var="e">
-                    <li>${e.scoper.name}</li>
-                </c:forEach>
-                <c:forEach items="${row.healthCareProviders}" var="e">
-                    <li>${e.scoper.name}</li>
-                </c:forEach>
-                <c:forEach items="${row.identifiedPersons}" var="e">
-                    <li>${e.scoper.name}</li>
-                </c:forEach>
-            </ul>
-        </display:column>
-        <display:column titleKey="person.postalAddress.cityOrMunicipality" property="postalAddress.cityOrMunicipality" sortable="false" maxLength="20"/>
-		<display:column titleKey="person.postalAddress.stateOrProvince" property="postalAddress.stateOrProvince" sortable="false" maxLength="20"/>
-        <display:column titleKey="person.statusCode" sortable="true" sortProperty="PERSON_STATUS" >
-            <c:choose>
-            <c:when test="${fn:length(row.changeRequests) > 0}">
-               ${row.statusCode} <br/>
-                <div class="difference_found">Change Requests (${fn:length(row.changeRequests)})</div>
-            </c:when>
-            <c:otherwise>${row.statusCode}</c:otherwise>
-            </c:choose>
-        </display:column>
+        <display:column titleKey="person.postalAddress.cityOrMunicipality" property="city" sortable="true" sortProperty="CITY" maxLength="20"/>
+		<display:column titleKey="person.postalAddress.stateOrProvince" property="state" sortable="true" sortProperty="STATE" maxLength="20"/>
+        <display:column titleKey="person.statusCode" sortable="true" sortProperty="STATUS" property="statusCode" />        
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>
                 <c:set var="personFullName">${func:escapeJavaScript(row.lastName)}, ${func:escapeJavaScript(row.firstName)} ${func:escapeJavaScript(row.middleName)}</c:set>

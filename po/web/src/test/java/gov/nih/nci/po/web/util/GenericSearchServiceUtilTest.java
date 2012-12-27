@@ -1,9 +1,9 @@
 package gov.nih.nci.po.web.util;
 
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.CuratePersonSearchCriteria;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
+import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
@@ -27,6 +27,6 @@ public class GenericSearchServiceUtilTest extends AbstractPoTest {
                 SortOrderEnum.ASCENDING);
         PersonServiceLocal personService = PoRegistry.getInstance().getPersonService();
 
-        GenericSearchServiceUtil.search(personService, new CuratePersonSearchCriteria(), persons, PersonSortCriterion.class);
+        GenericSearchServiceUtil.search(personService, new StrutsPersonSearchCriteria(), persons, PersonSortCriterion.class);
     }
 }

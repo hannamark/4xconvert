@@ -3,8 +3,13 @@
 <%@ attribute name="emailRequired" type="java.lang.Boolean" required="false" description="By default email is required"%>
 <%@ attribute name="phoneRequired" type="java.lang.Boolean" required="false" description="By default phone is not required"%>
 <%@ attribute name="readonly" type="java.lang.Boolean" required="false" description="Display read-only view, if not provied readonly is false"%>
+<%@ attribute name="defaultEmails" type="java.lang.Boolean" required="false" description="Use player's emails to pre-populate with."%>
+<%@ attribute name="defaultPhones" type="java.lang.Boolean" required="false" description="Use player's phones to pre-populate with."%>
+<%@ attribute name="defaultFaxes" type="java.lang.Boolean" required="false" description="Use player's faxes to pre-populate with."%>
+<%@ attribute name="usOrCanadaFormatForValidationOnly" type="java.lang.Boolean" required="false" description="Whether US/Canada format should be used for validation only."%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="po" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://ctrp.nci.nih.gov/taglib/utility-functions" prefix="func" %>
 <%@ taglib uri="/struts-tags" prefix="s" %>
 <s:if test="%{#attr.emailRequired == null || #attr.emailRequired == true}">
 <s:set name="emailRequiredBool" value="true"/>
@@ -76,6 +81,7 @@ function isTelecomFieldsBlank() {
     <c:url value="contactable/email/edit.action" var="viewEmailAction">
         <c:param name="rootKey" value="${rootKey}"/>
         <c:param name="readonly" value="${readonlyBool}"/>
+        <c:param name="usePlayerContactsAsDefault" value="${defaultEmails}"/>
     </c:url>
     <div id="email-list">Loading...</div>
     <script>
@@ -96,6 +102,8 @@ function isTelecomFieldsBlank() {
         <c:param name="readonly" value="${readonlyBool}"/>
         <c:param name="create" value="${isCreate}"/>
         <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
+        <c:param name="usePlayerContactsAsDefault" value="${defaultPhones}"/>
     </c:url>
     <div id="phone-list">Loading...</div>
     <script>
@@ -113,6 +121,8 @@ function isTelecomFieldsBlank() {
         <c:param name="readonly" value="${readonlyBool}"/>
         <c:param name="create" value="${isCreate}"/>
         <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
+        <c:param name="usePlayerContactsAsDefault" value="${defaultFaxes}"/>
     </c:url>
     <div id="fax-list">Loading...</div>
     <script>
@@ -130,6 +140,7 @@ function isTelecomFieldsBlank() {
         <c:param name="readonly" value="${readonlyBool}"/>
         <c:param name="create" value="${isCreate}"/>
         <c:param name="usOrCanadaFormat" value="${usOrCanadaFormat}"/>
+        <c:param name="usOrCanadaFormatForValidationOnly" value="${usOrCanadaFormatForValidationOnly}"/>
     </c:url>
     <div id="tty-list">Loading...</div>
     <script>

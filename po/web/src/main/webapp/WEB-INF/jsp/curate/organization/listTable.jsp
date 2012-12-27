@@ -4,10 +4,10 @@
 	    <po:displayTagProperties/>
 	    <display:setProperty name="export.xml" value="false" />
 	    <display:setProperty name="export.excel.filename"
-	        value="search_results.xls" />
+	        value="org_inbox.xls" />
 	    <display:setProperty name="export.excel.include_header" value="true" />
 	    <display:setProperty name="export.csv.filename"
-	        value="search_results.csv" />
+	        value="org_inbox.csv" />
 	    <display:setProperty name="export.csv.include_header" value="true" />
 	    	    
 		<display:setProperty name="pagination.sort.param" value="orgs.sortCriterion" />

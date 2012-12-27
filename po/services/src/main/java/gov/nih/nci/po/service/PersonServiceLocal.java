@@ -85,11 +85,13 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
@@ -125,4 +127,30 @@ public interface PersonServiceLocal extends GenericSearchService<Person, SearchC
      * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
     void curate(Person curatedPerson) throws JMSException;
+
+    /**
+     * @param criteria PersonSearchCriteria
+     * @param pageSortParams PageSortParams
+     * @return List<PersonSearchDTO>
+     */
+    List<PersonSearchDTO> search(PersonSearchCriteria criteria,
+            PageSortParams<PersonSearchDTO> pageSortParams);
+
+    /**
+     * @param criteria PersonSearchCriteria
+     * @return int
+     */
+    int count(PersonSearchCriteria criteria);
+
+    /**
+     * @param pageSortParams PageSortParams
+     * @return List<PersonSearchDTO>
+     */
+    List<PersonSearchDTO> getInboxPersons(
+            PageSortParams<PersonSearchDTO> pageSortParams);
+
+    /**
+     * @return count
+     */
+    int countInboxPersons();
 }

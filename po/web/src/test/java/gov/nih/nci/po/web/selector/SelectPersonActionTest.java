@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
+import gov.nih.nci.po.service.PersonSearchCriteria;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import org.junit.Before;
@@ -31,7 +31,7 @@ public class SelectPersonActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareNoRootKey() throws Exception {
-        StrutsPersonSearchCriteria initial = action.getCriteria();
+        PersonSearchCriteria initial = action.getCriteria();
         action.prepare();
         assertSame(initial, action.getCriteria());
     }
@@ -49,7 +49,7 @@ public class SelectPersonActionTest extends AbstractPoTest {
 
     @Test
     public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
-        StrutsPersonSearchCriteria c = new StrutsPersonSearchCriteria();
+        PersonSearchCriteria c = new PersonSearchCriteria();
         String rootKey = "a";
         getSession().setAttribute(rootKey, c);
         action.setRootKey(rootKey);

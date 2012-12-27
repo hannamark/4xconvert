@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.Contact;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -108,7 +109,7 @@ import com.opensymphony.xwork2.validator.annotations.RequiredStringValidator;
  *
  * @author gax
  */
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public abstract class AbstractEditContactListAction<Entry extends Contact> extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 1L;
@@ -122,6 +123,8 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
     private Entry entry;
     private String rootKey;
     private boolean readonly;
+    private boolean usePlayerContactsAsDefault;
+    private boolean usOrCanadaFormatForValidationOnly;
     private boolean create;
     private boolean usOrCanadaFormat;
 
@@ -156,10 +159,22 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
     /**
      * @return SUCCESS.
      */
+    @SuppressWarnings("rawtypes")
     @SkipValidation
     public String edit() {
+        if (usePlayerContactsAsDefault && contactable instanceof PlayedRole) {
+            Contactable contactableToCopyFrom = (Contactable) ((PlayedRole) contactable)
+                    .getPlayer();
+            setDefaults(contactableToCopyFrom);
+        }
         return SUCCESS;
     }
+
+    /**
+     * Copy defaults from the given {@link Contactable}.
+     * @param contactableToCopyFrom Contactable
+     */
+    protected abstract void setDefaults(Contactable contactableToCopyFrom);
 
     /**
      * Prep.
@@ -328,6 +343,20 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         public String add() {
             return super.add();
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SkipValidation
+        public void setDefaults(Contactable contactableToCopyFrom) {  
+            if (contactableToCopyFrom != null) {
+                for (Email e : contactableToCopyFrom.getEmail()) {
+                    getEntry().setValue(e.getValue());
+                    super.add();
+                }
+            }
+        }
 
         /**
          * Get the Email.
@@ -391,6 +420,10 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         public void setUrlEntry(URL url) {
            setEntry(url);
         }
+
+        @Override
+        protected void setDefaults(Contactable contactableToCopyFrom) { // NOPMD                       
+        }
     }
 
     /**
@@ -424,6 +457,20 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         @CustomValidator(type = VALIDATOR_HIB, fieldName = "phoneEntry")
         public String add() {
             return super.add();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SkipValidation
+        public void setDefaults(Contactable contactableToCopyFrom) {  
+            if (contactableToCopyFrom != null) {
+                for (PhoneNumber e : contactableToCopyFrom.getPhone()) {
+                    getEntry().setValue(e.getValue());
+                    super.add();
+                }
+            }
         }
 
         /**
@@ -465,6 +512,20 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         @CustomValidator(type = VALIDATOR_HIB, fieldName = "faxEntry")
         public String add() {
             return super.add();
+        }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        @SkipValidation
+        public void setDefaults(Contactable contactableToCopyFrom) {  
+            if (contactableToCopyFrom != null) {
+                for (PhoneNumber e : contactableToCopyFrom.getFax()) {
+                    getEntry().setValue(e.getValue());
+                    super.add();
+                }
+            }
         }
 
         /**
@@ -521,6 +582,34 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         public void setTtyEntry(PhoneNumber tty) {
             setEntry(tty);
         }
+    }
+    /**
+     * @return the usePlayerContactsAsDefault
+     */
+    public boolean isUsePlayerContactsAsDefault() {
+        return usePlayerContactsAsDefault;
+    }
+
+    /**
+     * @param usePlayerContactsAsDefault the usePlayerContactsAsDefault to set
+     */
+    public void setUsePlayerContactsAsDefault(boolean usePlayerContactsAsDefault) {
+        this.usePlayerContactsAsDefault = usePlayerContactsAsDefault;
+    }
+
+    /**
+     * @return the usOrCanadaFormatForValidationOnly
+     */
+    public boolean isUsOrCanadaFormatForValidationOnly() {
+        return usOrCanadaFormatForValidationOnly;
+    }
+
+    /**
+     * @param usOrCanadaFormatForValidationOnly the usOrCanadaFormatForValidationOnly to set
+     */
+    public void setUsOrCanadaFormatForValidationOnly(
+            boolean usOrCanadaFormatForValidationOnly) {
+        this.usOrCanadaFormatForValidationOnly = usOrCanadaFormatForValidationOnly;
     }
 
 }

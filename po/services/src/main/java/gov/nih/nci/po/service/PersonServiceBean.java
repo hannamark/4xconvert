@@ -80,8 +80,16 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.service; // NOPMD
 
+import static gov.nih.nci.po.service.PersonSearchSortEnum.CITY;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.CTEP_ID;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.EMAIL;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_FIRSTNAME;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_ID;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_LASTNAME;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.STATE;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.STATUS;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -90,24 +98,45 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.service.PersonSearchDTO.Affiliation;
+import gov.nih.nci.po.service.PersonSearchDTO.Affiliation.RoleGroup;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+
 /**
- *
+ * 
  * @author lpower
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person> implements PersonServiceLocal {
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+public class PersonServiceBean extends
+        AbstractCuratableEntityServiceBean<Person> implements
+        PersonServiceLocal {
+
+    private static final String ORDER_BY = " ORDER BY ";
 
     /**
      * {@inheritDoc}
@@ -125,11 +154,15 @@ public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person
     @Override
     protected Set<Correlation> getAssociatedRoles(Person p, Session s) {
         Set<Correlation> l = new HashSet<Correlation>();
-        l.addAll(getAssociatedRoles(p.getId(), ClinicalResearchStaff.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(p.getId(), Patient.class, PLAYER_ID, s)); 
-        l.addAll(getAssociatedRoles(p.getId(), HealthCareProvider.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(p.getId(), IdentifiedPerson.class, PLAYER_ID, s));
-        l.addAll(getAssociatedRoles(p.getId(), OrganizationalContact.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), ClinicalResearchStaff.class,
+                PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), Patient.class, PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), HealthCareProvider.class,
+                PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), IdentifiedPerson.class,
+                PLAYER_ID, s));
+        l.addAll(getAssociatedRoles(p.getId(), OrganizationalContact.class,
+                PLAYER_ID, s));
         return l;
     }
 
@@ -138,9 +171,462 @@ public class PersonServiceBean extends AbstractCuratableEntityServiceBean<Person
      */
     @Override
     protected void activateCtepRoles(Person e) {
-        //NOOP - currently we do not do anything with 
+        // NOOP - currently we do not do anything with
         // ctep associated roles for person.
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PersonSearchDTO> search(PersonSearchCriteria criteria,
+            PageSortParams<PersonSearchDTO> pageSortParams) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        List<PersonSearchDTO> results = new ArrayList<PersonSearchDTO>();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.PersonServiceBean.search")
+                .getQueryString());
+        appendWhere(sql, criteria);
+        appendOrderBy(sql, pageSortParams);
+        appendPagination(sql, pageSortParams);
+        SQLQuery query = s.createSQLQuery(sql.toString());
+        for (Object[] row : (List<Object[]>) query.list()) {
+            results.add(convert(row));
+        }
+        loadAffiliationInfo(results);
+        return results;
+    }
 
+    @SuppressWarnings("unchecked")
+    private void loadAffiliationInfo(List<PersonSearchDTO> results) {
+        if (CollectionUtils.isNotEmpty(results)) {
+            Session s = PoHibernateUtil.getCurrentSession();
+            Query query = s
+                    .getNamedQuery("gov.nih.nci.po.service.PersonServiceBean.search.affiliation");
+            List<Long> ids = new ArrayList<Long>();
+            for (PersonSearchDTO dto : results) {
+                ids.add(Long.valueOf(dto.getId()));
+            }
+            query.setParameterList("ids", ids);
+            for (Object[] row : (List<Object[]>) query.list()) {
+                processPersonAffiliationEntry(row, results);
+            }
+        }
+    }
+
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+    private void processPersonAffiliationEntry(Object[] row,
+            List<PersonSearchDTO> results) {
+        final long pid = ((Number) row[0]).longValue();
+        PersonSearchDTO dto = (PersonSearchDTO) CollectionUtils.find(results,
+                new Predicate() {
+                    public boolean evaluate(Object arg0) {
+                        return pid == ((PersonSearchDTO) arg0).getId();
+                    }
+                });
+        if (dto.getAffiliation() == null) {
+            dto.setAffiliation(new TreeSet<Affiliation>());
+        }
+        Collection<Affiliation> affiliation = dto.getAffiliation();
+        // CHECKSTYLE:OFF
+        if (row[2] != null) {
+            affiliation.add(new Affiliation(row[2].toString(),
+                    EntityStatus.PENDING.name().equals(row[1]), RoleGroup.CRS));
+        }
+        if (row[4] != null) {
+            affiliation.add(new Affiliation(row[4].toString(),
+                    EntityStatus.PENDING.name().equals(row[3]), RoleGroup.HCP));
+        }
+        if (row[6] != null) {
+            affiliation.add(new Affiliation(row[6].toString(),
+                    EntityStatus.PENDING.name().equals(row[5]), RoleGroup.OC));
+        }
+        if (row[8] != null) {
+            affiliation.add(new Affiliation(row[8].toString(),
+                    EntityStatus.PENDING.name().equals(row[7]), RoleGroup.OPI));
+        }
+        // CHECKSTYLE:ON
+    }
+
+    // CHECKSTYLE:OFF
+    private PersonSearchDTO convert(Object[] row) {
+        PersonSearchDTO dto = new PersonSearchDTO();
+        dto.setId(((Number) row[0]).longValue());
+        dto.setStatusCode((String) row[1]);
+        dto.setCtepID((String) row[2]);
+        dto.setFirstName((String) row[3]);
+        dto.setMiddleName((String) row[4]);
+        dto.setLastName((String) row[5]);
+        dto.setTotalCrs(((Number) row[7]).intValue());
+        dto.setTotalHcp(((Number) row[8]).intValue());
+        dto.setTotalOc(((Number) row[9]).intValue());
+        dto.setTotalOpi(((Number) row[10]).intValue());
+        dto.setTotalPending(((Number) row[11]).intValue()
+                + ((Number) row[12]).intValue() + ((Number) row[13]).intValue()
+                + ((Number) row[14]).intValue());
+        dto.setAddress1((String) row[15]);
+        dto.setAddress2((String) row[16]);
+        dto.setCity((String) row[17]);
+        dto.setState((String) row[18]);
+        dto.setCountry((String) row[19]);
+        dto.setZipCode((String) row[20]);
+        dto.setComments((String) row[21]);
+        dto.setEmailAddresses((String) row[6]);
+        dto.setPhones((String) row[22]);
+        dto.setDuplicateOf(((BigInteger) row[23]));
+        return dto;
+    }
+
+    // CHECKSTYLE:ON
+
+    @SuppressWarnings("deprecation")
+    private void appendOrderBy(StringBuilder sql,
+            PageSortParams<PersonSearchDTO> params) {
+        if (params.getSortCriterion() != null) {
+            throw new RuntimeException(// NOPMD
+                    "SortCriterion is not supported for SQL queries."); // NOPMD
+        }
+        if (CollectionUtils.isNotEmpty(params.getDynamicSortCriteria())) {
+            for (String sort : params.getDynamicSortCriteria()) {
+                PersonSearchSortEnum sortEnum = PersonSearchSortEnum
+                        .valueOf(sort);
+                appendOrderBy(sql, sortEnum);
+            }
+        }
+        if (params.isDesc()) {
+            sql.append(" DESC");
+        }
+    }
+
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+    private void appendOrderBy(StringBuilder sql, PersonSearchSortEnum sortEnum) {
+        if (sql.toString().contains(ORDER_BY)) {
+            sql.append(", ");
+        } else {
+            sql.append(ORDER_BY);
+        }
+        if (PERSON_ID == sortEnum) {
+            sql.append("p.id");
+        }
+        if (CTEP_ID == sortEnum) {
+            sql.append("ctepID");
+        }
+        if (PERSON_FIRSTNAME == sortEnum) {
+            sql.append("p.firstname");
+        }
+        if (PERSON_LASTNAME == sortEnum) {
+            sql.append("p.lastname");
+        }
+        if (EMAIL == sortEnum) {
+            sql.append("emailAddresses");
+        }
+        if (CITY == sortEnum) {
+            sql.append("city");
+        }
+        if (STATE == sortEnum) {
+            sql.append("state");
+        }
+        if (STATUS == sortEnum) {
+            sql.append("p.status");
+        }
+    }
+
+    private void appendPagination(StringBuilder sql,
+            PageSortParams<PersonSearchDTO> pageSortParams) {
+        sql.append(" LIMIT " + pageSortParams.getPageSize());
+        if (pageSortParams.getIndex() > 0) {
+            sql.append(" OFFSET " + pageSortParams.getIndex());
+        }
+    }
+
+    private void appendWhere(StringBuilder sql, PersonSearchCriteria criteria) {
+        sql.append(" WHERE p.status <> 'NULLIFIED' ");
+        if (!criteria.isEmpty()) {
+            appendFirstNameClause(sql, criteria);
+            appendLastNameClause(sql, criteria);
+            appendEmailClause(sql, criteria);
+            appendCtepIdClause(sql, criteria);
+            appendPoIdClause(sql, criteria);
+            appendStatusClause(sql, criteria);
+            appendAffiliationClause(sql, criteria);
+
+            appendPendingCrsClause(sql, criteria);
+            appendPendingHcpClause(sql, criteria);
+            appendPendingOcClause(sql, criteria);
+            appendPendingOpiClause(sql, criteria);
+
+            appendCountryClause(sql, criteria);
+            appendAddr1Clause(sql, criteria);
+            appendAddr2Clause(sql, criteria);
+            appendCityClause(sql, criteria);
+            appendStateClause(sql, criteria);
+            appendZipCodeClause(sql, criteria);
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendZipCodeClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getPostalCode())) {
+            sql.append(String.format(
+                    " AND lower(a.postalcode) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getPostalCode().toLowerCase()) + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendStateClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStateOrProvince())) {
+            sql.append(String.format(
+                    " AND lower(a.stateorprovince) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getStateOrProvince().toLowerCase()) + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCityClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getCityOrMunicipality())) {
+            sql.append(String.format(
+                    " AND lower(a.cityormunicipality) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getCityOrMunicipality().toLowerCase())
+                            + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendAddr2Clause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getDeliveryAddressLine())) {
+            sql.append(String.format(
+                    " AND lower(a.deliveryaddressline) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getDeliveryAddressLine().toLowerCase())
+                            + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendAddr1Clause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStreetAddressLine())) {
+            sql.append(String.format(
+                    " AND lower(a.streetaddressline) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getStreetAddressLine().toLowerCase())
+                            + "%"));
+        }
+    }
+
+    /**
+     * @param sql
+     * @param criteria
+     */
+    private void appendCountryClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (criteria.getCountryId() != null) {
+            sql.append(String.format(" AND c.id=%s ", criteria.getCountryId()));
+        }
+    }
+
+    private void appendPendingHcpClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingHcpRoles())) {
+            sql.append(" AND (select count(id) from healthcareprovider ro "
+                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
+        }
+
+    }
+
+    private void appendPendingOcClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingOcRoles())) {
+            sql.append(" AND (select count(id) from organizationalcontact ro "
+                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
+        }
+
+    }
+
+    private void appendPendingOpiClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingOpiRoles())) {
+            sql.append(" AND (select count(id) from identifiedperson ro "
+                    + "where ro.player_id=p.id and ro.status='PENDING') > 0");
+        }
+
+    }
+
+    private void appendPendingCrsClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (Boolean.TRUE.equals(criteria.getHasPendingCrsRoles())) {
+            sql.append(" AND (select count(id) from clinicalresearchstaff ro "
+                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
+        }
+    }
+
+    private void appendAffiliationClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getOrg())) {
+            String org = "%"
+                    + StringEscapeUtils.escapeSql(criteria.getOrg()
+                            .toLowerCase()) + "%";
+            sql.append(String
+                    .format(" AND ((select count(ro.id) from clinicalresearchstaff ro inner join organization o on "
+                            + "o.id=ro.organization_id where ro.person_id=p.id and ro.status <> 'NULLIFIED' and "
+                            + "lower(o.name) LIKE '%s')>0 OR "
+                            + "(select count(ro.id) from healthcareprovider ro inner join organization o on "
+                            + "o.id=ro.organization_id where ro.person_id=p.id and ro.status <> 'NULLIFIED' and "
+                            + "lower(o.name) LIKE '%s')>0 OR "
+                            + "(select count(ro.id) from organizationalcontact ro inner join organization o "
+                            + "on o.id=ro.organization_id where ro.person_id=p.id and ro.status <> 'NULLIFIED'"
+                            + " and lower(o.name) LIKE '%s')>0 OR "
+                            + "(select count(ro.id) from identifiedperson ro inner join organization o on "
+                            + "o.id=ro.scoper_id where ro.player_id=p.id and ro.status <> 'NULLIFIED'"
+                            + " and lower(o.name) LIKE '%s')>0) ", org, org,
+                            org, org));
+        }
+    }
+
+    private void appendStatusClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getStatusCode())) {
+            sql.append(String.format(" AND p.status='%s' ",
+                    StringEscapeUtils.escapeSql(criteria.getStatusCode())));
+        }
+
+    }
+
+    private void appendPoIdClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            sql.append(String.format(" AND p.id=%s ",
+                    StringEscapeUtils.escapeSql(criteria.getId())));
+        }
+
+    }
+
+    private void appendCtepIdClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getCtepID())) {
+            sql.append(String
+                    .format(" AND exists (select ip.assigned_identifier_extension from identifiedperson "
+                            + "ip where ip.player_id=p.id and ip.assigned_identifier_root='2.16.840.1.113883.3.26.6.1' "
+                            + "and ip.status <> 'NULLIFIED' and lower(ip.assigned_identifier_extension) LIKE '%s' ) ",
+                            "%"
+                                    + StringEscapeUtils.escapeSql(
+                                            criteria.getCtepID()).toLowerCase()
+                                    + "%"));
+        }
+    }
+
+    private void appendEmailClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getEmail())) {
+            String email = "%"
+                    + StringEscapeUtils.escapeSql(criteria.getEmail()
+                            .toLowerCase()) + "%";
+            sql.append(String
+                    .format(" AND (exists (select e.value from email e inner join crs_email ass on e.id=ass.email_id"
+                            + " inner join clinicalresearchstaff rol on rol.id=ass.crs_id where rol.person_id=p.id and"
+                            + " lower(e.value) like '%s') OR "
+                            + "exists (select e.value from email e inner join hcp_email ass on e.id=ass.email_id inner"
+                            + " join healthcareprovider rol on rol.id=ass.hcp_id where rol.person_id=p.id and "
+                            + "lower(e.value) like '%s') OR "
+                            + "exists (select e.value from email e inner join orgcontact_email ass on e.id=ass.email_id"
+                            + " inner join organizationalcontact rol on rol.id=ass.orgcontact_id where "
+                            + "rol.person_id=p.id and lower(e.value) like '%s') OR "
+                            + "exists (select e.value from email e inner join person_email ass on e.id=ass.email_id "
+                            + "where ass.person_id=p.id and lower(e.value) like '%s'))",
+                            email, email, email, email));
+        }
+
+    }
+
+    private void appendLastNameClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getLastName())) {
+            sql.append(String.format(
+                    " AND lower(p.lastname) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getLastName().toLowerCase()) + "%"));
+        }
+
+    }
+
+    private void appendFirstNameClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        if (StringUtils.isNotBlank(criteria.getFirstName())) {
+            sql.append(String.format(
+                    " AND lower(p.firstname) like '%s' ",
+                    "%"
+                            + StringEscapeUtils.escapeSql(criteria
+                                    .getFirstName().toLowerCase()) + "%"));
+        }
+
+    }
+
+    @Override
+    public int count(PersonSearchCriteria criteria) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.PersonServiceBean.search")
+                .getQueryString());
+        appendWhere(sql, criteria);
+        SQLQuery query = s.createSQLQuery("select count(*) from ("
+                + sql.toString() + ") as cnt");
+        return ((Number) query.uniqueResult()).intValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PersonSearchDTO> getInboxPersons(
+            PageSortParams<PersonSearchDTO> pageSortParams) {
+        Session s = PoHibernateUtil.getCurrentSession();
+        List<PersonSearchDTO> results = new ArrayList<PersonSearchDTO>();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.PersonServiceBean.getInboxPersons")
+                .getQueryString());
+        appendOrderBy(sql, pageSortParams);
+        appendPagination(sql, pageSortParams);
+        SQLQuery query = s.createSQLQuery(sql.toString());
+        for (Object[] row : (List<Object[]>) query.list()) {
+            results.add(convert(row));
+        }
+        loadAffiliationInfo(results);
+        return results;
+    }
+
+    @Override
+    public int countInboxPersons() {
+        Session s = PoHibernateUtil.getCurrentSession();
+        StringBuilder sql = new StringBuilder(s.getNamedQuery(
+                "gov.nih.nci.po.service.PersonServiceBean.getInboxPersons")
+                .getQueryString());
+        SQLQuery query = s.createSQLQuery("select count(*) from ("
+                + sql.toString() + ") as cnt");
+        return ((Number) query.uniqueResult()).intValue();
+    }
 }

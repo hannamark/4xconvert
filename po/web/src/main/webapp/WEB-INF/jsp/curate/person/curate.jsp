@@ -141,18 +141,19 @@
         <div class="boxouter">
         <h2>Address Information</h2>
             <div class="box_white">
-                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" required="true"/>
+                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="person.postalAddress" address="${person.postalAddress}" 
+                   noPhoneFormatSwitch="true" required="true"/>
                 <div class="clear"></div>
             </div>
         </div>
-        <s:hidden key="person.comments" id="curateEntityForm.person.comments"/>
+        <s:hidden key="comments" id="curateEntityForm.person.comments"/>
     </s:form>
 
         <div class="boxouter_nobottom">
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="person"/>
+                <po:contacts contactableKeyBase="person" usOrCanadaFormatForValidationOnly="true"/>
             </div>
         </div>
 <s:if test="%{isNotCreate}">
@@ -170,21 +171,99 @@
                 </c:url>
                 <c:url var="manageIdentifiedPerson" value="/protected/roles/person/IdentifiedPerson/start.action">
                     <c:param name="person" value="${person.id}"/>
-                </c:url>
-                <ul>
-                    <li><a href="${manageClinicalResearchStaff}"><s:text name="clinicalResearchStaff.manage.title"/></a> (${fn:length(person.clinicalResearchStaff)}) <c:if test="${hotClinicalResearchStaffCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageHealthCareProvider}"><s:text name="healthCareProvider.manage.title"/></a> (${fn:length(person.healthCareProviders)}) <c:if test="${hotHealthCareProviderCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageOrganizationalContact}"><s:text name="organizationalContact.manage.title"/></a> (${fn:length(person.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'>*</span></c:if></li>
-                    <li><a href="${manageIdentifiedPerson}"><s:text name="identifiedPerson.manage.title"/></a> (${fn:length(person.identifiedPersons)}) <c:if test="${hotIdentifiedPersonCount > 0}"><span class='required'>*</span></c:if></li>
+                </c:url>      
+                
+                <ul id="maintabs" class="roletabs">
+                     <li><a href="#crs">CRS (${fn:length(person.clinicalResearchStaff)}) <c:if test="${hotClinicalResearchStaffCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#hcp">HCP (${fn:length(person.healthCareProviders)}) <c:if test="${hotHealthCareProviderCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#oc">OC (${fn:length(person.organizationalContacts)}) <c:if test="${hotOrganizationalContactCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>
+                     <li><a href="#opi">OPI (${fn:length(person.identifiedPersons)}) <c:if test="${hotIdentifiedPersonCount > 0}"><span class='required'><i>P</i></span></c:if></a></li>                     
                 </ul>
-                <div class="clear"></div>
+                <script type="text/javascript">
+                                //<![CDATA[
+                                Event.observe(window,'load',function() {
+                                    $$('.roletabs').each(function(tabs) {
+                                        new Control.Tabs(tabs);
+                                    });
+                                });
+                                //]]>
+                </script>                
+                <div id="tabboxwrapper">
+                      <div id="crs" class="tabbox"> 
+                            <c:set var="results" value="${func:wrapInPaginated(person.clinicalResearchStaff)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/person/ClinicalResearchStaff/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/person/ClinicalResearchStaff/input.action">
+                                <c:param name="person" value="${person.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_hcf" href="${addUrl}" style="add" text="Add Clinical Research Staff"/>
+                                </po:buttonRow>                                     
+                            </div>               
+                      </div>
+                      <div id="hcp" class="tabbox" style="display:none;">   
+                            <c:set var="results" value="${func:wrapInPaginated(person.healthCareProviders)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/person/HealthCareProvider/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/person/HealthCareProvider/input.action">
+                                <c:param name="person" value="${person.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_ro" href="${addUrl}" style="add" text="Add Health Care Provider"/>
+                                </po:buttonRow>                                     
+                            </div>       
+                      </div>
+                      <div id="oc" class="tabbox" style="display:none;">
+                            <c:set var="results" value="${func:wrapInPaginated(person.organizationalContacts)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/OrganizationalContact/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/person/OrganizationalContact/input.action">
+                                <c:param name="person" value="${person.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_oc" href="${addUrl}" style="add" text="Add Organizational Contact"/>
+                                </po:buttonRow>                                     
+                            </div>          
+                      </div>
+                      <div id="opi" class="tabbox" style="display:none;">
+                            <c:set var="results" value="${func:wrapInPaginated(person.identifiedPersons)}" scope="request"/>
+                            <%@include file="/WEB-INF/jsp/roles/person/IdentifiedPerson/list.jsp" %>
+                            <c:url var="addUrl" value="/protected/roles/person/IdentifiedPerson/input.action">
+                                <c:param name="person" value="${person.id}"/>
+                            </c:url>
+                            <div class="btnwrapper">
+                                <po:buttonRow>
+                                    <po:button id="add_button_io" href="${addUrl}" style="add" text="Add Other Person Identifier"/>
+                                </po:buttonRow>                                     
+                            </div>          
+                      </div>                      
+                </div>
             </div>
         </div>
 </s:if>
         <div class="boxouter">
         <h2>Curator Comment(s)</h2>
+            <c:forEach items="${person.comments}" var="comment">
+                <div class="comment_box">
+                    <div class="comment_hdr">
+                        <b><c:out value="${not empty comment.userName?comment.userName:'Unknown user'}"></c:out></b>
+                        <fmt:message key="organization.comments.addedBy"/>
+                        <b>
+                        <c:choose>
+                            <c:when test="${comment.createDate==null}">
+                                unknown date:
+                            </c:when>    
+                            <c:otherwise>
+                                <fmt:formatDate value="${comment.createDate}" pattern="yyyy-MM-dd hh:mm aaa"/>:
+                            </c:otherwise>                
+                        </c:choose>
+                        </b>
+                    </div>
+                    <div class="comment_txt"><c:out value="${comment.value}" escapeXml="false"/></div>
+                </div>
+            </c:forEach>
             <div class="box_white">
-                <s:textarea id="curateEntityForm.person.commentsText" label="%{getText('person.comments')}" cols="50" rows="8" cssStyle="resize: none;" value="%{person.comments}" />
+                <s:textarea id="curateEntityForm.person.commentsText" label="%{getText('person.comments.add')}" cols="50" rows="8" cssStyle="resize: none;" value="%{comments}" />
             </div>
         </div>
     </div>

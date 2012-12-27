@@ -82,14 +82,13 @@
  */
 package gov.nih.nci.po.web.curation;
 
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.CuratePersonSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationSearchSortEnum;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonSortCriterion;
+import gov.nih.nci.po.service.PersonSearchDTO;
+import gov.nih.nci.po.service.PersonSearchSortEnum;
+import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.GenericSearchServiceUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,15 +110,17 @@ import com.opensymphony.xwork2.ActionSupport;
 public class CurateAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
 
-    private final PaginatedList<Person> persons = new PaginatedList<Person>(0, new ArrayList<Person>(),
-            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null, PersonSortCriterion.PERSON_ID.name(),
-            SortOrderEnum.ASCENDING);
+    private final PaginatedList<PersonSearchDTO> persons = new PaginatedList<PersonSearchDTO>(
+            0, new ArrayList<PersonSearchDTO>(),
+            PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
+            PersonSearchSortEnum.PERSON_ID.name(), SortOrderEnum.ASCENDING);
     private final PaginatedList<OrganizationSearchDTO> orgs = new PaginatedList<OrganizationSearchDTO>(
             0, new ArrayList<OrganizationSearchDTO>(),
             PoRegistry.DEFAULT_RECORDS_PER_PAGE, 1, null,
             OrganizationSearchSortEnum.ID.name(), SortOrderEnum.ASCENDING);
     
     private static final String EXPORT_ORGS = "exportOrgs";
+    private static final String EXPORT_PERSONS = "exportPersons";
     private static final String RESULTS_TABLE_UID = "row";
 
     /**
@@ -130,7 +131,6 @@ public class CurateAction extends ActionSupport {
     public String listAll() {
         listOrgs();
         listPersons();
-
         return SUCCESS;
     }
 
@@ -177,9 +177,35 @@ public class CurateAction extends ActionSupport {
      * @return success
      */
     public String listPersons() {
-        GenericSearchServiceUtil.search(PoRegistry.getPersonService(), new CuratePersonSearchCriteria(),
-                getPersons(), PersonSortCriterion.class);
-        return SUCCESS;
+        String returnValue = SUCCESS;
+        ParamEncoder encoder = new ParamEncoder(RESULTS_TABLE_UID);
+        String exportParamName = encoder
+                .encodeParameterName(TableTagParameters.PARAMETER_EXPORTTYPE);
+        String exportParamValue = ServletActionContext.getRequest()
+                .getParameter(exportParamName);
+        if (NumberUtils.isNumber(exportParamValue)) {
+            MediaTypeEnum mediaType = MediaTypeEnum.fromCode(Integer
+                    .parseInt(exportParamValue));
+            if (mediaType == MediaTypeEnum.EXCEL
+                    || mediaType == MediaTypeEnum.CSV) {
+                returnValue = EXPORT_PERSONS;
+                persons.setPageNumber(1);
+                persons.setObjectsPerPage(Integer.MAX_VALUE);
+            }
+        }
+        searchPersons();
+        return returnValue;
+    }
+
+    private void searchPersons() {
+        PersonServiceLocal orgService = PoRegistry.getPersonService();
+        PageSortParams<PersonSearchDTO> pageSortParams = new PageSortParams<PersonSearchDTO>(
+                persons.getObjectsPerPage(), (persons.getPageNumber() - 1)
+                        * persons.getObjectsPerPage(), null, persons
+                        .getSortDirection().equals(SortOrderEnum.DESCENDING),
+                Arrays.asList(persons.getSortCriterion()));
+        persons.setList(orgService.getInboxPersons(pageSortParams));
+        persons.setFullListSize((int) orgService.countInboxPersons());
     }
 
     /**
@@ -192,7 +218,7 @@ public class CurateAction extends ActionSupport {
     /**
      * @return list of persons to curate
      */
-    public PaginatedList<Person> getPersons() {
+    public PaginatedList<PersonSearchDTO> getPersons() {
         return persons;
     }
 

@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Person;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +146,31 @@ public class MockPersonService implements PersonServiceLocal {
 
     public void curate(Person curatedPerson) {
 
+    }
+
+    @Override
+    public List<PersonSearchDTO> search(PersonSearchCriteria criteria,
+            PageSortParams<PersonSearchDTO> pageSortParams) {       
+        return new ArrayList<PersonSearchDTO>();
+    }
+
+    @Override
+    public int count(PersonSearchCriteria criteria) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public List<PersonSearchDTO> getInboxPersons(
+            PageSortParams<PersonSearchDTO> pageSortParams) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int countInboxPersons() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

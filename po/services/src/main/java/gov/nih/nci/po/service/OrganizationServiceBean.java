@@ -372,7 +372,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     // CHECKSTYLE:OFF
     private OrganizationSearchDTO convert(Object[] row) {
         OrganizationSearchDTO dto = new OrganizationSearchDTO();
-        dto.setId(row[0].toString());
+        dto.setId(((Number) row[0]).longValue());
         dto.setName((String) row[1]);
         dto.setFamilyName((String) row[2]);
         dto.setRoCtepId((String) row[3]);

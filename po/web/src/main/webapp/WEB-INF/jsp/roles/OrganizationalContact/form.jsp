@@ -4,6 +4,7 @@
 <head>
 <s:set name="isCreate" value="role.id == null" />
 <s:set name="isNotCreate" value="role.id != null" />
+<c:set var="usePlayerDefaults" value="${role.id == null && input}"/>
 <s:if test="%{isCreate}">
     <title>Create <s:text name="organizationalContact"/></title>
 </s:if>
@@ -130,14 +131,17 @@
         </div>
         <div class="boxouter">
             <h2>Address Information</h2>
-            <po:addresses />
+            <po:addresses usOrCanadaFormatForValidationOnly="${person.id != null}"/>
         </div>
 
         <div class="boxouter_nobottom">
-        <h2>Contact Information ${role.status == 'ACTIVE'}</h2>
+        <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="${role.status == 'ACTIVE'}" />
+                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="${role.status == 'ACTIVE'}" 
+                    usOrCanadaFormatForValidationOnly="${person.id != null}"
+                    defaultEmails="${usePlayerDefaults && person.id != null}" defaultPhones="${usePlayerDefaults && person.id != null}" 
+                    defaultFaxes="${usePlayerDefaults && person.id != null}"/>
             </div>
         </div>
     </div>

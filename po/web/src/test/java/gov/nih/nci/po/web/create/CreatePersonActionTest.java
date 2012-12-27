@@ -7,6 +7,7 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -78,7 +79,7 @@ public class CreatePersonActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void create() throws JMSException {
+    public void create() throws JMSException, CSException {
         assertEquals(Action.SUCCESS, action.create());
         assertEquals(1, ActionHelper.getMessages().size());
         assertEquals("person.create.success", ActionHelper.getMessages().get(0));
