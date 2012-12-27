@@ -31,7 +31,31 @@ public enum BioMarkerAttributesCode implements CodedEnum<String> {
     /**
      * SPECIMEN COLLECTION.
      */
-    SPECIMEN_COLLECTION("SPECIMEN COLLECTION");
+    SPECIMEN_COLLECTION("SPECIMEN COLLECTION"),
+    /**
+     * ASSAY TYPE CODE
+     */
+    ASSAY_TYPE_CODE("ASSAY TYPE CODE"),
+    /**
+     * BIOMARKER USE CODE
+     */
+    ASSAY_USE_CODE("BIOMARKER USE CODE"),
+    /**
+     * BIOMARKER PURPOSE CODE
+     */
+    ASSAY_PURPOSE_CODE("BIOMARKER PURPOSE CODE"),
+    /**
+     * SPECIMEN TYPE CODE
+     */
+    TISSUE_SPECIMEN_TYPE_CODE("SPECIMEN TYPE CODE"),
+    /**
+     * SPECIMEN COLLECTION CODE
+     */
+    TISSUE_COLLECTION_METHOD_CODE("SPECIMEN COLLECTION CODE"),
+    /**
+     * EVALUATION TYPE CODE
+     */
+    EVALUATION_TYPE_CODE("EVALUATION TYPE CODE");
     
     private String code;
     

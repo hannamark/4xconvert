@@ -93,10 +93,15 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
@@ -111,10 +116,12 @@ import org.junit.Test;
  */
 public class PlannedMarkerActionTest extends AbstractPaActionTest {
     private PlannedMarkerAction plannedMarkerAction;
+    private PlannedMarkerServiceLocal plannedMarkerService;
 
     @Before
     public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerAction();
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         plannedMarkerAction.prepare();
 
@@ -134,12 +141,31 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
 
         ApplicationService appService = mock(ApplicationService.class);
         when(appService.search(eq(ValueDomainPermissibleValue.class), any(ValueDomainPermissibleValue.class))).thenReturn(results);
-
+        
         plannedMarkerAction.setAppService(appService);
+        PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);PlannedMarkerDTO oldValue = new PlannedMarkerDTO();
+        oldValue.setAssayTypeCode(CdConverter.convertStringToCd("Microarray"));
+        oldValue.setAssayPurposeCode(CdConverter.convertStringToCd("Stratification Factor"));
+        oldValue.setAssayUseCode(CdConverter.convertStringToCd("Integral"));
+        oldValue.setTissueSpecimenTypeCode(CdConverter.convertStringToCd("Serum"));
+        oldValue.setTissueCollectionMethodCode(CdConverter.convertStringToCd("Mandatory"));
+        oldValue.setEvaluationType(CdConverter.convertStringToCd("Methylation"));
+        
+        when(plannedMarkerService.getPlannedMarkerWithID(1L)).thenReturn(oldValue);
+        plannedMarkerAction.setPlannedMarkerService(plannedMarkerService);
     }
 
     @Test
     public void testAdd() throws PAException {
+        PlannedMarkerDTO oldValue = new PlannedMarkerDTO();
+        oldValue.setAssayTypeCode(CdConverter.convertStringToCd("Microarray"));
+        oldValue.setAssayPurposeCode(CdConverter.convertStringToCd("Stratification Factor"));
+        oldValue.setAssayUseCode(CdConverter.convertStringToCd("Integral"));
+        oldValue.setTissueSpecimenTypeCode(CdConverter.convertStringToCd("Serum"));
+        oldValue.setTissueCollectionMethodCode(CdConverter.convertStringToCd("Mandatory"));
+        oldValue.setEvaluationType(CdConverter.convertStringToCd("Methylation"));
+        
+        when(plannedMarkerService.getPlannedMarkerWithID(1L)).thenReturn(oldValue);
         plannedMarkerAction.add();
         assertTrue(plannedMarkerAction.hasFieldErrors());
         plannedMarkerAction.clearErrorsAndMessages();

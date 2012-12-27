@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import java.util.List;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 
 /**
@@ -130,4 +131,25 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      * @throws PAException exception
      */
     List<PlannedMarkerDTO> getPendingPlannedMarkersWithProtocolId(List<Long> listOfIds) throws PAException;
+    
+    
+    /**
+     * updates  plannedMarker with the new bio marker attribute values 
+     * 
+     * @param typeCode typeCode
+     * @param oldValue oldValue
+     * @param newValue newValue
+     * @throws PAException exception
+     */
+    
+    void updatePlannedMarkerAttributeValues(BioMarkerAttributesCode typeCode, String oldValue, String newValue) 
+    throws PAException;
+    
+    /**
+     * returns  plannedMarker with the matching ID 
+     * @return PlannedMarkerDTO
+     * @param id id
+     * @throws PAException exception
+     */
+    PlannedMarkerDTO getPlannedMarkerWithID(Long id) throws PAException;
 }

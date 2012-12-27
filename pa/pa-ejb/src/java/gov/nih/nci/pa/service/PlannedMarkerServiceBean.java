@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PlannedMarker;
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.iso.convert.PlannedMarkerConverter;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -102,7 +103,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -240,5 +243,54 @@ implements PlannedMarkerServiceLocal {
         List<PlannedMarker> markers = query.list();
         return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);     
     }
-
+    
+    /**
+     * updates  plannedMarker with the new bio marker attribute values 
+     * 
+     * @param typeCode typeCode
+     * @param oldValue oldValue
+     * @param newValue newValue
+     * @throws PAException exception
+     */
+    public void updatePlannedMarkerAttributeValues(BioMarkerAttributesCode typeCode, String oldValue, String newValue) 
+    throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        List<Object[]> queryList = null;
+        SQLQuery query = session.createSQLQuery("select identifier, "
+                + typeCode.getName() + " from planned_marker where "
+                + typeCode.getName() + " = '" + oldValue + "' or "
+                + typeCode.getName() + " like (:oldValue1) or "
+                + typeCode.getName() + " like (:oldValue2)");  
+        query.setParameter("oldValue1", "%," + oldValue);
+        query.setParameter("oldValue2", oldValue + ",%");
+        queryList = query.list();
+        String newValue1 = "";
+        for (Object[] oArr : queryList) {
+            if (StringUtils.containsIgnoreCase(oArr[1].toString(), oldValue)) {
+                newValue1 = StringUtils.replace(oArr[1].toString(), oldValue, newValue);
+            }  
+            SQLQuery query1 = session
+            .createSQLQuery("update planned_marker set " + typeCode.getName() 
+                    + " = '" + newValue1 + "' where identifier = " + oArr[0]); 
+            query1.executeUpdate();    
+        }      
+    }
+    
+    /**
+     * returns  plannedMarker with the matching ID 
+     * @return PlannedMarkerDTO
+     * @param id id
+     * @throws PAException exception
+     */
+    public PlannedMarkerDTO getPlannedMarkerWithID(Long id) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        String hql = "from PlannedMarker as pm where pm.id = :id ";
+        Query query = session.createQuery(hql);
+        query.setParameter("id", id);
+        List<PlannedMarker> markers = query.list();        
+        PlannedMarker marker = markers.get(0);
+        return (PlannedMarkerDTO) convertFromDomainToDto(marker);   
+    }
 }

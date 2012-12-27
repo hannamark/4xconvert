@@ -4,6 +4,7 @@ import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +52,43 @@ public class MarkerAttributesBeanLocal implements MarkerAttributesServiceLocal {
         return returnValue;
 
     }
-
+   
+    /**
+     * return the list of values for the BioMarker attributes with CADSR value.
+     * 
+     * @param valueType
+     *            the valueType
+     * @return the map<Key, Map<key,value>> with the attribute value
+     *
+     */
+    public Map<Long, Map<String, String>> attributeValuesWithCaDSR(
+            BioMarkerAttributesCode valueType) {
+        Map<Long, Map<String, String>> returnValue = new HashMap<Long, Map<String, String>>();
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<Object[]> queryList = null;
+        SQLQuery query = session
+                .createSQLQuery("Select type_code, DESCRIPTION_TEXT, cadsr_id from "
+                        + valueType.getName());
+        queryList = query.list();
+        for (Object[] oArr : queryList) {
+            if (oArr[0] != null) {
+                Map<String, String> value = new HashMap<String, String>();
+                value.put(oArr[0].toString(), oArr[1].toString());
+                Integer ret = null;
+                BigInteger retBig = null;
+                if (oArr[2] instanceof Integer) {
+                    ret = (Integer) oArr[2];  
+                    returnValue.put(ret.longValue(), value);
+                } else if (oArr[2] instanceof BigInteger) {
+                    retBig = (BigInteger) oArr[2];  
+                    returnValue.put(retBig.longValue(), value);
+                }
+            }
+        }
+        return returnValue;
+    }
+    
     private Map<String, String> attributeValues(
             BioMarkerAttributesCode valueType) {
         Map<String, String> returnValue = new HashMap<String, String>();
@@ -103,21 +140,28 @@ public class MarkerAttributesBeanLocal implements MarkerAttributesServiceLocal {
      * @param map map
      * @throws PAException on error.
      */
-    public void updateMarker(BioMarkerAttributesCode valueType, Map<String, String> map) throws PAException {
+    public void updateMarker(BioMarkerAttributesCode valueType, Map<Long , Map<String, String>> map) 
+    throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
     
         SQLQuery query = session
-                .createSQLQuery("Delete from " 
-                        + valueType.getName());    
+                .createSQLQuery("Delete from " + valueType.getName());    
         query.executeUpdate();
-        Iterator<Map.Entry<String, String>> itr = map.entrySet().iterator();
+        Iterator<Map.Entry<Long, Map<String, String>>> itr = map.entrySet().iterator();
         while (itr.hasNext()) {
-            Map.Entry<String, String> entry = itr.next();
+            Map.Entry<Long, Map<String, String>> entry = itr.next();
             SQLQuery query1 = session
             .createSQLQuery("insert into " 
-                    + valueType.getName() + "(type_code, DESCRIPTION_TEXT) values (:typeCode, :descriptionText)");
-            query1.setParameter("typeCode", entry.getKey().toString());
-            query1.setParameter("descriptionText", entry.getValue().toString());
+                    + valueType.getName() + " (type_code, DESCRIPTION_TEXT, CADSR_ID) " 
+                    + "values (:typeCode, :descriptionText, :cadsrId)");
+            query1.setParameter("cadsrId", entry.getKey().longValue());
+            Map<String, String> valueMap = entry.getValue();
+            Iterator<Map.Entry<String, String>> itr1 = valueMap.entrySet().iterator();
+            while (itr1.hasNext()) {
+                Map.Entry<String, String> entry1 = itr1.next();            
+                query1.setParameter("descriptionText", entry1.getValue().toString());
+                query1.setParameter("typeCode", entry1.getKey().toString());
+            }
             query1.executeUpdate();
         } 
     }

@@ -98,7 +98,7 @@ public class SpecimenCollection extends AbstractEntity {
     private static final int DEFAULT_COLUMN_LENGTH = 200;
     private String typeCode;
     private String description;
-    
+    private Long caDSRId;
     
     /**
     *
@@ -130,6 +130,23 @@ public class SpecimenCollection extends AbstractEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+    /**
+    *
+    * @return caDSRId
+    */
+    @Column(name = "CADSR_ID")
+    public Long getCaDSRId() {
+        return caDSRId;
+    }
+    
+    /**
+    *
+    * @param caDSRId caDSRId
+    */
+    public void setCaDSRId(Long caDSRId) {
+        this.caDSRId = caDSRId;
+    }
+    
 }
 
 

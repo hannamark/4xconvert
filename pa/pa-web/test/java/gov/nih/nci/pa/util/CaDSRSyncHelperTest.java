@@ -11,7 +11,9 @@ import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import org.junit.Test;
 public class CaDSRSyncHelperTest extends AbstractPaActionTest {
     CaDSRSyncHelper helper;
     private MarkerAttributesServiceLocal markerAttributesService = mock(MarkerAttributesServiceLocal.class);
+    private PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     ApplicationService appService = mock(ApplicationService.class);
     CaDSRSyncHelper helperMock = mock(CaDSRSyncHelper.class);
     /** The CDE public Id for Assay Type Attribute. */
@@ -49,6 +52,7 @@ public class CaDSRSyncHelperTest extends AbstractPaActionTest {
     public void setUp() throws Exception {
         helper = new CaDSRSyncHelper();
         helper.setMarkerAttributesService(markerAttributesService);
+        helper.setPlannedMarkerService(plannedMarkerService);
         EnumeratedValueDomain vd = new EnumeratedValueDomain();
         vd.setId("1");
         
@@ -84,29 +88,58 @@ public class CaDSRSyncHelperTest extends AbstractPaActionTest {
 
     @Test
     public void updateMarkerTablesTest() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("ELISA", "ELISA");
+        Map<Long , Map<String, String>> map = new HashMap<Long , Map<String, String>>();
+        Map<String, String> result = new HashMap<String, String>();
+        result.put("ELISA","ELISA");
+        map.put(2558713L, result);
         when(helperMock.getCaDSRValues(CDE_PUBLIC_ID_ASSAY)).thenReturn(map);
         helper.updateMarkerTables();        
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_ASSAY);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Microarray").equals("Microarray"));
+        Map<String, String> value = map.get(2575508L);
+        
+        assertTrue(value.get("Microarray").equals("Microarray"));
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_USE);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Integral").equals("Integral"));
+        value.clear();
+        value = map.get(2944941L);
+        assertTrue(value.get("Integral").equals("Integral"));
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_PURPOSE);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Stratification Factor").equals("Stratification Factor"));
+        value.clear();
+        value = map.get(2939394L);
+        assertTrue(value.get("Stratification Factor").equals("Stratification Factor"));
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_SPECIMEN);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Serum").equals("Serum"));
+        value.clear();
+        value = map.get(3004972L);
+        assertTrue(value.get("Serum").equals("Serum"));
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_SP_COL);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Mandatory").equals("Mandatory"));
+        value.clear();
+        value = map.get(2939403L);
+        assertTrue(value.get("Mandatory").equals("Mandatory"));
         map = helper.getCaDSRValues(CDE_PUBLIC_ID_EVAL);
         assertTrue(map.size() > 0);
-        assertTrue(map.get("Methylation").equals("Methylation"));
-        
+        value.clear();
+        value = map.get(3079271L);
+        assertTrue(value.get("Methylation").equals("Methylation"));    
+    }
+    
+    
+    @Test
+    public void syncPlannedMarkerAttributes() throws Exception {
+        Map<Long, Map<String, String>> map = new HashMap<Long, Map<String,String>>();
+        Map<String, String> value = new HashMap<String, String>();
+        value.put("Microarray", "Microarray");
+        map.put(2575508L, value);
+        when(markerAttributesService.attributeValuesWithCaDSR(BioMarkerAttributesCode.ASSAY_TYPE)).thenReturn(map);
+        helper.syncPlannedMarkerAttributes();
+        Map<String, String> value1 = new HashMap<String, String>();
+        value1.put("ELISA1", "ELISA1");
+        map.put(2558713L, value1);
+        when(markerAttributesService.attributeValuesWithCaDSR(BioMarkerAttributesCode.ASSAY_TYPE)).thenReturn(map);
+        helper.syncPlannedMarkerAttributes();
     }
 
 }

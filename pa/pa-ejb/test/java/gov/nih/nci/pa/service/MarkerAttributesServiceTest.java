@@ -68,20 +68,37 @@ public class MarkerAttributesServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void updateMarkerTest() throws PAException {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("PCR", "PCR");
-        map.put("MicroArray", "MicroArray");
+        Map<Long , Map<String, String>> map = new HashMap<Long , Map<String, String>>();
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("PCR", "PCR");
+        map.put(2565773L, values);
+        values.clear();   
+        values.put("MicroArray", "MicroArray");
+        map.put(2575508L, values);
         bean.updateMarker(BioMarkerAttributesCode.ASSAY_TYPE, map);
         List<String> result = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.ASSAY_TYPE);
         assertTrue(result.size() == 2);
         map.clear();
-        map.put("Retrospective Research", "Retrospective Research");
-        map.put("Treatment Assignment", "Treatment Assignment");
-        map.put("Other (specify)", "Other");
+        values.clear();
+        values.put("Retrospective Research", "Retrospective Research");
+        map.put(3645779L, values);
+        values.clear();
+        values.put("Treatment Assignment", "Treatment Assignment");
+        
+        map.put(2939395L, values);
+        values.clear();
+        values.put("Other (specify)", "Other");
+        map.put(2559653L, values);
         bean.updateMarker(BioMarkerAttributesCode.BIOMARKER_PURPOSE, map);
         result.clear();
         result = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.BIOMARKER_PURPOSE);
         assertTrue(result.size() == 3);
     }
 
+    @Test
+    public void attributeValuesWithCaDSRTest() throws PAException {
+        Map<Long, Map<String, String>> returnValue = new HashMap<Long, Map<String, String>>();
+        returnValue = bean.attributeValuesWithCaDSR(BioMarkerAttributesCode.ASSAY_TYPE);
+        assertTrue(returnValue.size() > 0);
+    }
 }

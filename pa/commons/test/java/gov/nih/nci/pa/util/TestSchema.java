@@ -179,6 +179,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.math.BigDecimal;
+import java.security.spec.ECField;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1107,6 +1108,7 @@ public class TestSchema {
         AssayType assayType = new AssayType();      
         assayType.setTypeCode("PCR");
         assayType.setDescription("PCR");
+        assayType.setCaDSRId(234567L);
         return assayType;
     }
     
@@ -1114,6 +1116,7 @@ public class TestSchema {
         EvaluationType evaluationType = new EvaluationType();      
         evaluationType.setTypeCode("Level / Quantity");
         evaluationType.setDescription("Level / Quantity");
+        evaluationType.setCaDSRId(213456L);
         return evaluationType;
     }
     
@@ -1121,6 +1124,7 @@ public class TestSchema {
         BiomarkerPurpose biomarkerPurpose = new BiomarkerPurpose();      
         biomarkerPurpose.setTypeCode("Eligibility Criterion");
         biomarkerPurpose.setDescription("Eligibility Criterion");
+        biomarkerPurpose.setCaDSRId(123467L);
         return biomarkerPurpose;
     }
     
@@ -1128,6 +1132,7 @@ public class TestSchema {
         BiomarkerUse biomarkerUse = new BiomarkerUse();      
         biomarkerUse.setTypeCode("Integral");
         biomarkerUse.setDescription("Integral");
+        biomarkerUse.setCaDSRId(2357843L);
         return biomarkerUse;
     }
     
@@ -1135,6 +1140,7 @@ public class TestSchema {
         SpecimenType specimenType = new SpecimenType();      
         specimenType.setTypeCode("Serum");
         specimenType.setDescription("Serum");
+        specimenType.setCaDSRId(3563212L);
         return specimenType;
     }
     
@@ -1142,6 +1148,7 @@ public class TestSchema {
         SpecimenCollection specimenCollection = new SpecimenCollection();      
         specimenCollection.setTypeCode("Mandatory");
         specimenCollection.setDescription("Mandatory");
+        specimenCollection.setCaDSRId(123456L);
         return specimenCollection;
     }
     

@@ -107,6 +107,6 @@ public interface MarkerAttributesServiceLocal extends MarkerAttributesServiceRem
      * @param map map
      * @throws PAException on error.
      */
-    void updateMarker(BioMarkerAttributesCode valueType, Map<String, String> map) throws PAException;
+    void updateMarker(BioMarkerAttributesCode valueType, Map<Long , Map<String, String>> map) throws PAException;
     
 }

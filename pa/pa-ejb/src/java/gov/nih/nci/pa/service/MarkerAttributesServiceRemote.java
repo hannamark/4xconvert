@@ -105,5 +105,16 @@ public interface MarkerAttributesServiceRemote {
      * @param map map
      * @throws PAException on error.
      */
-    void updateMarker(BioMarkerAttributesCode valueType, Map<String, String> map) throws PAException;
+    void updateMarker(BioMarkerAttributesCode valueType, Map<Long , Map<String, String>> map) throws PAException;
+    
+    /**
+     * return the list of values for the BioMarker attributes with CADSR value.
+     * 
+     * @param valueType
+     *            the valueType
+     * @return the map<Key, Map<key,value>> with the attribute value
+     *
+     */
+    Map<Long, Map<String, String>> attributeValuesWithCaDSR(BioMarkerAttributesCode valueType);
+   
 }

@@ -24,6 +24,7 @@ public class CaDSRSyncJob implements Job {
         LOG.info("executing job");
         try {
             CaDSRSyncHelper helper = new CaDSRSyncHelper();
+            helper.syncPlannedMarkerAttributes();
             helper.updateMarkerTables();
         } catch (Exception e) {
             LOG.error("error", e);
