@@ -366,8 +366,9 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
         Session session = PaHibernateUtil.getCurrentSession();
         String sql = "INSERT INTO performed_activity(identifier, study_protocol_identifier, performed_activity_type," 
-                + "date_last_created, study_subject_identifier, registration_date, user_last_created_id) "
-                + "VALUES (:psmId, :spId, 'PerformedSubjectMilestone', now(), :ssId, :regDate, :userId)";
+                + "date_last_created, date_last_updated, study_subject_identifier, registration_date, " 
+                + "user_last_created_id) "
+                + "VALUES (:psmId, :spId, 'PerformedSubjectMilestone', now(), now(), :ssId, :regDate, :userId)";
         SQLQuery qry = session.createSQLQuery(sql);
         qry.setLong("psmId", newId);
         qry.setLong("spId", spId);
@@ -447,9 +448,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         } else {
             result = getNextId(session);
             sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code, " 
-                    + "date_last_created, country_identifier, zip, user_last_created_id, birth_month_excluded) " 
+                    + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id, " 
+                    + "birth_month_excluded) " 
                     + "VALUES (:identifier, :race_code, :sex_code, :ethnic_code, :birth_date,'ACTIVE', "
-                    + "now(), :country_identifier, :zip, :user_id, :birth_month_excluded)";
+                    + "now(), now(), :country_identifier, :zip, :user_id, :birth_month_excluded)";
         }
         queryObject = session.createSQLQuery(sql);
         queryObject.setParameter(IDENTIFIER, result);
@@ -507,11 +509,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             result = newPatientId;
             sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
                     + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
-                    + "date_last_created, assigned_identifier, submission_type," 
+                    + "date_last_created, date_last_updated, assigned_identifier, submission_type," 
                     + "user_last_created_id, icd9disease_identifier, registration_group_id) "
                     + "VALUES (:identifier, :patient_identifier, :study_protocol_identifier, "
                     + ":study_site_identifier, " + sdcString + ", :pmCode, :status_code, "
-                    + "now(), :assigned_identifier, :submission_type," 
+                    + "now(), now(), :assigned_identifier, :submission_type," 
                     + ":user_id, " + icd9String + ", :registration_group_id)";
             queryObject = session.createSQLQuery(sql);
             queryObject.setParameter("patient_identifier", newPatientId);
