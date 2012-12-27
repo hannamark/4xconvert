@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -204,6 +205,11 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
     @Override
     public SubmissionHistoryService getSubmissionHistoryService() {
         return serviceLocator.getSubmissionHistoryService();
+    }
+
+    @Override
+    public AccrualDiseaseServiceLocal getAccrualDiseaseService() {
+        return serviceLocator.getAccrualDiseaseService();
     }    
     
 }

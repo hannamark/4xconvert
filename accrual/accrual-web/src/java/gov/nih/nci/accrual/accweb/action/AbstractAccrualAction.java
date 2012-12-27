@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -94,10 +95,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 
 import java.util.HashSet;
@@ -121,8 +120,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private PatientServiceLocal patientSvc;
     private PerformedActivityService performedActivitySvc;
     private CountryService countrySvc;
-    private SDCDiseaseServiceRemote sdcDiseaseSvc;
-    private ICD9DiseaseServiceRemote icd9DiseaseSvc;
+    private AccrualDiseaseServiceLocal diseaseSvc;
     private PlannedActivityServiceRemote plannedActivitySvc;
     private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
     private BatchFileService batchFileSvc;
@@ -143,8 +141,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         submissionHistorySvc = AccrualServiceLocator.getInstance().getSubmissionHistoryService();
-        sdcDiseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
-        icd9DiseaseSvc = PaServiceLocator.getInstance().getICD9DiseaseService();
+        diseaseSvc = AccrualServiceLocator.getInstance().getAccrualDiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         batchFileSvc = AccrualServiceLocator.getInstance().getBatchFileService();
         subjectAccrualSvc = AccrualServiceLocator.getInstance().getSubjectAccrualService();
@@ -250,17 +247,10 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     /**
      * @return the diseaseSvc
      */
-    public SDCDiseaseServiceRemote getSDCDiseaseSvc() {
-        return sdcDiseaseSvc;
+    public AccrualDiseaseServiceLocal getDiseaseSvc() {
+        return diseaseSvc;
     }    
 
-    /**
-     * @return the icd9DiseaseSvc
-     */
-    public ICD9DiseaseServiceRemote getIcd9DiseaseSvc() {
-        return icd9DiseaseSvc;
-    }
-   
     /**
      * @return the plannedActivitySvc
      */

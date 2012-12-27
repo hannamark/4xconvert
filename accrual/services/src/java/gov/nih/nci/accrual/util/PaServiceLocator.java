@@ -78,9 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
@@ -127,21 +125,6 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
     public void setServiceLocator(ServiceLocatorPaInterface serviceLocator) {
         this.serviceLocator = serviceLocator;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SDCDiseaseServiceRemote getDiseaseService() {
-         return serviceLocator.getDiseaseService();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public ICD9DiseaseServiceRemote getICD9DiseaseService() {
-        return serviceLocator.getICD9DiseaseService();
-    }
-    
 
     /**
      * {@inheritDoc}

@@ -82,11 +82,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +109,6 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
 
     @Before
     public void setUp() throws Exception {
-
         action = new PopUpAction();
         action.prepare();
         searchName = "disease";
@@ -122,30 +119,29 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     public void tearDown() throws Exception {
     }
 
-    @Test
-    public void testDisplayList() {
+    @Test 
+    public void testExecute() {
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
 
-        assertEquals(ActionSupport.SUCCESS, action.displayList());
+    @Test
+    public void testDiseaseSearch() {
+        assertEquals(ActionSupport.SUCCESS, action.diseaseSearch());
     }
 
     @Test
     public void testLoadResultList() {
 
         assertNotNull(StringUtils.isEmpty(action.getSearchName()));
-        SDCDiseaseDTO criteria = new SDCDiseaseDTO();
-        criteria.setPreferredName(StConverter.convertToSt(action.getSearchName()));
-        assertNotNull(criteria);
         action.setSearchName(searchName);
-        action.setIncludeSDC("false");
         assertEquals(ActionSupport.SUCCESS, action.displayList());
 
     }
 
     @Test
     public void testLoadResultListTooManyResults() throws PAException {
-        when(action.getIcd9DiseaseSvc().getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());
+        when(action.getDiseaseSvc().search(any(AccrualDisease.class))).thenReturn(createICD9DiseaseDTOList());
         action.setSearchName(searchName);
-        action.setIncludeSDC("true");
         action.displayList();
         assertTrue(action.getActionErrors().size() > 0);
         for (String err: action.getActionErrors()) {
@@ -156,10 +152,8 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     @Test
     public void testSearchNameProperty() {
         action.setSearchName(searchName);
-        action.setIncludeSDC("true");
         action.setSearchCode("searchCode");
         assertNotNull(action.getSearchName());
-        assertNotNull(action.getIncludeSDC());
         assertNotNull(action.getSearchCode());
     }
 
@@ -174,23 +168,23 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
 
         assertNotNull(StringUtils.isEmpty(action.getSearchName()));
         action.setSearchCode("searchCode");
-        action.setIncludeSDC("true");
         assertEquals(ActionSupport.SUCCESS, action.displayList());
 
     }
 
-    private ICD9DiseaseDTO createICD9DiseaseDTO() {
-        ICD9DiseaseDTO dto = new ICD9DiseaseDTO();
-        dto.setIdentifier(IiConverter.convertToIi(1L));
-        dto.setPreferredName(StConverter.convertToSt("pname"));
-        dto.setDiseaseCode(StConverter.convertToSt("code"));
-        dto.setName(StConverter.convertToSt("pname"));
+    private AccrualDisease createICD9DiseaseDTO() {
+        AccrualDisease dto = new AccrualDisease();
+        dto.setId(1L);
+        dto.setPreferredName("pname");
+        dto.setDiseaseCode("code");
+        dto.setDisplayName("pname");
+        dto.setCodeSystem("codeSystem");
         return dto;
     }
 
-    private List<ICD9DiseaseDTO> createICD9DiseaseDTOList() {
-        List<ICD9DiseaseDTO> list = new ArrayList<ICD9DiseaseDTO>();
-        for (int i = 0; i < PopUpAction.MAX_SEARCH_RESULT_SIZE + 1; i++) {
+    private List<AccrualDisease> createICD9DiseaseDTOList() {
+        List<AccrualDisease> list = new ArrayList<AccrualDisease>();
+        for (int i = 0; i < PAConstants.MAX_SEARCH_RESULTS; i++) {
             list.add(createICD9DiseaseDTO());
         }
         return list;

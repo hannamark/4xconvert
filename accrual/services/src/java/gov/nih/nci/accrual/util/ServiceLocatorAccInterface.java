@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -144,4 +145,9 @@ public interface ServiceLocatorAccInterface {
      * @return the submission history service
      */
     SubmissionHistoryService getSubmissionHistoryService();
+    
+    /**
+     * @return the accrual disease service
+     */
+    AccrualDiseaseServiceLocal getAccrualDiseaseService();
 }

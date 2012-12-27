@@ -79,16 +79,14 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -98,120 +96,70 @@ import org.apache.struts2.ServletActionContext;
 public class PopUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
-    private static final Logger LOG = Logger.getLogger(PopUpAction.class);
-    static final int MAX_SEARCH_RESULT_SIZE = 500;
-
     private String searchName;
     private String searchCode;
-    private String includeSDC;
+    private String searchCodeSystem;
     private String page;
+    private List<String> listOfDiseaseCodeSystems = null;
 
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String execute() {
+        setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi())));
+        return super.execute();
+    }
+
+    /**
+     * Search any coding system.
+     * @return action result
+     */
+    public String diseaseSearch() {
+        setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(null));
+        return super.execute();
+    }
 
     private void loadResultList() {
         disWebList.clear();
 
         if (StringUtils.isEmpty(searchName) && StringUtils.isEmpty(searchCode)) {
-            String message = "Please enter at least one search criteria";
+            String message = "Please enter a name or code to search";
             addActionError(message);
             ServletActionContext.getRequest().setAttribute("failureMessage", message);
             return;
         }
-        if (!StringUtils.isEmpty(searchCode)) {
-            try {
-                if ("true".equalsIgnoreCase(includeSDC)) {
-                    SDCDiseaseDTO sdc = getSDCDiseaseSvc().getByCode(searchCode);
-                    if (sdc != null) {
-                        DiseaseWebDTO newRec = convertToDiseaseWebDTO(sdc);
-                        getDisWebList().add(newRec);
-                    }
-                }
-                ICD9DiseaseDTO disease = getIcd9DiseaseSvc().getByCode(searchCode);
-                if (disease != null) {
-                    DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
-                    getDisWebList().add(newRec);
-                }
-            } catch (Exception e) {
-                error("Exception while loading disease results by code.", e);
-                return;
-            }
+        AccrualDisease criteria = new AccrualDisease();
+        criteria.setPreferredName(searchName);
+        criteria.setDiseaseCode(searchCode);
+        criteria.setCodeSystem(searchCodeSystem);
+        List<AccrualDisease> diseaseList = getDiseaseSvc().search(criteria);
+        if (diseaseList.size() >= PAConstants.MAX_SEARCH_RESULTS) {
+            error("Too many diseases found.  Please narrow search.");
         } else {
-
-            if ("true".equalsIgnoreCase(includeSDC)) {
-                loadSDCDiseases(searchName);
-            }
-            loadICD9Diseases(searchName);
-
-            if (disWebList.size() > MAX_SEARCH_RESULT_SIZE) {
-                disWebList.clear();
-                error("Too many diseases found.  Please narrow search.");
-                return;
+            for (AccrualDisease disease : diseaseList) {
+                DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
+                getDisWebList().add(newRec);
             }
         }
     }
 
-    private void loadSDCDiseases(String tName) {
-        SDCDiseaseDTO criteria = new SDCDiseaseDTO();
-        criteria.setPreferredName(StConverter.convertToSt(tName));
-
-        List<SDCDiseaseDTO> diseaseList = null;
-        try {
-            diseaseList = getSDCDiseaseSvc().search(criteria);
-        } catch (Exception e) {
-            error("Exception while loading SDC disease results.", e);
-            return;
-        }
-        
-        for (SDCDiseaseDTO disease : diseaseList) {
-            DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
-            getDisWebList().add(newRec);
-        }
-    }
-
-    private DiseaseWebDTO convertToDiseaseWebDTO(SDCDiseaseDTO disease) {
+    private DiseaseWebDTO convertToDiseaseWebDTO(AccrualDisease disease) {
         DiseaseWebDTO newRec = new DiseaseWebDTO();
-        newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
-        newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-        newRec.setSdcCode(StConverter.convertToString(disease.getDiseaseCode()));
-        newRec.setDisplayName(StConverter.convertToString(disease.getDisplayName()));
-        newRec.setType(DiseaseWebDTO.SDC_TYPE);
+        newRec.setDiseaseIdentifier(disease.getId().toString());
+        newRec.setPreferredName(disease.getPreferredName());
+        newRec.setDiseaseCode(disease.getDiseaseCode());
+        newRec.setDisplayName(disease.getDisplayName());
+        newRec.setCodeSystem(disease.getCodeSystem());
         return newRec;
-    }
-    
-    private void loadICD9Diseases(String tName) {
-        List<ICD9DiseaseDTO> diseaseList = null;
-        try {
-            diseaseList = getIcd9DiseaseSvc().getByName(tName);
-        } catch (Exception e) {
-            error("Exception while loading ICD9 disease results.", e);
-            return;
-        }
-       
-        for (ICD9DiseaseDTO disease : diseaseList) {
-            DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
-            getDisWebList().add(newRec);
-        }
-    }
-
-    private DiseaseWebDTO convertToDiseaseWebDTO(ICD9DiseaseDTO disease) {
-        DiseaseWebDTO newRec = new DiseaseWebDTO();
-        newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
-        newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-        newRec.setIcd9Code(StConverter.convertToString(disease.getDiseaseCode()));
-        newRec.setDisplayName(StConverter.convertToString(disease.getPreferredName()));
-        newRec.setType(DiseaseWebDTO.ICD9_TYPE);
-        return newRec;
-    }
-    
-
-    private void error(String errMsg, Throwable t) {
-        LOG.error(errMsg, t);
-        addActionError(errMsg);
-        ServletActionContext.getRequest().setAttribute("failureMessage", errMsg);
     }
 
     private void error(String errMsg) {
-        error(errMsg, null);
+        LOG.error(errMsg);
+        addActionError(errMsg);
+        ServletActionContext.getRequest().setAttribute("failureMessage", errMsg);
     }
 
     /**
@@ -236,19 +184,6 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setSearchName(String searchName) {
         this.searchName = searchName;
-    }
-    /**
-     * @return the includeSDC
-     */
-    public String getIncludeSDC() {
-        return includeSDC;
-    }
-
-    /**
-     * @param includeSDC the includeSDC to set
-     */
-    public void setIncludeSDC(String includeSDC) {
-        this.includeSDC = includeSDC;
     }
 
     /**
@@ -280,6 +215,20 @@ public class PopUpAction extends AbstractAccrualAction {
     }
 
     /**
+     * @return the searchCodeSystem
+     */
+    public String getSearchCodeSystem() {
+        return searchCodeSystem;
+    }
+
+    /**
+     * @param searchCodeSystem the searchCodeSystem to set
+     */
+    public void setSearchCodeSystem(String searchCodeSystem) {
+        this.searchCodeSystem = searchCodeSystem;
+    }
+
+    /**
      * @return the page
      */
     public String getPage() {
@@ -291,5 +240,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setPage(String page) {
         this.page = page;
+    }
+
+    /**
+     * @return the listOfDiseaseCodeSystems
+     */
+    public List<String> getListOfDiseaseCodeSystems() {
+        return listOfDiseaseCodeSystems;
+    }
+
+    /**
+     * @param listOfDiseaseCodeSystems the listOfDiseaseCodeSystems to set
+     */
+    public void setListOfDiseaseCodeSystems(List<String> listOfDiseaseCodeSystems) {
+        this.listOfDiseaseCodeSystems = listOfDiseaseCodeSystems;
     }
 }

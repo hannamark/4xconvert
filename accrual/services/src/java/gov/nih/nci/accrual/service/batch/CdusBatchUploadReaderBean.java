@@ -89,7 +89,6 @@ import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
-import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
@@ -98,12 +97,11 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.AccrualCollections;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -305,7 +303,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         long startTime = System.currentTimeMillis();
         Long userId = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
         Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService().getSubjectAndPatientKeys(
-                IiConverter.convertToLong(studyProtocolIi));
+                IiConverter.convertToLong(studyProtocolIi), false);
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
@@ -371,21 +369,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         Element element = getDiseaseCache().get(diseaseCode);
         if (element == null) {
-            Ii diseaseIi = null;
-            SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
+            AccrualDisease disease = getDiseaseService().getByCode(diseaseCode);
             if (disease != null) {
-                diseaseIi = disease.getIdentifier();
-                diseaseIi.setIdentifierName(SubjectAccrualBeanLocal.SDC_DISEASE_IDENTIFIER_NAME);
-            } else {
-                ICD9DiseaseDTO icd9Disease = PaServiceLocator.getInstance().getICD9DiseaseService()
-                        .getByCode(diseaseCode);
-                if (icd9Disease != null) {
-                    diseaseIi = icd9Disease.getIdentifier();
-                    diseaseIi.setIdentifierName(SubjectAccrualBeanLocal.ICD9_DISEASE_IDENTIFIER_NAME);
-                }
+                element = new Element(diseaseCode, IiConverter.convertToIi(disease.getId()));
+                getDiseaseCache().put(element);
             }
-            element = new Element(diseaseCode, diseaseIi);
-            getDiseaseCache().put(element);
         }
         saDTO.setDiseaseIdentifier((Ii) element.getValue());
     }

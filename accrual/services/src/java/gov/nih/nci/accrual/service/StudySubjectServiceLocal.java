@@ -122,10 +122,12 @@ public interface StudySubjectServiceLocal extends StudySubjectService {
     /**
      * Return a list of keys for existing subjects on a given study. The input studyProtocolId must not be null.
      * @param studyProtocolId the study protocol identifier
+     * @param activeOnly set to true to ignore nullified
      * @return map where values are arrays with study subject ids as element 0 and patient ids as element 1
      * @throws PAException exception
      */
-    Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException;
+    Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId, boolean activeOnly)
+            throws PAException;
 
     /**
      * Search for study subject with given Study Subject ID and Study Site. Criteria must not be fully populated.
@@ -136,7 +138,8 @@ public interface StudySubjectServiceLocal extends StudySubjectService {
     StudySubject get(SubjectAccrualKey key) throws PAException;
     
     /**
-     * Search based on spId and Status as Active to know the disease code used for the trial.
+     * Search based on spId, status as Active, and disease code exists to know the 
+     * disease code system used for the trial.
      * @param spId studyprotocol id
      * @return result study subject object (empty if none found)
      * @throws PAException exception

@@ -95,36 +95,28 @@ public class DiseaseWebDTOTest {
     @Before
     public void initDto() {
     	diseaseWebDTO = new DiseaseWebDTO();
-    	diseaseWebDTO.setIcd9Code("icd9Code1");
-    	diseaseWebDTO.setSdcCode("sdcCode");
-    	diseaseWebDTO.setConceptId("conceptId");
+    	diseaseWebDTO.setDiseaseCode("icd9Code1");
+    	diseaseWebDTO.setCodeSystem("ICD9");
     	diseaseWebDTO.setDiseaseIdentifier("diseaseIdentifier");
-    	diseaseWebDTO.setLead("lead");
     	diseaseWebDTO.setDisplayName("menuDisplayName");
     	diseaseWebDTO.setPreferredName("preferredName");
     	diseaseWebDTO.setStudyDiseaseIdentifier("studyDiseaseIdentifier");
     }
 
-   @Test
-   public void codePropertyTest() {
-       assertNotNull(diseaseWebDTO.getIcd9Code());
-       assertNotNull(diseaseWebDTO.getSdcCode());
-   }
-
-   @Test
-   public void conceptIdPropertyTest() {
-      assertNotNull(diseaseWebDTO.getConceptId());
-   }
+    @Test
+    public void codePropertyTest() {
+        assertNotNull(diseaseWebDTO.getDiseaseCode());
+    }
+    @Test
+    public void codeSystemPropertyTest() {
+        assertNotNull(diseaseWebDTO.getCodeSystem());
+    }
    @Test
     public void diseaseIdentifierPropertyTest() {
       assertNotNull(diseaseWebDTO.getDiseaseIdentifier());
    }
    @Test
-   public void leadPropertyTest() {
-     assertNotNull(diseaseWebDTO.getLead());
-   }
-   @Test
-   public void menuDisplayNamePropertyTest() {
+   public void displayNamePropertyTest() {
      assertNotNull(diseaseWebDTO.getDisplayName());
    }
    @Test

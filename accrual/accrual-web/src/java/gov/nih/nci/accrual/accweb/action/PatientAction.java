@@ -91,17 +91,14 @@ import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -124,7 +121,7 @@ import com.opensymphony.xwork2.Preparable;
  * Patient actions.
  * @author Hugh Reinhart
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings("PMD.TooManyMethods")
 public class PatientAction extends AbstractListEditAccrualAction<PatientListDto> implements Preparable {
     private static final long serialVersionUID = -6820189447703204634L;
     private static List<Country> listOfCountries = null;
@@ -265,8 +262,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
      */
     @Override
     public String add() throws PAException {
-        boolean checkDisease = checkDiseaseIsNeeded();
-        helper.validate(checkDisease);
+        helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.create();
@@ -289,6 +285,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
                 ssub = getStudySubjectSvc().update(ssub);
                 setRegistrationDate(psm);
             } else {
+                pat.setIdentifier(null);
+                ssub.setIdentifier(null);
+                psm.setIdentifier(null);
                 pat = getPatientSvc().create(pat);
                 ssub.setPatientIdentifier(pat.getIdentifier());
                 ssub = getStudySubjectSvc().create(ssub);
@@ -307,11 +306,15 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
      */
     @Override
     public String edit() throws PAException {
-        boolean checkDisease = checkDiseaseIsNeeded();
-        helper.validate(checkDisease);
+        helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.update();
+        }
+        if (keyChanged()) {
+            Ii ssubIi = IiConverter.convertToIi(patient.getStudySubjectId());
+            getSubjectAccrualSvc().deleteSubjectAccrual(ssubIi, "Change ID or Site");
+            return add();
         }
         PatientDto pat = patient.getPatientDto();
         StudySubjectDto ssub = patient.getStudySubjectDto();
@@ -329,6 +332,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         return super.edit();
     }
 
+    private boolean keyChanged() {
+        try {
+            StudySubject ssDb = getStudySubjectSvc().get(patient.getStudySubjectId());
+            return !ssDb.getAssignedIdentifier().equals(patient.getAssignedIdentifier()) 
+                    || !ssDb.getStudySite().getId().equals(patient.getStudySiteId());
+        } catch (Exception e) {
+            LOG.error("Exception in PatientAction.keyChanged()", e);
+            return false;
+        }
+    }
+
     private void loadPatient(String id, boolean loadusername) throws PAException {
         if (id == null) {
             patient = null;
@@ -342,19 +356,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
                     .getRegistryUserService().getUser(ss.getUserLastCreated().getLoginName());
             patient.setUserCreated(regUser.getFirstName() + " " + regUser.getLastName());
         }
-    }
-
-    private boolean checkDiseaseIsNeeded() throws PAException {
-        boolean checkDisease = true;
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(patient.getStudyProtocolId());
-        StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService()
-               .getStudyProtocol(studyProtocolIi);
-        boolean checkDCPFlag = getSearchStudySiteSvc().isStudySiteHasDCPId(studyProtocolIi);
-        if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
-                .equals(PrimaryPurposeCode.PREVENTION) || checkDCPFlag) {
-            checkDisease = false;
-        }
-        return checkDisease;
     }
 
     /**
@@ -388,24 +389,12 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     public String getDisplayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
-        webDTO.setType(ServletActionContext.getRequest().getParameter("dType"));
         if (StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
         } else {
-            Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
-            try {
-                if (webDTO.getType().equals(DiseaseWebDTO.SDC_TYPE)) {
-                    SDCDiseaseDTO dto = getSDCDiseaseSvc().get(ii);
-                    webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
-                    webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
-                } else {
-                    ICD9DiseaseDTO dto = getIcd9DiseaseSvc().get(ii);
-                    webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
-                    webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
-                }
-            } catch (Exception e) {
-                return ERROR;
-            }
+            AccrualDisease bo = getDiseaseSvc().get(Long.valueOf(webDTO.getDiseaseIdentifier()));
+            webDTO.setPreferredName(bo.getPreferredName());
+            webDTO.setDiseaseIdentifier(bo.getId().toString());
         }
         setPatientDisease(webDTO);
         return "displayDiseases";
@@ -413,18 +402,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
 
     void setPatientDisease(DiseaseWebDTO webDTO) {
         patient = new PatientWebDto();
-        if (webDTO.getType().equals(DiseaseWebDTO.SDC_TYPE)) {
-            patient.setIcd9DiseasePreferredName(null);
-            patient.setIcd9DiseaseIdentifier(null);
-            patient.setSdcDiseasePreferredName(webDTO.getPreferredName());
-            patient.setSdcDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
-
-        } else {
-            patient.setSdcDiseasePreferredName(null);
-            patient.setSdcDiseaseIdentifier(null);
-            patient.setIcd9DiseasePreferredName(webDTO.getPreferredName());
-            patient.setIcd9DiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
-        }
+        patient.setDiseasePreferredName(webDTO.getPreferredName());
+        patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
     }
 
     /**

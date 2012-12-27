@@ -85,26 +85,13 @@ package gov.nih.nci.accrual.accweb.dto.util;
  * @since 12/02/2008
  */
 public class DiseaseWebDTO {
-    
-    /**
-     * SDC_TYPE type of disease.
-     */
-    public static final String SDC_TYPE = "sdc";
-    
-    /**
-     * ICD9_TYPE type of disease.
-     */
-    public static final String ICD9_TYPE = "icd9";
-    
+
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
     private String preferredName;
-    private String icd9Code;
-    private String sdcCode;
-    private String conceptId;
+    private String diseaseCode;
     private String displayName;
-    private String lead;
-    private String type;
+    private String codeSystem;
     /**
      * @return the studyDiseaseIdentifier
      */
@@ -142,40 +129,16 @@ public class DiseaseWebDTO {
         this.preferredName = preferredName;
     }
     /**
-     * @return the icd9Code
+     * @return the diseaseCode
      */
-    public String getIcd9Code() {
-       return icd9Code;
+    public String getDiseaseCode() {
+        return diseaseCode;
     }
     /**
-     * @param icd9Code the icd9Code to set
+     * @param diseaseCode the diseaseCode to set
      */
-    public void setIcd9Code(String icd9Code) {
-       this.icd9Code = icd9Code;
-    }
-    /**
-     * @return the sdcCode
-     */
-    public String getSdcCode() {
-       return sdcCode;
-    }
-    /**
-     * @param sdcCode the sdcCode to set
-     */
-    public void setSdcCode(String sdcCode) {
-        this.sdcCode = sdcCode;
-    }
-    /**
-     * @return the conceptId
-     */
-    public String getConceptId() {
-        return conceptId;
-    }
-    /**
-     * @param conceptId the conceptId to set
-     */
-    public void setConceptId(String conceptId) {
-        this.conceptId = conceptId;
+    public void setDiseaseCode(String diseaseCode) {
+        this.diseaseCode = diseaseCode;
     }
     /**
      * @return the displayName
@@ -190,28 +153,15 @@ public class DiseaseWebDTO {
         this.displayName = displayName;
     }
     /**
-     * @return the lead
+     * @return the codeSystem
      */
-    public String getLead() {
-        return lead;
+    public String getCodeSystem() {
+        return codeSystem;
     }
     /**
-     * @param lead the lead to set
+     * @param codeSystem the codeSystem to set
      */
-    public void setLead(String lead) {
-        this.lead = lead;
+    public void setCodeSystem(String codeSystem) {
+        this.codeSystem = codeSystem;
     }
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }    
-    
 }

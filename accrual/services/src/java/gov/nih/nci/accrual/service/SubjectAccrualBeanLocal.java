@@ -94,6 +94,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualValidator;
@@ -107,6 +108,7 @@ import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
@@ -122,7 +124,6 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -185,10 +186,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     /** Number of hours witch the batch processing thread will run before being killed. */
     public static final int BATCH_PROCESSING_THREAD_TIMEOUT_HOURS = 24;
-    /** ICD9 Disease identifier name. */
-    public static final String ICD9_DISEASE_IDENTIFIER_NAME = "ICD9 Disease identifier";
-    /** SDC Disease identifier name. */
-    public static final String SDC_DISEASE_IDENTIFIER_NAME = "SDC Disease identifier";
 
     @EJB
     private PatientServiceLocal patientService;
@@ -206,6 +203,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private SubjectAccrualValidator subjectAccrualValidator;
     @EJB
     private BatchUploadProcessingTaskServiceLocal batchUploadProcessingTaskService;
+    @EJB
+    private AccrualDiseaseServiceLocal diseaseSvc;
     
     private boolean useTestSeq = false;
 
@@ -290,10 +289,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 StudySiteDTO participatingSite = PaServiceLocator.getInstance().getStudySiteService().get(
                                 subject.getParticipatingSiteIdentifier());
                 subject.setSubmissionTypeCode(CdConverter.convertToCd(AccrualSubmissionTypeCode.SERVICE_MSA));
-                SDCDiseaseDTO sdc = PaServiceLocator.getInstance().getDiseaseService()
-                        .get(subject.getDiseaseIdentifier());
-                subject.getDiseaseIdentifier().setIdentifierName(sdc == null 
-                        ? ICD9_DISEASE_IDENTIFIER_NAME : SDC_DISEASE_IDENTIFIER_NAME);
+                AccrualDisease disease = diseaseSvc.get(subject.getDiseaseIdentifier()); 
+                if (disease != null) {
+                    subject.setDiseaseIdentifier(IiConverter.convertToIi(disease.getId()));
+                }
+
                 Long userId = AccrualCsmUtil.getInstance().getCSMUser(
                         CaseSensitiveUsernameHolder.getUser()).getUserId();
                 Long[] ids;
@@ -484,23 +484,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         String sql = "";
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery queryObject = null;
-        String sdcString = "null";
-        String icd9String = "null";
-        Ii dii = dto.getDiseaseIdentifier();
-        if (dii != null && !ICD9_DISEASE_IDENTIFIER_NAME.equals(dii.getIdentifierName())) {
-            sdcString = IiConverter.convertToString(dii);
-        } else {
-            icd9String = IiConverter.convertToString(dii);
-        }
         dto.setPaymentMethod(CdConverter.convertToCd(
                 CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
+        Ii dii = dto.getDiseaseIdentifier();
+        String diseaseString = ISOUtil.isIiNull(dii) ? "NULL" : IiConverter.convertToString(dii);
         Long result;
         if (ids != null) {
             result = ids[0];
             sql = "UPDATE study_subject SET study_site_identifier= :study_site_identifier, " 
                 + "payment_method_code=:pmCode, status_code= :status_code, date_last_updated=now(), "
                 + "assigned_identifier= :assigned_identifier, user_last_updated_id= :user_id, " 
-                + "disease_identifier=" + sdcString + ", icd9disease_identifier=" + icd9String + ", "
+                + "disease_identifier=" + diseaseString + ", "
                 + "registration_group_id= :registration_group_id, submission_type= :submission_type "
                 + "WHERE identifier= :identifier";
 
@@ -510,11 +504,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
                     + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
                     + "date_last_created, date_last_updated, assigned_identifier, submission_type," 
-                    + "user_last_created_id, icd9disease_identifier, registration_group_id) "
+                    + "user_last_created_id, registration_group_id) "
                     + "VALUES (:identifier, :patient_identifier, :study_protocol_identifier, "
-                    + ":study_site_identifier, " + sdcString + ", :pmCode, :status_code, "
+                    + ":study_site_identifier, " + diseaseString + ", :pmCode, :status_code, "
                     + "now(), now(), :assigned_identifier, :submission_type," 
-                    + ":user_id, " + icd9String + ", :registration_group_id)";
+                    + ":user_id,  :registration_group_id)";
             queryObject = session.createSQLQuery(sql);
             queryObject.setParameter("patient_identifier", newPatientId);
             queryObject.setParameter("study_protocol_identifier", spId);
@@ -791,6 +785,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public void setSubjectAccrualValidator(SubjectAccrualValidator subjectAccrualValidator) {
         this.subjectAccrualValidator = subjectAccrualValidator;
     }
+    /**
+     * @param diseaseSvc the diseaseSvc to set
+     */
+    public void setDiseaseSvc(AccrualDiseaseServiceLocal diseaseSvc) {
+        this.diseaseSvc = diseaseSvc;
+    }
+
     /**
      * @return useTestSeq
      */

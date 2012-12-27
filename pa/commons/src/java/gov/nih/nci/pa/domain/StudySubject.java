@@ -119,8 +119,7 @@ public class StudySubject extends Subject {
     private PaymentMethodCode paymentMethodCode;
     private Patient patient;
     private StudySite studySite;
-    private SDCDisease disease;
-    private ICD9Disease icd9disease;
+    private AccrualDisease disease;
     private String registrationGroupId;
     private AccrualSubmissionTypeCode submissionTypeCode;
     private String deleteReason;
@@ -198,31 +197,15 @@ public class StudySubject extends Subject {
      */
     @ManyToOne
     @JoinColumn(name = "disease_identifier")
-    public SDCDisease getDisease() {
+    public AccrualDisease getDisease() {
         return disease;
     }
 
     /**
      * @param disease the disease to set
      */
-    public void setDisease(SDCDisease disease) {
+    public void setDisease(AccrualDisease disease) {
         this.disease = disease;
-    }
-
-    /**
-     * @return the icd9disease
-     */
-    @ManyToOne
-    @JoinColumn(name = "icd9disease_identifier")
-    public ICD9Disease getIcd9disease() {
-        return icd9disease;
-    }
-
-    /**
-     * @param icd9disease the icd9disease to set
-     */
-    public void setIcd9disease(ICD9Disease icd9disease) {
-        this.icd9disease = icd9disease;
     }
 
     /**

@@ -469,12 +469,14 @@ public class StudySubjectBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException {
+    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId, boolean activeOnly)
+            throws PAException {
         Map<SubjectAccrualKey, Long[]> result = new HashMap<SubjectAccrualKey, Long[]>();
         try {
             Session session = PaHibernateUtil.getCurrentSession();
             String sql = "select study_site_identifier, assigned_identifier, identifier, patient_identifier "
-                    + "from study_subject where study_protocol_identifier = :studyProtocolId";
+                    + "from study_subject where study_protocol_identifier = :studyProtocolId "
+                    + (activeOnly ? " and status_code = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "'" : "");
             Query query = session.createSQLQuery(sql);
             query.setLong("studyProtocolId", studyProtocolId);
             List<Object[]> list = query.list();
@@ -581,6 +583,7 @@ public class StudySubjectBeanLocal extends
             String hql = "from StudySubject ssub "
                     + "where ssub.studyProtocol.id = :studyProtocolId "
                     + " and ssub.statusCode = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "'"
+                    + " and ssub.disease.id is not null "
                     + " order by ssub.id ";
             Query query = session.createQuery(hql);
             query.setParameter("studyProtocolId", spId);

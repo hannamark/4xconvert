@@ -83,6 +83,7 @@
 package gov.nih.nci.accrual.service.batch;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -95,6 +96,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
@@ -113,15 +115,14 @@ import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -131,15 +132,14 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -161,6 +161,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
@@ -184,6 +185,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     protected MailManagerServiceRemote mailService;
     protected BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
+    protected AccrualDiseaseServiceLocal diseaseSvc;
     private static final String ERROR_SUBJECT_KEY = "accrual.error.subject";
     private static final String ERROR_SUBJECT_VALUE = "accrual.error.subject- ${nciTrialIdentifier}";
     private static final String ERROR_BODY_KEY = "accrual.error.body";
@@ -342,55 +344,52 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
         cdusBatchUploadDataValidator.setSubjectAccrualService(mock(SubjectAccrualServiceLocal.class));
 
-        final SDCDiseaseDTO disease = new SDCDiseaseDTO();
-        disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
-        when(diseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
-            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+        final AccrualDisease disease = new AccrualDisease();
+        disease.setId(TestSchema.diseases.get(0).getId());
+        disease.setCodeSystem("SDC");
+        disease.setDiseaseCode("code");
+        diseaseSvc = mock(AccrualDiseaseServiceLocal.class);
+        when(diseaseSvc.getByCode(anyString())).thenAnswer(new Answer<AccrualDisease>() {
+            public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 String medraCode = (String) args[0];
-                List<String> validCodes = Arrays.asList("10053571", "10010029");
+                List<String> validCodes = Arrays.asList("1", "10053571", "10010029");
                 if (validCodes.contains(medraCode)) {
                     return disease;
                 }
                 return null;
             }
         });
-        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
-            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+        when(diseaseSvc.get(anyLong())).thenAnswer(new Answer<AccrualDisease>() {
+            public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                if (IiConverter.convertToLong(ii).equals(TestSchema.diseases.get(0).getId())) {
+                Long id = (Long) args[0];
+                if (ObjectUtils.equals(id, disease.getId())) {
                     return disease;
                 }
                 return null;
             }
         });
-        
-        final ICD9DiseaseDTO icdDis = new ICD9DiseaseDTO();
-        icdDis.setIdentifier(IiConverter.convertToIi(TestSchema.icd9Diseases.get(0).getId()));
-        ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
-        when(icd9DiseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<ICD9DiseaseDTO>() {
-            public ICD9DiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                String medraCode = (String) args[0];
-                List<String> validCodes = Arrays.asList("10053581");
-                if (validCodes.contains(medraCode)) {
-                    return icdDis;
-                }
-                return null;
-            }
-        });
-        when(icd9DiseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<ICD9DiseaseDTO>() {
-            public ICD9DiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<AccrualDisease>() {
+            public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii ii = (Ii) args[0];
-                if (IiConverter.convertToLong(ii).equals(TestSchema.diseases.get(0).getId())) {
-                    return icdDis;
+                if (!ISOUtil.isIiNull(ii)) {
+                    if ("SDC".equals(ii.getIdentifierName())) {
+                        if (disease.getDiseaseCode().equals(ii.getExtension())) {
+                            return disease;
+                        }
+                    } else {
+                        if (ObjectUtils.equals(Long.valueOf(ii.getExtension()), disease.getId())) {
+                            return disease;
+                        }
+                    }
                 }
                 return null;
             }
         });
+        readerService.setDiseaseService(diseaseSvc);
+        cdusBatchUploadDataValidator.setDiseaseService(diseaseSvc);
 
         SubjectAccrualCountBean accrualCountSvc = new SubjectAccrualCountBean();
         accrualCountSvc.setSearchTrialService(searchTrialSvc);
@@ -426,8 +425,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
-        when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
-        when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
         LookUpTableServiceRemote lookuptableSvc = mock(LookUpTableServiceRemote.class);
@@ -458,6 +455,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
         when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
+        when(accSvcLocator.getAccrualDiseaseService()).thenReturn(diseaseSvc);
         
         CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
     }

@@ -89,6 +89,7 @@ import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -99,8 +100,6 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -115,7 +114,6 @@ import java.util.Map;
 import javax.ejb.EJB;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Base Batch reader.
@@ -123,7 +121,6 @@ import org.apache.log4j.Logger;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BaseBatchUploadReader {
-    private static final Logger LOG = Logger.getLogger(BaseBatchUploadReader.class);
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
@@ -246,6 +243,8 @@ public class BaseBatchUploadReader {
     private SearchStudySiteService searchStudySiteService;
     @EJB
     private SearchTrialService searchTrialService;
+    @EJB
+    private AccrualDiseaseServiceLocal diseaseService;
 
     /**
      * Gets the study protocol with the given id, be it NCI, CTEP or DCP identifier.
@@ -280,42 +279,6 @@ public class BaseBatchUploadReader {
         return foundStudy;
     }
 
-    /**
-     * Loads the disease with the given meddra code, returning null if no such disease can be found.
-     * @param meddraCode the meddra code of the disease to retrieve
-     * @param errMsg the error messages
-     * @return the disease with the give meddra code or null if no such disease can be found
-     */
-    protected SDCDiseaseDTO getDisease(String meddraCode, StringBuffer errMsg) {
-        SDCDiseaseDTO disease = null;
-        try {
-            disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(meddraCode);
-        } catch (PAException e) {
-            LOG.error("Error retrieving disease." , e);
-            errMsg.append("Unable to load the SDC diease with code ")
-                .append(meddraCode).append(" from the database.\n");
-        }
-        return disease;
-    }
-    
-    /**
-     * Loads the disease with the given ICD9 code, returning null if no such disease can be found.
-     * @param code the ICD9 code of the disease to retrieve
-     * @param errMsg the error messages
-     * @return the disease with the give ICD9 code or null if no such disease can be found
-     */
-    protected ICD9DiseaseDTO getICD9Disease(String code, StringBuffer errMsg) {
-        ICD9DiseaseDTO disease = null;
-        try {
-            disease = PaServiceLocator.getInstance().getICD9DiseaseService().getByCode(code);
-        } catch (PAException e) {
-            LOG.error("Error retrieving ICD9 disease." , e);
-            errMsg.append("Unable to load the ICD9 diease with code ")
-                .append(code).append(" from the database.\n");
-        }
-        return disease;
-    }
-    
     /**
      * 
      * @param values values
@@ -414,5 +377,19 @@ public class BaseBatchUploadReader {
      */
     public void setSearchTrialService(SearchTrialService searchTrialService) {
         this.searchTrialService = searchTrialService;
+    }
+
+    /**
+     * @return the diseaseService
+     */
+    public AccrualDiseaseServiceLocal getDiseaseService() {
+        return diseaseService;
+    }
+
+    /**
+     * @param diseaseService the diseaseService to set
+     */
+    public void setDiseaseService(AccrualDiseaseServiceLocal diseaseService) {
+        this.diseaseService = diseaseService;
     }
 }

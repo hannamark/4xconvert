@@ -27,7 +27,7 @@ function loadDiv() {
     var params = { searchName: $("searchName").value,
             searchCode: $("searchCode").value,
             page: "searchMenu",
-            includeSDC: $("includeSDC") != null && $("includeSDC").checked == true
+            searchCodeSystem: $("searchCodeSystem").value
             };
     var div = $('getDiseases');
     div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
@@ -50,10 +50,11 @@ function loadDiv() {
                         <td><s:textfield id="searchCode" name="searchCode" maxlength="60" size="60" cssStyle="width:200px" /></td>
                     </tr>
                     <tr> 
-                        <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.includeSDC"/></label></td>
+                        <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.codeSystem"/></label></td>
                         <td>
-                            <s:checkbox name="includeSDC" id="includeSDC" />
-                        </td>                
+                            <s:select id ="searchCodeSystem" name="searchCodeSystem" headerValue="" headerKey=""
+                                      list="listOfDiseaseCodeSystems"/>
+                        </td>
                     </tr>
                 </table>
                 <div class="actionsrow">

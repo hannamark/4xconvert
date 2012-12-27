@@ -84,10 +84,9 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
-import gov.nih.nci.pa.domain.ICD9Disease;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
-import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -124,8 +123,6 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setStudySiteIdentifier(IiConverter.convertToIi(bo.getStudySite() == null ? null 
                 : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
-        dto.setIcd9DiseaseIdentifier(IiConverter.convertToIi(bo.getIcd9disease() == null ? null : bo.getIcd9disease()
-            .getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         dto.setDeleteReason(StConverter.convertToSt(bo.getDeleteReason()));
@@ -152,11 +149,9 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
         if (!ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
-            bo.setDisease(fKeySetter(SDCDisease.class, dto.getDiseaseIdentifier()));
-            bo.setIcd9disease(null);
-        } else {
-            bo.setIcd9disease(fKeySetter(ICD9Disease.class, dto.getIcd9DiseaseIdentifier()));
-            bo.setDisease(null);
+            AccrualDisease ad = new AccrualDisease();
+            ad.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
+            bo.setDisease(ad);
         }
         bo.setRegistrationGroupId(StConverter.convertToString(dto.getRegistrationGroupId()));
         if (!ISOUtil.isCdNull(dto.getSubmissionTypeCode())) {
@@ -181,12 +176,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setPaymentMethod(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setParticipatingSiteIdentifier(
                 IiConverter.convertToIi(bo.getStudySite() == null ? null : bo.getStudySite().getId()));
-        Long diseaseId;
-        if (bo.getDisease() == null) {
-            diseaseId = bo.getIcd9disease() == null ? null : bo.getIcd9disease().getId();
-        } else {
-            diseaseId = bo.getDisease().getId();
-        }
+        Long diseaseId = bo.getDisease() == null ? null : bo.getDisease().getId();
         dto.setDiseaseIdentifier(IiConverter.convertToIi(diseaseId));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));

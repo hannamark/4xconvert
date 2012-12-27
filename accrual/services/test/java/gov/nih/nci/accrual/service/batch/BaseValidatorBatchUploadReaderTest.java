@@ -83,20 +83,21 @@
 package gov.nih.nci.accrual.service.batch;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -105,7 +106,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hsqldb.lib.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -115,10 +116,12 @@ import org.junit.Test;
 public class BaseValidatorBatchUploadReaderTest {    
    
     private static final String CODE = "code";
-    private static final List<String> valueList = createValueList();
+    private static final String CODE_SYSTEM = "system";
+    private static List<String> valueList = createValueList(CODE);
     BaseValidatorBatchUploadReader bean;
     StudyProtocolServiceRemote spSvc;
     SearchTrialService stSvc;
+    AccrualDiseaseServiceLocal dSvc;
 
     @Before
     public void setUp() {
@@ -129,6 +132,8 @@ public class BaseValidatorBatchUploadReaderTest {
         bean = mock(BaseValidatorBatchUploadReader.class);
         stSvc = mock(SearchTrialService.class);
         when(bean.getSearchTrialService()).thenReturn(stSvc);
+        dSvc = mock(AccrualDiseaseServiceLocal.class);
+        when(bean.getDiseaseService()).thenReturn(dSvc);
     }
 
     @Test
@@ -198,37 +203,59 @@ public class BaseValidatorBatchUploadReaderTest {
     }
 
     @Test
-    public void validateDiseaseCodeICD9ValidationFails() {
+    public void validateDiseaseCodeValidationFails() {
+        // code not found
         StringBuffer errMsg = new StringBuffer();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
-        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
-        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(null);
-        
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
-        
-        assertFalse(StringUtil.isEmpty(errMsg.toString()));
-      
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
+
+        // wrong code system not found
+        AccrualDisease ad = new AccrualDisease();
+        ad.setCodeSystem(CODE_SYSTEM);
+        ad.setDiseaseCode(CODE);
+        when(dSvc.getByCode(anyString())).thenReturn(ad);
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
+        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
+
+        // found
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        assertEquals("", errMsg.toString());
+
+        // null code, code not required
+        valueList = createValueList(null);
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        assertTrue(errMsg.toString().isEmpty());
+
+        // null code, code required
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is missing or not recognized for patient ID"));
+
+        // empty code, code not required
+        valueList = createValueList(" ");
+        errMsg = new StringBuffer();
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        assertTrue(errMsg.toString().isEmpty());
+
+        // empty code, code required
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is missing or not recognized for patient ID"));
     }
-    
-    @Test
-    public void validateDiseaseCodeICD9ValidationPasses() {
-        StringBuffer errMsg = new StringBuffer();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
-        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
-        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(new ICD9DiseaseDTO());
-        
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, false, true, false);
-        
-        assertTrue(StringUtil.isEmpty(errMsg.toString()));
-      
-    }
-    
-    private static List<String> createValueList() {
+    private static List<String> createValueList(String diseaseCode) {
         List<String> result = new ArrayList<String>(21);
         new BaseValidatorBatchUploadReader();
         for (int i = 0; i <= BaseBatchUploadReader.PATIENT_DISEASE_INDEX; i++) {
             if (i == BaseBatchUploadReader.PATIENT_DISEASE_INDEX) {
-                result.add(CODE);
+                result.add(diseaseCode);
             } else {
                 result.add(null);
             }
@@ -236,5 +263,4 @@ public class BaseValidatorBatchUploadReaderTest {
         return result;
 
     }
-
 }

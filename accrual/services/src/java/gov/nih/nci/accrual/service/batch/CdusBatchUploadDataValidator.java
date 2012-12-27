@@ -90,15 +90,13 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -159,8 +157,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     private static final String SUABSTRACTOR = "SuAbstractor";
-    private boolean sdcCode;
-    private boolean icd9Code;
+    private String codeSystemFile;
     private boolean checkDisease;
     private boolean patientCheck;
     private final Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
@@ -208,12 +205,14 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     }
                     sp = getStudyProtocol(protocolId, errMsg);
                     if (sp != null) {
+                        Long spId = IiConverter.convertToLong(sp.getIdentifier());
+                        checkDisease = getDiseaseService().diseaseCodeMandatory(spId);
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
                         results.setNciIdentifier(ii.getExtension());
                         try {
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
-                                    .getTreatingSites(IiConverter.convertToLong(sp.getIdentifier()));
+                                    .getTreatingSites(spId);
                             for (SearchStudySiteResultDto iso : isoStudySiteList) {
                                 listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
                                         IiConverter.convertToLong(iso.getStudySiteIi()));
@@ -280,7 +279,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
                }
               }
-            validateDiseaseCode(errMsg);
+             validateDiseaseCodeSystem(errMsg);
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
@@ -313,18 +312,19 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         return results;
     }
 
-
-    private void validateDiseaseCode(StringBuffer errMsg) {
+    /**
+     * Validate that the code system in the batch file matches the code system for the trial from the database. 
+     */
+    private void validateDiseaseCodeSystem(StringBuffer errMsg) {
+        Long spId = IiConverter.convertToLong(sp.getIdentifier()); 
+        String codeSystemDB = getDiseaseService().getTrialCodeSystem(spId);
         try {
-             StudySubject ss = getStudySubjectService().searchActiveByStudyProtocol(
-                  IiConverter.convertToLong(sp.getIdentifier()));
-             if (ss != null && ss.getDisease() != null && ss.getIcd9disease() == null && icd9Code 
-                    || ss != null && ss.getDisease() == null && ss.getIcd9disease() != null && sdcCode) {
+            if (codeSystemDB != null && !StringUtils.equals(codeSystemDB, codeSystemFile)) {
                 Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService()
-                        .getSubjectAndPatientKeys(IiConverter.convertToLong(sp.getIdentifier()));
+                        .getSubjectAndPatientKeys(spId, true);
                 Set<SubjectAccrualKey> patientsFromDB = listOfStudySubjects.keySet();
                 if (!patientsFromBatchFile.containsAll(patientsFromDB)) {
-                    errMsg.append("Please follow same Disease code for the trial.\n");               
+                    errMsg.append("Please use same Disease code system used for the trial (" + codeSystemDB + ").\n");
                 }
              }
         } catch (Exception e) {
@@ -332,7 +332,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
     }
 
-    
     /**
      * This method split the data into key and value.
      * @param data data
@@ -354,27 +353,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
-        if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && !sdcCode && !icd9Code) {
+        if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && codeSystemFile == null) {
             String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
             if (StringUtils.isNotEmpty(code)) {
-                SDCDiseaseDTO sdc = getDisease(code, new StringBuffer());
-                ICD9DiseaseDTO icd9 = getICD9Disease(code, new StringBuffer());
-                if (sdc != null && icd9 == null) {
-                    sdcCode = true;
-                } else if (sdc == null && icd9 != null) {
-                    icd9Code = true;
+                AccrualDisease disease = getDiseaseService().getByCode(code);
+                if (disease != null) {
+                    codeSystemFile = disease.getCodeSystem();
+                    patientCheck = true;
                 }
-                patientCheck = true;
             }
-            try {
-                checkDisease = getSearchStudySiteService().isStudySiteHasDCPId(sp.getIdentifier());
-               } catch (PAException e) {
-                   errMsg.append("Unable to determine if study site has a DCP Id for study with identifier " 
-                           + sp.getIdentifier() + " \n");
-               }
         }
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion, sdcCode, 
-            icd9Code, checkDisease);
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion, codeSystemFile, 
+                checkDisease);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccrualCount(key, values, errMsg, lineNumber, sp);

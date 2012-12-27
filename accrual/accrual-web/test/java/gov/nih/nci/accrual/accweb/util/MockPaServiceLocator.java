@@ -85,16 +85,11 @@ import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -103,9 +98,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.mockito.invocation.InvocationOnMock;
@@ -117,35 +110,18 @@ import org.mockito.stubbing.Answer;
  */
 public class MockPaServiceLocator implements ServiceLocatorPaInterface {
 
-    private final SDCDiseaseServiceRemote diseaseSvc;
     private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
     private final MailManagerServiceRemote mailManagerService = mock(MailManagerServiceRemote.class);
     private final RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
-    private final ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
     private final StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
     private final StudyResourcingServiceRemote studyResourcingSvc = mock(StudyResourcingServiceRemote.class);
     private final LookUpTableServiceRemote lookUpTableSvc = mock(LookUpTableServiceRemote.class);
     private final StudySiteAccrualStatusServiceRemote accrualStatusSvc = mock(StudySiteAccrualStatusServiceRemote.class);
-    
-    private static Map<Long, SDCDiseaseDTO> dtos;
+
     private static Map<Long, StudyProtocolDTO> studyDtos;
 
     static {
-        dtos = new HashMap<Long, SDCDiseaseDTO>();
-        SDCDiseaseDTO disease = new SDCDiseaseDTO();
-        disease.setIdentifier(IiConverter.convertToIi(1L));
-        disease.setDiseaseCode(StConverter.convertToSt("diseaseCode 01"));
-        disease.setDisplayName(StConverter.convertToSt("menu 01"));
-        disease.setPreferredName(StConverter.convertToSt("perferredName 01"));
-        dtos.put(1L, disease);
-        disease = new SDCDiseaseDTO();
-        disease.setIdentifier(IiConverter.convertToIi(2L));
-        disease.setDiseaseCode(StConverter.convertToSt("diseaseCode 02"));
-        disease.setDisplayName(StConverter.convertToSt("menu 02"));
-        disease.setPreferredName(StConverter.convertToSt("perferredName 02"));
-        dtos.put(2L, disease);
-        
         studyDtos = new HashMap<Long, StudyProtocolDTO>();
         StudyProtocolDTO dto = new StudyProtocolDTO();
         dto.setIdentifier(IiConverter.convertToIi(1L));
@@ -161,21 +137,9 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
      * Default constructor.
      */
     public MockPaServiceLocator() throws PAException {
-        diseaseSvc = mock(SDCDiseaseServiceRemote.class);
-        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
-          public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
-              Object args[] = invocation.getArguments();
-              Ii ii = (Ii) args[0];
-              return dtos.get(IiConverter.convertToLong(ii));
-          }
-        });
-        when(diseaseSvc.search(any(SDCDiseaseDTO.class))).thenReturn(new ArrayList<SDCDiseaseDTO>(dtos.values()));
-        
         RegistryUser ru = new RegistryUser();
         ru.setId(1L);
         when(registryUserService.getUser(any(String.class))).thenReturn(ru);
-        when(icd9DiseaseSvc.get(any(Ii.class))).thenReturn(createICD9DiseaseDTO());
-        when(icd9DiseaseSvc.getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
           public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
               Object args[] = invocation.getArguments();
@@ -184,14 +148,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
           }
         });
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public SDCDiseaseServiceRemote getDiseaseService() {
-        return diseaseSvc;
-    }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -220,28 +177,6 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
         return registryUserService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ICD9DiseaseServiceRemote getICD9DiseaseService() {
-        return icd9DiseaseSvc;
-    }
-    
-    private ICD9DiseaseDTO createICD9DiseaseDTO() {
-        ICD9DiseaseDTO dto = new ICD9DiseaseDTO();
-        dto.setIdentifier(IiConverter.convertToIi(1L));
-        dto.setPreferredName(StConverter.convertToSt("pname"));
-        dto.setDiseaseCode(StConverter.convertToSt("code"));
-        dto.setName(StConverter.convertToSt("pname"));
-        return dto;
-    }
-    
-    private List<ICD9DiseaseDTO> createICD9DiseaseDTOList() {
-        List<ICD9DiseaseDTO> list = new ArrayList<ICD9DiseaseDTO>();
-        list.add(createICD9DiseaseDTO());
-        return list;
-    }
-    
     /**
      * {@inheritDoc}
      */

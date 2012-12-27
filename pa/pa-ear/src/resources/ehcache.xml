@@ -396,7 +396,7 @@
          />
 
     <cache
-        name="gov.nih.nci.pa.domain.SDCDisease"
+        name="gov.nih.nci.pa.domain.AccrualDisease"
         maxElementsInMemory="300"
         eternal="true"
         overflowToDisk="false"

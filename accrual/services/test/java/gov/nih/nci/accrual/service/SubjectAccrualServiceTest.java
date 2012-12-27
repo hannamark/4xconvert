@@ -89,6 +89,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,7 +137,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -208,6 +208,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         SubjectAccrualValidatorBean validator = new SubjectAccrualValidatorBean();
         validator.setCountryService(countryService);
         validator.setStudySubjectService(studySubjectService);
+        validator.setDiseaseService(diseaseSvc);
         
         bean = new SubjectAccrualServiceBean();
         bean.setSubjectAccrualCountSvc(accCountSvc);
@@ -217,14 +218,11 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.setCountryService(new CountryBean());
         bean.setBatchFileService(new BatchFileServiceBeanLocal());
         bean.setSubjectAccrualValidator(validator);
+        bean.setDiseaseSvc(diseaseSvc);
         bean.setUseTestSeq(true);
         
         studySiteSvc = mock(StudySiteServiceRemote.class);
         when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(participatingSite));        
-        
-        ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
-        
-        when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
         when(accSvcLocator.getPerformedActivityService()).thenReturn(performedActivitySvc);
@@ -245,7 +243,9 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
 
     @Test
     public void manageSubjectAccruals() throws Exception {
-        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(null);
+        assertTrue(results.isEmpty());
+        results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
         assertTrue(results.isEmpty());
         
         StudySite ss = createAccessibleStudySite(); 
@@ -266,6 +266,29 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         assertEquals(1, results.size());
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
         validateSubjectAccrualDTO(dto, results.get(0));
+    }
+
+    @Test
+    public void manageSubjectAccrualsMulti() throws Exception {
+        Ii ii = new Ii();
+        ii.setIdentifierName("SDC");
+        ii.setExtension("code");
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto1 = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()), ii);
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto1));
+        assertEquals(1, results.size());
+    }
+
+    @Test
+    public void manageSubjectAccrualsDiseaseCode() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto1 = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        SubjectAccrualDTO dto2 = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        dto2.setAssignedIdentifier(StConverter.convertToSt("Patient-2"));
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto1, dto2));
+        assertEquals(2, results.size());
     }
 
     @Test
@@ -328,6 +351,67 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
             fail();
         } catch (IndexedInputValidationException e) {
             assertEquals("Subject identifier not found.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void manageSubjectAccrualInvalidStudySite() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(null);
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals(ss.getId() + " is not a valid value for Participating Site Identifier.\n", e.getMessage());
+        }
+    }
+
+    @Test
+    public void manageSubjectAccrualInvalidDiseaseCodeSystem() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("xyzzy");
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals("1 is not a valid value for Disease Identifier.\n", e.getMessage());
+        }
+    }
+
+    @Test
+    public void manageSubjectAccrualNoDisease() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()), null);
+        when(diseaseSvc.diseaseCodeMandatory(anyLong())).thenReturn(true);
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals("Disease Identifier is a required field.\n", e.getMessage());
+        }
+        when(diseaseSvc.diseaseCodeMandatory(anyLong())).thenReturn(false);
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+        } catch (IndexedInputValidationException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void manageSubjectAccrualUSNoZip() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()), null);
+        dto.setCountryCode(CdConverter.convertStringToCd("US"));
+        dto.setZipCode(null);
+        try {
+            bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            assertEquals("Zip Code must be specified when the subject's country is the US.\n", e.getMessage());
         }
     }
 

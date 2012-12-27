@@ -61,8 +61,6 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.OversightCommittee" />
         <mapping class="gov.nih.nci.pa.domain.StudyDisease" />
         <mapping class="gov.nih.nci.pa.domain.PDQDisease" />
-        <mapping class="gov.nih.nci.pa.domain.SDCDisease" />
-        <mapping class="gov.nih.nci.pa.domain.ICD9Disease" />
         <mapping class="gov.nih.nci.pa.domain.PDQDiseaseAltername" />
         <mapping class="gov.nih.nci.pa.domain.PDQDiseaseParent" />
         <mapping class="gov.nih.nci.pa.domain.AnatomicSite" />
@@ -108,6 +106,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount" />
         <mapping class="gov.nih.nci.pa.domain.BatchFile" />
         <mapping class="gov.nih.nci.pa.domain.AccrualCollections" />
+        <mapping class="gov.nih.nci.pa.domain.AccrualDisease" />
 
           <!-- mapping classes for Outcomes -->
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />

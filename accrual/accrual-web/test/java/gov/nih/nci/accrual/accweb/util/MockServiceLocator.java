@@ -76,13 +76,17 @@
 */
 package gov.nih.nci.accrual.accweb.util;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -90,12 +94,21 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.pa.domain.AccrualDisease;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
 public class MockServiceLocator implements ServiceLocatorAccInterface {
+
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
     private final CountryService countryService = new MockCountryBean();
@@ -109,7 +122,37 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final BatchFileService batchFileSvc = mock(BatchFileService.class);
     private final SubjectAccrualServiceLocal subjectAccrualServiceLocal = mock(SubjectAccrualServiceLocal.class);
     private final SubmissionHistoryService submissionHistoryService = mock(SubmissionHistoryService.class);
-    
+    public static AccrualDiseaseServiceLocal diseaseService;
+
+    private static Map<Long, AccrualDisease> dtos;
+    static {
+        dtos = new HashMap<Long, AccrualDisease>();
+        AccrualDisease disease = new AccrualDisease();
+        disease.setId(1L);
+        disease.setDiseaseCode("diseaseCode 01");
+        disease.setDisplayName("menu 01");
+        disease.setPreferredName("perferredName 01");
+        dtos.put(1L, disease);
+        disease = new AccrualDisease();
+        disease.setId(2L);
+        disease.setDiseaseCode("diseaseCode 02");
+        disease.setDisplayName("menu 02");
+        disease.setPreferredName("perferredName 02");
+        dtos.put(2L, disease);
+    }
+
+    public MockServiceLocator() {
+        diseaseService = mock(AccrualDiseaseServiceLocal.class);
+        when(diseaseService.get(anyLong())).thenAnswer(new Answer<AccrualDisease>() {
+          public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
+              Object args[] = invocation.getArguments();
+              Long id = (Long) args[0];
+              return dtos.get(id);
+          }
+        });
+        when(diseaseService.search(any(AccrualDisease.class))).thenReturn(new ArrayList<AccrualDisease>(dtos.values()));
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -186,5 +229,9 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     @Override
     public SubmissionHistoryService getSubmissionHistoryService() {
         return submissionHistoryService;
+    }
+    @Override
+    public AccrualDiseaseServiceLocal getAccrualDiseaseService() {
+        return diseaseService;
     }
 }

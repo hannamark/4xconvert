@@ -87,6 +87,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
@@ -105,6 +106,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -189,7 +191,6 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         subj.setStudySite(TestSchema.studySites.get(1));
         subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
         subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
-        subj.setIcd9disease(TestSchema.icd9Diseases.get(0));
         TestSchema.addUpdObject(subj);
         
     	StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
@@ -297,9 +298,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));
         assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 207747 at line 2"));
         assertTrue(StringUtils.contains(errorMsg, "Gender must not be 1 for patient ID 208847 at line 3"));
-        assertTrue(StringUtils.contains(errorMsg, "Patient ICD9 Disease Code is used instaed of SDC Code  at line 3"));
         assertTrue(results.get(0).getValidatedLines().isEmpty()); 
-                       
+
         file = new File(this.getClass().getResource("/no_protocol.txt").toURI());
         batchFile = getBatchFile(file);
         results = readerService.validateBatchData(batchFile);
@@ -320,15 +320,60 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 	}
 
 	@Test
-	public void testDiseaseCodes() throws URISyntaxException {
-		File file = new File(this.getClass().getResource("/junit_coverage2.txt").toURI());
-		BatchFile batchFile = getBatchFile(file);
-		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+	public void testDiseaseCodes() throws Exception {
+        AccrualDisease disease1 = new AccrualDisease();
+        disease1.setCodeSystem("SDC");
+        disease1.setDiseaseCode("code1");
+        AccrualDisease disease2 = new AccrualDisease();
+        disease2.setCodeSystem("SDC");
+        disease2.setDiseaseCode("code2");
+        File file = new File(this.getClass().getResource("/junit_coverage2.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("SDC");
+
+        // not found
+        when(diseaseSvc.getByCode("code1")).thenReturn(null);
+        when(diseaseSvc.getByCode("code2")).thenReturn(null);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString();
-        assertTrue(StringUtils.contains(errorMsg, "COLLECTIONS at line 1 NCITrial is not a valid NCI or CTEP/DCP identifier."));
+        assertTrue(StringUtils.contains(errorMsg, "Patient Disease Code is invalid for patient ID"));
+
+        // found, code systems match
+        when(diseaseSvc.getByCode("code1")).thenReturn(disease1);
+        when(diseaseSvc.getByCode("code2")).thenReturn(disease2);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString())); 
+
+        // found, code systems don't match, all existing in file
+        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("ICD9");
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString())); 
+
+        // found, code systems don't match, file not inclusive of all existing
+        StudySubject subj = new StudySubject();
+        subj.setDisease(TestSchema.diseases.get(0));
+        subj.setPatient(TestSchema.patients.get(0));
+        subj.setAssignedIdentifier("xyzzy");
+        subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStudyProtocol(TestSchema.studyProtocols.get(2));
+        subj.setStudySite(TestSchema.studySites.get(1));
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UNKNOWN);
+        subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
+        TestSchema.addUpdObject(subj);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "Please use same Disease code system used for the trial"));
 	}
 	
     @Test
@@ -378,7 +423,6 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("NCI-2010-00003", collection.getNciNumber());
         assertTrue(StringUtils.isEmpty(collection.getResults()));
         assertEquals((Integer) 24, collection.getTotalImports());
-
     }
 
     @Test

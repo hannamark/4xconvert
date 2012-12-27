@@ -89,9 +89,8 @@ import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.ICD9Disease;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.PerformedActivity;
-import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
@@ -270,7 +269,7 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
     }
 
     @Override
-    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId) throws PAException {
+    public Map<SubjectAccrualKey, Long[]> getSubjectAndPatientKeys(Long studyProtocolId, boolean activeOnly) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -313,13 +312,7 @@ public class MockStudySubjectBean implements StudySubjectServiceLocal {
 	public StudySubject searchActiveByStudyProtocol(Long spId)
 			throws PAException {
 		StudySubject ss = new StudySubject();
-		if (spId == 1) {
-			ss.setDisease(new SDCDisease());
-			ss.setIcd9disease(null);
-		} else {
-			ss.setDisease(null);
-			ss.setIcd9disease(new ICD9Disease());			
-		}		
+		ss.setDisease(new AccrualDisease());
 		return ss;
 	}
 }

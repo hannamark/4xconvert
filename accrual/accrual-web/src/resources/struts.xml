@@ -130,7 +130,7 @@
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
         </action>
 
-        <action name="diseaseSearch" class="gov.nih.nci.accrual.accweb.action.PopUpAction">
+        <action name="diseaseSearch" class="gov.nih.nci.accrual.accweb.action.PopUpAction" method="diseaseSearch">
             <result>/WEB-INF/jsp/diseaseSearch.jsp</result>
         </action>
 

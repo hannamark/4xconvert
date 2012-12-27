@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.AssayType;
@@ -95,7 +96,6 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.EvaluationType;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -114,7 +114,6 @@ import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.SpecimenCollection;
 import gov.nih.nci.pa.domain.SpecimenType;
 import gov.nih.nci.pa.domain.StratumGroup;
@@ -712,36 +711,36 @@ public class TestSchema {
         marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
         addUpdObject(marker02);
 
-        SDCDisease sdc01 = TestSchema.createSdcDisease("Toe Cancer");
+        AccrualDisease sdc01 = TestSchema.createAccrualDisease("SDC", "SDC01", "Toe Cancer");
         addUpdObject(sdc01);
         sdcDiseaseIds.add(sdc01.getId());
-        SDCDisease sdc02 = TestSchema.createSdcDisease("Heel Cancer");
+        AccrualDisease sdc02 = TestSchema.createAccrualDisease("SDC", "SDC02", "Heel Cancer");
         addUpdObject(sdc02);
         sdcDiseaseIds.add(sdc02.getId());
-        SDCDisease sdc03 = TestSchema.createSdcDisease("Foot Cancer");
+        AccrualDisease sdc03 = TestSchema.createAccrualDisease("SDC", "SDC03", "Foot Cancer");
         addUpdObject(sdc03);
         sdcDiseaseIds.add(sdc03.getId());
-        SDCDisease sdc04 = TestSchema.createSdcDisease("Leg Cancer");
+        AccrualDisease sdc04 = TestSchema.createAccrualDisease("SDC", "SDC04", "Leg Cancer");
         addUpdObject(sdc04);
         sdcDiseaseIds.add(sdc04.getId());
 
-        ICD9Disease icd901 = TestSchema.createICD9Disease("code1", "name1");
+        AccrualDisease icd901 = TestSchema.createAccrualDisease("ICD9", "code1", "name1");
         addUpdObject(icd901);
         icd9DiseaseIds.add(icd901.getId());
 
-        ICD9Disease icd902 = TestSchema.createICD9Disease("code2", "name2");
+        AccrualDisease icd902 = TestSchema.createAccrualDisease("ICD9", "code2", "name2");
         addUpdObject(icd902);
         icd9DiseaseIds.add(icd902.getId());
 
-        ICD9Disease icd903 = TestSchema.createICD9Disease("code3", "name3");
+        AccrualDisease icd903 = TestSchema.createAccrualDisease("ICD9", "code3", "name3");
         addUpdObject(icd903);
         icd9DiseaseIds.add(icd903.getId());
 
-        ICD9Disease icd904 = TestSchema.createICD9Disease("code4", "namedif4");
+        AccrualDisease icd904 = TestSchema.createAccrualDisease("ICD9", "code4", "namedif4");
         addUpdObject(icd904);
         icd9DiseaseIds.add(icd904.getId());
 
-        ICD9Disease icd905 = TestSchema.createICD9Disease("code5", "namedif5");
+        AccrualDisease icd905 = TestSchema.createAccrualDisease("ICD9", "code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
 
@@ -1052,28 +1051,12 @@ public class TestSchema {
         return create;
     }
 
-    private static SDCDisease createSdcDisease(String preferredName) {
-        SDCDisease create = new SDCDisease();
-        create.setDiseaseCode("diseaseCode");
-        create.setCtepCategory("diseaseCategory");
-        create.setCtepSubCategory("diseaseSubCategory");
-        create.setDisplayName("menuDisplayName");
-        create.setPreferredName(preferredName);
-        create.setUserLastCreated(getUser());
-        create.setDateLastCreated(TODAY);
-        create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(TODAY);
-        return create;
-    }
-
-    private static ICD9Disease createICD9Disease(String diseaseCode, String name) {
-        ICD9Disease create = new ICD9Disease();
+    private static AccrualDisease createAccrualDisease(String codeSystem, String diseaseCode, String name) {
+        AccrualDisease create = new AccrualDisease();
+        create.setCodeSystem(codeSystem);
         create.setDiseaseCode(diseaseCode);
-        create.setName(name);
-        create.setUserLastCreated(getUser());
-        create.setDateLastCreated(TODAY);
-        create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(TODAY);
+        create.setPreferredName(name);
+        create.setDisplayName("menuDisplayName");
         return create;
     }
 

@@ -423,7 +423,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         StudySubject ss2 = TestSchema.studySubjects.get(1);
         SubjectAccrualKey key1 = new SubjectAccrualKey(ss1.getStudySite().getId(), ss1.getAssignedIdentifier());
         SubjectAccrualKey key2 = new SubjectAccrualKey(ss2.getStudySite().getId(), ss2.getAssignedIdentifier());
-        Map<SubjectAccrualKey, Long[]> map = bean.getSubjectAndPatientKeys(spId);
+        Map<SubjectAccrualKey, Long[]> map = bean.getSubjectAndPatientKeys(spId, false);
         Long[] ids1 = map.get(key1);
         Long[] ids2 = map.get(key2);
         assertEquals(ss1.getId(), ids1[0]);
@@ -435,7 +435,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
 
     @Test(expected = PAException.class) 
     public void getSubjectAndPatientKeysException() throws Exception {
-        bean.getSubjectAndPatientKeys(null);
+        bean.getSubjectAndPatientKeys(null, false);
     }
     
     @Test

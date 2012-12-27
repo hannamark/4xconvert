@@ -148,19 +148,17 @@ public class PatientWebDto {
     private String organizationName;
 
     // disease    
-    private String sdcDiseasePreferredName;
-    private Long sdcDiseaseIdentifier;
-    
-    private String icd9DiseasePreferredName;
-    private Long icd9DiseaseIdentifier;
+    private String diseasePreferredName;
+    private Long diseaseIdentifier;
 
     /**
      * Perform basic validations.
      * @param dto dto
      * @param action action to add for errors
-     * @param checkDisease  check disease
      */
-    public static void validate(PatientWebDto dto, AbstractAccrualAction action, boolean checkDisease) {
+    public static void validate(PatientWebDto dto, AbstractAccrualAction action) {
+        Long spId = IiConverter.convertToLong(action.getSpIi());
+        boolean checkDisease = action.getDiseaseSvc().diseaseCodeMandatory(spId);
         action.clearActionErrors();
         action.addActionErrorIfEmpty(dto, "Error inputing study subject data.");
         if (!action.hasActionErrors()) {
@@ -224,13 +222,9 @@ public class PatientWebDto {
         }
 
         loadPerformedActivitiesData(ss.getPerformedActivities());
-
         if (ss.getDisease() != null) {
-            sdcDiseasePreferredName = ss.getDisease().getPreferredName();
-            sdcDiseaseIdentifier = ss.getDisease().getId();
-        } else if (ss.getIcd9disease() != null) {
-            icd9DiseasePreferredName = ss.getIcd9disease().getPreferredName();
-            icd9DiseaseIdentifier = ss.getIcd9disease().getId();
+            diseasePreferredName = ss.getDisease().getPreferredName();
+            diseaseIdentifier = ss.getDisease().getId();
         }
         dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated() == null 
                 ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
@@ -300,8 +294,7 @@ public class PatientWebDto {
         ssub.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
         ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
         ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
-        ssub.setDiseaseIdentifier(IiConverter.convertToIi(getSdcDiseaseIdentifier()));
-        ssub.setIcd9DiseaseIdentifier(IiConverter.convertToIi(getIcd9DiseaseIdentifier()));
+        ssub.setDiseaseIdentifier(IiConverter.convertToIi(getDiseaseIdentifier()));
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
         ssub.setRegistrationGroupId(StConverter.convertToSt(getRegistrationGroupId()));
@@ -571,78 +564,28 @@ public class PatientWebDto {
      * @return the disease Preferred Name
      */
     public String getDiseasePreferredName() {
-        return sdcDiseasePreferredName != null ? sdcDiseasePreferredName : icd9DiseasePreferredName;
+        return diseasePreferredName;
     } 
     
     /**
-     * artificial method to ged rid of the exception in logs.
      * @param diseasePreferredName the diseasePreferredName to set
      */
     public void setDiseasePreferredName(String diseasePreferredName) {
-        //op
+        this.diseasePreferredName = diseasePreferredName;
     } 
 
     /**
-     * @return the disease Identifier
+     * @return the diseaseIdentifier
      */
     public Long getDiseaseIdentifier() {
-        return sdcDiseaseIdentifier != null ? sdcDiseaseIdentifier : icd9DiseaseIdentifier;
-    }    
-
-    /**
-     * @return the sdcDiseasePreferredName
-     */
-    public String getSdcDiseasePreferredName() {
-        return sdcDiseasePreferredName;
+        return diseaseIdentifier;
     }
 
     /**
-     * @param sdcDiseasePreferredName the sdcDiseasePreferredName to set
+     * @param diseaseIdentifier the diseaseIdentifier to set
      */
-    public void setSdcDiseasePreferredName(String sdcDiseasePreferredName) {
-        this.sdcDiseasePreferredName = sdcDiseasePreferredName;
-    }
-
-    /**
-     * @return the sdcDiseaseIdentifier
-     */
-    public Long getSdcDiseaseIdentifier() {
-        return sdcDiseaseIdentifier;
-    }
-
-    /**
-     * @param sdcDiseaseIdentifier the sdcDiseaseIdentifier to set
-     */
-    public void setSdcDiseaseIdentifier(Long sdcDiseaseIdentifier) {
-        this.sdcDiseaseIdentifier = sdcDiseaseIdentifier;        
-    }
-
-    /**
-     * @return the icd9DiseasePreferredName
-     */
-    public String getIcd9DiseasePreferredName() {
-        return icd9DiseasePreferredName;
-    }
-
-    /**
-     * @param icd9DiseasePreferredName the icd9DiseasePreferredName to set
-     */
-    public void setIcd9DiseasePreferredName(String icd9DiseasePreferredName) {
-        this.icd9DiseasePreferredName = icd9DiseasePreferredName;
-    }
-
-    /**
-     * @return the icd9DiseaseIdentifier
-     */
-    public Long getIcd9DiseaseIdentifier() {
-        return icd9DiseaseIdentifier;
-    }
-
-    /**
-     * @param icd9DiseaseIdentifier the icd9DiseaseIdentifier to set
-     */
-    public void setIcd9DiseaseIdentifier(Long icd9DiseaseIdentifier) {
-        this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;       
+    public void setDiseaseIdentifier(Long diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
     }
 
     /**

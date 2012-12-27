@@ -102,7 +102,6 @@ public class Converters {
         converterMap.put(InterventionAlternateNameConverter.class, new InterventionAlternateNameConverter());
         converterMap.put(StudySiteConverter.class, new StudySiteConverter());
         converterMap.put(PDQDiseaseConverter.class, new PDQDiseaseConverter());
-        converterMap.put(SDCDiseaseConverter.class, new SDCDiseaseConverter());
         converterMap.put(PDQDiseaseAlternameConverter.class, new PDQDiseaseAlternameConverter());
         converterMap.put(PDQDiseaseParentConverter.class, new PDQDiseaseParentConverter());
         converterMap.put(StudyDiseaseConverter.class, new StudyDiseaseConverter());
@@ -127,7 +126,6 @@ public class Converters {
         converterMap.put(PlannedProcedureConverter.class, new PlannedProcedureConverter());
         converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
         converterMap.put(StudySiteAccrualAccessConverter.class, new StudySiteAccrualAccessConverter());
-        converterMap.put(ICD9DiseaseConverter.class, new ICD9DiseaseConverter());
     }
 
     /**

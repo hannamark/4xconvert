@@ -79,17 +79,16 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -134,8 +133,7 @@ import org.hibernate.Session;
 * @since 08/07/2009
 */
 public class TestSchema {
-    public static List<SDCDisease> diseases;
-    public static List<ICD9Disease> icd9Diseases;
+    public static List<AccrualDisease> diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<StudySite> studySites;
     public static List<StudyDisease> studyDiseases;
@@ -172,8 +170,7 @@ public class TestSchema {
     }
 
     public static void primeData() {
-        diseases = new ArrayList<SDCDisease>();
-        icd9Diseases = new ArrayList<ICD9Disease>();
+        diseases = new ArrayList<AccrualDisease>();
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         studySites = new ArrayList<StudySite>();
@@ -353,7 +350,7 @@ public class TestSchema {
         sp.setStudyResourcings(srList);
         addUpdObject(sp);
         studyProtocols.add(sp);
-        
+
         sp = new StudyProtocol();
         sp.setOfficialTitle("Sample Preventative Study");
         dates = sp.getDates();
@@ -396,21 +393,22 @@ public class TestSchema {
         studyOverallStatuses.add(sos);
 
         // Disease
-        SDCDisease disease = new SDCDisease();
-        disease.setDiseaseCode("code");
+        AccrualDisease disease = new AccrualDisease();
+        disease.setCodeSystem("SDC");
+        disease.setDiseaseCode("code1");
         disease.setDisplayName("menu name");
         disease.setPreferredName("name");
-        disease.setCtepCategory("category");
-        disease.setCtepSubCategory("sub-category");
         addUpdObject(disease);
         diseases.add(disease);
 
         // ICD9Disease
-        ICD9Disease icd9Disease = new ICD9Disease();
-        icd9Disease.setDiseaseCode("code");
-        icd9Disease.setName("name");
-        addUpdObject(icd9Disease);
-        icd9Diseases.add(icd9Disease);
+        disease = new AccrualDisease();
+        disease.setCodeSystem("ICD9");
+        disease.setDiseaseCode("code2");
+        disease.setDisplayName("menu name");
+        disease.setPreferredName("name");
+        addUpdObject(disease);
+        diseases.add(disease);
 
         // StudySite
         StudySite ss = new StudySite();
