@@ -197,4 +197,9 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
     public void assignmentHistoryTest() throws Exception {
         assertEquals("history", action.assignmentHistory());
     }
+
+    @Test
+    public void assignmentByTrialTest() throws Exception {
+        assertEquals("byTrial", action.assignmentByTrial());
+    }
 }
