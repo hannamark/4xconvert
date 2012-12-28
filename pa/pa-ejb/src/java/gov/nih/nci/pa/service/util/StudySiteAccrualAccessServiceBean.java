@@ -848,16 +848,18 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     
     @SuppressWarnings("unchecked")
     @Override
-    public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial()
+    public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial(Collection<Long> trialIds)
             throws PAException {
         List<AccrualAccessAssignmentByTrialDTO> list = new ArrayList<AccrualAccessAssignmentByTrialDTO>();
         Session session = PaHibernateUtil.getCurrentSession();
         
         String hql = "select saa from StudyAccrualAccess saa where "
-                + "saa.statusCode = :statusCode and saa.actionCode = :actionCode";
+                + "saa.statusCode = :statusCode and saa.actionCode = :actionCode "
+                + "and saa.studyProtocol.id in (:trialIds)";
         Query query = session.createQuery(hql);        
         query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
         query.setParameter(ACTION_CODE, AssignmentActionCode.ASSIGNED);
+        query.setParameterList("trialIds", trialIds);
         List<StudyAccrualAccess> accessList = query.list();
         for (StudyAccrualAccess saa : accessList) {
             final StudyProtocol protocol = saa.getStudyProtocol();

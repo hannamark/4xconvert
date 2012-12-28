@@ -246,8 +246,10 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
             throws PAException;
 
     /**
+     * @param trialIds the trials to search for
      * @return List<AccrualAccessAssignmentByTrialDTO>
      * @throws PAException PAException
      */
-    List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial() throws PAException;
+    List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial(Collection<Long> trialIds)
+            throws PAException;
 }

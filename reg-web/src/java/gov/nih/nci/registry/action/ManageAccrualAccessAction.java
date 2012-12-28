@@ -505,8 +505,9 @@ public class ManageAccrualAccessAction extends ActionSupport implements
      */
     public String assignmentByTrial() throws PAException {
         model.getByTrial().clear();
+        Collection<Long> trialIds = familyService.getSiteAccrualTrials(currentUser.getAffiliatedOrganizationId());
         List<AccrualAccessAssignmentByTrialDTO> list = studySiteAccrualAccessService
-                .getAccrualAccessAssignmentByTrial();
+                .getAccrualAccessAssignmentByTrial(trialIds);
         for (AccrualAccessAssignmentByTrialDTO dto : list) {
             SummaryFourFundingCategoryCode code = dto.getCategoryCode();
             List<AccrualAccessAssignmentByTrialDTO> trials = model.getByTrial()

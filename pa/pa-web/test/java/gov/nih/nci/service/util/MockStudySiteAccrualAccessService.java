@@ -266,7 +266,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     }
 
     @Override
-    public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial()
+    public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial(Collection<Long> trialIds)
             throws PAException {
         return new ArrayList<AccrualAccessAssignmentByTrialDTO>();
     }

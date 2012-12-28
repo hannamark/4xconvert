@@ -62,6 +62,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             + "INNER JOIN ss.researchOrganization ro "
             + "INNER JOIN ro.organization org  "
             + "WHERE sp.statusCode = :statusCode "
+            + "  AND sp.proprietaryTrialIndicator = false "
             + "  AND sr.summary4ReportedResourceIndicator = true "
             + "  AND sr.typeCode != :excludeType "
             + "  AND ss.functionalCode = :siteCode "
