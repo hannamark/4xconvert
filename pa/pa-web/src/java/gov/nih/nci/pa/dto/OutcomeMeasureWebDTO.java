@@ -97,7 +97,8 @@ public class OutcomeMeasureWebDTO {
     private String description;
     private String id;
     private Integer displayOrder;
-
+    private String typeCode;
+    
     /**
      * @return id
      */
@@ -184,6 +185,18 @@ public class OutcomeMeasureWebDTO {
      */
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+    /**
+     * @return the typeCode
+     */
+    public String getTypeCode() {
+        return typeCode;
+    }
+    /**
+     * @param typeCode the typeCode to set
+     */
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 
 }

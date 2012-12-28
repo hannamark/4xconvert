@@ -60,13 +60,15 @@ BubbleTips.activateTipOn("dfn");
     <table class="form">
     			<tr>
 					<td scope="row"  class="label"><label>
-						<fmt:message key="osdesign.outcome.primary"/><span class="required">*</span></label>
+						<fmt:message key="osdesign.outcome.type"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select  name="webDTO.outcomeMeasure.primaryIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" />
+					   <s:set name="outcomeMeasureTypeValues" value="@gov.nih.nci.pa.enums.OutcomeMeasureTypeCode@getDisplayNames()" />
+						<s:select headerKey="" headerValue="--Select--" 
+						name="webDTO.outcomeMeasure.typeCode" id="webDTO.outcomeMeasure.typeCode" list="#outcomeMeasureTypeValues" />
 						<span class="formErrorMsg"> 
                                 <s:fielderror>
-                                <s:param>webDTO.outcomeMeasure.primaryIndicator</s:param>
+                                <s:param>webDTO.outcomeMeasure.type</s:param>
                                </s:fielderror>                            
                          </span>
 					</td>

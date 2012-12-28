@@ -78,8 +78,12 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -106,6 +110,7 @@ public class StudyOutcomeMeasure extends AbstractEntity implements Auditable {
     private Boolean safetyIndicator;
     private StudyProtocol studyProtocol;
     private Integer displayOrder;
+    private OutcomeMeasureTypeCode typeCode;
 
     /**
      * @return name
@@ -202,5 +207,19 @@ public class StudyOutcomeMeasure extends AbstractEntity implements Auditable {
      */
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+    /**
+     * @return the typeCode
+     */
+    @Column(name = "TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public OutcomeMeasureTypeCode getTypeCode() {
+        return typeCode;
+    }
+    /**
+     * @param typeCode the typeCode to set
+     */
+    public void setTypeCode(OutcomeMeasureTypeCode typeCode) {
+        this.typeCode = typeCode;
     }
 }

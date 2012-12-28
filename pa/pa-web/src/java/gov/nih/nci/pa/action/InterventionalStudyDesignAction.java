@@ -476,8 +476,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
             sgDTO.setName(StConverter.convertToSt(webDTO.getOutcomeMeasure().getName()));
             sgDTO.setDescription(StConverter.convertToSt(webDTO.getOutcomeMeasure().getDescription()));
-            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(
-                    Boolean.valueOf(webDTO.getOutcomeMeasure().getPrimaryIndicator())));
+            sgDTO.setTypeCode(CdConverter.convertStringToCd(webDTO.getOutcomeMeasure().getTypeCode()));
             sgDTO.setSafetyIndicator(BlConverter.convertToBl(
                     Boolean.valueOf(webDTO.getOutcomeMeasure().getSafetyIndicator())));
             sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getOutcomeMeasure().getTimeFrame()));
@@ -534,7 +533,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             OutcomeMeasureWebDTO webOutcomeMeasure = webDTO.getOutcomeMeasure();
             studyOutcomeMeasure.setName(StConverter.convertToSt(webOutcomeMeasure.getName()));
             studyOutcomeMeasure.setDescription(StConverter.convertToSt(webOutcomeMeasure.getDescription()));
-            studyOutcomeMeasure.setPrimaryIndicator(BlConverter.convertToBl(webOutcomeMeasure.getPrimaryIndicator()));
+            studyOutcomeMeasure.setTypeCode(CdConverter.convertStringToCd(webOutcomeMeasure.getTypeCode()));
             studyOutcomeMeasure.setSafetyIndicator(BlConverter.convertToBl(webOutcomeMeasure.getSafetyIndicator()));
             studyOutcomeMeasure.setTimeFrame(StConverter.convertToSt(webOutcomeMeasure.getTimeFrame()));
             studyOutcomeMeasure.setDisplayOrder(IntConverter
@@ -550,8 +549,8 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
     }
 
     private void enforceOutcomeBusinessRules() {
-        if (webDTO.getOutcomeMeasure().getPrimaryIndicator() == null) {
-            addFieldError("webDTO.primaryIndicator", getText("error.outcome.primary"));
+        if (webDTO.getOutcomeMeasure().getTypeCode() == null) {
+            addFieldError("webDTO.outcomeMeasure.type", getText("error.outcome.type"));
         }
         addErrors(webDTO.getOutcomeMeasure().getName(), "webDTO.outcomeMeasure.name", "error.outcome.title");
         if (StringUtils.length(webDTO.getOutcomeMeasure().getName()) > MAXIMUM_CHAR_OUTCOME_NAME) {
@@ -606,7 +605,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
     private ISDesignDetailsWebDTO setOutcomeMeasureDTO(StudyOutcomeMeasureDTO dto) {
         ISDesignDetailsWebDTO webdto = new ISDesignDetailsWebDTO();
         if (dto != null) {
-            webdto.getOutcomeMeasure().setPrimaryIndicator(BlConverter.convertToBoolean(dto.getPrimaryIndicator()));
+            webdto.getOutcomeMeasure().setTypeCode(CdConverter.convertCdToString(dto.getTypeCode()));
             webdto.getOutcomeMeasure().setName(StConverter.convertToString(dto.getName()));
             webdto.getOutcomeMeasure().setDescription(StConverter.convertToString(dto.getDescription()));
             webdto.getOutcomeMeasure().setTimeFrame(StConverter.convertToString(dto.getTimeFrame()));

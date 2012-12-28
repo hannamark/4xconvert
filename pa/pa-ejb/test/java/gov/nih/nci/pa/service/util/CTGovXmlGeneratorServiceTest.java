@@ -86,12 +86,15 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -104,6 +107,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -335,9 +339,10 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     @Test
     public void testGetOrgThrowNpe() throws PAException, NullifiedEntityException {
         when(poOrgSvc.getOrganization(any(Ii.class))).thenThrow(new NullifiedEntityException(spId));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<error_description>"));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<study_identifier>"));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<error_messages>"));
+        String ctgov = getBean().generateCTGovXml(spId);
+        assertTrue(ctgov.contains("<error_description>"));
+        assertTrue(ctgov.contains("<study_identifier>"));
+        assertTrue(ctgov.contains("<error_messages>"));
     }
 
     @Test
@@ -662,17 +667,30 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
 
     @Test
     public void testSomPrimTrue() throws PAException {
-        studyOutcomeMeasureDtoList = new ArrayList<StudyOutcomeMeasureDTO>();
+    	studyOutcomeMeasureDtoList = new ArrayList<StudyOutcomeMeasureDTO>();
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(new St());
         studyOutcomeMeasureDto.setTimeFrame(new St());
-        studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(true));
+        studyOutcomeMeasureDto.setTypeCode(new Cd());
         St desc = new St();
         desc.setValue("testSomPrimTrue -- Some description");
         studyOutcomeMeasureDto.setDescription(desc);
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
+        // to test null checks
         String ctGovXml = getBean().generateCTGovXml(spId);
+    	
+        studyOutcomeMeasureDtoList = new ArrayList<StudyOutcomeMeasureDTO>();
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(new St());
+        studyOutcomeMeasureDto.setTimeFrame(new St());
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.PRIMARY.getCode()));
+        desc = new St();
+        desc.setValue("testSomPrimTrue -- Some description");
+        studyOutcomeMeasureDto.setDescription(desc);
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
+        ctGovXml = getBean().generateCTGovXml(spId);
         assertTrue(ctGovXml.contains("<primary_outcome>"));
         assertFalse(ctGovXml.contains("<secondary_outcome>"));
         assertTrue(ctGovXml.contains("<outcome_description>"));
@@ -685,7 +703,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(new St());
         studyOutcomeMeasureDto.setTimeFrame(new St());
-        studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(false));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.SECONDARY.getCode()));
         St desc = new St();
         desc.setValue("testSomPrimFalse -- Some description");
         studyOutcomeMeasureDto.setDescription(desc);
@@ -694,6 +712,25 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         String ctGovXml = getBean().generateCTGovXml(spId);
         assertFalse(ctGovXml.contains("<primary_outcome>"));
         assertTrue(ctGovXml.contains("<secondary_outcome>"));
+        assertTrue(ctGovXml.contains("<outcome_description>"));
+    }
+
+    @Test
+    public void testSomOtherPrespecified() throws PAException {
+        studyOutcomeMeasureDtoList = new ArrayList<StudyOutcomeMeasureDTO>();
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(new St());
+        studyOutcomeMeasureDto.setTimeFrame(new St());
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode()));
+        St desc = new St();
+        desc.setValue("testSomPrimFalse -- Some description");
+        studyOutcomeMeasureDto.setDescription(desc);
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        when(studyOutcomeMeasureSvc.getByStudyProtocol(any(Ii.class))).thenReturn(studyOutcomeMeasureDtoList);
+        String ctGovXml = getBean().generateCTGovXml(spId);
+        assertFalse(ctGovXml.contains("<primary_outcome>"));
+        assertFalse(ctGovXml.contains("<secondary_outcome>"));
+        assertTrue(ctGovXml.contains("<other_outcome>"));
         assertTrue(ctGovXml.contains("<outcome_description>"));
     }
 

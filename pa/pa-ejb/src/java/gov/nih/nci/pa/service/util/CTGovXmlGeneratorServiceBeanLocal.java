@@ -96,6 +96,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -261,6 +262,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
             createPrimaryOutcome(somDtos, doc, root);
             createSecondaryOutcome(somDtos, doc, root);
+            createOtherOutcome(somDtos, doc, root);
             createCondition(spDTO.getIdentifier(), doc, root);
             createSubGroups(spDTO.getIdentifier(), doc, root);
             XmlGenHelper.appendElement(root,
@@ -851,7 +853,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             .getStudyResourcingByStudyProtocol(spDTO.getIdentifier());
 
         for (StudyResourcingDTO srDto : srDtos) {
-            if (!ISOUtil.isBlNull(srDto.getActiveIndicator())) {
+            if (!ISOUtil.isBlNull(srDto.getActiveIndicator()) && srDto.getActiveIndicator().getValue()) {
                 Element grantId = doc.createElement("secondary_id");
                 StringBuilder id = new StringBuilder();
                 id.append(srDto.getFundingMechanismCode().getCode());
@@ -1299,28 +1301,34 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             return;
         }
         for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-            if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
+            if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
+                    && smDTO.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.PRIMARY.getCode())) {
                 Element po = doc.createElement("primary_outcome");
-                XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElement("outcome_measure",
-                                StringUtils.substring(smDTO.getName().getValue(), 0,
-                        PAAttributeMaxLen.LEN_254), doc));
-                if (!ISOUtil.isStNull(smDTO.getDescription())) {
-                    createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
-                            PAAttributeMaxLen.LEN_600), doc, po);
-                }
-                XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElement(
-                                "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
-                        .getSafetyIndicator()), doc));
-                XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElement(
-                                "outcome_time_frame", StringUtils.substring(smDTO.getTimeFrame()
-                        .getValue(), 0, PAAttributeMaxLen.LEN_254), doc));
-                if (po.hasChildNodes()) {
-                    XmlGenHelper.appendElement(root, po);
-                }
+                createOutcomeMeasure(doc, root, smDTO, po);
             }
+        }
+    }
+
+    private void createOutcomeMeasure(Document doc, Element root,
+            StudyOutcomeMeasureDTO smDTO, Element po) throws PAException {
+        XmlGenHelper.appendElement(po,
+                XmlGenHelper.createElement("outcome_measure",
+                StringUtils.substring(smDTO.getName().getValue(), 0,
+                    PAAttributeMaxLen.LEN_254), doc));
+        if (!ISOUtil.isStNull(smDTO.getDescription())) {
+            createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
+                    PAAttributeMaxLen.LEN_600), doc, po);
+        }
+        XmlGenHelper.appendElement(po,
+                XmlGenHelper.createElement(
+                        "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
+                        .getSafetyIndicator()), doc));
+        XmlGenHelper.appendElement(po,
+                XmlGenHelper.createElement(
+                "outcome_time_frame", StringUtils.substring(smDTO.getTimeFrame()
+                .getValue(), 0, PAAttributeMaxLen.LEN_254), doc));
+        if (po.hasChildNodes()) {
+            XmlGenHelper.appendElement(root, po);
         }
     }
 
@@ -1330,27 +1338,25 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             return;
         }
         for (StudyOutcomeMeasureDTO smDTO : somDtos) {
-            if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
+            if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
+                    && smDTO.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.SECONDARY.getCode())) {
                 Element om = doc.createElement("secondary_outcome");
-                XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElement("outcome_measure",
-                                StringUtils.substring(smDTO.getName().getValue(), 0,
-                        PAAttributeMaxLen.LEN_254), doc));
-                if (!ISOUtil.isStNull(smDTO.getDescription())) {
-                    createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
-                            PAAttributeMaxLen.LEN_600), doc, om);
-                }                
-                XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElement(
-                                "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
-                        .getSafetyIndicator()), doc));
-                XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElement(
-                                "outcome_time_frame", StringUtils.substring(smDTO.getTimeFrame()
-                        .getValue(), 0, PAAttributeMaxLen.LEN_254), doc));
-                if (om.hasChildNodes()) {
-                    XmlGenHelper.appendElement(root, om);
-                }
+                createOutcomeMeasure(doc, root, smDTO, om);
+            }
+        }
+    }
+
+    private void createOtherOutcome(List<StudyOutcomeMeasureDTO> somDtos, Document doc, Element root)
+            throws PAException {
+        if (CollectionUtils.isEmpty(somDtos)) {
+            return;
+        }
+        for (StudyOutcomeMeasureDTO smDTO : somDtos) {
+            if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
+                    && smDTO.getTypeCode().getCode().equalsIgnoreCase(
+                    OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode())) {
+                Element om = doc.createElement("other_outcome");
+                createOutcomeMeasure(doc, root, smDTO, om);
             }
         }
     }

@@ -83,6 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -229,6 +230,37 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         dto.setRequestDetails(updatedRequestDetails);
         StudySiteAccrualAccessDTO r = bean.update(dto);
         assertTrue(r.getRequestDetails().equals(updatedRequestDetails));
+    }
+    
+    @Test
+    public void testNullChecks() {
+    	StudySiteAccrualAccessDTO  dto = new StudySiteAccrualAccessDTO();
+    	Ii ii = new Ii();
+    	ii.setExtension("1");
+    	dto.setIdentifier(ii);
+    	try {
+			bean.create(dto);
+            fail();
+		} catch (PAException e) {
+			assertEquals("Id is not null when calling StudySiteAccrualAccess.create().", e.getMessage());
+		}
+    	dto.setIdentifier(null);
+    	try {
+			bean.update(dto);
+            fail();
+		} catch (PAException e) {
+			assertEquals("Id is null when calling StudySiteAccrualAccess.update().", e.getMessage());
+		}
+    }
+    
+    @Test
+    public void testUncoveredLines() throws Exception {
+    	assertNotNull(bean.getByStudySite(ssId));
+    	assertNotNull(bean.getSubmitters());
+    	Session session = PaHibernateUtil.getCurrentSession();
+    	RegistryUser user = (RegistryUser) session.get(RegistryUser.class,
+                TestSchema.registryUserIds.get(0));
+    	assertNotNull(bean.getFullName(user));
     }
 
     @Test

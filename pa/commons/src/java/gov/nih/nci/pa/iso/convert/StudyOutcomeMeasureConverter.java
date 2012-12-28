@@ -80,8 +80,10 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -111,6 +113,7 @@ public class StudyOutcomeMeasureConverter extends
         somDTO.setSafetyIndicator(BlConverter.convertToBl(som.getSafetyIndicator()));
         somDTO.setDisplayOrder(IntConverter.convertToInt(som.getDisplayOrder()));
         somDTO.setDescription(StConverter.convertToSt(som.getDescription()));
+        somDTO.setTypeCode(CdConverter.convertToCd(som.getTypeCode()));
         return somDTO;
     }
 
@@ -142,6 +145,7 @@ public class StudyOutcomeMeasureConverter extends
         som.setPrimaryIndicator(BlConverter.convertToBoolean(somDTO.getPrimaryIndicator()));
         som.setSafetyIndicator(BlConverter.convertToBoolean(somDTO.getSafetyIndicator()));
         som.setDisplayOrder(IntConverter.convertToInteger(somDTO.getDisplayOrder()));
+        som.setTypeCode(OutcomeMeasureTypeCode.getByCode(CdConverter.convertCdToString(somDTO.getTypeCode())));
     }
 
 }

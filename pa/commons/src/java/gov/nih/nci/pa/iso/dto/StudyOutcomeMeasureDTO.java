@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 
@@ -98,6 +99,7 @@ public class StudyOutcomeMeasureDTO extends StudyDTO {
     private Bl primaryIndicator;
     private Bl safetyIndicator;
     private Int displayOrder;
+    private Cd typeCode;
 
     /**
      *
@@ -176,5 +178,17 @@ public class StudyOutcomeMeasureDTO extends StudyDTO {
      */
     public void setDisplayOrder(Int displayOrder) {
         this.displayOrder = displayOrder;
+    }
+    /**
+     * @return the typeCode
+     */
+    public Cd getTypeCode() {
+        return typeCode;
+    }
+    /**
+     * @param typeCode the typeCode to set
+     */
+    public void setTypeCode(Cd typeCode) {
+        this.typeCode = typeCode;
     }
 }

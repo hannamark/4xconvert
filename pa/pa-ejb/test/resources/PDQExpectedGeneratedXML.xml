@@ -9,6 +9,12 @@
             <id_domain>CTRP (Clinical Trial Reporting Program)</id_domain>
         </secondary_id>
         <secondary_id>
+            <id>OtherId</id>
+        </secondary_id>
+        <secondary_id>
+            <id>OtherId</id>
+        </secondary_id>
+        <secondary_id>
             <id>U10CA177</id>
             <id_type>NIH Grant Number</id_type>
         </secondary_id>
@@ -143,6 +149,11 @@
         <outcome_safety_issue>Yes</outcome_safety_issue>
         <outcome_time_frame>some time</outcome_time_frame>
     </secondary_outcome>
+    <other_outcome>
+        <outcome_measure>some name</outcome_measure>
+        <outcome_safety_issue>No</outcome_safety_issue>
+        <outcome_time_frame>some time</outcome_time_frame>
+    </other_outcome>
     <disease_conditions>
         <condition_info>
             <preferred_name>some disease</preferred_name>

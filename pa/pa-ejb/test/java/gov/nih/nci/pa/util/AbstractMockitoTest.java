@@ -121,6 +121,7 @@ import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -591,15 +592,20 @@ public class AbstractMockitoTest {
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(StConverter.convertToSt("some name"));
         studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(true));
-        studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(true));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.PRIMARY.getCode()));
         studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(StConverter.convertToSt("some name"));
         studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(true));
-        studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(true));
         studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
-        studyOutcomeMeasureDto.setPrimaryIndicator(BlConverter.convertToBl(false));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.SECONDARY.getCode()));
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(StConverter.convertToSt("some name"));
+        studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(false));
+        studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode()));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
     }
 
@@ -767,7 +773,15 @@ public class AbstractMockitoTest {
         assignedId.setExtension("NCI_2010_0001");
         Set<Ii> iis = new HashSet<Ii>();
         iis.add(assignedId);
+        
+        Ii otherId = new Ii();
+        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+        otherId.setExtension("OtherId");
+        iis.add(otherId);
+        
         secondaryIdentifiers.setItem(iis);
+        
         spDto.setSecondaryIdentifiers(secondaryIdentifiers);
     }
 

@@ -120,10 +120,8 @@
 	<display:table name="outcomeList" id="row" class="data" sort="list"  pagesize="200"
 	   decorator="gov.nih.nci.pa.decorator.OutcomeMeasureTableDecorator" 
 	   requestURI="interventionalStudyDesignoutcomeQuery.action" export="false">
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.primary" sortable="true" headerClass="sortable nodnd">
-            <pa:displayBoolean value="${row.outcomeMeasure.primaryIndicator}"/>
-        </display:column>
-	    <display:column escapeXml="true" titleKey="osdesign.outcome.name" property="outcomeMeasure.name" sortable="true" headerClass="sortable nodnd" />
+	    <display:column escapeXml="true" titleKey="osdesign.outcome.type" property="outcomeMeasure.typeCode" sortable="true" headerClass="sortable nodnd"/>
+        <display:column escapeXml="true" titleKey="osdesign.outcome.name" property="outcomeMeasure.name" sortable="true" headerClass="sortable nodnd" />
 	    <display:column escapeXml="true" titleKey="osdesign.outcome.timeFrame" property="outcomeMeasure.timeFrame"  sortable="true" headerClass="sortable nodnd" />
         <display:column escapeXml="true" titleKey="osdesign.outcome.description" property="outcomeMeasure.description"  sortable="true" headerClass="sortable nodnd" />
 	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" sortable="true" headerClass="sortable nodnd">

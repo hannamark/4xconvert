@@ -178,6 +178,8 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
                 "PDQExpectedGeneratedXML_invalid.xml").toString()))).getChannel();
         String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
+        System.out.println("testing the otherId: " + expectedPdqXml);
+        System.out.println("testing the generated otherId: " + pdqBean.generatePdqXml(spId));
         assertEquals(expectedPdqXml.replaceAll("\n", NEWLINE), pdqBean.generatePdqXml(spId));
     }
 

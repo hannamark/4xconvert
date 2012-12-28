@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.OutcomeMeasureWebDTO;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -175,7 +176,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
         webDTO.setOutcomeMeasure(omDto);
-        webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
+        webDTO.getOutcomeMeasure().setTypeCode(OutcomeMeasureTypeCode.PRIMARY.getCode());
         webDTO.getOutcomeMeasure().setName("Name");
         webDTO.getOutcomeMeasure().setDescription("Description");
         webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
