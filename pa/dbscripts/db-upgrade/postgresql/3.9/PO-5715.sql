@@ -20,12 +20,13 @@ INSERT INTO accrual_disease (identifier, code_system, disease_code, preferred_na
   SELECT icd9_disease.identifier, 'ICD9' AS code_system, icd9_disease.disease_code, ((icd9_disease.name::text || ' ('::text) || icd9_disease.disease_code::text) || ')'::text AS preferred_name, ((icd9_disease.name::text || ' ('::text) || icd9_disease.disease_code::text) || ')'::text AS display_name
     FROM icd9_disease;
 
+ALTER TABLE study_subject DROP CONSTRAINT fk_study_subject_icd9disease;
+ALTER TABLE study_subject DROP CONSTRAINT fk_study_subject_disease;
+
 UPDATE study_subject
   SET disease_identifier = icd9disease_identifier
   WHERE disease_identifier IS NULL;
 
-ALTER TABLE study_subject DROP CONSTRAINT fk_study_subject_icd9disease;
-ALTER TABLE study_subject DROP CONSTRAINT fk_study_subject_disease;
 ALTER TABLE study_subject ADD CONSTRAINT fk_study_subject_disease 
   FOREIGN KEY (disease_identifier) REFERENCES accrual_disease (identifier)
   ON UPDATE NO ACTION ON DELETE RESTRICT;
