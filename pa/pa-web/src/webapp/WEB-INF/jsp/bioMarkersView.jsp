@@ -18,6 +18,10 @@
                  var name = document.forms[0].markerName.value;  
                  document.forms[0].action="bioMarkerssearch.action";
                  document.forms[0].submit();
+                 if (extensionValue == "" && name == "") {
+                    document.forms[0].action="bioMarkersexecute.action";
+                    document.forms[0].submit();
+                 }
             }
             function resetValues() {
                 $("trialId").value="";
