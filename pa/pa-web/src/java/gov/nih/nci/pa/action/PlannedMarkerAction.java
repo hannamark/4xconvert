@@ -478,95 +478,104 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (getPlannedMarker().isFoundInHugo()) {
             marker.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));
         }
-        PlannedMarkerDTO oldValue = plannedMarkerService.getPlannedMarkerWithID(getPlannedMarker().getId());
-        Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
-        if (oldValue != null) {
-            List<String> assayTypeList = deletedTypeValues(oldValue.getAssayTypeCode().getCode(), 
-                            markerValues, BioMarkerAttributesCode.ASSAY_TYPE.getName()); 
-            String assayTypeValue = "";
-            if (assayTypeList != null) {
-                for (String delAssayValue : assayTypeList) {
-                    assayTypeValue = delAssayValue + ",";
+        if (isEdit) {
+            PlannedMarkerDTO oldValue = plannedMarkerService.getPlannedMarkerWithID(getPlannedMarker().getId());
+            Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
+            if (oldValue != null) {
+                List<String> assayTypeList = deletedTypeValues(oldValue.getAssayTypeCode().getCode(), 
+                                markerValues, BioMarkerAttributesCode.ASSAY_TYPE.getName()); 
+                String assayTypeValue = "";
+                if (assayTypeList != null) {
+                    for (String delAssayValue : assayTypeList) {
+                        assayTypeValue = delAssayValue + ",";
+                    }
+                    marker.setAssayTypeCode(CdConverter
+                            .convertStringToCd(assayTypeValue + getPlannedMarker().getAssayType()));
+                } else {
+                    marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
                 }
-                marker.setAssayTypeCode(CdConverter
-                        .convertStringToCd(assayTypeValue + getPlannedMarker().getAssayType()));
-            } else {
-                marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
-            }
+
+                List<String> assayUseList = deletedTypeValues(oldValue.getAssayUseCode().getCode(), 
+                        markerValues, BioMarkerAttributesCode.BIOMARKER_USE.getName()); 
+                String assayUseValue = "";
+                if (assayUseList != null) {
+                    for (String delAssayUseValue : assayUseList) {
+                        assayUseValue = delAssayUseValue + ",";
+                    }
+                    marker.setAssayUseCode(CdConverter
+                            .convertStringToCd(assayUseValue + getPlannedMarker().getAssayUse()));
+                } else {
+                    marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
+                }
+           
+                List<String> assayPurposeList = deletedTypeValues(oldValue.getAssayPurposeCode().getCode(), 
+                        markerValues, BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName()); 
+                String assayPurposeValue = "";
+                if (assayPurposeList != null) {
+                    for (String delAssayPurposeValue : assayPurposeList) {
+                        assayPurposeValue = delAssayPurposeValue + ",";
+                    }
+                    marker.setAssayPurposeCode(CdConverter
+                            .convertStringToCd(assayPurposeValue + getPlannedMarker().getAssayPurpose()));
+                } else {
+                    marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
+                }
+            
+                List<String> specimenTypeList = deletedTypeValues(oldValue.getTissueSpecimenTypeCode().getCode(), 
+                        markerValues, BioMarkerAttributesCode.SPECIMEN_TYPE.getName()); 
+                String specimenTypeValue = "";
+                if (specimenTypeList != null) {
+                    for (String delSpecValue : specimenTypeList) {
+                        specimenTypeValue = delSpecValue + ",";
+                    }
+                    marker.setTissueSpecimenTypeCode(CdConverter
+                            .convertStringToCd(specimenTypeValue + getPlannedMarker().getTissueSpecimenType()));
+                } else {
+                    marker.setTissueSpecimenTypeCode(CdConverter
+                            .convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
+                }
+           
+                List<String> evalTypeList = deletedTypeValues(oldValue.getEvaluationType().getCode(), 
+                        markerValues, BioMarkerAttributesCode.EVALUATION_TYPE.getName()); 
+                String evalTypeValue = "";
+                if (evalTypeList != null) {
+                    for (String delEvalValue : evalTypeList) {
+                        evalTypeValue = delEvalValue + ",";
+                    } 
+                    marker.setEvaluationType(CdConverter
+                            .convertStringToCd(evalTypeValue + getPlannedMarker().getEvaluationType()));
+                } else {
+                    marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
+                }
+            } 
+        } else {
+            marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
+            marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
+           
+            marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
+            marker.setTissueSpecimenTypeCode(CdConverter
+                    .convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
+            marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
         }
+        
         if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayType(), 
                 getPlannedMarker().getAssayTypeOtherText()), OTHER)) {
             marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayTypeOtherText()));
         }
-        if (oldValue != null) {
-            List<String> assayUseList = deletedTypeValues(oldValue.getAssayUseCode().getCode(), 
-                    markerValues, BioMarkerAttributesCode.BIOMARKER_USE.getName()); 
-            String assayUseValue = "";
-            if (assayUseList != null) {
-                for (String delAssayUseValue : assayUseList) {
-                    assayUseValue = delAssayUseValue + ",";
-                }
-                marker.setAssayUseCode(CdConverter
-                        .convertStringToCd(assayUseValue + getPlannedMarker().getAssayUse()));
-            } else {
-                marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
-            }
-        }
-        if (oldValue != null) {
-            List<String> assayPurposeList = deletedTypeValues(oldValue.getAssayPurposeCode().getCode(), 
-                    markerValues, BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName()); 
-            String assayPurposeValue = "";
-            if (assayPurposeList != null) {
-                for (String delAssayPurposeValue : assayPurposeList) {
-                    assayPurposeValue = delAssayPurposeValue + ",";
-                }
-                marker.setAssayPurposeCode(CdConverter
-                        .convertStringToCd(assayPurposeValue + getPlannedMarker().getAssayPurpose()));
-            } else {
-                marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
-            }
-        }
-        
+         
        
         if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayPurpose(), 
                 getPlannedMarker().getAssayPurposeOtherText()), OTHER)) {
             marker.setAssayPurposeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayPurposeOtherText()));
         }
-        if (oldValue != null) {
-            List<String> specimenTypeList = deletedTypeValues(oldValue.getTissueSpecimenTypeCode().getCode(), 
-                    markerValues, BioMarkerAttributesCode.SPECIMEN_TYPE.getName()); 
-            String specimenTypeValue = "";
-            if (specimenTypeList != null) {
-                for (String delSpecValue : specimenTypeList) {
-                    specimenTypeValue = delSpecValue + ",";
-                }
-                marker.setTissueSpecimenTypeCode(CdConverter
-                        .convertStringToCd(specimenTypeValue + getPlannedMarker().getTissueSpecimenType()));
-            } else {
-                marker.setTissueSpecimenTypeCode(CdConverter
-                        .convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
-            }
-        }
+       
         
        
         if (StringUtils.equals(otherTextPresent(getPlannedMarker().getTissueSpecimenType(), 
                 getPlannedMarker().getSpecimenTypeOtherText()), OTHER)) {
             marker.setSpecimenTypeOtherText(StConverter.convertToSt(getPlannedMarker().getSpecimenTypeOtherText()));
         }
-        if (oldValue != null) {
-            List<String> evalTypeList = deletedTypeValues(oldValue.getEvaluationType().getCode(), 
-                    markerValues, BioMarkerAttributesCode.EVALUATION_TYPE.getName()); 
-            String evalTypeValue = "";
-            if (evalTypeList != null) {
-                for (String delEvalValue : evalTypeList) {
-                    evalTypeValue = delEvalValue + ",";
-                } 
-                marker.setEvaluationType(CdConverter
-                        .convertStringToCd(evalTypeValue + getPlannedMarker().getEvaluationType()));
-            } else {
-                marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
-            }
-        }
+        
         
         
         
