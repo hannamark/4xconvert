@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -1054,7 +1055,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<StudyOutcomeMeasureDTO> somList = studyOutcomeMeasureService.getByStudyProtocol(studyProtocolIi);
         boolean isPrimayFound = false;
         for (StudyOutcomeMeasureDTO somDto : somList) {
-            if (BlConverter.convertToBool(somDto.getPrimaryIndicator())) {
+            if (!ISOUtil.isCdNull(somDto.getTypeCode()) 
+                    && somDto.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.PRIMARY.getCode())) {
                 isPrimayFound = true;
                 break;
             }

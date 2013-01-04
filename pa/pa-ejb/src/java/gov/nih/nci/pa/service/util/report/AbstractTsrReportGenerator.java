@@ -162,6 +162,7 @@ public abstract class AbstractTsrReportGenerator {
     private List<TSRReportArmGroup> armGroups = new ArrayList<TSRReportArmGroup>();
     private List<TSRReportOutcomeMeasure> primaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
     private List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
+    private List<TSRReportOutcomeMeasure> otherOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
     private List<TSRReportSubGroupStratificationCriteria> sgsCriterias =
         new ArrayList<TSRReportSubGroupStratificationCriteria>();
     private List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
@@ -255,6 +256,7 @@ public abstract class AbstractTsrReportGenerator {
             addArmGroupsTable();
             addPrimaryOutcomesMeasuresTable();
             addSecondaryOutcomesMeasuresTable();
+            addOtherOutcomesMeasuresTable();
             addSubGroupsStratificationCriteriaTable();
             addPlannedMarkers();
             addParticipatingSitesTable();
@@ -756,6 +758,24 @@ public abstract class AbstractTsrReportGenerator {
         }
     }
 
+    private void addOtherOutcomesMeasuresTable() throws DocumentException {
+        if (CollectionUtils.isNotEmpty(getOtherOutcomeMeasures())) {
+            Table table = getOuterTable(TSRReportLabelText.TABLE_OTHER_OUTCOME_MEASURES, true);
+            Table somTable = getInnerTable(Arrays.asList(TSRReportLabelText.SOM_TITLE,
+                    TSRReportLabelText.SOM_DESCRIPTION, TSRReportLabelText.SOM_TIMEFRAME,
+                    TSRReportLabelText.SOM_SAFETY_ISSUE));
+            for (TSRReportOutcomeMeasure som : getOtherOutcomeMeasures()) {
+                somTable.addCell(getItemValueCell(som.getTitle()));
+                somTable.addCell(getItemValueCell(som.getDescription()));
+                somTable.addCell(getItemValueCell(som.getTimeFrame()));
+                somTable.addCell(getItemValueCell(som.getSafetyIssue()));
+            }
+            table.insertTable(somTable);
+            reportDocument.add(table);
+            reportDocument.add(getLineBreak());
+        }
+    }
+
     private void addSubGroupsStratificationCriteriaTable() throws DocumentException {
         if (CollectionUtils.isNotEmpty(getSgsCriterias())) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_SUB_GROUP_STRATIFICATION_CRITERIA, true);
@@ -1130,6 +1150,14 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     /**
+     * @param otherOutcomeMeasures the otherOutcomeMeasures to set
+     */
+    public void setOtherOutcomeMeasures(
+            List<TSRReportOutcomeMeasure> otherOutcomeMeasures) {
+        this.otherOutcomeMeasures = otherOutcomeMeasures;
+    }
+
+    /**
      * @param sgsCriterias the sgsCriterias to set
      */
     public void setSgsCriterias(List<TSRReportSubGroupStratificationCriteria> sgsCriterias) {
@@ -1267,6 +1295,13 @@ public abstract class AbstractTsrReportGenerator {
      */
     public List<TSRReportOutcomeMeasure> getSecondaryOutcomeMeasures() {
         return secondaryOutcomeMeasures;
+    }
+
+    /**
+     * @return the otherOutcomeMeasures
+     */
+    public List<TSRReportOutcomeMeasure> getOtherOutcomeMeasures() {
+        return otherOutcomeMeasures;
     }
 
     /**

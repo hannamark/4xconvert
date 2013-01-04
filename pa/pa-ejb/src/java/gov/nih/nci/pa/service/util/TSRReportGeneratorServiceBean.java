@@ -99,6 +99,7 @@ import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -763,7 +764,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         List<StudyResourcingDTO> funds = studyResourcingService
                 .getStudyResourcingByStudyProtocol(studyProtocolDto.getIdentifier());
         for (StudyResourcingDTO fund : funds) {
-            if (!ISOUtil.isBlNull(fund.getActiveIndicator())) {
+            if (!ISOUtil.isBlNull(fund.getActiveIndicator()) && fund.getActiveIndicator().getValue()) {
                 TSRReportNihGrant nihGrant = new TSRReportNihGrant();
                 nihGrant.setFundingMechanism(getValue(fund.getFundingMechanismCode()));
                 nihGrant.setNihInstitutionCode(getValue(fund.getNihInstitutionCode()));
@@ -997,6 +998,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         if (!somDtos.isEmpty()) {
             List<TSRReportOutcomeMeasure> primaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
             List<TSRReportOutcomeMeasure> secondaryOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
+            List<TSRReportOutcomeMeasure> otherOutcomeMeasures = new ArrayList<TSRReportOutcomeMeasure>();
             for (StudyOutcomeMeasureDTO somDto : somDtos) {
                 TSRReportOutcomeMeasure outcomeMeasure = new TSRReportOutcomeMeasure();
                 outcomeMeasure.setDescription(StConverter.convertToString(somDto.getDescription()));
@@ -1004,14 +1006,21 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 outcomeMeasure.setTimeFrame(StConverter.convertToString(somDto.getTimeFrame()));
                 outcomeMeasure.setSafetyIssue(getValue(somDto.getSafetyIndicator(), INFORMATION_NOT_PROVIDED));
 
-                if (somDto.getPrimaryIndicator().getValue().booleanValue()) {
+                if (!ISOUtil.isCdNull(somDto.getTypeCode()) 
+                        && somDto.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.PRIMARY.getCode())) {
                     primaryOutcomeMeasures.add(outcomeMeasure);
-                } else {
+                } else if (!ISOUtil.isCdNull(somDto.getTypeCode()) 
+                    && somDto.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.SECONDARY.getCode())) {
                     secondaryOutcomeMeasures.add(outcomeMeasure);
+                } else if (!ISOUtil.isCdNull(somDto.getTypeCode()) 
+                        && somDto.getTypeCode().getCode().equalsIgnoreCase(
+                                OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode())) {
+                    otherOutcomeMeasures.add(outcomeMeasure);
                 }
             }
             tsrReportGenerator.setPrimaryOutcomeMeasures(primaryOutcomeMeasures);
             tsrReportGenerator.setSecondaryOutcomeMeasures(secondaryOutcomeMeasures);
+            tsrReportGenerator.setOtherOutcomeMeasures(otherOutcomeMeasures);
         }
     }
 

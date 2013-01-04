@@ -596,6 +596,10 @@ public class TSRReportLabelText { //NOPMD
      */
     public static final String TABLE_SECONDARY_OUTCOME_MEASURES = "Secondary Outcome Measures";
     /**
+     * Table Other Pre-specified outcome measures.
+     */
+    public static final String TABLE_OTHER_OUTCOME_MEASURES = "Other Pre-specified Outcome Measures";
+    /**
      * Title.
      */
     public static final String SOM_TITLE = "Title";
