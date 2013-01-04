@@ -2,32 +2,17 @@ import groovy.sql.Sql
 def sql = """SELECT
 				sm.milestone_date,
 				sm.milestone_code,
+				sm.user_last_created_id,
+				sm.user_last_updated_id,
 				sm.date_last_created, 
 				sm.date_last_updated,
                 sm.identifier,
                 sm.comment_text,
-                nci_id.extension,
-                CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
-                     WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
-                     ELSE split_part(creator.login_name, 'CN=', 2)
-                END as creator,
-                CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
-                     WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
-                     ELSE split_part(updater.login_name, 'CN=', 2)
-                END as updater,
-                ru_creator.first_name as creator_first,
-                ru_creator.last_name as creator_last,
-                ru_updater.first_name as updater_first,
-                ru_updater.last_name as updater_last
+                nci_id.extension
                 FROM STUDY_MILESTONE sm
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sm.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'
-                left outer join csm_user as creator on sm.user_last_created_id = creator.user_id   
-                left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
-                left outer join csm_user as updater on sm.user_last_created_id = updater.user_id
-                left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
                 join study_protocol sp on sp.identifier = sm.study_protocol_identifier
-                   and sp.status_code = 'ACTIVE'
                 """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
@@ -44,17 +29,19 @@ sourceConnection.eachRow(sql) { row ->
     		date_created: row.date_last_created,
     		date_last_updated: row.date_last_updated,
             internal_system_id: row.identifier,
-            nci_id: row.extension, 
-            user_name_created: row.creator,
-            user_name_last_updated: row.updater,
-            first_name_created: row.creator_first,
-            last_name_created: row.creator_last,
-            first_name_last_updated: row.updater_first,
-            last_name_last_updated: row.updater_last)
-            }
-            
-            
-   
+            nci_id: row.extension,
+            user_last_created_id: row.user_last_created_id,
+            user_last_updated_id: row.user_last_updated_id
+            )};
+
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE tbl
+                                 SET user_name_created = us.name, first_name_created = us.first_name, last_name_created = us.last_name  
+                                 FROM stg_dw_user us where tbl.user_last_created_id = us.csm_user_id""");
+
+destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE tbl
+                                 SET user_name_last_updated = us.name, first_name_last_updated = us.first_name, last_name_last_updated = us.last_name 
+                                 FROM stg_dw_user us where tbl.user_last_updated_id = us.csm_user_id""");
+
 destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submission Received Date'    
 	where NAME='SUBMISSION_RECEIVED'""")
 destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Submission Acceptance Date'    
@@ -93,6 +80,4 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='On-goin
 	where NAME='ONGOING_ABSTRACTION_VERIFICATION'""")
 destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Late Rejection Date'    
 	where NAME='LATE_REJECTION_DATE'""")
-	
-	
-	            
+

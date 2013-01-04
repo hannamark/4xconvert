@@ -13,6 +13,8 @@ CREATE TABLE STG_DW_STUDY_MILESTONE (
     FIRST_NAME_CREATED character varying(500),
     LAST_NAME_CREATED character varying(500),
     FIRST_NAME_LAST_UPDATED character varying(500),
-    LAST_NAME_LAST_UPDATED character varying(500)
+    LAST_NAME_LAST_UPDATED character varying(500),
+    user_last_created_id integer,
+    user_last_updated_id integer
 );
 
