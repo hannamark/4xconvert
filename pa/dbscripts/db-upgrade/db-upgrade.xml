@@ -1176,15 +1176,19 @@
      <changeSet id="PO-5656-2" author="krylovd">
         <comment>Added CCR trial list.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5656-2.sql"/>
-     </changeSet>   
+     </changeSet>
       <changeSet id="PO-5730" author="Reshma">
         <comment>Adding columns to Bio Marker Attribute tables</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5730.sql"/>
-     </changeSet>         
+     </changeSet>
      <changeSet id="PO-5653" author="krylovd">
         <comment>Add birth month flag to Patient.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5653.sql"/>
-     </changeSet>          
+     </changeSet>
+     <changeSet id="PO-5754" author="Hugh">
+        <comment>Handle different disease code systems in Accrual.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5754.sql"/>
+     </changeSet>
      <changeSet id="PO-5715" author="Hugh">
         <comment>Handle different disease code systems in Accrual.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5715.sql"/>
@@ -1192,5 +1196,5 @@
      <changeSet id="PO-5422" author="Kalpana">
         <comment>Add new coulmn outcomeMeasure type_code and update the column based on primary_indicator.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5422.sql"/>
-     </changeSet>          
+     </changeSet>
 </databaseChangeLog>
