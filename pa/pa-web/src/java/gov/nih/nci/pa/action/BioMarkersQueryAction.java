@@ -184,17 +184,12 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
         String nciIdentifier = getTrialId();
         String markerNames =  getMarkerName();
-        List<Long> protocolIds = new ArrayList<Long>();
+        
         List<Long> identifiersList = new ArrayList<Long>();
-        if (!StringUtils.isBlank(nciIdentifier)) {
-            protocolIds = studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier);
-            markers = plannedMarkerService.getPendingPlannedMarkersWithProtocolId(protocolIds);
-        }
-       
-        if (!StringUtils.isBlank(markerNames)) {
-            markers.addAll(plannedMarkerService.getPendingPlannedMarkersShortName(markerNames));
-        }
-       
+                   
+        markers = plannedMarkerService
+               .getPendingPlannedMarkersShortNameAndNCIId(markerNames, nciIdentifier);
+
         if (!markers.isEmpty()) {
             for (PlannedMarkerDTO dto : markers) {
                 identifiersList.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));

@@ -152,4 +152,15 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      * @throws PAException exception
      */
     PlannedMarkerDTO getPlannedMarkerWithID(Long id) throws PAException;
+    
+
+    /**
+     * returns list of plannedMarkers with the matching short name NCI ID and with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param name name
+     * @param nciIdentifier nciIdentifier
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPendingPlannedMarkersShortNameAndNCIId(String name, String nciIdentifier) 
+    throws PAException;
 }

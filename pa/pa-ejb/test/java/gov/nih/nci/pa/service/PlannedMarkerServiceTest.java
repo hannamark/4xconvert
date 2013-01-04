@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
@@ -100,12 +101,13 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
-
+import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.validator.AssertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,14 +115,19 @@ import org.junit.Test;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
-    private final PlannedMarkerServiceLocal bean = new PlannedMarkerServiceBean();
+    private final PlannedMarkerServiceBean bean = new PlannedMarkerServiceBean();
     private Ii spIi;
+    
+    private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
 
     @Before
     public void setUp() throws Exception {
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        bean.setStudyProtocolService(studyProtocolService);
      }
 
     @Test
@@ -178,4 +185,28 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         List<PlannedMarkerDTO> markers = bean.getPendingPlannedMarkersWithProtocolId(listOfIds);
         assertTrue(markers.size() > 0);
     }
+    
+    @Test
+    public void getPendingPlannedMarkersShortNameAndNCIIdTest() throws PAException {
+        String name = "Marker #1";
+        List<Long> listOfIds = new ArrayList<Long>();
+        listOfIds.add(1L);
+        listOfIds.add(2L);
+        constructPlannedMarker(); 
+        String nciIdentifier = "NCI-0000-2010";
+        when(PaRegistry.getStudyProtocolService()).thenReturn(studyProtocolService);
+        when(studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier)).thenReturn(listOfIds);
+        List<PlannedMarkerDTO> markers = bean.getPendingPlannedMarkersShortNameAndNCIId(name, "NCI-0000-2010");
+        assertTrue(markers.size() > 0);
+        
+        
+        name = "Marker #1";
+        listOfIds = new ArrayList<Long>();    
+        when(studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier)).thenReturn(listOfIds);
+        constructPlannedMarker(); 
+        markers =  bean.getPendingPlannedMarkersShortNameAndNCIId(name, "");
+        assertTrue(markers.size() > 0);
+    }
+    
+    
 }

@@ -94,7 +94,9 @@ import gov.nih.nci.pa.service.search.PlannedMarkerSortCriterion;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -121,7 +123,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class PlannedMarkerServiceBean extends
 AbstractStudyIsoService<PlannedMarkerDTO, PlannedMarker, PlannedMarkerConverter>
 implements PlannedMarkerServiceLocal {
-
+    private StudyProtocolServiceLocal studyProtocolService;
     /**
      * {@inheritDoc}
      */
@@ -209,7 +211,46 @@ implements PlannedMarkerServiceLocal {
         List<PlannedMarker> markers = query.list();
         return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
     }
-    
+
+    /**
+     * returns list of plannedMarkers with the matching short name NCI ID and with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param name name
+     * @param nciIdentifier nciIdentifier
+     * @throws PAException exception
+     */
+    public List<PlannedMarkerDTO> getPendingPlannedMarkersShortNameAndNCIId(String name, String nciIdentifier) 
+    throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        String hql = "";
+        List<Long> protocolIds = new ArrayList<Long>();
+        if (!StringUtils.isBlank(nciIdentifier)) {
+            protocolIds = studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier);    
+        }
+        if (!StringUtils.isBlank(name) && !StringUtils.isBlank(nciIdentifier)) {
+             hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)" 
+                + " and pm.id IN" 
+                + " (select pa.id from PlannedActivity as pa " 
+                + " where pa.studyProtocol.id IN (:listOfIds))";
+        } else {
+             hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)" 
+                + " or pm.id IN" 
+                + " (select pa.id from PlannedActivity as pa " 
+                + " where pa.studyProtocol.id IN (:listOfIds))";
+        } 
+        Query query = session.createQuery(hql);
+        if (!protocolIds.isEmpty()) {
+            query.setParameterList("listOfIds", protocolIds);   
+        } else {
+            query.setParameter("listOfIds", null);  
+        }
+        
+        query.setParameter("name", "%" + name + "%");
+        List<PlannedMarker> markers = query.list();
+        return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);  
+    }
     /**
      * returns list of plannedMarkers with the matching name with pending status.
      * @return list of PlannedMarkerDTO
@@ -227,7 +268,7 @@ implements PlannedMarkerServiceLocal {
     }
     
     /**
-     * returns list of plannedMarkers with the matching name with pending status.
+     * returns list of plannedMarkers with the matching list of ids with pending status.
      * @return list of PlannedMarkerDTO
      * @param listOfIds listOfIds
      * @throws PAException exception
@@ -293,4 +334,20 @@ implements PlannedMarkerServiceLocal {
         PlannedMarker marker = markers.get(0);
         return (PlannedMarkerDTO) convertFromDomainToDto(marker);   
     }
+
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+    
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+    
+    
 }
