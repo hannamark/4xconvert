@@ -79,7 +79,6 @@
 package gov.nih.nci.registry.action;
 
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.CodedEnum;
@@ -167,40 +166,55 @@ public class TrialValidator {
     }
 
     /**
-     * @param trialDto TrialDTO
-     * @param addFieldError Map<String, String> 
+     * @param trialDto
+     *            TrialDTO
+     * @param addFieldError
+     *            Map<String, String>
      */
-    public void validateNonInterventionalTrialDTO(BaseTrialDTO trialDto, // NOPMD
+    public void validateNonInterventionalTrialDTO(BaseTrialDTO trialDto,
             Map<String, String> addFieldError) {
         if (PAConstants.NON_INTERVENTIONAL.equals(trialDto.getTrialType())) {
-            if (StringUtils.isBlank(trialDto.getStudySubtypeCode())) {
-                addFieldError.put("trialDTO.studySubtypeCode",
-                        getText("error.submit.studySubtypeCode"));
+            validateNonInterventionalSpecificFields(trialDto, addFieldError);
+            if ((trialDto instanceof TrialDTO)
+                    && "Yes".equalsIgnoreCase(((TrialDTO) trialDto)
+                            .getSection801Indicator())) {
+                addFieldError.put("trialDTO.section801Indicator",
+                        getText("error.submit.801.nonInterventional"));
             }
-            if (StringUtils.isBlank(trialDto.getStudyModelCode())) {
-                addFieldError.put("trialDTO.studyModelCode",
-                        getText("error.submit.studyModelCode"));
-            }
-            if (StringUtils.isBlank(trialDto.getTimePerspectiveCode())) {
-                addFieldError.put("trialDTO.timePerspectiveCode",
-                        getText("error.submit.timePerspectiveCode"));
-            }
-            if (StudyModelCode.OTHER.getCode().equalsIgnoreCase(
-                    trialDto.getStudyModelCode())
-                    && StringUtils.isBlank(trialDto.getStudyModelOtherText())) {
-                addFieldError.put("trialDTO.studyModelOtherText",
-                        getText("error.submit.studyModelOtherText"));
-            }
-            if (TimePerspectiveCode.OTHER.getCode().equalsIgnoreCase(
-                    trialDto.getTimePerspectiveCode())
-                    && StringUtils.isBlank(trialDto
-                            .getTimePerspectiveOtherText())) {
-                addFieldError.put("trialDTO.timePerspectiveOtherText",
-                        getText("error.submit.timePerspectiveOtherText"));
-            }
-            
         }
+    }
 
+    /**
+     * @param trialDto
+     * @param addFieldError
+     */
+    private void validateNonInterventionalSpecificFields(BaseTrialDTO trialDto, // NOPMD
+            Map<String, String> addFieldError) {
+        if (StringUtils.isBlank(trialDto.getStudySubtypeCode())) {
+            addFieldError.put("trialDTO.studySubtypeCode",
+                    getText("error.submit.studySubtypeCode"));
+        }
+        if (StringUtils.isBlank(trialDto.getStudyModelCode())) {
+            addFieldError.put("trialDTO.studyModelCode",
+                    getText("error.submit.studyModelCode"));
+        }
+        if (StringUtils.isBlank(trialDto.getTimePerspectiveCode())) {
+            addFieldError.put("trialDTO.timePerspectiveCode",
+                    getText("error.submit.timePerspectiveCode"));
+        }
+        if (StudyModelCode.OTHER.getCode().equalsIgnoreCase(
+                trialDto.getStudyModelCode())
+                && StringUtils.isBlank(trialDto.getStudyModelOtherText())) {
+            addFieldError.put("trialDTO.studyModelOtherText",
+                    getText("error.submit.studyModelOtherText"));
+        }
+        if (TimePerspectiveCode.OTHER.getCode().equalsIgnoreCase(
+                trialDto.getTimePerspectiveCode())
+                && StringUtils.isBlank(trialDto
+                        .getTimePerspectiveOtherText())) {
+            addFieldError.put("trialDTO.timePerspectiveOtherText",
+                    getText("error.submit.timePerspectiveOtherText"));
+        }
     }
 
     private void validateStudyStatusReason(TrialDTO trialDto, Map<String, String> addFieldError) {
