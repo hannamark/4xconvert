@@ -253,7 +253,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         action.setDiseaseIds("123,321,4321");
         String result = action.addDiseases();
         assertEquals("success", result);
-        verify(studyDiseaseService.create(any(StudyDiseaseDTO.class)), times(3));
+        verify(studyDiseaseService, times(3)).create(any(StudyDiseaseDTO.class));
     }
 
 	/**
