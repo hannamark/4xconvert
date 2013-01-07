@@ -91,6 +91,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author mshestopalov
  *
@@ -312,6 +314,13 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
      */
     public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
         this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+    }
+    
+    /**
+     * @return OtherIdentifiers as String
+     */    
+    public String getOtherIdentifiersAsString() {
+        return StringUtils.join(getOtherIdentifiers(), "   ");
     }
     
     /**

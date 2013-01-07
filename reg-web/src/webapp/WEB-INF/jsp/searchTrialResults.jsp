@@ -166,11 +166,11 @@ body {
                 <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column titleKey="search.trial.nctNumber" property="nctIdentifier" sortable="true" headerClass="sortable"/>
-                <display:column title="Other Identifiers" >
-                	<s:iterator value="%{#attr.row.otherIdentifiers}" >
+                <display:column title="Other Identifiers"  property="otherIdentifiersAsString" />
+                	<%--<s:iterator value="%{#attr.row.otherIdentifiers}" >
 				    	'<s:property/>'				
 					</s:iterator>
-                </display:column>  
+                </display:column>   --%>
                 <display:column title="Participating Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
