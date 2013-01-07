@@ -81,6 +81,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 /**
@@ -108,6 +110,15 @@ public interface CTGovXmlGeneratorServiceLocal {
      *             on error
      */
     String generateCTGovXml(Ii studyProtocolIi,
+            CTGovXmlGeneratorOptions... options) throws PAException;
+    
+    /**
+     * @param studyProtocolIds list of trial ids
+     * @param options CTGovXmlGeneratorOptions
+     * @return String xml string
+     * @throws PAException on error
+     */
+    String generateCTGovXml(List<Ii> studyProtocolIds,
             CTGovXmlGeneratorOptions... options) throws PAException;
 
 }

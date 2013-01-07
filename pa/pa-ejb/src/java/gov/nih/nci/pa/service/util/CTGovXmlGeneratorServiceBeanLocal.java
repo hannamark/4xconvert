@@ -168,6 +168,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -226,82 +227,140 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             CTGovXmlGeneratorOptions... options) throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException("Study Protocol Identifier is null");
-        }
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        }       
         StudyProtocolDTO spDTO = null;
         try {
             spDTO = getStudyProtocol(studyProtocolIi);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = factory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
-            Element root = doc.createElement("clinical_study");
-            doc.appendChild(root);
-            addStudyTypeInfo(spDTO, doc, root);
-            createIdInfo(spDTO, doc, root, options);
-            addStudyOwnersInfo(spDTO, doc, root);
-            addLeadOrgInfo(spDTO, doc, root);
-            addNciSpecificInfo(spDTO, doc, root);
-            addCtGovInfo(spDTO, doc, root);
-            createIndInfo(spDTO, doc, root);
-            XmlGenHelper.createElement("brief_title", spDTO.getPublicTitle().getValue(), doc, root);
-            XmlGenHelper.createElement("acronym", spDTO.getAcronym().getValue(), doc, root);
-            String officialTitle = replaceXMLCharacters(spDTO.getOfficialTitle().getValue());
-            Element officialTitleElement = XmlGenHelper.createElement("official_title", officialTitle, doc);
-            if (officialTitleElement != null) {
-                root.appendChild(officialTitleElement);
-            }
-            createSponsors(spDTO.getIdentifier(), doc, root, spDTO);
-            createOversightInfo(spDTO, doc, root);
-            createTextBlock("brief_summary", StringUtils.substring(StConverter.convertToString(
-                    spDTO.getPublicDescription()), 0, PAAttributeMaxLen.LEN_MIN_1), doc, root);
-            createTextBlock("detailed_description", StringUtils.substring(StConverter.convertToString(
-                    spDTO.getScientificDescription()), 0, PAAttributeMaxLen.LEN_32000), doc, root);
-            createOverallStatus(spDTO, doc, root);            
-            createTrialFunding(spDTO, doc, root);
-            XmlGenHelper.appendElement(root, createStudyDesign(spDTO, doc));
-            List<StudyOutcomeMeasureDTO> somDtos =
-                getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
-            createPrimaryOutcome(somDtos, doc, root);
-            createSecondaryOutcome(somDtos, doc, root);
-            createOtherOutcome(somDtos, doc, root);
-            createCondition(spDTO.getIdentifier(), doc, root);
-            createSubGroups(spDTO.getIdentifier(), doc, root);
-            XmlGenHelper.appendElement(root,
-                    XmlGenHelper.createElementWithTextblock("enrollment", IvlConverter.convertInt().convertLowToString(
-                    spDTO.getTargetAccrualNumber()), doc));
-            XmlGenHelper.appendElement(root, XmlGenHelper.createElementWithTextblock(
-                    "enrollment_type", "anticipated", doc));
-            createArmGroup(spDTO, doc, root);
-            createIntervention(spDTO.getIdentifier(), doc, root);
-            createEligibility(spDTO, doc, root);
-            createOverallOfficial(spDTO.getIdentifier(), doc, root);
-            createOverallContact(spDTO.getIdentifier(), doc, root);
-            createLocation(spDTO, doc, root);
-            createKeywords(spDTO, doc, root);
-            Ts tsVerificationDate = spDTO.getRecordVerificationDate();
-            if (ISOUtil.isTsNull(tsVerificationDate))  {
-                DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
-                        .getCurrentByStudyProtocol(spDTO.getIdentifier());
-                tsVerificationDate = TsConverter.convertToTs(IvlConverter.convertTs().convertLow(
-                        dto.getStatusDateRange()));
-            }
-            addVerificationDate(doc, root, tsVerificationDate);
-
-            DOMSource domSource = new DOMSource(doc);
-            StringWriter writer = new StringWriter();
-            StreamResult result = new StreamResult(writer);
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            // set indentation, there's a bug in java 1.5 that makes the indent property not work properly.
-            // setting an indent-amount fixes it.
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.transform(domSource, result);
-            return writer.toString();
+            
+            buildClinicalStudyElement(spDTO, doc, options);
+            
+            return transformIntoString(doc);
         } catch (Exception e) {
             LOG.error("Error while generating CT.GOV.xml", e);
             return createErrorXml(spDTO, e);
         }
+    }
+    
+    @Override
+    public String generateCTGovXml(List<Ii> studyProtocolIds,
+            CTGovXmlGeneratorOptions... options) throws PAException {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = factory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            Element root = doc.createElement("study_collection");
+            doc.appendChild(root);  
+            
+            for (Ii trialID : studyProtocolIds) {
+                StudyProtocolDTO spDTO = getStudyProtocol(trialID);
+                Element studyElement = doc.createElement("clinical_study");
+                root.appendChild(studyElement);
+                populateClinicalStudyElement(spDTO, doc, studyElement, options);                
+            }            
+            
+            return transformIntoString(doc);
+        } catch (Exception e) {
+            LOG.error("Error while generating CT.GOV.xml", e);
+            throw new PAException(e);
+        }
+    }
+
+  
+    private String transformIntoString(Document doc) throws
+                                                TransformerException {
+        DOMSource domSource = new DOMSource(doc);
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        // set indentation, there's a bug in java 1.5 that makes the indent
+        // property not work properly.
+        // setting an indent-amount fixes it.
+        transformer.setOutputProperty(
+                "{http://xml.apache.org/xslt}indent-amount", "4");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.transform(domSource, result);
+        return writer.toString();
+    }
+
+  
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    private void buildClinicalStudyElement(StudyProtocolDTO spDTO,
+            Document doc, CTGovXmlGeneratorOptions... options)
+            throws PAException, NullifiedRoleException {
+        Element root = doc.createElement("clinical_study");
+        doc.appendChild(root);
+        populateClinicalStudyElement(spDTO, doc, root, options);
+    }
+
+ 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    private void populateClinicalStudyElement(StudyProtocolDTO spDTO,
+            Document doc, Element root, CTGovXmlGeneratorOptions... options)
+            throws PAException, NullifiedRoleException {
+        addStudyTypeInfo(spDTO, doc, root);
+        createIdInfo(spDTO, doc, root, options);
+        addStudyOwnersInfo(spDTO, doc, root);
+        addLeadOrgInfo(spDTO, doc, root);
+        addNciSpecificInfo(spDTO, doc, root);
+        addCtGovInfo(spDTO, doc, root);
+        createIndInfo(spDTO, doc, root);
+        XmlGenHelper.createElement("brief_title", spDTO.getPublicTitle()
+                .getValue(), doc, root);
+        XmlGenHelper.createElement("acronym", spDTO.getAcronym().getValue(),
+                doc, root);
+        String officialTitle = replaceXMLCharacters(spDTO.getOfficialTitle()
+                .getValue());
+        Element officialTitleElement = XmlGenHelper.createElement(
+                "official_title", officialTitle, doc);
+        if (officialTitleElement != null) {
+            root.appendChild(officialTitleElement);
+        }
+        createSponsors(spDTO.getIdentifier(), doc, root, spDTO);
+        createOversightInfo(spDTO, doc, root);
+        createTextBlock("brief_summary", StringUtils.substring(
+                StConverter.convertToString(spDTO.getPublicDescription()), 0,
+                PAAttributeMaxLen.LEN_MIN_1), doc, root);
+        createTextBlock("detailed_description", StringUtils.substring(
+                StConverter.convertToString(spDTO.getScientificDescription()),
+                0, PAAttributeMaxLen.LEN_32000), doc, root);
+        createOverallStatus(spDTO, doc, root);
+        createTrialFunding(spDTO, doc, root);
+        XmlGenHelper.appendElement(root, createStudyDesign(spDTO, doc));
+        List<StudyOutcomeMeasureDTO> somDtos = getStudyOutcomeMeasureService()
+                .getByStudyProtocol(spDTO.getIdentifier());
+        createPrimaryOutcome(somDtos, doc, root);
+        createSecondaryOutcome(somDtos, doc, root);
+        createOtherOutcome(somDtos, doc, root);
+        createCondition(spDTO.getIdentifier(), doc, root);
+        createSubGroups(spDTO.getIdentifier(), doc, root);
+        XmlGenHelper.appendElement(root, XmlGenHelper
+                .createElementWithTextblock(
+                        "enrollment",
+                        IvlConverter.convertInt().convertLowToString(
+                                spDTO.getTargetAccrualNumber()), doc));
+        XmlGenHelper.appendElement(root, XmlGenHelper
+                .createElementWithTextblock("enrollment_type", "anticipated",
+                        doc));
+        createArmGroup(spDTO, doc, root);
+        createIntervention(spDTO.getIdentifier(), doc, root);
+        createEligibility(spDTO, doc, root);
+        createOverallOfficial(spDTO.getIdentifier(), doc, root);
+        createOverallContact(spDTO.getIdentifier(), doc, root);
+        createLocation(spDTO, doc, root);
+        createKeywords(spDTO, doc, root);
+        Ts tsVerificationDate = spDTO.getRecordVerificationDate();
+        if (ISOUtil.isTsNull(tsVerificationDate)) {
+            DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
+                    .getCurrentByStudyProtocol(spDTO.getIdentifier());
+            tsVerificationDate = TsConverter.convertToTs(IvlConverter
+                    .convertTs().convertLow(dto.getStatusDateRange()));
+        }
+        addVerificationDate(doc, root, tsVerificationDate);
     }
 
     private void addStudyTypeInfo(StudyProtocolDTO spDTO, Document doc,

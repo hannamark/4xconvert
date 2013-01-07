@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -18,7 +17,6 @@ import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
-import org.mockito.Mockito;
 
 /**
  * @author Denis G. Krylov
@@ -42,14 +40,6 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
         serviceBean.setQueryServiceLocal(protocolQueryServiceLocal);
         serviceBean.setGeneratorServiceLocal(ctGovXmlGeneratorServiceLocal);
         serviceBean.setLookUpTableService(lookupSvc);
-
-        PAServiceUtils paServiceUtils = Mockito.mock(PAServiceUtils.class);
-        Mockito.when(paServiceUtils.getTrialNciId(1L)).thenReturn(
-                "NCI-2012-0001");
-        Mockito.when(paServiceUtils.getTrialNciId(2L)).thenReturn(
-                "NCI-2012-0002");
-        
-        serviceBean.setPaServiceUtils(paServiceUtils);
 
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.setServerControlPort(51239); // use any free port
@@ -92,8 +82,7 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
     @Test
     public final void testUploadToCTGov() {
         serviceBean.uploadToCTGov();
-        assertTrue(fileSystem.exists("/NCI-2012-0001.xml"));
-        assertFalse(fileSystem.exists("/NCI-2012-0002.xml"));
+        assertTrue(fileSystem.exists("/clinical.txt"));        
     }
 
 }
