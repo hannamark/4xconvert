@@ -353,12 +353,12 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
                 diesaseIdList.add(Long.parseLong(id));
             }
             setPdqDiseases(diesaseIdList);
-            try {
-                for (Long id : getPdqDiseases()) {
-                    studyDiseaseService.create(getStudyDisease(id)); 
-                }
-            } catch (Exception e) {
-                addActionError(e.getMessage());
+            for (Long id : getPdqDiseases()) {
+                try {
+                    studyDiseaseService.create(getStudyDisease(id));
+                } catch (Exception e) {
+                    LOG.debug(e);
+                } 
             }
         }
         return SUCCESS;

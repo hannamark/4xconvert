@@ -13,9 +13,9 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
@@ -36,9 +36,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
-import org.hamcrest.core.AnyOf;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 /**
  * Test class for the PopUpDisAction.
  * 
@@ -227,7 +228,34 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         assertTrue(action.getPdqDiseases().contains(new Long("321")));
         assertTrue(action.getPdqDiseases().contains(new Long("4321")));
     }
-    
+
+    /**
+     * Test the add method when no error happens in the backend.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testAddDiseasesError() throws PAException {
+        
+        StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);
+        when(studyDiseaseService.create(any(StudyDiseaseDTO.class))).thenAnswer(new Answer<StudyDiseaseDTO>() {
+            public StudyDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                StudyDiseaseDTO dto = (StudyDiseaseDTO) args[0];
+                if (IiConverter.convertToLong(dto.getDiseaseIdentifier()) == 321L) {
+                    throw new PAException("PAException");
+                }
+                return dto;
+            }
+        });
+        PopUpDisAction action = new PopUpDisAction();
+        action.setStudyDiseaseService(studyDiseaseService);
+
+        action.setDiseaseIds("123,321,4321");
+        String result = action.addDiseases();
+        assertEquals("success", result);
+        verify(studyDiseaseService.create(any(StudyDiseaseDTO.class)), times(3));
+    }
+
 	/**
 	 * Test the add method when no error happens in the backend.
 	 * @throws PAException if an error occurs
