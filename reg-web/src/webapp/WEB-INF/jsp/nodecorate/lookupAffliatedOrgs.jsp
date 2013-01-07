@@ -39,7 +39,8 @@
                     orgName: $("orgNameSearch").value,
                     stateName: $("orgStateSearch").value,
                     zipCode: $("orgZipSearch").value,
-                    poId: $("orgPOIdSearch").value
+                    poId: $("orgPOIdSearch").value,
+                    familyName: $("orgFamilyNameSearch").value
                 };
         	    var div = $('getOrgs');   	   
         	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="./images/loading.gif"/>&nbsp;Loading...</div>';
