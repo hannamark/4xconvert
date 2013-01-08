@@ -74,16 +74,17 @@
 			 <tr>
                     <td colspan="2">
                     <s:set name="plannedMarkerList" value="plannedMarkerList" scope="request" /> 
+                    
 							<display:table
 							name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
 							class="data" defaultsort="1" sort="list" pagesize="200"
-							requestURI="bioMarkersexecute.action">
+							requestURI="bioMarkerssearch.action">
 							<display:column escapeXml="true" property="nciIdentifier"
-								sortable="true" titleKey="plannedMarker.protocolId"
+								sortable="true" titleKey="plannedMarker.protocolId" 
 								headerClass="sortable"/>
 							<display:column escapeXml="true" property="trialStatus" sortable="false" 
 							titleKey="plannedMarker.TrialStatus" headerClass="sortable"/>
-							<display:column escapeXml="true" property="name" sortable="true"
+							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
 							<display:column titleKey="plannedMarker.edit"
 								headerClass="centered" class="action">

@@ -184,27 +184,30 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
         String nciIdentifier = getTrialId();
         String markerNames =  getMarkerName();
-        
-        List<Long> identifiersList = new ArrayList<Long>();
-                   
-        markers = plannedMarkerService
-               .getPendingPlannedMarkersShortNameAndNCIId(markerNames, nciIdentifier);
+        if (StringUtils.isEmpty(nciIdentifier) && StringUtils.isEmpty(markerNames)) {
+            execute();
+        } else {
+            List<Long> identifiersList = new ArrayList<Long>();
+            
+            markers = plannedMarkerService
+                   .getPendingPlannedMarkersShortNameAndNCIId(markerNames, nciIdentifier);
 
-        if (!markers.isEmpty()) {
-            for (PlannedMarkerDTO dto : markers) {
-                identifiersList.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+            if (!markers.isEmpty()) {
+                for (PlannedMarkerDTO dto : markers) {
+                    identifiersList.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+                }
+                Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
+                Map<Long, String> trialStatusList = studyProtocolService.getTrialProcessingStatus(identifiersList);
+                for (PlannedMarkerDTO dto : markers) {
+                    if (dto.getUserLastCreated() != null 
+                            && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
+                                    .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))) {
+                            pmList.add(populateWebDTO(dto, identifierMap, trialStatusList));    
+                    }         
+                } 
+                setPlannedMarkerList(pmList);
             }
-            Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
-            Map<Long, String> trialStatusList = studyProtocolService.getTrialProcessingStatus(identifiersList);
-            for (PlannedMarkerDTO dto : markers) {
-                if (dto.getUserLastCreated() != null 
-                        && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
-                                .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))) {
-                        pmList.add(populateWebDTO(dto, identifierMap, trialStatusList));    
-                }         
-            } 
-            setPlannedMarkerList(pmList);
-        }
+        } 
         return SUCCESS;
     }
     /**
