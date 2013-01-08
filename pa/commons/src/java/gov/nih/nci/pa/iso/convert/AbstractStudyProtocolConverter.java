@@ -157,6 +157,7 @@ public class AbstractStudyProtocolConverter {
         dto.setProgramCodeText(StConverter.convertToSt(bo.getProgramCodeText()));
         dto.setProprietaryTrialIndicator(BlConverter.convertToBl(bo.getProprietaryTrialIndicator()));
         dto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(bo.getCtgovXmlRequiredIndicator()));
+        dto.setDateLastCreated(TsConverter.convertToTs(bo.getDateLastCreated()));        
     }
     
     private static void convertDatesToDto(StudyProtocolDates dates, AbstractStudyProtocolDTO dto) {

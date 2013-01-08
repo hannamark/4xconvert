@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.Ts;
  * @author moweis
  *
  */
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class AbstractStudyProtocolDTO extends BaseDTO {
 
     private static final long serialVersionUID = 237182631792206585L;
@@ -112,6 +113,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private St userLastCreated;
 
     private Ts startDate;
+    private Ts dateLastCreated;
     private Ts primaryCompletionDate;
     private Ts completionDate;
     private Cd startDateTypeCode;
@@ -410,6 +412,20 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
      */
     public void setCompletionDateTypeCode(Cd completionDateTypeCode) {
         this.completionDateTypeCode = completionDateTypeCode;
+    }
+
+    /**
+     * @return the dateLastCreated
+     */
+    public Ts getDateLastCreated() {
+        return dateLastCreated;
+    }
+
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(Ts dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
     }
 
     

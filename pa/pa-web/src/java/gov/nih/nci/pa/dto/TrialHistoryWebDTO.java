@@ -157,9 +157,9 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
         } else {
             this.amendmentDate = "";
         }
-        if (isoDto.getStatusDate() != null && isoDto.getStatusDate().getValue() != null) {
+        if (isoDto.getDateLastCreated() != null && isoDto.getDateLastCreated().getValue() != null) {
             this.submissionDate = TsConverter.convertToTimestamp(isoDto
-                    .getStatusDate());
+                    .getDateLastCreated());
         } else {
             this.submissionDate = null;
         }
