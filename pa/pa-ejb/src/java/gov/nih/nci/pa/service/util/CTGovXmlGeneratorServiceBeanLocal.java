@@ -322,9 +322,9 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
         createSponsors(spDTO.getIdentifier(), doc, root, spDTO);
         createOversightInfo(spDTO, doc, root);
-        createTextBlock("brief_summary", StringUtils.substring(
-                StConverter.convertToString(spDTO.getPublicDescription()), 0,
-                PAAttributeMaxLen.LEN_MIN_1), doc, root);
+        createTextBlock("brief_summary",
+                StConverter.convertToString(spDTO.getPublicDescription()), doc,
+                root);
         createTextBlock("detailed_description", StringUtils.substring(
                 StConverter.convertToString(spDTO.getScientificDescription()),
                 0, PAAttributeMaxLen.LEN_32000), doc, root);
