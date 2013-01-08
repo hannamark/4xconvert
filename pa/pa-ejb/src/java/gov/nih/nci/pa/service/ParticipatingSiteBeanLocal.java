@@ -133,6 +133,8 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jboss.annotation.security.SecurityDomain;
 
 /**
@@ -144,10 +146,12 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @SecurityDomain("pa")
 @RolesAllowed({CLIENT_ROLE, ADMIN_ABSTRACTOR_ROLE, SUBMITTER_ROLE })
-@SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
+@SuppressWarnings({ "PMD.AvoidRethrowingException", "PMD.TooManyMethods" }) 
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
 
+    private static final Map<MutexKey, Object> MUTEX_MAP = new HashMap<MutexKey, Object>();
+    
     /**
      * {@inheritDoc}
      */
@@ -270,23 +274,75 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException {
         // assume that there is a poHcf out there already
         // assume that siteDTO has a real Ii for studyProtocol
-        try {
-            // check business rules based on trial type.
-            StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(
-                    studySiteDTO.getStudyProtocolIdentifier());
-            studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-            if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
-                enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
-            } else {
-                enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
-            }
-            StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);            
-            return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
-        } catch (PAException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new PAException(e);
+        Object mutex = getMutex(studySiteDTO.getStudyProtocolIdentifier(),
+                poHcfIi);
+        synchronized (mutex) {
+            try {
+                // check business rules based on trial type.
+                StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(
+                        studySiteDTO.getStudyProtocolIdentifier());
+                studySiteDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
+                if (spDTO.getProprietaryTrialIndicator().getValue().booleanValue()) {
+                    enforceBusinessRulesForProprietary(spDTO, studySiteDTO, currentStatusDTO);
+                } else {
+                    enforceBusinessRules(currentStatusDTO, PAUtil.getCurrentTime());
+                }
+                StudySite ss = saveOrUpdateStudySiteHelper(true, studySiteDTO, poHcfIi, currentStatusDTO);            
+                return new ParticipatingSiteConverter().convertFromDomainToDto(ss);
+            } catch (PAException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PAException(e);
+            } 
+        }        
+    }
+
+    /**
+     * @param studyProtocolIdentifier studyProtocolIdentifier
+     * @param poHcfIi poHcfIi
+     * @return mutex
+     */
+    protected synchronized Object getMutex(Ii studyProtocolIdentifier, Ii poHcfIi) {
+        if (ISOUtil.isIiNull(studyProtocolIdentifier) || ISOUtil.isIiNull(poHcfIi)) {
+            return new Object();
         }
+        final MutexKey key = new MutexKey(studyProtocolIdentifier, poHcfIi);
+        Object mutex = MUTEX_MAP.get(key);
+        if (mutex == null) {
+            mutex = new Object();
+            MUTEX_MAP.put(key, mutex);
+        }
+        return mutex;
+    }
+    
+    /**
+     * @author Denis G. Krylov
+     *
+     */
+    private static final class MutexKey { 
+        @SuppressWarnings("unused")
+        private final String spId; 
+        @SuppressWarnings("unused")
+        private final String hcfId;
+        /**
+         * @param spId
+         * @param hcfId
+         */
+        public MutexKey(Ii spId, Ii hcfId) {
+            this.spId = IiConverter.convertToString(spId);
+            this.hcfId = IiConverter.convertToString(hcfId);
+        }
+
+        @Override
+        public int hashCode() {            
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+        
     }
 
     /**
@@ -333,12 +389,14 @@ implements ParticipatingSiteServiceLocal {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private StudySite saveOrUpdateStudySiteHelper(boolean isCreate, StudySiteDTO siteDTO, Ii poHcfIi,
             StudySiteAccrualStatusDTO currentStatus) throws PAException, EntityValidationException, CurationException {
+        Ii paHcfIi = null;
         if (isCreate && poHcfIi != null) {
             Long paHealthCareFacilityId = getOrganizationCorrelationService().createHcfWithExistingPoHcf(poHcfIi);
             // check that we are not creating another part site w/ same trial and hcf ids.
-            Ii paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
+            paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
             if (isDuplicate(siteDTO.getStudyProtocolIdentifier(), paHcfIi)) {
                 throw new DuplicateParticipatingSiteException(siteDTO.getStudyProtocolIdentifier(), poHcfIi);
             }
@@ -361,6 +419,11 @@ implements ParticipatingSiteServiceLocal {
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
         final StudySite studySite = getStudySite(studySiteDTO.getIdentifier());
         getAccrualAccessServiceLocal().synchronizeSiteAccrualAccess(studySite.getId());
+        if (paHcfIi != null
+                && isMoreThanOne(siteDTO.getStudyProtocolIdentifier(), paHcfIi)) {
+            throw new DuplicateParticipatingSiteException(
+                    siteDTO.getStudyProtocolIdentifier(), poHcfIi);
+        }
         return studySite;
     }
 
@@ -377,6 +440,21 @@ implements ParticipatingSiteServiceLocal {
             return true;
         }
         return CollectionUtils.isNotEmpty(ssDtoList);
+    }
+    
+    private boolean isMoreThanOne(Ii trialIi, Ii paHcfIi) throws PAException {
+        StudySiteDTO ssDto = new StudySiteDTO();
+        ssDto.setStudyProtocolIdentifier(trialIi);
+        ssDto.setHealthcareFacilityIi(paHcfIi);
+        ssDto.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+
+        List<StudySiteDTO> ssDtoList;
+        try {
+            ssDtoList = this.getStudySiteService().search(ssDto, new LimitOffset(2, 0));
+        } catch (TooManyResultsException e) {
+            return true;
+        }
+        return CollectionUtils.isNotEmpty(ssDtoList) && ssDtoList.size() > 1;
     }
 
     /**

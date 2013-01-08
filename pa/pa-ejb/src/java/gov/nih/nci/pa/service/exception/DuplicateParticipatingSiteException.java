@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.exception;
 
+import javax.ejb.ApplicationException;
+
 import gov.nih.nci.iso21090.Ii;
 
 /**
@@ -89,6 +91,7 @@ import gov.nih.nci.iso21090.Ii;
  * but does not have a unique trial id and HCF id.
  * @author mshestopalov
  */
+@ApplicationException(rollback = true)
 public class DuplicateParticipatingSiteException extends PADuplicateException {
 
     private static final long serialVersionUID = 1L;
