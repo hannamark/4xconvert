@@ -1197,4 +1197,8 @@
         <comment>Add new coulmn outcomeMeasure type_code and update the column based on primary_indicator.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5422.sql"/>
      </changeSet>
+     <changeSet id="PO-5656-3" author="krylovd">
+        <comment>Updated CCR trial list.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5656-3.sql"/>
+     </changeSet>     
 </databaseChangeLog>
