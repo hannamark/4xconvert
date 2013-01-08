@@ -98,7 +98,8 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySiteStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.NonInterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -961,7 +962,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 StudyProtocolDTO studyToSearch = new StudyProtocolDTO();
                 studyToSearch.setSecondaryIdentifiers(studyProtocolDto.getSecondaryIdentifiers());
                 studyToSearch.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-
                 List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
                 if (CollectionUtils.isNotEmpty(spList)) {
                     Collections.sort(spList, new Comparator<StudyProtocolDTO>() {
@@ -987,10 +987,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     .getStudyProtocol(sourceSpIi);
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-                // studyProtocolService.updateStudyProtocol(sourceSpDto);
                 Session session = PaHibernateUtil.getCurrentSession();
-                StudyProtocol source = StudyProtocolConverter
-                    .convertFromDTOToDomain(sourceSpDto);
+                StudyProtocol source = null;
+                if (sourceSpDto instanceof NonInterventionalStudyProtocolDTO) {
+                    source = NonInterventionalStudyProtocolConverter
+                            .convertFromDTOToDomain((NonInterventionalStudyProtocolDTO) sourceSpDto);
+                } else if (sourceSpDto instanceof InterventionalStudyProtocolDTO) {
+                    source = InterventionalStudyProtocolConverter
+                            .convertFromDTOToDomain((InterventionalStudyProtocolDTO) sourceSpDto);
+                }
                 Long id = IiConverter.convertToLong(targetSpIi);
                 StudyProtocol target = (StudyProtocol) session
                     .load(StudyProtocol.class, id);
@@ -1020,7 +1025,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 scSourceDTO.setStudyProtocolIdentifier(targetSpIi);
                 studyContactService.delete(sourceIi);
                 studyContactService.update(scSourceDTO);
-
                 StudySiteDTO studySiteDto = new StudySiteDTO();
                 studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
                 studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
