@@ -331,11 +331,14 @@
 								style="${toggleResultsTab?'':'display:none;'}">
 								<c:set var="requestURI" value="dashboardloopback.action"
 									scope="request" />
-								<display:table class="data" sort="list" uid="results"
+								<display:table class="data" sort="list" uid="results" pagesize="2147483647"
 									defaultsort="9"
 									decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator"
 									name="${dashboardSearchResults}" requestURI="${requestURI}"
-									export="true">
+									export="true">									
+                                    <display:setProperty name="paging.banner.item_name" value="trial"/>
+                                    <display:setProperty name="paging.banner.items_name" value="trials"/> 
+                                    <display:setProperty name="paging.banner.group_size" value="0"/>  									
 									<display:setProperty name="export.xml" value="false" />
 									<display:setProperty name="export.excel.filename"
 										value="dashboardSearchResults.xls" />
