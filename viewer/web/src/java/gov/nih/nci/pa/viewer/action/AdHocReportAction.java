@@ -131,8 +131,8 @@ import com.opensymphony.xwork2.Preparable;
 /**
  * @author Max Shestopalov
  */
-public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCriteria, StudyProtocolQueryDTO>
-        implements Preparable, ServletResponseAware {
+public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCriteria, StudyProtocolQueryDTO> //NOPMD
+        implements Preparable, ServletResponseAware { // NOPMD
 
     private static final long serialVersionUID = 5108753083296696308L;
     private static final int MAX_LIMIT = 100;
