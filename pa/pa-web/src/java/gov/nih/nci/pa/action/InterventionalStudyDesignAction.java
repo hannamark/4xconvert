@@ -89,7 +89,6 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -101,6 +100,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.Lov;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -254,7 +255,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
                     PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
         } else {
-            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(null));
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd((Lov) null));
         }
         setPurpose(ispDTO);
     }
@@ -269,7 +270,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(
               PrimaryPurposeAdditionalQualifierCode.getByCode(webDTO.getPrimaryPurposeAdditionalQualifierCode())));
         } else {
-            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
+            ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd((Lov) null));
         }
         if (PAUtil.isPrimaryPurposeAdditionQualifierCodeOther(webDTO.getPrimaryPurposeCode(),
                 webDTO.getPrimaryPurposeAdditionalQualifierCode())) {

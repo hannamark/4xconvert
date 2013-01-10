@@ -150,7 +150,9 @@ public abstract class AbstractHibernateTestCase {
         SchemaExport se = new SchemaExport(PaHibernateUtil.getHibernateHelper().getConfiguration());
         se.drop(false, true);
         se.create(false, true);
+        TestSchema.loadPrimaryPurposeCodes();
         tx.commit();
+        
     }
 
     private void createAuditTable() throws HibernateException, SQLException {

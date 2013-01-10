@@ -119,7 +119,6 @@ import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -256,7 +255,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00003")) {
                     dto.setIdentifier(preventionIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-                    dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+                    dto.setPrimaryPurposeCode(CdConverter.convertStringToCd("Prevention"));
                     spSecId.setExtension("NCI-2009-00003");
                     secondaryIdentifiers.add(spSecId);
                     dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));

@@ -76,88 +76,192 @@
 *
 *
 */
-package gov.nih.nci.pa.enums;
+package gov.nih.nci.pa.lov;
 
-import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
-import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
-import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 /**
- * Code to identify a type of study protocol based upon the intent of the study's activities.
+ * Code to identify a type of study protocol based upon the intent of the
+ * study's activities.
  * 
- * @author Naveen Amiruddin
- * @since 07/22/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
- *        permission of the copyright holder, NCI.
+ * @author Denis G. Krylov
+ * @since 07/22/2008 copyright NCI 2007. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
  */
+@Entity
+@Table(name = "primary_purpose")
+public class PrimaryPurposeCode implements Lov {
+    
+    private static final Logger LOG = Logger.getLogger(PrimaryPurposeCode.class);
 
-public enum PrimaryPurposeCode implements CodedEnum<String> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 274784493414629534L;
 
-    /** Treatment. */
-    TREATMENT("Treatment"),
-    /** Prevention. */
-    PREVENTION("Prevention"),
-    /** Supportive Care. */
-    SUPPORTIVE_CARE("Supportive Care"),
-    /** Screening. */
-    SCREENING("Screening"),
-    /** Diagnostic. */
-    DIAGNOSTIC("Diagnostic"),
-    /** Health Services Research. */
-    HEALTH_SERVICES_RESEARCH("Health Services Research"),
-    /** Basic Science. */
-    BASIC_SCIENCE("Basic Science"),
-    /** Other. */
-    OTHER("Other");
+    /**
+     * PREVENTION.
+     */
+    public static final PrimaryPurposeCode PREVENTION = new PrimaryPurposeCode(
+            "PREVENTION", "Prevention");
+
+    /**
+     * OTHER.
+     */
+    public static final PrimaryPurposeCode OTHER = new PrimaryPurposeCode(
+            "OTHER", "Other");
+
+    private String name;
 
     private String code;
 
     /**
-     * 
-     * @param code
+     * @param name name
+     * @param code code
      */
-    private PrimaryPurposeCode(String code) {
+    public PrimaryPurposeCode(String name, String code) {
+        this.name = name;
         this.code = code;
-        register(this);
     }
 
     /**
-     * @return code code
+     * 
+     */
+    public PrimaryPurposeCode() { //NOPMD      
+    }
+
+    /**
+     * 
+     * @param code
+     *            code
+     * @return ResponsibilityCode
+     */
+    @SuppressWarnings("unchecked")
+    public static PrimaryPurposeCode getByCode(String code) {
+        try {
+            if (StringUtils.isNotBlank(code)) {
+                List<PrimaryPurposeCode> list = PaHibernateUtil.getCurrentSession()
+                        .createCriteria(PrimaryPurposeCode.class)
+                        .add(Restrictions.eq("code", code)).list();
+                return list.isEmpty() ? null : list.get(0);
+            }            
+            
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+        return null;
+    }
+
+    /**
+     * @return the name
      */
     @Override
+    @Id
+    @Column(name = "name")
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the code
+     */
+    @Override
+    @Column(name = "code")
     public String getCode() {
         return code;
     }
 
     /**
-     * @return String DisplayName
+     * @param code
+     *            the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
      */
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof PrimaryPurposeCode)) {
+            return false;
+        }
+        PrimaryPurposeCode other = (PrimaryPurposeCode) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    @Transient
     public String getDisplayName() {
-        return sentenceCasedName(this);
-    }
-
-    /**
-     * 
-     * @return String name
-     */
-    public String getName() {
-        return name();
-    }
-
-    /**
-     * 
-     * @param code code
-     * @return ResponsibilityCode
-     */
-    public static PrimaryPurposeCode getByCode(String code) {
-        return getByClassAndCode(PrimaryPurposeCode.class, code);
+        if (StringUtils.isNotBlank(getName())) {
+            StringBuilder displayName = new StringBuilder(getName()
+                    .toLowerCase());
+            displayName
+                    .replace(0, 1, displayName.substring(0, 1).toUpperCase());
+            for (int i = 0; i < displayName.length(); i++) {
+                if (displayName.charAt(i) == '_') {
+                    displayName.setCharAt(i, ' ');
+                }
+            }
+            return displayName.toString();
+        } else {
+            return "";
+        }
     }
 
     /**
      * @return String[] display names of enums
      */
+    @SuppressWarnings("unchecked")
     public static String[] getDisplayNames() {
-        PrimaryPurposeCode[] l = PrimaryPurposeCode.values();
+        List<PrimaryPurposeCode> list = PaHibernateUtil.getCurrentSession()
+                .createCriteria(PrimaryPurposeCode.class).list();
+        PrimaryPurposeCode[] l = list.toArray(new PrimaryPurposeCode[0]); //NOPMD
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
             a[i] = l[i].getCode();
@@ -165,4 +269,12 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
         return a;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {        
+        return getName();
+    }
+    
 }

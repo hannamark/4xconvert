@@ -84,6 +84,7 @@ package gov.nih.nci.pa.report.service;
 
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.service.PAException;
@@ -126,4 +127,9 @@ public interface Summary4ReportLocal extends ViewerReport<Summ4RepCriteriaDto, S
      * @throws TooManyResultsException if too many results 
      */
     Map<String, String> getOrganizations(String familyId, int maxLimit) throws TooManyResultsException;
+    
+    /**
+     * @return List<PrimaryPurposeCode>
+     */
+    List<PrimaryPurposeCode> getPrimaryPurposeCodes();
 }

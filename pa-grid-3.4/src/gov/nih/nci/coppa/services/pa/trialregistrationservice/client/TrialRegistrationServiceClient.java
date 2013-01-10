@@ -25,7 +25,7 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -393,7 +393,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setStatusDate(pastDate);
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
-        studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD(PrimaryPurposeCode.TREATMENT.getCode()));
+        studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD("Treatment"));
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setAmendmentDate(amendmentDate);
 

@@ -6,6 +6,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.Lov;
 
 /**
  * @author Hugh Reinhart
@@ -14,7 +15,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 public class TrialProcessingResultDto {
 
     private Int submissionNumber = IntConverter.convertToInt((Integer) null);
-    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private Cd milestoneCode = CdConverter.convertToCd((Lov) null);
     private St milestoneDays = StConverter.convertToSt(null);
     private St cumulativeDays = StConverter.convertToSt(null);
 

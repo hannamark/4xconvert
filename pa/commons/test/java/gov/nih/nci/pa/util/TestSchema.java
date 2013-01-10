@@ -165,7 +165,6 @@ import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -176,10 +175,10 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.math.BigDecimal;
-import java.security.spec.ECField;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -285,7 +284,7 @@ public class TestSchema {
         studyDiseaseIds = new ArrayList<Long>();
         studyOnholdIds = new ArrayList<Long>();
         assayTypeIds = new ArrayList<Long>();
-
+        
         User curator = getUser(true);
         addUpdObject(curator);
 
@@ -296,7 +295,7 @@ public class TestSchema {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setPhaseCode(PhaseCode.I);
@@ -753,7 +752,7 @@ public class TestSchema {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setPhaseCode(PhaseCode.I);
@@ -792,7 +791,7 @@ public class TestSchema {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.INACTIVE);
         sp.setPhaseCode(PhaseCode.I);
@@ -822,6 +821,34 @@ public class TestSchema {
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
+    }
+
+    public static void loadPrimaryPurposeCodes() {
+        Session session = PaHibernateUtil.getCurrentSession();
+        PrimaryPurposeCode code1 = new PrimaryPurposeCode("TREATMENT",
+                "Treatment");
+        PrimaryPurposeCode code2 = new PrimaryPurposeCode("PREVENTION",
+                "Prevention");
+        PrimaryPurposeCode code3 = new PrimaryPurposeCode("SUPPORTIVE_CARE",
+                "Supportive Care");
+        PrimaryPurposeCode code4 = new PrimaryPurposeCode("SCREENING",
+                "Screening");
+        PrimaryPurposeCode code5 = new PrimaryPurposeCode("DIAGNOSTIC",
+                "Diagnostic");
+        PrimaryPurposeCode code6 = new PrimaryPurposeCode(
+                "HEALTH_SERVICES_RESEARCH", "Health Services Research");
+        PrimaryPurposeCode code7 = new PrimaryPurposeCode("BASIC_SCIENCE",
+                "Basic Science");
+        PrimaryPurposeCode code8 = new PrimaryPurposeCode("OTHER", "Other");
+        session.saveOrUpdate(code1);
+        session.saveOrUpdate(code2);
+        session.saveOrUpdate(code3);
+        session.saveOrUpdate(code4);
+        session.saveOrUpdate(code5);
+        session.saveOrUpdate(code6);
+        session.saveOrUpdate(code7);
+        session.saveOrUpdate(code8);
+        session.flush();
     }
 
     public static void addAbstractedWorkflowStatus(Long spId) {
@@ -952,7 +979,7 @@ public class TestSchema {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
@@ -1336,7 +1363,7 @@ public class TestSchema {
         sp.setOfficialTitle("Cancer for kids");
         sp.setPhaseCode(PhaseCode.I);
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode("Prevention"));
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         sp.setPublicDescription("publicDescription");
@@ -1419,7 +1446,7 @@ public class TestSchema {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        isp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        isp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
         isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);

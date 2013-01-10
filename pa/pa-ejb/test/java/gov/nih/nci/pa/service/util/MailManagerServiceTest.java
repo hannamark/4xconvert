@@ -124,7 +124,6 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -132,6 +131,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceBean;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -798,7 +798,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setOfficialTitle("Cancer for kids");
         sp.setPhaseCode(PhaseCode.I);
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE);
 
         sp.setPublicDescription("publicDescription");

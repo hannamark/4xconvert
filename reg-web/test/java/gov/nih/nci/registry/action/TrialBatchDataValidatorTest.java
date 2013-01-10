@@ -13,9 +13,12 @@ import org.junit.Test;
  * @author Vrushali
  *
  */
-public class TrialBatchDataValidatorTest extends AbstractRegWebTest {
+public class TrialBatchDataValidatorTest extends AbstractHibernateTestCase {
     private final TrialBatchDataValidator validator = new TrialBatchDataValidator();
     private StudyProtocolBatchDTO  dto = new StudyProtocolBatchDTO ();
+    
+ 
+    
     @Test
     public void testValidateBatchForObservational() {
         dto = new StudyProtocolBatchDTO ();

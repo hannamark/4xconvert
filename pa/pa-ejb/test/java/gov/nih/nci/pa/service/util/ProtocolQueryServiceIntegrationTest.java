@@ -275,7 +275,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals(PhaseAdditionalQualifierCode.PILOT, results.get(0).getPhaseAdditionalQualifier());
         criteria.setPhaseAdditionalQualifierCode(null);
 
-        criteria.setPrimaryPurposeCode("Basic Science");
+        criteria.setPrimaryPurposeCode("Prevention");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         criteria.setPrimaryPurposeCode(null);

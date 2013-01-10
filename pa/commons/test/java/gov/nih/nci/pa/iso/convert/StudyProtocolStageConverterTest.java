@@ -85,7 +85,6 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
@@ -95,13 +94,13 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -136,7 +135,7 @@ public class StudyProtocolStageConverterTest extends
         bo.setOfficialTitle("Cancer for kids");
         bo.setPhaseCode(PhaseCode.I);
         bo.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        bo.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        //bo.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         bo.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         bo.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         bo.setSection801Indicator(Boolean.TRUE);
@@ -178,7 +177,7 @@ public class StudyProtocolStageConverterTest extends
         dto.setOfficialTitle(StConverter.convertToSt("Cancer for kids"));
         dto.setPhaseCode(CdConverter.convertToCd(PhaseCode.I));
         dto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.PILOT));
-        dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.BASIC_SCIENCE));
+        //dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
         dto.setPrimaryPurposeAdditionalQualifierCode(CdConverter
             .convertToCd(PrimaryPurposeAdditionalQualifierCode.ANCILLARY));
         dto.setPrimaryPurposeOtherText(StConverter.convertToSt("primaryPurposeOtherText"));
@@ -211,7 +210,7 @@ public class StudyProtocolStageConverterTest extends
         assertEquals("Cancer for kids", bo.getOfficialTitle());
         assertEquals(PhaseCode.I, bo.getPhaseCode());
         assertEquals(PhaseAdditionalQualifierCode.PILOT, bo.getPhaseAdditionalQualifierCode());
-        assertEquals(PrimaryPurposeCode.BASIC_SCIENCE, bo.getPrimaryPurposeCode());
+        //assertEquals(PrimaryPurposeCode.PREVENTION, bo.getPrimaryPurposeCode());
         assertEquals(PrimaryPurposeAdditionalQualifierCode.ANCILLARY, bo.getPrimaryPurposeAdditionalQualifierCode());
         assertEquals("primaryPurposeOtherText", bo.getPrimaryPurposeOtherText());
         assertTrue(bo.getSection801Indicator());
@@ -239,7 +238,7 @@ public class StudyProtocolStageConverterTest extends
         assertEquals("Cancer for kids", dto.getOfficialTitle().getValue());
         assertEquals(PhaseCode.I.getCode(), dto.getPhaseCode().getCode());
         assertEquals(PhaseAdditionalQualifierCode.PILOT.getCode(), dto.getPhaseAdditionalQualifierCode().getCode());
-        assertEquals(PrimaryPurposeCode.BASIC_SCIENCE.getCode(), dto.getPrimaryPurposeCode().getCode());
+        //assertEquals(PrimaryPurposeCode.PREVENTION.getCode(), dto.getPrimaryPurposeCode().getCode());
         assertEquals(PrimaryPurposeAdditionalQualifierCode.ANCILLARY.getCode(), dto
             .getPrimaryPurposeAdditionalQualifierCode().getCode());
         assertEquals("primaryPurposeOtherText", dto.getPrimaryPurposeOtherText().getValue());

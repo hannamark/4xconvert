@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -166,6 +167,7 @@ public abstract class AbstractTrialRegistrationBean {
      * @param studyProtocolDTO dto
      * @param returnStudyProtocolDTO  dto
      */
+    @SuppressWarnings("rawtypes")
     protected void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
             StudyProtocolDTO returnStudyProtocolDTO) {
         returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
@@ -175,7 +177,9 @@ public abstract class AbstractTrialRegistrationBean {
                     .getPrimaryPurposeAdditionalQualifierCode());
         } else {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
-            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
+            returnStudyProtocolDTO
+                    .setPrimaryPurposeAdditionalQualifierCode(CdConverter
+                            .convertToCd((CodedEnum) null));
         }
         returnStudyProtocolDTO.setSecondaryPurposes(studyProtocolDTO.getSecondaryPurposes());
     }

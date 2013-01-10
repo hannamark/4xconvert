@@ -5,13 +5,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.OutcomeMeasureWebDTO;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -21,7 +23,6 @@ import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Vrushali
@@ -252,7 +253,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
         webDTO.setOutcomeMeasure(omDto);
         webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
-        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
+        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");
         webDTO.setNumberOfInterventionGroups("1");
@@ -277,7 +278,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
         webDTO.setOutcomeMeasure(omDto);
         webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
-        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
+        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");
         webDTO.setNumberOfInterventionGroups("1");
@@ -319,7 +320,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
         webDTO.setOutcomeMeasure(omDto);
         webDTO.getOutcomeMeasure().setPrimaryIndicator(true);
-        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT.getDisplayName());
+        webDTO.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION.getDisplayName());
         webDTO.setPhaseCode(PhaseCode.I.getDisplayName());
         webDTO.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT.getDisplayName());
         webDTO.setDesignConfigurationCode("designConfigurationCode");

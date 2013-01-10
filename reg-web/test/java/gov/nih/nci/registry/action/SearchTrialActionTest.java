@@ -57,7 +57,7 @@ import com.opensymphony.xwork2.Action;
  * @author Vrushali
  *
  */
-public class SearchTrialActionTest extends AbstractRegWebTest {
+public class SearchTrialActionTest extends AbstractHibernateTestCase {
     private static final int MAX_CACHE_SIZE = 10;
     private SearchTrialAction action;
 

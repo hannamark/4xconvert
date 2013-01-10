@@ -85,7 +85,6 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
@@ -99,11 +98,11 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.AbstractStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -219,7 +218,7 @@ public class BaseStudyProtocolConverterTest {
         sp.setOfficialTitle("Cancer for kids");
         sp.setPhaseCode(PhaseCode.I);
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        //sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
         
@@ -272,7 +271,7 @@ public class BaseStudyProtocolConverterTest {
         assertEquals(sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
         assertEquals(sp.getPhaseAdditionalQualifierCode().getCode(), spDTO.getPhaseAdditionalQualifierCode().getCode());
 
-        assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
+        //assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
         assertEquals(sp.getPrimaryPurposeAdditionalQualifierCode().getCode(), spDTO
             .getPrimaryPurposeAdditionalQualifierCode().getCode());
         assertEquals(sp.getPrimaryPurposeOtherText(), spDTO.getPrimaryPurposeOtherText().getValue());

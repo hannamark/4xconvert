@@ -150,7 +150,7 @@
                         <td  scope="row" class="label">
                             <label for="trialType"> <fmt:message key="studyProtocol.trialType"/></label>
                         </td>
-                        <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+                        <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
                         <td>
                             <s:select headerKey="" id="primaryPurpose" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"
                                       value="criteria.primaryPurposeCode" cssStyle="width:206px" />

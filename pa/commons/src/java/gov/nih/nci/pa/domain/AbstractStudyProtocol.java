@@ -86,7 +86,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -95,6 +95,8 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -272,8 +274,8 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @return the primaryPurposeCode
      */
-    @Column(name = "PRIMARY_PURPOSE_CODE")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "primary_purpose_code") 
     @Searchable
     public PrimaryPurposeCode getPrimaryPurposeCode() {
         return primaryPurposeCode;

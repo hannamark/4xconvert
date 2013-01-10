@@ -5,10 +5,10 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -192,8 +192,9 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
                 return false;
             }
             StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(spIi);
-            if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spDto.getPrimaryPurposeCode()))
-                     .equals(PrimaryPurposeCode.PREVENTION)) {
+            if (PrimaryPurposeCode.PREVENTION.equals(PrimaryPurposeCode
+                    .getByCode(CdConverter.convertCdToString(spDto
+                            .getPrimaryPurposeCode())))) {
                 return false;
             }
         } catch (PAException e) {

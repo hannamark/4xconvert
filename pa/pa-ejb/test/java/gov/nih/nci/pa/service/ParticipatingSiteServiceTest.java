@@ -36,6 +36,7 @@ import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -88,7 +89,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         rBean.setOrganizationCorrelationService(ocsr);
         remoteBean = rBean;
         
-        studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
+        studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));        
     }
 
     private OrganizationDTO getOrg1() {

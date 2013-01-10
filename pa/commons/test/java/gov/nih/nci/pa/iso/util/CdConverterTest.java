@@ -81,10 +81,10 @@ package gov.nih.nci.pa.iso.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.lov.Lov;
 
 import org.junit.Test;
 /**
@@ -98,7 +98,7 @@ public class CdConverterTest {
      */
     @Test
     public void testConvertToCdNull() {
-        Cd result = CdConverter.convertToCd(null);
+        Cd result = CdConverter.convertToCd((Lov)null);
         checkNullCd(result);
     }
 

@@ -78,6 +78,7 @@ package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
@@ -87,7 +88,7 @@ import gov.nih.nci.pa.util.ISOUtil;
  */
 public class SubmissionTypeCriteriaDto extends AbstractStandardCriteriaDto {
 
-    private Cd submissionType = CdConverter.convertToCd(null);
+    private Cd submissionType = CdConverter.convertToCd((Lov) null);
 
     /**
      * Validate that the criteria is good.

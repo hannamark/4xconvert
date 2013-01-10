@@ -4,6 +4,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.Lov;
 
 /**
  * @author Hugh Reinhart
@@ -14,7 +15,7 @@ public class TrialProcessingHeaderResultDto {
     private St officialTitle = StConverter.convertToSt(null);
     private St assignedIdentifier = StConverter.convertToSt(null);
     private St leadOrganization = StConverter.convertToSt(null);
-    private Cd statusCode = CdConverter.convertToCd(null);
+    private Cd statusCode = CdConverter.convertToCd((Lov) null);
     private St userLastCreated  = StConverter.convertToSt(null);
 
     /**

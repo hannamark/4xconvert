@@ -82,7 +82,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.OSDesignDetailsWebDTO;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
@@ -92,6 +91,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.Lov;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
@@ -163,7 +164,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             } else {
                 ospFromDatabaseDTO
                         .setPrimaryPurposeAdditionalQualifierCode(CdConverter
-                                .convertToCd(null));
+                                .convertToCd((Lov) null));
             }
             if (PAUtil
                     .isPrimaryPurposeCodeOther(webDTO.getPrimaryPurposeCode())) {

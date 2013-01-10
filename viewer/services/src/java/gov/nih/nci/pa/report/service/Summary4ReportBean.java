@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
@@ -457,6 +458,13 @@ public class Summary4ReportBean extends AbstractStandardReportBean<Summ4RepCrite
             returnMap.put(orgName, functionalRelationship);
         }
         return returnMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PrimaryPurposeCode> getPrimaryPurposeCodes() {
+        return PaHibernateUtil.getCurrentSession()
+                .createCriteria(PrimaryPurposeCode.class).list();
     }
 
 }

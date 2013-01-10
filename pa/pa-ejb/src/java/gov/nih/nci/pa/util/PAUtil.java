@@ -99,7 +99,6 @@ import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -155,7 +154,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
-
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 import de.jollyday.Holiday;
@@ -175,6 +173,7 @@ import de.jollyday.HolidayManager;
  */
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class PAUtil {
+    private static final String OTHER = "Other";
     /**
      * Date format.
      */
@@ -1204,7 +1203,7 @@ public class PAUtil {
      * @return boolean
      */
     public static boolean isPrimaryPurposeCodeOther(String primaryPurposeCode) {
-        return StringUtils.equalsIgnoreCase(primaryPurposeCode, PrimaryPurposeCode.OTHER.getCode());
+        return StringUtils.equalsIgnoreCase(primaryPurposeCode, OTHER);
     }
     /**
      * phaseOtherCode is req or not.

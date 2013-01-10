@@ -15,10 +15,10 @@ import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -144,7 +144,7 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         assertFalse(bean.diseaseCodeMandatory(1L));
 
         // Disease mandatory
-        sp.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.TREATMENT));
+        sp.setPrimaryPurposeCode(CdConverter.convertStringToCd("TREATMENT"));
         assertTrue(bean.diseaseCodeMandatory(1L));
 
         // Exception

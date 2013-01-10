@@ -21,6 +21,7 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.PAExceptionAssertHelper;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
     @Before
     public void init() throws Exception {
         CSMUserService.setInstance(new MockCSMUserService());
-        bean.setStudyProtocolService(studyProtocolService);
+        bean.setStudyProtocolService(studyProtocolService);        
     }
 
     @Test

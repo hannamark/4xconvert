@@ -241,6 +241,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         create.setAffiliatedOrganizationId(501L);
         create.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         TestSchema.addUpdObject(create);
+        
     }
 
     /**

@@ -76,14 +76,15 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
-import java.util.Arrays;
-
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.Lov;
+
+import java.util.Arrays;
 
 /**
  * @author Hugh Reinhart
@@ -106,7 +107,7 @@ public class AverageMilestoneResultDto {
     private static final int DAY9_INDEX = 8;
     private static final int DAY10_INDEX = 9;
     private static final int NUM_OF_DAYS = 10;
-    private Cd milestoneCode = CdConverter.convertToCd(null);
+    private Cd milestoneCode = CdConverter.convertToCd((Lov) null);
     private Int order = IntConverter.convertToInt((Integer) null);
     private Int[] days = new Int[NUM_OF_DAYS]; 
     private Int gtTenDays = IntConverter.convertToInt((Integer) null);

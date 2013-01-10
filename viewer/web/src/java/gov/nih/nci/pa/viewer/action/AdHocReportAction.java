@@ -90,6 +90,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
@@ -153,6 +154,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private List<KeyValueDTO> families;
     private List<KeyValueDTO> organizations;
     private List<KeyValueDTO> participatingSites;
+    private List<PrimaryPurposeCode> primaryPurposeCodes = new ArrayList<PrimaryPurposeCode>();
 
     /**
      * {@inheritDoc}
@@ -180,7 +182,12 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         loadFamilies();
         loadLeadOrganizations();
         loadParticipatingSites();
+        loadPrimaryPurposeCodes();
         return super.execute();
+    }
+
+    void loadPrimaryPurposeCodes() {
+        primaryPurposeCodes = summary4ReportService.getPrimaryPurposeCodes();        
     }
 
     /**
@@ -504,6 +511,13 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+
+    /**
+     * @return the primaryPurposeCodes
+     */
+    public List<PrimaryPurposeCode> getPrimaryPurposeCodes() {
+        return primaryPurposeCodes;
     }
 
 }

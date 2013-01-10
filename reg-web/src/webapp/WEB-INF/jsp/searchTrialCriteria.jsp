@@ -133,7 +133,7 @@
                 <td scope="row" class="label">
                     <label for="typeCodeValues"> <fmt:message key="search.trial.purpose"/></label>
                 </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
                 <td>
                     <s:select id="typeCodeValues" headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
                 </td>

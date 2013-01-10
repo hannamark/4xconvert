@@ -23,7 +23,7 @@ import org.junit.Test;
  * @author Vrushali
  *
  */
-public class BatchCreateProtocolsTest extends AbstractRegWebTest {
+public class BatchCreateProtocolsTest extends AbstractHibernateTestCase {
       private final BatchCreateProtocols trial = new BatchCreateProtocols();
       @Test
       public void testCreateProtocolsForOriginal() throws URISyntaxException {

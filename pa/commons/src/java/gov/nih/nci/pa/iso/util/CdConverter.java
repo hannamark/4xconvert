@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.CodedEnumHelper;
+import gov.nih.nci.pa.lov.Lov;
 
 
 /**
@@ -102,6 +103,21 @@ public class CdConverter {
      * @return Cd
      */
     public static Cd convertToCd(CodedEnum<?> ce) {
+        Cd cd = new Cd();
+        if (ce == null) {
+            cd.setNullFlavor(NullFlavor.NI);
+        } else {
+            fillCd(cd, ce.getDisplayName().toString(), ce.getCode().toString());
+        }
+        return cd;
+    }
+    
+    /**
+     * Converts a LoV value into a Cd.
+     * @param ce Lov
+     * @return Cd
+     */
+    public static Cd convertToCd(Lov ce) {
         Cd cd = new Cd();
         if (ce == null) {
             cd.setNullFlavor(NullFlavor.NI);

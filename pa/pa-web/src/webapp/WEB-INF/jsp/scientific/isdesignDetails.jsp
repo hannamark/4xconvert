@@ -170,7 +170,7 @@ function initialize() {
 	<tr>
 	 	<td  scope="row" class="label"><label>
 	 		<fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
-     	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+     	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" id="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
                    value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate();displayPrimaryPurposeOtherText()"/>

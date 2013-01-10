@@ -127,6 +127,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <!-- mapping classes for auditing -->
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
+        
+        <!-- mapping classes for database-driven lists of values (LOVs) -->
+        <mapping class="gov.nih.nci.pa.lov.PrimaryPurposeCode" />
+        
         <mapping resource="queries.xml" />
 
     </session-factory>

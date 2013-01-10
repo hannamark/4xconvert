@@ -30,7 +30,7 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
  * @author Vrushali
  *
  */
-public class SubmitTrialActionTest extends AbstractRegWebTest{
+public class SubmitTrialActionTest extends AbstractHibernateTestCase{
     private static final String FILE_NAME = "ProtocolDoc.doc";
     private SubmitTrialAction action = new SubmitTrialAction();
     /**

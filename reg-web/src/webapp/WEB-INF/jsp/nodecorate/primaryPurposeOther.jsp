@@ -6,7 +6,7 @@
                         <label for="trialDTO.primaryPurposeCode"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
                 <td>
                     <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" 
                     value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode();"/>

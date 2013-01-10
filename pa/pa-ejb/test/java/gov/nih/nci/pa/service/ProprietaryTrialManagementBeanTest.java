@@ -96,7 +96,6 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -113,6 +112,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.Lov;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -442,7 +443,7 @@ public class ProprietaryTrialManagementBeanTest extends
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt("NEW TITLE"));
         studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.IV));
         studyProtocolDTO.setPrimaryPurposeCode(CdConverter
-                .convertToCd(PrimaryPurposeCode.HEALTH_SERVICES_RESEARCH));
+                .convertToCd(PrimaryPurposeCode.PREVENTION));
 
         // Alter participating site and its accrual status
         studySiteDTOs.get(0).setProgramCodeText(
@@ -473,7 +474,7 @@ public class ProprietaryTrialManagementBeanTest extends
                 StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
         assertEquals("NEW TITLE", protocol.getOfficialTitle());
         assertEquals(PhaseCode.IV, protocol.getPhaseCode());
-        assertEquals(PrimaryPurposeCode.HEALTH_SERVICES_RESEARCH,
+        assertEquals(PrimaryPurposeCode.PREVENTION,
                 protocol.getPrimaryPurposeCode());
         assertEquals(
                 "NEW_NCT_ID",
@@ -530,8 +531,8 @@ public class ProprietaryTrialManagementBeanTest extends
 
         // Only very limited set of fields can be changed by update.
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(""));
-        studyProtocolDTO.setPhaseCode(CdConverter.convertToCd(null));
-        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(null));
+        studyProtocolDTO.setPhaseCode(CdConverter.convertToCd((Lov) null));
+        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd((Lov) null));
         try {
             bean.update(studyProtocolDTO, leadOrganizationDTO, summary4Org,
                     leadOrganizationIdentifier, nctIdentifier,

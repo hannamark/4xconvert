@@ -95,10 +95,10 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -135,7 +135,7 @@ public class StudyProtocolTestHelper {
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
 

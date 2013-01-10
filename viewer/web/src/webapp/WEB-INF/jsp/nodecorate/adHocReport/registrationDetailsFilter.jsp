@@ -20,9 +20,10 @@ jQuery(function() {
                 <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="600" size="600" cssStyle="width:600px"/>
             </viewer:valueRow>
             <viewer:valueRow labelFor="primaryPurpose" labelKey="studyProtocol.primaryPurpose">
-                <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
+                <s:set name="primaryPurposeCodeValues" value="primaryPurposeCodes" />
                 <s:select headerKey="" id="primaryPurpose" headerValue="All" name="criteria.primaryPurposeCode" 
-                          list="#primaryPurposeCodeValues" value="criteria.primaryPurposeCode" cssStyle="width:206px" />
+                          list="#primaryPurposeCodeValues" listKey="code" listValue="code" 
+                          value="criteria.primaryPurposeCode" cssStyle="width:206px" />
             </viewer:valueRow>
             <viewer:valueRow labelFor="phaseCodes" labelKey="studyProtocol.studyPhase">
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />

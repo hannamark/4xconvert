@@ -91,13 +91,13 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -125,6 +125,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
@@ -352,9 +353,9 @@ public class TrialRegistrationValidatorTest {
     @Test
     public void testValidateStudyProtocolDatesNulldata() {
         studyProtocolDTO.setStartDate(TsConverter.convertToTs(null));
-        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(null));
+        studyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd((Lov) null));
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(null));
-        studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(null));
+        studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd((Lov) null));
         boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
         assertFalse("Validation should have failed", result);
         checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Trial"
