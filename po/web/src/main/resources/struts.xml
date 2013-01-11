@@ -27,7 +27,11 @@
             <interceptor-stack name="poDefaultStack">
                 <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.po</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
@@ -35,7 +39,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -49,7 +53,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />
@@ -72,7 +76,11 @@
 
             <interceptor-stack name="poNoDisclaimerStack">
                 <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.po</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
@@ -80,7 +88,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -94,7 +102,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />
@@ -118,7 +126,11 @@
            <interceptor-stack name="poPerMethodValidationStack">
                 <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.po</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
@@ -126,7 +138,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -140,7 +152,7 @@
                         Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                     -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />
@@ -163,7 +175,11 @@
            <interceptor-stack name="poSearchPerMethodValidationStack">
                 <interceptor-ref name="showDisclaimer"/>
                 <interceptor-ref name="logger"/>
-                <interceptor-ref name="exception" />
+                <interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logCategory">gov.nih.nci.po</param>
+                  <param name="logLevel">ERROR</param>                               
+                </interceptor-ref>
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="checkbox" />
                 <interceptor-ref name="params">
@@ -171,7 +187,7 @@
                 Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                 -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -185,7 +201,7 @@
                 Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
                 -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop],^struts\..*,^\d\d.*
+                        _,d-\d+?-[sop],^struts\..*,^\d\d.*,^role.fundingMechanismSelect
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="conversionError" />
