@@ -103,6 +103,10 @@ import gov.nih.nci.po.service.PersonSearchDTO.Affiliation.RoleGroup;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -119,7 +123,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -131,7 +134,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PersonServiceBean extends
         AbstractCuratableEntityServiceBean<Person> implements
         PersonServiceLocal {
@@ -198,16 +201,38 @@ public class PersonServiceBean extends
     @SuppressWarnings("unchecked")
     private void loadAffiliationInfo(List<PersonSearchDTO> results) {
         if (CollectionUtils.isNotEmpty(results)) {
-            Session s = PoHibernateUtil.getCurrentSession();
-            Query query = s
-                    .getNamedQuery("gov.nih.nci.po.service.PersonServiceBean.search.affiliation");
             List<Long> ids = new ArrayList<Long>();
             for (PersonSearchDTO dto : results) {
                 ids.add(Long.valueOf(dto.getId()));
             }
-            query.setParameterList("ids", ids);
-            for (Object[] row : (List<Object[]>) query.list()) {
-                processPersonAffiliationEntry(row, results);
+
+            Session s = PoHibernateUtil.getCurrentSession();
+            String sql = s
+                    .getNamedQuery(
+                            "gov.nih.nci.po.service.PersonServiceBean.search.affiliation")
+                    .getQueryString();
+
+            Connection c = s.connection();
+            PreparedStatement st = null;
+            ResultSet rs = null;
+            try {
+                st = c.prepareStatement(sql.replace(":ids", StringUtils.join(ids, ',')));                
+                rs = st.executeQuery();
+                while (rs.next()) {
+                    // CHECKSTYLE:OFF
+                    Object[] row = new Object[9];
+                    for (int i = 0; i < row.length; i++) {
+                        row[i] = rs.getObject(i + 1);
+                    }
+                    processPersonAffiliationEntry(row, results);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e); // NOPMD
+            } finally {
+                try {
+                    st.close();
+                } catch (Exception e) { // NOPMD
+                }
             }
         }
     }
@@ -226,7 +251,7 @@ public class PersonServiceBean extends
             dto.setAffiliation(new TreeSet<Affiliation>());
         }
         Collection<Affiliation> affiliation = dto.getAffiliation();
-        // CHECKSTYLE:OFF
+       
         if (row[2] != null) {
             affiliation.add(new Affiliation(row[2].toString(),
                     EntityStatus.PENDING.name().equals(row[1]), RoleGroup.CRS));
