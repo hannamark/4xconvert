@@ -99,8 +99,12 @@
                     </script>
                     <script type="text/javascript">
                         function showPopWinCallback(returnVal) {
-                            $('curateEntityForm.duplicateOf.id').value = returnVal.id;
-                            $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
+                            if(returnVal.id == ${organization.id}) {
+                                alert("Please select a different organization instead of selecting the same organization as duplicate.");
+                            } else {
+                                $('curateEntityForm.duplicateOf.id').value = returnVal.id;
+                                $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
+                            }
                         }
                     </script>
                     <po:inputRow>
