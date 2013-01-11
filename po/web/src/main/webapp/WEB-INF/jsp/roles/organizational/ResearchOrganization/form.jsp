@@ -79,6 +79,7 @@
                             var opts = fundingSel.options;
                             if (opts.length == 2) {
                                fundingSel.selectedIndex = 1;
+                               fundingSel.onchange();
                             }
                         }
                       }
