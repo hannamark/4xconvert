@@ -123,6 +123,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -140,6 +141,7 @@ public class PersonServiceBean extends
         PersonServiceLocal {
 
     private static final String ORDER_BY = " ORDER BY ";
+    private static final Logger LOG = Logger.getLogger(PersonServiceBean.class);
 
     /**
      * {@inheritDoc}
@@ -216,7 +218,8 @@ public class PersonServiceBean extends
             PreparedStatement st = null;
             ResultSet rs = null;
             try {
-                st = c.prepareStatement(sql.replace(":ids", StringUtils.join(ids, ',')));                
+                st = c.prepareStatement(sql.replace(":ids",
+                        StringUtils.join(ids, ',')));
                 rs = st.executeQuery();
                 while (rs.next()) {
                     // CHECKSTYLE:OFF
@@ -227,11 +230,13 @@ public class PersonServiceBean extends
                     processPersonAffiliationEntry(row, results);
                 }
             } catch (SQLException e) {
+                LOG.error(e, e);
                 throw new RuntimeException(e); // NOPMD
             } finally {
                 try {
                     st.close();
                 } catch (Exception e) { // NOPMD
+                    LOG.error(e, e);
                 }
             }
         }
