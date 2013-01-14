@@ -28,13 +28,20 @@
             }
 
             jQuery(bindListeners);
-            
+            function setFocusToFirstControl() {
+               // Left blank in order to remove the focus from the first field on page load. 
+               // It will override the setFocusToFirstControl function which is called from popup.jsp                
+            }
+          
             Event.observe(window, "load", function () {
                 if ($('passedValidation').value != 'false') {
                     window.top.reloadFamilyOrgRelationship();
-                }                  
+                }
            });
+           
+          
         </script>
+        
     </head>
     <body> 
         <div class="po_wrapper" id="loadingDiv">
@@ -64,15 +71,15 @@
                                         </po:field>
                                     </po:inputRowElement>
                                     <po:inputRowElement>&nbsp;&nbsp;&nbsp;</po:inputRowElement>
+                                             
                                     <po:inputRowElement>
                                         <po:field labelKey="organizationRelationship.popup.endDate" fieldRequired="true">
-                                            <sj:datepicker readonly="true" required="true" name="orgRelationship.endDate" id="orgRelationship.endDate" 
-                                                displayFormat="mm/dd/yy" labelposition="left" minDate="orgRelationship.startDate" maxDate="new Date()"
-                                                value="today"/>
+                                            <sj:datepicker value="today" readonly="true" required="true" name="orgRelationship.endDate" id="orgRelationship.endDate" 
+                                                displayFormat="mm/dd/yy" labelposition="left" minDate="orgRelationship.startDate" maxDate="new Date()"/>
+                                            <s:fielderror>
+                                                <s:param>orgRelationship.endDate</s:param>
+                                            </s:fielderror>
                                         </po:field>
-                                        <s:fielderror>
-                                            <s:param>orgRelationship.endDate</s:param>
-                                        </s:fielderror>
                                     </po:inputRowElement>
                                 </po:inputRow>
                                 <div class="clear"></div>
