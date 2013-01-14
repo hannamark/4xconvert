@@ -173,7 +173,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         ctepPersonId.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
         try {
             // get org from ctep and convert to local data model
-            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
+            PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);      
+            CtepUtils.converPhoneNumberFormats(ctepPersonDto.getTelecomAddress());
             comparePersonIi(ctepPersonId, ctepPersonDto.getIdentifier());
             printPersonDataToLog(ctepPersonDto);
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
@@ -440,7 +441,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private HealthCareProviderDTO getHcpFromCtep(Ii personIi) {
         try {
-            return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
+            final HealthCareProviderDTO hcp = getCtepPersonService()
+                    .getHealthCareProviderByPlayerId(personIi);
+            if (hcp != null) {
+                CtepUtils.converPhoneNumberFormats(hcp.getTelecomAddress());
+            }
+            return hcp;
         } catch (CTEPEntException e) {
             return null;
         }
@@ -470,7 +476,12 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private ClinicalResearchStaffDTO getCrsFromCtep(Ii personIi) {
         try {
-            return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
+            final ClinicalResearchStaffDTO crs = getCtepPersonService()
+                    .getClinicalResearchStaffByPlayerId(personIi);
+            if (crs != null) {
+                CtepUtils.converPhoneNumberFormats(crs.getTelecomAddress());
+            }
+            return crs;
         } catch (CTEPEntException e) {
             return null;
         }

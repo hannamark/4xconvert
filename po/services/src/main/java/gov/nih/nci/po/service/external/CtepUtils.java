@@ -1,17 +1,22 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.services.CorrelationDto;
+import gov.nih.nci.services.correlation.AbstractBaseEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -196,5 +201,61 @@ public final class CtepUtils {
         CollectionUtils.transform(transformedList1, valueTransformer);
         CollectionUtils.transform(transformedList2, valueTransformer);
         return CollectionUtils.isEqualCollection(transformedList1, transformedList2);
+    }
+
+    /**
+     * CTEP sends phone number in format that causes Curation exception in PO. See 
+     * https://tracker.nci.nih.gov/browse/PO-2392. This method will attempt to change the format
+     * to the one supported by PO.
+     * @see https://tracker.nci.nih.gov/browse/PO-2392
+     * @param dto AbstractBaseEnhancedOrganizationRoleDTO
+     * 
+     */
+    public static void converPhoneNumberFormats(
+            AbstractBaseEnhancedOrganizationRoleDTO dto) {
+        if (dto != null) {
+            converPhoneNumberFormats(dto.getTelecomAddress());
+        }
+    }
+    
+    /**
+     * CTEP sends phone number in format that causes Curation exception in PO.
+     * See https://tracker.nci.nih.gov/browse/PO-2392. This method will attempt
+     * to change the format to the one supported by PO.
+     * 
+     * @see https://tracker.nci.nih.gov/browse/PO-2392
+     * @param telecomAddress
+     *            DSet<Tel>
+     * 
+     */
+    public static void converPhoneNumberFormats(DSet<Tel> telecomAddress) {
+        if (telecomAddress != null && telecomAddress.getItem() != null) {
+            for (Tel tel : telecomAddress.getItem()) {
+                if (tel.getValue() != null) {
+                    reformatPhoneNumber(tel);
+                }
+            }
+        }
+    }
+
+    private static void reformatPhoneNumber(Tel tel) {
+        URI ctepPhone = tel.getValue();        
+        try {
+            URI poPhone = new URI(reformatPhoneNumber(ctepPhone.toString()));
+            tel.setValue(poPhone);
+        } catch (URISyntaxException e) { // NOPMD
+        }
+    }
+
+    private static String reformatPhoneNumber(String phone) {
+        return phone
+                .replaceFirst("^tel:\\((\\d+)\\)-", "tel:$1-")
+                .replaceFirst("^x-text-fax:\\((\\d+)\\)-", "x-text-fax:$1-")
+                .replaceFirst("^x-text-tel:\\((\\d+)\\)-", "x-text-tel:$1-")
+                .replaceFirst("^tel:\\((\\d+)\\)\\s*?(\\d)", "tel:$1-$2")
+                .replaceFirst("^x-text-fax:\\((\\d+)\\)\\s*?(\\d)",
+                        "x-text-fax:$1-$2")
+                .replaceFirst("^x-text-tel:\\((\\d+)\\)\\s*?(\\d)",
+                        "x-text-tel:$1-$2");
     }
 }

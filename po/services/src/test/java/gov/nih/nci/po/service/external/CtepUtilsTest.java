@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -16,10 +19,16 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.services.correlation.AbstractBaseEnhancedOrganizationRoleDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -285,6 +294,56 @@ public class CtepUtilsTest {
         list1.add(phone2copy);
         list2.add(phone1copy);
         assertTrue(CtepUtils.arePhoneNumberListsEqual(list1, list2));
+    }
+    
+    @Test
+    public void converPhoneNumberFormats() throws URISyntaxException {
+        AbstractBaseEnhancedOrganizationRoleDTO dto = new ResearchOrganizationDTO();
+        dto.setTelecomAddress(new DSet<Tel>());
+        dto.getTelecomAddress().setItem(new HashSet<Tel>());
+        final Set<Tel> phones = dto.getTelecomAddress().getItem();
+        
+        TelPhone phone =  new TelPhone();
+        phone.setValue(new URI("tel:(703)-555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("tel:703-555-5555ext123", phones.iterator().next().getValue().toString());
+        
+        phone =  new TelPhone();
+        phone.setValue(new URI("x-text-fax:(703)-555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("x-text-fax:703-555-5555ext123", phones.iterator().next().getValue().toString());
+        
+        phone =  new TelPhone();
+        phone.setValue(new URI("x-text-tel:(703)-555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("x-text-tel:703-555-5555ext123", phones.iterator().next().getValue().toString());   
+        
+        phone =  new TelPhone();
+        phone.setValue(new URI("tel:(703)555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("tel:703-555-5555ext123", phones.iterator().next().getValue().toString());     
+        
+        phone =  new TelPhone();
+        phone.setValue(new URI("x-text-fax:(703)555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("x-text-fax:703-555-5555ext123", phones.iterator().next().getValue().toString());     
+        
+        phone =  new TelPhone();
+        phone.setValue(new URI("x-text-tel:(703)555-5555ext123"));        
+        phones.clear();
+        phones.add(phone);
+        CtepUtils.converPhoneNumberFormats(dto);
+        assertEquals("x-text-tel:703-555-5555ext123", phones.iterator().next().getValue().toString());           
     }
 
 

@@ -509,7 +509,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return scoper;
     }
 
-    @SuppressWarnings("PMD.CyclomaticComplexity")
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
     private boolean copyCtepRoleToExistingRole(AbstractEnhancedOrganizationRole ctepRole,
             AbstractEnhancedOrganizationRole role, Ii assignedId) {
         boolean changed = false;
@@ -520,13 +520,17 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         if (!checkAddressSetsEqual(role.getPostalAddresses(), ctepRole.getPostalAddresses())) {
             role.getPostalAddresses().clear();
-            role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
+            if (ctepRole.getPostalAddresses() != null) {
+                role.getPostalAddresses().addAll(ctepRole.getPostalAddresses());
+            }
             changed = true;
         }
 
         if (!CtepUtils.areEmailListsEqual(role.getEmail(), ctepRole.getEmail())) {
             role.getEmail().clear();
-            role.getEmail().addAll(ctepRole.getEmail());
+            if (ctepRole.getEmail() != null) {
+                role.getEmail().addAll(ctepRole.getEmail());
+            }
             changed = true;
         }
 
@@ -542,7 +546,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         if (!CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())) {
             role.getPhone().clear();
-            role.getPhone().addAll(ctepRole.getPhone());
+            if (ctepRole.getPhone() != null) {
+                role.getPhone().addAll(ctepRole.getPhone());
+            }
             changed = true;
         }
 
@@ -600,6 +606,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
             HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
+            CtepUtils.converPhoneNumberFormats(hcfDto);
             printHcf(hcfDto);
 
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
@@ -621,6 +628,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         try {
             ctepOrgId.setReliability(IdentifierReliability.ISS);
             ResearchOrganizationDTO roDto = getCtepOrgService().getResearchOrganization(ctepOrgId);
+            CtepUtils.converPhoneNumberFormats(roDto);
             print(roDto);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
