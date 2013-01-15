@@ -109,8 +109,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -120,7 +122,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -204,8 +205,11 @@ public class PersonServiceBean extends
     private void loadAffiliationInfo(List<PersonSearchDTO> results) {
         if (CollectionUtils.isNotEmpty(results)) {
             List<Long> ids = new ArrayList<Long>();
+            Map<Long, PersonSearchDTO> resultsMap = new HashMap<Long, PersonSearchDTO>();
             for (PersonSearchDTO dto : results) {
-                ids.add(Long.valueOf(dto.getId()));
+                final Long id = Long.valueOf(dto.getId());
+                ids.add(id);
+                resultsMap.put(id, dto);
             }
 
             Session s = PoHibernateUtil.getCurrentSession();
@@ -227,7 +231,7 @@ public class PersonServiceBean extends
                     for (int i = 0; i < row.length; i++) {
                         row[i] = rs.getObject(i + 1);
                     }
-                    processPersonAffiliationEntry(row, results);
+                    processPersonAffiliationEntry(row, resultsMap);
                 }
             } catch (SQLException e) {
                 LOG.error(e, e);
@@ -244,14 +248,9 @@ public class PersonServiceBean extends
 
     @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     private void processPersonAffiliationEntry(Object[] row,
-            List<PersonSearchDTO> results) {
+            Map<Long, PersonSearchDTO> resultsMap) {
         final long pid = ((Number) row[0]).longValue();
-        PersonSearchDTO dto = (PersonSearchDTO) CollectionUtils.find(results,
-                new Predicate() {
-                    public boolean evaluate(Object arg0) {
-                        return pid == ((PersonSearchDTO) arg0).getId();
-                    }
-                });
+        PersonSearchDTO dto = resultsMap.get(pid);
         if (dto.getAffiliation() == null) {
             dto.setAffiliation(new TreeSet<Affiliation>());
         }
