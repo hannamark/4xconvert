@@ -1,5 +1,7 @@
 package gov.nih.nci.po.web.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
@@ -54,7 +56,16 @@ public class CsmHelper {
             init();
         }
         return lastName;
-    }    
+    }   
+    
+    /**
+     * Whether user has no first/last name specified.
+     * @return true or false
+     */
+    public boolean isEmptyName() {
+        return StringUtils.isBlank(getFirstName())
+                && StringUtils.isBlank(getLastName());
+    }
     
     private void init() {
         try {
