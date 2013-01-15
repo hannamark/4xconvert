@@ -442,16 +442,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             result = ids[1];
             sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code, "
                     + "birth_date=:birth_date, status_code='ACTIVE', date_last_updated=now(), "
-                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id, "
-                    + "birth_month_excluded = :birth_month_excluded "
+                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id "
                     + "WHERE identifier= :identifier";
         } else {
             result = getNextId(session);
             sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code, " 
-                    + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id, " 
-                    + "birth_month_excluded) " 
+                    + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id) " 
                     + "VALUES (:identifier, :race_code, :sex_code, :ethnic_code, :birth_date,'ACTIVE', "
-                    + "now(), now(), :country_identifier, :zip, :user_id, :birth_month_excluded)";
+                    + "now(), now(), :country_identifier, :zip, :user_id)";
         }
         queryObject = session.createSQLQuery(sql);
         queryObject.setParameter(IDENTIFIER, result);
@@ -459,7 +457,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         queryObject.setParameter("sex_code", p.getSexCode().getName());
         queryObject.setParameter("ethnic_code", p.getEthnicCode().getName());
         queryObject.setParameter("birth_date", p.getBirthDate(), Hibernate.TIMESTAMP);
-        queryObject.setParameter("birth_month_excluded", p.getBirthMonthExcluded());
         queryObject.setParameter("country_identifier", p.getCountry().getId());
         queryObject.setParameter("zip", p.getZip());
         queryObject.setParameter("user_id", userId);

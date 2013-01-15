@@ -768,7 +768,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     public void birthDateYearOnlyOr000000() throws Exception {
         File file = new File(this.getClass().getResource("/CDUS_Complete-BirthDates.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
-        assertTrue(results.get(0).isPassedValidation());
+        assertFalse(results.get(0).isPassedValidation());
+        assertEquals(16, StringUtils.countMatches(results.get(0).getErrors().toString(), "Patient birth date must be in YYYYMM format"));
     }
 
     @Test

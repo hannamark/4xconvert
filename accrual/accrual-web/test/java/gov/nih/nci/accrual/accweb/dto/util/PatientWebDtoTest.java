@@ -118,7 +118,7 @@ public class PatientWebDtoTest {
     public void initDto() {
         patientWebDto = new PatientWebDto();
         patientWebDto.setAssignedIdentifier("assignedIdentifier");
-        patientWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1977"));
+        patientWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("197711"));
         patientWebDto.setCountryIdentifier(Long.valueOf(1));
         patientWebDto.setEthnicCode("ethnicCode");
         patientWebDto.setGenderCode("genderCode");
@@ -156,11 +156,10 @@ public class PatientWebDtoTest {
         country.setId(1423L);
         country.setName("fdsjklfsdjkljk");
         p.setCountry(country);
-        p.setBirthMonthExcluded(false);
         ss.setPatient(p);
         PatientWebDto r = new PatientWebDto(ss);
         assertEquals(r.getAssignedIdentifier(), ss.getAssignedIdentifier());
-        assertEquals("000000", r.getBirthDate());
+        assertNull(r.getBirthDate());
         assertEquals(r.getCountryIdentifier(), country.getId());
         assertEquals(r.getCountryName(), country.getName());
         assertEquals(r.getDiseaseIdentifier(), null);
@@ -229,7 +228,7 @@ public class PatientWebDtoTest {
 
     @Test
     public void birthDatePropertyTest() {
-        assertEquals("1977", patientWebDto.getBirthDate());
+        assertEquals("11/1977", patientWebDto.getBirthDate());
     }
 
     @Test

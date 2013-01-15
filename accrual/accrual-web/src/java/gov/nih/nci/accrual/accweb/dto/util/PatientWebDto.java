@@ -235,7 +235,7 @@ public class PatientWebDto {
         loadRaces(p.getRaceCode());
         genderCode = AccrualUtil.getCode(p.getSexCode());
         ethnicCode = AccrualUtil.getCode(p.getEthnicCode());
-        birthDate = AccrualUtil.timestampToYearMonthString(p.getBirthDate(), p.getBirthMonthExcluded());
+        birthDate = AccrualUtil.timestampToYearMonthString(p.getBirthDate());
         countryIdentifier = p.getCountry().getId();
         countryName = p.getCountry().getName();
         zip = p.getZip();

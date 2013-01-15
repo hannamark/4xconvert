@@ -563,7 +563,6 @@ public class TestSchema {
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
-        p.setBirthMonthExcluded(false);
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
@@ -575,7 +574,6 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/1/1963"));
-        p.setBirthMonthExcluded(false);
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setRaceCode(PatientRaceCode.WHITE.getName());
@@ -587,7 +585,6 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/1/1963"));
-        p.setBirthMonthExcluded(false);
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setRaceCode(PatientRaceCode.WHITE.getName());
@@ -599,7 +596,6 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/1/1960"));
-        p.setBirthMonthExcluded(false);
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
@@ -611,7 +607,6 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/1/1968"));
-        p.setBirthMonthExcluded(false);
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setRaceCode(PatientRaceCode.UNKNOWN.getName());

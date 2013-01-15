@@ -426,9 +426,9 @@ public class StudySubjectBeanLocal extends
     }
 
     private static final String[] HQL_COLS = {"ssite.id", "assignedIdentifier", "statusCode", 
-        "birthDate", "birthMonthExcluded"};
+        "birthDate"};
     private static final String[] SQL_COLS = {"ssub.study_site_identifier", "assigned_identifier", "status_code",
-        "birth_date", "birth_month_excluded"};
+        "birth_date"};
     private String getSearchWhereClause(SearchSSPCriteriaDto criteria, boolean hql) {
         String[] cols = hql ? HQL_COLS : SQL_COLS;
         StringBuffer result = new StringBuffer("where " + cols[0] + " in (:studySiteIds) ");
@@ -439,12 +439,7 @@ public class StudySubjectBeanLocal extends
             result.append("and ssub." + cols[2] + " = :statusCode ");
         }
         if (StringUtils.isNotEmpty(criteria.getPatientBirthDate())) {
-            if (AccrualUtil.YR_MO_NULL.equals(criteria.getPatientBirthDate())) {
-                result.append("and pat." + cols[THREE] + " is null ");
-            } else {
-                result.append("and pat." + cols[THREE] + " = :birthDate "
-                            + "and pat." + cols[FOUR] + " = :birthMonthExcluded ");
-            }
+            result.append("and pat." + cols[THREE] + " = :birthDate ");
         }
         return result.toString();
     }
@@ -458,10 +453,8 @@ public class StudySubjectBeanLocal extends
             FunctionalRoleStatusCode status = criteria.getStudySubjectStatusCode();
             query.setParameter("statusCode", hql ? status : status.getName());
         }
-        if (StringUtils.isNotEmpty(criteria.getPatientBirthDate()) 
-                && !AccrualUtil.YR_MO_NULL.equals(criteria.getPatientBirthDate())) {
+        if (StringUtils.isNotEmpty(criteria.getPatientBirthDate())) {
             query.setParameter("birthDate", AccrualUtil.yearMonthStringToTimestamp(criteria.getPatientBirthDate()));
-            query.setParameter("birthMonthExcluded", criteria.getPatientBirthDate().length() == AccrualUtil.YR_LEN);
         }
     }
 

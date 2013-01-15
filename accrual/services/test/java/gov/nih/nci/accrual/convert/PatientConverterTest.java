@@ -80,7 +80,6 @@
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.PatientDto;
@@ -114,11 +113,9 @@ public class PatientConverterTest extends AbstractConverterTest {
         Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
         // must strip days
         assertEquals(PAUtil.dateStringToTimestamp("2/1/2009"), bo.getBirthDate());
-        assertFalse(bo.getBirthMonthExcluded());
 
         // strip days
         bo.setBirthDate(PAUtil.dateStringToTimestamp("2/2/2009"));
-        bo.setBirthMonthExcluded(false);
         PatientDto r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
         assertEquals(PAUtil.dateStringToTimestamp("2/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
         assertTrue(iiTest(r.getCountryIdentifier()));
@@ -127,11 +124,6 @@ public class PatientConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getIdentifier()));
         assertTrue(dsetTest(r.getRaceCode()));
         assertTrue(stTest(r.getZip()));
-
-        // strip days and month
-        bo.setBirthMonthExcluded(true);
-        r = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        assertEquals(PAUtil.dateStringToTimestamp("1/1/2009"), TsConverter.convertToTimestamp(r.getBirthDate()));
 
         // test null
         bo.setBirthDate(null);

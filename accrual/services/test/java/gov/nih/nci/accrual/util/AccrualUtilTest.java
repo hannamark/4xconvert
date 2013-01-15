@@ -108,6 +108,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -260,20 +261,18 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
     public void normalizeYearMonthStringTest() {
         assertNull(AccrualUtil.normalizeYearMonthString(null));
         assertNull(AccrualUtil.normalizeYearMonthString(""));
-        assertEquals("000000", AccrualUtil.normalizeYearMonthString(" 000000 "));
+        assertNull(AccrualUtil.normalizeYearMonthString(" 000000 "));
         assertNull(AccrualUtil.normalizeYearMonthString("00000"));
         assertEquals("03/1999", AccrualUtil.normalizeYearMonthString("3/1999"));
-        assertEquals("1999", AccrualUtil.normalizeYearMonthString("1999 "));
+        assertNull(AccrualUtil.normalizeYearMonthString("1999 "));
     }
 
     @Test
     public void tsToYearMonthStringTest() {
-        assertEquals("000000", AccrualUtil.tsToYearMonthString(null));
-        assertEquals("000000", AccrualUtil.tsToYearMonthString(new Ts()));
+        assertNull(AccrualUtil.tsToYearMonthString(null));
+        assertNull(AccrualUtil.tsToYearMonthString(new Ts()));
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy");
-        String nowYr = sdf.format(now);
         sdf.applyPattern("MM/yyyy");
         String nowYrMo = sdf.format(now);
         Ts ts = new Ts();
@@ -283,8 +282,6 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         edt.setValue(nowYrMo);
         ts.setOriginalText(edt);
         assertEquals(nowYrMo, AccrualUtil.tsToYearMonthString(ts));
-        edt.setValue(nowYr);
-        assertEquals(nowYr, AccrualUtil.tsToYearMonthString(ts));
     }
 
     @Test
@@ -295,8 +292,7 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertEquals(PAUtil.dateStringToDateTime("2/1/2011"), ts.getValue());
         assertEquals("02/2011", ts.getOriginalText().getValue());
         ts = AccrualUtil.yearMonthStringToTs("2011");
-        assertEquals(PAUtil.dateStringToDateTime("1/1/2011"), ts.getValue());
-        assertEquals("2011", ts.getOriginalText().getValue());
+        assertTrue(ISOUtil.isTsNull(ts));
     }
 
     @Test
@@ -327,41 +323,17 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertNull(AccrualUtil.yearMonthStringToTimestamp(null));
         assertNull(AccrualUtil.yearMonthStringToTimestamp(""));
         Timestamp yrMoValue = PAUtil.dateStringToTimestamp("2/1/1999");
-        Timestamp yrValue = PAUtil.dateStringToTimestamp("1/1/1999");
         assertEquals(yrMoValue, AccrualUtil.yearMonthStringToTimestamp("2/1999"));
-        assertEquals(yrValue, AccrualUtil.yearMonthStringToTimestamp("1999"));
+        assertNull(AccrualUtil.yearMonthStringToTimestamp("1999"));
     }
 
     @Test
     public void timestampToYearMonthStringTest() {
-        assertEquals("000000", AccrualUtil.timestampToYearMonthString(null, true));
-        assertEquals("000000", AccrualUtil.timestampToYearMonthString(null, false));
         Date now = new Date();
         Timestamp nowTstamp = new Timestamp(now.getTime());
-        Timestamp nowYrMo = new Timestamp(DateUtils.truncate(now, Calendar.MONTH).getTime());
-        Timestamp nowYr = new Timestamp(DateUtils.truncate(now, Calendar.YEAR).getTime());
         SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy");
-        String nowYrStr = sdf.format(now);
         sdf.applyPattern("MM/yyyy");
         String nowYrMoStr = sdf.format(now);
-        assertEquals(nowYrStr, AccrualUtil.timestampToYearMonthString(nowTstamp, true));
-        assertEquals(nowYrMoStr, AccrualUtil.timestampToYearMonthString(nowTstamp, false));
+        assertEquals(nowYrMoStr, AccrualUtil.timestampToYearMonthString(nowTstamp));
     }
-
-    @Test
-    public void  isYearOnlyTest() {
-        assertFalse(AccrualUtil.isYearOnly(null));
-        assertFalse(AccrualUtil.isYearOnly(new Ts()));
-        Ts ts = new Ts();
-        EdText edt = new EdText();
-        ts.setOriginalText(edt);
-        assertFalse(AccrualUtil.isYearOnly(new Ts()));
-        assertFalse(AccrualUtil.isYearOnly(ts));
-        edt.setValue("1234");
-        assertTrue(AccrualUtil.isYearOnly(ts));
-        edt.setValue("12/3456");
-        assertFalse(AccrualUtil.isYearOnly(ts));
-    }
-    
 }

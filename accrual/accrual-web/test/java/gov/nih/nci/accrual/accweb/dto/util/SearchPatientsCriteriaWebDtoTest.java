@@ -97,7 +97,7 @@ public class SearchPatientsCriteriaWebDtoTest {
     public void initDto() {
      searchPatientsCriteriaWebDto = new SearchPatientsCriteriaWebDto();
      searchPatientsCriteriaWebDto.setAssignedIdentifier("assignedIdentifier");
-     searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1978"));
+     searchPatientsCriteriaWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1/1978"));
      searchPatientsCriteriaWebDto.setStudySiteId(Long.valueOf(1));
     }
 
@@ -108,7 +108,7 @@ public class SearchPatientsCriteriaWebDtoTest {
 
     @Test
     public void birthDatePropertyTest() {
-      assertEquals("1978", searchPatientsCriteriaWebDto.getBirthDate());
+      assertEquals("01/1978", searchPatientsCriteriaWebDto.getBirthDate());
     }
 
     @Test
