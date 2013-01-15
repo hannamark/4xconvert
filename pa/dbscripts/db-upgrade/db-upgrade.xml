@@ -1205,4 +1205,8 @@
         <comment>Make Primary Purpose Code table driven rather than hard coded.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5692.sql"/>
      </changeSet>
+     <changeSet id="PO-5762" author="Hugh">
+        <comment>Require birth month for accruals.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5762.sql"/>
+     </changeSet>
 </databaseChangeLog>
