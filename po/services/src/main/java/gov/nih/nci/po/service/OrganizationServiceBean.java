@@ -331,6 +331,17 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 && isCtepRole(correlation)) {
             correlation.setStatus(RoleStatus.ACTIVE);
         }
+        // PO-5432: When an Organization is being nullified and merged into a
+        // different Organization that is
+        // itself INACTIVE, there is a validation error regarding incompatible
+        // entity & role statuses. Inactive
+        // organization cannot have active roles. So we're adjusting the
+        // correlation status here. We change ACTIVE roles to SUSPENDED and keep
+        // PENDING intact. 
+        if (dup.getStatusCode() == EntityStatus.INACTIVE
+                && correlation.getStatus() == RoleStatus.ACTIVE) {
+            correlation.setStatus(RoleStatus.SUSPENDED);
+        }
     }
 
     /**

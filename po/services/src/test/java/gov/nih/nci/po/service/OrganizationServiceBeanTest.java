@@ -125,6 +125,7 @@ import javax.jms.JMSException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -692,6 +693,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(o);
+        hcf.setStatus(RoleStatus.ACTIVE);
         hcf.setName("HCF Name");
         HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
         long hcfId = healthCareFacilityServiceBean.create(hcf);
@@ -747,6 +749,70 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
+    
+    @Test
+    public void curateToNullifiedWithInactiveDuplicateOf()
+            throws EntityValidationException, JMSException {
+        final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
+        setDefaultCountry(c);
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+       
+        final Session session = PoHibernateUtil.getCurrentSession();
+        session.createSQLQuery("update organization set status='INACTIVE' where id="+id2).executeUpdate();      
+        session.createSQLQuery("update organization set status='ACTIVE' where id="+id).executeUpdate();     
+        session.flush();
+        
+        o = getOrgServiceBean().getById(id);
+        o.getEmail().size();
+        o.getUrl().size();
+        o.getPhone().size();
+        o.getTty().size();
+        o.getFax().size();
+        o.getPostalAddress().getCountry().getStates().size();
+       
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setPlayer(o);
+       
+        hcf.setName("HCF Name");
+        HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
+        long hcfId = healthCareFacilityServiceBean.create(hcf);
+                
+        session.flush();
+        session.createSQLQuery("update healthcarefacility set status='ACTIVE' where id="+hcfId).executeUpdate();        
+        session.flush();
+               
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        
+        PersonServiceBeanTest pst = new PersonServiceBeanTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+        };
+        // Don't load the data since duplicate entries would be created.
+        // pst.loadData();
+        pst.setUpData();
+        session.flush();
+        session.clear();
+        
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
+
+        hcf = healthCareFacilityServiceBean.getById(hcfId);
+        assertEquals(RoleStatus.SUSPENDED, hcf.getStatus());
+       
+
+       
+    }
+
 
     @Test
     public void curateToNullifiedWithDuplicateOfAndPointCtepRolesToDuplicateActiveOrg()
