@@ -225,7 +225,7 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
     /**
      * {@inheritDoc}
      */
-    public int getMaxDisplayOrderValue(gov.nih.nci.pa.service.Ii studyProtocolIi)
+    public int getMaxDisplayOrderValue(Ii studyProtocolIi)
         throws PAException {
         // TODO Auto-generated method stub
         return 0;
