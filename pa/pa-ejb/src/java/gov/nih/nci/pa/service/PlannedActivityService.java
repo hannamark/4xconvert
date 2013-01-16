@@ -260,4 +260,13 @@ public interface PlannedActivityService  extends StudyPaService<PlannedActivityD
      */
     void reorderInterventions(Ii studyProtocolIi, List<String> ids)
             throws PAException;
+    
+    /**
+     * Gets the max value of displayOrder from PlannedActivity.
+     * 
+     * @param studyProtocolIi the studyProtocolIi
+     * @return max value of displayOrder
+     * @throws PAException the PA exception
+     */
+    int getMaxDisplayOrderValue(Ii studyProtocolIi) throws PAException;
 }

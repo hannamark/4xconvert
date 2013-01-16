@@ -6,6 +6,7 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.iso.convert.PlannedActivityConverter;
 import gov.nih.nci.pa.iso.convert.PlannedEligibilityCriterionConverter;
@@ -748,6 +749,23 @@ public class PlannedActivityBeanLocal extends
                 super.update(intervention);
             }
         }
+    }
+    
+    @Override
+    public int getMaxDisplayOrderValue(Ii studyProtocolIi) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select max(pa.displayOrder) from PlannedActivity pa join pa.studyProtocol sp "
+            + "where sp.id = :studyProtocolId and pa.categoryCode = :categoryCode";
+        Query query = null;
+        query = session.createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+        query.setParameter("categoryCode", ActivityCategoryCode.OTHER);
+        List list = query.list();
+        if (list.get(0) != null) {
+            return ((Integer) list.get(0)).intValue();
+        } else {
+            return 0;
+        }        
     }
     
 }

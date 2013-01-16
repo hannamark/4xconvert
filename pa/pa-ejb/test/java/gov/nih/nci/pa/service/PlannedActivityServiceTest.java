@@ -249,6 +249,7 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
     public void getPlannedEligibilityCriterion() throws Exception {
         List<PlannedEligibilityCriterionDTO> statusList = remoteEjb.getPlannedEligibilityCriterionByStudyProtocol(spIi);
         assertEquals(1, statusList.size());
+        assertEquals(0, remoteEjb.getMaxDisplayOrderValue(spIi));
 
         PlannedEligibilityCriterionDTO dto = remoteEjb.getPlannedEligibilityCriterion(statusList.get(0).getIdentifier());
         assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()),

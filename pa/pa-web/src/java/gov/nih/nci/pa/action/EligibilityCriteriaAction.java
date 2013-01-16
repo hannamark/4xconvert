@@ -980,15 +980,10 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
     private void enforceEligibilityBusinessRules() throws PAException {
         if (StringUtils.isEmpty(webDTO.getDisplayOrder())) {
-            if (eligibilityList == null) {
-                webDTO.setDisplayOrder("1");
-            } else {
-                webDTO.setDisplayOrder(eligibilityList.size() + 1 + "");
-            }
-        } 
-        String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
-        if (ruleError.length() > 0) {
-            addFieldError("webDTO.displayOrder", ruleError);
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+            int displayOrderValue = PaRegistry.getPlannedActivityService().getMaxDisplayOrderValue(studyProtocolIi);
+            webDTO.setDisplayOrder(displayOrderValue + 1 + "");
         }
         if (StringUtils.isNotEmpty(webDTO.getTextDescription())
                 && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
@@ -1004,13 +999,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                     addFieldError("webDTO.TextDescription", "Duplicate description");
                 }
             }
-        }
-
-        HashSet<String> order = new HashSet<String>();
-        String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
-        if (StringUtils.isNotEmpty(dispOrder)) {
-            String mesg = "Display Order(s) exist: ";
-            addFieldError("webDTO.displayOrder", mesg + dispOrder);
         }
     }
 
