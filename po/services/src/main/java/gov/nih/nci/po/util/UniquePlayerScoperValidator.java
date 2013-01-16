@@ -70,7 +70,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
     }
 
     private boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
-        return (match == null || match.getId().equals(input.getId()));
+        return (match == null || match.getId().equals(input.getId()) || RoleStatus.NULLIFIED == input.getStatus());
     }
 
     
