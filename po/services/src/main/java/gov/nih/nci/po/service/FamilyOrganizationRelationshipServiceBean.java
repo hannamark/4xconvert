@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -275,5 +276,11 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
      */
     public void setPublisher(MessageProducerLocal publisher) {
         this.publisher = publisher;
+    }
+
+    @Override
+    public List<FamilyOrganizationRelationship> getActiveRelationships(
+            Organization org) {
+        return new FamilyUtilDao().getActiveRelationships(PoHibernateUtil.getCurrentSession(), org);
     }
 }

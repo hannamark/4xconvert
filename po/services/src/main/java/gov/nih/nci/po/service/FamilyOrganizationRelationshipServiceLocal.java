@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.Date;
 import java.util.List;
@@ -130,6 +131,13 @@ public interface FamilyOrganizationRelationshipServiceLocal
      * @return the active relationships
      */
     List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId);
+    
+    /**
+     * Gets the list of active (i.e. no end date) family organization relationships by organization.
+     * @param org Organization
+     * @return the active relationships
+     */
+    List<FamilyOrganizationRelationship> getActiveRelationships(Organization org);    
     
     /**
      * Gets the start date of the active family organization relationships for a family and org.

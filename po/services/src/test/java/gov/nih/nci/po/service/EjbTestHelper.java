@@ -140,6 +140,7 @@ public class EjbTestHelper {
     public static OrganizationServiceBean getOrganizationServiceBean() {
         OrganizationServiceBean organizationServiceBean = new OrganizationServiceBean();
         organizationServiceBean.setPublisher(getMessageProducer());
+        organizationServiceBean.setFamilyOrganizationRelationshipService(getFamilyOrganizationRelationshipService());
         return organizationServiceBean;
     }
 

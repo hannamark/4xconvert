@@ -94,6 +94,7 @@ import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -121,6 +122,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -148,6 +150,9 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     private static final String ORDER_BY = " ORDER BY ";
     private static final String UNCHECKED = "unchecked";
     private MergeOrganizationHelper mergeOrganizationHelper;
+
+    @EJB
+    private FamilyOrganizationRelationshipServiceLocal familyOrganizationRelationshipService;
 
     /**
      * Constructs an {@link OrganizationServiceBean} with the default MergeOrganizationHelper.
@@ -245,11 +250,22 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
      * {@inheritDoc}
      */
     @Override
-    protected void cascadeStatusChangeNullified(Organization org, Session s) throws JMSException {
+    protected void cascadeStatusChangeNullified(Organization org, Session s)
+            throws JMSException {
         if (org.getDuplicateOf() == null) {
             super.cascadeStatusChangeNullified(org, s);
         } else {
             mergeCorrelations(org, s);
+        }
+        endFamilyOrgRelationships(org);
+    }
+
+    private void endFamilyOrgRelationships(Organization org)
+            throws JMSException {
+        for (FamilyOrganizationRelationship rel : familyOrganizationRelationshipService
+                .getActiveRelationships(org)) {
+            rel.setEndDate(new Date());
+            familyOrganizationRelationshipService.updateEntity(rel);
         }
     }
 
@@ -748,6 +764,14 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 OrganizationCR.class, cr.getId());
         crToRemove.setProcessed(true);
         s.update(crToRemove);
+    }
+
+    /**
+     * @param familyOrganizationRelationshipService the familyOrganizationRelationshipService to set
+     */
+    public void setFamilyOrganizationRelationshipService(
+            FamilyOrganizationRelationshipServiceLocal familyOrganizationRelationshipService) {
+        this.familyOrganizationRelationshipService = familyOrganizationRelationshipService;
     }
 
 }

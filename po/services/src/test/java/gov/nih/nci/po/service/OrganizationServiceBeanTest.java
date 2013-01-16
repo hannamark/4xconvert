@@ -812,6 +812,74 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
        
     }
+    
+    @Test
+    public void curateToNullifiedWithFamilyRel()
+            throws EntityValidationException, JMSException {
+        final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
+        setDefaultCountry(c);
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        long id = createOrganization(o);
+        long id2 = createOrganization(o2);
+       
+        final Session session = PoHibernateUtil.getCurrentSession();
+        
+        o = getOrgServiceBean().getById(id);
+        o.getEmail().size();
+        o.getUrl().size();
+        o.getPhone().size();
+        o.getTty().size();
+        o.getFax().size();
+        o.getPostalAddress().getCountry().getStates().size();
+        
+        // Create family
+        Family family = new Family();
+        family.setName("Family");
+        final Date date = new Date(System.currentTimeMillis()-100000000);
+        family.setStartDate(date);
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        long fid = EjbTestHelper.getFamilyServiceBean().create(family);
+        session.flush();      
+        family = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, fid);        
+        
+        // Create Family Org Rel
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setOrganization(o);
+        famOrgRel.setFamily(family);
+        famOrgRel.setFunctionalType(FamilyFunctionalType.AFFILIATION);
+        famOrgRel.setStartDate(date);        
+        long famOrgRelId = EjbTestHelper.getFamilyOrganizationRelationshipService().createEntity(famOrgRel);
+        session.flush();       
+        famOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);        
+         
+        PersonServiceBeanTest pst = new PersonServiceBeanTest() {
+            @Override
+            public Country getDefaultCountry() {
+                return c;
+            }
+        };
+        // Don't load the data since duplicate entries would be created.
+        // pst.loadData();
+        pst.setUpData();
+        session.flush();
+        session.clear();
+        
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+        session.flush(); 
+
+        Organization result = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
+        
+        famOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
+                .getCurrentSession().load(FamilyOrganizationRelationship.class,
+                        famOrgRelId);
+        assertNotNull(famOrgRel.getEndDate());
+       
+    }
 
 
     @Test

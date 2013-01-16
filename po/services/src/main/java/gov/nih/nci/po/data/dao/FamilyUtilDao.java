@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.dao;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
@@ -253,5 +254,22 @@ public class FamilyUtilDao {
                 s.close();
             }
         }
+    }
+
+    /**
+     * Gets the list of active (i.e. no end date) family organization relationships by org.
+     * 
+     * @param currentSession {@link org.hibernate.Session} to use for the query.
+     * @param org organization
+     * @return the active relationships
+     */
+    @SuppressWarnings("unchecked")
+    public List<FamilyOrganizationRelationship> getActiveRelationships(
+            Session currentSession, Organization org) {
+        String hql = "from " + FamilyOrganizationRelationship.class.getName()
+                + " famOrgRel where famOrgRel.organization.id = :orgId" + " and famOrgRel.endDate is null";
+        Query query = currentSession.createQuery(hql);
+        query.setParameter(ORG_ID_PARAM, org.getId());
+        return (List<FamilyOrganizationRelationship>) query.list();
     }
 }

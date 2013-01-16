@@ -236,4 +236,10 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     public Map<Long, Family> getFamilies(Set<Long> familyOrgRelationshipIds) {
         return new HashMap<Long, Family>();
     }
+
+    @Override
+    public List<FamilyOrganizationRelationship> getActiveRelationships(
+            Organization org) {
+        return new ArrayList<FamilyOrganizationRelationship>();
+    }
 }
