@@ -221,4 +221,13 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
             throws PAException {
         throw new PAException("Not supported.");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getMaxDisplayOrderValue(gov.nih.nci.pa.service.Ii studyProtocolIi)
+        throws PAException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
