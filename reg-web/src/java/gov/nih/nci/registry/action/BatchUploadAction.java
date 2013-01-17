@@ -112,7 +112,7 @@ import com.opensymphony.xwork2.ActionSupport;
 /**
  * @author Vrushali
  */
-public class BatchUploadAction extends ActionSupport implements ServletResponseAware {
+public class BatchUploadAction extends ActionSupport implements ServletResponseAware { //NOPMD
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(BatchUploadAction.class);
@@ -262,7 +262,10 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
         String uploadedLoc;
         try {
             uploadedLoc = uploadFile();
-            String unzipLoc = unZipDoc(uploadedLoc + File.separator + docZipFileName);
+            String unzipLoc = null;
+            if (StringUtils.isNotBlank(docZipFileName)) {
+                unzipLoc = unZipDoc(uploadedLoc + File.separator + docZipFileName);
+            }
             // helper to unzip the zip files
             Thread batchProcessor =
                     new Thread(new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc, ServletActionContext
@@ -297,7 +300,9 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
             if (md) {
                 // save the XLS file and then the ZIp file
                 saveFile(folderPath.toString(), trialDataFileName, trialData);
-                saveFile(folderPath.toString(), docZipFileName, docZip);
+                if (StringUtils.isNotBlank(docZipFileName)) { //NOPMD
+                    saveFile(folderPath.toString(), docZipFileName, docZip);
+                }
                 uploadedLoc = folderPath.toString();
             }
         }
@@ -330,7 +335,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
     /**
      * Validate form fields.
      */
-    public void validateForm() {
+    public void validateForm() { // NOPMD
         if (StringUtils.isBlank(orgName)) {
             addFieldError("orgName", getText("error.batch.orgName"));
         }
@@ -345,20 +350,17 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
                 addFieldError("trialDataFileName", getText("error.batch.trialDataFileName.invalidFileType"));
             }
         }
-        validateDocZipFileName();
-
+        if (StringUtils.isNotBlank(docZipFileName)) {
+            validateDocZipFileName();
+        }
     }
 
     private void validateDocZipFileName() {
-        if (StringUtils.isBlank(docZipFileName)) {
-            addFieldError("docZipFileName", getText("error.batch.docZipFileName"));
-        } else {
-            if (!docZip.exists()) {
-                addFieldError("docZipFileName", getText("error.batch.invalidDocument"));
-            }
-            if (!paServiceUtil.isValidFileType(docZipFileName, "zip")) {
-                addFieldError("docZipFileName", getText("error.batch.docZipFileName.invalidFileType"));
-            }
+        if (!docZip.exists()) {
+            addFieldError("docZipFileName", getText("error.batch.invalidDocument"));
+        }
+        if (!paServiceUtil.isValidFileType(docZipFileName, "zip")) {
+            addFieldError("docZipFileName", getText("error.batch.docZipFileName.invalidFileType"));
         }
     }
 

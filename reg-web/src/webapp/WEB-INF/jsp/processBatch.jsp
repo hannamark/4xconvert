@@ -28,8 +28,9 @@ function handleAction(){
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
          <br>&nbsp;Note the following requirements:
          <br> &nbsp;&nbsp; 1) This form can only be used for submitting complete trials.
-         <br> &nbsp;&nbsp; 2) Trial data in the attached files must conform to the specifications in the CTRP Registry Complete Batch Upload Template that is valid for the current release, found <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="_blank">here</a>.
-         <br> &nbsp;&nbsp; 3) All fields are mandatory.
+         <br> &nbsp;&nbsp; 2) Trial data file attached must conform to the specifications in the CTRP Registry Complete Batch Upload Template that is valid for the current release, found <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="_blank">here</a>.
+         <br> &nbsp;&nbsp; 3) Zip file containing trail documents is mandatory for a Trail data file consisting of new submissions and amendments.
+         <br> &nbsp;&nbsp; 4) Zip file containing trail documents is optional for a Trail data file consisting of only trial updates.
          </p>
         <table class="form"> 
           <tr><td colspan="2" class="space">&nbsp;</td></tr>
@@ -66,7 +67,6 @@ function handleAction(){
               <td scope="row" class="label">
               <label for="docZip">
                      <fmt:message key="process.batch.docZip"/>
-                     <span class="required">*</span>
               </label>
              </td>
              <td class="value">
@@ -76,8 +76,8 @@ function handleAction(){
                     <s:param>docZipFileName</s:param>
                    </s:fielderror>                            
                  </span>
-               </td>         
-         </tr> 
+               </td>
+         </tr>
            </table>
             <div class="actionsrow">
             <del class="btnwrapper">

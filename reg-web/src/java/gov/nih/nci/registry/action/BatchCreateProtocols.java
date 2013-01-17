@@ -360,7 +360,7 @@ public class BatchCreateProtocols {
     }
 
     private List<TrialDocumentWebDTO> getDocDTOListForUpdate(StudyProtocolBatchDTO batchDto, String folderPath,
-            String studyProtocolId) throws IOException, PAException {
+            String studyProtocolId) throws IOException, PAException { 
         
         List<DocumentDTO> docsFromDB =
                 PaRegistry.getDocumentService().getDocumentsByStudyProtocol(IiConverter.convertToIi(studyProtocolId));
@@ -384,15 +384,24 @@ public class BatchCreateProtocols {
                 partDocId = doc.getIdentifier();
             }
         }
+        
         List<TrialDocumentWebDTO> docDTOList = new ArrayList<TrialDocumentWebDTO>();
-        docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
-                protocolDocId, protocolDocumentCode));
-        docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
-                irbDocId, irbApprovalDocCode));
-        docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
-                iConsentDocId, informedConsentDocumentCode));
-        docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
-                partDocId, participatingSitesCode));
+        if (StringUtils.isNotEmpty(batchDto.getProtcolDocumentFileName())) {
+            docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
+                    protocolDocId, protocolDocumentCode));
+        } 
+        if (StringUtils.isNotEmpty(batchDto.getInformedConsentDocumentFileName())) {
+            docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
+                    iConsentDocId, informedConsentDocumentCode));
+        }        
+        if (StringUtils.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())) {
+            docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
+                    partDocId, participatingSitesCode));
+        } 
+        if (StringUtils.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
+            docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
+                    irbDocId, irbApprovalDocCode));
+        }        
         return docDTOList;
     }
 
@@ -403,24 +412,19 @@ public class BatchCreateProtocols {
         TrialUtil util = new TrialUtil();
         File doc;
         
-        if (documentCode.equals(protocolDocumentCode)
-                && StringUtils
-                        .isNotEmpty(batchDto.getProtcolDocumentFileName())) {
+        if (documentCode.equals(protocolDocumentCode)) {
             doc = new File(folderPath + batchDto.getProtcolDocumentFileName());
             webDto = util.convertToDocumentDTO(protocolDocumentCode,
                     batchDto.getProtcolDocumentFileName(), doc);
-        } else if (documentCode.equals(informedConsentDocumentCode) && StringUtils
-                .isNotEmpty(batchDto.getInformedConsentDocumentFileName())) {
+        } else if (documentCode.equals(informedConsentDocumentCode)) {
             doc = new File(folderPath + batchDto.getInformedConsentDocumentFileName());
             webDto = util.convertToDocumentDTO(informedConsentDocumentCode,
                     batchDto.getInformedConsentDocumentFileName(), doc);
-        } else if (documentCode.equals(participatingSitesCode) && StringUtils
-                .isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())) {
+        } else if (documentCode.equals(participatingSitesCode)) {
             doc = new File(folderPath + batchDto.getParticipatinSiteDocumentFileName());
             webDto = util.convertToDocumentDTO(participatingSitesCode,
                     batchDto.getParticipatinSiteDocumentFileName(), doc);
-        } else if (documentCode.equals(irbApprovalDocCode) && StringUtils
-                .isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
+        } else if (documentCode.equals(irbApprovalDocCode)) {
             doc = new File(folderPath + batchDto.getIrbApprovalDocumentFileName());
             webDto = util.convertToDocumentDTO(irbApprovalDocCode,
                     batchDto.getIrbApprovalDocumentFileName(), doc);
