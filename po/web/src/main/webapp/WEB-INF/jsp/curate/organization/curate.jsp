@@ -20,7 +20,7 @@
       <script type="text/javascript">
 		function confirmThenSubmit(fieldId, formId){
 		    var map = new Array();
-		    if ($('curateEntityForm.duplicateOf.id').value=='') {
+		    if ($('curateEntityForm.duplicateOf.id')==null || $('curateEntityForm.duplicateOf.id').value=='') {
 		    	 map['NULLIFIED'] = 'Warning: You are about to nullify organization "${func:escapeJavaScript(organization.name)} - ${organization.id}". Changing the status to NULLIFIED will force all roles to go in to the NULLIFIED state. This action is irreversible. Do you really want to mark the record as NULLIFIED?';
 		    } else {
 		    	 map['NULLIFIED'] = 'Warning: You are about to nullify organization "${func:escapeJavaScript(organization.name)} - ${organization.id}" and merge it into organization "'+dupeOrgName+' - '+$('curateEntityForm.duplicateOf.id').value+'". This action is irreversible. Are you sure you want to merge this organization?';

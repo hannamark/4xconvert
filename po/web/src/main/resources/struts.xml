@@ -443,7 +443,8 @@
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
             <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>
-                <param name="actionName">curate/search/listOrgs</param>
+                <param name="actionName">organization/curate/start</param>
+                <param name="organization.id">${organization.id}</param>
             </result>
         </action>
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
