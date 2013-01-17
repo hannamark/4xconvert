@@ -16,7 +16,19 @@
         </c:if>
         <c:set var="topic" scope="request" value="orgdetails"/>
     </s:else>
-    <%@include file="../defineMapToShowConfirm.jsp" %>
+    <%@include file="../../confirmThenSubmit.jsp" %>
+      <script type="text/javascript">
+		function confirmThenSubmit(fieldId, formId){
+		    var map = new Array();
+		    if ($('curateEntityForm.duplicateOf.id').value=='') {
+		    	 map['NULLIFIED'] = 'Warning: You are about to nullify organization "${func:escapeJavaScript(organization.name)} - ${organization.id}". Changing the status to NULLIFIED will force all roles to go in to the NULLIFIED state. This action is irreversible. Do you really want to mark the record as NULLIFIED?';
+		    } else {
+		    	 map['NULLIFIED'] = 'Warning: You are about to nullify organization "${func:escapeJavaScript(organization.name)} - ${organization.id}" and merge it into organization "'+dupeOrgName+' - '+$('curateEntityForm.duplicateOf.id').value+'". This action is irreversible. Are you sure you want to merge this organization?';
+		    }		   
+		    map['INACTIVE'] = '<s:text name="entity.curation.inactive.confirmation"/>';
+		    finalConfirmThenSubmit($(fieldId),$(formId),map);
+		 }
+   </script>
 </head>
 <body>
 
@@ -87,12 +99,14 @@
                    id="curateEntityForm.organization.statusCode"/>
                 <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
                     <script type="text/javascript">
+                        var dupeOrgName = '';
                         function handleDuplicateOf() {
                             $('duplicateOfDiv')[$('curateEntityForm.organization.statusCode').value == 'NULLIFIED' ? 'show' : 'hide']();
 
                             if ($('curateEntityForm.organization.statusCode').value != 'NULLIFIED') {
                                 $('curateEntityForm.duplicateOf.id').value = '';
                                 $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '';
+                                dupeOrgName = '';
                             }
                             return true;
                         }
@@ -104,6 +118,7 @@
                             } else {
                                 $('curateEntityForm.duplicateOf.id').value = returnVal.id;
                                 $('wwctrl_curateEntityForm_organization_duplicateOf_id').innerHTML = '' + returnVal.value + ' (' + returnVal.id + ')';
+                                dupeOrgName = returnVal.value;
                             }
                         }
                     </script>
