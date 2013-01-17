@@ -211,4 +211,20 @@ implements DocumentWorkflowStatusServiceLocal {
         }
     }
 
+    @Override
+    public DocumentWorkflowStatusDTO getInitialStatus(Ii spIi)
+            throws PAException {
+        DocumentWorkflowStatusDTO result = null;
+        Timestamp resultDate = null;
+        for (DocumentWorkflowStatusDTO status : getByStudyProtocol(spIi)) {
+            Timestamp low = IvlConverter.convertTs().convertLow(
+                    status.getStatusDateRange());
+            if ((result == null || resultDate.after(low))) {
+                result = status;
+                resultDate = low;
+            }
+        }
+        return result;
+    }
+
 }

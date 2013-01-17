@@ -82,11 +82,13 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
@@ -145,8 +147,9 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
      * The Constructor.
      *
      * @param isoDto the is dto
+     * @param initialStatus initialStatus
      */
-    public TrialHistoryWebDTO(StudyProtocolDTO isoDto) {
+    public TrialHistoryWebDTO(StudyProtocolDTO isoDto, DocumentWorkflowStatusDTO initialStatus) {
         this.identifier = IiConverter.convertToString(isoDto.getIdentifier());
         this.submissionNumber = IntConverter.convertToInteger(isoDto.getSubmissionNumber()).toString();
         this.amendmentNumber = StConverter.convertToString(isoDto.getAmendmentNumber());
@@ -157,7 +160,13 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
         } else {
             this.amendmentDate = "";
         }
-        if (isoDto.getDateLastCreated() != null && isoDto.getDateLastCreated().getValue() != null) {
+        if (initialStatus != null
+                && IvlConverter.convertTs().convertLow(
+                        initialStatus.getStatusDateRange()) != null) {
+            this.submissionDate = IvlConverter.convertTs().convertLow(
+                    initialStatus.getStatusDateRange());
+        } else if (isoDto.getDateLastCreated() != null
+                && isoDto.getDateLastCreated().getValue() != null) {
             this.submissionDate = TsConverter.convertToTimestamp(isoDto
                     .getDateLastCreated());
         } else {

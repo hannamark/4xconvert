@@ -272,6 +272,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
             StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
+            
+            Timestamp amendmentCreationDate = new Timestamp(System.currentTimeMillis());
+            Timestamp previousProtocolRecordDate = TsConverter
+                    .convertToTimestamp(spDTO.getDateLastCreated());
+            
             if (studyRegAuthDTO != null) {
                 studyRegAuthDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
                 StudyRegulatoryAuthorityDTO tempDTO = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO
@@ -288,7 +293,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                         studyIndldeDTOs);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             Ii toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
-            updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);
+            updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);            
             updateStudyIdentifiers(spIi, studyIdentifierDTOs);
             paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
             paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
@@ -308,6 +313,22 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
             saveAmenderInfo(studyProtocolDTO, amender);
+            
+            // PO-5806: date_last_created fields get reversed for amendment and original.
+            // Need to fix this here.
+            if (previousProtocolRecordDate != null) {
+                String updateOrigDate = "UPDATE study_protocol SET date_last_created = '"
+                        + previousProtocolRecordDate
+                        + "' WHERE identifier="
+                        + IiConverter.convertToLong(toStudyProtocolIi);
+                getPAServiceUtils().executeSql(updateOrigDate);
+            }
+            String updateAmendDate = "UPDATE study_protocol SET date_last_created = '"
+                    + amendmentCreationDate
+                    + "' WHERE identifier="
+                    + IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+            getPAServiceUtils().executeSql(updateAmendDate);
+            
             studyProtocolService
                     .updatePendingTrialAssociationsToActive(IiConverter
                             .convertToLong(spIi));

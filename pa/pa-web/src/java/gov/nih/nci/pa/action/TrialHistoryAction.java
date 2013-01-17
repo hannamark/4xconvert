@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -140,6 +141,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private StudyInboxServiceLocal studyInboxService;
     private StudyProtocolServiceLocal studyProtocolService;
     private RegistryUserServiceLocal registryUserServiceLocal;
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusServiceLocal;
 
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
     private TrialHistoryWebDTO trialHistoryWbDto;
@@ -161,6 +163,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         registryUserServiceLocal = PaRegistry.getRegistryUserService();
+        documentWorkflowStatusServiceLocal = PaRegistry.getDocumentWorkflowStatusService();
     }
 
     /**
@@ -364,7 +367,9 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         
         if (!spList.isEmpty()) {
             for (StudyProtocolDTO sp : spList) {
-                TrialHistoryWebDTO dto = new TrialHistoryWebDTO(sp);
+                TrialHistoryWebDTO dto = new TrialHistoryWebDTO(sp,
+                        documentWorkflowStatusServiceLocal.getInitialStatus(sp
+                                .getIdentifier()));
                 dto.setDocuments(getDocuments(sp));
                 dto.setSubmitter(getSubmitterName(sp));
                 trialHistoryWebdtos.add(dto);
@@ -504,11 +509,16 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      * 
      * @throws PAException exception
      */
+    @SuppressWarnings("deprecation")
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setTrialHistoryWbDto(new TrialHistoryWebDTO(studyProtocolService.getStudyProtocol(IiConverter
-                .convertToIi(getSelectedRowIdentifier()))));
+            final StudyProtocolDTO studyProtocol = studyProtocolService
+                    .getStudyProtocol(IiConverter
+                            .convertToIi(getSelectedRowIdentifier()));
+            setTrialHistoryWbDto(new TrialHistoryWebDTO(studyProtocol,
+                    documentWorkflowStatusServiceLocal
+                            .getInitialStatus(studyProtocol.getIdentifier())));
         } else {
             setTrialHistoryWbDto(new TrialHistoryWebDTO());
         }
@@ -652,5 +662,14 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         this.deletedDocuments = deletedDocuments;
     }
 
+    /**
+     * @param documentWorkflowStatusServiceLocal the documentWorkflowStatusServiceLocal to set
+     */
+    public void setDocumentWorkflowStatusServiceLocal(
+            DocumentWorkflowStatusServiceLocal documentWorkflowStatusServiceLocal) {
+        this.documentWorkflowStatusServiceLocal = documentWorkflowStatusServiceLocal;
+    }
 
+  
+    
 }

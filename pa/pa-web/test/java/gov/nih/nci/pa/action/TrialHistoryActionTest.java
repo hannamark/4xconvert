@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -130,6 +131,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
     private final DocumentServiceLocal documentService = mock(DocumentServiceLocal.class);
+    private final DocumentWorkflowStatusServiceLocal documentWorkflowStatusServiceLocal = mock(DocumentWorkflowStatusServiceLocal.class);
     private final StudyInboxServiceLocal studyInboxService = mock(StudyInboxServiceLocal.class);
     private final ServiceLocator serviceLoc = mock(ServiceLocator.class);
 
@@ -206,6 +208,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         trialHistory.setDocumentService(documentService);
         trialHistory.setStudyInboxService(studyInboxService);
         trialHistory.setStudyProtocolService(studyProtocolService);
+        trialHistory.setDocumentWorkflowStatusServiceLocal(documentWorkflowStatusServiceLocal);
         
         StudyProtocolDTO spDto = new StudyProtocolDTO();
         spDto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.NA.getCode()));
