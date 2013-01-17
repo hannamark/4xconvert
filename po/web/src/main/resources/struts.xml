@@ -461,7 +461,8 @@
             <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
             <result name="success" type="redirectAction">
                 <param name="namespace">/protected</param>
-                <param name="actionName">curate/search/listPersons</param>
+                <param name="actionName">person/curate/start</param>
+                <param name="person.id">${person.id}</param>
             </result>
         </action>
         <action name="ajax/person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
