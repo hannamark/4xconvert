@@ -220,6 +220,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         BeanUtils.copyProperties(registryUser, registryUserWebDTO);
         registryUser.setId(null);
         registryUser.setCsmUser(null);
+        registryUser.setSiteAccrualSubmitter(false);
+        registryUser.setFamilyAccrualSubmitter(false);
         Calendar curCalendar = Calendar.getInstance();
         registryUser.setDateLastCreated(curCalendar.getTime());
         if (registryUserWebDTO.isRequestAdminAccess()) {
@@ -442,6 +444,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         CSMUserService.getInstance().updateCSMUser(registryUser, userWebDTO.getUsername(), null);
         registryUserService.updateUser(registryUser);
         ServletActionContext.getRequest().setAttribute("userName", CsmUserUtil.getGridIdentityUsername(loginName));
+        RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
+        ServletActionContext.getRequest().getSession().setAttribute("regUserWebDto", regUserWebDto);
         return redirectPage;
     }
     

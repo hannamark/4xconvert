@@ -10,6 +10,7 @@
 
 <script type="text/javascript" language="javascript">
     var orgid;
+    var originalorgid = -1;
     var chosenname;
     
     function setorgid(orgIdentifier, oname) {
@@ -23,11 +24,20 @@
         form.action="registerUserupdateAccount.action";
         form.submit();
     }
-    
+
     function lookupAffiliateOrg() {
-    	showPopup('${lookupOrgUrl}', loadAffliatedOrgDiv, 'Select Affiliated Organization');
+        if (originalorgid == -1) {
+          originalorgid = $('registryUserWebDTO.affiliatedOrganizationId').value;
+        }
+        if (originalorgid) {
+          var r = confirm("Warning: You will lose any existing Site Admin and Accrual Submission privileges if you change your organizaiton affiliation.");
+          if (r == false) {
+            return;
+          }
+        }
+        showPopup('${lookupOrgUrl}', loadAffliatedOrgDiv, 'Select Affiliated Organization');
     }
-    
+
     function loadAffliatedOrgDiv() {
         $('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
         $('registryUserWebDTO.affiliateOrg').value = chosenname;
