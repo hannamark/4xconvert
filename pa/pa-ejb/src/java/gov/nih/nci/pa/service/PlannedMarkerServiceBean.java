@@ -236,7 +236,7 @@ implements PlannedMarkerServiceLocal {
                 + " where pa.studyProtocol.id IN (:listOfIds))";
         } else {
              hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)" 
-                + " or pm.id IN" 
+                + " or pm.statusCode='PENDING' and pm.id IN" 
                 + " (select pa.id from PlannedActivity as pa " 
                 + " where pa.studyProtocol.id IN (:listOfIds))";
         } 
