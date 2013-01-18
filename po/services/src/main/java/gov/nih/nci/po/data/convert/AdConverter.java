@@ -107,6 +107,9 @@ public class AdConverter {
      * Converter for simple addresses (ie, not sets or bags).
      */
     public static class SimpleConverter extends AbstractXSnapshotConverter<Ad> {
+        private static final String GB = "GB ";
+        private static final String UK = "UK";
+
         /**
          * {@inheritDoc}
          */
@@ -174,7 +177,7 @@ public class AdConverter {
                             sdelimitor = "";
                             continue;
                         case CNT:
-                            verifyCnt(part);
+                            verifyAndAdjustCnt(part);
                             String code = StringUtils.trimToNull(part.getCode());
                             if (code == null) {
                                 a.setCountry(PoRegistry.getCountryService().getCountryByName(part.getValue()));
@@ -219,12 +222,16 @@ public class AdConverter {
             }
         }
 
-        private static void verifyCnt(Adxp part) {
+        private static void verifyAndAdjustCnt(Adxp part) {
             String code = StringUtils.trimToNull(part.getCode());
             String codeSystem = StringUtils.trimToNull(part.getCodeSystem());
-
             if (code != null && codeSystem == null) {
                 throw new PoIsoConstraintException("Adxp.codeSystem is required");
+            }
+            // PO-4180: CTEP is coding United Kingdom as UK, which is invalid: the country's ISO code is GB. 
+            // PO can't find the country record and ends up with a curation error. 
+            if (UK.equals(code)) {
+                part.setCode(GB);
             }
         }
 
