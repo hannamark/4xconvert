@@ -728,9 +728,8 @@ div.accrual_btn_column {
 
 #comments-dialog {
 	border: 2px solid black;
-	width: 300px !important;
-	height: 200px !important;
-	white-space: nowrap !important;
+	width: 400px !important;
+	height: 250px !important;	
     z-index: 100;
     background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;    
     -moz-box-shadow: 10px 10px 5px #888;
