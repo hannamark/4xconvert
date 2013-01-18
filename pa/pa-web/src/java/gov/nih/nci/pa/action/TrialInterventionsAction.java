@@ -1047,10 +1047,12 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         List<InterventionAlternateNameDTO> ians = interventionAlternateNameService.getByIntervention(interventionIi);
         StringBuffer onBuff = new StringBuffer("");
         for (InterventionAlternateNameDTO ian : ians) {
-            if (ians.get(0) != ian) {
-                onBuff.append(", ");
+            if (ians.get(0) != ian && !StringUtils.contains(onBuff.toString(), ian.getName().getValue())) {
+                onBuff.append(", ");           
             }
-            onBuff.append(StConverter.convertToString(ian.getName()));
+            if (!StringUtils.contains(onBuff.toString(), ian.getName().getValue())) {
+                onBuff.append(StConverter.convertToString(ian.getName()));
+            }   
         }
         return onBuff.toString();
     }
