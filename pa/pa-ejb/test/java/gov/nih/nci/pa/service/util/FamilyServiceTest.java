@@ -234,12 +234,14 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
         when(fs.getActiveRelationships(1L)).thenReturn(getRelationships(new Long[] {1L}));
 
+        List<Long> poOrgIds =  FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
+        Set<Long> trialIds = ejb.getSiteAccrualTrials(poOrgIds);
         // not eligible for accrual, no dws
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
-        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        ejb.assignFamilyAccess(trialIds, ru, ru, null);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
@@ -247,7 +249,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         
         // not eligible for accrual
         TestSchema.addAbstractedWorkflowStatus(TestSchema.studyProtocolIds.get(0));
-        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        ejb.assignFamilyAccess(trialIds, ru, ru, null);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
@@ -259,16 +261,16 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
             dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
             sess.update(dws);
         }
-        ejb.assignFamilyAccrualAccess(ru, ru, null);
+        ejb.assignFamilyAccess(trialIds, ru, ru, null);
         assertEquals(1, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
     }
 
-;    @Test
+    @Test
     public void getSiteAccrualTrialsTestNoTrialsTest() throws Exception {
-        assertEquals(0, ejb.getSiteAccrualTrials(null).size());
+        assertEquals(0, ejb.getSiteAccrualTrials((Long) null).size());
         assertEquals(0, ejb.getSiteAccrualTrials(-1L).size());
     }
 
@@ -312,7 +314,8 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
-        ejb.unassignAllAccrualAccess(ru, ru);
+        Set<Long> trialIds = new HashSet<Long>(siteAccessEjb.getActiveTrialLevelAccrualAccess(ru));
+        ejb.unassignAllAccess(ru, ru, trialIds);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
@@ -327,7 +330,8 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
-        ejb.unassignAllAccrualAccess(ru, ru);
+        Set<Long> trialIds = new HashSet<Long>(siteAccessEjb.getActiveTrialLevelAccrualAccess(ru));
+        ejb.unassignAllAccess(ru, ru, trialIds);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));

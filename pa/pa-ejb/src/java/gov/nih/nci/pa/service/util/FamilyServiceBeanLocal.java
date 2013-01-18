@@ -32,6 +32,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -43,7 +44,7 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyServiceBeanLocal implements FamilyServiceLocal {
-
+    private static final Logger LOG = Logger.getLogger(FamilyServiceBeanLocal.class);
     private static final String ORG_IDS = "orgIds";
 
     @EJB
@@ -54,6 +55,42 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
     private DocumentWorkflowStatusServiceLocal dwsService;
     @EJB
     private ParticipatingOrgServiceLocal participatingOrgService;
+
+
+    /**
+     * Class used to run separate thread for processing batch submissions.
+     */
+    private class FamilyAccessProcessor implements Runnable {
+        private boolean assign;
+        private Set<Long> trialIds;
+        private RegistryUser user;
+        private RegistryUser creator;
+        private String comment;
+
+        public FamilyAccessProcessor(boolean assign, Set<Long> trialIds, RegistryUser user, RegistryUser creator,
+                String comment) {
+            System.out.println("Initializing batch thread....");
+            this.assign = assign;
+            this.trialIds = trialIds;
+            this.user = user;
+            this.creator = creator;
+            this.comment = comment;
+        }
+
+        @Override
+        public void run() {
+            try {
+                if (assign) {
+                    System.out.println("Running batch thread....");
+                    assignFamilyAccess(trialIds, user, creator, comment);
+                } else {
+                    unassignAllAccess(user, creator, trialIds);
+                }
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
+    }
 
     static final String HQL_COMPLETE = "SELECT sp.id "
             + "FROM StudyProtocol sp "
@@ -110,7 +147,8 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         List<Long> poOrgIds =  FamilyHelper.getAllRelatedOrgs(user.getAffiliatedOrganizationId());
         if (CollectionUtils.isNotEmpty(poOrgIds)) {
             Set<Long> trialIds = getSiteAccrualTrials(poOrgIds);
-            assignFamilyAccess(trialIds, user, creator, comment);
+            Thread batchThread = new Thread(new FamilyAccessProcessor(true, trialIds, user, creator, comment));
+            batchThread.start();
         }
         user.setFamilyAccrualSubmitter(true);
         registryUserService.updateUser(user);
@@ -126,7 +164,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<Long> getSiteAccrualTrials(List<Long> poOrgIds) throws PAException {
+    Set<Long> getSiteAccrualTrials(List<Long> poOrgIds) throws PAException {
         Set<Long> result = new HashSet<Long>();
         if (CollectionUtils.isNotEmpty(poOrgIds)) {
             Session session = PaHibernateUtil.getCurrentSession();
@@ -152,7 +190,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         return result;
     }
 
-    private void assignFamilyAccess(Set<Long> trialIds, RegistryUser user, RegistryUser creator, String comment)
+    void assignFamilyAccess(Set<Long> trialIds, RegistryUser user, RegistryUser creator, String comment)
             throws PAException {
         Set<Long> idsForAccess = new HashSet<Long>();
         for (Long trialId : trialIds) {
@@ -195,14 +233,19 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         if (creator == null) {
             throw new PAException("Calling FamilyServiceBeanLocal.unassignFamilyAccrualAccess with creator == null.");
         }
-        List<Long> trialIds = studySiteAccess.getActiveTrialLevelAccrualAccess(user);
+        Set<Long> trialIds = new HashSet<Long>(studySiteAccess.getActiveTrialLevelAccrualAccess(user));
+        Thread batchThread = new Thread(new FamilyAccessProcessor(false, trialIds, user, creator, null));
+        batchThread.start();
+        user.setFamilyAccrualSubmitter(false);
+        user.setSiteAccrualSubmitter(false);
+        registryUserService.updateUser(user);
+    }
+
+    void unassignAllAccess(RegistryUser user, RegistryUser creator, Set<Long> trialIds) throws PAException {
         studySiteAccess.unassignTrialLevelAccrualAccess(user, 
                 AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, trialIds, null, creator);
         List<StudySiteAccrualAccessDTO> list = studySiteAccess.getActiveByUser(user.getId());
         studySiteAccess.removeStudySiteAccrualAccess(user, list, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
-        user.setFamilyAccrualSubmitter(false);
-        user.setSiteAccrualSubmitter(false);
-        registryUserService.updateUser(user);
     }
 
     /**

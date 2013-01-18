@@ -155,11 +155,13 @@
     }
     
     function assignUnassignSASubmitter(el) {
+        displayWaitPanel();
         el.form.action='manageAccrualAccessassignUnAssignSASubmitter.action';
         el.form.submit();
     }
 
     function assignUnassignOFSubmitter(el) {
+        displayWaitPanel();
         el.form.action='manageAccrualAccessassignUnAssignOFSubmitter.action';
         el.form.submit();
     }

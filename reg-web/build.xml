@@ -7,7 +7,7 @@
 <project name="reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="reg-web.coverage.line" value="79"/>
     <property name="reg-web.coverage.branch" value="64"/>
-    <property name="reg-web.pmd.maxerrors" value="161"/>
+    <property name="reg-web.pmd.maxerrors" value="163"/>
 	<property name="software.dir" value="${basedir}/.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
