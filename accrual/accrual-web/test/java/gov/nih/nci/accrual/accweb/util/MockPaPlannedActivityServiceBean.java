@@ -232,4 +232,10 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
             throws PAException {
         throw new PAException("Not supported.");
     }
+
+    @Override
+    public int getMaxDisplayOrderValue(Ii studyProtocolIi) throws PAException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
