@@ -1667,11 +1667,12 @@ public class PAServiceUtils {
             gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
             StructuralRole srRO = commonsCorrUtils.getStructuralRoleByIi(identifierDTO.getResearchOrganizationIi());
             if (srRO == null) {
+                final String roIdExt = identifierDTO.getResearchOrganizationIi().getExtension();
                 ResearchOrganizationDTO poSrDto = (ResearchOrganizationDTO) getCorrelationByIi(IiConverter
-                    .convertToPoResearchOrganizationIi(identifierDTO.getResearchOrganizationIi().getExtension()));
+                    .convertToPoResearchOrganizationIi(roIdExt));
                 if (poSrDto == null) {
-                    throw new PAException("Structral Role is not found in PO"
-                            + identifierDTO.getResearchOrganizationIi());
+                    throw new PAException("Structral Role is not found in PO: "
+                            + roIdExt);
                 }
                 Long roId = PaRegistry.getOrganizationCorrelationService()
                     .createResearchOrganizationCorrelations(poSrDto.getPlayerIdentifier().getExtension());
