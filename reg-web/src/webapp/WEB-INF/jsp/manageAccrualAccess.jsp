@@ -16,6 +16,14 @@
     var studiesToUnassignRowsSelected = new Array();    
     
     function change(el) {
+        if(el.value) {
+            if(el.id=='userId'){
+                el.form.ofUserId.value = null;
+            }
+            if(el.id=='ofUserId'){
+                el.form.userId.value = null;
+            }
+        }
         el.form.action='manageAccrualAccesschange.action';
         displayWaitPanel();
         el.form.submit();
