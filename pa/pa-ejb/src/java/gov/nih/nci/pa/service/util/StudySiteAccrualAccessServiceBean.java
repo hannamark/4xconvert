@@ -133,6 +133,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ObjectUtils;
@@ -173,7 +178,23 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     private ParticipatingOrgServiceLocal participatingOrgServiceLocal;
     
     private static final Logger LOG = Logger.getLogger(StudySiteAccrualAccessServiceBean.class);
-    
+
+    /** Cache for country Ii's. */
+    private static CacheManager cacheManager;
+    private static final String IND_TRIAL_CACHE_KEY = "IND_TRIAL_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 50;
+    private static final long CACHE_TIME = 43200;
+
+    private static Cache getIndTrialCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(IND_TRIAL_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+            cacheManager.removeCache(IND_TRIAL_CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(IND_TRIAL_CACHE_KEY);
+    }
 
     /**
      * {@inheritDoc}
@@ -709,13 +730,15 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             }
     }
 
-    private boolean isIndustrialTrial(Long trialID) {
-        return (Boolean) PaHibernateUtil
-                .getCurrentSession()
-                .createQuery(
-                        "select sp.proprietaryTrialIndicator from "
-                                + StudyProtocol.class.getName()
-                                + " sp where sp.id=" + trialID).uniqueResult();
+    public static boolean isIndustrialTrial(Long trialID) {
+        Element element = getIndTrialCache().get(trialID);
+        if (element == null) {
+            Boolean isIndustrial = (Boolean) PaHibernateUtil.getCurrentSession().createQuery(
+                "select sp.proprietaryTrialIndicator from StudyProtocol sp where sp.id=" + trialID).uniqueResult();
+            element = new Element(trialID, isIndustrial);
+            getIndTrialCache().put(element);
+        }
+        return (Boolean) element.getValue();
     }
 
     private boolean hasAccrualAccess(Long studySiteId,

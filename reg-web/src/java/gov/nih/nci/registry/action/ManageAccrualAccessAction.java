@@ -225,7 +225,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
            }
            familyService.unassignAllAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
            model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser.getAffiliatedOrganizationId())));
-           msg = rUser.getFirstName() + " " + rUser.getLastName() + " can now no longer submit accrual.";
+           msg = rUser.getFirstName() + " " + rUser.getLastName() + " will no longer be able to submit accrual";
         } else {
             if (ObjectUtils.equals(getUserId(), getOfUserId())) {
                 getAllTrialsForSiteAccrualSubmitter(); 
@@ -243,10 +243,10 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 famString.append(fam.getName()); 
             }
             familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser, null);
-            msg = (rUser.getFirstName() + " " + rUser.getLastName() + " can now now submit accrual for "
+            msg = (rUser.getFirstName() + " " + rUser.getLastName() + " will be able to submit accrual for "
                   + getOrganization().getName() + " and any of " + famString.toString()
                   + " family member org's Institutional, Externally Peer Reviewed, "
-                  + "and Industrial trials where the org is a lead organization or a participating site.");
+                  + "and Industrial trials where the org is a lead organization or a participating site");
         }
         populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);

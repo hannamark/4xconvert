@@ -56,7 +56,6 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
     @EJB
     private ParticipatingOrgServiceLocal participatingOrgService;
 
-
     /**
      * Class used to run separate thread for processing batch submissions.
      */
@@ -69,7 +68,6 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
 
         public FamilyAccessProcessor(boolean assign, Set<Long> trialIds, RegistryUser user, RegistryUser creator,
                 String comment) {
-            System.out.println("Initializing batch thread....");
             this.assign = assign;
             this.trialIds = trialIds;
             this.user = user;
@@ -81,7 +79,6 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         public void run() {
             try {
                 if (assign) {
-                    System.out.println("Running batch thread....");
                     assignFamilyAccess(trialIds, user, creator, comment);
                 } else {
                     unassignAllAccess(user, creator, trialIds);
@@ -257,7 +254,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             return;
         }
         Map<RegistryUser, AccrualAccessSourceCode> users;
-        if (isIndustrialTrial(trialId)) {
+        if (StudySiteAccrualAccessServiceBean.isIndustrialTrial(trialId)) {
             Set<Long> partSites = getParticipatingSiteOrgIds(trialId);
             users = getUsersForAccess(partSites);
         } else {
@@ -293,12 +290,6 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             result.add(Long.valueOf(site.getPoId()));
         }
         return result;
-    }
-
-    private boolean isIndustrialTrial(Long trialID) {
-        Session session = PaHibernateUtil.getCurrentSession();
-        return (Boolean) session.createQuery(
-                "select sp.proprietaryTrialIndicator from StudyProtocol sp where sp.id=" + trialID).uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
