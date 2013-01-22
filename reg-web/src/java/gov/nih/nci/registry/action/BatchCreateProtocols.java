@@ -1000,8 +1000,7 @@ public class BatchCreateProtocols {
                     .getParticipatinSiteDocumentFileName(), doc));
         }
         // for Amendment Other document type will be skipped.
-        if (StringUtils.isEmpty(dto.getAmendmentDate()) && StringUtils.isEmpty(dto.getNciTrialIdentifier())
-                && StringUtils.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
+        if (StringUtils.isNotEmpty(dto.getOtherTrialRelDocumentFileName())) {
             doc = new File(folderPath + dto.getOtherTrialRelDocumentFileName());
             docDTOList.add(util.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(), dto
                     .getOtherTrialRelDocumentFileName(), doc));
