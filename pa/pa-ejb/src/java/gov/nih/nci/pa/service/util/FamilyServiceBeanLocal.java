@@ -19,6 +19,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -46,6 +48,7 @@ import org.hibernate.Session;
 public class FamilyServiceBeanLocal implements FamilyServiceLocal {
     private static final Logger LOG = Logger.getLogger(FamilyServiceBeanLocal.class);
     private static final String ORG_IDS = "orgIds";
+    private static final String UNCHECKED = "unchecked";
 
     @EJB
     private StudySiteAccrualAccessServiceLocal studySiteAccess;
@@ -60,14 +63,15 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
      * Class used to run separate thread for processing batch submissions.
      */
     private class FamilyAccessProcessor implements Runnable {
-        private boolean assign;
-        private Set<Long> trialIds;
-        private RegistryUser user;
-        private RegistryUser creator;
-        private String comment;
+        private final boolean assign;
+        private final Set<Long> trialIds;
+        private final RegistryUser user;
+        private final RegistryUser creator;
+        private final String comment;
 
         public FamilyAccessProcessor(boolean assign, Set<Long> trialIds, RegistryUser user, RegistryUser creator,
-                String comment) {
+                String comment) throws PAException {
+            lockUserFA(user, true);
             this.assign = assign;
             this.trialIds = trialIds;
             this.user = user;
@@ -83,9 +87,24 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
                 } else {
                     unassignAllAccess(user, creator, trialIds);
                 }
+                lockUserFA(user, false);
             } catch (Exception e) {
                 LOG.error(e);
             }
+        }
+    }
+
+    private static Map<Long, Date> locks = new HashMap<Long, Date>();
+    private static synchronized void lockUserFA(RegistryUser user, boolean lock) throws PAException {
+        if (lock) {
+            Date lockdt = locks.get(user.getId());
+            if (lockdt != null && (new Date().getTime() - lockdt.getTime() < DateUtils.MILLIS_PER_HOUR)) {
+                throw new PAException("Prior family accrual submitter request for " + user.getFirstName() + " " 
+                        + user.getLastName() + " processing. Try again later.");
+            }
+            locks.put(user.getId(), new Date());
+        } else {
+            locks.remove(user.getId());
         }
     }
 
@@ -160,7 +179,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         return getSiteAccrualTrials(poOrgList);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     Set<Long> getSiteAccrualTrials(List<Long> poOrgIds) throws PAException {
         Set<Long> result = new HashSet<Long>();
         if (CollectionUtils.isNotEmpty(poOrgIds)) {
@@ -267,7 +286,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private Set<Long> getLeadOrgId(Long trialId) {
         Set<Long> result = new HashSet<Long>();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -292,7 +311,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private Map<RegistryUser, AccrualAccessSourceCode> getUsersForAccess(Collection<Long> orgIds) throws PAException {
         Map<RegistryUser, AccrualAccessSourceCode> result = new HashMap<RegistryUser, AccrualAccessSourceCode>();
         if (CollectionUtils.isNotEmpty(orgIds)) {

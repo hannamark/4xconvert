@@ -52,6 +52,7 @@ import com.opensymphony.xwork2.interceptor.ScopedModelDriven;
  * @author Denis G. Krylov
  * 
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class ManageAccrualAccessAction extends ActionSupport implements
         ScopedModelDriven<AccrualAccessModel>, Preparable {
 
@@ -223,7 +224,12 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                getAllTrialsForSiteAccrualSubmitter(); 
                unassignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
            }
-           familyService.unassignAllAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+           try {
+               familyService.unassignAllAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
+           } catch (PAException e) {
+               ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
+               return SUCCESS;
+           }
            model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser.getAffiliatedOrganizationId())));
            msg = rUser.getFirstName() + " " + rUser.getLastName() + " will no longer be able to submit accrual";
         } else {
@@ -242,7 +248,12 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                 }
                 famString.append(fam.getName()); 
             }
-            familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser, null);
+            try {
+                familyService.assignFamilyAccrualAccess(registryUserService.getUserById(ofUserId), currentUser, null);
+            } catch (PAException e) {
+                ServletActionContext.getRequest().setAttribute(FAILURE_MSG, e.getMessage());
+                return SUCCESS;
+            }
             msg = (rUser.getFirstName() + " " + rUser.getLastName() + " will be able to submit accrual for "
                   + getOrganization().getName() + " and any of " + famString.toString()
                   + " family member org's Institutional, Externally Peer Reviewed, "

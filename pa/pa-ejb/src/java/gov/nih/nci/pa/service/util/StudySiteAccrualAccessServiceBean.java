@@ -179,7 +179,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     
     private static final Logger LOG = Logger.getLogger(StudySiteAccrualAccessServiceBean.class);
 
-    /** Cache for country Ii's. */
+    /** Cache for industrial trial flag. */
     private static CacheManager cacheManager;
     private static final String IND_TRIAL_CACHE_KEY = "IND_TRIAL_CACHE_KEY";
     private static final int CACHE_MAX_ELEMENTS = 50;
