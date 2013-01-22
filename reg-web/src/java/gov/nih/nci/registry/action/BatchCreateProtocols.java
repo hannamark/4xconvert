@@ -158,6 +158,7 @@ public class BatchCreateProtocols {
     
     private final String protocolDocumentCode = DocumentTypeCode.PROTOCOL_DOCUMENT.getCode();
     private final String irbApprovalDocCode = DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode();
+    private final String otherDocCode = DocumentTypeCode.OTHER.getCode();
     private final String informedConsentDocumentCode = DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode();
     private final String participatingSitesCode = DocumentTypeCode.PARTICIPATING_SITES.getCode();
 
@@ -401,7 +402,11 @@ public class BatchCreateProtocols {
         if (StringUtils.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())) {
             docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
                     irbDocId, irbApprovalDocCode));
-        }        
+        }
+        if (StringUtils.isNotEmpty(batchDto.getOtherTrialRelDocumentFileName())) {
+            docDTOList.add(handleDocument(batchDto, folderPath, studyProtocolId,
+                    null, otherDocCode));
+        }
         return docDTOList;
     }
 
@@ -428,6 +433,10 @@ public class BatchCreateProtocols {
             doc = new File(folderPath + batchDto.getIrbApprovalDocumentFileName());
             webDto = util.convertToDocumentDTO(irbApprovalDocCode,
                     batchDto.getIrbApprovalDocumentFileName(), doc);
+        } else if (documentCode.equals(otherDocCode)) {
+            doc = new File(folderPath + batchDto.getOtherTrialRelDocumentFileName());
+            webDto = util.convertToDocumentDTO(otherDocCode,
+                    batchDto.getOtherTrialRelDocumentFileName(), doc);
         }
         if (!ISOUtil.isIiNull(docId)) {
             webDto.setId(docId.getExtension());
