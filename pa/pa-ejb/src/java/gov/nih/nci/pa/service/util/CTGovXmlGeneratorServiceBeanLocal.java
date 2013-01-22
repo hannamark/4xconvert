@@ -820,28 +820,21 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
         addGrantInfo(spDTO, doc, idInfo);
 
-        String prsOrgName = "";        
+        // Determine PRS org name in this block.
+        User user = CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser());
+        RegistryUser registryUser = user != null ? getRegistryUserService()
+                .getUser(user.getLoginName()) : null;
         if (ArrayUtils.contains(options,
-                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)) {
-            RegistryUser registryUser = getRegistryUserService().getUser(
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)
+                || registryUser == null) {
+            registryUser = getRegistryUserService().getUser(
                     StConverter.convertToString(spDTO.getUserLastCreated()));
-            prsOrgName = PRS_PLACEHOLDER;
-            if (registryUser != null
-                    && StringUtils.isNotEmpty(registryUser.getPrsOrgName())) {
-                prsOrgName = registryUser.getPrsOrgName();
-            }
-        } else {
-            User user = CSMUserService.getInstance().getCSMUser(
-                    UsernameHolder.getUser());
-            RegistryUser registryUser = user != null ? getRegistryUserService()
-                    .getUser(user.getLoginName()) : null;
-            prsOrgName = registryUser != null
-                    && StringUtils.isNotEmpty(registryUser.getPrsOrgName()) ? registryUser
-                    .getPrsOrgName()
-                    : PRS_PLACEHOLDER;
         }
-        
-        //XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElementWithTextblock("org_name", prsOrgName, doc)); 
+        String prsOrgName = registryUser != null
+                && StringUtils.isNotEmpty(registryUser.getPrsOrgName()) ? registryUser
+                .getPrsOrgName() : PRS_PLACEHOLDER;       
+         
         String data = replaceXMLCharacters(prsOrgName);
         XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElement("org_name", data, doc));
         XmlGenHelper.appendElement(root, idInfo);

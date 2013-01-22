@@ -10,8 +10,8 @@ package gov.nih.nci.pa.service.util;
 public enum CTGovXmlGeneratorOptions {
 
     /**
-     * Tells Ct.gov XML generation to use trial submitter's (not logged in
-     * user's) PRS org.
+     * Tells Ct.gov XML generation to use the trial submitter's PRS organization name without
+     * trying to determine currently logged in user's PRS organization name.
      */
     USE_SUBMITTERS_PRS;
 
