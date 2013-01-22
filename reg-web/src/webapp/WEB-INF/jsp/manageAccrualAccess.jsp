@@ -228,6 +228,7 @@
                         for="ofUserId"> <fmt:message key="manage.accrual.access.family.selectUser" /></label></td>
                     <td>                       
                        <s:select name="ofUserId" id="ofUserId" cssStyle="width:300px;"
+                                onchange="change(this);"
                                 list="model.ofUsers" 
                                 listKey="id"  
                                 listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
