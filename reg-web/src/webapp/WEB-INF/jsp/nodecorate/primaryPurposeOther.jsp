@@ -44,7 +44,7 @@
                 <td>
                     <s:select id ="trialDTO.secondaryPurposes" name="trialDTO.secondaryPurposes" list="#typeCodeValues"  cssStyle="width:206px"
                         value="trialDTO.secondaryPurposes" multiple="true"/>
-                      <p class="info">You can select more than one purpose by holding down the CTRL key and clicking on multiple items.</p>
+                      <p class="info">You can select more than one purpose by holding down the CTRL or SHIFT key and clicking on multiple items.</p>
                 </td>
           </tr>
           
