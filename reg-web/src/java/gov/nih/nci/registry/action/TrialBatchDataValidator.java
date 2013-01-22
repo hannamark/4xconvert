@@ -197,9 +197,6 @@ public class TrialBatchDataValidator {
         if (StringUtils.isEmpty(batchDto.getFdaRegulatoryInformationIndicator())) {
           fieldErr.append("FDA Regulatory Information Indicator is required. \n");
         }
-        if (StringUtils.isEmpty(batchDto.getDataMonitoringCommitteeAppointedIndicator())) {
-          fieldErr.append("Data Monitoring Committee Appointed Indicator is required. \n");
-        }
         if (StringUtils.isNotEmpty(batchDto.getFdaRegulatoryInformationIndicator())
             && !PAUtil.isYesNo(batchDto.getFdaRegulatoryInformationIndicator())) {
            fieldErr.append("FDA Regulatory Information Indicator can be Yes or No.\n");
