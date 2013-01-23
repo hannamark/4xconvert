@@ -441,11 +441,7 @@
             <result name="curate">/WEB-INF/jsp/curate/organization/curate.jsp</result>
             <result name="curateError" type="redirectAction">organization/curate/curate/error?organization.id=${organizationId}&amp;duplicateOf.id=${duplicateOfId}</result>
             <result name="input">/WEB-INF/jsp/curate/organization/{1}.jsp</result>
-            <result name="success" type="redirectAction">
-                <param name="namespace">/protected</param>
-                <param name="actionName">organization/curate/start</param>
-                <param name="organization.id">${organization.id}</param>
-            </result>
+            <result name="success" type="redirectAction">organization/curate/start?organization.id=${organizationId}</result>
         </action>
         <action name="ajax/organization/curate/*" class="gov.nih.nci.po.web.curation.CurateOrganizationAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />
@@ -460,11 +456,7 @@
             </interceptor-ref>
             <result name="curate">/WEB-INF/jsp/curate/person/curate.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/person/{1}.jsp</result>
-            <result name="success" type="redirectAction">
-                <param name="namespace">/protected</param>
-                <param name="actionName">person/curate/start</param>
-                <param name="person.id">${person.id}</param>
-            </result>
+            <result name="success" type="redirectAction">person/curate/start?person.id=${personId}</result>            
         </action>
         <action name="ajax/person/curate/*" class="gov.nih.nci.po.web.curation.CuratePersonAction" method="{1}">
             <interceptor-ref name="poPerMethodValidationStack" />

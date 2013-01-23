@@ -137,6 +137,17 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
     public Person getPerson() {
         return person;
     }
+    
+    /**
+     * Method for pulling this value in struts xml.
+     * @return the organization id as a string.
+     */
+    public String getPersonId() {
+        if (getPerson() != null && getPerson().getId() != null) {
+            return this.getPerson().getId().toString();
+        }
+        return "";
+    }
 
     /**
      * @param org to curate
