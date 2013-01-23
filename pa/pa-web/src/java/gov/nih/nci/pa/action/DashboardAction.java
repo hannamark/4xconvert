@@ -27,7 +27,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -58,7 +57,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -67,7 +65,7 @@ import com.opensymphony.xwork2.Preparable;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods",
         "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class DashboardAction extends ActionSupport implements Preparable,
+public class DashboardAction extends AbstractCheckInOutAction implements Preparable,
         ServletRequestAware {
 
     private static final String DASHBOARD_TITLE = "dashboardTitle";
@@ -95,8 +93,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
     private HttpServletRequest request;
 
     private ProtocolQueryServiceLocal protocolQueryService;
-    private StudyProtocolService studyProtocolService;
-    private StudyCheckoutServiceLocal studyCheckoutService;
+    private StudyProtocolService studyProtocolService;    
     private PAServiceUtils serviceUtils = new PAServiceUtils();
 
     // fields that capture search criteria
@@ -120,8 +117,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
     private Boolean scientificQC;
     private Boolean readyForTSR;
     private Boolean submittedUnaccepted;
-    private Long studyProtocolId;
-
+    
     // Details tab updatable fields
     private Long assignedTo;
     private String newProcessingPriority;
@@ -291,7 +287,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
             session.setAttribute(SUMMARY_DTO, summaryDTO);
             session.setAttribute(NCT_IDENTIFIER, getServiceUtils()
                     .getStudyIdentifier(IiConverter
-                            .convertToStudyProtocolIi(studyProtocolId),
+                            .convertToStudyProtocolIi(getStudyProtocolId()),
                             PAConstants.NCT_IDENTIFIER_TYPE));
             session.setAttribute(Constants.TRIAL_SUMMARY, summaryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II,
@@ -317,7 +313,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
     public String save() throws PAException {
         try {
             StudyProtocolDTO studyDTO = studyProtocolService
-                    .getStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+                    .getStudyProtocol(IiConverter.convertToIi(getStudyProtocolId()));
             final Ii assignedUser = studyDTO.getAssignedUser();
             final Ii newAssignedUser = IiConverter.convertToIi(assignedTo);
 
@@ -339,7 +335,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
                             && !ISOUtil.isIiNull(newAssignedUser) && !assignedUser
                             .getExtension().equals(
                                     newAssignedUser.getExtension())))) {
-                studyCheckoutService.handleTrialAssigneeChange(studyProtocolId);
+                getStudyCheckoutService().handleTrialAssigneeChange(getStudyProtocolId());
             }
             request.setAttribute(Constants.SUCCESS_MESSAGE,
                     getText("dashboard.save.success"));
@@ -518,7 +514,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
         determineProperPageTitle();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
-        studyCheckoutService = PaRegistry.getStudyCheckoutService();
+        setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
     }
 
     private void determineProperPageTitle() {
@@ -551,6 +547,24 @@ public class DashboardAction extends ActionSupport implements Preparable,
         map.put(NOONE, getText("dashboard.noone"));
         map.putAll(CSMUserService.getInstance().getAbstractors());
         return map;
+    }
+    
+    @Override
+    public String adminCheckIn() throws PAException {     
+        super.adminCheckIn();
+        return view();
+    }
+    
+    @Override
+    public String scientificCheckIn() throws PAException {
+        super.scientificCheckIn();
+        return view();
+    }
+    
+    @Override
+    public String adminAndScientificCheckIn() throws PAException {        
+        super.adminAndScientificCheckIn();
+        return view();
     }
 
     /**
@@ -793,21 +807,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
         this.scientificQC = scientificQC;
     }
 
-    /**
-     * @return the studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     * @param studyProtocolId
-     *            the studyProtocolId to set
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
-
+    
     /**
      * @return the assignedTo
      */
@@ -940,14 +940,7 @@ public class DashboardAction extends ActionSupport implements Preparable,
     public void setStudyProtocolService(StudyProtocolService studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-
-    /**
-     * @param studyCheckoutService the studyCheckoutService to set
-     */
-    public void setStudyCheckoutService(
-            StudyCheckoutServiceLocal studyCheckoutService) {
-        this.studyCheckoutService = studyCheckoutService;
-    }
+  
 
     /**
      * @return the serviceUtils

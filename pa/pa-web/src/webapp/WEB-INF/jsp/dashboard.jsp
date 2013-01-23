@@ -36,17 +36,21 @@
 	
 	function handleCheckoutAction(action) {
         var studyProtocolId = '${sessionScope.summaryDTO.studyProtocolId}';
-        var form = $('checkoutForm');
+        
         if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
-            var bs=new Array(64).join(' ');
-            var comment=prompt(bs+"Enter check-in comment:"+bs,"");
-            if (comment==null){
+        	var form = $('dashboardForm');
+            var bs = new Array(64).join(' ');
+            var comment = prompt(bs+"Enter check-in comment:"+bs,"");
+            if (comment == null){
                 return;
             }
             form.elements["checkInReason"].value = comment.substr(0,200);
-        }
-        form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
-        form.submit();
+            handleAction(action);
+        } else {
+        	var form = $('checkoutForm');
+        	form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
+            form.submit();
+        }       
     }	
 
 	function viewProtocol(pid) {
@@ -130,6 +134,7 @@
 			<pa:sucessMessage />
 			<pa:failureMessage />
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
+			<s:hidden name="checkInReason" id="checkInReason"/>
 			<table class="form">
 				<c:if test="${dashboardSearchResults!=null}">
 					<tr>
@@ -678,8 +683,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 			</table>
 		</s:form>
 		<s:form action="studyProtocol" id="checkoutForm">
-		      <s:token></s:token>
-		      <s:hidden name="checkInReason" id="checkInReason"/>
+		      <s:token></s:token>		      
 		</s:form>
 	</div>
 </body>

@@ -84,15 +84,12 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
@@ -115,14 +112,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 
@@ -133,25 +128,21 @@ import com.opensymphony.xwork2.Preparable;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods",
         "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware, 
+public class StudyProtocolQueryAction extends AbstractCheckInOutAction implements Preparable, ServletResponseAware, 
                                                             ServletRequestAware {
     private static final long serialVersionUID = -2308994602660261367L;
     private static final String SHOW_VIEW = "view";
-    private static final String SHOW_VIEW_REFRESH = "viewRefresh";
     private static final String BARE = "/bare/";
     
     private ProtocolQueryServiceLocal protocolQueryService;
-    private StudyCheckoutServiceLocal studyCheckoutService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     private StudyProtocolService studyProtocolService;
     
     private List<StudyProtocolQueryDTO> records;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-    private Long studyProtocolId;
     private HttpServletResponse servletResponse;
     private HttpServletRequest httpServletRequest;
     private List<String> checkoutCommands;
-    private String checkInReason;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private String identifier;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
@@ -166,7 +157,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     @Override
     public void prepare() {
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
-        studyCheckoutService = PaRegistry.getStudyCheckoutService();
+        setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
 
@@ -295,7 +286,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         try {
             HttpSession session = ServletActionContext.getRequest().getSession();
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
-                .getTrialSummaryByStudyProtocolId(studyProtocolId);
+                .getTrialSummaryByStudyProtocolId(getStudyProtocolId());
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
             if (studyProtocolQueryDTO.getPiId() != null) {
@@ -306,7 +297,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             }
             
             session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
+            session.setAttribute(Constants.STUDY_PROTOCOL_II,
+                    IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
             // When the study protocol is selected, set its token to be the current time in milliseconds.
             session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
                 .generateToken());
@@ -314,12 +306,12 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
             session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
             setCheckoutCommands(studyProtocolQueryDTO);
             session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                .convertToStudyProtocolIi(studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
+                .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.NCT_IDENTIFIER_TYPE));
             if (!studyProtocolQueryDTO.isProprietaryTrial()) {
                 session.setAttribute("dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                    .convertToStudyProtocolIi(studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
+                    .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.DCP_IDENTIFIER_TYPE));
                 session.setAttribute("ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                    .convertToStudyProtocolIi(studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
+                    .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.CTEP_IDENTIFIER_TYPE));
             }
             String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
             String trialSubmitterOrg = "";
@@ -374,122 +366,15 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * Administrative check-out.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String adminCheckOut() throws PAException {
-        return checkOut(CheckOutType.ADMINISTRATIVE);
-    }
-    
-    /**
-     * Forced administrative and scientific check-out for super abstractors.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String adminAndScientificCheckOut() throws PAException {
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        boolean suAbs = BooleanUtils.toBoolean((Boolean) session
-                .getAttribute(Constants.IS_SU_ABSTRACTOR));
-        if (!suAbs) {
-            throw new PAException(
-                    "Admin & Scientific forced check-out is only available to super abstractors.");
-        }
-        // forcibly check in, in case a different user has this trial checked
-        // out.
-        adminCheckIn();
-        scientificCheckIn();
-        // now check out.
-        adminCheckOut();
-        scientificCheckOut();
-        return SHOW_VIEW_REFRESH;
-    }
-    
-    /**
-     * Forced administrative and scientific check-in for super abstractors.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String adminAndScientificCheckIn() throws PAException {
-    HttpSession session = ServletActionContext.getRequest().getSession();
-    boolean suAbs = BooleanUtils.toBoolean((Boolean) session
-                .getAttribute(Constants.IS_SU_ABSTRACTOR));
-        if (!suAbs) {
-            throw new PAException(
-                    "Admin & Scientific forced check-in is only available to super abstractors.");
-        }
-        // forcibly check out, in case a different user has this trial checked in
-        adminCheckOut();
-        scientificCheckOut();
-        // now check in.
-        adminCheckIn();
-        scientificCheckIn();
-    return SHOW_VIEW_REFRESH; 
-    }
-     
-    
-    /**
-     * Scientific check-out.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String scientificCheckOut() throws PAException {
-        return checkOut(CheckOutType.SCIENTIFIC);
-    }
-    
-    private String checkOut(CheckOutType checkOutType) throws PAException {
-        try {
-            studyCheckoutService.checkOut(IiConverter.convertToStudyProtocolIi(studyProtocolId),
-                    CdConverter.convertToCd(checkOutType),
-                    StConverter.convertToSt(UsernameHolder.getUser()));
-                String msg = getText("studyProtocol.trial.checkOut." + checkOutType.name());
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
-        } catch (PAException e) {
-            addActionError(e.getLocalizedMessage());
-        }
-        return SHOW_VIEW_REFRESH;
-    }
-    
-    /**
-     * Administrative check-in.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String adminCheckIn() throws PAException {
-        return checkIn(CheckOutType.ADMINISTRATIVE);
-    }
-    
-    /**
-     * Scientific check-in.
-     * @return The result name
-     * @throws PAException exception
-     */
-    public String scientificCheckIn() throws PAException {
-        return checkIn(CheckOutType.SCIENTIFIC);
-    }
-
-    private String checkIn(CheckOutType checkOutType) throws PAException {
-        try {
-            studyCheckoutService.checkIn(IiConverter.convertToStudyProtocolIi(studyProtocolId),
-                    CdConverter.convertToCd(checkOutType),
-                    StConverter.convertToSt(UsernameHolder.getUser()),
-                    StConverter.convertToSt(getCheckInReason()));
-            String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
-        } catch (PAException e) {
-            addActionError(e.getLocalizedMessage());
-        }
-        return SHOW_VIEW_REFRESH;
-    }
-    
-    /**
      * @return String
      * @throws PAException PAException
      */
     @SuppressWarnings("deprecation")
     public String save() throws PAException {
         try {
-            StudyProtocolDTO studyDTO = studyProtocolService.getStudyProtocol(IiConverter.convertToIi(studyProtocolId));
+            StudyProtocolDTO studyDTO = studyProtocolService
+                    .getStudyProtocol(IiConverter
+                            .convertToIi(getStudyProtocolId()));
             final Ii assignedUser = studyDTO.getAssignedUser();
             final Ii newAssignedUser = IiConverter.convertToIi(assignedTo);
             
@@ -509,7 +394,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
                             && !ISOUtil.isIiNull(newAssignedUser) && !assignedUser
                             .getExtension().equals(
                                     newAssignedUser.getExtension())))) {
-                studyCheckoutService.handleTrialAssigneeChange(studyProtocolId);
+                getStudyCheckoutService().handleTrialAssigneeChange(getStudyProtocolId());
             }
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                     getText("dashboard.save.success"));            
@@ -548,22 +433,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     public void setCriteria(StudyProtocolQueryCriteria criteria) {
         this.criteria = criteria;
     }
-
-    /**
-     * 
-     * @return studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     * 
-     * @param studyProtocolId studyProtocolId
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
+   
 
     /**
      * @return the servletResponse
@@ -595,20 +465,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * @return the checkInReason
-     */
-    public String getCheckInReason() {
-        return checkInReason;
-    }
-
-    /**
-     * @param checkInReason the checkInReason to set
-     */
-    public void setCheckInReason(String checkInReason) {
-        this.checkInReason = checkInReason;
-    }
-
-    /**
      * @return the identifier
      */
     public String getIdentifier() {
@@ -622,13 +478,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         this.identifier = identifier;
     }
 
-    /**
-     * @param studyCheckoutService the studyCheckoutService to set
-     */
-    public void setStudyCheckoutService(StudyCheckoutServiceLocal studyCheckoutService) {
-        this.studyCheckoutService = studyCheckoutService;
-    }
-
+    
     /**
      * @param tsrReportGeneratorService the tsrReportGeneratorService to set
      */
