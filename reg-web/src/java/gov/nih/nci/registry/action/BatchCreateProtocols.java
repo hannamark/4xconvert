@@ -131,6 +131,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -411,33 +412,45 @@ public class BatchCreateProtocols {
     }
 
     private TrialDocumentWebDTO handleDocument(StudyProtocolBatchDTO batchDto, String folderPath, // NOPMD
-            String studyProtocolId, Ii docId, String documentCode) throws IOException {       
+            String studyProtocolId, Ii docId, String documentCode) throws IOException, PAException {       
     
         TrialDocumentWebDTO webDto = new TrialDocumentWebDTO();
         TrialUtil util = new TrialUtil();
         File doc;
-        
-        if (documentCode.equals(protocolDocumentCode)) {
-            doc = new File(folderPath + batchDto.getProtcolDocumentFileName());
-            webDto = util.convertToDocumentDTO(protocolDocumentCode,
-                    batchDto.getProtcolDocumentFileName(), doc);
-        } else if (documentCode.equals(informedConsentDocumentCode)) {
-            doc = new File(folderPath + batchDto.getInformedConsentDocumentFileName());
-            webDto = util.convertToDocumentDTO(informedConsentDocumentCode,
-                    batchDto.getInformedConsentDocumentFileName(), doc);
-        } else if (documentCode.equals(participatingSitesCode)) {
-            doc = new File(folderPath + batchDto.getParticipatinSiteDocumentFileName());
-            webDto = util.convertToDocumentDTO(participatingSitesCode,
-                    batchDto.getParticipatinSiteDocumentFileName(), doc);
-        } else if (documentCode.equals(irbApprovalDocCode)) {
-            doc = new File(folderPath + batchDto.getIrbApprovalDocumentFileName());
-            webDto = util.convertToDocumentDTO(irbApprovalDocCode,
-                    batchDto.getIrbApprovalDocumentFileName(), doc);
-        } else if (documentCode.equals(otherDocCode)) {
-            doc = new File(folderPath + batchDto.getOtherTrialRelDocumentFileName());
-            webDto = util.convertToDocumentDTO(otherDocCode,
-                    batchDto.getOtherTrialRelDocumentFileName(), doc);
+        String fileBeingProcessed = ""; 
+        try {
+            if (documentCode.equals(protocolDocumentCode)) {
+                fileBeingProcessed = batchDto.getProtcolDocumentFileName();
+                doc = new File(folderPath +  fileBeingProcessed);
+                webDto = util.convertToDocumentDTO(protocolDocumentCode,
+                        batchDto.getProtcolDocumentFileName(), doc);
+            } else if (documentCode.equals(informedConsentDocumentCode)) {
+                fileBeingProcessed = batchDto.getInformedConsentDocumentFileName();
+                doc = new File(folderPath + fileBeingProcessed);
+                webDto = util.convertToDocumentDTO(informedConsentDocumentCode,
+                        batchDto.getInformedConsentDocumentFileName(), doc);
+            } else if (documentCode.equals(participatingSitesCode)) {
+                fileBeingProcessed = batchDto.getParticipatinSiteDocumentFileName();
+                doc = new File(folderPath + fileBeingProcessed);
+                webDto = util.convertToDocumentDTO(participatingSitesCode,
+                        batchDto.getParticipatinSiteDocumentFileName(), doc);
+            } else if (documentCode.equals(irbApprovalDocCode)) {
+                fileBeingProcessed = batchDto.getIrbApprovalDocumentFileName();
+                doc = new File(folderPath + fileBeingProcessed);
+                webDto = util.convertToDocumentDTO(irbApprovalDocCode,
+                        batchDto.getIrbApprovalDocumentFileName(), doc);
+            } else if (documentCode.equals(otherDocCode)) {
+                fileBeingProcessed = batchDto.getOtherTrialRelDocumentFileName();
+                doc = new File(folderPath + fileBeingProcessed);
+                webDto = util.convertToDocumentDTO(otherDocCode,
+                        batchDto.getOtherTrialRelDocumentFileName(), doc);
+            }
+        } catch (FileNotFoundException fnfEx) {
+            throw new PAException(//NOPMD
+                    "No accompanying zip file containing the file "
+                            + fileBeingProcessed + " mentioned in the trial data file.\n");
         }
+
         if (!ISOUtil.isIiNull(docId)) {
             webDto.setId(docId.getExtension());
         }
