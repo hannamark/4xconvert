@@ -168,4 +168,8 @@
        <comment>PO-5735: adding multiple comments per org.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9/PO-5735.sql"/>
     </changeSet>
+    <changeSet id="PO-5833" author="krylovd">
+       <comment>Added table to keep OMB/Disclaimer text.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9/PO-5833.sql"/>
+    </changeSet>    
 </databaseChangeLog>

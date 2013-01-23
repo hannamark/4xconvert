@@ -31,12 +31,14 @@ function submitForm(btnSelected){
         <tr>
             <td align="left"><br>
             <center><b><fmt:message key="disclaimer.page.programTitle" /></b></center>
-            <br>
-            <hr>
-            <br>
-            <fmt:message key="disclaimer.page.systemmsg" /> <br />
-            <br />
-            <hr>
+            <br/>
+            <hr/>
+            <br/>
+            <s:property escapeHtml="false" escapeXml="false" 
+                value="@gov.nih.nci.po.util.MiscDocumentUtils@getDocumentContent('Disclaimer')"/>
+            <br/>
+            <br/>
+            <hr/>
             </td>
         </tr>
     </table>
