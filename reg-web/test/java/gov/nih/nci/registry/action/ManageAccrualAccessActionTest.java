@@ -162,7 +162,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
         assertEquals(ActionSupport.SUCCESS, action.execute());
         action.setOfUserId(4L);
         assertEquals(0, action.getModel().getUnassignedTrials().size());
-        assertEquals(1, action.getModel().getAssignedTrials().size());
+        assertEquals(0, action.getModel().getAssignedTrials().size());
         assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
         verify(ssaas, never()).unassignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
