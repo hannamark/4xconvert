@@ -33,13 +33,20 @@ function submitForm(btnSelected){
 <br>
 <center><b><fmt:message key="disclaimer.page.ctrp"/></b></center><br> 
 <hr><br>
-<fmt:message key="disclaimer.page.ctrp.systemmsg"/>
+<s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('Disclaimer','Registry')"/>
 <br/>
 <br/>
 <hr>
-<p align="right"><fmt:message key="disclaimer.page.ctrp.burden.omb"/></p>
+<p align="right">OMB#: <s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentVersion('OMB','Registry')"/> 
+                                EXP. DATE:
+                                <s:set var="ombExpDate" value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentExpiration('OMB','Registry')"/>
+                                <fmt:formatDate value="${ombExpDate}" dateStyle="SHORT"/> 
+                                </p>
 <center><b><fmt:message key="disclaimer.page.ctrp.burden.title"/></b></center><br><br>
-<fmt:message key="disclaimer.page.ctrp.burden.text"/>
+<s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('OMB','Registry')"/>
 <hr>
   
 </td>

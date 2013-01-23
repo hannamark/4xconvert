@@ -34,13 +34,25 @@ function submitForm(btnSelected){
 <br>
 <center><b><fmt:message key="disclaimer.page.ctrp"/></b></center><br> 
 <hr><br>
-<fmt:message key="disclaimer.page.ctrp.systemmsg"/>
+<%
+  gov.nih.nci.pa.util.PaHibernateUtil.getHibernateHelper().openAndBindSession();
+%>
+<s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('Disclaimer','Accrual')"/>
 <br/>
 <br/>
 <hr>
-<p align="right"><fmt:message key="disclaimer.page.ctrp.burden.omb"/></p>
+<p align="right">OMB#: <s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentVersion('OMB','Accrual')"/> 
+                                EXP. DATE:
+                                <s:set var="ombExpDate" value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentExpiration('OMB','Accrual')"/>
+                                <fmt:formatDate value="${ombExpDate}" dateStyle="SHORT"/></p>
 <center><b><fmt:message key="disclaimer.page.ctrp.burden.title"/></b></center><br><br>
-<fmt:message key="disclaimer.page.ctrp.burden.text"/>
+<s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('OMB','Accrual')"/>
+<%
+  gov.nih.nci.pa.util.PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+%>
 <br>
 <hr>
 </td>

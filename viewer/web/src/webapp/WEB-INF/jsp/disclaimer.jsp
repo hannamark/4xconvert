@@ -32,7 +32,14 @@
                             <br>
                             <center><b><fmt:message key="disclaimer.page.ctrp"/></b></center><br/> 
                             <hr/><br/>
-                            <fmt:message key="disclaimer.page.ctrp.systemmsg"/>
+                            <%
+                            gov.nih.nci.pa.util.PaHibernateUtil.getHibernateHelper().openAndBindSession();
+                            %>                            
+                            <s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('Disclaimer','Viewer')"/>
+                            <%
+                            gov.nih.nci.pa.util.PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+                            %>
                             <br/>
                             <br/>
                             <hr/>

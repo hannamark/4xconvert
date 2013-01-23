@@ -29,7 +29,8 @@
                             <br/>
                             <center><b><fmt:message key="${pagePrefix}page.ctrp"/></b></center><br/> 
                             <hr/><br/>
-                            <fmt:message key="${pagePrefix}page.ctrp.systemmsg"/><br/>
+                            <s:property escapeHtml="false" escapeXml="false" 
+                                value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('Disclaimer','PA')"/><br/>
                             <br/>
                             <hr/>
                         </td>
