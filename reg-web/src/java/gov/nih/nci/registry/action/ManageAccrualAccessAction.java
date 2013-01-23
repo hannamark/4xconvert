@@ -38,7 +38,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -52,7 +51,7 @@ import com.opensymphony.xwork2.interceptor.ScopedModelDriven;
  * @author Denis G. Krylov
  * 
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class ManageAccrualAccessAction extends ActionSupport implements
         ScopedModelDriven<AccrualAccessModel>, Preparable {
 
@@ -220,10 +219,6 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         }
         String msg = "";
         if (rUser.getFamilyAccrualSubmitter()) {
-           if (ObjectUtils.equals(getUserId(), getOfUserId())) {
-               getAllTrialsForSiteAccrualSubmitter(); 
-               unassignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
-           }
            try {
                familyService.unassignAllAccrualAccess(registryUserService.getUserById(ofUserId), currentUser);
            } catch (PAException e) {
@@ -233,10 +228,6 @@ public class ManageAccrualAccessAction extends ActionSupport implements
            model.setUsers(sort(registryUserService.findByAffiliatedOrg(currentUser.getAffiliatedOrganizationId())));
            msg = rUser.getFirstName() + " " + rUser.getLastName() + " will no longer be able to submit accrual";
         } else {
-            if (ObjectUtils.equals(getUserId(), getOfUserId())) {
-                getAllTrialsForSiteAccrualSubmitter(); 
-                assignAll(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
-            }
             List<OrgFamilyDTO> famList = FamilyHelper.getByOrgId(ofUserId);
             StringBuffer famString = new StringBuffer();
             boolean bFirst = true;

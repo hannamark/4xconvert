@@ -139,25 +139,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void assignOFSubmitterTestUserSet() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
-        action.setUserId(4L);
-        action.change();
-        action.setOfUserId(4L);
-        assertEquals(1, action.getModel().getUnassignedTrials().size());
-        assertEquals(0, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
-        verify(ssaas, times(1)).assignTrialLevelAccrualAccess(
-                any(RegistryUser.class), 
-                eq(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE), 
-                anyCollectionOf(Long.class), 
-                anyString(), 
-                any(RegistryUser.class));
-        verify(fs, times(1)).assignFamilyAccrualAccess(any(RegistryUser.class), any(RegistryUser.class), anyString());
-    }
-
-    @Test
-    public void assignOFSubmitterTestUserNotSet() throws Exception {
+    public void assignOFSubmitterTest() throws Exception {
         assertEquals(ActionSupport.SUCCESS, action.execute());
         action.setOfUserId(4L);
         assertEquals(0, action.getModel().getUnassignedTrials().size());
@@ -174,19 +156,17 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
 
 
     @Test
-    public void unassignOFSubmitterTestUserSet() throws Exception {
+    public void unassignOFSubmitterTest() throws Exception {
         MockRegistryUserService.userList.get(3).setFamilyAccrualSubmitter(true);
         when(ssaas.getActiveTrialLevelAccrualAccess(any(RegistryUser.class))).thenReturn(Arrays.asList(3L));
         assertEquals(ActionSupport.SUCCESS, action.execute());
-        action.setUserId(4L);
-        action.change();
         action.setOfUserId(4L);
         assertEquals(0, action.getModel().getUnassignedTrials().size());
         assertEquals(1, action.getModel().getAssignedTrials().size());
         assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
-        verify(ssaas, times(1)).unassignTrialLevelAccrualAccess(
+        verify(ssaas, never()).unassignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
-                eq(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE), 
+                any(AccrualAccessSourceCode.class), 
                 anyCollectionOf(Long.class), 
                 anyString(), 
                 any(RegistryUser.class));
