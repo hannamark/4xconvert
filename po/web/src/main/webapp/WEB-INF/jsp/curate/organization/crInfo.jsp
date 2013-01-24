@@ -38,9 +38,7 @@
 	        
             <po:copyButton id="copy_curateEntityForm_organization_name" onclick="copyValueToTextField('${func:escapeJavaScript(cr.name)}', 'curateEntityForm_organization_name');" 
                 bodyStyle="clear:left; float:left;" buttonStyle="float:right;">
-                <po:field labelKey="organization.name" fieldChanged="${cr.nameChanged}">
-                    ${cr.name}
-                </po:field>
+                <po:field labelKey="organization.name" fieldChanged="${cr.nameChanged}">${cr.name}</po:field>
             </po:copyButton>
                         
             <div class="clear"></div>

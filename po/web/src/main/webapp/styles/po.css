@@ -393,3 +393,7 @@ span.pending {
 	color: red;	
 	font-style: italic;
 }
+
+div#wwctrl_organization\.name {
+	white-space: pre-wrap;
+}

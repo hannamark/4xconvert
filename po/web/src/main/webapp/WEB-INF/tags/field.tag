@@ -16,7 +16,5 @@
         </label>
     </div>
     <br/>
-    <div class="wwctrl" id="wwctrl_${labelKey}${idSuffix}">
-        <jsp:doBody />
-    </div>
+    <div class="wwctrl" id="wwctrl_${labelKey}${idSuffix}"><jsp:doBody /></div>
 </div>
