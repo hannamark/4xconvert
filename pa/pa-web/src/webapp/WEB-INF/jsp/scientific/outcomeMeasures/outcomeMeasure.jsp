@@ -73,7 +73,12 @@
 </SCRIPT>
 
 <body>
-<c:set var="topic" scope="request" value="abstractoutcome"/>
+<c:choose>
+     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
+     <c:set var="topic" scope="request" value="abstractoutcome_noninterventional"/>
+     </c:when>
+     <c:otherwise><c:set var="topic" scope="request" value="abstractoutcome"/></c:otherwise>
+</c:choose>
  <h1><c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <fmt:message key="osdesign.outcome.title"/>

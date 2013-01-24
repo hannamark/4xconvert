@@ -117,15 +117,17 @@
 	<h1>
 	    <c:out value="${dashboardTitle}" escapeXml="false"/>		
 	</h1>
-	<c:set var="topic" scope="request" value="dashboard_admin-sci" />
-	<c:if test="${suAbs}">
-	<c:set var="topic" scope="request" value="dashboard_super" />
-	</c:if>
-    <c:if test="${admAbs}">
+    <c:if test="${sessionScope.isAdminAbstractor==true}">
     <c:set var="topic" scope="request" value="dashboard_admin" />
     </c:if>
-    <c:if test="${sciAbs}">
+    <c:if test="${sessionScope.isScientificAbstractor==true}">
     <c:set var="topic" scope="request" value="dashboard_sci" />
+    </c:if>
+    <c:if test="${sessionScope.isAdminAbstractor==true && sessionScope.isScientificAbstractor==true}">
+    <c:set var="topic" scope="request" value="dashboard_admin-sci" />
+    </c:if>
+    <c:if test="${sessionScope.isSuAbstractor==true}">
+    <c:set var="topic" scope="request" value="dashboard_super" />
     </c:if>
 	<jsp:useBean id="currentDate" class="java.util.Date" scope="request"></jsp:useBean>
 	<div class="box" id="filters">
