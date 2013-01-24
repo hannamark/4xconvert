@@ -120,23 +120,17 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         dto.setName(StConverter.convertToSt(marker.getName()));
         dto.setLongName(StConverter.convertToSt(marker.getLongName()));
         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd(marker.getHugoBiomarkerCode()));
-        //String assayType = marker.getAssayTypeCode();        
-       // String finalAssayTypeCode = enumTypeCodeValue(AssayTypeCode.class, assayType); 
-        //String finalAssayTypeCode = assayTypeCodeValue(assayType);
-       // dto.setAssayTypeCode(CdConverter.convertStringToCd(finalAssayTypeCode));
+
         dto.setAssayTypeCode(CdConverter.convertStringToCd(marker.getAssayTypeCode()));
         dto.setAssayTypeOtherText(StConverter.convertToSt(marker.getAssayTypeOtherText()));
         dto.setAssayUseCode(CdConverter.convertStringToCd(marker.getAssayUseCode()));
         // change of Assay Purpose Code
-     //   String assayPurposeCode = marker.getAssayPurposeCode();
-       // String finalAssayPurposeCode = assayPurposeCodeValue(assayPurposeCode);
-     //   String finalAssayPurposeCode = enumTypeCodeValue(AssayPurposeCode.class, assayPurposeCode);
+
         dto.setAssayPurposeCode(CdConverter.convertStringToCd(marker.getAssayPurposeCode())); 
-       // dto.setAssayPurposeCode(CdConverter.convertToCd(marker.getAssayPurposeCode()));
+      
         dto.setAssayPurposeOtherText(StConverter.convertToSt(marker.getAssayPurposeOtherText()));
         // change of tissueSpecimenType
-        //String tissueSpecimenType = marker.getTissueSpecimenTypeCode();
-       // String finaltissueSpecimenType = enumTypeCodeValue(TissueSpecimenTypeCode.class, tissueSpecimenType);
+
         dto.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(marker.getTissueSpecimenTypeCode()));
         dto.setSpecimenTypeOtherText(StConverter.convertToSt(marker.getSpecimenTypeOtherText()));
         dto.setTissueCollectionMethodCode(CdConverter.convertStringToCd(marker.getTissueCollectionMethodCode()));
@@ -167,7 +161,7 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
                     if (i == 1) {
                         finalTypeCode = finalTypeCode.concat(itr.next());
                     } else {
-                        finalTypeCode = finalTypeCode.concat(itr.next() + ",");
+                        finalTypeCode = finalTypeCode.concat(itr.next() + ", ");
                     }
                     i--;
                 }

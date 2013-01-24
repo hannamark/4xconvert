@@ -487,7 +487,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 String assayTypeValue = "";
                 if (assayTypeList != null) {
                     for (String delAssayValue : assayTypeList) {
-                        assayTypeValue = delAssayValue + ",";
+                        assayTypeValue = delAssayValue + ", ";
                     }
                     marker.setAssayTypeCode(CdConverter
                             .convertStringToCd(assayTypeValue + getPlannedMarker().getAssayType()));
@@ -500,7 +500,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 String assayUseValue = "";
                 if (assayUseList != null) {
                     for (String delAssayUseValue : assayUseList) {
-                        assayUseValue = delAssayUseValue + ",";
+                        assayUseValue = delAssayUseValue + ", ";
                     }
                     marker.setAssayUseCode(CdConverter
                             .convertStringToCd(assayUseValue + getPlannedMarker().getAssayUse()));
@@ -513,7 +513,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 String assayPurposeValue = "";
                 if (assayPurposeList != null) {
                     for (String delAssayPurposeValue : assayPurposeList) {
-                        assayPurposeValue = delAssayPurposeValue + ",";
+                        assayPurposeValue = delAssayPurposeValue + ", ";
                     }
                     marker.setAssayPurposeCode(CdConverter
                             .convertStringToCd(assayPurposeValue + getPlannedMarker().getAssayPurpose()));
@@ -526,7 +526,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 String specimenTypeValue = "";
                 if (specimenTypeList != null) {
                     for (String delSpecValue : specimenTypeList) {
-                        specimenTypeValue = delSpecValue + ",";
+                        specimenTypeValue = delSpecValue + ", ";
                     }
                     marker.setTissueSpecimenTypeCode(CdConverter
                             .convertStringToCd(specimenTypeValue + getPlannedMarker().getTissueSpecimenType()));
@@ -540,7 +540,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 String evalTypeValue = "";
                 if (evalTypeList != null) {
                     for (String delEvalValue : evalTypeList) {
-                        evalTypeValue = delEvalValue + ",";
+                        evalTypeValue = delEvalValue + ", ";
                     } 
                     marker.setEvaluationType(CdConverter
                             .convertStringToCd(evalTypeValue + getPlannedMarker().getEvaluationType()));
