@@ -26,13 +26,13 @@
     </display:column>       
     <display:column titleKey="organization.totalOrgContacts" media="excel csv">
             ${row.totalOrgContacts==0?'':row.totalOrgContacts}
-    </display:column>       
+    </display:column>    
+    <display:column titleKey="organization.pendingHCFs" media="excel csv">
+           ${row.pendingHCFs==0?'':row.pendingHCFs}
+    </display:column>
     <display:column titleKey="organization.pendingROs" media="excel csv">
              ${row.pendingROs==0?'':row.pendingROs}
     </display:column>
-    <display:column titleKey="organization.pendingHCFs" media="excel csv">
-           ${row.pendingHCFs==0?'':row.pendingHCFs}
-    </display:column>           
 
     <display:column titleKey="organization.hcfCtepId" property="hcfCtepId"
         sortable="true" sortProperty="HCF_CTEP_ID" />           
@@ -54,13 +54,13 @@
         sortProperty="CR">
             ${row.changeRequests==0?'':row.changeRequests}
     </display:column>
-    <display:column titleKey="organization.pendingROs" sortable="true" media="html"
-        sortProperty="PENDING_RO">
-             ${row.pendingROs==0?'':row.pendingROs}
-    </display:column>
     <display:column titleKey="organization.pendingHCFs" sortable="true" media="html"
         sortProperty="PENDING_HCF">
            ${row.pendingHCFs==0?'':row.pendingHCFs}
+    </display:column>    
+    <display:column titleKey="organization.pendingROs" sortable="true" media="html"
+        sortProperty="PENDING_RO">
+             ${row.pendingROs==0?'':row.pendingROs}
     </display:column>
     <display:column titleKey="organization.statusCode"
         property="statusCode" sortable="true" sortProperty="STATUS" media="html"/>
