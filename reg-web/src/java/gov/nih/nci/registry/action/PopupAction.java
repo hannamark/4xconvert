@@ -436,9 +436,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("2/3-letter State/Province Code required for Australia");
         }
 
-        if (StringUtils.isEmpty(email)) {
-            addActionError("Email is a required field");
-        } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
+        if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
 
@@ -486,9 +484,11 @@ public class PopupAction extends ActionSupport implements Preparable {
                 telurl.setValue(new URI(url));
                 telco.getItem().add(telurl);
             }
-            TelEmail telemail = new TelEmail();
-            telemail.setValue(new URI("mailto:" + email));
-            telco.getItem().add(telemail);
+            if (StringUtils.isNotEmpty(email)) {
+                TelEmail telemail = new TelEmail();
+                telemail.setValue(new URI("mailto:" + email));
+                telco.getItem().add(telemail);
+            }
             orgDto.setTelecomAddress(telco);
             Ii id = PoRegistry.getOrganizationEntityService().createOrganization(orgDto);
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
