@@ -12,12 +12,10 @@
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     setFocusToFirstControl();
-    activate();         
+    displayMaskingRoles();         
 }
 
-function activate(){
-	var input="webDTO.primaryPurposeCode";
-  	var inputElement = document.forms[0].elements[input];
+function displayMaskingRoles() {	
 	
 	var input2="webDTO.blindingSchemaCode";
 	var inputElement2 = document.forms[0].elements[input2];
@@ -173,7 +171,7 @@ function initialize() {
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.primaryPurposeCode" id="webDTO.primaryPurposeCode" list="#primaryPurposeCodeValues"  
-                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="activate();displayPrimaryPurposeOtherText()"/>
+                   value="webDTO.primaryPurposeCode" cssStyle="width:150px" onchange="displayPrimaryPurposeOtherText()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.primaryPurposeCode</s:param>
@@ -270,7 +268,7 @@ function initialize() {
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
            <s:select headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
-	           value="webDTO.blindingSchemaCode" cssStyle="width:120px" onchange="activate()" />
+	           value="webDTO.blindingSchemaCode" cssStyle="width:120px" onchange="displayMaskingRoles();" />
 	       <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.blindingSchemaCode</s:param>
