@@ -165,6 +165,13 @@
 							<div id="search" class="box"
 								style="${toggleResultsTab || toggleDetailsTab?'display:none;':''}">
 								<table class="form">
+                                    <tr>
+                                        <td scope="row" class="label"><label for="assignee"><fmt:message
+                                                    key="dashboard.assignedTo" /></label></td>
+                                        <td><s:select id="assignee" name="assignee"
+                                                list="assigneeList" headerKey="" headerValue=""
+                                                value="assignee" cssStyle="width:206px" /></td>
+                                    </tr>								
 									<tr>
 										<td scope="row" class="label"><label for="checkedOutBy"><fmt:message
 													key="dashboard.checkedOutBy" /></label></td>

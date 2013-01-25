@@ -880,7 +880,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      * @return the assignedUser
      */
     @ManyToOne
-    @JoinColumn(name = "assigned_user_id")    
+    @JoinColumn(name = "assigned_user_id") 
+    @Searchable
     public User getAssignedUser() {
         return assignedUser;
     }

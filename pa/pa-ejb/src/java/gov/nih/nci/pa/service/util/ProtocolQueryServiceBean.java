@@ -128,6 +128,7 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -665,6 +666,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
         sp.setCtroOverride(crit.getCtroOverride());
+        
+        if (crit.getAssignedUserId() != null) {
+            User user = new User();
+            user.setUserId(crit.getAssignedUserId());
+            sp.setAssignedUser(user);
+        }
+        
         populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
     }
 
@@ -794,6 +802,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return (StringUtils.isEmpty(criteria.getNciIdentifier())
                 && StringUtils.isEmpty(criteria.getCtgovXmlRequiredIndicator())
                 && criteria.getStudyProtocolId() == null                
+                && criteria.getAssignedUserId() == null
                 && criteria.getSubmittedOnOrAfter() == null
                 && criteria.getSubmittedOnOrBefore() == null
                 && criteria.getNciSponsored() == null

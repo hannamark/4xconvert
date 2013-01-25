@@ -86,6 +86,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
 
     private static final Long ANYONE = -1L;
     private static final Long NOONE = -2L;
+    private static final Long ME = -3L;
 
     private static final String TOGGLE_RESULTS_TAB = "toggleResultsTab";
     private static final String TOGGLE_DETAILS_TAB = "toggleDetailsTab";
@@ -98,6 +99,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
 
     // fields that capture search criteria
     private Long checkedOutBy;
+    private Long assignee;
     private List<String> processingPriority = new ArrayList<String>();
     private String submittedOnOrAfter;
     private String submittedOnOrBefore;
@@ -383,6 +385,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         criteria.setNciSponsored(StringUtils.isBlank(nciSponsored) ? null
                 : "true".equals(nciSponsored));
         buildCheckOutCriteria(criteria);
+        buildAssigneeCriteria(criteria);
         buildSubmissionTimelineCriteria(criteria);
         buildOnHoldCriteria(criteria);
         buildMilestoneCriteria(criteria);
@@ -494,6 +497,22 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             }
         }
     }
+    
+    /**
+     * @param criteria
+     * @throws PAException
+     */
+    private void buildAssigneeCriteria(StudyProtocolQueryCriteria criteria)
+            throws PAException {
+        if (assignee != null) {
+            if (ME.equals(assignee)) {     
+                criteria.setAssignedUserId(CSMUserService.getInstance()
+                        .getCSMUser(UsernameHolder.getUser()).getUserId());
+            } else {
+                criteria.setAssignedUserId(assignee);
+            }
+        }
+    }
 
     private String getUserIdentifier(long userId) throws PAException {
         return CSMUserService.getInstance().getCSMUserById(userId)
@@ -545,6 +564,18 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         Map<Long, String> map = new LinkedHashMap<Long, String>();
         map.put(ANYONE, getText("dashboard.anyone"));
         map.put(NOONE, getText("dashboard.noone"));
+        map.putAll(CSMUserService.getInstance().getAbstractors());
+        return map;
+    }
+    
+    /**
+     * @return Map<String, String>
+     * @throws PAException
+     *             PAException
+     */
+    public Map<Long, String> getAssigneeList() throws PAException {
+        Map<Long, String> map = new LinkedHashMap<Long, String>();
+        map.put(ME, getText("dashboard.me"));        
         map.putAll(CSMUserService.getInstance().getAbstractors());
         return map;
     }
@@ -954,6 +985,20 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     public void setServiceUtils(PAServiceUtils serviceUtils) {
         this.serviceUtils = serviceUtils;
+    }
+
+    /**
+     * @return the assignee
+     */
+    public Long getAssignee() {
+        return assignee;
+    }
+
+    /**
+     * @param assignee the assignee to set
+     */
+    public void setAssignee(Long assignee) {
+        this.assignee = assignee;
     }
 
 }

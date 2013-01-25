@@ -193,6 +193,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private MilestoneCode currentOrPreviousMilestone;          
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
     private Boolean ctroOverride;
+    private Long assignedUserId;
     
     /**
      * @return the inBoxProcessing
@@ -992,6 +993,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", submitterAffiliateOrgId=")
                 .append(submitterAffiliateOrgId).append(", holdRecordExists=")
                 .append(holdRecordExists)
+                .append(", assignedUserId=")
+                .append(assignedUserId)
                 .append(", currentOrPreviousMilestone=")
                 .append(currentOrPreviousMilestone).append("]");
         return builder.toString();
@@ -1250,6 +1253,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setCtroOverride(Boolean ctroOverride) {
         this.ctroOverride = ctroOverride;
+    }
+
+    /**
+     * @return the assignedUserId
+     */
+    public Long getAssignedUserId() {
+        return assignedUserId;
+    }
+
+    /**
+     * @param assignedUserId the assignedUserId to set
+     */
+    public void setAssignedUserId(Long assignedUserId) {
+        this.assignedUserId = assignedUserId;
     }
         
     
