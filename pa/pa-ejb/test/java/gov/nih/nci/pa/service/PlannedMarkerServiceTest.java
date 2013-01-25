@@ -159,8 +159,8 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         markerDTO.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
         markerDTO.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
         markerDTO.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
-        markerDTO.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
-        markerDTO.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
+        markerDTO.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.INTEGRAL));
+        markerDTO.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.ELIGIBILITY_CRITERION));
         markerDTO.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
         markerDTO.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
         markerDTO.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));

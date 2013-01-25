@@ -94,7 +94,7 @@ public class TSRReportPlannedMarker {
     private String assayPurpose;
     private String tissueSpecimenType;
     private String tissueCollectionMethod;
-
+    private String evaluationType;
     /**
      * @return the name
      */
@@ -178,4 +178,17 @@ public class TSRReportPlannedMarker {
     public void setTissueCollectionMethod(String tissueCollectionMethod) {
         this.tissueCollectionMethod = tissueCollectionMethod;
     }
+    /**
+     * @return the evaluationType
+     */
+    public String getEvaluationType() {
+        return evaluationType;
+    }
+    /**
+     * @param evaluationType the evaluationType to set
+     */
+    public void setEvaluationType(String evaluationType) {
+        this.evaluationType = evaluationType;
+    }
+    
 }

@@ -93,40 +93,34 @@ import java.util.List;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public enum AssayPurposeCode implements CodedEnum<String> {
+    
     /**
-     * Stratification Factor.
+     * Eligibility Criterion.
      */
-    STRATIFICATION_FACTOR("Stratification Factor"),
+    ELIGIBILITY_CRITERION("Eligibility Criterion"),
+    
 
     /**
      * Treatment Assignment.
      */
     TREATMENT_ASSIGNMENT("Treatment Assignment"),
 
-    /**
-     * Eligibility Criterion.
-     */
-    ELIGIBILITY_CRITERION("Eligibility Criterion"),
 
+    /**
+     * Stratification Factor.
+     */
+    STRATIFICATION_FACTOR("Stratification Factor"),
+
+    
     /**
      * Research.
      */
     RESEARCH("Research"),
-
+    
     /**
-     * PD - Dose Adjustment.
+     * Response Assessment.
      */
-    PD("PD - Dose Adjustment"),
-
-    /**
-     * Unspecified.
-     */
-    UNSPECIFIED("Unspecified"),
-
-    /**
-     * Other.
-     */
-    OTHER("Other");
+    RESPONSE_ASSESSMENT("Response Assessment");
 
     private String code;
 

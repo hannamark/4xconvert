@@ -91,35 +91,16 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public enum AssayUseCode implements CodedEnum<String> {
-    /**
-     * Correlative.
-     */
-    CORRELATIVE("Correlative"),
-
-    /**
-     * Integrated.
-     */
-    INTEGRATED("Integrated"),
-
+   
     /**
      * Integral.
      */
     INTEGRAL("Integral"),
-
+    
     /**
-     * Research.
+     * Integrated.
      */
-    RESEARCH("Research"),
-
-    /**
-     * Unspecified.
-     */
-    UNSPECIFIED("Unspecified"),
-
-    /**
-     * Unclear.
-     */
-    UNCLEAR("Unclear");
+    INTEGRATED("Integrated");
 
     private String code;
 

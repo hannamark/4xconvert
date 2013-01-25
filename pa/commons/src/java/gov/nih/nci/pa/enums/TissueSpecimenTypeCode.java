@@ -107,21 +107,38 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
      * Whole Blood.
      */
     WHOLE_BLOOD("Whole Blood"),
-
-    /**
-     * Citrated Plasma.
-     */
-    CITRATED_PLASMA("Citrated Plasma"),
-
+    
     /**
      * Tissue.
      */
     TISSUE("Tissue"),
+    /**
+     * Urine.
+     */
+    URINE("Urine"),
+    /**
+     * Peripheral Blood Monocytic Cells (PBMCs).
+     */
+    PERIPHERAL("Peripheral Blood Monocytic Cells (PBMCs)"),
 
     /**
-     * Other Fluid.
+     * Cerebrospinal Fluid (CSF).
      */
-    OTHER_FLUID("Other Fluid"),
+    CEREBROSPINAL_FLUID("Cerebrospinal Fluid (CSF)"),
+
+    /**
+     * Bone Marrow (BM).
+     */
+    BONE_MARROW("Bone Marrow (BM)"),
+    
+    /**
+     * Saliva.
+     */
+    SALIVA("Saliva"),
+    /**
+     * Other.
+     */
+    OTHER("Other"),
 
     /**
      * Unspecified.

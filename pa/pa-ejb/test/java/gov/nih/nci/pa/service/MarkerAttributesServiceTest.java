@@ -51,7 +51,7 @@ public class MarkerAttributesServiceTest extends AbstractHibernateTestCase {
         assertTrue(StringUtils.equals(result.get(0), "PCR"));
         List<String> resultEval = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.EVALUATION_TYPE);
         assertTrue(resultEval.size() > 0);
-        assertTrue(StringUtils.equals(resultEval.get(0), "Level / Quantity"));
+        assertTrue(StringUtils.equals(resultEval.get(0), "Level/Quantity"));
         List<String> resultBio = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.BIOMARKER_PURPOSE);
         assertTrue(resultBio.size() > 0);
         assertTrue(StringUtils.equals(resultBio.get(0), "Eligibility Criterion"));
@@ -77,7 +77,7 @@ public class MarkerAttributesServiceTest extends AbstractHibernateTestCase {
         map.put(2575508L, values);
         bean.updateMarker(BioMarkerAttributesCode.ASSAY_TYPE, map);
         List<String> result = MarkerAttributesBeanLocal.getTypeValues(BioMarkerAttributesCode.ASSAY_TYPE);
-        assertTrue(result.size() == 2);
+        assertTrue(result.size() == 1);
         map.clear();
         values.clear();
         values.put("Retrospective Research", "Retrospective Research");

@@ -92,60 +92,76 @@ import java.util.List;
  */
 public enum AssayTypeCode implements CodedEnum<String> {
     /**
-     * RT-PCR..
+     * PCR.
      */
-    RT_PCR("RT-PCR"),
-
-    /**
-     * Ligand Binding Assay.
-     */
-    LIGAND_BINDING_ASSAY("Ligand Binding Assay"),
-
+    PCR("PCR"),
+    
     /**
      * In Situ Hybridization.
      */
     IN_SITU_HYBRIDIZATION("In Situ Hybridization"),
-
+    
     /**
      * Microarray.
      */
     MICROARRAY("Microarray"),
-
-    /**
-     * CGH.
-     */
-    CGH("Comparative Genomic Hybridization"),
-
-    /**
-     * Loss of Heterozygosity.
-     */
-    LOH("Loss of Heterozygosity"),
-
+    
     /**
      * ELISA.
      */
     ELISA("ELISA"),
 
     /**
-     * Fluorescence in situ hybridization.
+     * Immunohistochemistry (IHC).
      */
-    FISH("Fluorescence in situ hybridization"),
-
+    IMMUNOHISTOCHEMISTRY("Immunohistochemistry (IHC)"),
     /**
-     * Immunohistochemistry.
+     * Western Blot (Immunoblot).
+     *
      */
-    IMMUNOHISTOCHEMISTRY("Immunohistochemistry"),
 
+    WESTERN_BLOT("Western Blot (Immunoblot)"),
+    
     /**
-     * PCR.
+     * Flow Cytometry.
      */
-    PCR("PCR"),
-
+    FLOW_CYTOMETRY("Flow Cytometry"),
+    
     /**
-     * Serum ECD Test.
+     * Sequencing.
      */
-    SERUM_ECD_TEST("Serum ECD Test"),
-
+   SEQUENCING("Sequencing"),
+   
+   /**
+    * Microscopy/Imaging.
+    */
+   MICROSCOPY_IMAGING("Microscopy/Imaging"),
+   
+   /**
+    * ELISPOT.
+    */
+   ELISPOT("ELISPOT"),
+   
+   /**
+    * Proliferation Assay.
+    */
+   PROLIFERATION_ASSAY("Proliferation Assay"),
+   
+   /**
+    * Cytotoxicity Assay.
+    */
+   CYTOTOXICITY_ASSAY("Cytotoxicity Assay"),
+   
+   /**
+    * Protein Activity Assay.
+    */
+   PROTEIN_ACTIVITY_ASSAY("Protein Activity Assay"),
+   
+   /**
+    * Mass Spectrometry.
+    */
+   MASS_SPECTROMETRY("Mass Spectrometry"),
+   
     /**
      * Unspecified.
      */

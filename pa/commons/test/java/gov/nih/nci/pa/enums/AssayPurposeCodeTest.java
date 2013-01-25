@@ -117,7 +117,6 @@ public class AssayPurposeCodeTest {
     public void testGetSelectedDisplayNames() {
         List<String> selectedValues = new ArrayList<String>();
         selectedValues.add(AssayPurposeCode.ELIGIBILITY_CRITERION.getCode());
-        selectedValues.add(AssayPurposeCode.OTHER.getCode());
         String[] result = AssayPurposeCode
                 .getSelectedDisplayNames(selectedValues);
         assertNotNull("results returned", result);

@@ -95,15 +95,16 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.EvaluationTypeCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -1031,6 +1032,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         for (PlannedMarkerDTO marker : plannedMarkers) {
             TSRReportPlannedMarker tsrMarker = new TSRReportPlannedMarker();
             tsrMarker.setName(getValue(marker.getName()));
+            String evaluationType = getValue(marker.getEvaluationType());
+            if (EvaluationTypeCode.getByCode(evaluationType) == EvaluationTypeCode.OTHER) {
+                evaluationType = StringUtils.join(new Object[] {
+                        evaluationType, ": ", getValue(marker.getEvaluationTypeOtherText())});
+            }
+            tsrMarker.setEvaluationType(evaluationType);
             String assayType = getValue(marker.getAssayTypeCode());
             if (AssayTypeCode.getByCode(assayType) == AssayTypeCode.OTHER) {
                 assayType = StringUtils.join(new Object[] {assayType, ": ", getValue(marker.getAssayTypeOtherText())});
@@ -1038,12 +1045,15 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             tsrMarker.setAssayType(assayType);
             tsrMarker.setAssayUse(getValue(marker.getAssayUseCode()));
             String assayPurpose = getValue(marker.getAssayPurposeCode());
-            if (AssayPurposeCode.getByCode(assayPurpose) == AssayPurposeCode.OTHER) {
-                assayPurpose =
-                    StringUtils.join(new Object[] {assayPurpose, ": ", getValue(marker.getAssayPurposeOtherText())});
-            }
+           
             tsrMarker.setAssayPurpose(assayPurpose);
-            tsrMarker.setTissueSpecimenType(getValue(marker.getTissueSpecimenTypeCode()));
+            String specimenType = getValue(marker.getTissueSpecimenTypeCode());
+            if (TissueSpecimenTypeCode.getByCode(specimenType) == TissueSpecimenTypeCode.OTHER) {
+                specimenType = StringUtils.join(new Object[] {
+                        specimenType, ": ", getValue(marker.getTissueSpecimenTypeCode())});
+            }
+            
+            tsrMarker.setTissueSpecimenType(specimenType);
             tsrMarker.setTissueCollectionMethod(getValue(marker.getTissueCollectionMethodCode()));
             tsrMarkers.add(tsrMarker);
         }

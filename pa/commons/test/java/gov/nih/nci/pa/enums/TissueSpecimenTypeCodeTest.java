@@ -116,10 +116,10 @@ public class TissueSpecimenTypeCodeTest {
     @Test
     public void testGetSelectedDisplayNames() {
         List<String> selectedValues = new ArrayList<String>();
-        selectedValues.add(TissueSpecimenTypeCode.CITRATED_PLASMA.getCode());
-        selectedValues.add(TissueSpecimenTypeCode.OTHER_FLUID.getCode());
+        selectedValues.add(TissueSpecimenTypeCode.BONE_MARROW.getCode());
+        selectedValues.add(TissueSpecimenTypeCode.CEREBROSPINAL_FLUID.getCode());
         String[] result = TissueSpecimenTypeCode.getSelectedDisplayNames(selectedValues);
         assertNotNull("results returned", result);
-        assertEquals(TissueSpecimenTypeCode.OTHER_FLUID.getCode(), result[1]);
+        assertEquals(TissueSpecimenTypeCode.CEREBROSPINAL_FLUID.getCode(), result[1]);
     }
 }

@@ -557,8 +557,8 @@ public class AbstractMockitoTest {
         plannedMarkerDto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
         plannedMarkerDto.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
         plannedMarkerDto.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
-        plannedMarkerDto.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
-        plannedMarkerDto.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
+        plannedMarkerDto.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.INTEGRAL));
+        plannedMarkerDto.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.ELIGIBILITY_CRITERION));
         plannedMarkerDto.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
         plannedMarkerDto.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
         plannedMarkerDto.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));

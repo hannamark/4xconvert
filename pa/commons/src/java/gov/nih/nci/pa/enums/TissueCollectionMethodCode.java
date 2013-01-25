@@ -92,24 +92,15 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
  */
 public enum TissueCollectionMethodCode implements CodedEnum<String> {
     /**
-     * Unspecified.
+     * Mandatory.
      */
-    UNSPECIFIED("Unspecified"),
-
+    MANDATORY("Mandatory"),
+    
     /**
      * Voluntary.
      */
-    VOLUNTARY("Voluntary"),
+    VOLUNTARY("Voluntary");
 
-    /**
-     * Mandatory on Consent.
-     */
-    MANDATORY_ON_CONSENT("Mandatory on Consent"),
-
-    /**
-     * Mandatory.
-     */
-    MANDATORY("Mandatory");
 
     private String code;
 

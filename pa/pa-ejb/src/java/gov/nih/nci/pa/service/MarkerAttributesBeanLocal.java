@@ -1,11 +1,18 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.enums.AssayPurposeCode;
+import gov.nih.nci.pa.enums.AssayTypeCode;
+import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
+import gov.nih.nci.pa.enums.EvaluationTypeCode;
+import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
+import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -131,7 +138,76 @@ public class MarkerAttributesBeanLocal implements MarkerAttributesServiceLocal {
                 returnValue.add(oArr[0].toString());
             }
         }
-        return returnValue;
+        
+        return orderAttributes(returnValue, valueType);
+    }
+    
+    private static List<String> orderAttributes(List<String> values, BioMarkerAttributesCode valueType) {
+        List<String> listValue = new ArrayList<String>();
+        if (valueType == BioMarkerAttributesCode.EVALUATION_TYPE) {
+            String[] orderedList = EvaluationTypeCode.getDisplayNames();
+            listValue = orderValues(orderedList, values); 
+        } else if (valueType == BioMarkerAttributesCode.ASSAY_TYPE) {            
+            String[] orderedList = AssayTypeCode.getDisplayNames();
+            listValue = orderValues(orderedList, values); 
+        } else if (valueType == BioMarkerAttributesCode.BIOMARKER_PURPOSE) {            
+            String[] orderedList = AssayPurposeCode.getDisplayNames();
+            listValue = orderValues(orderedList, values);
+        } else if (valueType == BioMarkerAttributesCode.BIOMARKER_USE) {           
+            String[] orderedList = AssayUseCode.getDisplayNames();
+            listValue = orderValues(orderedList, values); 
+        } else if (valueType == BioMarkerAttributesCode.SPECIMEN_TYPE) {           
+            String[] orderedList = TissueSpecimenTypeCode.getDisplayNames();
+            listValue = orderValues(orderedList, values);    
+        } else if (valueType == BioMarkerAttributesCode.SPECIMEN_COLLECTION) {
+            String[] orderedList = TissueCollectionMethodCode.getDisplayNames();
+            listValue = orderValues(orderedList, values); 
+        }
+        return listValue;
+    }
+    
+    private static List<String> orderValues(String[] orderedList, List<String> values) {
+        List<String> proposedOrderedList = new ArrayList<String>();
+        List<String> listValue = new ArrayList<String>();
+        for (String value : orderedList) {
+            proposedOrderedList.add(value);
+        }
+        for (String value : proposedOrderedList) {
+            if (containsIgnoreCaseAndSpace(value, values)) {
+                listValue.add(value);
+            }
+        }
+        for (String value : values) {
+            if (!containsIgnoreCaseAndSpace(value, proposedOrderedList)) {
+                listValue.add(value);
+            }
+        } 
+        return swapList(listValue);
+    }
+    
+    private static boolean containsIgnoreCaseAndSpace(String str, List<String> list) {
+        for (String i : list) {
+            if (i.replaceAll(" ", "").equalsIgnoreCase(str.replaceAll(" ", ""))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private static List<String> swapList(List<String> listValue) {
+        if (listValue.contains("Unspecified")) {
+            int x = listValue.indexOf("Unspecified");
+            if (x != listValue.size() - 2) {
+                Collections.swap(listValue, listValue.size() - 2, x);
+            }  
+        }        
+        if (listValue.contains("Other")) {
+            int x = listValue.indexOf("Other");
+            if (x != listValue.size() - 1) {
+                Collections.swap(listValue, listValue.size() - 1, x);
+            }
+        }
+        return listValue;
     }
     /**
      * Delete the Biomarker attribute tables and sync with the CaDSR values
