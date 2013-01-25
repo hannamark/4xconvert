@@ -45,7 +45,7 @@
     <td scope="row" class="label"><label for="poOrganizations_createOrg_orgZip;">ZIP :</label><span class="required">*</span></td><td><s:textfield id="orgZip" name="zipCode" maxlength="20" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgEmail;">Email :</label><span class="required">*</span></td><td><s:textfield id="orgEmail" name="email;"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgEmail;">Email :</label></td><td><s:textfield id="orgEmail" name="email;"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
         <td scope="row" class="label"><label for="poOrganizations_createOrg_orgPhone">Phone Number :</label></td><td><s:textfield  id="orgPhone"  name="telephone" maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>

@@ -99,7 +99,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         validateRequiredField(getCountryName(), "Country");
         validateRequiredField(getCityName(), "City");
         validateRequiredField(getZipCode(), "Zip");
-        validateRequiredField(getEmail(), "Email");
+        validateEmail(getEmail());
         if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
@@ -124,7 +124,11 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
     private void validateRequiredField(String value, String type) {
         if (StringUtils.isEmpty(value)) {
             addActionError(type + " is a required field");
-        } else if ("Email".equals(type) && !PAUtil.isValidEmail(value)) {
+        }
+    }
+
+    private void validateEmail(String value) {
+        if (StringUtils.isNotBlank(value) && !PAUtil.isValidEmail(value)) {
             addActionError("Email address is invalid");
         }
     }
@@ -183,9 +187,11 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
             telurl.setValue(new URI(url));
             telco.getItem().add(telurl);
         }
-        TelEmail telemail = new TelEmail();
-        telemail.setValue(new URI("mailto:" + getEmail()));
-        telco.getItem().add(telemail);
+        if (StringUtils.isNotBlank(getEmail())) {
+            TelEmail telemail = new TelEmail();
+            telemail.setValue(new URI("mailto:" + getEmail()));
+            telco.getItem().add(telemail);
+        }
         orgDto.setTelecomAddress(telco);
         Ii id = PoRegistry.getOrganizationEntityService().createOrganization(orgDto);
         OrganizationDTO newOrg = PoRegistry.getOrganizationEntityService().getOrganization(id);
