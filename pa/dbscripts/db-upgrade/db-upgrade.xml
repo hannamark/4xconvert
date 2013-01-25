@@ -1212,5 +1212,9 @@
      <changeSet id="PO-5833" author="krylovd">
        <comment>Added misc_documents to keep OMB/Disclaimer text.</comment>
        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5833.sql"/>
-    </changeSet>      
+    </changeSet>
+     <changeSet id="PO-5712" author="Kalpana">
+        <comment>Delete duplicate sites and add unique constraint.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5712.sql"/>
+     </changeSet>      
 </databaseChangeLog>
