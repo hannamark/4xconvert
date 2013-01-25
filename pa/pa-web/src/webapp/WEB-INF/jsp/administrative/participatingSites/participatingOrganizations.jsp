@@ -63,7 +63,7 @@ function handleEdit(studyResourcingId){
                 <s:hidden name="cbValue" />
                 <s:set name="organizationList" value="organizationList" scope="request" />
                 <display:table name="organizationList" id="row" class="data" pagesize="200" sort="list" requestURI="participatingOrganizations.action">
-                    <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
+                    <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true"  sortProperty="nciNumberAsLong">
                         <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.nciNumber}"/>)"><c:out value="${row.nciNumber}"/></a>
                     </display:column>
                     <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" sortable="true" />

@@ -84,6 +84,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 /**
  * DTO class for displaying organizations as a list.
  *
@@ -182,6 +184,13 @@ public class PaOrganizationDTO implements Serializable {
      */
     public String getNciNumber() {
         return nciNumber;
+    }
+
+    /**
+     * @return the nciNumber
+     */
+    public Long getNciNumberAsLong() {
+        return NumberUtils.createLong(nciNumber);
     }
 
     /**
