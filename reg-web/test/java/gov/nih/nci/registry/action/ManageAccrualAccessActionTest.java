@@ -13,14 +13,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.registry.action.ManageAccrualAccessAction.TrialCategory;
 import gov.nih.nci.registry.service.MockRegistryUserService;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -182,4 +187,50 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
     public void assignmentByTrialTest() throws Exception {
         assertEquals("byTrial", action.assignmentByTrial());
     }
+
+    @Test
+    public void filterNationalAndRejectedTest() throws Exception {
+        StudyProtocolQueryDTO trial = new StudyProtocolQueryDTO();
+        trial.setSummary4FundingSponsorType(null);
+        trial.setDocumentWorkflowStatusCode(null);
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(0, list.size());
+
+        trial.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INDUSTRIAL.name());
+        trial.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(1, list.size());
+
+        trial.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.NATIONAL.name());
+        trial.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(0, list.size());
+
+        trial.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INDUSTRIAL.name());
+        trial.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(0, list.size());
+
+        trial.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.NATIONAL.name());
+        trial.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(0, list.size());
+
+        trial.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INDUSTRIAL.name());
+        trial.setDocumentWorkflowStatusCode(null);
+        list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(trial);
+        action.filterOutNationalAndRejectedTrials(list);
+        assertEquals(1, list.size());
+}
 }

@@ -13,6 +13,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
@@ -367,7 +368,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             Organization org = findCurrentUsersOrg();
             loadInstitutionalPeerReviewedTrials(list, org);
             loadIndustrialTrials(list, org);
-            filterOutNationalTrials(list);
+            filterOutNationalAndRejectedTrials(list);
             loadTrialsIntoModel(list);
         }
     }
@@ -389,19 +390,19 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         }
     }
 
-    /**
-     * @param list
-     */
-    private void filterOutNationalTrials(List<StudyProtocolQueryDTO> list) {
+    void filterOutNationalAndRejectedTrials(List<StudyProtocolQueryDTO> list) {
         CollectionUtils.filter(list, new Predicate() {
             @Override
             public boolean evaluate(Object arg0) {
                 StudyProtocolQueryDTO trial = (StudyProtocolQueryDTO) arg0;
-                return StringUtils.isNotBlank(trial
+                boolean isNotNational = StringUtils.isNotBlank(trial
                         .getSummary4FundingSponsorType())
                         && !SummaryFourFundingCategoryCode.NATIONAL.name()
                                 .equals(trial
                                         .getSummary4FundingSponsorType());
+                boolean isNotRejected = !DocumentWorkflowStatusCode.REJECTED.equals(
+                        trial.getDocumentWorkflowStatusCode());
+                return isNotNational && isNotRejected;
             }
         });
     }
