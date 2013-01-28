@@ -138,8 +138,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param lineNumber line Number
      * @param sp study protocol
      * @param genderCriterion gender
-     * @param icd9Code 
-     * @param sdcCode 
+     * @param codeSystem diseasecode
      * @param checkDisease 
      */
     @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
