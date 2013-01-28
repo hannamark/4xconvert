@@ -100,6 +100,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -283,11 +284,16 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     }
 
     private void validateNumberOfGroups() {
-        if (StringUtils.isEmpty(webDTO.getNumberOfGroups())) {
+        final String groups = webDTO.getNumberOfGroups();
+        if (StringUtils.isEmpty(groups)) {
             addFieldError("webDTO.numberOfGroups", getText("error.numberOfGroups"));
         } else {
             try {
-                Integer.valueOf(webDTO.getNumberOfGroups());
+                Integer.valueOf(groups);
+                if (NumberUtils.toInt(groups) < 1) {
+                    addFieldError("webDTO.numberOfGroups",
+                            getText("error.positiveNumOfGroups"));
+                }                
             } catch (NumberFormatException e) {
                 addFieldError("webDTO.numberOfGroups", getText("error.numeric"));
             }

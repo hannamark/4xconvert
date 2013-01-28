@@ -290,24 +290,30 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         addErrors(webDTO.getPrimaryPurposeCode(), "webDTO.primaryPurposeCode", "error.primary");
         addErrors(webDTO.getPhaseCode(), "webDTO.phaseCode", "error.phase");
         addErrors(webDTO.getDesignConfigurationCode(), "webDTO.designConfigurationCode", "error.intervention");
-        addErrors(webDTO.getNumberOfInterventionGroups(), "webDTO.numberOfInterventionGroups", "error.arms");
+        final String arms = webDTO.getNumberOfInterventionGroups();
+        addErrors(arms, "webDTO.numberOfInterventionGroups", "error.arms");
         addErrors(webDTO.getBlindingSchemaCode(), "webDTO.blindingSchemaCode", "error.masking");
         addErrors(webDTO.getAllocationCode(), "webDTO.allocationCode", "error.allocation");
         addErrors(webDTO.getMinimumTargetAccrualNumber(), "webDTO.minimumTargetAccrualNumber",
                 "error.target.enrollment");
         validateTragetAccrualNumber();
-        if (!NumberUtils.isDigits(webDTO.getNumberOfInterventionGroups())) {
+        if (!NumberUtils.isDigits(arms)) {
             addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));
-       }
-       if (PAUtil.isPrimaryPurposeOtherCodeReq(webDTO.getPrimaryPurposeCode(),
+        }
+        if (NumberUtils.isNumber(arms)
+                && NumberUtils.toInt(arms) < 1) {
+            addFieldError("webDTO.numberOfInterventionGroups",
+                    getText("error.positiveNumOfArms"));
+        }
+        if (PAUtil.isPrimaryPurposeOtherCodeReq(webDTO.getPrimaryPurposeCode(),
                webDTO.getPrimaryPurposeAdditionalQualifierCode())) {
             addFieldError("webDTO.primaryPurposeAdditionalQualifierCode", getText("error.otherPurposeCode"));
         }
-       //validate Purpose when Selected value is OTHER
-       if (PAUtil.isPrimaryPurposeOtherTextReq(webDTO.getPrimaryPurposeCode(),
+        //validate Purpose when Selected value is OTHER
+        if (PAUtil.isPrimaryPurposeOtherTextReq(webDTO.getPrimaryPurposeCode(),
                 webDTO.getPrimaryPurposeAdditionalQualifierCode(), webDTO.getPrimaryPurposeOtherText())) {
             addFieldError("webDTO.primaryPurposeOtherText", getText("error.otherPurposeText"));
-       }
+        }
     }
 
     private void validateTragetAccrualNumber() {
