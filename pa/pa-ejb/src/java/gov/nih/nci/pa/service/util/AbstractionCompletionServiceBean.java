@@ -176,6 +176,8 @@ import org.apache.commons.lang.BooleanUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
+    private static final String SELECT = "Select ";
+    private static final String INTERVENTIONAL_STUDY_PROTOCOL = "InterventionalStudyProtocol";
     private static final String NON_INTERVENTIONAL_STUDY_PROTOCOL = "NonInterventionalStudyProtocol";
     private static final String SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU = 
             "Select Participating Sites from Administrative Data menu.";
@@ -273,7 +275,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
             enforceDocument(protocolDoc, irbDoc, messages);
 
-            if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
+            if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)) {
                 InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
                 ispDTO = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
                 enforceInterventional(ispDTO, messages);
@@ -291,16 +293,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 NonInterventionalStudyProtocolDTO ospDTO = new NonInterventionalStudyProtocolDTO();
                 ospDTO = studyProtocolService.getNonInterventionalStudyProtocol(studyProtocolIi);
                 enforeNonInterventional(ospDTO, messages);
-                if (ospDTO.getNumberOfGroups().getValue() != null) {
-                    List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
-                    if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
-                        messages.addError(
-                                SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
-                                "Number of non-interventional study group records must be the same"
-                                        + " as the Number of Groups assigned in Non-Interventional Study Design.",
-                                ErrorMessageTypeEnum.SCIENTIFIC);
-                    }
-                }
+                enforceNonInterventionalGroups(studyProtocolIi, messages,
+                        ospDTO);
             }
             enforceTrialDescriptionDetails(studyProtocolDTO, messages);
             enforceOutcomeMeasure(studyProtocolIi, messages);
@@ -312,13 +306,61 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceArmGroup(studyProtocolIi, studyProtocolDTO, messages);
             enforceTrialFunding(studyProtocolIi, messages);
             enforceDisease(studyProtocolDTO, messages);
-            enforceArmInterventional(studyProtocolDTO, messages);
+            enforceArmOrGroupAssociationToIntervention(studyProtocolDTO, messages);
             enforceEligibility(studyProtocolIi, messages);
             enforceCollaborator(studyProtocolIi, messages);
             enforceSummary4OrgNullification(studyProtocolIi, messages);
             enforcePlannedMarkerStatus(studyProtocolIi, messages);
         }
         return messages.getMessages();
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @param messages
+     * @param ospDTO
+     * @throws PAException
+     */
+    private void enforceNonInterventionalGroups(Ii studyProtocolIi,
+            AbstractionMessageCollection messages,
+            NonInterventionalStudyProtocolDTO ospDTO) throws PAException {
+        final Integer groups = ospDTO.getNumberOfGroups().getValue();
+        final int interventions = getNumberOfInterventions(studyProtocolIi);
+        if (groups != null) {
+            List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
+            // PO-5852: If a study is single-group (i.e. number of
+            // Groups/Cohorts = 1) and Group/Cohort (detail) is not present on
+            // study but there exists one/none intervention for the study,
+            // abstraction validation will not show any error.
+            if (Integer.valueOf(1).equals(groups) && aList.isEmpty()
+                    && interventions <= 1) {
+                return;
+            }
+            // If a study is multi-group (i.e. number of Groups/Cohorts > 1) and
+            // if for each Group/Cohort (detail) is not present on study.
+            // Abstraction-validation will show error as follow: "Number of
+            // non-interventional study group records must be the same as the
+            // Number of Groups assigned in Non-Interventional Study Design." 
+            if (aList.size() != groups && groups > 1) {
+                messages.addError(
+                        SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                        "Number of non-interventional study group/cohort records must be the same"
+                                + " as the Number of Groups/Cohorts assigned in Non-Interventional Study Design.",
+                        ErrorMessageTypeEnum.SCIENTIFIC);
+            }
+        }
+    }
+    
+    private int getNumberOfInterventions(Ii studyProtocolIi) throws PAException {
+        int cnt = 0;
+        List<PlannedActivityDTO> paList = plannedActivityService
+                .getByStudyProtocol(studyProtocolIi);
+        for (PlannedActivityDTO pa : paList) {
+            if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
+                cnt++;
+            }
+        }
+        return cnt;
     }
 
     private void abstractionCompletionRuleForProprietary(StudyProtocolDTO studyProtocolDTO,
@@ -618,15 +660,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private void enforceArmGroup(Ii studyProtocolIi, StudyProtocolDTO studyProtocolDTO,
             AbstractionMessageCollection messages) throws PAException {
-        List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi);
+        List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi);        
         if (dtos.isEmpty()) {
-            if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
+            if (studyProtocolDTO.getStudyProtocolType().getValue()
+                    .equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)) {
                 messages.addError("Select Arm under Scientific Data menu.",
-                                  "No Arm exists for the trial.", ErrorMessageTypeEnum.SCIENTIFIC);
+                        "No Arm exists for the trial.",
+                        ErrorMessageTypeEnum.SCIENTIFIC);
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
-                .equalsIgnoreCase(NON_INTERVENTIONAL_STUDY_PROTOCOL)) {
-                messages.addError("Select Groups from Non-Interventional Trial Design " + "under Scientific Data menu.",
-                                  "No Groups exists for the trial.", ErrorMessageTypeEnum.SCIENTIFIC);
+                    .equalsIgnoreCase(NON_INTERVENTIONAL_STUDY_PROTOCOL)) {
+                NonInterventionalStudyProtocolDTO ospDTO = studyProtocolService
+                        .getNonInterventionalStudyProtocol(studyProtocolIi);
+                final Integer groups = ospDTO.getNumberOfGroups().getValue();
+                final int interventions = getNumberOfInterventions(studyProtocolIi);
+                if (!(Integer.valueOf(1).equals(groups) && interventions <= 1)) {
+                    messages.addError(
+                            "Select Groups/Cohorts from Non-Interventional Trial Design "
+                                    + "under Scientific Data menu.",
+                            "No Groups/Cohorts exists for the trial.",
+                            ErrorMessageTypeEnum.SCIENTIFIC);
+                }              
             }
         } else {
             for (ArmDTO dto : dtos) {
@@ -1221,14 +1274,59 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     ErrorMessageTypeEnum.SCIENTIFIC);
         }
     }
+    
+    private void enforceArmOrGroupAssociationToIntervention(
+            StudyProtocolDTO sp, AbstractionMessageCollection messages)
+            throws PAException {
+        if (sp.getStudyProtocolType().getValue()
+                .equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)) {
+            enforceArmsInterventionAssociations(sp, messages);
+        } else {
+            enforceGroupsInterventionsAssociations(sp, messages);
+        }
+    }
 
     @SuppressWarnings("PMD.NPathComplexity")
-    private void enforceArmInterventional(StudyProtocolDTO sp, AbstractionMessageCollection messages)
-            throws PAException {
+    private void enforceGroupsInterventionsAssociations(StudyProtocolDTO sp,
+            AbstractionMessageCollection messages) throws PAException {
         Ii studyProtocolIi = sp.getIdentifier();
-        boolean isNonInter = sp.getStudyProtocolType().getValue()
-                .equalsIgnoreCase(NON_INTERVENTIONAL_STUDY_PROTOCOL);
-        final String menuName = isNonInter ? "Groups/Cohorts" : "Arm";
+        final String menuName = "Groups/Cohorts";
+        NonInterventionalStudyProtocolDTO ospDTO = studyProtocolService
+                .getNonInterventionalStudyProtocol(studyProtocolIi);
+        final Integer groups = ospDTO.getNumberOfGroups().getValue();
+        final int interventions = getNumberOfInterventions(studyProtocolIi);
+        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolIi);
+        
+        if ((groups != null && groups < 2) || interventions == 0 || CollectionUtils.isEmpty(arms)) {
+            return;
+        }
+        
+        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
+        HashMap<String, String> intervention = new HashMap<String, String>();
+        for (PlannedActivityDTO pa : paList) {
+            if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
+                List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
+                if (armDtos == null || armDtos.isEmpty()) {                    
+                    messages.addError(
+                            SELECT
+                                    + menuName
+                                    + " from Scientific Data menu and associated Intervention.", 
+                            "Intervention(s) must be associated with at least"
+                                    + " one Group/Cohort",
+                            ErrorMessageTypeEnum.SCIENTIFIC);
+                }
+                for (ArmDTO armDTO : armDtos) {
+                    intervention.put(armDTO.getName().getValue(), armDTO.getName().getValue());
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("PMD.NPathComplexity")
+    private void enforceArmsInterventionAssociations(StudyProtocolDTO sp, AbstractionMessageCollection messages)
+            throws PAException {
+        Ii studyProtocolIi = sp.getIdentifier();       
+        final String menuName = "Arm";
         List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
         HashMap<String, String> intervention = new HashMap<String, String>();
         for (PlannedActivityDTO pa : paList) {
@@ -1236,7 +1334,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
 
                 if (armDtos == null || armDtos.isEmpty()) {                    
-                    messages.addError("Select " + menuName + " from Scientific Data menu and associated Intervention.",
+                    messages.addError(SELECT + menuName + " from Scientific Data menu and associated Intervention.",
                                       "Every intervention in interventional trial must be associated with at least"
                                               + " one arm in interventional trial", ErrorMessageTypeEnum.SCIENTIFIC);
                 }
@@ -1252,7 +1350,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
             if (!intervention.containsKey(armDTO.getName().getValue())) {
                 messages.addError(
-                        "Select "
+                        SELECT
                                 + menuName
                                 + " from Scientific Data menu and associated Interventional.",
                         "Arm " + armDTO.getName().getValue()
