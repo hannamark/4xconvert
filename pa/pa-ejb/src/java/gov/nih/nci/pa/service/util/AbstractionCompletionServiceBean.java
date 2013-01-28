@@ -304,7 +304,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
             enforceTrialDescriptionDetails(studyProtocolDTO, messages);
             enforceOutcomeMeasure(studyProtocolIi, messages);
-            enforceInterventions(studyProtocolIi, messages);
+            enforceInterventions(studyProtocolDTO, messages);
             enforceTreatingSite(studyProtocolIi, messages);
             enforceStudyContactNullification(studyProtocolIi, messages);
             enforceStudySiteNullification(studyProtocolIi, messages);
@@ -328,7 +328,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceIdentifierLength(studyProtocolDTO, messages);
         enforceGeneralTrailDetails(studyProtocolDTO, messages);
 
-        enforceInterventions(studyProtocolIi, messages);
+        enforceInterventions(studyProtocolDTO, messages);
         enforceStudySiteNullification(studyProtocolIi, messages);
         enforceStudySiteContactNullification(studyProtocolIi, messages);
         enforceTrialFunding(studyProtocolIi, messages);
@@ -1025,9 +1025,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         return dup;
     }
 
-    private void enforceInterventions(Ii studyProtocolIi, AbstractionMessageCollection messages) throws PAException {
-        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
+    private void enforceInterventions(StudyProtocolDTO studyProtocolDTO,
+            AbstractionMessageCollection messages) throws PAException {
+        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolDTO.getIdentifier());
         boolean interventionsList = false;
+        boolean isNonInterventional = studyProtocolDTO.getStudyProtocolType() != null
+                && NON_INTERVENTIONAL_STUDY_PROTOCOL
+                        .equalsIgnoreCase(studyProtocolDTO
+                                .getStudyProtocolType().getValue());
         for (PlannedActivityDTO pa : paList) {
             if (ActivityCategoryCode.INTERVENTION.equals(ActivityCategoryCode.getByCode(CdConverter
                 .convertCdToString(pa.getCategoryCode())))
@@ -1046,10 +1051,16 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
             }
         }
-        if (!interventionsList) {
-            messages.addError("Select Interventions from Scientific Data menu.",
-                              "No Interventions exists for the trial.", ErrorMessageTypeEnum.SCIENTIFIC);
-        }
+        if (!interventionsList && !isNonInterventional) {
+            messages.addError(
+                    "Select Interventions from Scientific Data menu.",
+                    "No Interventions exists for the trial.",
+                    ErrorMessageTypeEnum.SCIENTIFIC);
+        } else if (!interventionsList && isNonInterventional) {
+            messages.addWarning(
+                    "Select Interventions from Scientific Data menu.",
+                    "Warning: There are no interventions in this study.");
+        } 
     }
 
     private void enforceOutcomeMeasure(Ii studyProtocolIi, AbstractionMessageCollection messages) throws PAException {
