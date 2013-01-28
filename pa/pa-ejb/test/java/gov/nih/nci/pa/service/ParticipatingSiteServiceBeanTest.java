@@ -161,7 +161,6 @@ public class ParticipatingSiteServiceBeanTest {
     private ParticipatingSiteServiceBean createParticipatingSiteServiceBeanMock() {
         ParticipatingSiteServiceBean service = mock(ParticipatingSiteServiceBean.class);
         doCallRealMethod().when(service).getCorrUtils();
-        doCallRealMethod().when(service).getMutex(any(Ii.class), any(Ii.class));
         doCallRealMethod().when(service).getOrganizationCorrelationService();
         doCallRealMethod().when(service).getStudyProtocolService();
         doCallRealMethod().when(service).getStudySiteService();

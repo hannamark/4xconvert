@@ -204,15 +204,10 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        Object mutex = getMutex(studySiteDTO.getStudyProtocolIdentifier(),
-                poHcfIi);
-        synchronized (mutex) {
-            checkStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
-            ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO,
-                    currentStatusDTO, poHcfIi);
-            updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
-            return getParticipatingSite(participatingSiteDTO.getIdentifier());
-        }
+        checkStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
 
     /**

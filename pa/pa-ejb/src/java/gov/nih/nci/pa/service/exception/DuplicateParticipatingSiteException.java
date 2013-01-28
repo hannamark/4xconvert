@@ -105,8 +105,8 @@ public class DuplicateParticipatingSiteException extends PADuplicateException {
      */
     public DuplicateParticipatingSiteException(Ii trialIi, Ii hcfIi) {
         super("A Participating Site with trial id " 
-                + trialIi.getExtension() 
-                + " and HCF id " + hcfIi.getExtension()
+                + (trialIi != null ? trialIi.getExtension() : "")
+                + " and HCF id " + (hcfIi != null ? hcfIi.getExtension() : "")
                 + " already exists.");
         this.trialIi = trialIi;
         this.hcfIi = hcfIi;
