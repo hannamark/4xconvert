@@ -75,7 +75,7 @@
 <body>
 <c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
-     <c:set var="topic" scope="request" value="abstractoutcome_noninterventional"/>
+     <c:set var="topic" scope="request" value="abstractoutcomenoninterventional"/>
      </c:when>
      <c:otherwise><c:set var="topic" scope="request" value="abstractoutcome"/></c:otherwise>
 </c:choose>

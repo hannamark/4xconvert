@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:set var="topic" scope="request" value="accrual_counts"/>
+<c:set var="topic" scope="request" value="accrualcounts"/>
 <head>
     <title><fmt:message key="accrual.counts.title"/></title>
     <s:head/>

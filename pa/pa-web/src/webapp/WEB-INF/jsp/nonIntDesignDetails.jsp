@@ -63,7 +63,7 @@ function displayPrimaryPurposeOtherText(){
 </SCRIPT>
 <body>
 <h1><fmt:message key="osdesign.details.title"/></h1>
-<c:set var="topic" scope="request" value="abstractdesign_noninterventional"/>
+<c:set var="topic" scope="request" value="abstractdesignnoninterventional"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>

@@ -12,7 +12,7 @@
         <c:choose>
             <c:when test="${pageContext.request.remoteUser != null}">
                  <c:choose>
-                    <c:when test="${requestScope.topic == 'trials_intro'}">
+                    <c:when test="${requestScope.topic == 'trialsintro'}">
                        <li><a href="viewTrials.action" class="selected">Trial Search</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -22,7 +22,7 @@
                 <c:choose>
                     <c:when test="${sessionScope.studyProtocolIi != null && !sessionScope.trialSummary.industrial.value}">
                         <c:choose>
-                            <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
+                            <c:when test="${(requestScope.topic == 'subjectsintro') || (requestScope.topic == 'subjectsadding') || (requestScope.topic == 'subjectsupdate')}">
                                 <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
                             </c:when>
                             <c:otherwise>
@@ -32,7 +32,7 @@
                     </c:when>
                     <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.industrial.value}">
                         <c:choose>
-                            <c:when test="${(requestScope.topic == 'accrual_count')}">
+                            <c:when test="${(requestScope.topic == 'accrualcount')}">
                                 <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
                             </c:when>
                             <c:otherwise>
@@ -42,7 +42,7 @@
                     </c:when>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'batch_upload'}">
+                    <c:when test="${requestScope.topic == 'batchupload'}">
                         <li><a href="batchUpload.action" class="selected">Batch Upload</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -50,7 +50,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'prior_submissions'}">
+                    <c:when test="${requestScope.topic == 'priorsubmissions'}">
                         <li><a href="priorSubmissions.action" class="selected">Prior Submissions</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -58,7 +58,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'accrual_counts'}">
+                    <c:when test="${requestScope.topic == 'accrualcounts'}">
                         <li><a href="accrualCounts.action" class="selected">Accrual Counts</a></li> 
                     </c:when>
                     <c:otherwise>
@@ -66,7 +66,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'disease_search'}">
+                    <c:when test="${requestScope.topic == 'diseasesearch'}">
                         <li><a href="diseaseSearch.action" class="selected">Disease Search</a></li> 
                     </c:when>
                     <c:otherwise>

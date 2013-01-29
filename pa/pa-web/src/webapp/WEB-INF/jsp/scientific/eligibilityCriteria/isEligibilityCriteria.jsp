@@ -95,7 +95,7 @@ BubbleTips.activateTipOn("dfn");
 <body>
  <c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
-     <c:set var="topic" scope="request" value="abstracteligibility_noninterventional"/>
+     <c:set var="topic" scope="request" value="abstracteligibilitynoninterventional"/>
      </c:when>
      <c:otherwise><c:set var="topic" scope="request" value="abstracteligibility"/></c:otherwise>
 </c:choose>

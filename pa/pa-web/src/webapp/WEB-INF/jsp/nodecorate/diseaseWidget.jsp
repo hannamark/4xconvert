@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:set var="topic" scope="request" value="run_ad_hoc" />
+<c:set var="topic" scope="request" value="runadhoc" />
 
 <!DOCTYPE html PUBLIC 
     "-//W3C//DTD XHTML 1.1 Transitional//EN"

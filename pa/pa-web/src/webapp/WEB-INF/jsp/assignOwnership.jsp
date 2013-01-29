@@ -88,7 +88,7 @@
     </head>
     <body>
         <h1><fmt:message key="assignOwbership.title"/></h1>
-        <c:set var="topic" scope="request" value="record_ownership"/>
+        <c:set var="topic" scope="request" value="recordownership"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
             
         <s:set name="trialOwners" value="trialOwners" scope="request"/>

@@ -9,15 +9,15 @@
     <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
     <head>
         <s:if test="%{currentAction == 'create'}">
-            <c:set var="topic" scope="request" value="subjects_adding"/> 
+            <c:set var="topic" scope="request" value="subjectsadding"/> 
             <fmt:message key="patient.create.title" var="pageTitle" />
         </s:if>
         <s:elseif test="%{currentAction == 'update'}">
-            <c:set var="topic" scope="request" value="subjects_update"/> 
+            <c:set var="topic" scope="request" value="subjectsupdate"/> 
             <fmt:message key="patient.update.title" var="pageTitle" />
         </s:elseif>
         <s:elseif test="%{currentAction == 'retrieve'}">
-            <c:set var="topic" scope="request" value="subjects_intro"/> 
+            <c:set var="topic" scope="request" value="subjectsintro"/> 
             <fmt:message key="patient.retrieve.title" var="pageTitle" />
         </s:elseif>
         <title>${pageTitle}</title>        

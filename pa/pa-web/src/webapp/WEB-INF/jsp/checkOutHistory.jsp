@@ -8,7 +8,7 @@
     </head>
     <body>
         <h1><fmt:message key="checkOutHistory.title"/></h1>
-        <c:set var="topic" scope="request" value="checkout_history"/>
+        <c:set var="topic" scope="request" value="checkouthistory"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 
         <div class="box">
