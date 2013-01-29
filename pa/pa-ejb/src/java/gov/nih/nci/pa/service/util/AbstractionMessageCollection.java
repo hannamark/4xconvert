@@ -87,6 +87,8 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Holder class for a collection of abstraction errors and warnings.
  * @author Michael Visee
@@ -104,12 +106,24 @@ public class AbstractionMessageCollection {
      */
     public void addError(String comment, String errorDescription, 
             AbstractionCompletionDTO.ErrorMessageTypeEnum messageTpe) {
-        AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
-        dto.setErrorType(AbstractionCompletionDTO.ERROR_TYPE);
-        dto.setComment(comment);
-        dto.setErrorDescription(errorDescription);
-        dto.setErrorMessageType(messageTpe);
-        errors.add(dto);
+        if (!hasError(errorDescription)) {
+            AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
+            dto.setErrorType(AbstractionCompletionDTO.ERROR_TYPE);
+            dto.setComment(comment);
+            dto.setErrorDescription(errorDescription);
+            dto.setErrorMessageType(messageTpe);
+            errors.add(dto);
+        }
+    }
+
+    private boolean hasError(String errorDescription) {
+        for (AbstractionCompletionDTO error : errors) {
+            if (StringUtils.equals(errorDescription,
+                    error.getErrorDescription())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
