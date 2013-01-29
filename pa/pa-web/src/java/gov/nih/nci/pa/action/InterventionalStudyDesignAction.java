@@ -297,7 +297,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         addErrors(webDTO.getMinimumTargetAccrualNumber(), "webDTO.minimumTargetAccrualNumber",
                 "error.target.enrollment");
         validateTragetAccrualNumber();
-        if (!NumberUtils.isDigits(arms)) {
+        if (StringUtils.isNotBlank(arms) && !NumberUtils.isDigits(arms)) {
             addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));
         }
         if (NumberUtils.isNumber(arms)
