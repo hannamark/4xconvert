@@ -109,3 +109,6 @@ ALTER TABLE STG_DW_ACCRUAL_BATCH_SUBMISSION RENAME TO DW_ACCRUAL_BATCH_SUBMISSIO
 DROP TABLE IF EXISTS DW_STUDY_FEWER_INDEXES;
 CREATE TABLE DW_STUDY_FEWER_INDEXES AS SELECT * FROM DW_STUDY;
 COMMENT ON TABLE DW_STUDY_FEWER_INDEXES IS 'This is an exact copy of the dw_study table. It is updated every time the dw_study table is updated. The only difference is that it has fewer indexes to facilitate importing it into MS Access for ad-hoc reporting. MS Access has a limit of 32 indexes per table';
+
+DROP TABLE IF EXISTS DW_DATA_TABLE_4;
+ALTER TABLE STG_DW_DATA_TABLE_4 RENAME TO DW_DATA_TABLE_4;

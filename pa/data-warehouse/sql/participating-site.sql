@@ -9,6 +9,8 @@ CREATE TABLE STG_DW_STUDY_PARTICIPATING_SITE (
     ORG_ORG_FAMILY character varying(200),
     RECRUITMENT_STATUS character varying(50),
     RECRUITMENT_STATUS_DATE date,
+    TARGET_ACCRUAL integer,
+    ORG_PO_ID integer,
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 );
 

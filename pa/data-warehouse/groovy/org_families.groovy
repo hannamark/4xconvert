@@ -1,6 +1,7 @@
 import groovy.sql.Sql
 
-def sql = """select f.name as family_name, o.name as org_name from organization o
+def sql = """select f.name as family_name, o.name as org_name, fo.functionaltype, f.id as family_id, o.id as org_id
+                from organization o
                 join familyorganizationrelationship fo on fo.organization_id=o.id
                 join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc"""
 def sourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], properties['datawarehouse.po.db.username'], 
@@ -9,5 +10,6 @@ def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jd
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
 def org_families = destinationConnection.dataSet("STG_DW_FAMILY_ORGANIZATION");
 sourceConnection.eachRow(sql) { row ->
-    org_families.add(family_name: row.family_name, organization_name: row.org_name)
+    org_families.add(family_name: row.family_name, organization_name: row.org_name,
+                     functionaltype: row.functionaltype, family_id: row.family_id, organization_id: row.org_id)
 }
