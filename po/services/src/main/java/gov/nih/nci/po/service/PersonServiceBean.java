@@ -377,10 +377,7 @@ public class PersonServiceBean extends
             appendStatusClause(sql, criteria);
             appendAffiliationClause(sql, criteria);
 
-            appendPendingCrsClause(sql, criteria);
-            appendPendingHcpClause(sql, criteria);
-            appendPendingOcClause(sql, criteria);
-            appendPendingOpiClause(sql, criteria);
+            appendPendingRolesClause(sql, criteria);
 
             appendCountryClause(sql, criteria);
             appendAddr1Clause(sql, criteria);
@@ -388,6 +385,34 @@ public class PersonServiceBean extends
             appendCityClause(sql, criteria);
             appendStateClause(sql, criteria);
             appendZipCodeClause(sql, criteria);
+        }
+    }
+
+    private void appendPendingRolesClause(StringBuilder sql,
+            PersonSearchCriteria criteria) {
+        StringBuilder subClause = new StringBuilder();
+        if (Boolean.TRUE.equals(criteria.getHasPendingCrsRoles())) {
+            subClause
+                    .append(" (select count(id) from clinicalresearchstaff ro "
+                            + "where ro.person_id=p.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (Boolean.TRUE.equals(criteria.getHasPendingHcpRoles())) {
+            subClause
+                    .append(" (select count(id) from healthcareprovider ro "
+                            + "where ro.person_id=p.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (Boolean.TRUE.equals(criteria.getHasPendingOpiRoles())) {
+            subClause
+                    .append(" (select count(id) from identifiedperson ro "
+                            + "where ro.player_id=p.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (Boolean.TRUE.equals(criteria.getHasPendingOcRoles())) {
+            subClause
+                    .append(" (select count(id) from organizationalcontact ro "
+                            + "where ro.person_id=p.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (subClause.length() > 0) {
+            sql.append(" AND (").append(subClause).append("1=2) ");
         }
     }
 
@@ -480,40 +505,7 @@ public class PersonServiceBean extends
         }
     }
 
-    private void appendPendingHcpClause(StringBuilder sql,
-            PersonSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingHcpRoles())) {
-            sql.append(" AND (select count(id) from healthcareprovider ro "
-                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
-        }
-
-    }
-
-    private void appendPendingOcClause(StringBuilder sql,
-            PersonSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingOcRoles())) {
-            sql.append(" AND (select count(id) from organizationalcontact ro "
-                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
-        }
-
-    }
-
-    private void appendPendingOpiClause(StringBuilder sql,
-            PersonSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingOpiRoles())) {
-            sql.append(" AND (select count(id) from identifiedperson ro "
-                    + "where ro.player_id=p.id and ro.status='PENDING') > 0");
-        }
-
-    }
-
-    private void appendPendingCrsClause(StringBuilder sql,
-            PersonSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingCrsRoles())) {
-            sql.append(" AND (select count(id) from clinicalresearchstaff ro "
-                    + "where ro.person_id=p.id and ro.status='PENDING') > 0");
-        }
-    }
+   
 
     private void appendAffiliationClause(StringBuilder sql,
             PersonSearchCriteria criteria) {

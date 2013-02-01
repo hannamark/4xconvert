@@ -501,9 +501,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             appendStatusClause(sql, criteria);
             appendOrgNameClause(sql, criteria);
             appendFamilyClause(sql, criteria);
-            appendCrClause(sql, criteria);
-            appendPendingHcfClause(sql, criteria);
-            appendPendingRoClause(sql, criteria);
+            appendCrOrPendingRolesClause(sql, criteria);
             appendCountryClause(sql, criteria);
             appendAddr1Clause(sql, criteria);
             appendAddr2Clause(sql, criteria);
@@ -513,6 +511,31 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
     
+    private void appendCrOrPendingRolesClause(StringBuilder sql,
+            OrganizationSearchCriteria criteria) {
+
+        StringBuilder subClause = new StringBuilder();
+        if (Boolean.TRUE.equals(criteria.getHasChangeRequests())) {
+            subClause
+                    .append(" (select count(id) from organizationcr ocr where ocr.target=o.id "
+                            + "and ocr.processed=false) > 0 OR ");
+        }
+        if (Boolean.TRUE.equals(criteria.getHasPendingHcfRoles())) {
+            subClause
+                    .append(" (select count(id) from healthcarefacility ro "
+                            + "where ro.player_id=o.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (Boolean.TRUE.equals(criteria.getHasPendingRoRoles())) {
+            subClause
+                    .append(" (select count(id) from researchorganization ro where"
+                            + " ro.player_id=o.id and ro.status='PENDING') > 0 OR ");
+        }
+        if (subClause.length() > 0) {
+            sql.append(" AND (").append(subClause).append("1=2) ");
+        }
+
+    }
+
     /**
      * @param sql
      * @param criteria
@@ -601,41 +624,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    /**
-     * @param sql
-     * @param criteria
-     */
-    private void appendPendingRoClause(StringBuilder sql,
-            OrganizationSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingRoRoles())) {
-            sql.append(" AND (select count(id) from researchorganization ro where"
-                    + " ro.player_id=o.id and ro.status='PENDING') > 0");
-        }
-    }
-
-    /**
-     * @param sql
-     * @param criteria
-     */
-    private void appendPendingHcfClause(StringBuilder sql,
-            OrganizationSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasPendingHcfRoles())) {
-            sql.append(" AND (select count(id) from healthcarefacility ro "
-                    + "where ro.player_id=o.id and ro.status='PENDING') > 0");
-        }
-    }
-
-    /**
-     * @param sql
-     * @param criteria
-     */
-    private void appendCrClause(StringBuilder sql,
-            OrganizationSearchCriteria criteria) {
-        if (Boolean.TRUE.equals(criteria.getHasChangeRequests())) {
-            sql.append(" AND (select count(id) from organizationcr ocr where ocr.target=o.id "
-                    + "and ocr.processed=false) > 0");
-        }
-    }
+  
 
     /**
      * @param sql
