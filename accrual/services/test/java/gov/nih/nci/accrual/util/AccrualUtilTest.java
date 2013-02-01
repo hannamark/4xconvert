@@ -310,12 +310,6 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         Ts ts = new Ts();
         ts.setValue(now);
         assertEquals(nowYrMo, AccrualUtil.yearMonthTsToTimestamp(ts));
-        EdText edt = new EdText();
-        edt.setValue(nowYrStr);
-        ts.setOriginalText(edt);
-        assertEquals(nowYr, AccrualUtil.yearMonthTsToTimestamp(ts));
-        edt.setValue(nowYrMoStr);
-        assertEquals(nowYrMo, AccrualUtil.yearMonthTsToTimestamp(ts));
     }
 
     @Test
