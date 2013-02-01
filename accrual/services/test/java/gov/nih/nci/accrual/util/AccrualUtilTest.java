@@ -301,12 +301,9 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertNull(AccrualUtil.yearMonthTsToTimestamp(new Ts()));
         Date now = DateUtils.truncate(new Date(), Calendar.MONTH);
         Timestamp nowYrMo = new Timestamp(DateUtils.truncate(now, Calendar.MONTH).getTime());
-        Timestamp nowYr = new Timestamp(DateUtils.truncate(now, Calendar.YEAR).getTime());
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy");
-        String nowYrStr = sdf.format(now);
         sdf.applyPattern("MM/yyyy");
-        String nowYrMoStr = sdf.format(now);
         Ts ts = new Ts();
         ts.setValue(now);
         assertEquals(nowYrMo, AccrualUtil.yearMonthTsToTimestamp(ts));
