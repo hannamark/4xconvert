@@ -314,6 +314,7 @@
     clean,
     init,
     build:po,
+    patch:po,
     build:po-grid-3.2,
     build:po-grid-3.1,
     build:po-grid-3.0
@@ -360,6 +361,23 @@
         </copy>
         <maven maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase" maven.goal.list="${po.maven.goal.list}" maven.dir="${po.base.dir}" />
         <copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear" />
+    </target>
+
+    <!-- Insert updated JMS jar  -->
+    <target name="patch:po">
+        <unzip src="${po-ear.dist.dir}/po.ear" dest="${po-ear.dist.dir}/po-patch" />
+        <delete file="${po-ear.dist.dir}/po.ear"/>
+        <delete file="${po-ear.dist.dir}/po-patch/wlthinclient-trimmed-10.3.3.jar" />
+        <copy todir="${po-ear.dist.dir}/po-patch" file="./wlthint3client-trimmed-10.3.6.jar" overwrite="true" />
+        <replaceregexp file="${po-ear.dist.dir}/po-patch/META-INF/application.xml" byline="true">
+          <regexp pattern="wlthinclient-trimmed-10.3.3.jar"/>
+          <substitution expression="wlthint3client-trimmed-10.3.6.jar"/>
+        </replaceregexp>
+        <ear destfile="${po-ear.dist.dir}/po.ear"
+             basedir="${po-ear.dist.dir}/po-patch"
+             compress="false"
+             appxml="${po-ear.dist.dir}/po-patch/META-INF/application.xml" />
+        <delete dir="${po-ear.dist.dir}/po-patch" />
     </target>
 
     <!-- Build po-grid sub-project produces project level artifact -->
