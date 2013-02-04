@@ -126,6 +126,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private String cdeId;
     private boolean saveReset = false;
     private boolean pendingStatus;
+    private PlannedMarkerDTO newlyCreatedMarker;
     /**
      * to compare the Attribute values with Other
      */
@@ -172,7 +173,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             }
 
             try {
-                plannedMarkerService.create(marker);
+                newlyCreatedMarker = plannedMarkerService.create(marker);
             } catch (PAException e) {
                 addActionError(e.getMessage());
             }
@@ -296,6 +297,11 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (saveReset) {
+            if (newlyCreatedMarker != null) {
+                getPlannedMarker().setId(
+                        IiConverter.convertToLong(newlyCreatedMarker
+                                .getIdentifier()));
+            }
             PlannedMarkerDTO markerDTO = populateDTO(true);
             markerDTO.setAssayTypeCode(null);
             markerDTO.setAssayPurposeCode(null);
@@ -305,6 +311,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             markerDTO.setAssayPurposeOtherText(null);
             markerDTO.setAssayTypeOtherText(null);
             plannedMarker = populateWebDTO(markerDTO, null);
+            plannedMarker.setId(null);
             saveReset = false;
         }
         if (plannedMarker != null && plannedMarker.getId() != null) {
