@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -119,6 +120,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     private static final Logger LOG = Logger.getLogger(StudyMilestoneTasksServiceBean.class);
     private static final int[] DAYS_DELTA_PER_DOW = new int[]{7, 7, 7, 7, 7, 5, 6 };
     private static final String MILESTONE_COMMENT = "Milestone auto-set based on non-response within 5 days";
+    private static final String PA_USER = "pauser";
     
     @EJB 
     private LookUpTableServiceRemote lookUpTableService;
@@ -185,12 +187,17 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      */
     StudyMilestoneTaskMessageCollection createMilestones(Set<StudyMilestone> milestones) {
         StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
+        User csmUser = null;
         for (StudyMilestone milestone : milestones) {
             try {
                 Long studyProtocolId = milestone.getStudyProtocol().getId();
                 LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
                         + studyProtocolId);
                 StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+                csmUser = CSMUserService.getInstance().getCSMUser(PA_USER);
+                if (csmUser != null) {
+                    newDTO.setUserLastCreated(csmUser.getUserId());
+                }
                 newDTO.setCommentText(StConverter.convertToSt(MILESTONE_COMMENT));
                 newDTO.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
                 newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
