@@ -27,23 +27,24 @@
                     </s:if>
                     <tr>
                         <td class="label">
-                            <s:label for="startDate">
+                            <label for="auditedObject">
                                 <fmt:message key="auditTrail.auditedObject" />
-                            </s:label>
+                            </label>
                         </td>
                         <td class="value">
                             <s:set name="auditTrailOptions" value="@gov.nih.nci.pa.util.AuditTrailCode@getSortedValues()" />
-                            <s:select list="auditTrailOptions" name="auditTrailCode" listValue="name"/>
+                            <s:select id="auditedObject" list="auditTrailOptions" name="auditTrailCode" listValue="name"/>
                         </td>
                     </tr>
                     <tr>
                         <td class="label">
-                            <s:label for="startDate">
+                        <label for="startDate">
+                            
                                 <fmt:message key="auditTrail.startDate" />
-                            </s:label>
+                            </label>
                         </td>
                         <td class="value">
-                            <s:textfield name="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <s:textfield id="startDate" name="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal1')">
                                 <img src="<c:url value='/images/ico_calendar.gif'/>" alt="Select Date" class="calendaricon" />
                             </a>
@@ -56,12 +57,13 @@
                     </tr>
                     <tr>
                         <td class="label">
-                            <s:label for="endDate">
+                         <label for="endDate">
+                         
                                 <fmt:message key="auditTrail.endDate" />
-                            </s:label>
+                            </label>
                         </td>
                         <td class="value">
-                            <s:textfield name="endDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <s:textfield id="endDate" name="endDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                             <a href="javascript:showCal('Cal2')">
                                 <img src="<c:url value='/images/ico_calendar.gif'/>" alt="Select Date" class="calendaricon" />
                             </a>

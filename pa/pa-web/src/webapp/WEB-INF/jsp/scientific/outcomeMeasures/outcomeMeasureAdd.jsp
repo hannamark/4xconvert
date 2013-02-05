@@ -59,7 +59,7 @@ BubbleTips.activateTipOn("dfn");
     <s:hidden name="webDTO.outcomeMeasure.displayOrder" />
     <table class="form">
     			<tr>
-					<td scope="row"  class="label"><label>
+					<td scope="row"  class="label"><label for="webDTO.outcomeMeasure.typeCode">
 						<fmt:message key="osdesign.outcome.type"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
@@ -80,7 +80,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.outcomeMeasure.name" rows="4" cssStyle="width:400px"
+                        <s:textarea id="fileName" name="webDTO.outcomeMeasure.name" rows="4" cssStyle="width:400px"
                             maxlength="254" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
@@ -96,7 +96,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                            <s:textarea name="webDTO.outcomeMeasure.timeFrame" rows="4" cssStyle="width:400px"
+                            <s:textarea id="typeCode" name="webDTO.outcomeMeasure.timeFrame" rows="4" cssStyle="width:400px"
                                 maxlength="254" cssClass="charcounter"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
@@ -107,12 +107,12 @@ BubbleTips.activateTipOn("dfn");
                 </tr>                      
 				<tr>
                      <td scope="row" class="label">
-                     <label for="fileName">
+                     <label for="fileName1">
                             <fmt:message key="osdesign.outcome.description"/>
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="webDTO.outcomeMeasure.description" rows="20" cssStyle="width:400px"
+                        <s:textarea id="fileName1" name="webDTO.outcomeMeasure.description" rows="20" cssStyle="width:400px"
                             maxlength="600" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
@@ -122,11 +122,11 @@ BubbleTips.activateTipOn("dfn");
                       </td>         
                 </tr> 
 				<tr>
-					<td scope="row"  class="label"><label>
+					<td scope="row"  class="label"><label for="safety">
 						<fmt:message key="osdesign.outcome.safety"/><span class="required">*</span></label>
 					</td>
 					<td class="value">
-						<s:select name="webDTO.outcomeMeasure.safetyIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" /><span class="formErrorMsg"> 
+						<s:select id="safety" name="webDTO.outcomeMeasure.safetyIndicator" list="#{' ':' ', 'false':'No', 'true':'Yes'}" /><span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>webDTO.outcomeMeasure.safetyIndicator</s:param>
                                </s:fielderror>                            

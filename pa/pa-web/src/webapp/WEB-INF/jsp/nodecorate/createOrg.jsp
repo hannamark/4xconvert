@@ -18,8 +18,8 @@
 <s:set name="usStates" value="@gov.nih.nci.pa.enums.USStateCode@getAbbreviatedNames()" />
 <table  class="form">  
    <tr>     
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgName;"> Organization Name :</label><span class="required">*</span></td><td><s:textfield  id = "orgName"  name="orgName;" maxlength="159" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgCountry;">Country :</label><span class="required">*</span></td><td>
+        <td scope="row" class="label"><label for="orgName"> Organization Name :</label><span class="required">*</span></td><td><s:textfield  id = "orgName"  name="orgName;" maxlength="159" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgCountry">Country :</label><span class="required">*</span></td><td>
             <s:select
              id = "orgCountry"
              name="countryName;" 
@@ -28,11 +28,11 @@
         </td>
         </tr>
    <tr>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgStreetAddress">Street Address :</label><span class="required">*</span></td><td><s:textfield id = "orgAddress" name="orgStAddress"  maxlength="254" size="100"  cssStyle="width:200px" /></td>       
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgCity;">City :</label><span class="required">*</span></td><td><s:textfield id="orgCity" name="cityName" maxlength="50" size="100"  cssStyle="width:200px" /></td>        
+        <td scope="row" class="label"><label for="orgAddress">Street Address :</label><span class="required">*</span></td><td><s:textfield id = "orgAddress" name="orgStAddress"  maxlength="254" size="100"  cssStyle="width:200px" /></td>       
+        <td scope="row" class="label"><label for="orgCity">City :</label><span class="required">*</span></td><td><s:textfield id="orgCity" name="cityName" maxlength="50" size="100"  cssStyle="width:200px" /></td>        
    </tr>
    <tr> 
-   <td scope="row" class="label"><label for="poOrganizations_createOrg_orgState">State :<br></label></td>
+   <td scope="row" class="label"><label for="orgStateSelect">State :<br></label></td>
    <td>
     <div id="orgStateDivSelect" style="display:''">
       <s:select id="orgStateSelect" name="stateName" headerKey="" headerValue="-Select a State-"  list="#usStates" />
@@ -42,18 +42,18 @@
        <br><span class="tiny">(2-letter state code for Canada <br> and 2 or 3-letter state code for Australia.)</span>
    </div>    
   </td>    
-    <td scope="row" class="label"><label for="poOrganizations_createOrg_orgZip;">ZIP :</label><span class="required">*</span></td><td><s:textfield id="orgZip" name="zipCode" maxlength="20" size="100"  cssStyle="width:200px" /></td>
+    <td scope="row" class="label"><label for="orgZip">ZIP :</label><span class="required">*</span></td><td><s:textfield id="orgZip" name="zipCode" maxlength="20" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgEmail;">Email :</label></td><td><s:textfield id="orgEmail" name="email;"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgPhone">Phone Number :</label></td><td><s:textfield  id="orgPhone"  name="telephone" maxlength="30" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgEmail">Email :</label></td><td><s:textfield id="orgEmail" name="email;"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgPhone">Phone Number :</label></td><td><s:textfield  id="orgPhone"  name="telephone" maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgURL;">URL :</label></td><td><s:textfield id="orgUrl" name="url" maxlength="254" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgTTY;">TTY :</label></td><td><s:textfield id="orgTty" name="tty"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgUrl">URL :</label></td><td><s:textfield id="orgUrl" name="url" maxlength="254" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgTty">TTY :</label></td><td><s:textfield id="orgTty" name="tty"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="poOrganizations_createOrg_orgFax;">Fax Number :</label></td><td><s:textfield id="orgFax"  name="fax;"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
+        <td scope="row" class="label"><label for="orgFax">Fax Number :</label></td><td><s:textfield id="orgFax"  name="fax;"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>       
 </table>
  <div class="actionsrow">

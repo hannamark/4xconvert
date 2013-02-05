@@ -107,7 +107,8 @@ function handleCreateGroup(){
                         </s:elseif>
                     </display:column>
                     <display:column titleKey="arms.delete" headerClass="centered" class="action">
-                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.identifier}" value="%{#attr.row.identifier in objectsToDelete}"/>
+                        <s:checkbox name="objectsToDelete"  id="objectsToDelete_%{#attr.row.identifier}" fieldValue="%{#attr.row.identifier}" value="%{#attr.row.identifier in objectsToDelete}"/>
+                        <label style="display: none;" for="objectsToDelete_${row.identifier}">Check this box to mark row for deletion.</label>
                     </display:column>
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>

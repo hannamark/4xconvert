@@ -47,7 +47,8 @@
                         </tr>
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <fmt:message key="userAccountDetails.firstName"/>
+                                <label for="firstName"> <fmt:message key="userAccountDetails.firstName"/></label>
+                               
                             </td>
                             <td class="value">                                
                                 <s:textfield id="firstName" name="firstName" maxlength="200" size="100" cssStyle="width:200px" />                                          
@@ -55,7 +56,8 @@
                         </tr>
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <fmt:message key="userAccountDetails.lastName"/>
+                                <label for="lastName"> <fmt:message key="userAccountDetails.lastName"/></label>
+                                
                             </td>
                             <td class="value">                                
                                 <s:textfield id="lastName" name="lastName" maxlength="200" size="100" cssStyle="width:200px"  />                                          
@@ -63,7 +65,8 @@
                         </tr>                        
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <fmt:message key="userAccountDetails.organization"/>
+                            <label for="organization"> <fmt:message key="userAccountDetails.organization"/></label>
+                                
                             </td>
                             <td class="value">                                
                                 <s:textfield id="organization" name="organization" size="100" cssStyle="float:left; width:200px" readonly="true" cssClass="readonly"  />                                          
@@ -72,7 +75,8 @@
                         </tr>                                     
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <fmt:message key="userAccountDetails.phoneNumber"/>
+                            <label for="phoneNumber"> <fmt:message key="userAccountDetails.phoneNumber"/></label>
+                                
                             </td>
                             <td class="value">                                
                                 <s:textfield id="phoneNumber" name="phoneNumber" maxlength="200" size="100" cssStyle="width:200px"  />                                          
@@ -80,7 +84,8 @@
                         </tr>                                     
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <fmt:message key="userAccountDetails.emailId"/>
+                             <label for="emailId"> <fmt:message key="userAccountDetails.emailId"/></label>
+                                
                             </td>
                             <td class="value">                                
                                 <s:textfield id="emailId" name="emailId" maxlength="200" size="100" cssStyle="width:200px"  />                                          

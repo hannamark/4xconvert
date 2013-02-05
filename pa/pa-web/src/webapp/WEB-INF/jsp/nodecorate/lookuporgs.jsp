@@ -115,17 +115,17 @@
         <s:form id="poOrganizations" name="poOrganizations" >
             <div id="searchOrgJsp">
             <h2><fmt:message key="popUpOrg.header"/></h2>
-            <s:label name="orgErrorMessage"/>
+            
               <table  class="form">  
                 <tr>
                      <td scope="row" class="label">
-                        <label for="name"><fmt:message key="popUpOrg.name"/></label>
+                        <label for="orgNameSearch"><fmt:message key="popUpOrg.name"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgNameSearch" name="orgName" maxlength="200" size="100" cssStyle="width:200px" />
                      </td>
                       <td scope="row" class="label">
-                        <label for="city"><fmt:message key="popUpOrg.city"/></label>
+                        <label for="orgCitySearch"><fmt:message key="popUpOrg.city"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgCitySearch" name="cityName" maxlength="200" size="100" cssStyle="width:200px" />
@@ -133,13 +133,13 @@
                 </tr>
                 <tr>  
                      <td scope="row" class="label">
-                        <label for="familyName"><fmt:message key="popUpOrg.familyName"/></label>
+                        <label for="orgFamilyNameSearch"><fmt:message key="popUpOrg.familyName"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgFamilyNameSearch" name="familyName" maxlength="200" size="100" cssStyle="width:200px" />
                      </td>
                      <td scope="row" class="label">
-                        <label for="country"><fmt:message key="popUpOrg.country"/></label>
+                        <label for="orgCountrySearch"><fmt:message key="popUpOrg.country"/></label>
                     </td>
                     <td>
                         <s:select id="orgCountrySearch" name="countryName" list="countryList"  
@@ -148,13 +148,13 @@
                 </tr>
                 <tr>
                      <td scope="row" class="label">
-                        <label for="state"><fmt:message key="popUpOrg.state"/></label>
+                        <label for="orgStateSearch"><fmt:message key="popUpOrg.state"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgStateSearch" name="stateName" maxlength="75" size="20"/><br><font size="1"><span class="info"><fmt:message key="popUpOrg.stateInfo"/></span></font>
                     </td>
                       <td scope="row" class="label">
-                        <label for="zip"><fmt:message key="popUpOrg.zip"/></label>
+                        <label for="orgZipSearch"><fmt:message key="popUpOrg.zip"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgZipSearch" name="zipCode" maxlength="75" size="20"/>
@@ -162,9 +162,9 @@
                 </tr>
                 <tr><td colspan="6"> <hr></td> </tr>
                 <tr>
-                    <td scope="row" class="label"><label for="poId"><fmt:message key="organization.search.poID"/></label></td>
+                    <td scope="row" class="label"><label for="orgPoIdSearch"><fmt:message key="organization.search.poID"/></label></td>
                     <td><s:textfield id="orgPoIdSearch" name="poId" maxlength="10" cssStyle="width:294px"  /></td>                
-                    <td scope="row" class="label"><label for="ctepId"><fmt:message key="popUpOrg.ctepId"/></label></td>
+                    <td scope="row" class="label"><label for="orgCtepIdSearch"><fmt:message key="popUpOrg.ctepId"/></label></td>
                     <td><s:textfield id="orgCtepIdSearch" name="ctepId" maxlength="75" cssStyle="width:294px"  /></td>    
                 </tr>
               </table>

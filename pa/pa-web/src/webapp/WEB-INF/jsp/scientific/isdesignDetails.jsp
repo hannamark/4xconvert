@@ -141,10 +141,10 @@ function initialize() {
 <table class="form">
 
     <tr>
-        <td  scope="row" class="label"><label>
+        <td  scope="row" class="label"><label for="study">
             <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
         <td>
-          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+          <s:select id="study" name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
                    onchange="changeStudyType();"
                    value="webDTO.studyType" cssStyle="width:200px"/>
           <span class="formErrorMsg"> 
@@ -166,7 +166,7 @@ function initialize() {
     </tr>
 
 	<tr>
-	 	<td  scope="row" class="label"><label>
+	 	<td  scope="row" class="label"><label for="webDTO.primaryPurposeCode">
 	 		<fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
      	<s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
         <td>
@@ -181,10 +181,10 @@ function initialize() {
     </tr>
     <tr id="purposeOtherTextDiv" style="display:'none'">
          <td scope="row" class="label">
-            <label><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
+            <label for="otherText"><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
          </td>
          <td>
-               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" maxlength="200" cssClass="charcounter"/><br/>
+               <s:textarea id="otherText" name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" maxlength="200" cssClass="charcounter"/><br/>
                <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                <span class="formErrorMsg"> 
                <s:fielderror>
@@ -196,7 +196,7 @@ function initialize() {
       
     <tr>
         <td  scope="row" class="label">
-            <label>
+            <label for="webDTO.secondaryPurposes">
                 <fmt:message key="isdesign.details.secondary.purpose"/>
             </label>
         </td>
@@ -209,7 +209,7 @@ function initialize() {
     </tr>
       
     <tr>
-        <td scope="row" class="label"><label for="studyPhase">
+        <td scope="row" class="label"><label for="webDTO.phaseCode">
         	 <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
@@ -223,12 +223,12 @@ function initialize() {
         </td>
     </tr>
     <tr id ="phaseOtherDiv" style="display:'none'">
-		<td   scope="row" class="label"><label>
+		<td   scope="row" class="label"><label for="comment">
 	 		<fmt:message key="isdesign.details.phase.comment"/>
             </label></td>
 		<td>
 		<s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-        <s:select headerKey="" headerValue="No" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+        <s:select id="comment" headerKey="" headerValue="No" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
                 value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
 	           <span class="formErrorMsg"> 
              <s:fielderror>
@@ -238,11 +238,11 @@ function initialize() {
 		</td>
 	</tr>	
 	<tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="conf">
 	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">*</span></label></td>
 		<s:set name="designConfigurationCodeValues" value="@gov.nih.nci.pa.enums.DesignConfigurationCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:150px" />
+           <s:select id="conf" headerKey="" headerValue="" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:150px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.designConfigurationCode</s:param>
@@ -251,10 +251,10 @@ function initialize() {
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="interventionGroup">
 	 		<fmt:message key="isdesign.details.no.arms"/><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.numberOfInterventionGroups" maxlength="3" cssStyle="width:25px"/>
+         	<s:textfield id="interventionGroup" name="webDTO.numberOfInterventionGroups" maxlength="3" cssStyle="width:25px"/>
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.numberOfInterventionGroups</s:param>
@@ -263,11 +263,11 @@ function initialize() {
         </td>
 	</tr>
     <tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="masking">
 	 		<fmt:message key="isdesign.details.masking"/><span class="required">*</span></label></td>
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
+           <s:select id="masking" headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
 	           value="webDTO.blindingSchemaCode" cssStyle="width:120px" onchange="displayMaskingRoles();" />
 	       <span class="formErrorMsg"> 
              <s:fielderror>
@@ -277,25 +277,25 @@ function initialize() {
          </td>
 	</tr>
 	<tr id="blindingRoleCode">
-		<td   scope="row" class="label"><label>
+		<td   scope="row" class="label"><label for="role">
 	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">*</span></label></td>
 		<td>
-           <s:checkbox name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
-           <label>Subject</label>
-		   <s:checkbox name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
-		   <label>Investigator</label>
-		   <s:checkbox name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
-		   <label>Caregiver</label>
-		   <s:checkbox name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
+           <s:checkbox id="role" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
+           <label for="subject">Subject</label>
+		   <s:checkbox id="subject" name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
+		   <label for="investigator">Investigator</label>
+		   <s:checkbox id="investigator" name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
+		   <label for="caregiver">Caregiver</label>
+		   <s:checkbox id="caregiver" name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
 		   <label>Outcomes Assessor</label>          
          </td>
 	</tr>
 	<tr> 
-        <td scope="row" class="label"><label>
+        <td scope="row" class="label"><label for="allocation">
 	 		<fmt:message key="isdesign.details.allocation"/><span class="required">*</span></label> </td>
         <s:set name="allocationCodeValues" value="@gov.nih.nci.pa.enums.AllocationCode@getDisplayNames()" />
         <td>
-        	<s:select headerKey="" headerValue="" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
+        	<s:select id="allocation" headerKey="" headerValue="" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
         	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.allocationCode</s:param>
@@ -304,11 +304,11 @@ function initialize() {
         </td>
     </tr>
     <tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="classification">
 	 		<fmt:message key="isdesign.details.trial.classification"/></label></td>
 		<s:set name="studyClassificationCodeValues" value="@gov.nih.nci.pa.enums.StudyClassificationCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="" name="webDTO.studyClassificationCode" list="#studyClassificationCodeValues"  value="webDTO.studyClassificationCode" cssStyle="width:206px" />
+           <s:select id="classification" headerKey="" headerValue="" name="webDTO.studyClassificationCode" list="#studyClassificationCodeValues"  value="webDTO.studyClassificationCode" cssStyle="width:206px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyClassificationCode</s:param>
@@ -317,10 +317,10 @@ function initialize() {
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="enrollment">
 	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px" />
+         	<s:textfield id="enrollment" name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px" />
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.minimumTargetAccrualNumber</s:param>

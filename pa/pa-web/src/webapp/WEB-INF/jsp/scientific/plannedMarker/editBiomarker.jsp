@@ -30,17 +30,18 @@
 							<table class="form">
 								<s:hidden name="plannedMarker.id" />
 								<tr>
-									<td class="label"><s:label
-											for="plannedMarker.nciIdentifier">
-											<fmt:message key="plannedMarker.trial" />:</s:label></td>
+									<td class="label">
+									
+									<label for="nciIdentifier"> <fmt:message key="plannedMarker.trial" />:</label>
+                                </td>
 									<td><s:hidden name="plannedMarker.nciIdentifier"
 											id="nciIdentifier" /> <s:property
 											value="plannedMarker.nciIdentifier" /></td>
 								</tr>
 								<tr>
-									<td class="label"><s:label for="plannedMarker.meaning">
-											<fmt:message key="plannedMarker.name" />:</s:label><span
-										class="required">*</span></td>
+									<td class="label">
+									<label for="name"> <fmt:message key="plannedMarker.name" />:</label>
+								<span class="required">*</span></td>
 									<td class="value" style="width: 250px"><s:textfield
 											name="plannedMarker.name" id="name" maxlength="200"
 											size="200" cssStyle="width:250px" /> <span

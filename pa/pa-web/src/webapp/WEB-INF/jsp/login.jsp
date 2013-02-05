@@ -50,11 +50,11 @@ function validateForm() {
              <div class="clearfloat"></div>
              <div class="fieldrow">
                 <label for="j_username">Username:</label>
-                <div class="fieldbox_m required"><input name="j_username" maxlength="100" size="15" type="text"></div>
+                <div class="fieldbox_m required"><input name="j_username" maxlength="100" size="15" type="text" id="j_username"></div>
             </div>
             <div class="fieldrow">
                 <label for="j_password">Password:</label>
-                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" autocomplete="off" onKeyPress="return submitenter(this,event)"/></div>
+                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" autocomplete="off" onKeyPress="return submitenter(this,event)" id="j_password"/></div>
             </div>
             <div>
                <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">

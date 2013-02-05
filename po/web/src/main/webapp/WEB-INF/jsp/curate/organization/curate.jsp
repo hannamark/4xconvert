@@ -82,11 +82,13 @@
             </s:if>
             <s:else>
                 <po:inputRow>
-                <po:inputRowElement><po:field labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
+                <po:inputRowElement><po:field labelFor="organization.id" labelKey="organization.id">${organization.id}</po:field></po:inputRowElement>
                 <po:inputRowElement>&nbsp;</po:inputRowElement>
                 <po:inputRowElement><po:field labelKey="organization.statusCode">${organization.statusCode}</po:field></po:inputRowElement>
                 <po:inputRowElement>&nbsp;</po:inputRowElement>
-                <po:inputRowElement><po:field labelKey="organization.statusDate"><s:date name="organization.statusDate" format="yyyy-MM-dd" /></po:field></po:inputRowElement>
+                <po:inputRowElement><po:field labelFor="organization.statusDate" labelKey="organization.statusDate">
+                <s:date name="organization.statusDate"  format="yyyy-MM-dd" /></po:field>
+                </po:inputRowElement>
                 </po:inputRow>
                 <s:select
                    label="New %{getText('organization.statusCode')}"

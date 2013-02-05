@@ -211,7 +211,7 @@
                         <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
                     </c:if>
                     <tr>
-                        <td scope="row" class="label"><label for="LocalProtocolIdentifier">
+                        <td scope="row" class="label"><label for="gtdDTO.localProtocolIdentifier">
                              <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span></label> </td>
                         <td>
                             <s:textfield name="gtdDTO.localProtocolIdentifier" id="gtdDTO.localProtocolIdentifier"/>
@@ -224,7 +224,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="Nct Identifier"><fmt:message key="studyProtocol.nctNumber"/></label> 
+                            <label for="gtdDTO.nctIdentifier"><fmt:message key="studyProtocol.nctNumber"/></label> 
                         </td>
                         <td>
                             <s:textfield name="gtdDTO.nctIdentifier" id="gtdDTO.nctIdentifier"/>
@@ -238,7 +238,7 @@
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <tr>
                             <td scope="row" class="label">
-                                <label for="CtepIdentifier"><fmt:message key="studyProtocol.ctepId"/></label> 
+                                <label for="gtdDTO.ctepIdentifier"><fmt:message key="studyProtocol.ctepId"/></label> 
                             </td>
                             <td><s:textfield name="gtdDTO.ctepIdentifier" id="gtdDTO.ctepIdentifier"/>
                             <span class="formErrorMsg">
@@ -249,7 +249,7 @@
                         </tr>
                         <tr>
                             <td scope="row" class="label">
-                                <label for="dcpIdentifier"><fmt:message key="studyProtocol.dcpId"/></label> 
+                                <label for="gtdDTO.dcpIdentifier"><fmt:message key="studyProtocol.dcpId"/></label> 
                             </td>
                             <td>
                                 <s:textfield name="gtdDTO.dcpIdentifier" id="gtdDTO.dcpIdentifier"/>
@@ -272,7 +272,7 @@
                             <label for="acronym"><fmt:message key="studyProtocol.acronym"/></label>
                         </td>
                         <td class="value">
-                            <s:textfield name="gtdDTO.acronym" cssStyle="width:86px" maxlength="14"/>
+                            <s:textfield id="acronym" name="gtdDTO.acronym" cssStyle="width:86px" maxlength="14"/>
                         </td>
                     </tr>
                     <tr>
@@ -283,7 +283,7 @@
                             </label>
                         </td>
                         <td class="value">
-                            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4" 
+                            <s:textarea id="officialTitle" name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4" 
                                 maxlength="4000" cssClass="charcounter" />
                             <span class="formErrorMsg">
                                 <s:fielderror>
@@ -300,7 +300,7 @@
                            <label for=keywordText><fmt:message key="studyProtocol.keywordText"/></label>
                         </td>
                         <td class="value">
-                            <s:textarea name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"
+                            <s:textarea id="keywordText" name="gtdDTO.keywordText" cssStyle="width:606px" rows="4"
                                 maxlength="4000" cssClass="charcounter" />
                         </td>
                     </tr>
@@ -310,7 +310,7 @@
                         </tr>
                         <tr>
                             <td scope="row" class="label">
-                                <label for="submitTrial_protocolWebDTO_otherIdentifiers">Other Identifier</label>
+                                <label for="otherIdentifierType">Other Identifier</label>
                             </td>
                             <td>                               
                                  <table>
@@ -321,7 +321,9 @@
 												<option value="1">Obsolete NCT ID</option>
 												<option value="2">Duplicate NCI ID</option>
 										</select></td>
-										<td><input type="text" name="otherIdentifierOrg"
+										<td>
+										<label for="otherIdentifierOrg" style="display:none">orgid</label>
+										<input type="text" name="otherIdentifierOrg"
 											id="otherIdentifierOrg" value="" />&nbsp;</td>
 										<td><input type="button" id="otherIdbtnid"
 											value="Add Other Identifier" onclick="addOtherIdentifier();" />
@@ -349,7 +351,7 @@
                         </tr>
                         <tr>
                             <td scope="row" class="label" >
-                                <label for="nciIdentifier"> Personal Contact </label>
+                                <label for="gtdDTO.centralContactName"> Personal Contact </label>
                             </td>
                             <td class="value">
                                 <div id="loadCentralContactDiv">
@@ -361,7 +363,7 @@
                           <td> OR    </td>
                       </tr>
                       <tr>
-                          <td scope="row" class="label"><s:label for="Generic Contact">Generic Contact:</s:label></td>
+                          <td scope="row" class="label"><label for="gtdDTO.centralContactTitle">Generic Contact:</label></td>
                           <td>
                               <table>
                                   <tr>
@@ -384,7 +386,8 @@
                       </tr>
                       <tr>
                           <td scope="row" class="label">
-                               Email Address:
+                          <label for="gtdDTO.centralContactEmail">Email Address:</label>
+                               
                           </td>
                           <td class="value">
                               <s:textfield name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail" maxlength="200" size="100"  cssStyle="width:200px" />
@@ -396,10 +399,13 @@
                           </td>
                       </tr>
                       <tr>
-                          <td scope="row" class="label">Phone Number:</td>
+                          <td scope="row" class="label">
+                          <label for="gtdDTO.centralContactPhone">Phone Number:</label></td>
                           <td class="value">
                               <s:textfield name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone" maxlength="200" size="15"  cssStyle="width:100px" />
-                                Extn:<s:textfield name="gtdDTO.centralContactPhoneExtn" id="gtdDTO.centralContactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
+                                Extn:
+                                <label for="gtdDTO.centralContactPhoneExtn" style="display:none">ext</label>
+                                <s:textfield name="gtdDTO.centralContactPhoneExtn" id="gtdDTO.centralContactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />
                               <span class="formErrorMsg">
                                   <s:fielderror>
                                       <s:param>gtdDTO.centralContactPhone</s:param>

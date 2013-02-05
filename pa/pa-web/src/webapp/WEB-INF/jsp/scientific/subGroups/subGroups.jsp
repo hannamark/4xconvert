@@ -54,7 +54,8 @@ function callOnloadFunctions(){
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
             </display:column>
             <display:column title="Delete" class="action">
-                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>                
+                <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.row.id}" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>  
+                <label style="display: none;" for="objectsToDelete_${row.id}">Check this box to mark row for deletion.</label>              
             </display:column>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     	</display:table>

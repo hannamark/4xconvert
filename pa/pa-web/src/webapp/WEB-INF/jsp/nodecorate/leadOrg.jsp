@@ -3,9 +3,9 @@
 <tr>
 <td>
 
-<s:textfield label="Organization Name" name="gtdDTO.leadOrganizationName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly"/>
+<s:textfield id="nciIdentifier" label="Organization Name" name="gtdDTO.leadOrganizationName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly"/>
 <a href="javascript:void(0)" onclick="displayOrgDetails($('gtdDTO.leadOrganizationIdentifier').value);">
-    <img src="<%=request.getContextPath()%>/images/details.gif"/>
+    <img src="<%=request.getContextPath()%>/images/details.gif" alt="details/>
 </a>
  </td><td> 
                   <ul style="margin-top:-1px;">             

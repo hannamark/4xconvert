@@ -99,7 +99,8 @@
                                         </s:a>
                                     </display:column>
                                     <display:column titleKey="disease.delete" headerClass="centered" class="action">
-                                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.studyDiseaseIdentifier}" value="%{#attr.row.studyDiseaseIdentifier in objectsToDelete}"/>
+                                        <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.row.studyDiseaseIdentifier}" fieldValue="%{#attr.row.studyDiseaseIdentifier}" value="%{#attr.row.studyDiseaseIdentifier in objectsToDelete}"/>
+                                          <label style="display: none;" for="objectsToDelete_${row.studyDiseaseIdentifier}">Check this box to mark row for deletion.</label>
                                     </display:column>
                                 </pa:scientificAbstractorDisplayWhenCheckedOut>
                             </display:table>

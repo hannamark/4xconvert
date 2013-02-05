@@ -78,7 +78,7 @@ BubbleTips.activateTipOn("dfn");
                 </tr>                
                 <tr>
                      <td scope="row" class="label">
-                     <label for="fileName">
+                     <label for="fileUpload">
                             <fmt:message key="trialDocument.fileName"/><span class="required">*</span>
                      </label>
                     </td>

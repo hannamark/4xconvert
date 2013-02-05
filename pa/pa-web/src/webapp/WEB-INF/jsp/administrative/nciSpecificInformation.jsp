@@ -71,7 +71,7 @@
                             </td>
                             <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
                             <td class="value">
-                                <s:select headerKey="" headerValue="" 
+                                <s:select id="accrualReportingMethodCode" headerKey="" headerValue="" 
                                    name="nciSpecificInformationWebDTO.accrualReportingMethodCode" 
                                    list="#accrualReportingMethodCodeValues"  
                                    value="nciSpecificInformationWebDTO.accrualReportingMethodCode" 
@@ -90,7 +90,7 @@
                         </td>
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                         <td class="value">
-                            <s:select headerKey="" headerValue="" 
+                            <s:select id="summary4TypeCode" headerKey="" headerValue="" 
                                       name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
                                       list="#summaryFourFundingCategoryCodeValues"  
                                       value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
@@ -104,7 +104,7 @@
                     </tr>      
                     <tr>
                         <td scope="row" class="label">
-                            <label for="summary4TypeCode">Summary 4 Funding Sponsor/Source:</label>
+                            <label for="summary4FundingSponsor">Summary 4 Funding Sponsor/Source:</label>
                         </td>
                         <td class="value">
                             <div id="loadOrgField">
@@ -118,7 +118,7 @@
                             <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                         </td>
                         <td class="value">
-                            <s:textfield name="nciSpecificInformationWebDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                            <s:textfield id="summary4ProgramCode" name="nciSpecificInformationWebDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>nciSpecificInformationWebDTO.programCodeText</s:param>
@@ -131,7 +131,7 @@
                             <label for="ctroOverride"><fmt:message key="studyProtocol.ctroOverride"/></label>
                         </td>
                         <td class="value">
-                            <s:checkbox name="nciSpecificInformationWebDTO.ctroOverride" />
+                            <s:checkbox id="ctroOverride" name="nciSpecificInformationWebDTO.ctroOverride" />
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>nciSpecificInformationWebDTO.ctroOverride</s:param>

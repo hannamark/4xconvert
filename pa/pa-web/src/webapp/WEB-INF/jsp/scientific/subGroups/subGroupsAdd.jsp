@@ -53,7 +53,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
     				<td class="value">    					
-                    		<s:textfield cssClass="charcounter" name="subGroupsWebDTO.groupNumberText" maxlength="200"  cssStyle="width:80px"/>                   
+                    		<s:textfield id="typeCode" cssClass="charcounter" name="subGroupsWebDTO.groupNumberText" maxlength="200"  cssStyle="width:80px"/>                   
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>subGroupsWebDTO.code</s:param>
@@ -68,7 +68,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="subGroupsWebDTO.description" cssStyle="width:606px" rows="20" 
+                        <s:textarea id="fileName" name="subGroupsWebDTO.description" cssStyle="width:606px" rows="20" 
                             maxlength="200" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>

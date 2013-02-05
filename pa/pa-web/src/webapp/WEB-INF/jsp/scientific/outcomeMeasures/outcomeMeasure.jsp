@@ -142,7 +142,8 @@
                 <s:a href="%{url}"><img src="<c:url value='/images/ico_copy.gif'/>" alt="Copy" width="16" height="16"/></s:a>
             </display:column>            
             <display:column title="Delete" class="action nodnd" headerClass="nodnd">
-                <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.outcomeMeasure.id}" value="%{#attr.row.outcomeMeasure.id in objectsToDelete}"/>
+                <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.row.id}" fieldValue="%{#attr.row.outcomeMeasure.id}" value="%{#attr.row.outcomeMeasure.id in objectsToDelete}"/>
+                 <label style="display: none;" for="objectsToDelete_${row.id}">Check this box to mark row for deletion.</label>
             </display:column>
         </pa:scientificAbstractorDisplayWhenCheckedOut>        
 	</display:table>

@@ -45,7 +45,7 @@
                             <label for="j_username">Login Id:</label>
                         </td>
                         <td class="value">
-                            <input name="j_username" maxlength="100" size="25" type="text">
+                            <input id="j_username" name="j_username" maxlength="100" size="25" type="text">
                         </td>
                     </tr>
                     <tr>
@@ -53,7 +53,7 @@
                             <label for="j_password">Password:</label>
                         </td>
                         <td class="value">
-                            <input name="j_password" maxlength="100" size="25" type="password" autocomplete="off" onKeyPress="return submitenter(this,event)"/>
+                            <input id="j_password" name="j_password" maxlength="100" size="25" type="password" autocomplete="off" onKeyPress="return submitenter(this,event)"/>
                         </td>
                     </tr>                
                         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
@@ -65,7 +65,7 @@
                             </c:when>
                             <c:otherwise>
                             <tr>
-                               <td class="label">Account Source: </td>
+                               <td class="label"><label for="authenticationServiceURL">Account Source: </label></td>
                                 <td>
                                  <select name="authenticationServiceURL" id="authenticationServiceURL" size="1">
                                     <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">

@@ -96,7 +96,7 @@
                             <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
                         </td>
                         <td  scope="row" class="label">
-                            <label for="leadOrganization"> <fmt:message key="studyProtocol.leadOrganization"/></label>
+                            <label for="leadOrganizationId"> <fmt:message key="studyProtocol.leadOrganization"/></label>
                         </td>
                         <td>
                             <s:select name="criteria.leadOrganizationIds" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
@@ -106,7 +106,7 @@
                     <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />
                     <tr>
                         <td scope="row" class="label">
-                            <label for="identfierType"><fmt:message key="studyProtocol.identifierType"/></label>
+                            <label for="identifierType"><fmt:message key="studyProtocol.identifierType"/></label>
                         </td>
                         <td>
                             <s:select id="identifierType" headerKey="All" 
@@ -134,7 +134,7 @@
                     <tr>
                         <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getCachingPAPersonService().getAllPrincipalInvestigators()" />
                         <td  scope="row" class="label">
-                            <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
+                            <label for="principalInvestigatorId"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                         </td>
                         <td align=left>
                             <s:select
@@ -148,7 +148,7 @@
                                 value="criteria.principalInvestigatorId" />
                         </td>
                         <td  scope="row" class="label">
-                            <label for="trialType"> <fmt:message key="studyProtocol.trialType"/></label>
+                            <label for="primaryPurpose"> <fmt:message key="studyProtocol.trialType"/></label>
                         </td>
                         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
                         <td>
@@ -158,14 +158,14 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="studyPhase"> <fmt:message key="studyProtocol.studyPhase"/></label>
+                            <label for="phaseCode"> <fmt:message key="studyProtocol.studyPhase"/></label>
                         </td>
                         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                         <td>
                             <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCodes[0]" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
-                            <label for="studyStatus"> <fmt:message key="studyProtocol.studyStatus"/></label>
+                            <label for="studyStatusCode"> <fmt:message key="studyProtocol.studyStatus"/></label>
                         </td>
                         <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                         <td>
@@ -174,14 +174,14 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="documentWorkflowStatus"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>
+                            <label for="documentWorkflowStatusCode"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>
                         </td>
                         <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
                         <td>
                            <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCodes[0]" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
-                            <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>
+                            <label for="studyMilestone"> <fmt:message key="studyProtocol.milestone"/></label>
                         </td>
                         <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
                         <td>
@@ -231,6 +231,7 @@
                         </td>
                         <td scope="row" class="label">
                             <label for="InterventionalStudyProtocol_studySubtypeCode"><fmt:message key="studyProtocol.trialSubType"/></label>
+                            <label for="NonInterventionalStudyProtocol_studySubtypeCode" style="display:none"><fmt:message key="studyProtocol.trialSubType"/></label>
                         </td>
                         <td>
                            <s:set name="studySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />

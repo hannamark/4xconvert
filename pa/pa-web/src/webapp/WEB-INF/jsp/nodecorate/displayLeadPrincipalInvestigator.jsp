@@ -2,9 +2,9 @@
 <table>
     <tr>
         <td>
-            <s:textfield label="First Name" name="gtdDTO.piName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly" />
+            <s:textfield id="principalInvestigator" label="First Name" name="gtdDTO.piName" size="30" cssStyle="width:200px" readonly="true" cssClass="readonly" />
             <a href="javascript:void(0)" onclick="displayPersonDetails($('gtdDTO.piIdentifier').value);">
-                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+                <img src="<%=request.getContextPath()%>/images/details.gif" alt="details"/>
             </a>
         </td>
         <td>

@@ -56,12 +56,12 @@ jQuery(function() {
             </tr>             
             
            <viewer:titleRow titleKey="adHocReport.leadOrganizations"/>        
-           <viewer:valueRow labelKey="adHocReport.byFamily">
+           <viewer:valueRow labelFor="familyId" labelKey="adHocReport.byFamily">
               
                 <s:select id="familyId" name="criteria.familyId" list="families" listKey="key"
                           listValue="value" headerKey="0" headerValue="--All--"  cssStyle="display:inline"/>
             </viewer:valueRow>
-            <viewer:valueRow labelKey="adHocReport.orgsByFamily">
+            <viewer:valueRow labelFor="orgNames" labelKey="adHocReport.orgsByFamily">
                 <div id="organization_choices">                       
                   <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/organizationsByFamily.jsp"/>                   
                 </div> 

@@ -41,11 +41,11 @@
             </c:if>
              <div class="fieldrow">
                 <label for="j_username">Username:</label>
-                <div class="fieldbox_m required"><input name="j_username" maxlength="100" size="15" type="text"></div>
+                <div class="fieldbox_m required"><input name="j_username" maxlength="100" size="15" type="text" id="j_username"></div>
             </div>
             <div class="fieldrow">
                 <label for="j_password">Password:</label>
-                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" autocomplete="off"/></div>
+                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" autocomplete="off" id="j_password"/></div>
             </div>
             <div class="fieldrow">
                 <c:set var="authMap" scope="page" value="${requestScope['AUTHENTICATION_SOURCE_MAP']}"/>
@@ -60,7 +60,7 @@
                     <% } else { %>
                         <label for="authenticationServiceURL">Account Source:</label>
                         <div class="fieldbox_m">
-                            <select name="authenticationServiceURL" size="1">
+                            <select name="authenticationServiceURL" size="1" id="authenticationServiceURL">
                                 <c:forEach var="item" items="${requestScope.AUTHENTICATION_SOURCE_MAP}">
 			                        <c:choose>
 			                            <c:when test="${fn:contains(item.value,'AuthenticationService')}">

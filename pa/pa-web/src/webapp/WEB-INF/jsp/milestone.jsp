@@ -101,29 +101,29 @@
 						                 <table class="form" id="table-1">
 						                 <tbody> 
 						                 <tr class="nodrag nodrop">
-						                 <th><label for="typeCode"><fmt:message key="milestone.milestone"/></label></th>
-						                 <th><label for="typeCode"><fmt:message key="milestone.date"/></label></th>
-						                  <th><label for="typeCode"><fmt:message key="milestone.comment"/></label></th>
-						                  <th><label for="typeCode"><fmt:message key="milestone.creator"/></label></th>
-						                  <th><label for="typeCode"><fmt:message key="milestone.creationDate"/></label></th>
+						                 <th><label for="typeCode1"><fmt:message key="milestone.milestone"/></label></th>
+						                 <th><label for="typeCode2"><fmt:message key="milestone.date"/></label></th>
+						                  <th><label for="typeCode3"><fmt:message key="milestone.comment"/></label></th>
+						                  <th><label for="typeCode4"><fmt:message key="milestone.creator"/></label></th>
+						                  <th><label for="typeCode5"><fmt:message key="milestone.creationDate"/></label></th>
 						                  </tr>
 						      
 						                      <s:iterator value="milestoneList" id="milestoneList" status="stat" >
 						                      <tr id="<s:property value='#stat.index'/>">
 						                       <td class="tdBoxed">
-						                       <s:textfield wrap="true"  name="milestoneList[%{#stat.index}].milestone" value="%{milestone}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
+						                       <s:textfield id="typeCode1" wrap="true"  name="milestoneList[%{#stat.index}].milestone" value="%{milestone}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true"/>
 						                       </td>
 						                       <td class="tdBoxed">
-						                        <s:textfield   name="milestoneList[%{#stat.index}].date" value="%{date}" cssStyle="width:110px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
+						                        <s:textfield id="typeCode2"  name="milestoneList[%{#stat.index}].date" value="%{date}" cssStyle="width:110px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
 						                       </td>
 						                       <td class="tdBoxed">
-						                        <s:textarea wrap="true" name="milestoneList[%{#stat.index}].comment" value="%{comment}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
+						                        <s:textarea id="typeCode3" wrap="true" name="milestoneList[%{#stat.index}].comment" value="%{comment}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
 						                       </td>
 						                       <td class="tdBoxed">
-						                        <s:textfield  name="milestoneList[%{#stat.index}].creator" value="%{creator}" cssStyle="width:150px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
+						                        <s:textfield id="typeCode4" name="milestoneList[%{#stat.index}].creator" value="%{creator}" cssStyle="width:150px;border: 1px solid #FFFFFF" readonly="true" rows="1"/>
 						                       </td>
 						                       <td class="tdBoxed">
-						                        <s:textfield  name="milestoneList[%{#stat.index}].creationDate" value="%{creationDate}" cssStyle="width:110px;border: 1px solid #FFFFFF" readonly="true"/>
+						                        <s:textfield id="typeCode5" name="milestoneList[%{#stat.index}].creationDate" value="%{creationDate}" cssStyle="width:110px;border: 1px solid #FFFFFF" readonly="true"/>
 						                       </td>
 						                     </tr>
 						                    </s:iterator>
@@ -161,17 +161,17 @@
 		                                        <table class="form">
 		                                            <tr>
 		                                                <td class="label">
-		                                                    <s:label><fmt:message key="milestone.milestone"/></s:label>
+		                                                     <label for="milestone"> <fmt:message key="milestone.milestone"/></label>
 		                                                    <span class="required">*</span>
 		                                                </td>
 		                                                <td class="value" style="width: 250px">
-		                                                    <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="%{allowedMilestones}" 
+		                                                    <s:select id="milestone" headerKey="" headerValue="--Select--" name="milestone.milestone" list="%{allowedMilestones}" 
 		                                                              onchange="statusChange()" onfocus="statusChange()"/>
 		                                                </td>
 		                                            </tr>
 		                                            <tr>
 		                                                <td class="label">
-		                                                    <s:label><fmt:message key="milestone.date"/></s:label>
+		                                                    <label for="date"> <fmt:message key="milestone.date"/></label>
 		                                                    <span class="required">*</span>
 		                                                </td>
 		                                                <td class="value">
@@ -182,15 +182,15 @@
 		                                                </td> 
 		                                            </tr>
 		                                            <tr>
-		                                                <td class="label" id="milestoneComments">
-		                                                    <s:label><fmt:message key="milestone.comment"/></s:label>
+		                                                <td class="label">
+		                                                  <label for="milestoneComments"><fmt:message key="milestone.comment"/></label>
 		                                                </td>
 		                                                <td class="label" id="latemilestoneComments" style="display: none;">
 		                                                    <s:label>Late Rejection <fmt:message key="milestone.comment"/></s:label>
 		                                                    <span class="required">*</span>
 		                                                </td>
-		                                                <td class="value">
-		                                                    <s:textarea name="milestone.comment" rows="4" cssStyle="width:280px;"/>
+		                                                <td class="value" id="milestoneComments">
+		                                                    <s:textarea id="milestoneComments" name="milestone.comment" rows="4" cssStyle="width:280px;"/>
 		                                                </td>
 		                                            </tr>
 		                                        </table>

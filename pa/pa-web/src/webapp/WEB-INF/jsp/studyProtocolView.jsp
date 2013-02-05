@@ -32,6 +32,14 @@
                 form.submit();
             }
         </script>
+        <style type="text/css">
+            
+            .labelDupe {
+                font-weight: bold;
+                font-size: 92%;
+                color: #333333;
+        }
+</style>
     </head>
     <body>
         <c:set var="topic" scope="request" value="trialdetails"/>
@@ -47,43 +55,43 @@
                 <h2>Trial Identification</h2>
                 <table class="form">
                     <tr>
-                        <td scope="row" class="label">
-                        <label>                          
+                        <td scope="row" class="labelDupe">
+                                                
                                 <fmt:message key="studyProtocol.studyProtocolType"/>
-                                </label>                          
+                                                      
                         </td>
-                        <td class="value">
+                        <td >
                             <c:out value="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>
                         </td>
                     </tr>   
                     <c:if test="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'}">
 	                    <tr>
-	                        <td scope="row" class="label"><label>	                            
+	                        <td scope="row" class="labelDupe">                            
 	                                <fmt:message key="studyProtocol.nonIntTrialType"/>
-	                                </label>	                           
+	                                                          
 	                        </td>
-	                        <td class="value">
+	                        <td >
 	                            <c:out value="${trialSummary.studySubtypeCode}"/>
 	                        </td>
 	                    </tr>
                     </c:if>             
                     <tr>
-                        <td scope="row" class="label">
-                            <label for="nciAccessionNumber">
+                        <td scope="row" class="labelDupe">
+                           
                                 <fmt:message key="studyProtocol.nciIdentifier"/>
-                            </label>
+                            
                         </td>
-                        <td class="value">
+                        <td>
                             <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" class="label">
-                            <label for="localProtocolIdentifier">
+                        <td scope="row" class="labelDupe">
+                           
                                 <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                            </label>
+                           
                         </td>
-                        <td class="value">
+                        <td>
                             <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
                             <span class="formErrorMsg">
                                 <s:fielderror>
@@ -94,10 +102,10 @@
                     </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <tr>
-                            <td scope="row" class="label">
-                                <label for="secondaryIdentifiers">Other Trial Identifiers</label>
+                            <td scope="row" class="labelDupe">
+                               Other Trial Identifiers
                             </td>
-                            <td class="value">
+                            <td>
                                 <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status">
                                     <c:out value="${extension}"/>
                                     <c:if test="${not status.last}">,&nbsp;</c:if>
@@ -106,56 +114,54 @@
                         </tr>
                     </c:if>
                     <tr>
-                        <td scope="row" class="label">
-                            <label for="nciIdentifier"> NCT Number </label>
+                        <td scope="row" class="labelDupe">
+                            NCT Number 
                         </td>
-                        <td class="value">
+                        <td>
                             <c:out value="${sessionScope.nctIdentifier }"/>
                         </td>
                     </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <tr>
-                            <td scope="row" class="label">
-                                <label for="ctepIdentifier"> CTEP Trial Identifier</label>
+                            <td scope="row" class="labelDupe">
+                                CTEP Trial Identifier
                             </td>
-                            <td class="value">
-                                <c:out value="${sessionScope.ctepIdentifier }"/>
+                            <td >
+                                <c:out value="${sessionScope.ctepIdentifier}"/>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="row" class="label">
-                                <label for="dcpIdentifier"> DCP Trial Identifier</label>
+                            <td scope="row" class="labelDupe">
+                                 DCP Trial Identifier
                             </td>
-                            <td class="value">
+                            <td>
                                 <c:out value="${sessionScope.dcpIdentifier }"/>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="row" class="label">
-                                <label for="ctGovXml"> ClinicalTrials.gov XML required?</label>
+                            <td scope="row" class="labelDupe">
+                                 ClinicalTrials.gov XML required?
                             </td>
-                            <td class="value">
+                            <td>
                                 <pa:displayBoolean value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator}"/>
                             </td>
                         </tr>
                     </c:if>
                     <tr>
-                        <td scope="row" class="label">
-                            <label for="leadOrg">
+                        <td scope="row" class="labelDupe">
+                            
                                 <fmt:message key="studyProtocol.proprietaryTrial"/>
-                            </label>
+                            
                         </td>
-                        <td class="value">
+                        <td>
                             <pa:displayBoolean value="${sessionScope.trialSummary.proprietaryTrial}"/>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" class="label">
-                            <label for="officialTitle">
-                                <fmt:message key="studyProtocol.officialTitle"/>
-                            </label>
+                        <td scope="row" class="labelDupe">                          
+                                <fmt:message key="studyProtocol.officialTitle"/>   
                         </td>
-                        <td class="value">
+                        <td>
                              <c:out value="${sessionScope.trialSummary.officialTitle }"/>
                         </td>
                     </tr>

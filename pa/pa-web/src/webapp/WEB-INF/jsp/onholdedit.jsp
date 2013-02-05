@@ -56,31 +56,31 @@
                             </h3>
                         </td>
                     </tr>    
-                    <pa:valueRow labelKey="onhold.reason.code" required="true">
+                    <pa:valueRow labelFor="reasonCode" labelKey="onhold.reason.code" required="true">
                         <s:set name="onholdCodeValues" value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
                         <s:if test="%{currentAction == 'create'}">
-                            <s:select headerKey="" headerValue="--Select--" name="onhold.reasonCode" list="#onholdCodeValues"/>
+                            <s:select headerKey="" headerValue="--Select--" name="onhold.reasonCode" list="#onholdCodeValues" id="reasonCode"/>
                         </s:if>
                         <s:else>
-                            <s:textfield name="onhold.reasonCode" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly"/>
+                            <s:textfield name="onhold.reasonCode" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly" id="reasonCode"/>
                         </s:else>
                         <pa:fieldError fieldName="onhold.reasonCode"/>
                     </pa:valueRow>
-                    <pa:valueRow labelKey="onhold.reason.text">
+                    <pa:valueRow labelFor="reasonText" labelKey="onhold.reason.text">
                         <s:if test="%{currentAction == 'create'}">
-                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;" maxlength="200" cssClass="charcounter"/>
+                            <s:textarea id="reasonText" name="onhold.reasonText" rows="3" cssStyle="width:280px;" maxlength="200" cssClass="charcounter"/>
                         </s:if>
                         <s:else>
-                            <s:textarea name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>
+                            <s:textarea id="reasonText" name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>
                         </s:else>
                     </pa:valueRow>
-                    <pa:valueRow labelKey="onhold.date.low">
-                        <s:textfield name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
+                    <pa:valueRow labelFor="onHoldDate" labelKey="onhold.date.low">
+                        <s:textfield id="onHoldDate" name="onhold.dateLow" cssStyle="width:70px;float:left" readonly="true" cssClass="readonly"/>
                         <pa:fieldError fieldName="onhold.dateLow"/>
                     </pa:valueRow>
                     <s:if test="%{currentAction != 'create'}">
-	                    <pa:valueRow labelKey="onhold.date.high">
-	                        <s:textfield name="onhold.dateHigh" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+	                    <pa:valueRow labelFor="dateHigh" labelKey="onhold.date.high">
+	                        <s:textfield id="dateHigh" name="onhold.dateHigh" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
 	                        <a href="javascript:showCal('Cal2')">
 	                            <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
 	                        </a>
@@ -88,8 +88,8 @@
 	                    </pa:valueRow>
                     </s:if>
                     <s:if test="%{onhold.processingLog!=null && onhold.processingLog!=''}">
-	                    <pa:valueRow labelKey="onhold.processingLog">
-	                        <s:textarea name="onhold.processingLog" rows="5" cssStyle="width:500px;float:left;" 
+	                    <pa:valueRow labelFor="processing" labelKey="onhold.processingLog">
+	                        <s:textarea id="processing" name="onhold.processingLog" rows="5" cssStyle="width:500px;float:left;" 
 	                         readonly="true" cssClass="readonly"/>
 	                    </pa:valueRow>                    
                     </s:if>                    

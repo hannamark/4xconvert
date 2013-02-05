@@ -2,15 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <table  class="form">
 		<tr>
-		    <td scope="row" class="label"><s:label for="editOrg.name">Organization Name:</s:label><span class="required">*</span>
+		    <td scope="row" class="label"><label for="editOrg.name">Organization Name:</label><span class="required">*</span>
 	    
 		    
 		    </td>
 			<td>
-                <s:textfield name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
+                <s:textfield id="editOrg.name" name="orgFromPO.name" maxlength="80" size="80" cssStyle="width: 300px" readonly="true" cssClass="readonly"/>
                 <s:if test="%{currentAction == 'edit'}">
                     <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value='${editOrg.identifier}'/>);">
-                        <img src="<%=request.getContextPath()%>/images/details.gif"/>
+                        <img src="<%=request.getContextPath()%>/images/details.gif" alt="details"/>
                     </a>
                 </s:if>
             
@@ -34,30 +34,30 @@
 		</tr>
 		<s:if test="proprietaryTrialIndicator == 'false'">
 		<tr>
-		    <td scope="row" class="label"><s:label for="editOrg.city">City:</s:label><span class="required">*</span></td>
+		    <td scope="row" class="label"><label for="editOrg.city">City:</label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
-		        <s:textfield name="orgFromPO.city" maxlength="200" size="200" 
+		        <s:textfield id="editOrg.city" name="orgFromPO.city" maxlength="200" size="200" 
 		         cssStyle="width: 200px" readonly="true" cssClass="readonly"/>
 		    </td>
 		</tr>
 		<tr>
-		    <td scope="row" class="label"><s:label for="orgFromPO.state">State:</s:label><span class="required">*</span></td>
+		    <td scope="row" class="label"><label for="orgFromPO.state">State:</label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
-		        <s:textfield name="orgFromPO.state" maxlength="200" size="200" 
+		        <s:textfield id="orgFromPO.state" name="orgFromPO.state" maxlength="200" size="200" 
 		         cssStyle="width: 200px" readonly="true" cssClass="readonly"/>
 		    </td>
 		</tr>		
 		<tr>
-		    <td scope="row" class="label"><s:label for="orgFromPO.country">Country:</s:label><span class="required">*</span></td>
+		    <td scope="row" class="label"><label for="orgFromPO.country">Country:</label><span class="required">*</span></td>
 		    <td class="value" colspan="2">
-		        <s:textfield name="orgFromPO.country" maxlength="200" size="200" 
+		        <s:textfield id="orgFromPO.country" name="orgFromPO.country" maxlength="200" size="200" 
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>
 		<tr>
-		    <td scope="row" class="label"><s:label for="editOrg.postalCode">Zip/Postal Code(*US/Canada):</s:label></td>
+		    <td scope="row" class="label"><label for="editOrg.postalCode">Zip/Postal Code(*US/Canada):</label></td>
 		    <td class="value" colspan="2">
-		        <s:textfield name="orgFromPO.zip" maxlength="200" size="200" 
+		        <s:textfield id="editOrg.postalCode" name="orgFromPO.zip" maxlength="200" size="200" 
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
 		    </td>
 		</tr>

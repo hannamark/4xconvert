@@ -111,7 +111,7 @@
                                     <td>&nbsp;</td>
                                     <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
                                 </tr>
-                                <pa:valueRow labelFor="statusReasonLabel" labelKey="trialStatus.current.trial.status.reason">
+                                <pa:valueRow labelFor="statusReason" labelKey="trialStatus.current.trial.status.reason">
                                     <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;" maxlength="160" cssClass="charcounter"/>
                                 </pa:valueRow>
                                 <pa:spaceRow/>
@@ -136,9 +136,11 @@
                                     </a> 
                                     <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
                                 </pa:valueRow>
-								<pa:valueRow labelKey="blank.label">
+								<td>&nbsp;</td>
+								<td>
 								    <span class="info">Please refer to the <a href='<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getStateTransitionDiagramUrl()" />' target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
-								</pa:valueRow>
+								    </td>
+								
                             </table>
                         </td>
                     </tr>

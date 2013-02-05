@@ -127,25 +127,28 @@
                     <s:hidden name="ct.id"/> 
                     <tr>
                         <td class="label">
-                            Board Approval Status:<span class="required">*</span>
+                        <label for="approve">
+                            Board Approval Status:<span class="required">*</span></label>
                         </td>
                         <s:set name="approvalStatusValues"  value="@gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode@getDisplayNames()" />
                         <td class="value" colspan="2">
-                            <s:select headerKey="" headerValue="--Select--" name="approvalStatus" list="#approvalStatusValues" 
+                            <s:select id="approve" headerKey="" headerValue="--Select--" name="approvalStatus" list="#approvalStatusValues" 
                                       onchange="statusChange()" onfocus="statusChange()"/>
                         </td>
                     </tr>
                     <tr id="approvalNumberrow">
-                        <td class="label">Board Approval Number:<span class="required">*</span></td>
-                        <td class="value" colspan="2"><s:textfield name="approvalNumber" maxlength="30" size="30" cssStyle="width:200px;float:left"/></td>
+                        <td class="label">
+                        <label for="approveNumber">Board Approval Number:<span class="required">*</span></label></td>
+                        <td class="value" colspan="2"><s:textfield id="approveNumber" name="approvalNumber" maxlength="30" size="30" cssStyle="width:200px;float:left"/></td>
                     </tr>
                     <tr id="boradNamerow">
-                         <td class="label">Board Name:<span class="required">*</span></td>
+                         <td class="label">
+                         <label for="name">Board Name:<span class="required">*</span></label></td>
                          <td class="value">
                              <s:textfield name="ct.name" id="name" size="30"  readonly="true" cssClass="readonly" onchange="changeName()"/>
                              <c:if test="${not empty ct.id}">
 	                            <a href="javascript:void(0)" onclick="displayOrgDetails(<c:out value="${ct.id}"/>);">
-	                                <img src="<%=request.getContextPath()%>/images/details.gif"/>
+	                                <img src="<%=request.getContextPath()%>/images/details.gif" alt="details"/>
 	                            </a>           
                             </c:if>                  
                          </td>
@@ -158,51 +161,52 @@
                          </td>
                     </tr>
                     <tr id="mailAddressrow">
-                        <td class="label">Board Contact Mailing Address:</td>
+                        <td class="label">
+                        <label for="address">Board Contact Mailing Address:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="address" name="ct.address" cssStyle="width:280px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                      <tr id="cityrow">
-                        <td class="label">Board Contact City:</td>
+                        <td class="label"><label for="city">Board Contact City:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="city" name="ct.city" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                      <tr id="staterow">
-                        <td class="label">Board Contact State/Province:</td>
+                        <td class="label"><label for="state">Board Contact State/Province:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="state" name="ct.state" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                      <tr id="ziprow">
-                        <td class="label">Board Contact Zip/Postal Code:</td>
+                        <td class="label"><label for="zip">Board Contact Zip/Postal Code:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="zip" name="ct.zip" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                      <tr id="countryrow">
-                        <td class="label">Board Contact Country:</td>
+                        <td class="label"><label for="country">Board Contact Country:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="country" name="ct.country" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                     <tr  id="phonerow">
-                        <td class="label">Board Contact Phone:</td>
+                        <td class="label"><label for="phone">Board Contact Phone:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="phone" name="ct.phone" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                     <tr id="emailrow">
-                        <td class="label">Board Contact Email Address:</td>
+                        <td class="label"><label for="email">Board Contact Email Address:</label></td>
                         <td class="value" colspan="2">
                             <s:textfield id="email" name="ct.email" cssStyle="width:140px;float:left" readonly="true" cssClass="readonly"/>
                         </td>
                     </tr>
                     <tr id="boardAffiliationrow">
-                        <td class="label">Board Affiliation:<span class="required">*</span></td>
+                        <td class="label"><label for="affiliation">Board Affiliation:<span class="required">*</span></label></td>
                         <td colspan="2" class="value">
-                            <s:textarea maxlength="200" cssClass="charcounter" name="contactAffiliation" cssStyle="width:606px" rows="4"/>
+                            <s:textarea id="affiliation" maxlength="200" cssClass="charcounter" name="contactAffiliation" cssStyle="width:606px" rows="4"/>
                         </td>
                     </tr>
                 </table>

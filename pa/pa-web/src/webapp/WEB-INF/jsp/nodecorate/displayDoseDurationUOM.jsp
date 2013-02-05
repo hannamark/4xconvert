@@ -1,7 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags"%> 
 <div>
 
-            <s:textfield readonly="true" name="doseDurationUOM" maxlength="80" size="80" 
+            <s:textfield readonly="true" name="doseDurationUOM" id="doseDurationUOM" maxlength="80" size="80" 
                     cssStyle="width:120px;float:left" cssClass="readonly"/> 
        
              <ul style="margin-top: -7px;">

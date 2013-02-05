@@ -7,7 +7,7 @@
     <s:hidden id="saveReset" name="saveReset"/>
     <tr>
         <td class="label">
-            <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.name" />:</s:label><span class="required">*</span>
+            <label for="name"><fmt:message key="plannedMarker.name" />:</label><span class="required">*</span>
         </td>
         <td class="value" style="width: 250px">
             <s:textfield name="plannedMarker.name" id="name" maxlength="200" size="200" cssStyle="width:250px" />
@@ -29,12 +29,12 @@
     </tr>
     <tr>
         <td class="label">
-            <s:label for="plannedMarker.evaluationType"><fmt:message key="plannedMarker.evaluationType" />:</s:label>
+            <label for="plannedMarker.evaluationType"><fmt:message key="plannedMarker.evaluationType" />:</label>
         </td>
         <td style="border:1px solid lavender">
             <s:set name="evaluationTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@EVALUATION_TYPE)" />
             <s:set name="selectedEvalValues" value="plannedMarker.selectedEvaluationType"/>
-            <s:checkboxlist list="#evaluationTypeValues" name="plannedMarker.evaluationType" value="#selectedEvalValues" id="evaluationType" onclick="toggleEvalTypeOtherText();" theme="vertical-checkbox"/> 
+            <s:checkboxlist id="plannedMarker.evaluationType" list="#evaluationTypeValues" name="plannedMarker.evaluationType" value="#selectedEvalValues"  onclick="toggleEvalTypeOtherText();" theme="vertical-checkbox"/> 
             
             <span class="formErrorMsg"> 
                 <s:fielderror>
@@ -134,7 +134,7 @@
     </tr>
     <tr>
         <td class="label">
-            <s:label for="plannedMarker.assayUse"><fmt:message key="plannedMarker.assayUse" />:</s:label><span class="required">*</span>
+            <label for="assayUse"><fmt:message key="plannedMarker.assayUse" />:</label><span class="required">*</span>
         </td>
         <td style="width: 250px">
             <s:set name="assayUseValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@BIOMARKER_USE)" />
@@ -236,7 +236,7 @@
     
     <tr>
         <td class="label">
-            <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
+            <s:label name="plannedMarker.status" for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
         </td>
         <td>
             <s:hidden name="plannedMarker.status" id="status"/>

@@ -60,7 +60,7 @@ function tooltip() {
                      </td>
                      <s:set name="fundingMechanism" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
                       <td class="value"> 
-                        <s:select headerKey="" headerValue="" 
+                        <s:select id="fundingMechanism" headerKey="" headerValue="" 
                            name="trialFundingWebDTO.fundingMechanismCode" 
                            list="#fundingMechanism"  
                            listKey="fundingMechanismCode" 
@@ -82,7 +82,7 @@ function tooltip() {
                      </td>              
                      <s:set name="nihInstitute" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
                       <td class="value">
-                        <s:select headerKey="" headerValue="" 
+                        <s:select id="institutionCode" headerKey="" headerValue="" 
                            name="trialFundingWebDTO.nihInstitutionCode" 
                            list="#nihInstitute"  
                            listKey="nihInstituteCode" 
@@ -102,7 +102,7 @@ function tooltip() {
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield name="trialFundingWebDTO.serialNumber" maxlength="6" cssStyle="width:80px"/>
+                        <s:textfield id="serialNumber" name="trialFundingWebDTO.serialNumber" maxlength="6" cssStyle="width:80px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.serialNumber</s:param>
@@ -118,7 +118,7 @@ function tooltip() {
                     </td>
                     <s:set name="monitorCodeValues" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
                       <td class="value">
-                        <s:select headerKey="" headerValue="" 
+                        <s:select id="monitorCode" headerKey="" headerValue="" 
                            name="trialFundingWebDTO.nciDivisionProgramCode" 
                            list="#monitorCodeValues"  
                            cssStyle="width:206px"/>

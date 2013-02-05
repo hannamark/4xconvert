@@ -28,27 +28,27 @@
 <table class="form">
     <tr>
         <td class="label">
-            <s:label><fmt:message key="${pagePrefix}type" /></s:label><span class="required">*</span>
+            <label for="interventionType"><fmt:message key="${pagePrefix}type" /></label><span class="required">*</span>
         </td>
         <s:if test="%{currentAction != 'edit'}">
             <s:set name="interventionTypeValues" value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
             <td class="value" colspan="2">
-                <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" 
+                <s:select id="interventionType" onchange="statusChange()" headerKey="" headerValue="--Select--" 
                           name="interventionType" value="interventionType" list="#interventionTypeValues" />
             </td>
         </s:if>
         <s:else>
             <td class="value" colspan="2">
-                <s:textfield  name="interventionType" readonly="true" cssClass="readonly" cssStyle="width:280px;float:left" />
+                <s:textfield  id="type" name="interventionType" readonly="true" cssClass="readonly" cssStyle="width:280px;float:left" />
             </td>    
         </s:else>
     </tr>
     <tr>
         <td scope="row" class="label">
-            <s:label><fmt:message key="${pagePrefix}name" /></s:label><span class="required">*</span>
+            <label for="name"><fmt:message key="${pagePrefix}name" /></label><span class="required">*</span>
         </td>
         <td class="value" style="width: 250px">
-            <s:textfield readonly="true" name="interventionName" maxlength="160" size="160" cssStyle="width:280px;float:left" cssClass="readonly"/> 
+            <s:textfield id="name" readonly="true" name="interventionName" maxlength="160" size="160" cssStyle="width:280px;float:left" cssClass="readonly"/> 
         </td>
         <td class="value">
             <s:if test="%{currentAction != 'edit'}">
@@ -62,10 +62,10 @@
     </tr>
     <tr>
         <td class="label">
-            <s:label><fmt:message key="${pagePrefix}description" /></s:label>
+            <label for="description"><fmt:message key="${pagePrefix}description" /></label>
         </td>
         <td class="value" colspan="2">
-            <s:textarea name="interventionDescription" rows="20" cssStyle="width:280px;"
+            <s:textarea id="description" name="interventionDescription" rows="20" cssStyle="width:280px;"
                 maxlength="1000" cssClass="charcounter"/>
             <span class="formErrorMsg"> 
                 <s:fielderror>
@@ -75,9 +75,9 @@
         </td>
     </tr>
     <tr>
-        <td class="label"><s:label><fmt:message key="${pagePrefix}otherNames" /></s:label></td>
+        <td class="label"><label for="otherNames"><fmt:message key="${pagePrefix}otherNames" /></label></td>
         <td class="value" colspan="2">
-            <s:textarea readonly="true" name="interventionOtherNames" rows="3" cssStyle="width:280px;float:left" cssClass="readonly"/>
+            <s:textarea id="otherNames" readonly="true" name="interventionOtherNames" rows="3" cssStyle="width:280px;float:left" cssClass="readonly"/>
         </td>
     </tr>
 </table>

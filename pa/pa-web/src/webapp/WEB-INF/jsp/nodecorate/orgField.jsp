@@ -2,12 +2,12 @@
 <table>
 <tr>
 <td> 
-<s:textfield name="nciSpecificInformationWebDTO.organizationName" size="30"  readonly="true" cssClass="readonly"/>
+<s:textfield id="summary4FundingSponsor" name="nciSpecificInformationWebDTO.organizationName" size="30"  readonly="true" cssClass="readonly"/>
 </td>
 <td>
 <s:if test="nciSpecificInformationWebDTO.organizationIi != null">
 <a href="javascript:void(0)" onclick="displayOrgDetails($('nciSpecificInformationWebDTO.organizationIi').value);">
-    <img src="<%=request.getContextPath()%>/images/details.gif"/>
+    <img src="<%=request.getContextPath()%>/images/details.gif" alt="details" />
 </a>
 </s:if>
 </td>

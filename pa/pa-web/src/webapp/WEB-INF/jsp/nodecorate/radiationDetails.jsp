@@ -7,9 +7,10 @@
 <table class="form">    
                     
     <tr>
-        <td scope="row" class="label"><s:label>Dose Range:</s:label></td>
+        <td scope="row" class="label"><label for="minDoseValue">Dose Range:</label></td>
         <td class="value" >
-            <s:textfield  name="minDoseValue" maxlength="9" /> 
+            <s:textfield  id="minDoseValue" name="minDoseValue" maxlength="9" /> 
+            <label for="maxDoseValue" style="display:none">Dose Range:</label>
              <s:textfield name="maxDoseValue" maxlength="9"/>         
               <span class="formErrorMsg"> 
              <s:fielderror>
@@ -20,7 +21,7 @@
          </s:fielderror> 
             </span>
         </td>
-        <td scope="row" class="label"><s:label>Dose UOM:</s:label></td>
+        <td scope="row" class="label"><label for="doseUOM">Dose UOM:</label></td>
         <td class="value" >
         <div id="loadDoseUOMDetails">
            <%@ include file="/WEB-INF/jsp/nodecorate/displayDoseUOM.jsp"%>
@@ -29,7 +30,7 @@
     </tr>
     <tr>
             
-     <td scope="row" class="label"><s:label>Dose Form:</s:label></td>
+     <td scope="row" class="label"><label for="doseForm">Dose Form:</label></td>
          <td>
          <div id="loadDoseFormDetails">
              <%@ include file="/WEB-INF/jsp/nodecorate/displayDoseForm.jsp"%>
@@ -37,7 +38,7 @@
         </td>
     </tr> 
     <tr>
-            <td scope="row" class="label"><s:label>Dose Frequency:</s:label></td>
+            <td scope="row" class="label"><label for="doseFrequency">Dose Frequency:</label></td>
             <td>
            <div id="loadDoseFreqDetails"> 
              <%@ include file="/WEB-INF/jsp/nodecorate/displayDoseFrequency.jsp"%>
@@ -46,9 +47,9 @@
     </tr> 
    
     <tr>
-        <td scope="row" class="label"><s:label>Dose Duration:</s:label></td>
+        <td scope="row" class="label"><label for="doseDurationValue">Dose Duration:</label></td>
         <td class="value">
-            <s:textfield name="doseDurationValue" maxlength="9"  
+            <s:textfield name="doseDurationValue" id="doseDurationValue" maxlength="9"  
                    /> 
                    <span class="formErrorMsg"> 
                      <s:fielderror>
@@ -56,7 +57,7 @@
                        </s:fielderror>  
         </span>
         </td>
-       <td scope="row" class="label"><s:label>Dose Duration UOM:</s:label></td>
+       <td scope="row" class="label"><label for="doseDurationUOM">Dose Duration UOM:</label></td>
         <td class="value" >
         <div id="loadDoseDurationUOMDetails"> 
           <%@ include file="/WEB-INF/jsp/nodecorate/displayDoseDurationUOM.jsp"%>
@@ -70,9 +71,9 @@
          </td>
     </tr>    
       <tr>
-        <td scope="row" class="label"><s:label>Dose Regimen:</s:label></td>
+        <td scope="row" class="label"><label for="doseRegimen">Dose Regimen:</label></td>
         <td class="value" >
-            <s:textarea name="doseRegimen" cssStyle="width:275px" rows="3"
+            <s:textarea name="doseRegimen" id="doseRegimen" cssStyle="width:275px" rows="3"
                 maxlength="1000" cssClass="charcounter"/> 
                <span class="formErrorMsg"> 
                   <s:fielderror>
@@ -82,12 +83,13 @@
         </td>
     </tr>
    <tr>
-        <td scope="row" class="label"><s:label>Total Dose Range:</s:label></td>
+        <td scope="row" class="label"><label for="minDoseTotalValue">Total Dose Range:</label></td>
         <td class="value" >
-            <s:textfield name="minDoseTotalValue" maxlength="9" 
+            <s:textfield name="minDoseTotalValue" id="minDoseTotalValue" maxlength="9" 
                     /> 
              <s:textfield name="maxDoseTotalValue" maxlength="9" 
                     />  
+                    <label for="maxDoseTotalValue" style="display:none">max Total Dose Range:</label>
                       <span class="formErrorMsg"> 
                              <s:fielderror>
                                  <s:param>minDoseTotalValue</s:param>
@@ -97,7 +99,7 @@
                                </s:fielderror> 
         </span>              
         </td>
-       <td scope="row" class="label"><s:label>Total Dose UOM:</s:label></td>
+       <td scope="row" class="label"><label for="doseTotalUOM">Total Dose UOM:</label></td>
         <td class="value" >
         <div id="loadTotalDoseUOMDetails"> 
            <%@ include file="/WEB-INF/jsp/nodecorate/displayTotalDoseUOM.jsp"%>
@@ -105,7 +107,7 @@
        </td>
     </tr>
      <tr>    
-         <td scope="row" class="label"><s:label>Target Site:</s:label></td>
+         <td scope="row" class="label"><label for="target">Target Site:</label></td>
          <td>
          <div id="loadTargetSiteDetails">
              <%@ include file="/WEB-INF/jsp/nodecorate/displayTargetSite.jsp"%>
@@ -113,7 +115,7 @@
     </td>
     </tr> 
     <tr>
-            <td scope="row" class="label"><s:label>Approach Site:</s:label></td>
+            <td scope="row" class="label"><label for="approachSite">Approach Site:</label></td>
             <td>
             <div id="loadApproachSiteDetails">
              <%@ include file="/WEB-INF/jsp/nodecorate/displayApproachSite.jsp"%>

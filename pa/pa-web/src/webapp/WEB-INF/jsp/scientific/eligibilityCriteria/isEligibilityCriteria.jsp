@@ -134,10 +134,10 @@ BubbleTips.activateTipOn("dfn");
     </c:if> 
     <table class="form">
     <tr>
-        <td scope="row"  class="label"><label>
+        <td scope="row"  class="label"><label for="acceptHealthy">
             <fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">*</span></label>
          </td> <td class="value">   
-            <s:select name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
+            <s:select id="acceptHealthy" name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
             <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>acceptHealthyVolunteersIndicator</s:param>
@@ -165,13 +165,13 @@ BubbleTips.activateTipOn("dfn");
     </tr>
     <tr>
          <td scope="row" class="label">
-         <label for="fileName">
+         <label for="gender">
                 <fmt:message key="isdesign.eligibilitycriteria.eligibleGender"/><span class="required">*</span>
          </label>
         </td> 
         <s:set name="genderValues" value="@gov.nih.nci.pa.enums.EligibleGenderCode@getDisplayNames()" />
        <td class="value">   
-            <s:select headerKey="" headerValue="" 
+            <s:select id="gender" headerKey="" headerValue="" 
                     name="eligibleGenderCode" 
                     list="#genderValues"  
                     cssStyle="width:75px" /> 
@@ -204,7 +204,7 @@ BubbleTips.activateTipOn("dfn");
                 <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">*</span>
          </label>
          </td> <td class="value" colspan="1">    
-                <s:textfield name="minimumValue" maxlength="12" cssStyle="width:85px" />
+                <s:textfield id="typeCode" name="minimumValue" maxlength="12" cssStyle="width:85px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>minimumValue</s:param>
@@ -213,13 +213,13 @@ BubbleTips.activateTipOn("dfn");
           </td>
           <td></td>
            <td scope="row" class="label" >
-         <label for="typeCode">
+         <label for="typeCode1">
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="1">   
-            <s:select headerKey="" headerValue="" 
+            <s:select id="typeCode1" headerKey="" headerValue="" 
                     name="minValueUnit" 
                     list="#unitsValues"  
                     cssStyle="width:76px" /> 
@@ -231,11 +231,11 @@ BubbleTips.activateTipOn("dfn");
           </tr>
           <tr>
           <td scope="row" class="label" >
-         <label for="typeCode">
+         <label for="typeCode2">
                 <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">*</span>
          </label>
          </td> <td class="value" colspan="1">   
-                <s:textfield name="maximumValue" maxlength="12" cssStyle="width:85px" />
+                <s:textfield id="typeCode2" name="maximumValue" maxlength="12" cssStyle="width:85px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>maximumValue</s:param>
@@ -244,13 +244,13 @@ BubbleTips.activateTipOn("dfn");
           </td>
           <td></td>
          <td scope="row" class="label" >
-         <label for="typeCode">
+         <label for="typeCode3">
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="1">   
-            <s:select headerKey="" headerValue="" 
+            <s:select id="typeCode3" headerKey="" headerValue="" 
                     name="maxValueUnit" 
                     list="#unitsValues"  
                     cssStyle="width:76px" /> 

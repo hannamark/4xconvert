@@ -10,7 +10,7 @@
 		<tr>
         
         <tr>    
-         <td scope="row" class="label"><s:label>Target Site:</s:label></td>
+         <td scope="row" class="label"><label for="target">Target Site:</label></td>
          <td>
          <div id="loadTargetSiteDetails">
              <%@ include file="/WEB-INF/jsp/nodecorate/displayTargetSite.jsp"%>

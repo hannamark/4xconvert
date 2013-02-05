@@ -83,7 +83,7 @@
         <td>
             <table>
                 <tr>
-                    <td class="label"><s:label for="armName">Label:</s:label><span class="required">*</span></td>
+                    <td class="label"><label for="armName">Label:</label><span class="required">*</span></td>
                     <td class="value">
                         <s:textfield name="armName" id="armName" maxlength="62" size="62" cssStyle="width:280px;float:left" cssClass="charcounter"/>
                     </td>
@@ -91,7 +91,7 @@
                 <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
                     <s:set name="armTypeValues" value="@gov.nih.nci.pa.enums.ArmTypeCode@getDisplayNames()" />
                     <tr>
-                        <td class="label"><s:label for="armType">Type:</s:label><span class="required">*</span></td>
+                        <td class="label"><label for="armType">Type:</label><span class="required">*</span></td>
                         <td class="value">
                         <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" name="armType" id="armType" list="#armTypeValues" />
                             <span class="formErrorMsg">
@@ -103,7 +103,7 @@
                     </tr>
                 </s:if>
                 <tr>
-                    <td class="label"><s:label for="armDescription">Description:</s:label><span class="required">*</span></td>
+                    <td class="label"><label for="armDescription">Description:</label><span class="required">*</span></td>
                     <td class="value">
                         <s:textarea name="armDescription" id="armDescription" rows="20" cssStyle="width:280px;"
                             maxlength="1000" cssClass="charcounter"/>
@@ -121,7 +121,8 @@
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
                     <s:a href="javascript:void(0)" onclick="interventionCheckboxClick(%{#attr.row.identifier})">
-                        <s:checkbox onclick="radio(this)" name="userid" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
+                        <s:checkbox onclick="radio(this)" name="userid" id="userid_%{#attr.row.armAssignment}" fieldValue="%{#attr.row.armAssignment}" value="%{#attr.row.armAssignment}"/>
+                        <label style="display: none;" for="userid_${row.armAssignment}">Check this box.</label>
                     </s:a>
                 </display:column>
                 <display:column escapeXml="true" property="name" titleKey="interventions.name"/>

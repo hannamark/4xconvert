@@ -192,11 +192,12 @@
 										<td scope="row" class="label"><label
 											for="submittedOnOrBefore"><fmt:message
 													key="dashboard.submittedBetween" /></label></td>
+										<label for="submittedOnOrAfter" style="display:none">Do not show </label>
 										<td nowrap="nowrap"><s:textfield id="submittedOnOrAfter"
 												name="submittedOnOrAfter" maxlength="10" size="10" /> <a
 											href="javascript:showCal('Cal1')"> <img
 												src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-												alt="Select Date" class="calendaricon" /></a> &nbsp;and&nbsp; <s:textfield
+												alt="Select Date" class="calendaricon"/></a> &nbsp;and&nbsp; <s:textfield
 												id="submittedOnOrBefore" name="submittedOnOrBefore"
 												maxlength="10" size="10" /> <a
 											href="javascript:showCal('Cal2')"> <img
@@ -280,6 +281,7 @@
 													value="milestoneType"
 													list="#{'last':'Has a last milestone'}"></s:radio>
 												<br />
+												<label for="milestone" style="display:none">milestone </label>
 												<s:select headerKey="" headerValue="" id="milestone"
 													name="milestone" list="#milestoneCodes" value="milestone"
 													cssStyle="width:206px" />
@@ -311,14 +313,14 @@
 												<tr>
 													<td class="label"><fmt:message
 															key="dashboard.administrative" /></td>
-													<td><s:checkbox name="adminAbstraction" /></td>
-													<td><s:checkbox name="adminQC" /></td>
+													<td><s:checkbox name="adminAbstraction" id="showTrialsReadyFor"/></td>
+													<td><s:checkbox name="adminQC" id="showTrialsReadyFor"/></td>
 												</tr>
 												<tr>
 													<td class="label"><fmt:message
 															key="dashboard.scientific" /></td>
-													<td><s:checkbox name="scientificAbstraction" /></td>
-													<td><s:checkbox name="scientificQC" /></td>
+													<td><s:checkbox name="scientificAbstraction" id="showTrialsReadyFor"/></td>
+													<td><s:checkbox name="scientificQC" id="showTrialsReadyFor"/></td>
 												</tr>
 											</table>
 										</td>
@@ -628,7 +630,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                     </tr>
                                     <tr><td>&nbsp;</td></tr>
                                     <tr>
-                                        <td scope="row" class="label">Assigned To</td>
+                                        <td scope="row" class="label"><label for="assignedTo">Assigned To</label></td>
                                         <td> 
                                             <s:set name="abstractorsList"
                                                 value="@gov.nih.nci.pa.service.util.CSMUserService@getInstance().abstractors" />
@@ -638,7 +640,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td scope="row" class="label">Processing Priority</td>
+                                        <td scope="row" class="label"><label for="newProcessingPriority">Processing Priority</label></td>
                                         <td> 
                                             <s:select id="newProcessingPriority"
                                                 name="newProcessingPriority"
@@ -657,7 +659,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                         </td>
                                     </tr>  
                                     <tr>
-                                        <td scope="row" class="label" colspan="2">Trial Processing Comments</td>
+                                        <td scope="row" class="label" colspan="2"><label for="processingComments">Trial Processing Comments</label></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">

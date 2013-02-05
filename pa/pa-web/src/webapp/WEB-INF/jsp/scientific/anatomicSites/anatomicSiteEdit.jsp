@@ -39,10 +39,11 @@
     <h2>
         <fmt:message key="anatomicSite.add.details.title"/>
     </h2>
-
+   
     <table class="form">
         <tr>
             <td colspan="2">
+             <label for="anatomicSite_code" style="display:none">site</label>
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
 
             <s:select name="anatomicSite.code" id="anatomicSite_code" list="anatomicSiteList" listKey="code"

@@ -139,7 +139,7 @@
                 <table class="form">   
                     <tr>
                         <td scope="row"  class="label">
-                            <label>
+                            <label for="group3IND">
                                 <fmt:message key="trialIndide.indldeType"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -154,7 +154,7 @@
                     </tr>
                     <tr>
                         <td scope="row"  class="label">
-                            <label>
+                            <label for="indidenumber">
                                 <fmt:message key="trialIndide.indideNumber"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -169,7 +169,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="SubCat">
                                 <fmt:message key="trialIndide.grantor"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -186,7 +186,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="holderType">
                                 <fmt:message key="trialIndide.holderType"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -202,7 +202,7 @@
                     </tr>
                     <tr id="programcoderow" style="display: none;">
                         <td scope="row"  class="label">
-                            <label>
+                            <label for="programcodenoneselected">
                                 <fmt:message key="trialIndide.nihnciDivProgHolderCode"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -226,7 +226,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="group4true">
                                 <fmt:message key="trialIndide.expandedAccessIndicator"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -241,7 +241,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="expandedStatus">
                                 <fmt:message key="trialIndide.expandedAccessStatusCode"/>:<span class="required">*</span>
                             </label>
                         </td>
@@ -257,7 +257,7 @@
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label>
+                            <label for="exemptIndicator">
                                 <fmt:message key="trialIndide.exemptIndicator"/>:
                             </label>
                         </td>

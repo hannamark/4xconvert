@@ -73,19 +73,19 @@
                             <table class="form">
                                 <tr>
                                     <td class="label">
-                                        <s:label for="functionalCode">Functional Role:</s:label><span class="required">*</span>
+                                        <label for="functionalCode">Functional Role:</label><span class="required">*</span>
                                     </td>
                                     <s:set name="functionalCodeValues" value="@gov.nih.nci.pa.enums.StudySiteFunctionalCode@getCollaboratorDisplayNames()" />
                                     <td class="value" colspan="2">
-                                        <s:select headerKey="" headerValue="--Select--" name="functionalCode" list="#functionalCodeValues" />
+                                        <s:select id="functionalCode" headerKey="" headerValue="--Select--" name="functionalCode" list="#functionalCodeValues" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="label">
-                                        <s:label for="statusCode">Status:</s:label>
+                                        <label for="statusCode">Status:</label>
                                     </td>
                                     <td class="value" colspan="2">
-                                        <s:textfield name="statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
+                                        <s:textfield id="statusCode" name="statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
                                     </td>
                                 </tr>
                             </table>

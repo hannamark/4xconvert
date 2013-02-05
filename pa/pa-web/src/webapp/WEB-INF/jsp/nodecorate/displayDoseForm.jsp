@@ -1,6 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%> 
  <div >   
-            <s:textfield readonly="true" name="doseForm" maxlength="80" size="80" 
+            <s:textfield readonly="true" name="doseForm" id="doseForm" maxlength="80" size="80" 
                     cssStyle="width:120px;float:left" cssClass="readonly"/> 
         
              <ul  style="margin-top: -2px;">

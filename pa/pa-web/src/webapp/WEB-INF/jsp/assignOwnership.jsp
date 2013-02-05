@@ -92,9 +92,9 @@
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
             
         <s:set name="trialOwners" value="trialOwners" scope="request"/>
-        <s:label key="trialOwners.title"/>
-        
-        
+        <div style="font-weight:bold;color:#333333">
+        <fmt:message key="trialOwners.title"/>
+        </div>
         <div class="box">
 
           <div id="ajaxIndicator" class="info" style="display: none;">
@@ -125,6 +125,7 @@
                 </display:column>                
                 <pa:displayWhenCheckedOut>
                     <display:column class="title" titleKey="assignOwnership.emailNotifications">
+                        <label for="email_pref_chk_${row.regUser.id}" style="display:none">empty</label>
                         <input type="checkbox" id="email_pref_chk_${row.regUser.id}"
                             onclick="setEmailNotificationsPreference(${row.regUser.id}, this.checked);"
                             <c:if test="${row.enableEmails}">
@@ -150,7 +151,7 @@
 	                <table class="form">
 	                    <tr>
 	                        <td scope="row" class="label">
-	                            <label for="assignOwnership_criteria_firstName">
+	                            <label for="firstName">
 	                                <fmt:message key="assignOwnership.criteria.firstname" />
 	                            </label>
 	                        </td>
@@ -161,7 +162,7 @@
 	                    </tr>
 	                    <tr>
 	                        <td scope="row" class="label">
-	                            <label for="assignOwnership_criteria_lastName"> 
+	                            <label for="lastName"> 
 	                                <fmt:message key="assignOwnership.criteria.lastname" />
 	                            </label>
 	                        </td>
@@ -172,7 +173,7 @@
 	                    </tr>
 	                    <tr>
 	                        <td scope="row" class="label">
-	                            <label for="assignOwnership_criteria_email"> 
+	                            <label for="emailAddress"> 
 	                                <fmt:message key="assignOwnership.criteria.email" />
 	                            </label>
 	                        </td>
@@ -183,7 +184,7 @@
 	                    </tr>
 	                    <tr>
 	                        <td scope="row" class="label">
-	                            <label for="assignOwnership.criteria.organization">
+	                            <label for="organization">
 	                                <fmt:message key="assignOwnership.criteria.organization" />
 	                            </label>
 	                        </td>
@@ -192,7 +193,7 @@
 	                                <table>
 	                                    <tr>
 	                                        <td>
-	                                            <s:textfield label="Organization Name" name="criteria.affiliatedOrgName" 
+	                                            <s:textfield id="organization" label="Organization Name" name="criteria.affiliatedOrgName" 
 	                                                         size="30" cssStyle="width:200px" readonly="true" 
 	                                                         cssClass="readonly"/>
 	                                        </td>

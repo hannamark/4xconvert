@@ -133,7 +133,8 @@ function handleCreate(){
                         </s:a>
                     </display:column>
                     <display:column titleKey="interventions.delete" headerClass="centered nodnd" class="action nodnd">
-                        <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.plannedActivityIdentifier}" value="%{#attr.row.plannedActivityIdentifier in objectsToDelete}"/>
+                        <s:checkbox name="objectsToDelete"  id="objectsToDelete_%{#attr.row.plannedActivityIdentifier}" fieldValue="%{#attr.row.plannedActivityIdentifier}" value="%{#attr.row.plannedActivityIdentifier in objectsToDelete}"/>
+                        <label style="display: none;" for="objectsToDelete_${row.plannedActivityIdentifier}">Check this box to mark row for deletion.</label>
                     </display:column>
                 </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>

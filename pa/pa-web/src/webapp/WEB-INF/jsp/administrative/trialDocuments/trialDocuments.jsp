@@ -59,7 +59,8 @@ function callOnloadFunctions(){
 		      <s:elseif test="%{#attr.row.typeCode.equals('Change Memo Document')}">
               </s:elseif>
     		  <s:else>			     
-    		     <s:checkbox name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
+    		     <s:checkbox name="objectsToDelete" id="objectsToDelete_%{#attr.row.id}" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>
+    		     <label style="display: none;" for="objectsToDelete_${row.id}">Check this box to mark row for deletion.</label>
     		      <s:set name="hasDeletableDocs" value="%{true}" scope="request"/>
 		      </s:else>
     	   </display:column>

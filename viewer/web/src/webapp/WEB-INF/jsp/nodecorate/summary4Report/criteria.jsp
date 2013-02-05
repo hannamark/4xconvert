@@ -10,17 +10,19 @@
                 <s:textfield id="intervalEndDate" name="criteria.intervalEndDate" maxlength="10" size="10" cssStyle="width:70px;"/>
             </viewer:valueRow>
             <viewer:titleRow titleKey="summary4Report.organizationName"/>
-            <viewer:valueRow labelKey="summary4Report.byOrgName">
+            <viewer:valueRow labelFor="orgName" labelKey="summary4Report.byOrgName">
                 <s:set name="orgSearchType" scope="page" value="orgSearchType"/>
+                <label for="orgSearchTypebyOrgName" style="display:none">empty</label>
                 <input id="orgSearchTypebyOrgName" name="orgSearchType" type="radio" value="0" ${(orgSearchType == 0) ? 'checked' : '' }/>
                 <s:textfield id="orgName" name="criteria.orgName" maxlength="100" size="100" cssStyle="width:200px;"/>
             </viewer:valueRow>
-            <viewer:valueRow labelKey="summary4Report.byFamily">
+            <viewer:valueRow labelFor="familyId" labelKey="summary4Report.byFamily">
+                <label for="orgSearchTypebyFamily" style="display:none">empty</label>
                 <input id="orgSearchTypebyFamily" name="orgSearchType" type="radio" value="1" ${(orgSearchType == 1) ? 'checked' : '' }/>
                 <s:select id="familyId" name="criteria.familyId" list="families" headerKey="" headerValue="--Select--" 
                           listKey="key" listValue="value" disabled="orgSearchType == 0" cssStyle="display:inline"/>
             </viewer:valueRow>
-            <viewer:valueRow labelKey="summary4Report.orgsByFamily">
+            <viewer:valueRow labelFor="orgNames" labelKey="summary4Report.orgsByFamily">
                 <div id="organization_choices">
                     <jsp:include page="/WEB-INF/jsp/nodecorate/summary4Report/organizationsByFamily.jsp"/>
                 </div> 

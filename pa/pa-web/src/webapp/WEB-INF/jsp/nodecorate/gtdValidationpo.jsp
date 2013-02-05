@@ -132,7 +132,7 @@
 <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
     <tr>
         <td scope="row" class="label">
-           <label for="nciIdentifier">
+           <label for="principalInvestigator">
                     Principal Investigator
                  <span class="required">*</span>
            </label>

@@ -46,7 +46,7 @@
                             <label for="name"><fmt:message key="popUpOrg.name"/></label>
                         </td>
                          <td>
-                             <s:textfield name="orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
+                             <s:textfield id="name" name="orgName"  maxlength="200" size="100"  cssStyle="width:200px" />
                          </td>
                          <td scope="row" class="label">
                             <label for="nciorgname"><fmt:message key="popUpOrg.nciorgnumber"/></label>

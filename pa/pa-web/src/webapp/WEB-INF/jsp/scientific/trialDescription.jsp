@@ -52,11 +52,11 @@
        </tr>
         <tr>
             <td class="label">
-            <s:label name="trialBriefTitleLabel" for="trialBriefTitle">
+            <label for="trialBriefTitle">
                 <fmt:message key="trial.briefTitle"/> <span class="notRequired">*</span>
-            </s:label>
+            </label>
             </td>
-            <td colspan="2" class="value"><s:textarea name="trialBriefTitle" maxlength="300" cssClass="charcounter" 
+            <td colspan="2" class="value"><s:textarea id="trialBriefTitle" name="trialBriefTitle" maxlength="300" cssClass="charcounter" 
                 cssStyle="width:606px" rows="4" /></td>
         </tr> 
         <tr> 
@@ -65,12 +65,12 @@
        </tr>
           <tr>
             <td class="label">
-            <s:label name="trialBriefSummaryLabel" for="trialBriefSummary">
+            <label for="trialBriefSummary">
                 <fmt:message key="trial.briefSummary"/><span class="notRequired">*</span>
-            </s:label>
+            </label>
             </td>
             <td colspan="2" class="value">
-            <s:textarea maxlength="5000" cssClass="charcounter" name="trialBriefSummary" cssStyle="width:606px" rows="20"/></td>
+            <s:textarea id="trialBriefSummary" maxlength="5000" cssClass="charcounter" name="trialBriefSummary" cssStyle="width:606px" rows="20"/></td>
         </tr>        
         <tr>
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
@@ -82,7 +82,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea name="outline" cssStyle="width:606px" rows="20" maxlength="32000" cssClass="charcounter"/> 
+        <s:textarea id="scientificDescription" name="outline" cssStyle="width:606px" rows="20" maxlength="32000" cssClass="charcounter"/> 
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>outline</s:param>
@@ -97,7 +97,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="primary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+        <s:textarea readonly="true"  id="primary" name="primary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
             maxlength="2000" /> 
             <span class="formErrorMsg"> 
                 <s:fielderror>
@@ -113,7 +113,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+        <s:textarea readonly="true"  id="secondary" name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
             maxlength="2000" /> 
         <span class="formErrorMsg"> 
                 <s:fielderror>
@@ -129,7 +129,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
+        <s:textarea id="ternary" readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
             maxlength="2000" />
         <span class="formErrorMsg"> 
                 <s:fielderror>

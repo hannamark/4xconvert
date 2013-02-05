@@ -123,7 +123,7 @@ function trialSelected(trialId, trialNciId) {
                 
                 <tr>
                      <td scope="row" class="label">
-                         <label for="typeCode">
+                         <label for="trialAssociation.studyProtocolType.code">
                                 <fmt:message key="trialAssociations.trialType"/>
                          </label>
                     </td>
@@ -158,7 +158,7 @@ function trialSelected(trialId, trialNciId) {
                          </label>
                     </td>
                     <td class="value">                      
-                            <s:textarea cols="40" rows="4" name="trialAssociation.officialTitle.value" maxlength="4000"
+                            <s:textarea id="trialAssociation.officialTitle.value" cols="40" rows="4" name="trialAssociation.officialTitle.value" maxlength="4000"
                                 readonly="%{disableControls}"
                                 cssClass="charcounter"/>
                     </td>         
