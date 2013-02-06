@@ -595,7 +595,7 @@ public class StudyOverallStatusBeanLocal extends
         // same as Current Trial Status Date and have 'actual' type.
         if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                 && (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL)) {
-            errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual ");
+            errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual. ");
         }
 
         // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed',
