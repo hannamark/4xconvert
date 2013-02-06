@@ -115,6 +115,12 @@ public class CuratePersonAction extends ActionSupport implements Addressable, Pr
             getPerson().setDuplicateOf(duplicateOf);
         }
         addCommentToOrg();
+        String middleName = getPerson().getMiddleName();
+        if (StringUtils.isNotEmpty(middleName) 
+                && (middleName.contains("(") || middleName.contains(")"))) {
+            middleName = middleName.replace("(", "").replace(")", "");
+        }
+        getPerson().setMiddleName(middleName);
         PoRegistry.getPersonService().curate(getPerson());
         ActionHelper.saveMessage(getText("person.curate.success"));
         return SUCCESS;

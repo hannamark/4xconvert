@@ -151,6 +151,12 @@ public class PersonServiceBean extends
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException, JMSException {
         p.setStatusCode(EntityStatus.PENDING);
+        String middleName = p.getMiddleName();
+        if (StringUtils.isNotEmpty(middleName) 
+                && (middleName.contains("(") || middleName.contains(")"))) {
+            middleName = middleName.replace("(", "").replace(")", "");
+        }
+        p.setMiddleName(middleName);
         return super.create(p);
     }
 
