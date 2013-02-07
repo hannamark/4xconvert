@@ -7,6 +7,7 @@ def sql = """SELECT
                 STG_DWs.identifier,
                 STG_DWs.comment_text,
                 nci_id.extension,
+                sp.submission_number,
                 CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
                      WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
                      ELSE split_part(creator.login_name, 'CN=', 2)
@@ -22,6 +23,7 @@ def sql = """SELECT
                 FROM DOCUMENT_WORKFLOW_STATUS STG_DWs
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = STG_DWs.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'
+                inner join study_protocol as sp on nci_id.study_protocol_id = sp.identifier
                 left outer join csm_user as creator on STG_DWs.user_last_created_id = creator.user_id   
                 left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
                 left outer join csm_user as updater on STG_DWs.user_last_created_id = updater.user_id
@@ -41,7 +43,8 @@ sourceConnection.eachRow(sql) { row ->
     		date_created: row.date_last_created,
     		date_last_updated: row.date_last_updated,
             internal_system_id: row.identifier,
-            nci_id: row.extension, 
+            nci_id: row.extension,
+            submission_number: row.submission_number,
             user_name_created: row.creator,
             user_name_last_updated: row.updater,
             first_name_created: row.creator_first,

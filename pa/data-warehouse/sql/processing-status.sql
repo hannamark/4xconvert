@@ -8,6 +8,7 @@ CREATE TABLE STG_DW_STUDY_PROCESSING_STATUS (
     INTERNAL_SYSTEM_ID INTEGER not null,
     NCI_ID character varying(255),
     STATUS character varying(50),
+    SUBMISSION_NUMBER integer,
     USER_NAME_CREATED character varying(500),
     USER_NAME_LAST_UPDATED character varying(500),
     FIRST_NAME_CREATED character varying(500),

@@ -8,6 +8,7 @@ def sql = """SELECT
 				sm.date_last_updated,
                 sm.identifier,
                 sm.comment_text,
+                sp.submission_number,
                 nci_id.extension
                 FROM STUDY_MILESTONE sm
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sm.study_protocol_identifier
@@ -30,6 +31,7 @@ sourceConnection.eachRow(sql) { row ->
     		date_last_updated: row.date_last_updated,
             internal_system_id: row.identifier,
             nci_id: row.extension,
+            submission_number: row.submission_number,
             user_last_created_id: row.user_last_created_id,
             user_last_updated_id: row.user_last_updated_id
             )};
