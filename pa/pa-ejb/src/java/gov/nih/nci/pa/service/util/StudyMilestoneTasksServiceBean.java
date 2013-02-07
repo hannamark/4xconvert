@@ -90,7 +90,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -108,6 +107,8 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Anupama Sharma
@@ -138,13 +139,18 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void performTask() {
-        LOG.info("Starting StudyMilestoneTasksServiceBean");
-        DateTime overdueDate = getOverdueDate(new DateTime());
-        Set<StudyMilestone> milestones = studyMilestoneTasksService.getTrialSummarySentMilestones(overdueDate);
-        LOG.info("StudyMilestoneTasksServiceBean searching for milestones. Results returned " + milestones.size());
-        StudyMilestoneTaskMessageCollection errors = createMilestones(milestones);
-        sendFailureNotification(errors);
-        LOG.info("Ending StudyMilestoneTasksServiceBean");
+        try {
+            LOG.info("Starting StudyMilestoneTasksServiceBean");
+            UsernameHolder.setUser(PA_USER);
+            DateTime overdueDate = getOverdueDate(new DateTime());
+            Set<StudyMilestone> milestones = studyMilestoneTasksService.getTrialSummarySentMilestones(overdueDate);
+            LOG.info("StudyMilestoneTasksServiceBean searching for milestones. Results returned " + milestones.size());
+            StudyMilestoneTaskMessageCollection errors = createMilestones(milestones);
+            sendFailureNotification(errors);
+            LOG.info("Ending StudyMilestoneTasksServiceBean");
+        } finally {
+            UsernameHolder.setUser(null);
+        }
     }
 
     /**
@@ -187,17 +193,12 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      */
     StudyMilestoneTaskMessageCollection createMilestones(Set<StudyMilestone> milestones) {
         StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
-        User csmUser = null;
         for (StudyMilestone milestone : milestones) {
             try {
                 Long studyProtocolId = milestone.getStudyProtocol().getId();
                 LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
                         + studyProtocolId);
                 StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-                csmUser = CSMUserService.getInstance().getCSMUser(PA_USER);
-                if (csmUser != null) {
-                    newDTO.setUserLastCreated(csmUser.getUserId());
-                }
                 newDTO.setCommentText(StConverter.convertToSt(MILESTONE_COMMENT));
                 newDTO.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
                 newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -245,7 +246,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 LOG.error("error sending notification mail", e);
             }
         }
-
     }
 
     /**
