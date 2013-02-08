@@ -104,6 +104,8 @@ public class DTOTest {
         Boolean default_bool= true;
         DEFAULT_ARGUMENTS.put("java.lang.String", "test");
         DEFAULT_ARGUMENTS.put("java.lang.Long", default_long);
+        DEFAULT_ARGUMENTS.put("java.lang.Integer", 1);
+        DEFAULT_ARGUMENTS.put("int", 1);
         DEFAULT_ARGUMENTS.put("java.lang.Boolean", default_bool);
         DEFAULT_ARGUMENTS.put("boolean", default_bool.booleanValue());
     }

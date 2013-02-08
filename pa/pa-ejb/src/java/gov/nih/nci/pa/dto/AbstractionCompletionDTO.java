@@ -81,7 +81,7 @@ package gov.nih.nci.pa.dto;
  * @author Kalpana Guthikonda
  * @since 11/24/2008
  */
-public class AbstractionCompletionDTO {
+public class AbstractionCompletionDTO implements Comparable<AbstractionCompletionDTO> {
     /**
      * type for error messages.
      */
@@ -106,6 +106,7 @@ public class AbstractionCompletionDTO {
     private String errorType;
     private String comment;   
     private ErrorMessageTypeEnum errorMessageType;
+    private int order;
     
     /**
      * @return errorMessageType
@@ -174,5 +175,22 @@ public class AbstractionCompletionDTO {
      */
     public void setComment(String comment) {
         this.comment = comment;
+    }
+    /**
+     * @return the order
+     */
+    public int getOrder() {
+        return order;
+    }
+    /**
+     * @param order the order to set
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
+    
+    @Override
+    public int compareTo(AbstractionCompletionDTO o) {        
+        return Integer.valueOf(getOrder()).compareTo(o.getOrder());
     }
 }

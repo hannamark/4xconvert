@@ -109,8 +109,8 @@ public class AbstractionMessageCollectionTest {
     @Test
     public void testGetMessages() {
         AbstractionMessageCollection messages = new AbstractionMessageCollection();
-        messages.addWarning(COMMENT1, DESC1);
-        messages.addError(COMMENT2, DESC2, ErrorMessageTypeEnum.ADMIN);
+        messages.addWarning(COMMENT1, DESC1, 1);
+        messages.addError(COMMENT2, DESC2, ErrorMessageTypeEnum.ADMIN, 1);
         List<AbstractionCompletionDTO> result = messages.getMessages();
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 2, result.size());

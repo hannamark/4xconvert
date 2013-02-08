@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -103,15 +104,17 @@ public class AbstractionMessageCollection {
      * @param comment The error comment
      * @param errorDescription The error description
      * @param messageTpe The ErrorMessageType Enum
+     * @param order order
      */
     public void addError(String comment, String errorDescription, 
-            AbstractionCompletionDTO.ErrorMessageTypeEnum messageTpe) {
+            AbstractionCompletionDTO.ErrorMessageTypeEnum messageTpe, int order) {
         if (!hasError(errorDescription)) {
             AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
             dto.setErrorType(AbstractionCompletionDTO.ERROR_TYPE);
             dto.setComment(comment);
             dto.setErrorDescription(errorDescription);
             dto.setErrorMessageType(messageTpe);
+            dto.setOrder(order);
             errors.add(dto);
         }
     }
@@ -130,12 +133,14 @@ public class AbstractionMessageCollection {
      * Add a warning to this message collection.
      * @param comment The warning comment
      * @param errorDescription The warning description
+     * @param order order
      */
-    public void addWarning(String comment, String errorDescription) {
+    public void addWarning(String comment, String errorDescription, int order) {
         AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
         dto.setErrorType(AbstractionCompletionDTO.WARNING_TYPE);
         dto.setComment(comment);
         dto.setErrorDescription(errorDescription);
+        dto.setOrder(order);
         warnings.add(dto);
     }
 
@@ -147,6 +152,7 @@ public class AbstractionMessageCollection {
         List<AbstractionCompletionDTO> res = new ArrayList<AbstractionCompletionDTO>(errors.size() + warnings.size());
         res.addAll(errors);
         res.addAll(warnings);
+        Collections.sort(res);
         return res;
     }
 }

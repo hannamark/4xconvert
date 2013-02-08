@@ -181,8 +181,8 @@ public class AbstractionCompletionServiceBeanRecruitentStatusTest {
                 {RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE, true, false, new int[]{} },
                 {RecruitmentStatusCode.COMPLETED, true, false, new int[]{} },
                 
-                {RecruitmentStatusCode.IN_REVIEW, true, true, new int[]{1,2} },
-                {RecruitmentStatusCode.APPROVED, true, true, new int[]{1,2} },
+                {RecruitmentStatusCode.IN_REVIEW, true, true, new int[]{2,1} },
+                {RecruitmentStatusCode.APPROVED, true, true, new int[]{2,1} },
                 {RecruitmentStatusCode.ACTIVE, true, true, new int[]{} },
                 {RecruitmentStatusCode.ENROLLING_BY_INVITATION, true, true, new int[]{} },
                 {RecruitmentStatusCode.CLOSED_TO_ACCRUAL, true, true, new int[]{} },
