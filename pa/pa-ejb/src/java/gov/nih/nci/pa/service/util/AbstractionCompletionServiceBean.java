@@ -276,12 +276,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceDocument(protocolDoc, irbDoc, messages);
 
             if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)) {
-                InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
-                ispDTO = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
+                InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) studyProtocolDTO;             
                 enforceInterventional(ispDTO, messages);
-                if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
+                final Integer numOfArms = ispDTO.getNumberOfInterventionGroups().getValue();
+                if (numOfArms != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
-                    if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
+                    if (aList.size() != numOfArms
+                            && !(numOfArms == 1 && aList.isEmpty())) {
                         messages.addError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
                                           "Number of interventional trial arm records must be the same"
                                                   + " as Number of Arms assigned in Interventional Trial Design.", 
@@ -664,9 +665,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (dtos.isEmpty()) {
             if (studyProtocolDTO.getStudyProtocolType().getValue()
                     .equalsIgnoreCase(INTERVENTIONAL_STUDY_PROTOCOL)) {
-                messages.addError("Select Arm under Scientific Data menu.",
-                        "No Arm exists for the trial.",
-                        ErrorMessageTypeEnum.SCIENTIFIC);
+                InterventionalStudyProtocolDTO ispDTO = studyProtocolService
+                        .getInterventionalStudyProtocol(studyProtocolIi);
+                final Integer arms = ispDTO.getNumberOfInterventionGroups().getValue();
+                if (!(Integer.valueOf(1).equals(arms))) {
+                    messages.addError("Select Arm under Scientific Data menu.",
+                            "No Arm exists for the trial.",
+                            ErrorMessageTypeEnum.SCIENTIFIC);
+                }
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
                     .equalsIgnoreCase(NON_INTERVENTIONAL_STUDY_PROTOCOL)) {
                 NonInterventionalStudyProtocolDTO ospDTO = studyProtocolService
@@ -1326,24 +1332,30 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceArmsInterventionAssociations(StudyProtocolDTO sp, AbstractionMessageCollection messages)
             throws PAException {
         Ii studyProtocolIi = sp.getIdentifier();       
+        InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) sp;
+        final Integer numberOfArms = ispDTO.getNumberOfInterventionGroups().getValue();        
         final String menuName = "Arm";
         List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
+        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolIi);
         HashMap<String, String> intervention = new HashMap<String, String>();
         for (PlannedActivityDTO pa : paList) {
             if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
-
-                if (armDtos == null || armDtos.isEmpty()) {                    
-                    messages.addError(SELECT + menuName + " from Scientific Data menu and associated Intervention.",
-                                      "Every intervention in interventional trial must be associated with at least"
-                                              + " one arm in interventional trial", ErrorMessageTypeEnum.SCIENTIFIC);
+                if ((armDtos == null || armDtos.isEmpty())
+                        && !(Integer.valueOf(1).equals(numberOfArms) && arms.isEmpty())) {
+                    messages.addError(
+                            SELECT
+                                    + menuName
+                                    + " from Scientific Data menu and associated Intervention.",
+                            "Every intervention in interventional trial must be associated with at least"
+                                    + " one arm in interventional trial",
+                            ErrorMessageTypeEnum.SCIENTIFIC);
                 }
                 for (ArmDTO armDTO : armDtos) {
                     intervention.put(armDTO.getName().getValue(), armDTO.getName().getValue());
                 }
             }
-        }
-        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolIi);
+        }        
         for (ArmDTO armDTO : arms) {
             if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode().getCode())) {
                 continue;

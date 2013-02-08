@@ -162,8 +162,10 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
@@ -279,7 +281,7 @@ public class AbstractMockitoTest {
     protected CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorServiceLocal;
 
     protected Ii spId;
-    protected StudyProtocolDTO spDto;
+    protected InterventionalStudyProtocolDTO spDto;
     protected StudySiteDTO studySiteDto;
     protected List<StudySiteDTO> studySiteDtoList;
     protected List<StratumGroupDTO> stratumGroupDtoList;
@@ -743,7 +745,7 @@ public class AbstractMockitoTest {
         spId = new Ii();
         spId.setExtension("1");
 
-        spDto = new StudyProtocolDTO();
+        spDto = new InterventionalStudyProtocolDTO();
         spDto.setPublicTitle(StConverter.convertToSt("title"));
         spDto.setAcronym(StConverter.convertToSt("acronym"));
         spDto.setOfficialTitle(StConverter.convertToSt("off title"));
@@ -765,6 +767,16 @@ public class AbstractMockitoTest {
         spDto.setDelayedpostingIndicator(BlConverter.convertToBl(true));
         spDto.setPublicTitle(StConverter.convertToSt("public title"));
         spDto.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(true));
+        spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd("TREATMENT"));
+        
+        spDto.setPhaseCode(CdConverter.convertToCd((Lov)null));
+        spDto.setDesignConfigurationCode(CdConverter.convertToCd((Lov)null)); 
+        spDto.setNumberOfInterventionGroups(IntConverter.convertToInt((Integer)null));
+        spDto.setBlindingSchemaCode(CdConverter.convertToCd((Lov)null));
+        spDto.setAllocationCode(CdConverter.convertToCd((Lov)null)) ;
+        final Ivl<Int> targetAccrualNumber = new Ivl<Int>();
+        targetAccrualNumber.setLow(IntConverter.convertToInt((Integer)null));
+        spDto.setTargetAccrualNumber(targetAccrualNumber);
 
 
         DSet<Ii> secondaryIdentifiers = new DSet<Ii>();
@@ -1075,7 +1087,7 @@ public class AbstractMockitoTest {
         when(spSvc.getStudyProtocol((Ii)anyObject())).thenReturn(spDto);
         when(spSvc.getInterventionalStudyProtocol((Ii)anyObject())).thenReturn(interventionalSPDto);
         when(spSvc.getNonInterventionalStudyProtocol(any(Ii.class))).thenReturn(observationalSPDto);
-        when(spSvc.getAbstractedCollaborativeTrials()).thenReturn(Arrays.asList(spDto));
+        when(spSvc.getAbstractedCollaborativeTrials()).thenReturn(Arrays.asList((StudyProtocolDTO)spDto));
     }
 
     public PoServiceLocator getPoSvcLoc() {
