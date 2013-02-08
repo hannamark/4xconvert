@@ -84,16 +84,7 @@ def collabTrialsSQL = """
             WHEN sp.accr_rept_meth_code = 'COMPLETE' then 'Complete'
             WHEN sp.accr_rept_meth_code = 'AE' then 'AE'
         END as accr_rept_meth_code,
-        CASE
-            WHEN sp.primary_purpose_code = 'TREATMENT' then 'Treatment'
-            WHEN sp.primary_purpose_code = 'PREVENTION' then 'Prevention'
-            WHEN sp.primary_purpose_code = 'SCREENING' then 'Screening'
-            WHEN sp.primary_purpose_code = 'DIAGNOSTIC' then 'Diagnostic'
-            WHEN sp.primary_purpose_code = 'OTHER' then 'Other'
-            WHEN sp.primary_purpose_code = 'BASIC_SCIENCE' then 'Basic Science'
-            WHEN sp.primary_purpose_code = 'HEALTH_SERVICES_RESEARCH' then 'Health Services Research'
-            WHEN sp.primary_purpose_code = 'SUPPORTIVE_CARE' then 'Supportive Care'
-        END as primary_purpose_code,
+        pp.code as primary_purpose_code,
         sp.phase_code,
         CASE
             WHEN sp.allocation_code = 'RANDOMIZED_CONTROLLED_TRIAL' then 'Randomized'
@@ -192,6 +183,7 @@ def collabTrialsSQL = """
      left outer join clinical_research_staff central_contact_crs on central_contact_crs.identifier = central_contact.clinical_research_staff_identifier
      left outer join csm_user subm_csm on subm_csm.user_id = sp.user_last_created_id
      left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
+     left outer join primary_purpose pp on sp.primary_purpose_code = pp.name        
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
      where sp.status_code = 'ACTIVE'  and
