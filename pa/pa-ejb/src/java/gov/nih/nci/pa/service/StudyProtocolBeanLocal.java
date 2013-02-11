@@ -204,6 +204,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
+    private static final int MAX_SINGLE_EMAIL_OWNERS = 3;
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     private static final String CREATE = "Create";
     private static final String UPDATE = "Update";
@@ -765,12 +766,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 unmatchedEmails.add(email);
                 continue;
             }
-            Collection<RegistryUser> users = registryUserService
+            List<RegistryUser> users = registryUserService
                     .getLoginNamesByEmailAddress(email);
             if (CollectionUtils.isEmpty(users)) {
                 unmatchedEmails.add(email);
             } else {
-                for (RegistryUser user : users) {
+                // PO-5892: to handle the situation when there are way too many users associated with a single
+                // email address. This is the case on non-production tiers: hundreds of de-identified users
+                // have example@example.com as email address. To reduce stress on the system, we'll trim
+                // the collection to, say, 3 elements.                
+                for (RegistryUser user : (users.size() > MAX_SINGLE_EMAIL_OWNERS ? users
+                        .subList(0, MAX_SINGLE_EMAIL_OWNERS) : users)) {
                     registryUserService.assignOwnership(user.getId(),
                             studyProtocolId);
                 }
