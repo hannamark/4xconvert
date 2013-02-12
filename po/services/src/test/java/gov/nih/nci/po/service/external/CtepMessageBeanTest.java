@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Country;
+import gov.nih.nci.po.data.bo.CtepJMSLogRecord;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -34,6 +35,7 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 
 import org.apache.log4j.WriterAppender;
+import org.hibernate.HibernateException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -222,6 +224,15 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         CtepMessageBean bean = setupCtepMessageBean();
         bean.onMessage(msg);
 
+        int jmsMsg_size = 0;
+        try {
+        	jmsMsg_size = PoHibernateUtil.getCurrentSession()
+      			  .createQuery("from " + CtepJMSLogRecord.class.getName() 
+      					  + " where messageId = " + msg.getJMSMessageID()).list().size();
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		assertEquals(1, jmsMsg_size);
         HealthCareFacility freshRo = (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(
                 HealthCareFacility.class, hcf1.getId());
         assertEquals(RoleStatus.NULLIFIED, freshRo.getStatus());

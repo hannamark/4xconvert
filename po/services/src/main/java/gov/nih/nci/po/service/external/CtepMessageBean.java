@@ -84,11 +84,14 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.CtepJMSLogRecord;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.EmailLogger;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.ejb.EJB;
 import javax.jms.JMSException;
@@ -186,6 +189,7 @@ public class CtepMessageBean implements MessageListener {
 
     private static final Logger LOG = Logger.getLogger(CtepMessageBean.class);
     private static final String INVALID_STATE_MSG = "Invalid value (property={0}, value={1}, message={2})";
+    private static final int JMS_MSG_LENG = 4000;    
     private CtepImportService ctepImportService;
 
     /**
@@ -245,6 +249,16 @@ public class CtepMessageBean implements MessageListener {
      */
     public void onMessage(final Message msg) {
         if (msg instanceof TextMessage) {
+            try {
+                String jmsMsg = StringUtils.substring(((TextMessage) msg).getText(), 0, JMS_MSG_LENG);                
+                CtepJMSLogRecord jmsLogRec = new CtepJMSLogRecord();
+                jmsLogRec.setCreatedDate(new Date());
+                jmsLogRec.setMessageId(Long.valueOf(msg.getJMSMessageID()));
+                jmsLogRec.setCtepJmsMsg(jmsMsg);
+                PoHibernateUtil.getCurrentSession().saveOrUpdate(jmsLogRec);
+            } catch (Exception e) {
+                LOG.error(e);
+            }
             processMessage((TextMessage) msg);
         } else {
             logError(String.format("Unsuported Message Type %s", msg.getClass().toString()), msg, null);
