@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="summary4_02" language="groovy" pageWidth="2016" pageHeight="612" orientation="Landscape" columnWidth="1976" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="271"/>
+	<property name="ireport.x" value="1101"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="cal" class="java.util.Calendar" isForPrompting="false">
 		<defaultValueExpression><![CDATA[Calendar.getInstance()]]></defaultValueExpression>
@@ -154,49 +154,49 @@ ORDER BY clinical_research_cat, nci_id]]>
 	<title>
 		<band height="48" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc" x="0" y="0" width="160" height="20"/>
+				<reportElement uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc" x="0" y="0" width="128" height="20"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Summary 4 Report]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" x="240" y="0" width="143" height="48"/>
+				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" x="256" y="0" width="127" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Center}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="false">
-				<reportElement uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8" x="568" y="0" width="100" height="20"/>
+				<reportElement uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8" x="672" y="0" width="144" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Start Date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="false">
-				<reportElement uuid="87011d0b-f674-4c8c-a00c-5f879d8427a7" x="702" y="0" width="100" height="20"/>
+				<reportElement uuid="87011d0b-f674-4c8c-a00c-5f879d8427a7" x="912" y="0" width="96" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{End Date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="b93123dd-2814-4096-afdd-c9a1c1436bba" x="181" y="0" width="59" height="20"/>
+				<reportElement uuid="b93123dd-2814-4096-afdd-c9a1c1436bba" x="128" y="0" width="128" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[Center:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2151a8f0-71d2-4597-81d9-f51294e95eb2" x="383" y="0" width="182" height="20"/>
+				<reportElement uuid="2151a8f0-71d2-4597-81d9-f51294e95eb2" x="463" y="0" width="209" height="20"/>
 				<textElement>
 					<font size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Date Range (non-industrial only):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="25a0fb45-0894-4034-a60a-c0ec660fbe82" x="668" y="0" width="34" height="20"/>
+				<reportElement uuid="25a0fb45-0894-4034-a60a-c0ec660fbe82" x="816" y="0" width="96" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
@@ -228,7 +228,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<text><![CDATA[Cat.]]></text>
+				<text><![CDATA[Clinical Research Category]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="ee98a638-5404-49ec-b649-2b572a9567d1" x="128" y="0" width="128" height="32"/>
@@ -245,50 +245,50 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<text><![CDATA[Site]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c63375e1-ddd9-44a9-a7b8-55a3b86788c5" x="512" y="0" width="64" height="32"/>
+				<reportElement uuid="c63375e1-ddd9-44a9-a7b8-55a3b86788c5" x="752" y="0" width="64" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Is Multi site]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="e5ea0879-dfef-4dce-8f67-ba949914f0d0" x="576" y="0" width="96" height="32"/>
+				<reportElement uuid="e5ea0879-dfef-4dce-8f67-ba949914f0d0" x="816" y="0" width="96" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<text><![CDATA[PI - Last]]></text>
+				<text><![CDATA[PI - Last Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ccef0731-0289-4bf3-a087-5bebc4ff88d4" x="768" y="0" width="64" height="32"/>
+				<reportElement uuid="ccef0731-0289-4bf3-a087-5bebc4ff88d4" x="1008" y="0" width="64" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Prog Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="4db1f386-5722-4ef4-9ccd-9392a7b385c9" x="896" y="0" width="64" height="32"/>
+				<reportElement uuid="4db1f386-5722-4ef4-9ccd-9392a7b385c9" x="1072" y="0" width="64" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Open Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="693ad12d-3f80-433b-ad16-ca8c94d9627d" x="1024" y="0" width="512" height="32"/>
+				<reportElement uuid="693ad12d-3f80-433b-ad16-ca8c94d9627d" x="1328" y="0" width="448" height="32"/>
 				<textElement/>
 				<text><![CDATA[Title]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="b0487517-e418-4535-967b-db598173b014" x="1536" y="0" width="64" height="32"/>
+				<reportElement uuid="b0487517-e418-4535-967b-db598173b014" x="1776" y="0" width="64" height="32"/>
 				<textElement/>
 				<text><![CDATA[Center]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="344cc7d1-5256-456c-981d-2b0d32607a7c" x="1600" y="0" width="64" height="32"/>
+				<reportElement uuid="344cc7d1-5256-456c-981d-2b0d32607a7c" x="1840" y="0" width="64" height="32"/>
 				<textElement/>
 				<text><![CDATA[Affiliate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="9c590f27-bba3-46ba-9119-b9d7f02fd800" x="1664" y="0" width="64" height="32"/>
+				<reportElement uuid="9c590f27-bba3-46ba-9119-b9d7f02fd800" x="1904" y="0" width="64" height="32"/>
 				<textElement/>
 				<text><![CDATA[Non-affiliate]]></text>
 			</staticText>
@@ -297,28 +297,56 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<text><![CDATA[Src.]]></text>
+				<text><![CDATA[Source of Support (NEID)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="d2397a6e-6c71-46c0-a134-7964aba556a3" x="832" y="0" width="64" height="32"/>
+				<reportElement uuid="d2397a6e-6c71-46c0-a134-7964aba556a3" x="1200" y="0" width="64" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Phase]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="09e7e315-ee01-47b2-b1d3-d6ec9ea122d9" x="960" y="0" width="64" height="32"/>
+				<reportElement uuid="09e7e315-ee01-47b2-b1d3-d6ec9ea122d9" x="1136" y="0" width="64" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Close Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="c2cea4e9-1c5c-4884-92fe-d401849f7d70" x="672" y="0" width="96" height="20"/>
+				<reportElement uuid="c2cea4e9-1c5c-4884-92fe-d401849f7d70" x="912" y="0" width="96" height="32"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
-				<text><![CDATA[PI - First]]></text>
+				<text><![CDATA[PI - First Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="65cd3e32-acc6-4302-a0c6-c522e2998533" x="512" y="0" width="80" height="32"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[NCT ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5eac8a7b-208b-4e24-9a52-3137748226b5" x="592" y="0" width="80" height="32" isPrintInFirstWholeBand="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CTEP ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c6316e23-e256-4f8d-8f8d-8aa79a585122" x="672" y="0" width="80" height="32"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Lead Org ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="67cbe269-d00b-4b1c-8cb4-80505a633dcf" x="1264" y="0" width="64" height="32"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Primary Purpose]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -328,56 +356,35 @@ ORDER BY clinical_research_cat, nci_id]]>
 || $F{affiliate_total} > 0
 || $F{non_affiliate_total} > 0]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="fe01c855-ed42-4fd4-a7ff-102fcc64e56a" x="384" y="0" width="128" height="20"/>
+				<reportElement uuid="fe01c855-ed42-4fd4-a7ff-102fcc64e56a" x="384" y="0" width="128" height="68"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nci_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="2d757152-4ca7-4a7d-a26a-de0d7c432904" x="432" y="20" width="80" height="16" isPrintInFirstWholeBand="true"/>
+				<reportElement uuid="2d757152-4ca7-4a7d-a26a-de0d7c432904" x="512" y="0" width="80" height="68" isPrintInFirstWholeBand="true"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nct_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="c6f818bb-2cd4-4646-8c66-d7052fe759c0" x="432" y="52" width="80" height="16"/>
+				<reportElement uuid="c6f818bb-2cd4-4646-8c66-d7052fe759c0" x="672" y="0" width="80" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{lead_org_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="38d54077-7794-4c91-b942-3b11659c91f5" x="432" y="36" width="80" height="16" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="38d54077-7794-4c91-b942-3b11659c91f5" x="592" y="0" width="80" height="68" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ctep_id}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="65cd3e32-acc6-4302-a0c6-c522e2998533" x="392" y="20" width="40" height="16"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[NCT]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="5eac8a7b-208b-4e24-9a52-3137748226b5" x="392" y="36" width="40" height="16"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[CTEP]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="c6316e23-e256-4f8d-8f8d-8aa79a585122" x="392" y="52" width="40" height="16"/>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<text><![CDATA[Lead Org]]></text>
-			</staticText>
 			<line>
-				<reportElement uuid="a92f08f0-b4b9-48c0-96e6-120ab9bd0cf5" x="0" y="0" width="1728" height="1"/>
+				<reportElement uuid="a92f08f0-b4b9-48c0-96e6-120ab9bd0cf5" x="0" y="0" width="1968" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="f6d53030-d9d8-4192-8563-bc6213c17432" x="0" y="0" width="64" height="68"/>
@@ -415,75 +422,82 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<textFieldExpression><![CDATA[$F{site}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f6b2e672-6e52-4ecb-a042-b64dbc7b39a9" x="510" y="0" width="64" height="68"/>
+				<reportElement uuid="f6b2e672-6e52-4ecb-a042-b64dbc7b39a9" x="752" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{is_multisite}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="ba84a8d6-a284-4f02-b149-48a44ca5f41b" x="576" y="0" width="96" height="68"/>
+				<reportElement uuid="ba84a8d6-a284-4f02-b149-48a44ca5f41b" x="816" y="0" width="96" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pi_last_name}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="71dcab5c-f266-4f88-bff5-34450f427daa" x="672" y="0" width="96" height="68"/>
+				<reportElement uuid="71dcab5c-f266-4f88-bff5-34450f427daa" x="912" y="0" width="96" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pi_first_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="cf3cd19c-922a-4b30-b0ab-259e9590ba83" x="768" y="0" width="64" height="68" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="cf3cd19c-922a-4b30-b0ab-259e9590ba83" x="1008" y="0" width="64" height="68" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{prog_code}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="dcb81fc3-0361-4a84-b100-0e25970286d4" x="896" y="0" width="64" height="68"/>
+				<reportElement uuid="dcb81fc3-0361-4a84-b100-0e25970286d4" x="1072" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{open_date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement uuid="811a5e31-e36d-4a87-a115-67f93f58327b" x="960" y="0" width="64" height="68"/>
+				<reportElement uuid="811a5e31-e36d-4a87-a115-67f93f58327b" x="1136" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{close_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="7f816c48-2f0c-43c5-a8bc-5393438b8650" x="832" y="0" width="64" height="68"/>
+				<reportElement uuid="7f816c48-2f0c-43c5-a8bc-5393438b8650" x="1200" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{phase}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f5a66df2-68f5-4d4d-acee-3e7634a24929" x="1024" y="0" width="512" height="68"/>
+				<reportElement uuid="f5a66df2-68f5-4d4d-acee-3e7634a24929" x="1328" y="0" width="448" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{official_title}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="5cb5c50d-1587-44ab-9003-633e1ca37684" x="1536" y="0" width="64" height="68"/>
+				<reportElement uuid="5cb5c50d-1587-44ab-9003-633e1ca37684" x="1776" y="0" width="64" height="68"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{center_total} == null ? 0 : $F{center_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a38e765d-ed07-4171-ad50-281228db586e" x="1600" y="0" width="64" height="68"/>
+				<reportElement uuid="a38e765d-ed07-4171-ad50-281228db586e" x="1840" y="0" width="64" height="68"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{affiliate_total} == null ? 0 : $F{affiliate_total}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="12667873-9352-4be5-8e12-8c7df756d25f" x="1664" y="0" width="64" height="68"/>
+				<reportElement uuid="12667873-9352-4be5-8e12-8c7df756d25f" x="1904" y="0" width="64" height="68"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{non_affiliate_total} == null ? 0 : $F{non_affiliate_total}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d5140988-d90b-456d-8cdb-b2afc254e148" x="1264" y="0" width="64" height="68" isPrintWhenDetailOverflows="true"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{primary_purpose}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
