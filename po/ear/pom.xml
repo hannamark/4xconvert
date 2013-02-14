@@ -181,7 +181,7 @@
                         </jarModule>
                         <jarModule>
                             <groupId>weblogic</groupId>
-                            <artifactId>wlthinclient-trimmed</artifactId>
+                            <artifactId>wlthint3client-trimmed</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
 

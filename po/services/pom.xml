@@ -93,16 +93,16 @@
         </dependency>
         <dependency>
              <groupId>weblogic</groupId>
-             <artifactId>wlthinclient-trimmed</artifactId>
-             <version>10.3.3</version>
+             <artifactId>wlthint3client-trimmed</artifactId>
+             <version>10.3.6nci</version>
              <scope>provided</scope>
         </dependency>
 
         <!-- Jars required -->
         <dependency>
              <groupId>weblogic</groupId>
-             <artifactId>wlthinclient-trimmed</artifactId>
-             <version>10.3.3</version>
+             <artifactId>wlthint3client-trimmed</artifactId>
+             <version>10.3.6nci</version>
              <scope>compile</scope>
         </dependency>
         <dependency>
