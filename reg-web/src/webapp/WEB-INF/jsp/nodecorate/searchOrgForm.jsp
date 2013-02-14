@@ -81,7 +81,7 @@ Please do not use wildcard characters.<br>
     </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();" id="search_organization_reset_btn">
         <span class="btn_img"><span class="cancel">Reset</span></span>
     </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();" id="search_organization_close_btn">
-        <span class="btn_img"><span class="close">Close</span></span>
+        <span class="btn_img"><span class="close">Cancel</span></span>
     </s:a></li>
 </ul>
 </div>

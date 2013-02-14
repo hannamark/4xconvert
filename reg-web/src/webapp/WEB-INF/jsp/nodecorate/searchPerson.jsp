@@ -74,7 +74,7 @@ function formClose() {
                     <s:a href="javascript:void(0);" cssClass="btn" onclick="loadDiv();" id="search_person_btn"><span class="btn_img"><span class="search">Search</span></span></s:a>
                     <s:a href="javascript:void(0);" cssClass="btn" onclick="setCreateFormVisible();" id="add_person_btn"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
                     <s:a href="javascript:void(0);" cssClass="btn" onclick="formReset();" id="search_person_reset_btn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                    <s:a href="javascript:void(0);" cssClass="btn" onclick="formClose();" id="search_person_close_btn"><span class="btn_img"><span class="close">Close</span></span></s:a>
+                    <s:a href="javascript:void(0);" cssClass="btn" onclick="formClose();" id="search_person_close_btn"><span class="btn_img"><span class="close">Cancel</span></span></s:a>
                 </li>
             </ul>
         </div>

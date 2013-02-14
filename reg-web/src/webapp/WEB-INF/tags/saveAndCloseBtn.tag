@@ -10,7 +10,7 @@
 					<span class="btn_img"><span class="save">Save</span></span>
 				</s:a> <s:a href="javascript:void(0);" cssClass="btn" onclick="window.top.hidePopWin();"
 					onkeypress="window.top.hidePopWin();" id="search_organization_close_btn">
-					<span class="btn_img"><span class="close">Close</span> </span>
+					<span class="btn_img"><span class="close">Cancel</span> </span>
 				</s:a></li>
 		</ul>
 	</del>

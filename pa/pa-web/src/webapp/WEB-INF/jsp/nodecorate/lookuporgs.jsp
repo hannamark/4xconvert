@@ -177,6 +177,7 @@
                              <s:a href="javascript:void(0)" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn"><span class="btn_img"><span class="add">Add Org</span></span></s:a>
                            </c:if>
                            <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();"><span class="btn_img"><span class="cancel"><fmt:message key="popUpOrg.button.reset"/></span></span></s:a>
+                           <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
                          </li>
                      </ul>   
                  </del>
