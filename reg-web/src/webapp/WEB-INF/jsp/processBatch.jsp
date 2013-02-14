@@ -19,6 +19,7 @@ function handleAction(){
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="process.batch.page.header"/></h1>
+    <c:set var="topic" scope="request" value="batchupload"/>
     <div class="box" id="filters">
     <reg-web:failureMessage/>
     <s:form name="batchUpload" method="POST" enctype="multipart/form-data">
