@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -286,5 +287,18 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public List<Long> getProtocolIdsWithNCIId(String nciId) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException {      
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeAnatomicSite(Ii studyProtocolIi, Cd site)
+            throws PAException {
     }
 }

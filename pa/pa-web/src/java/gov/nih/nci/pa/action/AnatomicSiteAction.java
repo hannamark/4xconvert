@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
@@ -94,7 +93,6 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -170,18 +168,11 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
     public String add() throws PAException {
         enforceBusinessRules();
         if (!hasActionErrors()) {
-            StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-            if (ISOUtil.isDSetEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
-                DSet<Cd> dSet = new DSet<Cd>();
-                dSet.setItem(new HashSet<Cd>());
-                studyProtocolDto.setSummary4AnatomicSites(dSet);
-            }
             Cd c = new Cd();
             c.setCode(getAnatomicSite().getCode());
-            studyProtocolDto.getSummary4AnatomicSites().getItem().add(c);
-            PaRegistry.getStudyProtocolService().updateStudyProtocol(studyProtocolDto);
+            PaRegistry.getStudyProtocolService().addAnatomicSite(getSpIi(), c);
             return super.add();
-       }
+        }
         return super.create();
     }
 
@@ -223,14 +214,13 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
         if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
             for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
                 if (AnatomicSiteConverter.convertFromDTOToDomain(as).getId()
-                        .equals(objectId)) {
-                    studyProtocolDto.getSummary4AnatomicSites().getItem()
-                            .remove(as);
+                        .equals(objectId)) {                    
+                    PaRegistry.getStudyProtocolService().removeAnatomicSite(
+                            getSpIi(), as);
                     break;
                 }
             }
-            PaRegistry.getStudyProtocolService().updateStudyProtocol(
-                    studyProtocolDto);
+
         }
     }
 

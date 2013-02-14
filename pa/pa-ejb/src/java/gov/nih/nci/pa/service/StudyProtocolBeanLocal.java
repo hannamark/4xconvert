@@ -81,10 +81,12 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -207,7 +209,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private static final int MAX_SINGLE_EMAIL_OWNERS = 3;
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     private static final String CREATE = "Create";
-    private static final String UPDATE = "Update";
+    private static final String UPDATE = "Update"; // NOPMD
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
     
@@ -1336,5 +1338,44 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         session.flush();
         session.clear();
         
+    }
+
+    @Override
+    public void addAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException {
+        final AnatomicSite siteDomainObj = AnatomicSiteConverter
+                .convertFromDTOToDomain(site);        
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session
+                .get(StudyProtocol.class,
+                        IiConverter.convertToLong(studyProtocolIi));        
+        final Set<AnatomicSite> protocolSites = studyProtocol
+                .getSummary4AnatomicSites();
+        for (AnatomicSite existentSite : protocolSites) {
+            if (existentSite.getId().equals(siteDomainObj.getId())) {
+                return;
+            }
+        }
+        protocolSites.add(siteDomainObj);
+        session.update(studyProtocol);
+    }
+
+    @Override
+    public void removeAnatomicSite(Ii studyProtocolIi, Cd site)
+            throws PAException {
+        final AnatomicSite siteDomainObj = AnatomicSiteConverter
+                .convertFromDTOToDomain(site);
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol studyProtocol = (StudyProtocol) session
+                .get(StudyProtocol.class,
+                        IiConverter.convertToLong(studyProtocolIi));
+        final Set<AnatomicSite> protocolSites = studyProtocol
+                .getSummary4AnatomicSites();
+        for (AnatomicSite existentSite : protocolSites) {
+            if (existentSite.getId().equals(siteDomainObj.getId())) {
+                protocolSites.remove(existentSite);
+                session.update(studyProtocol);
+                break;
+            }
+        }
     }
 }

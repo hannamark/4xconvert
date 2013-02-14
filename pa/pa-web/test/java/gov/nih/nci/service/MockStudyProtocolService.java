@@ -80,6 +80,7 @@ package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -403,5 +404,14 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     public List<Long> getProtocolIdsWithNCIId(String nciId) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void addAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException {             
+    }
+
+    @Override
+    public void removeAnatomicSite(Ii studyProtocolIi, Cd site)
+            throws PAException {
     }
 }

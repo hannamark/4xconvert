@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -331,5 +332,22 @@ public interface StudyProtocolService {
      * @return List<Long>
      */
     List<Long> getProtocolIdsWithNCIId(String nciId);
+    
+    /**
+     * Adds an anatomic site to the protocol.
+     * @param studyProtocolIi studyProtocolIi
+     * @param site Cd
+     * @throws PAException PAException
+     */
+    void addAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException;
+    
+    /**
+     * Removes an anatomic site from the protocol.
+     * @param studyProtocolIi studyProtocolIi
+     * @param site Cd
+     * @throws PAException PAException
+     */
+    void removeAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException;
+    
     
 }
