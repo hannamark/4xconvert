@@ -7,7 +7,7 @@
 <table class="form">
     <tr>
         <td scope="row" class="label">
-            <s:label name="personContactWebDTO.telephone" for="personContactWebDTO.telephone">Phone Number:</s:label><span class="required">**</span>
+            <label for="personContactWebDTO.telephone">Phone Number:</label><span class="required">**</span>
         </td>
         <td class="value" colspan="2">
             
@@ -22,7 +22,7 @@
     </tr>
     <tr>
         <td scope="row" class="label">
-            <s:label name="personContactWebDTO.email" for="personContactWebDTO.email">Email Address:</s:label><span class="required">**</span>
+            <label for="personContactWebDTO.email">Email Address:</label><span class="required">**</span>
         </td>
         <td class="value" colspan="2">
             <s:textfield name="personContactWebDTO.email"  id="personContactWebDTO.email" maxlength="200" size="200" 
