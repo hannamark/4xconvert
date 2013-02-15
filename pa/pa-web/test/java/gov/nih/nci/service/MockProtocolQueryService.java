@@ -122,4 +122,10 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
             throws PAException { 
     }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

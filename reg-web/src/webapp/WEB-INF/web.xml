@@ -22,6 +22,14 @@
         <param-name>appTagRevision</param-name>
         <param-value>@project.revision@</param-value>
     </context-param>
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/rest</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>
+    </context-param>
 
     <!-- Filters -->
     <filter>
@@ -135,7 +143,9 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-    
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+    </listener>
     <listener>
         <description>Sets the various paths variables in the servlet context for use in jsps</description>
         <listener-class>gov.nih.nci.registry.util.ServletContextConfigurator</listener-class>
@@ -151,6 +161,14 @@
         <servlet-class>org.apache.struts2.views.JspSupportServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
 
     <!-- Welcome file lists -->
     <welcome-file-list>

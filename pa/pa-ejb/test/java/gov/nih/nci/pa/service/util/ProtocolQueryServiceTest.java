@@ -86,7 +86,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -167,7 +166,11 @@ public class ProtocolQueryServiceTest  {
         bean.getStudyProtocolByOrgIdentifier(null);
     }
 
-    
+    @Test
+    public void getStudyProtocolByAgentNsc() throws Exception {
+        assertTrue(bean.getStudyProtocolByAgentNsc(null).isEmpty());
+    }
+
     /**
      *    1                   6
      * 2     3             7       8      9    

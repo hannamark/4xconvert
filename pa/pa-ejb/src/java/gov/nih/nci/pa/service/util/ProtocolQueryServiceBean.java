@@ -105,6 +105,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -996,6 +997,30 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             dto.setMilestoneHistory(map.get(dto.getStudyProtocolId()));
         }
     }
-    
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException {
+        if (StringUtils.isBlank(agentNsc)) {
+            return new ArrayList<StudyProtocolQueryDTO>();
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session
+                .createQuery("select distinct sp.id"
+                        + " from InterventionAlternateName ian"
+                        + " join ian.intervention int"
+                        + " join int.plannedActivities pa"
+                        + " join pa.studyProtocol sp"
+                        + " join sp.otherIdentifiers soi"
+                        + " where ian.name = :name and ian.nameTypeCode = 'NSC number'"
+                        + "   and int.typeCode = :type"
+                        + "   and sp.statusCode = :statusCode");
+        query.setParameter("name", agentNsc);
+        query.setParameter("type", InterventionTypeCode.DRUG);
+        query.setParameter("statusCode", ActStatusCode.ACTIVE);
+        return protocolQueryResultsService.getResults(query.list(), false, null);
+    }
 }

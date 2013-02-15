@@ -160,5 +160,12 @@ public interface ProtocolQueryServiceLocal {
      */
     void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
             throws PAException;
-    
+
+    /**
+     * Find all protocols which use the given agent.
+     * @param agentNsc the NSC number for the drug
+     * @return collection of StudyProtocol
+     * @throws PAException exception
+     */
+    List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException;
 }

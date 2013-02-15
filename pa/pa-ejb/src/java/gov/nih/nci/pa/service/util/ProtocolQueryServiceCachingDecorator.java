@@ -116,4 +116,9 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
             throws PAException {
         serviceLocal.populateMilestoneHistory(trials);        
     }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException {
+        return serviceLocal.getStudyProtocolByAgentNsc(agentNsc);
+    }
 }

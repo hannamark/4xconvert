@@ -8,7 +8,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -121,5 +120,11 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     @Override
     public void populateMilestoneHistory(List<StudyProtocolQueryDTO> trials)
             throws PAException { 
+    }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
