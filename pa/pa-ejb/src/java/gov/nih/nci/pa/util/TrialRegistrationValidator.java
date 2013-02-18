@@ -260,7 +260,8 @@ public class TrialRegistrationValidator {
                     Long spId = Long.parseLong(studyProtocolDTO.getIdentifier().getExtension());
                     if (!registryUserServiceLocal.hasTrialAccess(loginName, spId)) {
                         errorMsg.append(operation);
-                        errorMsg.append(" to Trial can be submitted by the submitter of the original Trial.\n");
+                        errorMsg.append(" to the trial can only be submitted by either an owner of the trial"
+                                + " or a lead organization admin.\n");
                     }
                 }
             }

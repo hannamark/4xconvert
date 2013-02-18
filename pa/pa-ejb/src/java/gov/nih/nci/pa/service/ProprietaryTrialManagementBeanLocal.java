@@ -553,7 +553,8 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         if (StringUtils.isNotEmpty(loginName)
                 && !userServiceLocal.hasTrialAccess(loginName,
                         Long.parseLong(studyProtocolDTO.getIdentifier().getExtension()))) {
-            errorMsg.append("Update to Trial can be submitted by the Owner of the original Trial.\n");
+            errorMsg.append("Updates to the trial can only be submitted by either an owner of the trial"
+                    + " or a lead organization admin.\n");
         }
     }
 

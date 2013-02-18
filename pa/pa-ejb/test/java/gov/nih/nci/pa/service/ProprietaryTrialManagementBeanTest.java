@@ -579,7 +579,7 @@ public class ProprietaryTrialManagementBeanTest extends
             e.printStackTrace();
             String msg = e.getMessage();
             Assert.assertTrue(msg
-                    .contains("Update to Trial can be submitted by the Owner of the original Trial"));
+                    .contains("Updates to the trial can only be submitted by either an owner of the trial or a lead organization admin"));
             throw e;
         }
 

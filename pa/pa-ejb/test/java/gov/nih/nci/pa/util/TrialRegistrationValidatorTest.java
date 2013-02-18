@@ -266,7 +266,8 @@ public class TrialRegistrationValidatorTest {
         studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt("user"));
         validator.validateUser(studyProtocolDTO, "Operation", true, errorMsg);
-        checkErrorMsg("Operation to Trial can be submitted by the submitter of the original Trial.\n");
+        checkErrorMsg("Operation to the trial can only be submitted by either an owner of the trial"
+                                + " or a lead organization admin.\n");
     }
     
     /**
