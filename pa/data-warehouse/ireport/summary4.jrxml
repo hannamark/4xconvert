@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="summary4_02" language="groovy" pageWidth="2016" pageHeight="612" orientation="Landscape" columnWidth="1976" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="summary4_02" language="groovy" pageWidth="2016" pageHeight="612" orientation="Landscape" columnWidth="1976" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="1101"/>
+	<property name="ireport.x" value="619"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="cal" class="java.util.Calendar" isForPrompting="false">
-		<defaultValueExpression><![CDATA[Calendar.getInstance()]]></defaultValueExpression>
-	</parameter>
 	<parameter name="Start Date" class="java.util.Date">
 		<parameterDescription><![CDATA[Month and year of earliest registration date (only for non-industrial).]]></parameterDescription>
-		<defaultValueExpression><![CDATA[(
-    $P{cal}.setTime(new Date()) ||
-    $P{cal}.add(Calendar.YEAR, -1)
-)
-? null : $P{cal}.getTime()]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="End Date" class="java.util.Date">
-		<parameterDescription><![CDATA[Latest registration date. Leave blank for 12 months after start date.]]></parameterDescription>
+		<parameterDescription><![CDATA[Month and year of latest registration date (only for non-industrial).]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Center" class="java.lang.String">
@@ -76,7 +69,19 @@
        *
 FROM "dw_data_table_4" dw_data_table_4
 WHERE is_industrial = false
-  -- filter out abbreviated trials
+  AND nci_id IN (select nci_id
+                 from dw_study_overall_status
+                 where ( status_date between $P{Start Date} and $P{End Date}
+                         or internal_system_id in ( select max(internal_system_id )
+		                                 from dw_study_overall_status
+			                       where status_date < $P{Start Date}
+			                       group by nci_id ))
+                    and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+  AND nci_id IN ( SELECT nci_id
+                  FROM dw_study_participating_site
+                  WHERE  org_org_family = $P{Center} )
 UNION
 SELECT (SELECT sum(accrual_count)
          FROM dw_study_accrual_count sac
@@ -120,8 +125,24 @@ SELECT (SELECT sum(accrual_count)
        *
 FROM "dw_data_table_4" dw_data_table_4
 WHERE is_industrial = true
--- filter out complete trial
-
+  AND ( nci_id IN (select nci_id
+                 from dw_study_overall_status
+                 where ( status_date between $P{Start Date} and $P{End Date}
+                         or internal_system_id in ( select max(internal_system_id )
+		                                 from dw_study_overall_status
+			                       where status_date < $P{Start Date}
+			                       group by nci_id ))
+                    and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+        OR nci_id IN (select nci_id
+                      from dw_data_table_4
+                      where nci_id not in ( select nci_id
+                                            from dw_study_overall_status
+	                                  where status_date < $P{Start Date} )))
+  AND nci_id IN ( SELECT nci_id
+                  FROM dw_study_participating_site
+                  WHERE  org_org_family = $P{Center} )
 ORDER BY clinical_research_cat, nci_id]]>
 	</queryString>
 	<field name="grant_number" class="java.lang.String"/>
@@ -154,49 +175,49 @@ ORDER BY clinical_research_cat, nci_id]]>
 	<title>
 		<band height="48" splitType="Stretch">
 			<staticText>
-				<reportElement uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc" x="0" y="0" width="128" height="20"/>
+				<reportElement uuid="5085a20d-066a-4e2c-bf6a-b0d3dcbb60bc" x="0" y="0" width="128" height="48"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Summary 4 Report]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" x="256" y="0" width="127" height="48"/>
+				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" x="256" y="0" width="256" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Center}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="false">
-				<reportElement uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8" x="672" y="0" width="144" height="20"/>
+				<reportElement uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8" x="912" y="0" width="160" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Start Date}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="false">
-				<reportElement uuid="87011d0b-f674-4c8c-a00c-5f879d8427a7" x="912" y="0" width="96" height="20"/>
+				<reportElement uuid="87011d0b-f674-4c8c-a00c-5f879d8427a7" x="1136" y="0" width="192" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{End Date}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement uuid="b93123dd-2814-4096-afdd-c9a1c1436bba" x="128" y="0" width="128" height="20"/>
+				<reportElement uuid="b93123dd-2814-4096-afdd-c9a1c1436bba" x="128" y="0" width="128" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[Center:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="2151a8f0-71d2-4597-81d9-f51294e95eb2" x="463" y="0" width="209" height="20"/>
+				<reportElement uuid="2151a8f0-71d2-4597-81d9-f51294e95eb2" x="512" y="0" width="400" height="48"/>
 				<textElement>
 					<font size="12" isItalic="true"/>
 				</textElement>
 				<text><![CDATA[Date Range (non-industrial only):]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="25a0fb45-0894-4034-a60a-c0ec660fbe82" x="816" y="0" width="96" height="20"/>
+				<reportElement uuid="25a0fb45-0894-4034-a60a-c0ec660fbe82" x="1072" y="0" width="64" height="48"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
@@ -351,10 +372,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="68" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{center_total} > 0
-|| $F{affiliate_total} > 0
-|| $F{non_affiliate_total} > 0]]></printWhenExpression>
+		<band height="68" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="fe01c855-ed42-4fd4-a7ff-102fcc64e56a" x="384" y="0" width="128" height="68"/>
 				<textElement>
@@ -471,7 +489,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<textFieldExpression><![CDATA[$F{phase}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="f5a66df2-68f5-4d4d-acee-3e7634a24929" x="1328" y="0" width="448" height="68"/>
+				<reportElement uuid="f5a66df2-68f5-4d4d-acee-3e7634a24929" mode="Transparent" x="1328" y="0" width="448" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>

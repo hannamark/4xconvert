@@ -1,22 +1,19 @@
 import groovy.sql.Sql
 import  org.apache.commons.lang.StringUtils
 
-def sql = """SELECT sp.identifier spid, soi.extension nci_id, sos_curr.status_code, sp.study_protocol_type, '3.9 Data Element' study_subtype_code,
+def sql = """SELECT sp.identifier spid, soi.extension nci_id, sp.study_protocol_type, '3.9 Data Element' study_subtype_code,
                     sr.type_code study_source, org.name specific_funding_source,
                     (select count(*) from study_anatomic_site where sp.identifier = study_protocol_identifier) asite_count,
                     anat.code AS asite, pi.last_name, pi.first_name, sp.program_code_text, sp.start_date, sos_close.status_date close_date,
                     sp.phase_code, sp.primary_purpose_code, sp.official_title, sp.min_target_accrual_num, 
                     sp.identifier sp_id, lead_org.assigned_identifier::integer lead_org_po_id, sp.proprietary_trial_indicator
              FROM study_protocol sp
-             JOIN study_overall_status sos_curr ON (sp.identifier = sos_curr.study_protocol_identifier 
-                         AND sos_curr.identifier IN (SELECT max(sos2.identifier)
-                         FROM study_overall_status sos2 WHERE sos_curr.study_protocol_identifier = sos2.study_protocol_identifier))
              JOIN document_workflow_status dwf_curr ON (sp.identifier = dwf_curr.study_protocol_identifier 
                          AND dwf_curr.identifier IN (SELECT max(dwf2.identifier)
                          FROM document_workflow_status dwf2 WHERE dwf_curr.study_protocol_identifier = dwf2.study_protocol_identifier))
-             JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
-             JOIN study_resourcing sr ON (sp.identifier = sr.study_protocol_identifier AND sr.summ_4_rept_indicator = TRUE)
-             JOIN organization org ON (org.identifier = sr.organization_identifier::integer)
+             JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id AND soi.root = '2.16.840.1.113883.3.26.4.3')
+             LEFT JOIN study_resourcing sr ON (sp.identifier = sr.study_protocol_identifier AND sr.summ_4_rept_indicator = TRUE)
+             LEFT JOIN organization org ON (org.identifier = sr.organization_identifier::integer)
              LEFT JOIN study_anatomic_site sas1 ON (sp.identifier = sas1.study_protocol_identifier 
                          AND sas1.anatomic_sites_identifier IN (SELECT MIN(anatomic_sites_identifier) 
                          FROM study_anatomic_site sas2 WHERE sas2.study_protocol_identifier = sp.identifier))
@@ -36,10 +33,13 @@ def sql = """SELECT sp.identifier spid, soi.extension nci_id, sos_curr.status_co
              LEFT JOIN study_site lo on lo.study_protocol_identifier = sp.identifier and lo.functional_code = 'LEAD_ORGANIZATION'
              LEFT JOIN research_organization ro_lead_org on ro_lead_org.identifier = lo.research_organization_identifier
              LEFT JOIN organization lead_org on lead_org.identifier = ro_lead_org.organization_identifier
-             WHERE soi.root = '2.16.840.1.113883.3.26.4.3'
-               AND sp.status_code = 'ACTIVE'
-               AND sos_curr.status_code NOT IN ('WITHDRAWN','ADMINISTRATIVELY_COMPLETE','COMPLETE')
-               AND dwf_curr.status_code != 'REJECTED'
+             WHERE dwf_curr.status_code != 'REJECTED'
+               AND sp.identifier IN ( SELECT MAX(identifier) 
+                                      FROM study_protocol sp
+                                      JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
+                                      WHERE soi.root = '2.16.840.1.113883.3.26.4.3'
+                                        AND sp.status_code = 'ACTIVE' 
+                                      GROUP BY soi.extension )
          """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
