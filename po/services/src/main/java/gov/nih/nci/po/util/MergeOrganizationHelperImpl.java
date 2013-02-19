@@ -101,10 +101,13 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.service.CurateEntityValidationException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
@@ -233,10 +236,17 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
      * @param correlation The potentially Going-away Structural Role.
      * @return returns a list of {@link Correlation} (Structural Roles) that will require curation.
      */
+    @SuppressWarnings("serial")
     public List<Correlation> handleConflictingPlayedRoleCorrelation(Organization org, Correlation correlation) {
         List<Correlation> changes = new ArrayList<Correlation>();
         if (correlation instanceof HealthCareFacility) {
-            throw new IllegalArgumentException("Conflict found for Health Care Facility " + correlation.getId());
+            final String errMsg = "Conflict found for Health Care Facility "
+                    + correlation.getId();
+            Map<String, String[]> errors = new HashMap<String, String[]>();
+            errors.put(
+                    "",
+                    new String[] {errMsg });
+            throw new CurateEntityValidationException(errors);
         } else if (correlation instanceof IdentifiedOrganization) {
             IdentifiedOrganization survivingRole = (IdentifiedOrganization) uniquePlayerScoperIdentifierValidator
                     .getConflictingRole((AbstractIdentifiedEntity<?>) correlation);

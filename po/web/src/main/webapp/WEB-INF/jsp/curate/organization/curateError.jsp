@@ -11,6 +11,8 @@ An error occurred when auto-merging this Organization's associated correlations 
 
 <p>
 This typically indicates malformed phone, fax, and/or tty numbers in the associated correlations.  <s:property value="@gov.nih.nci.po.util.UsOrCanadaPhoneHelper@getPhoneFormatErrorMessage()" />
+This can also indicate that auto-merging correlations results in an incompatible entity/role status combination, i.e.
+the selected duplicate is <i>Pending</i> and one or more scoped roles being merged are <i>Active.</i>  
 </p>
 
 <div id="page" style="margin-top:10px;">

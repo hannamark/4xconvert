@@ -112,11 +112,13 @@ import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.RoleStatusChangeHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -342,6 +344,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
+    @SuppressWarnings("serial")
     private void activateRoleStatusByDupStatus(Organization dup, Correlation correlation) {
         if (dup.getStatusCode() == EntityStatus.ACTIVE && correlation.getStatus() == RoleStatus.PENDING
                 && isCtepRole(correlation)) {
@@ -358,6 +361,18 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 && correlation.getStatus() == RoleStatus.ACTIVE) {
             correlation.setStatus(RoleStatus.SUSPENDED);
         }
+        
+        // PO-5923: Pending Scoper can't have an Active SR.
+        if (!RoleStatusChangeHelper.isValid(dup.getStatusCode(),
+                correlation.getStatus())) {
+            Map<String, String[]> errors = new HashMap<String, String[]>();
+            errors.put(
+                    "",
+                    new String[] {"Merging two entities will result in incompatible "
+                            + "entity/role status combination" });
+            throw new CurateEntityValidationException(errors);
+        }
+        
     }
 
     /**

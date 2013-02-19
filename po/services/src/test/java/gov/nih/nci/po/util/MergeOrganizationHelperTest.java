@@ -101,6 +101,7 @@ import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.service.CurateEntityValidationException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -189,8 +190,7 @@ public class MergeOrganizationHelperTest {
         try {
             testee.handleConflictingPlayedRoleCorrelation(null, hcf);
             fail("we should see a runtime exception here.");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Conflict found for Health Care Facility"));
+        } catch (CurateEntityValidationException e) {            
         }
 
         IdentifiedOrganization io = new IdentifiedOrganization();
