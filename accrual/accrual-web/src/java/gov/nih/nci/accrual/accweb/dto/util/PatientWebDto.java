@@ -171,7 +171,8 @@ public class PatientWebDto {
             if (checkDisease) {
                 action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
             }
-            action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating site is required.");
+            action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating Site is required.");
+            action.addActionErrorIfEmpty(dto.getRegistrationDate(), "Registration Date is required.");
         }
         if (!action.hasActionErrors() && StringUtils.isNotEmpty(dto.getRegistrationDate())) {
             Timestamp registration = AccrualUtil.yearMonthStringToTimestamp(dto.getRegistrationDate());

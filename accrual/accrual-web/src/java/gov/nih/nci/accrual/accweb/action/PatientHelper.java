@@ -121,9 +121,6 @@ public class PatientHelper {
             validateNoPatientDuplicates();
             validateUnitedStatesRules();
             validateEligibilityCriteria();
-            if (StringUtils.isEmpty(action.getPatient().getRegistrationDate())) {
-                action.addActionError("Registration Date is required.");
-            }
         }
     }
 

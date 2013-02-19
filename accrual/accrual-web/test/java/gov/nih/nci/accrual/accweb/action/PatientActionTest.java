@@ -405,28 +405,28 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         assertTrue(action.hasActionErrors());
-        assertEquals(8, action.getActionErrors().size());
+        assertEquals(9, action.getActionErrors().size());
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
-        		"Study Subject ID is required., "
-        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
-        		+ "Country is required., Disease is required., Participating site is required."));
+        		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., " +
+        		"Ethnicity is required., Country is required., Disease is required., Participating Site is required., " +
+        		"Registration Date is required."));
         when(MockServiceLocator.diseaseService.diseaseCodeMandatory(anyLong())).thenReturn(false);
         action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         assertTrue(action.hasActionErrors());
-        assertEquals(7, action.getActionErrors().size());
+        assertEquals(8, action.getActionErrors().size());
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
-        		"Study Subject ID is required., "
-        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
-        		+ "Country is required., Participating site is required.")); 
+        		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., " +
+        		"Ethnicity is required., Country is required., Participating Site is required., " +
+        		"Registration Date is required.")); 
         action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.edit());
         assertTrue(action.hasActionErrors());
-        assertEquals(7, action.getActionErrors().size());
+        assertEquals(8, action.getActionErrors().size());
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
-        		"Study Subject ID is required., "
-        		+ "Birth date is required., Gender is required., Race is required., Ethnicity is required., "
-        		+ "Country is required., Participating site is required."));
+        		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., " +
+        		"Ethnicity is required., Country is required., Participating Site is required., " +
+        		"Registration Date is required."));
     }
     
     @Test
