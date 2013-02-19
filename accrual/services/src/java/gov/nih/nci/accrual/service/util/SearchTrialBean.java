@@ -333,8 +333,7 @@ public class SearchTrialBean implements SearchTrialService {
     public List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException {
         List<AccrualCountsDto> result = new ArrayList<AccrualCountsDto>();
         Long studyProtocolId = 0L;
-        Long studysiteId = 0L;
-        Map<Long, Long> ids = new HashMap<Long, Long>();
+        List<Long> ids = new ArrayList<Long>();
         String sql = "select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"
                 + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
                 + " join study_site_accrual_access ssaa on (ss.identifier = ssaa.study_site_identifier)"
@@ -360,20 +359,19 @@ public class SearchTrialBean implements SearchTrialService {
         List<Object[]> queryList = query.list();
         for (Object[] obj : queryList) {
             studyProtocolId = Long.valueOf(((Number) obj[0]).longValue());
-            studysiteId =  Long.valueOf(((Number) obj[1]).longValue());
-            if (!ids.containsKey(studyProtocolId)) {
-                ids.put(studyProtocolId, studysiteId);
+            if (!ids.contains(studyProtocolId)) {
+                ids.add(studyProtocolId);
             }
         }
         
-        for (Map.Entry<Long, Long> entry : ids.entrySet()) {
-            SearchTrialResultDto dto = getTrialSummaryByStudyProtocolIi(IiConverter.convertToIi(entry.getKey()));
+        for (Long spId : ids) {
+            SearchTrialResultDto dto = getTrialSummaryByStudyProtocolIi(IiConverter.convertToIi(spId));
             AccrualCountsDto ac = new AccrualCountsDto();
             ac.setNciNumber(StConverter.convertToString(dto.getAssignedIdentifier()));
             ac.setLeadOrgTrialIdentifier(StConverter.convertToString(dto.getLeadOrgTrialIdentifier()));
-            ac.setNctNumber(getNCTNumber(entry.getKey()));
+            ac.setNctNumber(getNCTNumber(spId));
             ac.setLeadOrgName(StConverter.convertToString(dto.getLeadOrgName()));
-            setCounts(entry.getKey(), entry.getValue(), session, dto, ac);
+            setCounts(spId, ru.getAffiliatedOrganizationId(), session, dto, ac);
             result.add(ac);            
         }
     return result;    
@@ -394,12 +392,15 @@ public class SearchTrialBean implements SearchTrialService {
         }
     }
 
-    private void setCounts(Long studyProtocolId, Long studysiteId,
+    private void setCounts(Long studyProtocolId, Long affOrgId,
         Session session, SearchTrialResultDto dto, AccrualCountsDto ac) {
         if (dto.getIndustrial().getValue()) {
             Query sqlCount = session.createSQLQuery("select accrual_count from study_site_subject_accrual_count"
-            + " where study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " 
-            + studysiteId);
+            + " where study_protocol_identifier = " + studyProtocolId + " and study_site_identifier in ( "
+            + "select identifier from study_site where study_protocol_identifier = " + studyProtocolId
+            + " and healthcare_facility_identifier in (select identifier from healthcare_facility "
+            + "where organization_identifier in (select identifier from organization "
+            + "where assigned_identifier = '" + affOrgId + "'))) ");
             String result = sqlCount.uniqueResult() != null ? sqlCount.uniqueResult().toString() : null;
             if (result != null) {
                 ac.setAffiliateOrgCount(Long.valueOf(result));
@@ -409,7 +410,11 @@ public class SearchTrialBean implements SearchTrialService {
             setTrialCountAndMaxDate(ac, sqlCount);
         } else {
             Query sqlCount = session.createSQLQuery("select count(*) from study_subject where "
-            + "study_protocol_identifier = " + studyProtocolId + " and study_site_identifier = " + studysiteId
+            + "study_protocol_identifier = " + studyProtocolId + " and study_site_identifier in ( "
+            + "select identifier from study_site where study_protocol_identifier = " + studyProtocolId
+            + " and healthcare_facility_identifier in (select identifier from healthcare_facility "
+            + "where organization_identifier in (select identifier from organization "
+            + "where assigned_identifier = '" + affOrgId + "'))) "
             + " and status_code <> 'NULLIFIED'");
             ac.setAffiliateOrgCount(Long.valueOf(sqlCount.uniqueResult().toString()));
             
