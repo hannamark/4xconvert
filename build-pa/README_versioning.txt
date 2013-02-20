@@ -6,23 +6,3 @@ When updating to the next release version after branching or tagging make the fo
 4. Deploy the pa-ejb-client and pa-commons jars (./pa/ant maven:deploy).
 5. Deploy the accrual client (./accrual/ant maven:deploy).
 6. Update the pa-grid pom's with the new pa client snapshot jar (3 pom's, 2 or 3 places per pom).
-7. Update the accrual, viewer, and pa-grid eclipse classpath's with the new version of the pa client snapshot jars.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
