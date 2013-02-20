@@ -175,5 +175,9 @@
     <changeSet id="PO-5803" author="Kalpana">
        <comment>Added table to log ctep jms messages.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803.sql"/>
+    </changeSet>
+    <changeSet id="PO-5803-2" author="Kalpana">
+       <comment>altered table ctep jms messages.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803-2.sql"/>
     </changeSet>    
 </databaseChangeLog>

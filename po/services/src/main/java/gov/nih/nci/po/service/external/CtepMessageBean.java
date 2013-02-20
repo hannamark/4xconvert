@@ -115,6 +115,7 @@ import org.xml.sax.SAXException;
  * @author gax
  *
  */
+@SuppressWarnings({"PMD.TooManyMethods" })
 public class CtepMessageBean implements MessageListener {
 
     /**
@@ -249,19 +250,27 @@ public class CtepMessageBean implements MessageListener {
      */
     public void onMessage(final Message msg) {
         if (msg instanceof TextMessage) {
-            try {
-                String jmsMsg = StringUtils.substring(((TextMessage) msg).getText(), 0, JMS_MSG_LENG);                
-                CtepJMSLogRecord jmsLogRec = new CtepJMSLogRecord();
-                jmsLogRec.setCreatedDate(new Date());
-                jmsLogRec.setMessageId(Long.valueOf(msg.getJMSMessageID()));
-                jmsLogRec.setCtepJmsMsg(jmsMsg);
-                PoHibernateUtil.getCurrentSession().saveOrUpdate(jmsLogRec);
-            } catch (Exception e) {
-                LOG.error(e);
-            }
+            insertCtepJmsLog(msg);
             processMessage((TextMessage) msg);
         } else {
             logError(String.format("Unsuported Message Type %s", msg.getClass().toString()), msg, null);
+        }
+    }
+
+    private void insertCtepJmsLog(final Message msg) {
+        PoHibernateUtil.getHibernateHelper().openAndBindSession();
+        try {
+            String jmsMsg = StringUtils.substring(((TextMessage) msg).getText(), 0, JMS_MSG_LENG);
+            CtepJMSLogRecord jmsLogRec = new CtepJMSLogRecord();
+            jmsLogRec.setCreatedDate(new Date());
+            jmsLogRec.setMessageId(msg.getJMSMessageID());
+            jmsLogRec.setCtepJmsMsg(jmsMsg);
+            PoHibernateUtil.getCurrentSession().save(jmsLogRec);
+            PoHibernateUtil.getCurrentSession().flush();
+        } catch (Exception e) {
+            LOG.error(e);
+        } finally {
+            PoHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
     }
 

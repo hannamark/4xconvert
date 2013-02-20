@@ -1,0 +1,1 @@
+alter table ctepjmslogrecord alter column messageid type varchar(1000);

@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @org.hibernate.annotations.Entity(mutable = false)
 public class CtepJMSLogRecord {
 
-    private Long messageId;
+    private String messageId;
     private String ctepJmsMsg;
     private Date createdDate;
 
@@ -25,7 +25,7 @@ public class CtepJMSLogRecord {
      * @param ctepJmsMsg jms msg
      * @param createdDate date
      */
-    public CtepJMSLogRecord(Long messageId, String ctepJmsMsg, Date createdDate) {
+    public CtepJMSLogRecord(String messageId, String ctepJmsMsg, Date createdDate) {
         this.messageId = messageId;
         this.ctepJmsMsg = ctepJmsMsg;
         this.createdDate = createdDate;
@@ -45,14 +45,14 @@ public class CtepJMSLogRecord {
      */
     @Id
     @Column(name = "messageid")
-    public Long getMessageId() {
+    public String getMessageId() {
         return messageId;
     }
 
     /**
      * @param messageId to set messageId
      */
-    public void setMessageId(Long messageId) {
+    public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
 
