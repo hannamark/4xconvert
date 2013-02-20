@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="summary4_02" language="groovy" pageWidth="2016" pageHeight="612" orientation="Landscape" columnWidth="1976" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="619"/>
+	<property name="ireport.x" value="760"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="Start Date" class="java.util.Date">
 		<parameterDescription><![CDATA[Month and year of earliest registration date (only for non-industrial).]]></parameterDescription>
@@ -401,9 +401,6 @@ ORDER BY clinical_research_cat, nci_id]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ctep_id}]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement uuid="a92f08f0-b4b9-48c0-96e6-120ab9bd0cf5" x="0" y="0" width="1968" height="1"/>
-			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="f6d53030-d9d8-4192-8563-bc6213c17432" x="0" y="0" width="64" height="68"/>
 				<textElement>
@@ -467,14 +464,14 @@ ORDER BY clinical_research_cat, nci_id]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{prog_code}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
 				<reportElement uuid="dcb81fc3-0361-4a84-b100-0e25970286d4" x="1072" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{open_date}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
 				<reportElement uuid="811a5e31-e36d-4a87-a115-67f93f58327b" x="1136" y="0" width="64" height="68"/>
 				<textElement>
 					<font size="8"/>
