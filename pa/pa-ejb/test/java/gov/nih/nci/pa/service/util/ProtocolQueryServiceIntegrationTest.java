@@ -1066,7 +1066,24 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals(nciSp, result.get(0));
         
     }
-    
+
+    @Test
+    public void getStudyProtocolByAgentNsc() throws PAException {
+        StudyProtocol leadSp = createStudyProtocol();
+        assertTrue(localEjb. getStudyProtocolByAgentNsc("xyzzy").isEmpty());
+
+        Intervention intrv = createIntervention();
+        intrv.setTypeCode(InterventionTypeCode.DRUG);
+        TestSchema.addUpdObject(intrv);
+        InterventionAlternateName ian = createInterventionAlternateName(intrv);
+        ian.setName("xyzzy");
+        ian.setNameTypeCode("NSC number");
+        TestSchema.addUpdObject(ian);
+        PlannedActivity pa = createPlannedActivity(intrv, leadSp);
+        TestSchema.addUpdObject(pa);
+
+        assertEquals(1, localEjb.getStudyProtocolByAgentNsc("xyzzy").size());
+    }
 
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
