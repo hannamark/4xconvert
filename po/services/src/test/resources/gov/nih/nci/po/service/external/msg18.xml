@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+<ROWSET>
+   <ROW num="1">
+      <TRANSACTION_TYPE>REJECT</TRANSACTION_TYPE>
+      <RECORD_TYPE>ORGANIZATION</RECORD_TYPE>
+      <ORGANIZATION_TYPE>HealthCareFacility</ORGANIZATION_TYPE>
+      <ENT_PO_ID>1223</ENT_PO_ID>
+      <SR_PO_ID>2343</SR_PO_ID>
+      <REASON>INVALID DATA</REASON>
+   </ROW>
+</ROWSET>

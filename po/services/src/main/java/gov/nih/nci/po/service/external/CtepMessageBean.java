@@ -314,15 +314,16 @@ public class CtepMessageBean implements MessageListener {
      *
      * @param trxTypeString message TRANSACTION_TYPE.
      * @param recordTypeString message RECORD_TYPE.
-     * @param recordId message RECORD_ID.
+     * @param recordIdIn message RECORD_ID.
      * @param organizationTypeString message ORGANIZATION_TYPE
      * @param duplicateOf message DUPLICATE_OF
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
      */
     // public for digester reflection call.
-    public void processRow(String trxTypeString, String recordTypeString, String recordId,
+    public void processRow(String trxTypeString, String recordTypeString, String recordIdIn,
             String organizationTypeString, String duplicateOf) throws JMSException, EntityValidationException {
+        String recordId = StringUtils.defaultString(recordIdIn);
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s", trxTypeString,
                     recordTypeString, recordId));

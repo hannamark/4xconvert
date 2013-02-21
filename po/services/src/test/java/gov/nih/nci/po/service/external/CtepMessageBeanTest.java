@@ -35,7 +35,6 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 
 import org.apache.log4j.WriterAppender;
-import org.hibernate.HibernateException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -275,6 +274,15 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         bean.onMessage(msg16);
         assertFalse("Should be ignoring this message", serviceCalled);
         bean.onMessage(msg17);
+        assertFalse("Should be ignoring this message", serviceCalled);
+    }
+
+    @Test
+    public void testRejectMessageNullRecordId() throws Exception {
+        serviceCalled = false;
+        MockTextMessage msg18 = new MockTextMessage(18);
+        CtepMessageBean bean = setupCtepMessageBeanWithDummyImporter();
+        bean.onMessage(msg18);
         assertFalse("Should be ignoring this message", serviceCalled);
     }
 
