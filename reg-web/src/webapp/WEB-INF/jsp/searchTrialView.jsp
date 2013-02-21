@@ -140,9 +140,9 @@
                         <reg-web:valueRow labelKey="view.trial.phase" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.phaseCode.code }"/>
                         </reg-web:valueRow>
-                        <c:if test="${requestScope.trialDTO.phaseAdditionalQualifier != null }">
-                            <reg-web:valueRow labelKey="view.trial.otherPhaseText" noLabelTag="true">
-                                <c:out value="${requestScope.trialDTO.phaseAdditionalQualifier}"/>
+                        <c:if test="${requestScope.trialSummary.phaseCode.code=='NA'}">
+                            <reg-web:valueRow labelKey="view.trial.otherPhaseText" noLabelTag="true">                                
+                                <c:out value="${requestScope.trialSummary.phaseAdditionalQualifierCode.code=='Pilot'?'Yes':'No'}"/>
                             </reg-web:valueRow>
                         </c:if>
                         <c:if test="${not empty trialSummary.studyProtocolType.value}">

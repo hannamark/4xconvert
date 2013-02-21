@@ -184,8 +184,8 @@
                 </reg-web:valueRow>
                     
 	            <c:if test="${trialDTO.phaseCode=='NA'}">                    
-	               <reg-web:valueRow labelFor="submit.trial.otherPhaseText" labelKey="submit.trial.otherPhaseText">
-	                  <s:property value="trialDTO.phaseAdditionalQualifier"/>
+	               <reg-web:valueRow labelFor="submit.trial.otherPhaseText" labelKey="submit.trial.otherPhaseText">	                  
+	                  <c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
 	               </reg-web:valueRow>
 	            </c:if>
                     

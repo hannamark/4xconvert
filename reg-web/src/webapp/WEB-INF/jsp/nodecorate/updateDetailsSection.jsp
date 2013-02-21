@@ -45,8 +45,8 @@
         <td scope="row" class="label-noinput">
                 <fmt:message key="submit.trial.otherPhaseText"/>
         </td>
-        <td>
-            <s:property value="trialDTO.phaseAdditionalQualifier"/>
+        <td>            
+            <c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
         </td>
     </tr>
 </s:if>

@@ -91,6 +91,8 @@ import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -639,8 +641,6 @@ public class BatchCreateProtocols {
         trialDTO.setLeadOrgTrialIdentifier(batchDTO.getLocalProtocolIdentifier());
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
-        trialDTO.setPhaseCode(batchDTO.getPhase());
-        trialDTO.setPhaseAdditionalQualifier(batchDTO.getPhaseAdditionalQualifierCode());
         trialDTO.setPrimaryPurposeCode(batchDTO.getPrimaryPurpose());
         trialDTO.setPrimaryPurposeAdditionalQualifierCode(batchDTO.getPrimaryPurposeAdditionalQualifierCode());
         trialDTO.setPrimaryPurposeOtherText(batchDTO.getPrimaryPurposeOtherText());
@@ -657,8 +657,11 @@ public class BatchCreateProtocols {
         // if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase
         trialDTO.setPhaseCode(batchDTO.getPhase());
-        if (StringUtils.isNotEmpty(batchDTO.getPhaseAdditionalQualifierCode())) {
-                trialDTO.setPhaseAdditionalQualifier(batchDTO.getPhaseAdditionalQualifierCode());
+        if (PhaseCode.NA.name().equals(batchDTO.getPhase())) {
+            trialDTO.setPhaseAdditionalQualifier("Yes"
+                    .equalsIgnoreCase(batchDTO
+                            .getPhaseAdditionalQualifierCode()) ? PhaseAdditionalQualifierCode.PILOT
+                    .getCode() : null);
         }
         trialDTO.setProgramCodeText(batchDTO.getProgramCodeText());
         if (batchDTO.getSubmissionType().equalsIgnoreCase("A")) {

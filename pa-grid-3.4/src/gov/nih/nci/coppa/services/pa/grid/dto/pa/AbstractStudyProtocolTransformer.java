@@ -164,6 +164,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toDto(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toDto(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toDto(input.getPhaseCode()));
+        result.setPhaseAdditionalQualifierCode(CDTransformer.INSTANCE.toDto(input.getPhaseAdditionalQualifierCode()));
         result.setPrimaryCompletionDateTypeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryCompletionDateTypeCode()));
         result.setCompletionDateTypeCode(CDTransformer.INSTANCE.toDto(input.getCompletionDateTypeCode()));
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toDto(input.getPrimaryPurposeCode()));
@@ -239,6 +240,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toXml(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toXml(input.getAmendmentReasonCode()));
         result.setPhaseCode(CDTransformer.INSTANCE.toXml(input.getPhaseCode()));
+        result.setPhaseAdditionalQualifierCode(CDTransformer.INSTANCE.toXml(input.getPhaseAdditionalQualifierCode()));
         result.setPrimaryCompletionDateTypeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryCompletionDateTypeCode()));
         result.setCompletionDateTypeCode(CDTransformer.INSTANCE.toXml(input.getCompletionDateTypeCode()));
         result.setPrimaryPurposeCode(CDTransformer.INSTANCE.toXml(input.getPrimaryPurposeCode()));

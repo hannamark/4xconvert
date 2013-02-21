@@ -103,6 +103,7 @@
                     <xs:element name="targetAccrualNumber" type="ISO:IVL_INT" />
                     <xs:element name="phaseCode" type="ISO:CD" />
                     <xs:element name="phaseOtherText" type="ISO:ST" />
+                    <xs:element name="phaseAdditionalQualifierCode" type="ISO:CD" />
                     <xs:element name="primaryCompletionDate" type="ISO:TS" />
                     <xs:element name="primaryCompletionDateTypeCode" type="ISO:CD" />
                     <xs:element name="completionDate" type="ISO:TS" />

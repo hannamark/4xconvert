@@ -20,8 +20,10 @@
                 <td scope="row" class="label">
                     <label for="trialDTO.phaseAdditionalQualifier"> <fmt:message key="submit.trial.otherPhaseText"/></label>
                 </td>
-                <td>
-                    <s:textfield id="trialDTO.phaseAdditionalQualifier" name="trialDTO.phaseAdditionalQualifier" readonly="true" value="Pilot"></s:textfield>
+                <td>                    
+                    <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+                    <s:select id="trialDTO.phaseAdditionalQualifier" headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
+                        value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" /> 
                 </td>
           </tr>
 <SCRIPT LANGUAGE="JavaScript">

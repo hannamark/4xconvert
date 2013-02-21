@@ -122,7 +122,7 @@
                             </reg-web:valueRow>
                             <c:if test="${trialDTO.phaseAdditionalQualifier!= '' && trialDTO.phaseCode=='NA'}">
                                 <reg-web:valueRow labelKey="view.trial.otherPhaseText" noLabelTag="true">
-                                    <c:out value="${trialDTO.phaseAdditionalQualifier}"/>
+                                    <c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
                                 </reg-web:valueRow>
                             </c:if>
                             <reg-web:valueRow labelKey="view.trial.type" noLabelTag="true">
