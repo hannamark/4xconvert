@@ -600,7 +600,8 @@
             <result name="rejectReason">/WEB-INF/jsp/trialValidationReject.jsp</result>
             <result name="amend_reject" type="redirectAction">
                 <param name="actionName">studyProtocol.action</param>
-            </result>
+            </result>            
+            <result name="protocol_view" type="redirectAction">protected/studyProtocolview?studyProtocolId=${studyProtocolIdentifier}</result>     
         </action>
         <action name="ajaxAssignOwnership*" class="gov.nih.nci.pa.action.AssignOwnershipAction" method="{1}">
             <result name="display_affiliated_org">/WEB-INF/jsp/nodecorate/affiliatedOrg.jsp</result>

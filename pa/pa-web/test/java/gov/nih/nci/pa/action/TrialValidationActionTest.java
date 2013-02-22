@@ -239,7 +239,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         gtdDTO.setRejectionReasonCode("Other");
         trialValidationAction.setGtdDTO(gtdDTO);
         getRequest().getSession().setAttribute("submissionNumber", 2);
-        assertEquals("amend_reject", trialValidationAction.rejectReason());
+        assertEquals("protocol_view", trialValidationAction.rejectReason());
         gtdDTO = new GeneralTrialDesignWebDTO();
         trialValidationAction.setGtdDTO(gtdDTO);
         assertEquals("rejectReason", trialValidationAction.rejectReason());

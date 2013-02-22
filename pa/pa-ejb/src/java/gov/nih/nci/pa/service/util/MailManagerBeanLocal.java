@@ -703,7 +703,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
+        sendEmail(spDTO, mailBody, null, mailSubject, true, false);
     }
 
     /**

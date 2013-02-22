@@ -117,6 +117,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -152,6 +153,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     private OrganizationDTO selectedLeadOrg;
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private List<Country> countryList = new ArrayList<Country>();
+    private long studyProtocolIdentifier;
 
     private static final Logger LOG = Logger.getLogger(TrialValidationAction.class);
 
@@ -275,7 +277,8 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         if (hasFieldErrors()) {
             return "rejectReason";
         }
-        HttpSession session = ServletActionContext.getRequest().getSession();
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        HttpSession session = request.getSession();
         String submissionNo = "submissionNumber";
         try {
             Integer intSubNo = (Integer) session.getAttribute(submissionNo);
@@ -292,16 +295,18 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                 session.removeAttribute(submissionNo);
                 session.removeAttribute(Constants.TRIAL_SUMMARY);
                 session.removeAttribute(Constants.STUDY_PROTOCOL_II);
-                return "amend_reject";
+                session.setAttribute(Constants.SUCCESS_MESSAGE, "Amendment has been rejected");
+                studyProtocolIdentifier = IiConverter.convertToLong(studyProtocolIi);
+                return "protocol_view";
             }
             createMilestones(MilestoneCode.SUBMISSION_REJECTED);
             mailManagerService.sendRejectionEmail(studyProtocolIi);
             refreshStudyProtocol(studyProtocolIi);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         query();
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");
+        request.setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Rejected");
         session.removeAttribute(submissionNo);
         populateOtherIdentifiers();
         return EDIT;
@@ -741,6 +746,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
      */
     public void setTrialHelper(TrialHelper helper) {
         this.trialHelper = helper;
+    }
+    
+    /**
+     * @return studyProtocolIi
+     */
+    public long getStudyProtocolIdentifier() {        
+        return studyProtocolIdentifier;
     }
 
 }
