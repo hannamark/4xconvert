@@ -338,6 +338,7 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the studySubjects
      */
     @OneToMany(mappedBy = MAPPED_BY_SS)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public List<StudySubject> getStudySubjects() {
         return studySubjects;
     }

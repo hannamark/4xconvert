@@ -1216,5 +1216,9 @@
      <changeSet id="PO-5712" author="Kalpana">
         <comment>Delete duplicate sites and add unique constraint.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5712.sql"/>
+     </changeSet>
+     <changeSet id="PO-5958" author="Kalpana">
+        <comment>Updated FK constraint to delete.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5958.sql"/>
      </changeSet>      
 </databaseChangeLog>
