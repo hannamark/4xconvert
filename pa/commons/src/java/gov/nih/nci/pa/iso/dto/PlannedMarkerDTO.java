@@ -86,7 +86,7 @@ import java.util.List;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
-
+import gov.nih.nci.iso21090.Ii;
 /**
  * DTO for representing a study's planned markers.
  *
@@ -113,7 +113,9 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private List<String> slectedAssayType;
     private List<String> selectedAssayPurpose;
     private List<String> selectedTissueSpecType;
-    private List<String> selectedEvaluationType;    
+    private List<String> selectedEvaluationType; 
+    private Ii permissibleValue;
+    private Ii cadsrId;
     /**
      * @return the name
      */
@@ -357,6 +359,33 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
      */
     public void setSpecimenTypeOtherText(St specimenTypeOtherText) {
         this.specimenTypeOtherText = specimenTypeOtherText;
+    }
+    /**
+     * @return the permissibleValue
+     */
+    public Ii getPermissibleValue() {
+        return permissibleValue;
+    }
+    /**
+     * 
+     * @param permissibleValue permissibleValue
+     */
+    public void setPermissibleValue(Ii permissibleValue) {
+        this.permissibleValue = permissibleValue;
+    }
+    /**
+     * @return the cadsrId
+     */
+    public Ii getCadsrId() {
+        return cadsrId;
+    }
+    
+    /**
+     * 
+     * @param cadsrId cadsrId
+     */
+    public void setCadsrId(Ii cadsrId) {
+        this.cadsrId = cadsrId;
     }
     
 }

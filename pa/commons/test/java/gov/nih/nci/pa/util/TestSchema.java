@@ -110,6 +110,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedMarker;
+import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -174,6 +175,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.dto.CaDSRDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -209,6 +211,7 @@ public class TestSchema {
     public static List<Long> registryUserIds;
     public static List<Long> studyProtocolIds;
     public static List<Long> studySiteIds;
+    public static List<Long> plannedMarkerSyncIds;
     public static List<Long> studySiteContactIds;
     public static List<Long> healthCareFacilityIds;
     public static List<Long> healthCareProviderIds;
@@ -263,6 +266,7 @@ public class TestSchema {
         registryUserIds = new ArrayList<Long>();
         studyProtocolIds = new ArrayList<Long>();
         studySiteIds = new ArrayList<Long>();
+        plannedMarkerSyncIds = new ArrayList<Long>();
         studySiteContactIds = new ArrayList<Long>();
         healthCareFacilityIds = new ArrayList<Long>();
         healthCareProviderIds = new ArrayList<Long>();
@@ -284,7 +288,7 @@ public class TestSchema {
         studyDiseaseIds = new ArrayList<Long>();
         studyOnholdIds = new ArrayList<Long>();
         assayTypeIds = new ArrayList<Long>();
-        
+
         User curator = getUser(true);
         addUpdObject(curator);
 
@@ -414,6 +418,9 @@ public class TestSchema {
         sPart.setStudyProtocol(sp);
         addUpdObject(sPart);
         studySiteIds.add(sPart.getId());
+
+        PlannedMarkerSyncWithCaDSR pmSync = new PlannedMarkerSyncWithCaDSR();
+        pmSync.setId(1L);
 
         StudySite sPart2 = new StudySite();
         sPart2.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
@@ -684,10 +691,11 @@ public class TestSchema {
         psa.setCategoryCode(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION);
         psa.setStudyProtocol(sp);
         addUpdObject(psa);
-
+        List<PlannedMarker> markers = new ArrayList<PlannedMarker>();
         PlannedMarker marker01 = new PlannedMarker();
         marker01.setStudyProtocol(sp);
-        marker01.setName("Marker #1");
+
+        // marker01.setName("Marker #1");
         marker01.setAssayTypeCode("PCR");
         marker01.setAssayUseCode("Integral");
         marker01.setAssayPurposeCode("Research");
@@ -695,11 +703,23 @@ public class TestSchema {
         marker01.setTissueSpecimenTypeCode("Plasma");
         marker01.setEvaluationTypeCode("Level / Quantity");
         marker01.setStatusCode(ActiveInactivePendingCode.PENDING);
+
+        markers.add(marker01);
+        PlannedMarkerSyncWithCaDSR pmSync1 = new PlannedMarkerSyncWithCaDSR();
+        pmSync1.setName("Marker #1");
+        pmSync1.setMeaning("meaning");
+        pmSync1.setDescription("description");
+        pmSync1.setCaDSRId(12345L);
+        pmSync1.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        pmSync1.setPlannedMarkers(markers);
+        addUpdObject(pmSync1);
+        marker01.setPermissibleValue(pmSync1);
         addUpdObject(marker01);
 
         PlannedMarker marker02 = new PlannedMarker();
         marker02.setStudyProtocol(sp);
-        marker02.setName("Marker #2");
+
+        // marker02.setName("Marker #2");
         marker02.setAssayTypeCode("Other");
         marker02.setAssayTypeOtherText("Assay Type Other Text");
         marker02.setAssayUseCode("Integral");
@@ -709,38 +729,58 @@ public class TestSchema {
         marker02.setTissueSpecimenTypeCode("Plasma");
         marker02.setEvaluationTypeCode("Level / Quantity");
         marker02.setStatusCode(ActiveInactivePendingCode.PENDING);
+
+        markers.add(marker02);
+        PlannedMarkerSyncWithCaDSR pmSync2 = new PlannedMarkerSyncWithCaDSR();
+        pmSync2.setName("Marker #2");
+        pmSync2.setMeaning("meaning");
+        pmSync2.setDescription("description");
+        pmSync2.setCaDSRId(1235L);
+
+        pmSync2.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        marker02.setPermissibleValue(pmSync2);
+        addUpdObject(pmSync2);
         addUpdObject(marker02);
 
-        AccrualDisease sdc01 = TestSchema.createAccrualDisease("SDC", "SDC01", "Toe Cancer");
+        AccrualDisease sdc01 = TestSchema.createAccrualDisease("SDC", "SDC01",
+                "Toe Cancer");
         addUpdObject(sdc01);
         sdcDiseaseIds.add(sdc01.getId());
-        AccrualDisease sdc02 = TestSchema.createAccrualDisease("SDC", "SDC02", "Heel Cancer");
+        AccrualDisease sdc02 = TestSchema.createAccrualDisease("SDC", "SDC02",
+                "Heel Cancer");
         addUpdObject(sdc02);
         sdcDiseaseIds.add(sdc02.getId());
-        AccrualDisease sdc03 = TestSchema.createAccrualDisease("SDC", "SDC03", "Foot Cancer");
+        AccrualDisease sdc03 = TestSchema.createAccrualDisease("SDC", "SDC03",
+                "Foot Cancer");
         addUpdObject(sdc03);
         sdcDiseaseIds.add(sdc03.getId());
-        AccrualDisease sdc04 = TestSchema.createAccrualDisease("SDC", "SDC04", "Leg Cancer");
+        AccrualDisease sdc04 = TestSchema.createAccrualDisease("SDC", "SDC04",
+                "Leg Cancer");
         addUpdObject(sdc04);
         sdcDiseaseIds.add(sdc04.getId());
 
-        AccrualDisease icd901 = TestSchema.createAccrualDisease("ICD9", "code1", "name1");
+        AccrualDisease icd901 = TestSchema.createAccrualDisease("ICD9",
+                "code1", "name1");
         addUpdObject(icd901);
         icd9DiseaseIds.add(icd901.getId());
 
-        AccrualDisease icd902 = TestSchema.createAccrualDisease("ICD9", "code2", "name2");
+        AccrualDisease icd902 = TestSchema.createAccrualDisease("ICD9",
+                "code2", "name2");
         addUpdObject(icd902);
         icd9DiseaseIds.add(icd902.getId());
 
-        AccrualDisease icd903 = TestSchema.createAccrualDisease("ICD9", "code3", "name3");
+        AccrualDisease icd903 = TestSchema.createAccrualDisease("ICD9",
+                "code3", "name3");
         addUpdObject(icd903);
         icd9DiseaseIds.add(icd903.getId());
 
-        AccrualDisease icd904 = TestSchema.createAccrualDisease("ICD9", "code4", "namedif4");
+        AccrualDisease icd904 = TestSchema.createAccrualDisease("ICD9",
+                "code4", "namedif4");
         addUpdObject(icd904);
         icd9DiseaseIds.add(icd904.getId());
 
-        AccrualDisease icd905 = TestSchema.createAccrualDisease("ICD9", "code5", "namedif5");
+        AccrualDisease icd905 = TestSchema.createAccrualDisease("ICD9",
+                "code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
 
@@ -938,14 +978,14 @@ public class TestSchema {
 
         prop = new PAProperties();
         prop.setName("tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
-        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},"
+                + "${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("tsr.proprietary.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
-        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},"
+                + "${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
@@ -955,14 +995,14 @@ public class TestSchema {
 
         prop = new PAProperties();
         prop.setName("xml.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}," +
-        		"(${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle},"
+                + "(${leadOrgTrialIdentifier}), ${receiptDate} ${fileName}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("noxml.tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle}," +
-        		"${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},"
+                + "${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         return IiConverter.convertToIi(nonpropTrial.getId());
@@ -1079,7 +1119,8 @@ public class TestSchema {
         return create;
     }
 
-    private static AccrualDisease createAccrualDisease(String codeSystem, String diseaseCode, String name) {
+    private static AccrualDisease createAccrualDisease(String codeSystem,
+            String diseaseCode, String name) {
         AccrualDisease create = new AccrualDisease();
         create.setCodeSystem(codeSystem);
         create.setDiseaseCode(diseaseCode);
@@ -1132,53 +1173,53 @@ public class TestSchema {
     }
 
     public static AssayType createAssayType() {
-        AssayType assayType = new AssayType();      
+        AssayType assayType = new AssayType();
         assayType.setTypeCode("PCR");
         assayType.setDescription("PCR");
         assayType.setCaDSRId(234567L);
         return assayType;
     }
-    
+
     public static EvaluationType createEvaluationType() {
-        EvaluationType evaluationType = new EvaluationType();      
+        EvaluationType evaluationType = new EvaluationType();
         evaluationType.setTypeCode("Level / Quantity");
         evaluationType.setDescription("Level / Quantity");
         evaluationType.setCaDSRId(213456L);
         return evaluationType;
     }
-    
+
     public static BiomarkerPurpose createBioPurposeType() {
-        BiomarkerPurpose biomarkerPurpose = new BiomarkerPurpose();      
+        BiomarkerPurpose biomarkerPurpose = new BiomarkerPurpose();
         biomarkerPurpose.setTypeCode("Eligibility Criterion");
         biomarkerPurpose.setDescription("Eligibility Criterion");
         biomarkerPurpose.setCaDSRId(123467L);
         return biomarkerPurpose;
     }
-    
+
     public static BiomarkerUse createBioUseType() {
-        BiomarkerUse biomarkerUse = new BiomarkerUse();      
+        BiomarkerUse biomarkerUse = new BiomarkerUse();
         biomarkerUse.setTypeCode("Integral");
         biomarkerUse.setDescription("Integral");
         biomarkerUse.setCaDSRId(2357843L);
         return biomarkerUse;
     }
-    
+
     public static SpecimenType createSPType() {
-        SpecimenType specimenType = new SpecimenType();      
+        SpecimenType specimenType = new SpecimenType();
         specimenType.setTypeCode("Serum");
         specimenType.setDescription("Serum");
         specimenType.setCaDSRId(3563212L);
         return specimenType;
     }
-    
+
     public static SpecimenCollection createSPCollectionType() {
-        SpecimenCollection specimenCollection = new SpecimenCollection();      
+        SpecimenCollection specimenCollection = new SpecimenCollection();
         specimenCollection.setTypeCode("Mandatory");
         specimenCollection.setDescription("Mandatory");
         specimenCollection.setCaDSRId(123456L);
         return specimenCollection;
     }
-    
+
     public static PDQDiseaseParent createPdqDiseaseParent(PDQDisease disease,
             PDQDisease parentDisease) {
         PDQDiseaseParent create = new PDQDiseaseParent();
@@ -1222,7 +1263,7 @@ public class TestSchema {
 
     public static PlannedMarker createPlannedMarker() {
         PlannedMarker result = new PlannedMarker();
-        result.setName("name");
+        // result.setName("name");
         result.setAssayTypeCode("Flow Cytometry");
         result.setAssayUseCode("Integrated");
         result.setAssayPurposeCode("Eligibility Criterion");
@@ -1230,6 +1271,7 @@ public class TestSchema {
         result.setTissueSpecimenTypeCode("Plasma");
         result.setEvaluationTypeCode("Level / Quantity");
         result.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+
         return result;
     }
 
@@ -1335,6 +1377,17 @@ public class TestSchema {
         StudyProtocol sp = new StudyProtocol();
         createStudyProtocolObj(sp);
         return sp;
+    }
+
+    public static PlannedMarkerSyncWithCaDSR createPlannedMarkerSyncWithCaDSRObj(
+            String name, Integer count) {
+        PlannedMarkerSyncWithCaDSR ps = new PlannedMarkerSyncWithCaDSR();
+        ps.setCaDSRId(count.longValue());
+        ps.setName(name + count);
+        ps.setMeaning("meaning");
+        ps.setDescription("description");
+        ps.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        return ps;
     }
 
     public static StudyProtocol createStudyProtocolObj(StudyProtocol sp) {
@@ -1458,6 +1511,18 @@ public class TestSchema {
         isp.setProprietaryTrialIndicator(Boolean.FALSE);
         isp.setSubmissionNumber(Integer.valueOf(1));
         return isp;
+    }
+
+    public static List<CaDSRDTO> createCaDSRDTO() {
+        List<CaDSRDTO> resultsList = new ArrayList<CaDSRDTO>();
+        CaDSRDTO dto = new CaDSRDTO();
+        dto.setId("123");
+        dto.setVmName("PDE5");
+        dto.setVmMeaning("PDE5");
+        dto.setVmDescription("PDE5-description");
+        dto.setPublicId(12345L);
+        resultsList.add(dto);
+        return resultsList;
     }
 
     public static StudySite createStudySiteObj(StudyProtocol sp,

@@ -1019,6 +1019,31 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    public void sendErrorToCTROMail(String toAddress, String fromAddress, 
+            String values) throws PAException {
+        try {
+            
+            
+            String body = "Check the below error " + values;   
+            String subject = "Error regarding CaDSR sync Job";
+            MimeMessage message = prepareMessage(toAddress, fromAddress, null, subject);
+            // body
+            Multipart multipart = new MimeMultipart();
+            BodyPart msgPart = new MimeBodyPart();
+            msgPart.setText(body);
+            multipart.addBodyPart(msgPart);
+            message.setContent(multipart);
+            // Send Message
+            invokeTransportAsync(message, null);
+        } catch (Exception e) {
+            throw new PAException("An error occured while sending email for an error message", e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException {
         try {
             StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter

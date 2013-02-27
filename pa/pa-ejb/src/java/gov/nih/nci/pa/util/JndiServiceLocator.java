@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -625,9 +626,19 @@ public class JndiServiceLocator implements ServiceLocator {
     public FamilyServiceLocal getFamilyService() {
         return (FamilyServiceLocal) JNDIUtil.lookupPa("/pa/FamilyServiceBeanLocal/local");
     }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CTGovUploadServiceLocal getCTGovUploadService() {
         return (CTGovUploadServiceLocal) JNDIUtil.lookupPa("/pa/CTGovUploadServiceBeanLocal/local");
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
+        return (PlannedMarkerSyncWithCaDSRServiceLocal) JNDIUtil
+        .lookupPa("/pa/PlannedMarkerSyncWithCaDSRBeanLocal/local");
     }
 }

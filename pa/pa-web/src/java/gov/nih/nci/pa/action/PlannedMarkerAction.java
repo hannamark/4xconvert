@@ -87,13 +87,16 @@ import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
@@ -116,15 +119,18 @@ import org.apache.struts2.ServletActionContext;
 public class PlannedMarkerAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = 560802697544499600L;
-    private static final Logger LOG = Logger.getLogger(PlannedMarkerAction.class);
+    private static final Logger LOG = Logger
+            .getLogger(PlannedMarkerAction.class);
 
     private ApplicationService appService;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private MarkerAttributesServiceLocal markerAttributesService;
+    private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
     private boolean saveReset = false;
+    private String cadsrId = "";
     private boolean pendingStatus;
     private PlannedMarkerDTO newlyCreatedMarker;
     /**
@@ -139,8 +145,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      * to compare the if attribute Text not present
      */
     protected static final String NOTPRESENT = "notPresent";
-    
-  
+
     /**
      * {@inheritDoc}
      */
@@ -150,10 +155,13 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
-            LOG.error("Error attempting to instatiate caDSR Application Service.", e);
+            LOG.error(
+                    "Error attempting to instatiate caDSR Application Service.",
+                    e);
         }
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         markerAttributesService = PaRegistry.getMarkerAttributesService();
+        permissibleService = PaRegistry.getPMWithCaDSRService();
     }
 
     /**
@@ -164,12 +172,28 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         enforceBusinessRules();
         if (!hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO(false);
-            if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning()) && !pendingStatus) {
-                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+            if (StringUtils.isNotEmpty(getPlannedMarker().getMeaning())
+                    && !pendingStatus) {
+                marker.setStatusCode(CdConverter
+                        .convertToCd(ActiveInactivePendingCode.ACTIVE));
+                Long cadsrId1 = IiConverter.convertToLong(marker.getCadsrId());
+                List<Number> listofValues = permissibleService
+                        .getIdentifierByCadsrId(cadsrId1);
+                if (!listofValues.isEmpty()) {
+                    marker.setPermissibleValue(IiConverter.convertToIi(listofValues.get(0).longValue()));
+                }
+               
                 pendingStatus = false;
             } else {
-                marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING)); 
-                pendingStatus = true;          
+                marker.setStatusCode(CdConverter
+                        .convertToCd(ActiveInactivePendingCode.PENDING));
+                String name = StConverter.convertToString(marker.getName());
+                List<Number> identifier = permissibleService
+                        .getPendingIdentifierByCadsrName(name);
+                if (!identifier.isEmpty()) {
+                marker.setPermissibleValue(IiConverter.convertToIi(identifier.get(0).longValue()));
+                }
+                pendingStatus = true;
             }
 
             try {
@@ -181,13 +205,14 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (hasActionErrors() || hasFieldErrors()) {
             saveReset = false;
             PlannedMarkerDTO marker = populateDTO(false);
-            Map<String, String> values = markerAttributesService.getAllMarkerAttributes();   
+            Map<String, String> values = markerAttributesService
+                    .getAllMarkerAttributes();
             plannedMarker = populateWebDTO(marker, values);
             return super.create();
         }
         return currentActionType();
     }
-    
+
     private String currentActionType() throws PAException {
         if (saveReset) {
             return save();
@@ -201,9 +226,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     public String edit() throws PAException {
-        PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
-            .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        Map<String, String> values = markerAttributesService.getAllMarkerAttributes();
+        PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService().get(
+                IiConverter.convertToIi(getSelectedRowIdentifier()));
+        Map<String, String> values = markerAttributesService
+                .getAllMarkerAttributes();
         plannedMarker = populateWebDTO(marker, values);
         return super.edit();
     }
@@ -217,6 +243,16 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (!hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO(true);
             try {
+                Long cadsrId2 = IiConverter.convertToLong(marker.getCadsrId());
+                List<Number> listofValues = permissibleService
+                        .getIdentifierByCadsrId(cadsrId2);
+                if (!listofValues.isEmpty()) {
+                    marker.setPermissibleValue(IiConverter
+                            .convertToIi(listofValues.get(0).longValue()));
+                } else {
+                    marker.setPermissibleValue(IiConverter.convertToIi(cadsrId2));
+                }
+
                 plannedMarkerService.update(marker);
             } catch (PAException e) {
                 addActionError(e.getMessage());
@@ -224,8 +260,9 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         }
         if (hasActionErrors() || hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO(false);
-            Map<String, String> values = markerAttributesService.getAllMarkerAttributes();
-             plannedMarker = populateWebDTO(marker, values);
+            Map<String, String> values = markerAttributesService
+                    .getAllMarkerAttributes();
+            plannedMarker = populateWebDTO(marker, values);
             return AR_EDIT;
         }
         return super.update();
@@ -248,29 +285,47 @@ public class PlannedMarkerAction extends AbstractListEditAction {
 
     /**
      * Loads and sets the various properties from caDSR.
+     * 
      * @return edit
      */
     public String displaySelectedCDE() {
         try {
             ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
             vdpv.setId(getCdeId());
-            Collection<Object> results = appService.search(ValueDomainPermissibleValue.class, vdpv);
-            ValueDomainPermissibleValue result = (ValueDomainPermissibleValue) results.iterator().next();
+            Collection<Object> results = appService.search(
+                    ValueDomainPermissibleValue.class, vdpv);
+            ValueDomainPermissibleValue result = (ValueDomainPermissibleValue) results
+                    .iterator().next();
 
             PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
             dto.setName(result.getPermissibleValue().getValue());
-            dto.setDescription(result.getPermissibleValue().getValueMeaning().getDescription());
-            dto.setMeaning(result.getPermissibleValue().getValueMeaning().getLongName());
+            dto.setDescription(result.getPermissibleValue().getValueMeaning()
+                    .getDescription());
+            dto.setMeaning(result.getPermissibleValue().getValueMeaning()
+                    .getLongName());
+            dto.setCadsrId(result.getPermissibleValue().getValueMeaning()
+                    .getPublicID());
+            dto.setStatus(ActiveInactivePendingCode.ACTIVE.getCode());
+            if (dto.getCadsrId() != null) {
+                cadsrId = result.getPermissibleValue().getValueMeaning()
+                        .getPublicID().toString();
+            }
+            if (getSelectedRowIdentifier() != null) {
+                dto.setId(Long.valueOf(getSelectedRowIdentifier()));
+            }
             setPlannedMarker(dto);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return AR_EDIT;
 
     }
 
     /**
-     * Reloads the planned marker screen with the requested marker name and hugo code.
+     * Reloads the planned marker screen with the requested marker name and hugo
+     * code.
+     * 
      * @return edit
      */
     public String displayRequestedCDE() {
@@ -283,8 +338,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     @Override
     protected void loadListForm() throws PAException {
         List<PlannedMarkerWebDTO> pmList = new ArrayList<PlannedMarkerWebDTO>();
-        List<PlannedMarkerDTO> results = plannedMarkerService.getByStudyProtocol(getSpIi());     
-        Map<String, String> values = markerAttributesService.getAllMarkerAttributes();      
+        List<PlannedMarkerDTO> results = plannedMarkerService
+                .getByStudyProtocol(getSpIi());
+        Map<String, String> values = markerAttributesService
+                .getAllMarkerAttributes();
         for (PlannedMarkerDTO dto : results) {
             pmList.add(populateWebDTO(dto, values));
         }
@@ -307,7 +364,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             markerDTO.setAssayPurposeCode(null);
             markerDTO.setAssayUseCode(null);
             markerDTO.setTissueSpecimenTypeCode(null);
-           
+
             markerDTO.setAssayPurposeOtherText(null);
             markerDTO.setAssayTypeOtherText(null);
             plannedMarker = populateWebDTO(markerDTO, null);
@@ -315,57 +372,80 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             saveReset = false;
         }
         if (plannedMarker != null && plannedMarker.getId() != null) {
-            PlannedMarkerDTO markerDTO = plannedMarkerService.get(IiConverter.convertToIi(plannedMarker.getId()));
-            Map<String, String> values = markerAttributesService.getAllMarkerAttributes(); 
+            PlannedMarkerDTO markerDTO = plannedMarkerService.get(IiConverter
+                    .convertToIi(plannedMarker.getId()));
+            Map<String, String> values = markerAttributesService
+                    .getAllMarkerAttributes();
+            if (!ISOUtil.isIiNull(plannedMarker.getPermissibleValue())) {
+                cadsrId = IiConverter.convertToLong(
+                        plannedMarker.getPermissibleValue()).toString();
+                // plannedMarker.setCadsrId(Long.valueOf(cadsrId));
+            }
             plannedMarker = populateWebDTO(markerDTO, values);
+            if (!cadsrId.isEmpty()) {
+                plannedMarker.setCadsrId(Long.valueOf(cadsrId));
+            }
+            
+
         }
     }
 
     private void enforceBusinessRules() {
         if (StringUtils.isEmpty(getPlannedMarker().getName())) {
-            addFieldError("plannedMarker.name", getText("error.plannedMarker.name"));
+            addFieldError("plannedMarker.name",
+                    getText("error.plannedMarker.name"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayType())) {
-            addFieldError("plannedMarker.assayType", getText("error.plannedMarker.assayType"));
+            addFieldError("plannedMarker.assayType",
+                    getText("error.plannedMarker.assayType"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayUse())) {
-            addFieldError("plannedMarker.assayUse", getText("error.plannedMarker.assayUse"));
+            addFieldError("plannedMarker.assayUse",
+                    getText("error.plannedMarker.assayUse"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getAssayPurpose())) {
-            addFieldError("plannedMarker.assayPurpose", getText("error.plannedMarker.assayPurpose"));
+            addFieldError("plannedMarker.assayPurpose",
+                    getText("error.plannedMarker.assayPurpose"));
         }
 
         if (StringUtils.isEmpty(getPlannedMarker().getEvaluationType())) {
-            addFieldError("plannedMarker.evaluationType", getText("error.plannedMarker.evaluationType"));
+            addFieldError("plannedMarker.evaluationType",
+                    getText("error.plannedMarker.evaluationType"));
         }
         enforceAdditionalBusinessRules();
     }
+
     @SuppressWarnings("PMD.CyclomaticComplexity")
     private void enforceAdditionalBusinessRules() {
-        
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayType(), 
-                getPlannedMarker().getAssayTypeOtherText()), EMPTY)) {
-            addFieldError("plannedMarker.assayTypeOtherText",                 
-            getText("error.plannedMarker.assayTypeOtherText"));
-         }
 
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayPurpose(), 
-                getPlannedMarker().getAssayPurposeOtherText()), EMPTY)) {
-            addFieldError("plannedMarker.assayPurposeOtherTex",                 
-            getText("error.plannedMarker.assayPurposeOtherText"));
-         }
-        
-       if (StringUtils.equals(otherTextPresent(getPlannedMarker().getEvaluationType(), 
-               getPlannedMarker().getEvaluationTypeOtherText()), EMPTY)) {
-           addFieldError("plannedMarker.evaluationTypeOtherText",                 
-           getText("error.plannedMarker.evaluationTypeOtherText"));
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getAssayType(),
+                        getPlannedMarker().getAssayTypeOtherText()), EMPTY)) {
+            addFieldError("plannedMarker.assayTypeOtherText",
+                    getText("error.plannedMarker.assayTypeOtherText"));
+        }
+
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getAssayPurpose(),
+                        getPlannedMarker().getAssayPurposeOtherText()), EMPTY)) {
+            addFieldError("plannedMarker.assayPurposeOtherTex",
+                    getText("error.plannedMarker.assayPurposeOtherText"));
+        }
+
+        if (StringUtils
+                .equals(otherTextPresent(
+                        getPlannedMarker().getEvaluationType(),
+                        getPlannedMarker().getEvaluationTypeOtherText()), EMPTY)) {
+            addFieldError("plannedMarker.evaluationTypeOtherText",
+                    getText("error.plannedMarker.evaluationTypeOtherText"));
         }
 
         if (StringUtils.isEmpty(getPlannedMarker().getTissueSpecimenType())) {
-            addFieldError("plannedMarker.tissueSpecimenType", getText("error.plannedMarker.tissueSpecimenType"));
+            addFieldError("plannedMarker.tissueSpecimenType",
+                    getText("error.plannedMarker.tissueSpecimenType"));
         }
     }
-    
+
     private String otherTextPresent(String typeValue, String otherText) {
         if (typeValue != null) {
             String[] typeList = typeValue.split(",\\s*");
@@ -376,15 +456,16 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                             return EMPTY;
                         } else {
                             return OTHER;
-                        }    
-                    }       
-                } 
+                        }
+                    }
+                }
             }
         }
-        return NOTPRESENT;    
+        return NOTPRESENT;
     }
-
-    private PlannedMarkerWebDTO populateWebDTO(PlannedMarkerDTO markerDTO, Map<String, String> markerValues) {
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
+    private PlannedMarkerWebDTO populateWebDTO(PlannedMarkerDTO markerDTO,
+            Map<String, String> markerValues) throws PAException {
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
         webDTO = new PlannedMarkerWebDTO();
         if (markerDTO != null) {
@@ -393,54 +474,91 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             if (pendingStatus) {
                 webDTO.setMeaning(null);
             } else {
-                webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
+                webDTO.setMeaning(StConverter.convertToString(markerDTO
+                        .getLongName()));
             }
-            webDTO.setDescription(StConverter.convertToString(markerDTO.getTextDescription()));
-            webDTO.setHugoCode(CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode()));
-            webDTO.setFoundInHugo(StringUtils.isNotEmpty(
-                    CdConverter.convertCdToString(markerDTO.getHugoBiomarkerCode())));
-            webDTO.setAssayType(CdConverter.convertCdToString(markerDTO.getAssayTypeCode()));
+            webDTO.setDescription(StConverter.convertToString(markerDTO
+                    .getTextDescription()));
+            webDTO.setStatus(CdConverter.convertCdToString(markerDTO
+                    .getStatusCode()));
+            webDTO.setHugoCode(CdConverter.convertCdToString(markerDTO
+                    .getHugoBiomarkerCode()));
+            if (webDTO.getStatus() != null) {
+                if (webDTO.getStatus().equals(
+                        ActiveInactivePendingCode.ACTIVE.getCode())) {
+                    if (markerDTO.getCadsrId() != null) {
+                        webDTO.setCadsrId(IiConverter.convertToLong(markerDTO
+                                .getCadsrId()));
+                    } else {
+                        List<PlannedMarkerSyncWithCaDSRDTO> listofValues = permissibleService
+                                .getValuesById(IiConverter.convertToLong(markerDTO
+                                        .getPermissibleValue()));
+                        webDTO.setPermissibleValue(listofValues.get(0).getCaDSRId());
+                    }
+                } else if (webDTO.getStatus().equals(
+                        ActiveInactivePendingCode.PENDING.getCode())) {
+                    webDTO.setPermissibleValue(markerDTO.getPermissibleValue());
+                } else {
+                    webDTO.setPermissibleValue(markerDTO.getPermissibleValue());
+                }
+            }
+            webDTO.setFoundInHugo(StringUtils.isNotEmpty(CdConverter
+                    .convertCdToString(markerDTO.getHugoBiomarkerCode())));
+            webDTO.setAssayType(CdConverter.convertCdToString(markerDTO
+                    .getAssayTypeCode()));
             if (markerDTO.getAssayTypeCode() != null) {
-                List<String> assayTypeList = selectedTypeValues(markerDTO.getAssayTypeCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.ASSAY_TYPE.getName());
+                List<String> assayTypeList = selectedTypeValues(markerDTO
+                        .getAssayTypeCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.ASSAY_TYPE.getName());
                 webDTO.setSelectedAssayType(assayTypeList);
             }
-            webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO.getAssayTypeOtherText()));
-            webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO.getAssayUseCode()));
+            webDTO.setAssayTypeOtherText(StConverter.convertToString(markerDTO
+                    .getAssayTypeOtherText()));
+            webDTO.setAssayUse(CdConverter.convertCdToString(markerDTO
+                    .getAssayUseCode()));
             if (markerDTO.getAssayPurposeCode() != null) {
-                List<String> assayPurposeList = selectedTypeValues(markerDTO.getAssayPurposeCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName());
+                List<String> assayPurposeList = selectedTypeValues(markerDTO
+                        .getAssayPurposeCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName());
                 webDTO.setSelectedAssayPurpose(assayPurposeList);
             }
-            webDTO.setAssayPurpose(CdConverter.convertCdToString(markerDTO.getAssayPurposeCode()));
-            webDTO.setAssayPurposeOtherText(StConverter.convertToString(markerDTO.getAssayPurposeOtherText()));
-            webDTO.setTissueSpecimenType(CdConverter.convertCdToString(markerDTO.getTissueSpecimenTypeCode()));
+            webDTO.setAssayPurpose(CdConverter.convertCdToString(markerDTO
+                    .getAssayPurposeCode()));
+            webDTO.setAssayPurposeOtherText(StConverter
+                    .convertToString(markerDTO.getAssayPurposeOtherText()));
+            webDTO.setTissueSpecimenType(CdConverter
+                    .convertCdToString(markerDTO.getTissueSpecimenTypeCode()));
             if (markerDTO.getTissueSpecimenTypeCode() != null) {
-                List<String> tissueSpecTypeList = selectedTypeValues(markerDTO.getTissueSpecimenTypeCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.SPECIMEN_TYPE.getName());
+                List<String> tissueSpecTypeList = selectedTypeValues(markerDTO
+                        .getTissueSpecimenTypeCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.SPECIMEN_TYPE.getName());
                 webDTO.setSelectedTissueSpecType(tissueSpecTypeList);
             }
-            webDTO.setSpecimenTypeOtherText(StConverter.convertToString(markerDTO.getSpecimenTypeOtherText()));
-            webDTO.setEvaluationType(CdConverter.convertCdToString(markerDTO.getEvaluationType()));
+            webDTO.setSpecimenTypeOtherText(StConverter
+                    .convertToString(markerDTO.getSpecimenTypeOtherText()));
+            webDTO.setEvaluationType(CdConverter.convertCdToString(markerDTO
+                    .getEvaluationType()));
             if (markerDTO.getEvaluationType() != null) {
-                List<String> evalTypeList = selectedTypeValues(markerDTO.getEvaluationType().getCode(), 
-                        markerValues, BioMarkerAttributesCode.EVALUATION_TYPE.getName());
+                List<String> evalTypeList = selectedTypeValues(markerDTO
+                        .getEvaluationType().getCode(), markerValues,
+                        BioMarkerAttributesCode.EVALUATION_TYPE.getName());
                 webDTO.setSelectedEvaluationType(evalTypeList);
             }
-            webDTO.setEvaluationTypeOtherText(StConverter.convertToString(markerDTO.getEvaluationTypeOtherText()));
-         
-            webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
+            webDTO.setEvaluationTypeOtherText(StConverter
+                    .convertToString(markerDTO.getEvaluationTypeOtherText()));
+
         }
         return webDTO;
-        
     }
-    private List<String> selectedTypeValues(String typeValue, Map<String, String> markerValues, String type) {
-        List<String> typeList = new ArrayList<String>();  
+
+    private List<String> selectedTypeValues(String typeValue,
+            Map<String, String> markerValues, String type) {
+        List<String> typeList = new ArrayList<String>();
         if (typeValue != null) {
-            String[] typeSplit = typeValue.split(",\\s*");        
+            String[] typeSplit = typeValue.split(",\\s*");
             for (String typeValues : typeSplit) {
-                for (int i = 0; markerValues != null && i < markerValues.size() 
-                && markerValues.containsKey(type + i); i++) {
+                for (int i = 0; markerValues != null && i < markerValues.size()
+                        && markerValues.containsKey(type + i); i++) {
                     if (markerValues.get(type + i).equals(typeValues)) {
                         typeList.add(typeValues);
                         break;
@@ -449,33 +567,32 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             }
         }
         return typeList;
-        
+
     }
-    
-    private List<String> deletedTypeValues(String typeValue, Map<String, String> markerValues, String type) {
-        List<String> typeList = new ArrayList<String>();  
+
+    private List<String> deletedTypeValues(String typeValue,
+            Map<String, String> markerValues, String type) {
+        List<String> typeList = new ArrayList<String>();
         if (typeValue != null) {
-            String[] typeSplit = typeValue.split(",\\s*");        
+            String[] typeSplit = typeValue.split(",\\s*");
             for (String typeValues : typeSplit) {
-                for (int i = 0; markerValues != null && i < markerValues.size() 
-                && markerValues.containsKey(type + i); i++) {
+                for (int i = 0; markerValues != null && i < markerValues.size()
+                        && markerValues.containsKey(type + i); i++) {
                     if (!markerValues.containsValue(typeValues)) {
                         typeList.add(typeValues);
                         break;
-                    }    
+                    }
                 }
             }
         }
         return typeList;
     }
-    
-    
+
     @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
     private PlannedMarkerDTO populateDTO(boolean isEdit) throws PAException {
         PlannedMarkerDTO marker = new PlannedMarkerDTO();
         marker.setIdentifier(IiConverter.convertToIi(getPlannedMarker().getId()));
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
-        // If no meaning (i.e. long name) is provided, use the name instead.
         if (StringUtils.isEmpty(getPlannedMarker().getMeaning()) || isEdit) {
             marker.setLongName(marker.getName());
         } else {
@@ -485,111 +602,118 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (getPlannedMarker().isFoundInHugo()) {
             marker.setHugoBiomarkerCode(CdConverter.convertStringToCd(getPlannedMarker().getHugoCode()));
         }
+        marker.setCadsrId(IiConverter.convertToIi(getPlannedMarker().getCadsrId()));
         if (isEdit) {
             PlannedMarkerDTO oldValue = plannedMarkerService.getPlannedMarkerWithID(getPlannedMarker().getId());
             Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
             if (oldValue != null) {
-                List<String> assayTypeList = deletedTypeValues(oldValue.getAssayTypeCode().getCode(), 
-                                markerValues, BioMarkerAttributesCode.ASSAY_TYPE.getName()); 
+                if (oldValue.getPermissibleValue() != null
+                        && StringUtils.equals(getPlannedMarker().getStatus(),
+                                ActiveInactivePendingCode.PENDING.getCode())) {
+                    Long id = IiConverter.convertToLong(oldValue.getPermissibleValue());
+                    List<PlannedMarkerSyncWithCaDSRDTO> list = permissibleService.getValuesById(id);
+                    if (!marker.getName().equals(list.get(0).getName())) {
+                        permissibleService.updateValueById(getPlannedMarker().getName(), id);
+                    }
+                }
+                List<String> assayTypeList = deletedTypeValues(oldValue.getAssayTypeCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.ASSAY_TYPE.getName());
                 String assayTypeValue = "";
                 if (assayTypeList != null) {
                     for (String delAssayValue : assayTypeList) {
                         assayTypeValue = delAssayValue + ", ";
                     }
-                    marker.setAssayTypeCode(CdConverter
-                            .convertStringToCd(assayTypeValue + getPlannedMarker().getAssayType()));
+                    marker.setAssayTypeCode(CdConverter.convertStringToCd(assayTypeValue
+                                    + getPlannedMarker().getAssayType()));
                 } else {
-                    marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
+                    marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker()
+                                    .getAssayType()));
                 }
-
-                List<String> assayUseList = deletedTypeValues(oldValue.getAssayUseCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.BIOMARKER_USE.getName()); 
+                List<String> assayUseList = deletedTypeValues(oldValue.getAssayUseCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.BIOMARKER_USE.getName());
                 String assayUseValue = "";
                 if (assayUseList != null) {
                     for (String delAssayUseValue : assayUseList) {
                         assayUseValue = delAssayUseValue + ", ";
                     }
-                    marker.setAssayUseCode(CdConverter
-                            .convertStringToCd(assayUseValue + getPlannedMarker().getAssayUse()));
+                    marker.setAssayUseCode(CdConverter.convertStringToCd(assayUseValue
+                                    + getPlannedMarker().getAssayUse()));
                 } else {
                     marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
                 }
-           
                 List<String> assayPurposeList = deletedTypeValues(oldValue.getAssayPurposeCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName()); 
+                        markerValues, BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName());
                 String assayPurposeValue = "";
                 if (assayPurposeList != null) {
                     for (String delAssayPurposeValue : assayPurposeList) {
                         assayPurposeValue = delAssayPurposeValue + ", ";
                     }
-                    marker.setAssayPurposeCode(CdConverter
-                            .convertStringToCd(assayPurposeValue + getPlannedMarker().getAssayPurpose()));
+                    marker.setAssayPurposeCode(CdConverter.convertStringToCd(assayPurposeValue
+                                    + getPlannedMarker().getAssayPurpose()));
                 } else {
                     marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
                 }
-            
-                List<String> specimenTypeList = deletedTypeValues(oldValue.getTissueSpecimenTypeCode().getCode(), 
-                        markerValues, BioMarkerAttributesCode.SPECIMEN_TYPE.getName()); 
+                List<String> specimenTypeList = deletedTypeValues(oldValue
+                        .getTissueSpecimenTypeCode().getCode(), markerValues,
+                        BioMarkerAttributesCode.SPECIMEN_TYPE.getName());
                 String specimenTypeValue = "";
                 if (specimenTypeList != null) {
                     for (String delSpecValue : specimenTypeList) {
                         specimenTypeValue = delSpecValue + ", ";
                     }
-                    marker.setTissueSpecimenTypeCode(CdConverter
-                            .convertStringToCd(specimenTypeValue + getPlannedMarker().getTissueSpecimenType()));
+                    marker.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(specimenTypeValue
+                                    + getPlannedMarker().getTissueSpecimenType()));
                 } else {
-                    marker.setTissueSpecimenTypeCode(CdConverter
-                            .convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
+                    marker.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(getPlannedMarker()
+                                    .getTissueSpecimenType()));
                 }
-           
-                List<String> evalTypeList = deletedTypeValues(oldValue.getEvaluationType().getCode(), 
-                        markerValues, BioMarkerAttributesCode.EVALUATION_TYPE.getName()); 
+                List<String> evalTypeList = deletedTypeValues(oldValue.getEvaluationType().getCode(), markerValues,
+                        BioMarkerAttributesCode.EVALUATION_TYPE.getName());
                 String evalTypeValue = "";
                 if (evalTypeList != null) {
                     for (String delEvalValue : evalTypeList) {
                         evalTypeValue = delEvalValue + ", ";
-                    } 
-                    marker.setEvaluationType(CdConverter
-                            .convertStringToCd(evalTypeValue + getPlannedMarker().getEvaluationType()));
+                    }
+                    marker.setEvaluationType(CdConverter.convertStringToCd(evalTypeValue
+                                    + getPlannedMarker().getEvaluationType()));
                 } else {
                     marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
                 }
-            } 
+            } else {
+                marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
+                marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
+                marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
+                marker.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(getPlannedMarker()
+                                .getTissueSpecimenType()));
+                marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
+            }
         } else {
             marker.setAssayTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayType()));
             marker.setAssayUseCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayUse()));
-           
             marker.setAssayPurposeCode(CdConverter.convertStringToCd(getPlannedMarker().getAssayPurpose()));
-            marker.setTissueSpecimenTypeCode(CdConverter
-                    .convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
+            marker.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(getPlannedMarker()
+                            .getTissueSpecimenType()));
             marker.setEvaluationType(CdConverter.convertStringToCd(getPlannedMarker().getEvaluationType()));
         }
-        
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayType(), 
-                getPlannedMarker().getAssayTypeOtherText()), OTHER)) {
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getAssayType(),
+                        getPlannedMarker().getAssayTypeOtherText()), OTHER)) {
             marker.setAssayTypeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayTypeOtherText()));
         }
-         
-       
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getAssayPurpose(), 
-                getPlannedMarker().getAssayPurposeOtherText()), OTHER)) {
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getAssayPurpose(),
+                        getPlannedMarker().getAssayPurposeOtherText()), OTHER)) {
             marker.setAssayPurposeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayPurposeOtherText()));
         }
-       
-        
-       
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getTissueSpecimenType(), 
-                getPlannedMarker().getSpecimenTypeOtherText()), OTHER)) {
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getTissueSpecimenType(),
+                        getPlannedMarker().getSpecimenTypeOtherText()), OTHER)) {
             marker.setSpecimenTypeOtherText(StConverter.convertToSt(getPlannedMarker().getSpecimenTypeOtherText()));
         }
-        
-        
-        
-        
-        if (StringUtils.equals(otherTextPresent(getPlannedMarker().getEvaluationType(), 
-                getPlannedMarker().getEvaluationTypeOtherText()), OTHER)) {
-            marker.setEvaluationTypeOtherText(StConverter
-                    .convertToSt(getPlannedMarker().getEvaluationTypeOtherText()));
+        if (StringUtils.equals(otherTextPresent(
+                        getPlannedMarker().getEvaluationType(),
+                        getPlannedMarker().getEvaluationTypeOtherText()), OTHER)) {
+           marker.setEvaluationTypeOtherText(StConverter.convertToSt(getPlannedMarker().getEvaluationTypeOtherText()));
         }
         marker.setStatusCode(CdConverter.convertStringToCd(getPlannedMarker().getStatus()));
         marker.setStudyProtocolIdentifier(getSpIi());
@@ -604,7 +728,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     }
 
     /**
-     * @param plannedMarker the plannedMarker to set
+     * @param plannedMarker
+     *            the plannedMarker to set
      */
     public void setPlannedMarker(PlannedMarkerWebDTO plannedMarker) {
         this.plannedMarker = plannedMarker;
@@ -618,7 +743,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     }
 
     /**
-     * @param plannedMarkerList the plannedMarkerList to set
+     * @param plannedMarkerList
+     *            the plannedMarkerList to set
      */
     public void setPlannedMarkerList(List<PlannedMarkerWebDTO> plannedMarkerList) {
         this.plannedMarkerList = plannedMarkerList;
@@ -632,7 +758,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     }
 
     /**
-     * @param cdeId the cdeId to set
+     * @param cdeId
+     *            the cdeId to set
      */
     public void setCdeId(String cdeId) {
         this.cdeId = cdeId;
@@ -646,30 +773,46 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     }
 
     /**
-     * @param appService the appService to set
+     * @param appService
+     *            the appService to set
      */
     public void setAppService(ApplicationService appService) {
         this.appService = appService;
     }
 
     /**
-     * @param plannedMarkerService the plannedMarkerService to set
+     * @param plannedMarkerService
+     *            the plannedMarkerService to set
      */
-    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+    public void setPlannedMarkerService(
+            PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
     }
+
     /**
-     * @param markerAttributesService the markerAttributesService to set
+     * @param markerAttributesService
+     *            the markerAttributesService to set
      */
-    public void setMarkerAttributesService(MarkerAttributesServiceLocal markerAttributesService) {
+    public void setMarkerAttributesService(
+            MarkerAttributesServiceLocal markerAttributesService) {
         this.markerAttributesService = markerAttributesService;
     }
-    
+
+    /**
+     * @param permissibleService
+     *            the permissibleService to set
+     */
+    public void setPermissibleService(
+            PlannedMarkerSyncWithCaDSRServiceLocal permissibleService) {
+        this.permissibleService = permissibleService;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public void deleteObject(Long objectId) throws PAException {
         plannedMarkerService.delete(IiConverter.convertToIi(objectId));
     }
+
     /**
      * @return the saveReset
      */
@@ -684,12 +827,14 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setSaveReset(boolean saveReset) {
         this.saveReset = saveReset;
     }
+
     /**
      * @return the pendingStatus
      */
     public boolean isPendingStatus() {
         return pendingStatus;
     }
+
     /**
      * @param pendingStatus
      *            the pendingStatus to set
@@ -697,5 +842,20 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setPendingStatus(boolean pendingStatus) {
         this.pendingStatus = pendingStatus;
     }
-    
+
+    /**
+     * @return the cadsrId
+     */
+    public String getCadsrId() {
+        return cadsrId;
+    }
+
+    /**
+     * @param cadsrId
+     *            the cadsrId to set
+     */
+    public void setCadsrId(String cadsrId) {
+        this.cadsrId = cadsrId;
+    }
+
 }

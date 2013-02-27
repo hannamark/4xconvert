@@ -165,6 +165,7 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         markerDTO.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
         markerDTO.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));
         markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+        markerDTO.setPermissibleValue(IiConverter.convertToIi(1L));
         return markerDTO;
     }
     

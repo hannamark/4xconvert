@@ -82,17 +82,18 @@
  */
 package gov.nih.nci.pa.action;
 
-
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -131,6 +132,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private StudyProtocolService studyProtocolService;
+    private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
     private String selectedRowIdentifier;
     private String trialId;
     private String markerName;
@@ -140,6 +142,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
+        permissibleService = PaRegistry.getPMWithCaDSRService();
     }
 
     @Override
@@ -258,17 +261,31 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             PlannedMarkerDTO marker = plannedMarkerService.get(IiConverter.convertToIi(getPlannedMarker().getId()));
             PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null);
             
-            List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkersWithName(
-                    StConverter.convertToString(marker.getLongName()));
-            for (PlannedMarkerDTO markerDTO : markerDTOs) {
-                markerDTO.setLongName(StConverter.convertToSt(plannedMarker.getName()));
-                markerDTO.setName(StConverter.convertToSt(plannedMarker.getName()));
-                markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                plannedMarkerService.update(markerDTO);
-                if (markerDTO.getIdentifier().getExtension().equals(marker.getIdentifier().getExtension())) {
-                    marker = markerDTO;
+         // check the value with the planned_marker_sync_cadsr table  as this table is in sync with the cadsr. 
+            List<PlannedMarkerDTO> markerDTOs = plannedMarkerService
+            .getPendingPlannedMarkersWithName(getPlannedMarker().getName());
+            List<PlannedMarkerSyncWithCaDSRDTO> acceptValues = 
+                permissibleService.getValuesByName(getPlannedMarker().getName());
+            if (!acceptValues.isEmpty()) {
+                if (StringUtils.equals(acceptValues.get(0).getStatusCode().toString(), 
+                        ActiveInactivePendingCode.ACTIVE.getName())) { 
+                for (PlannedMarkerDTO markerDTO : markerDTOs) {
+                    markerDTO.setLongName(StConverter.convertToSt(plannedMarker.getName()));
+                    markerDTO.setName(StConverter.convertToSt(plannedMarker.getName()));
+                    markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                    markerDTO.setPermissibleValue(IiConverter
+                            .convertToIi(Long.valueOf(acceptValues.get(0).getIdentifier().toString())));
+                   
+                    if (markerDTO.getIdentifier().getExtension().equals(marker.getIdentifier().getExtension())) {
+                        marker = markerDTO;
+                    }
                 }
-            }           
+                } else {
+                    addActionError("An exact match in caDSR could not be found. Please check" 
+                            + " the permissible value name before editing"); 
+                }
+            }
+           
             try {                                
                 PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
                         webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);           
@@ -287,13 +304,24 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null);
-        
-        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkersWithName(
-                StConverter.convertToString(marker.getLongName()));
-        for (PlannedMarkerDTO markerDTO : markerDTOs) {
-            markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-            plannedMarkerService.update(markerDTO);
+        Long id = IiConverter.convertToLong(marker.getPermissibleValue());
+        // check the value with the planned_marker_sync_cadsr table  as this table is in sync with the cadsr. 
+        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(id);
+        List<PlannedMarkerSyncWithCaDSRDTO> acceptValues = permissibleService.getValuesById(id);
+        if (!acceptValues.isEmpty()) {
+            if (StringUtils.equals(acceptValues.get(0).getStatusCode().toString(), 
+                    ActiveInactivePendingCode.ACTIVE.getName())) {
+                for (PlannedMarkerDTO markerDTO : markerDTOs) {
+                    markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                    plannedMarkerService.update(markerDTO);
+                }
+            } else {
+                addActionError("An exact match in caDSR could not be found. Please check" 
+                        + " the permissible value name before accepting"); 
+            }
         }
+       
+       
         marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
         try {            
             PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
@@ -348,7 +376,9 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setQuestion("");
         webDTO.setNciIdentifier(nciIdentifier);
         webDTO.setCsmUserEmailId(emailId);
-
+        //List<PlannedMarkerSyncWithCaDSRDTO> listofValues = 
+     //       permissibleService.getValuesById(IiConverter.convertToLong(markerDTO.getPermissibleValue()));
+        webDTO.setPermissibleValue(markerDTO.getPermissibleValue());
         return webDTO;
     }
 
@@ -493,6 +523,16 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      */
     public void setStudyProtocolService(StudyProtocolService studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
-    }  
+    } 
+   
+    /**
+     * @param permissibleService the permissibleService to set
+     */
+    public void setPermissibleService(
+            PlannedMarkerSyncWithCaDSRServiceLocal permissibleService) {
+        this.permissibleService = permissibleService;
+    }
+    
+    
     
 }

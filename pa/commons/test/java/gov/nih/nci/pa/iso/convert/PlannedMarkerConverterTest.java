@@ -84,6 +84,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.PlannedMarker;
+import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -92,9 +93,10 @@ import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- *
+ * 
  */
-public class PlannedMarkerConverterTest extends
+public class PlannedMarkerConverterTest
+        extends
         AbstractConverterTest<PlannedMarkerConverter, PlannedMarkerDTO, PlannedMarker> {
 
     /**
@@ -103,10 +105,16 @@ public class PlannedMarkerConverterTest extends
     @Override
     public PlannedMarker makeBo() {
         PlannedMarker bo = new PlannedMarker();
+        PlannedMarkerSyncWithCaDSR permissibleValue = new PlannedMarkerSyncWithCaDSR();
+        permissibleValue.setCaDSRId(12345L);
+        permissibleValue.setName("Biomarker");
+        permissibleValue.setMeaning("Biomarker long name");
+        permissibleValue.setDescription("desc");
+        permissibleValue.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         bo.setId(ID);
         bo.setStudyProtocol(getStudyProtocol());
-        bo.setName("Biomarker");
-        bo.setLongName("Biomarker long name");
+        // bo.setName("Biomarker");
+        // bo.setLongName("Biomarker long name");
         bo.setHugoBiomarkerCode("HUGO Biomarker Code");
         bo.setAssayTypeCode("Other");
         bo.setAssayTypeOtherText("Assay Type Other Text");
@@ -115,6 +123,7 @@ public class PlannedMarkerConverterTest extends
         bo.setTissueSpecimenTypeCode("Serum");
         bo.setTissueCollectionMethodCode("Mandatory");
         bo.setStatusCode(ActiveInactivePendingCode.PENDING);
+        bo.setPermissibleValue(permissibleValue);
         return bo;
     }
 
@@ -125,17 +134,23 @@ public class PlannedMarkerConverterTest extends
     public PlannedMarkerDTO makeDto() {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setIdentifier(IiConverter.convertToIi(ID));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        dto.setStudyProtocolIdentifier(IiConverter
+                .convertToIi(STUDY_PROTOCOL_ID));
         dto.setName(StConverter.convertToSt("Biomarker"));
         dto.setLongName(StConverter.convertToSt("Biomarker long name"));
-        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
+        dto.setHugoBiomarkerCode(CdConverter
+                .convertStringToCd("HUGO Biomarker Code"));
         dto.setAssayTypeCode(CdConverter.convertStringToCd("Other"));
-        dto.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
+        dto.setAssayTypeOtherText(StConverter
+                .convertToSt("Assay Type Other Text"));
         dto.setAssayUseCode(CdConverter.convertStringToCd("Integral"));
-        dto.setAssayPurposeCode(CdConverter.convertStringToCd("Eligibility Criterion"));
+        dto.setAssayPurposeCode(CdConverter
+                .convertStringToCd("Eligibility Criterion"));
         dto.setTissueSpecimenTypeCode(CdConverter.convertStringToCd("Serum"));
-        dto.setTissueCollectionMethodCode(CdConverter.convertStringToCd("Mandatory"));
-        dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+        dto.setTissueCollectionMethodCode(CdConverter
+                .convertStringToCd("Mandatory"));
+        dto.setStatusCode(CdConverter
+                .convertToCd(ActiveInactivePendingCode.PENDING));
         return dto;
     }
 
@@ -145,14 +160,14 @@ public class PlannedMarkerConverterTest extends
     @Override
     public void verifyBo(PlannedMarker bo) {
         assertEquals(ID, bo.getId());
-        assertEquals("Biomarker", bo.getName());
-        assertEquals("Biomarker long name", bo.getLongName());
+        // assertEquals("Biomarker", bo.getName());
+        // assertEquals("Biomarker long name", bo.getLongName());
         assertEquals("HUGO Biomarker Code", bo.getHugoBiomarkerCode());
-        //assertEquals(AssayTypeCode.OTHER.getClass(), bo.getAssayTypeCode());
+        // assertEquals(AssayTypeCode.OTHER.getClass(), bo.getAssayTypeCode());
         assertEquals("Assay Type Other Text", bo.getAssayTypeOtherText());
         assertEquals("Integral", bo.getAssayUseCode());
         assertEquals("Eligibility Criterion", bo.getAssayPurposeCode());
-        
+
         assertEquals("Serum", bo.getTissueSpecimenTypeCode());
         assertEquals("Mandatory", bo.getTissueCollectionMethodCode());
         assertEquals(ActiveInactivePendingCode.PENDING, bo.getStatusCode());
@@ -166,14 +181,19 @@ public class PlannedMarkerConverterTest extends
         assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals("Biomarker", dto.getName().getValue());
         assertEquals("Biomarker long name", dto.getLongName().getValue());
-        assertEquals("HUGO Biomarker Code", dto.getHugoBiomarkerCode().getCode());
+        assertEquals("HUGO Biomarker Code", dto.getHugoBiomarkerCode()
+                .getCode());
         assertEquals("Other", dto.getAssayTypeCode().getCode());
-        assertEquals("Assay Type Other Text", dto.getAssayTypeOtherText().getValue());
+        assertEquals("Assay Type Other Text", dto.getAssayTypeOtherText()
+                .getValue());
         assertEquals("Integral", dto.getAssayUseCode().getCode());
-        assertEquals("Eligibility Criterion", dto.getAssayPurposeCode().getCode());
-        //assertEquals("Assay Purpose Other Text", dto.getAssayPurposeOtherText().getValue());
+        assertEquals("Eligibility Criterion", dto.getAssayPurposeCode()
+                .getCode());
+        // assertEquals("Assay Purpose Other Text",
+        // dto.getAssayPurposeOtherText().getValue());
         assertEquals("Serum", dto.getTissueSpecimenTypeCode().getCode());
         assertEquals("Mandatory", dto.getTissueCollectionMethodCode().getCode());
-        assertEquals(ActiveInactivePendingCode.PENDING.getCode(), dto.getStatusCode().getCode());
+        assertEquals(ActiveInactivePendingCode.PENDING.getCode(), dto
+                .getStatusCode().getCode());
     }
 }

@@ -163,4 +163,39 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      */
     List<PlannedMarkerDTO> getPendingPlannedMarkersShortNameAndNCIId(String name, String nciIdentifier) 
     throws PAException;
+    
+//    /**
+//     * returns list of plannedMarkers with Active status adn with null sync ID.
+//     * @return list of PlannedMarkerDTO
+//     * @throws PAException exception
+//     */
+//    List<PlannedMarkerDTO> getActivePlannedMarkersWithSyncIDNull() throws PAException;
+    
+    /**
+     * returns list of plannedMarkers with the matching Sync id with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param syncId syncId
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPendingPlannedMarkerWithSyncID(Long syncId) throws PAException;
+    
+    /**
+     * updates the marker with status
+     * 
+     * @param identifier identifier
+     * @param status status
+     * @throws PAException PAException
+     */
+    void updateStatusByPMSynID(Long identifier, String status) throws PAException;
+    
+    /**
+     * updates the marker with status
+     * 
+     * @param newId newId
+     * @param status status
+     * @param oldId oldId
+     * @throws PAException PAException
+     * 
+     */
+    void updateStatusOldIDByPMSynID(Long oldId, Long newId, String status) throws PAException;
 }

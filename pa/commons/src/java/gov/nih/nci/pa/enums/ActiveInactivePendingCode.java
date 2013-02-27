@@ -102,7 +102,11 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
     /**
      * Pending.
      */
-    PENDING("Pending");
+    PENDING("Pending"),
+    /**
+     * Deleted in caDSR.
+     */
+    DELECTED_IN_CADSR("Deleted in caDSR");
 
     private String code;
 

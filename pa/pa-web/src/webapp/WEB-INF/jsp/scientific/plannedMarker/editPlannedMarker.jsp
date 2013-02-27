@@ -93,7 +93,12 @@
             function loadDiv(markerId) {
                 window.top.hidePopWin(true);
                 var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action';
-                var params = { cdeId: markerId };
+                var split = location.search.replace('?', '').split('=');
+                if (split != null) {
+                 var rowValue = split[1];
+                }
+                var params = { cdeId: markerId, selectedRowIdentifier:rowValue};
+                
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);

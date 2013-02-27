@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -622,7 +623,13 @@ public final class PaRegistry {
     public static MarkerAttributesServiceLocal getMarkerAttributesService() {
         return getInstance().getServiceLocator().getMarkerAttributesService();
     }
-
+    
+    /**
+     * @return the PlannedMarkerSyncWithCaDSR Service
+     */
+    public static PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
+        return getInstance().getServiceLocator().getPMWithCaDSRService();
+    }
     /**
      * @return the audit trail service
      */
@@ -657,4 +664,7 @@ public final class PaRegistry {
     public static CTGovUploadServiceLocal getCTGovUploadService() {
         return getInstance().getServiceLocator().getCTGovUploadService();
     }
+    
+   
+
 }

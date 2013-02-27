@@ -167,7 +167,7 @@ implements PlannedMarkerServiceLocal {
      */
     @Override
     protected String getQueryOrderClause() {
-        return " order by alias.longName";
+        return " order by alias.id";
     }
 
     private void enforceNoDuplicates(PlannedMarkerDTO markerDTO) throws PAException {
@@ -177,11 +177,14 @@ implements PlannedMarkerServiceLocal {
                 PlannedMarkerSortCriterion.PLANNED_MARKER_ID, false);
         List<PlannedMarker> results = search(new AnnotatedBeanSearchCriteria<PlannedMarker>(criteria), params);
         for (PlannedMarker m : results) {
-            if (!m.getId().equals(IiConverter.convertToLong(markerDTO.getIdentifier()))) {
+            if (!m.getId().equals(IiConverter.convertToLong(markerDTO.getIdentifier())) 
+                    && m.getPermissibleValue().getId() == (IiConverter
+                            .convertToLong(markerDTO.getPermissibleValue()))) {
                 throw new PADuplicateException("Duplicate Planned Markers are not allowed.");
-            }
-        }
+            }      
+        }  
     }
+           
     /**
      * returns list of plannedMarkers with pending status.
      * @return list of PlannedMarkerDTO
@@ -196,6 +199,7 @@ implements PlannedMarkerServiceLocal {
         return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
     }
     
+    
     /**
      * returns list of plannedMarkers with the matching long name with pending status.
      * @return list of PlannedMarkerDTO
@@ -205,8 +209,24 @@ implements PlannedMarkerServiceLocal {
     public List<PlannedMarkerDTO> getPendingPlannedMarkersWithName(String longName) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
-        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.longName='" 
-                    + longName + "'";
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.permissibleValue= " 
+            + " (select ps.id from PlannedMarkerSyncWithCaDSR as ps where ps.name ='"
+            + longName + "')";
+        Query query = session.createQuery(hql);
+        List<PlannedMarker> markers = query.list();
+        return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
+    }
+    
+    /**
+     * returns list of plannedMarkers with the matching Sync id with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param syncId syncId
+     * @throws PAException exception
+     */
+    public List<PlannedMarkerDTO> getPendingPlannedMarkerWithSyncID(Long syncId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.permissibleValue=" + syncId;
         Query query = session.createQuery(hql);
         List<PlannedMarker> markers = query.list();
         return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
@@ -230,15 +250,15 @@ implements PlannedMarkerServiceLocal {
             protocolIds = studyProtocolService.getProtocolIdsWithNCIId(nciIdentifier);    
         }
         if (!StringUtils.isBlank(name) && !StringUtils.isBlank(nciIdentifier)) {
-             hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)" 
-                + " and pm.id IN" 
-                + " (select pa.id from PlannedActivity as pa " 
-                + " where pa.studyProtocol.id IN (:listOfIds))";
-        } else {
-             hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)" 
-                + " or pm.statusCode='PENDING' and pm.id IN" 
-                + " (select pa.id from PlannedActivity as pa " 
-                + " where pa.studyProtocol.id IN (:listOfIds))";
+            hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.permissibleValue IN "
+                + " (select ps.id from PlannedMarkerSyncWithCaDSR as ps where UPPER(ps.name)"
+                + " like UPPER(:name)) and pm.id IN" 
+                + " (select pa.id from PlannedActivity as pa where pa.studyProtocol.id IN (:listOfIds))";
+        } else {         
+            hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.permissibleValue IN "
+                + " (select ps.id from PlannedMarkerSyncWithCaDSR as ps where UPPER(ps.name)"
+                + " like UPPER(:name)) or  pm.statusCode='PENDING' and pm.id IN" 
+                + " (select pa.id from PlannedActivity as pa where pa.studyProtocol.id IN (:listOfIds))";
         } 
         Query query = session.createQuery(hql);
         if (!protocolIds.isEmpty()) {
@@ -260,7 +280,9 @@ implements PlannedMarkerServiceLocal {
     public List<PlannedMarkerDTO> getPendingPlannedMarkersShortName(String name) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
-        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and UPPER(pm.name) like UPPER(:name)";
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.permissibleValue IN" 
+            + "(select ps.id from PlannedMarkerSyncWithCaDSR as ps where UPPER(ps.name)"
+            + " like UPPER(:name))";
         Query query = session.createQuery(hql);
         query.setParameter("name", "%" + name + "%");
         List<PlannedMarker> markers = query.list();
@@ -330,11 +352,57 @@ implements PlannedMarkerServiceLocal {
         String hql = "from PlannedMarker as pm where pm.id = :id ";
         Query query = session.createQuery(hql);
         query.setParameter("id", id);
-        List<PlannedMarker> markers = query.list();        
-        PlannedMarker marker = markers.get(0);
-        return (PlannedMarkerDTO) convertFromDomainToDto(marker);   
+        List<PlannedMarker> markers = query.list();  
+        PlannedMarker marker = null;
+        PlannedMarkerDTO markerDto = null;
+        if (!markers.isEmpty()) {
+            marker = markers.get(0);
+            markerDto = (PlannedMarkerDTO) convertFromDomainToDto(marker);
+        }
+        return  markerDto;
     }
-
+    
+    
+    /**
+     * updates the marker with status
+     * 
+     * @param identifier identifier
+     * @param status status
+     * @throws PAException PAException
+     */
+    public void updateStatusByPMSynID(Long identifier, String status) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        
+        SQLQuery query = session.createSQLQuery("update Planned_Marker set status_code=:status"
+                + " where pm_sync_identifier=:identifier");
+        query.setParameter("status", status);
+        query.setParameter("identifier", identifier);
+        query.executeUpdate();
+    }
+    
+    /**
+     * updates the marker with status
+     * 
+     * @param newId newId
+     * @param status status
+     * @param oldId oldId
+     * @throws PAException PAException
+     * 
+     */
+    public void updateStatusOldIDByPMSynID(Long oldId, Long newId, String status) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        
+        SQLQuery query = session.createSQLQuery("update Planned_Marker set status_code=:status, " 
+                + " pm_sync_identifier=:newId"
+                + " where pm_sync_identifier=:oldId");
+        query.setParameter("status", status);
+        query.setParameter("oldId", oldId);
+        query.setParameter("newId", newId);
+        query.executeUpdate();
+    }
+    
     /**
      * @return the studyProtocolService
      */

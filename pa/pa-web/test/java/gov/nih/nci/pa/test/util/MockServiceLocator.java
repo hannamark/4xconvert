@@ -129,6 +129,7 @@ import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
@@ -938,6 +939,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public CTGovUploadServiceLocal getCTGovUploadService() {        
         return Mockito.mock(CTGovUploadServiceLocal.class);
+    }
+
+    @Override
+    public PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
+        return Mockito.mock(PlannedMarkerSyncWithCaDSRServiceLocal.class);
     }
 
 }

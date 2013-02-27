@@ -82,11 +82,14 @@
  */
 package gov.nih.nci.pa.domain;
 
+
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -105,8 +108,6 @@ public class PlannedMarker extends PlannedObservation {
     private static final int DEFAULT_COLUMN_LENGTH = 200;
     /** Maximum length of planned attribute column length . */
     private static final int ATTRIBUTE_COLUMN_LENGTH = 200;
-    private String name;
-    private String longName;
     private String hugoBiomarkerCode;
     private String assayTypeCode;
     private String assayTypeOtherText;
@@ -119,38 +120,8 @@ public class PlannedMarker extends PlannedObservation {
     private ActiveInactivePendingCode statusCode;
     private String evaluationTypeCode;
     private String evaluationTypeOtherText;
+    private PlannedMarkerSyncWithCaDSR permissibleValue; 
 
-    /**
-     * @return the name
-     */
-    @Column(name = "NAME", length = DEFAULT_COLUMN_LENGTH, nullable = false)
-    @NotNull
-    @Searchable(caseSensitive = false, matchMode = Searchable.MATCH_MODE_EXACT)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the longName
-     */
-    @Column(name = "LONG_NAME", length = TEXT_DESCRIPTION_LENGTH)
-    public String getLongName() {
-        return longName;
-    }
-
-    /**
-     * @param longName the longName to set
-     */
-    public void setLongName(String longName) {
-        this.longName = longName;
-    }
 
     /**
      * @return the hugoBiomarkerCode
@@ -348,5 +319,22 @@ public class PlannedMarker extends PlannedObservation {
     public void setSpecimenTypeOtherText(String specimenTypeOtherText) {
         this.specimenTypeOtherText = specimenTypeOtherText;
     }
+    /**
+    *
+    * @return permisibleValue permisibleValue
+    */
+   @ManyToOne
+   @JoinColumn(name = "PM_SYNC_IDENTIFIER")
+    public PlannedMarkerSyncWithCaDSR getPermissibleValue() {
+        return permissibleValue;
+    }
+   /**
+   *
+   * @param permissibleValue permissibleValue
+   */
+    public void setPermissibleValue(PlannedMarkerSyncWithCaDSR permissibleValue) {
+        this.permissibleValue = permissibleValue;
+    }
+    
     
 }

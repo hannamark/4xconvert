@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.iso21090.Ii;
+
 import java.util.List;
 /**
  * Web DTO for planned markers.
@@ -118,6 +120,8 @@ public class PlannedMarkerWebDTO {
     private List<String> selectedAssayPurpose;
     private List<String> selectedTissueSpecType;
     private List<String> selectedEvaluationType;
+    private Ii permissibleValue;
+    private Long cadsrId;
     /**
      * @return the id
      */
@@ -500,5 +504,33 @@ public class PlannedMarkerWebDTO {
     public void setSpecimenTypeOtherText(String specimenTypeOtherText) {
         this.specimenTypeOtherText = specimenTypeOtherText;
     }
+    /**
+     * @return the permissibleValue
+     */
+    public Ii getPermissibleValue() {
+        return permissibleValue;
+    }
+    /**
+     * 
+     * @param permissibleValue permissibleValue
+     */
+    public void setPermissibleValue(Ii permissibleValue) {
+        this.permissibleValue = permissibleValue;
+    }
+    /**
+     * @return the cadsrId
+     */
+    public Long getCadsrId() {
+        return cadsrId;
+    }
+    
+    /**
+     * 
+     * @param cadsrId cadsrId
+     */
+    public void setCadsrId(Long cadsrId) {
+        this.cadsrId = cadsrId;
+    }
+    
     
 }

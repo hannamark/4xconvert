@@ -95,6 +95,7 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({"PMD.TooManyMethods" })
 public interface MailManagerService {
 
     /**
@@ -328,6 +329,16 @@ public interface MailManagerService {
      * @param deadline deadline
      * @throws PAException PAException
      */
-    void sendOnHoldEmail(Long studyProtocolId, StudyOnhold onhold, Date deadline) throws PAException;     
+    void sendOnHoldEmail(Long studyProtocolId, StudyOnhold onhold, Date deadline) throws PAException;  
+    
+    /**
+     * send mail to CTRP when an error occurs.
+     * @param toAddress toAddress
+     * @param fromAddress fromAddress
+     * @param values values
+     * @throws PAException PAException
+     */
+    void sendErrorToCTROMail(String toAddress, String fromAddress, 
+            String values) throws PAException;
     
 }

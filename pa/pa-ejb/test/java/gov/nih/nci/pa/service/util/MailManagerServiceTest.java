@@ -414,12 +414,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("CDE_MARKER_REQUEST_FROM_EMAIL");
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
-        
+
         PaHibernateUtil
                 .getCurrentSession()
                 .createSQLQuery(
                         "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
-                .executeUpdate();       
+                .executeUpdate();
     }
 
     private User createUser(String loginName, String firstName, String lastName) {
@@ -676,8 +676,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(user);
         bean.sendMarkerCDERequestMail(proprietaryTrialIi, "from@example.com",
                 dto, "Marker Text");
-    }   
-    
+    }
+
     @Test
     public void testGetMarkerEmailAddress() throws PAException {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
@@ -688,6 +688,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         dto.setUserLastCreated(StConverter.convertToSt("1000"));
         assertEquals("example1@example.com", bean.getMarkerEmailAddress(dto));
     }
+
     @Test
     public void testsendMarkerAcceptanceMailToCDE() throws PAException {
         String nciIdentifier = "nciIdentifier";
@@ -1124,7 +1125,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 lookUpTableService
                         .getPropertyValue("trial.register.mismatchedUser.email.body"))
                 .thenReturn("BODY {0} {1} {2}");
-        
+
         when(lookUpTableService.getPropertyValue("abstraction.script.mailTo"))
                 .thenReturn("denis.krylov@semanticbits.com");
 
@@ -1149,7 +1150,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut.sendUnidentifiableOwnerEmail(1L,
                 Arrays.asList("bademail@semanticbits.com"));
 
-        verify(protocolQueryService, atLeastOnce()).getTrialSummaryByStudyProtocolId(1L);
+        verify(protocolQueryService, atLeastOnce())
+                .getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService, atLeastOnce()).getUser("loginName");
 
         ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
@@ -1157,7 +1159,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
                 .forClass(String.class);
 
-        verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"), anyString(), anyListOf(String.class),
+        verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"),
+                anyString(), anyListOf(String.class),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
                 eq(new File[0]), anyBoolean());
         assertEquals("Wrong mail subject", "SUBJECT NCI nciIdentifier",
@@ -1197,5 +1200,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("logctrp@example.com", bcc.toString());
         assertEquals("subject", result.getSubject());
         assertEquals("copy", cc.toString());
+    }
+
+    @Test
+    public void sendErrorToCTROMailTest() throws Exception {
+        bean.sendErrorToCTROMail("to", "from", "Exception");
     }
 }

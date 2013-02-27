@@ -5,6 +5,7 @@
     <s:hidden name="plannedMarker.id" />
     <s:hidden id="foundInHugo" name="plannedMarker.foundInHugo" />
     <s:hidden id="saveReset" name="saveReset"/>
+    
     <tr>
         <td class="label">
             <label for="name"><fmt:message key="plannedMarker.name" />:</label><span class="required">*</span>
@@ -82,6 +83,7 @@
         <td>
             <s:hidden name="plannedMarker.description" id="description"/>
             <s:property value="plannedMarker.description"/>
+            
         </td>
     </tr>
     <tr id="hugoCodeRow" style="display:none">
@@ -91,6 +93,15 @@
         <td>
             <s:hidden name="plannedMarker.hugoCode" id="hugoCode" />
             <s:property value="plannedMarker.hugoCode"/>
+        </td>
+    </tr>
+    <tr id="cadsrID" style="display:none">
+        <td class="label">
+            <s:label for="plannedMarker.cadsrId"><fmt:message key="plannedMarker.cadsrId"/>:</s:label>
+        </td>
+        <td>
+            <s:hidden name="plannedMarker.cadsrId" id="cadsrID" />
+            <s:property value="plannedMarker.cadsrId"/>
         </td>
     </tr>
     <tr>

@@ -126,6 +126,7 @@ public class Converters {
         converterMap.put(PlannedProcedureConverter.class, new PlannedProcedureConverter());
         converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
         converterMap.put(StudySiteAccrualAccessConverter.class, new StudySiteAccrualAccessConverter());
+        converterMap.put(PlannedMarkerSyncWithCaDSRConverter.class, new PlannedMarkerSyncWithCaDSRConverter());
     }
 
     /**
