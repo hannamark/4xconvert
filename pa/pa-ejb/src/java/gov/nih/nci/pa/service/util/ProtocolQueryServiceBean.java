@@ -1021,6 +1021,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         query.setParameter("name", agentNsc);
         query.setParameter("type", InterventionTypeCode.DRUG);
         query.setParameter("statusCode", ActStatusCode.ACTIVE);
-        return protocolQueryResultsService.getResults(query.list(), false, null);
+        return protocolQueryResultsService.getResultsLean(query.list());
     }
 }

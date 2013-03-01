@@ -194,6 +194,11 @@ public class ProtocolQueryServiceIntegrationTest extends
             }
             return result;
         }
+
+        @Override
+        public List<StudyProtocolQueryDTO> getResultsLean(List<Long> ids) throws PAException {
+            return getResults(ids, false, null);
+        }
     }
 
     @Rule

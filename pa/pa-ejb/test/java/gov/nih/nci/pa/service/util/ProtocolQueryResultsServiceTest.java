@@ -1,7 +1,9 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -238,6 +240,15 @@ public class ProtocolQueryResultsServiceTest {
     }
 
     @Test
+    public void emptyListLeanTest() throws Exception {
+        List<Object> result = new ArrayList<Object>();
+        result.add(qryResult);
+        when(daMock.findByQuery(any(DAQuery.class))).thenReturn(result);
+        assertEquals(0, bean.getResultsLean(null).size());
+        assertEquals(0, bean.getResultsLean(new ArrayList<Long>()).size());
+    }
+
+    @Test
     public void noOwnedTrialsTest() throws Exception {
         List<Long> ids = new ArrayList<Long>();
         for (long x = 0; x < 501; x++) {           
@@ -266,6 +277,16 @@ public class ProtocolQueryResultsServiceTest {
         trials = bean.getResults(ids, false, MEMB_USERID);
         assertEquals(1, trials.size());
         assertEquals(SubmissionTypeCode.A, trials.get(0).getSubmissionTypeCode());
+    }
+
+    @Test
+    public void submissionTypeLeanTest() throws Exception {
+        List<Object> result = new ArrayList<Object>();
+        result.add(qryResult);
+        when(daMock.findByQuery(any(DAQuery.class))).thenReturn(result);
+        List<Long> ids = new ArrayList<Long>();
+        ids.add(1L);
+        assertEquals(1, bean.getResultsLean(ids).size());
     }
 
     @Test
@@ -357,6 +378,4 @@ public class ProtocolQueryResultsServiceTest {
         assertEquals(1, map.size());
         assertEquals(Boolean.TRUE, map.get(studyProtocolIdentifier.longValue()));
     }
-    
-    
 }

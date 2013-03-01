@@ -2,9 +2,13 @@ package gov.nih.nci.registry.rest.domain;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,13 +27,18 @@ import org.apache.log4j.Logger;
 public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLean> {
     private static final Logger LOG = Logger.getLogger(StudyProtocolXmlLean.class);
 
+    private static final Set<DocumentWorkflowStatusCode> DISPLAY_CODES =
+            EnumSet.of(DocumentWorkflowStatusCode.VERIFICATION_PENDING,
+                       DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                       DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+
     private String nciIdentifier;
     private String officialTitle;
     private String phaseName;
     private String leadOrganizationName;
     private String piFullName;
-    private DocumentWorkflowStatusCode documentWorkflowStatusCode;
-    private String nctNumber;
+    private StudyStatusCode studyStatusCode;
+    private String nctIdentifier;
 
     /**
      * Generate a list of StudyProtocolXmlLean from search result list.
@@ -40,16 +49,27 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
         List<StudyProtocolXmlLean> result = new ArrayList<StudyProtocolXmlLean>();
         if (searchResultDtoList != null) {
             for (StudyProtocolQueryDTO item : searchResultDtoList) {
-                if (StringUtils.isNotEmpty(item.getNciIdentifier())) {
-                    result.add(new StudyProtocolXmlLean(item));
+                if (StringUtils.isNotEmpty(item.getNciIdentifier()) 
+                        && DISPLAY_CODES.contains(item.getDocumentWorkflowStatusCode())) {
+                    StudyProtocolXmlLean xmlObj = new StudyProtocolXmlLean(item);
+                    result.add(xmlObj);
                 }
             }
         }
+        Collections.sort(result);
         return result;
     }
 
     private StudyProtocolXmlLean() {
         // required for to prevent JAXBMarshalException: IllegalAnnotationsException
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(StudyProtocolXmlLean that) {
+        return nciIdentifier.compareTo(that.nciIdentifier);
     }
 
     /**
@@ -112,37 +132,6 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
         this.piFullName = piFullName;
     }
     /**
-     * @return the nctNumber
-     */
-    public String getNctNumber() {
-        return nctNumber;
-    }
-    /**
-     * @param nctNumber the nctNumber to set
-     */
-    public void setNctNumber(String nctNumber) {
-        this.nctNumber = nctNumber;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(StudyProtocolXmlLean that) {
-        return nciIdentifier.compareTo(that.nciIdentifier);
-    }
-    /**
-     * @return the documentWorkflowStatusCode
-     */
-    public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
-        return documentWorkflowStatusCode;
-    }
-    /**
-     * @param documentWorkflowStatusCode the documentWorkflowStatusCode to set
-     */
-    public void setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode documentWorkflowStatusCode) {
-        this.documentWorkflowStatusCode = documentWorkflowStatusCode;
-    }
-    /**
      * @return the phaseName
      */
     public String getPhaseName() {
@@ -153,5 +142,31 @@ public final class StudyProtocolXmlLean implements Comparable<StudyProtocolXmlLe
      */
     public void setPhaseName(String phaseName) {
         this.phaseName = phaseName;
+    }
+    /**
+     * @return the studyStatusCode
+     */
+    public StudyStatusCode getStudyStatusCode() {
+        return studyStatusCode;
+    }
+
+    /**
+     * @param studyStatusCode the studyStatusCode to set
+     */
+    public void setStudyStatusCode(StudyStatusCode studyStatusCode) {
+        this.studyStatusCode = studyStatusCode;
+    }
+
+    /**
+     * @return the nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+    /**
+     * @param nctIdentifier the nctIdentifier to set
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
     }
 }

@@ -112,6 +112,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -343,6 +344,29 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return dtoList;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyProtocolQueryDTO> getResultsLean(List<Long> ids) throws PAException {
+        if (CollectionUtils.isEmpty(ids)) {
+            return new ArrayList<StudyProtocolQueryDTO>();
+        }
+        DAQuery query = new DAQuery();
+        query.setSql(true);
+        query.setText(QRY_STRING);
+        query.addParameter("ids", ids);
+        List<Object[]> qryList = dataAccessService.findByQuery(query);
+        List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
+        for (Object[] row : qryList) {
+            StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+            loadGeneralData(dto, row);
+            loadStatusData(dto, row);
+            result.add(dto);
+        }
+        return result;
+    }
+
     /**
      * @return {@link List} list of RSS organization names.
      * @throws PAException PAException
