@@ -85,10 +85,10 @@
  
     <cache
         name="com.fiveamsolutions.nci.commons.audit.AuditLogDetail"
-        maxElementsInMemory="5000"
+        maxElementsInMemory="300"
         eternal="true"
         overflowToDisk="false"
-        memoryStoreEvictionPolicy="FIFO"
+        memoryStoreEvictionPolicy="LFU"
          />
 
     <cache
