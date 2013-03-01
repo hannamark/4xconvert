@@ -247,7 +247,7 @@
     
     <tr>
         <td class="label">
-            <s:label name="plannedMarker.status" for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
+            <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
         </td>
         <td>
             <s:hidden name="plannedMarker.status" id="status"/>
