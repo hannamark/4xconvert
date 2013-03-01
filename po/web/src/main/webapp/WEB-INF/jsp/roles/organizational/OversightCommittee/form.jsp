@@ -104,14 +104,14 @@
         
         <div class="boxouter">
             <h2>Address Information</h2>
-            <po:addresses readonly="${role.ctepOwned}"/>
+            <po:addresses readonly="${role.ctepOwned}" usOrCanadaFormatForValidationOnly="true"/>
         </div>
 
         <div class="boxouter_nobottom">
             <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false" readonly="${role.ctepOwned}"/>
+                <po:contacts usOrCanadaFormatForValidationOnly="true" contactableKeyBase="role" emailRequired="false" phoneRequired="false" readonly="${role.ctepOwned}"/>
             </div>
         </div>
         

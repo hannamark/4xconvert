@@ -158,7 +158,7 @@
         <div class="boxouter">
         <h2>Address Information</h2>
             <div class="box_white">
-                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true"/>
+                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true" noPhoneFormatSwitch="true"/>
                 <div class="clear"></div>
             </div>
         </div>
@@ -170,7 +170,7 @@
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="organization" emailRequired="false"/>
+                <po:contacts contactableKeyBase="organization" emailRequired="false" usOrCanadaFormatForValidationOnly="true"/>
             </div>
         </div>
 <s:if test="%{isNotCreate}">

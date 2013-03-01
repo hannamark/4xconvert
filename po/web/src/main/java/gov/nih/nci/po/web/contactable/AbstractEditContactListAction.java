@@ -88,6 +88,7 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.web.util.POUtils;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import java.util.List;
@@ -456,9 +457,10 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
         @Override
         @CustomValidator(type = VALIDATOR_HIB, fieldName = "phoneEntry")
         public String add() {
+            super.getEntry().setValue(POUtils.adjustPhoneNumberFormat(super.getEntry().getValue()));
             return super.add();
         }
-        
+      
         /**
          * {@inheritDoc}
          */
@@ -589,6 +591,7 @@ public abstract class AbstractEditContactListAction<Entry extends Contact> exten
     public boolean isUsePlayerContactsAsDefault() {
         return usePlayerContactsAsDefault;
     }
+   
 
     /**
      * @param usePlayerContactsAsDefault the usePlayerContactsAsDefault to set

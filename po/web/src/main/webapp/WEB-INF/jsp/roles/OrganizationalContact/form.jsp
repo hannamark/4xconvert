@@ -131,7 +131,7 @@
         </div>
         <div class="boxouter">
             <h2>Address Information</h2>
-            <po:addresses usOrCanadaFormatForValidationOnly="${person.id != null}"/>
+            <po:addresses usOrCanadaFormatForValidationOnly="true"/>
         </div>
 
         <div class="boxouter_nobottom">
@@ -139,7 +139,7 @@
             <div class="box_white">
                 <div class="clear"></div>
                 <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="${role.status == 'ACTIVE'}" 
-                    usOrCanadaFormatForValidationOnly="${person.id != null}"
+                    usOrCanadaFormatForValidationOnly="true"
                     defaultEmails="${usePlayerDefaults && person.id != null}" defaultPhones="${usePlayerDefaults && person.id != null}" 
                     defaultFaxes="${usePlayerDefaults && person.id != null}"/>
             </div>
