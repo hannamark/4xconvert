@@ -128,7 +128,9 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String recentHoldDescription;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
-    
+    private boolean trialHasBioMarkers;
+   
+
     /**
      * Whether this trial permits self-registration of participating sites. 
      * @see https://tracker.nci.nih.gov/browse/PO-2034
@@ -677,4 +679,21 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public void setRecentHoldDescription(String recentHoldDescription) {
         this.recentHoldDescription = recentHoldDescription;
     }
+    /**
+     * 
+     * @return trialHasBioMarkers trialHasBioMarkers
+     */
+    public boolean isTrialHasBioMarkers() {
+        return trialHasBioMarkers;
+    }
+    
+    /**
+     * 
+     * @param trialHasBioMarkers trialHasBioMarkers
+     */
+    public void setTrialHasBioMarkers(boolean trialHasBioMarkers) {
+        this.trialHasBioMarkers = trialHasBioMarkers;
+    }
+    
+    
 }

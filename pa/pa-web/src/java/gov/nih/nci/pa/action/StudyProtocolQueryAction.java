@@ -85,11 +85,13 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
@@ -137,7 +139,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private ProtocolQueryServiceLocal protocolQueryService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     private StudyProtocolService studyProtocolService;
-    
+    private PlannedMarkerServiceLocal plannedMarkerService;
     private List<StudyProtocolQueryDTO> records;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private HttpServletResponse servletResponse;
@@ -160,7 +162,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
-
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
         if (httpServletRequest.getServletPath().contains(BARE)) {
             // we are in BARE mode, which is typically used just to look up and
             // pick a trial in a pop-up
@@ -238,12 +240,25 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
                         criteria.getUniqueCriteriaKey());
             }     
             records = protocolQueryService.getStudyProtocolByCriteria(criteria);
+            setBioMarkersExistenceFlag();
             ActionUtils.sortTrialsByNciId(records);
             return SUCCESS;
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return SUCCESS;
         }
+    }
+    
+    private void setBioMarkersExistenceFlag() throws PAException { 
+        for (StudyProtocolQueryDTO record : records) {
+            List<PlannedMarkerDTO> results =
+            plannedMarkerService.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(record.getStudyProtocolId()));
+            if (!results.isEmpty()) {
+                record.setTrialHasBioMarkers(true);
+            } else {
+                record.setTrialHasBioMarkers(false);
+            }
+        }   
     }
 
     /**
@@ -560,4 +575,22 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     public void setStudyProtocolService(StudyProtocolService studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
+
+    /**
+     * @param plannedMarkerService
+     *            the plannedMarkerService to set
+     */
+    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
+    }
+    /**
+     * 
+     * @param protocolQueryService protocolQueryService
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+    
+    
 }

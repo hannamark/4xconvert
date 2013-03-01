@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>        
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>       
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="${displayTableUID}"
             name="records" requestURI="${requestURI}" export="${empty isBare}">                           
             <display:setProperty name="export.xml" value="false"/>
@@ -20,10 +20,10 @@
                         <a href="javascript:void(0);" onclick="handleTrialSelect(${row.studyProtocolId},'${row.nciIdentifier}');"><c:out value="${row.nciIdentifier}"/></a>
                 </display:column>
             </c:if>
-            
             <display:column class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
             </display:column>
+           
             <display:column escapeXml="false" titleKey="studyProtocol.processingPriority" property="processingPriority"
                 sortable="true" headerClass="sortable"/>                
             <display:column escapeXml="true" titleKey="studyProtocol.ctepIdentifier" property="ctepId"
@@ -50,6 +50,9 @@
             </display:column>
             <display:column titleKey="studyProtocol.trialSubType" sortable="true" headerClass="sortable">
                 <c:out value="${row.studyProtocolType=='NonInterventionalStudyProtocol'?row.studySubtypeCode:''}"/>
+            </display:column>
+             <display:column escapeXml="false" titleKey="studyProtocol.trialHasBioMarkers" sortable="true" headerClass="sortable">
+                    <c:out value="${row.trialHasBioMarkers?'Yes':'No'}"/>
             </display:column>
             <display:column escapeXml="false" titleKey="studyProtocol.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>

@@ -7,10 +7,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.service.MockCorrelationUtils;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -40,6 +44,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
         criteria.setCtgovXmlRequiredIndicator("");
+        spqAction.setCriteria(criteria);
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         UsernameHolder.setUser("suAbstractor");
         getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
@@ -69,6 +74,23 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testQuery() throws PAException {
+        assertEquals("success", spqAction.query());
+    }
+    
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#query()}.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testQueryNew() throws PAException {
+        List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2009-00001");
+        records.add(dto);
+        ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class); 
+        when(protocolQueryService.getStudyProtocolByCriteria(criteria)).thenReturn(records);
+        spqAction.setProtocolQueryService(protocolQueryService);
         assertEquals("success", spqAction.query());
     }
     
