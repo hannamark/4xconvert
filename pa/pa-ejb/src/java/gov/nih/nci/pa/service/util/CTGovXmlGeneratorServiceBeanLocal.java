@@ -785,16 +785,8 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     private void createIdInfo(StudyProtocolDTO spDTO, Document doc, Element root, CTGovXmlGeneratorOptions[] options) 
             throws PAException {
         Element idInfo = doc.createElement("id_info");
-
-        StudySiteDTO spartDTO = new StudySiteDTO();
-        spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
-        for (StudySiteDTO spart : sParts) {
-            XmlGenHelper.appendElement(idInfo,
-                    XmlGenHelper.createElementWithTextblock("org_study_id", StConverter.convertToString(spart
-                    .getLocalStudyProtocolIdentifier()), doc));
-            break;
-        }
+        
+        createOrgStudyId(spDTO, doc, idInfo);
 
         Element assignedId = doc.createElement("secondary_id");
         XmlGenHelper.appendElement(assignedId,
@@ -839,6 +831,32 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         XmlGenHelper.appendElement(idInfo, XmlGenHelper.createElement("org_name", data, doc));
         XmlGenHelper.appendElement(root, idInfo);
 
+    }
+
+    /**
+     * @param spDTO
+     * @param doc
+     * @param idInfo
+     * @throws PAException
+     */
+    private void createOrgStudyId(StudyProtocolDTO spDTO, Document doc,
+            Element idInfo) throws PAException {        
+        if (!isNCISponsored(spDTO.getIdentifier())) {
+            StudySiteDTO spartDTO = new StudySiteDTO();
+            spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+            List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(spDTO.getIdentifier(), spartDTO);
+            for (StudySiteDTO spart : sParts) {
+                XmlGenHelper.appendElement(idInfo,
+                        XmlGenHelper.createElementWithTextblock("org_study_id", StConverter.convertToString(spart
+                        .getLocalStudyProtocolIdentifier()), doc));
+                break;
+            }
+        } else {
+            XmlGenHelper.appendElement(idInfo, XmlGenHelper
+                    .createElementWithTextblock("org_study_id",
+                            PAUtil.getAssignedIdentifierExtension(spDTO), doc));
+
+        }
     }
 
     /**
@@ -1516,15 +1534,32 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      * @throws PAException when error.
      */
     protected Element createLeadSponsor(Ii studyProtocolIi, Document doc) throws PAException {
-        Organization sponsor = getOrgCorrelationService().getOrganizationByFunctionRole(studyProtocolIi, CdConverter
-                .convertToCd(StudySiteFunctionalCode.SPONSOR));
+        String sponsorName = getTrialSponsorName(studyProtocolIi);
         Element lead = doc.createElement("lead_sponsor");
-        String sponsorName = sponsor.getName();
         String data = replaceXMLCharacters(StringUtils.substring(sponsorName, 0,
                 PAAttributeMaxLen.LEN_160));
         XmlGenHelper.appendElement(lead,
                 XmlGenHelper.createElement("agency", data, doc));
         return lead;
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws PAException
+     */
+    private String getTrialSponsorName(Ii studyProtocolIi) throws PAException {
+        Organization sponsor = getOrgCorrelationService()
+                .getOrganizationByFunctionRole(
+                        studyProtocolIi,
+                        CdConverter
+                                .convertToCd(StudySiteFunctionalCode.SPONSOR));
+        return sponsor != null ? sponsor.getName() : StringUtils.EMPTY;
+    }
+
+    private boolean isNCISponsored(Ii studyProtocolIi) throws PAException {
+        return PAConstants.NCI_ORG_NAME
+                .equals(getTrialSponsorName(studyProtocolIi));
     }
 
     /**
