@@ -216,12 +216,15 @@ function displayPrimaryPurposeOtherText(){
 		<td scope="row" class="label"><label>
 	 		<fmt:message key="osdesign.details.specimen.description"/></label></td>
 		<td>
-         	<s:textfield name="webDTO.biospecimenDescription" maxlength="800" cssStyle="width:206px"/>
+		  <s:textarea id="webDTO.biospecimenDescription" name="webDTO.biospecimenDescription"    
+                                                maxlength="800" cssClass="charcounter"                                        
+                                                cssStyle="width:50%;" rows="5"> </br>                                                                                         
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.biospecimenDescription</s:param>
              </s:fielderror>                            
           </span>
+             </s:textarea>
         </td>
 	</tr>	
     <tr>
