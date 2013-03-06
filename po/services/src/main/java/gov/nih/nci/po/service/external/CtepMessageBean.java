@@ -319,10 +319,12 @@ public class CtepMessageBean implements MessageListener {
      * @param duplicateOf message DUPLICATE_OF
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
+     * @throws CtepImportException ctep import exception
      */
     // public for digester reflection call.
     public void processRow(String trxTypeString, String recordTypeString, String recordIdIn,
-            String organizationTypeString, String duplicateOf) throws JMSException, EntityValidationException {
+            String organizationTypeString, String duplicateOf) 
+            throws JMSException, EntityValidationException, CtepImportException {
         String recordId = StringUtils.defaultString(recordIdIn);
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("TRANSACTION_TYPE = %s, RECORD_TYPE = %s, RECORD_ID = %s", trxTypeString,
@@ -375,10 +377,11 @@ public class CtepMessageBean implements MessageListener {
      * @param duplicateOf message DUPLICATE_OF
      * @throws JMSException on error.
      * @throws EntityValidationException if any validation errors occur
+     * @throws CtepImportException ctep import exception
      */
     // protected for testing.
     protected void processMessage(TransactionType trxType, RecordType msgType, Ii id, OrganizationType orgType,
-            Ii duplicateOf) throws JMSException, EntityValidationException {
+            Ii duplicateOf) throws JMSException, EntityValidationException, CtepImportException {
         switch (trxType) {
         case REJECT:
         case DELETE:

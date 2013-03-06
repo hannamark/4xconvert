@@ -155,7 +155,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.orgImporter = orgImporter;
     }
 
-    private Organization getCtepOrganization() throws JMSException, EntityValidationException {
+    private Organization getCtepOrganization() throws JMSException, EntityValidationException, CtepImportException {
         return this.orgImporter.getCtepOrganization();
     }
 
@@ -166,9 +166,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs
      * @return the organization record.
+     * @throws CtepImportException ctep import exception
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException {
+    public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException, CtepImportException {
         ctepPersonId.setReliability(IdentifierReliability.VRF);
         ctepPersonId.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
         try {
@@ -256,7 +257,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return identifiedPeople.get(0);
     }
 
-    private Person createCtepPerson(Person ctepPerson, Ii ctepPersonId) throws JMSException, EntityValidationException {
+    private Person createCtepPerson(Person ctepPerson, Ii ctepPersonId) throws JMSException, EntityValidationException,
+            CtepImportException {
         // create the local entity record
         this.personService.curate(ctepPerson);
         createIdentifiedPerson(ctepPerson, ctepPersonId);
@@ -280,7 +282,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
         identifiedPerson.setPlayer(ctepPerson);
         identifiedPerson.setScoper(getCtepOrganization());
@@ -298,7 +300,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson)
-            throws JMSException, EntityValidationException {
+            throws JMSException, EntityValidationException, CtepImportException {
         Person p = identifiedPerson.getPlayer();
 
         // copy updated data in to the local person
@@ -324,7 +326,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private void updateCrsRoles(Person p, ClinicalResearchStaffDTO crsDto) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<ClinicalResearchStaff> i = p.getClinicalResearchStaff().iterator();
@@ -371,7 +373,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException, EntityValidationException {
+    private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException, EntityValidationException, 
+            CtepImportException {
         // we don't handle merge here, iterate over roles nullifying them out, except the last one,
         // which we will update with ctep's data.
         Iterator<HealthCareProvider> i = p.getHealthCareProviders().iterator();
@@ -453,7 +456,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private void createHcp(HealthCareProviderDTO hcpDto, Person ctepPerson) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         // store ii's we will need
         Ii scoperIi = hcpDto.getScoperIdentifier();
 
@@ -488,7 +491,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private void createCrs(ClinicalResearchStaffDTO crsDto, Person ctepPerson) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         // store ii's we will need
         Ii scoperIi = crsDto.getScoperIdentifier();
 

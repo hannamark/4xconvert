@@ -4,10 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.po.data.bo.AbstractContactableOrganizationRole;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
@@ -346,5 +349,81 @@ public class CtepUtilsTest {
         assertEquals("x-text-tel:703-555-5555ext123", phones.iterator().next().getValue().toString());           
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testValidateAddresses() throws Exception {
+        CtepUtils.validateAddresses(null);
+        AbstractContactableOrganizationRole role = new AbstractContactableOrganizationRole() {};
+        CtepUtils.validateAddresses(role);
+        Set<Address> addrs = new HashSet<Address>();
+        Address addr = new Address();
+        addr.setStreetAddressLine("streetAddressLine");
+        addr.setCityOrMunicipality("cityOrMunicipality");
+        addr.setPostalCode("postalCode");
+        addr.setCountry(new Country());
+        addrs.add(addr);
+        role.setPostalAddresses(addrs);
+        CtepUtils.validateAddresses(role);
+    }
 
+    @Test(expected = CtepImportException.class)
+    public void testValidateAddressesException() throws Exception {
+        AbstractContactableOrganizationRole role = new AbstractContactableOrganizationRole() {};
+        Set<Address> addrs = new HashSet<Address>();
+        Address addr = new Address();
+        addrs.add(addr);
+        role.setPostalAddresses(addrs);
+        CtepUtils.validateAddresses(role);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testValidateAddress() throws Exception {
+        CtepUtils.validateAddress(null);
+        Address addr = new Address();
+        addr.setStreetAddressLine("streetAddressLine");
+        addr.setCityOrMunicipality("cityOrMunicipality");
+        addr.setPostalCode("postalCode");
+        addr.setCountry(new Country());
+        CtepUtils.validateAddress(addr);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testValidateAddressException() {
+        Address addr = new Address();
+        addr.setCityOrMunicipality("cityOrMunicipality");
+        addr.setPostalCode("postalCode");
+        addr.setCountry(new Country());
+        try {
+            CtepUtils.validateAddress(addr);
+            fail();
+        } catch (CtepImportException e) {
+            assertEquals("street address missing", e.getShortMessage());
+        }
+        addr.setStreetAddressLine("streetAddressLine");
+        addr.setCityOrMunicipality(" ");
+        try {
+            CtepUtils.validateAddress(addr);
+            fail();
+        } catch (CtepImportException e) {
+            assertEquals("city missing", e.getShortMessage());
+        }
+        addr.setCityOrMunicipality("cityOrMunicipality");
+        addr.setPostalCode(null);
+        try {
+            CtepUtils.validateAddress(addr);
+            fail();
+        } catch (CtepImportException e) {
+            assertEquals("zip missing", e.getShortMessage());
+        }
+        addr.setPostalCode("postalCode");
+        addr.setCountry(null);
+        try {
+            CtepUtils.validateAddress(addr);
+            fail();
+        } catch (CtepImportException e) {
+            assertEquals("country missing", e.getShortMessage());
+        }
+   }
 }

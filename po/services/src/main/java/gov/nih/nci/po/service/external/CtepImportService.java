@@ -104,8 +104,9 @@ public interface CtepImportService {
      * @return the org.
      * @throws JMSException on error
      * @throws EntityValidationException if any validation errors occur
+     * @throws CtepImportException ctep import exception
      */
-    Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException;
+    Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException, CtepImportException;
 
     /**
      * Handle the nullification with duplicate of an organization from the ctep system.
@@ -122,6 +123,7 @@ public interface CtepImportService {
      * @return the person
      * @throws JMSException on error
      * @throws EntityValidationException if any validation errors occur
+     * @throws CtepImportException ctep import exception
      */
-    Person importCtepPerson(Ii personId) throws JMSException, EntityValidationException;
+    Person importCtepPerson(Ii personId) throws JMSException, EntityValidationException, CtepImportException;
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.MockCtepImportService;
+import gov.nih.nci.po.service.external.CtepImportException;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoRegistry;
@@ -221,6 +222,43 @@ public class CtepFileUploadTest extends AbstractPoTest {
         assertTrue(itr.hasNext());
         String next = itr.next();
         assertTrue(next.startsWith("An error occurred processing the following line(s): "));
+        assertFalse(itr.hasNext());
+    }
+
+    @Test
+    public void testUploadOrgsAllCtepExceptions() throws Exception {
+        PoRegistry.getInstance().setServiceLocator(new MockServiceLocator() {
+            @Override
+            public CtepImportService getCtepImportService() {
+                return new CtepImportService() {
+                    public Organization importCtepOrganization(Ii orgId) throws CtepImportException {
+                        throw new CtepImportException("shortMessage", "message");
+                    }
+                    public Person importCtepPerson(Ii personId) throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                    public void nullifyCtepOrganization(Ii orgId, Ii duplicateOfId, OrganizationType orgType)
+                        throws JMSException {
+                        throw new HibernateException("Bogus");
+                    }
+                };
+            }
+        });
+
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(ORG_FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        CtepImportAction action = new CtepImportAction();
+        action.setFile(f);
+        assertEquals(Action.SUCCESS, action.uploadOrganizations());
+
+        Iterator<String> itr= ActionHelper.getMessages().iterator();
+        assertTrue(itr.hasNext());
+        assertEquals("0 records successfully imported.", itr.next());
+        assertTrue(itr.hasNext());
+        String next = itr.next();
+        assertTrue(next.startsWith("An error occurred processing the following line(s): "));
+        assertTrue(next.contains("(shortMessage)"));
         assertFalse(itr.hasNext());
     }
 

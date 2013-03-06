@@ -1,6 +1,9 @@
 package gov.nih.nci.po.service.external.stubs;
 
+import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.AddressPartType;
+import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
@@ -8,7 +11,6 @@ import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
-import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.convert.AddressConverter;
@@ -24,6 +26,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 /**
@@ -180,6 +183,48 @@ public class CTEPOrgServiceStubBuilder {
         CTEPOrganizationServiceStub stub = buildCreateHCFStub();
         addIdentifier(stub.getHcf(), hcfId);
         return stub;
+    }
+
+    public CTEPOrganizationServiceStub buildCreateHCFWithBadOrgAddressStub() throws Exception {
+        CTEPOrganizationServiceStub common = createGeneric();
+        Ad postal = common.getOrg().getPostalAddress();
+        for(Iterator<Adxp> itr = postal.getPart().iterator(); itr.hasNext();) {
+            Adxp element = itr.next();  
+            if (AddressPartType.ZIP.equals(element.getType())) {
+                itr.remove();  
+            }  
+        }  
+        return new CTEPOrganizationServiceStub(common.getOrg(), common.getHcf(), null);
+    }
+
+    public CTEPOrganizationServiceStub buildCreateHCFWithBadRoleAddressStub() throws Exception {
+        CTEPOrganizationServiceStub common = createGeneric();
+        @SuppressWarnings("unchecked")
+        DSet<Ad> dset = common.getHcf().getPostalAddress();
+        for (Ad ad : dset.getItem()) {
+            for(Iterator<Adxp> itr = ad.getPart().iterator(); itr.hasNext();) {
+                Adxp element = itr.next();  
+                if (AddressPartType.ZIP.equals(element.getType())) {
+                    itr.remove();  
+                }  
+            }  
+        }
+        return new CTEPOrganizationServiceStub(common.getOrg(), common.getHcf(), null);
+    }
+
+    public CTEPOrganizationServiceStub buildCreateROWithBadRoleAddressStub() throws Exception {
+        CTEPOrganizationServiceStub common = createGeneric();
+        @SuppressWarnings("unchecked")
+        DSet<Ad> dset = common.getRo().getPostalAddress();
+        for (Ad ad : dset.getItem()) {
+            for(Iterator<Adxp> itr = ad.getPart().iterator(); itr.hasNext();) {
+                Adxp element = itr.next();  
+                if (AddressPartType.ZIP.equals(element.getType())) {
+                    itr.remove();  
+                }  
+            }  
+        }
+        return new CTEPOrganizationServiceStub(common.getOrg(), common.getHcf(), null);
     }
 
     public CTEPOrganizationServiceStub buildCreateROWithNoUpdatesStub(Ii roId) throws Exception {

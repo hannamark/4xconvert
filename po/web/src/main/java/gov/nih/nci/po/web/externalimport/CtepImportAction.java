@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.external.CtepImportException;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -179,8 +180,9 @@ public class CtepImportAction extends ActionSupport {
          * @return COPPA-PO Object saved, otherwise null
          * @throws JMSException the JMS related exception encountered
          * @throws EntityValidationException if any validation error occurs
+         * @throws CtepImportException ctep import exception
          */
-        Object invoke(Ii value) throws JMSException, EntityValidationException;
+        Object invoke(Ii value) throws JMSException, EntityValidationException, CtepImportException;
 
         /**
          * @return the friendly name
@@ -201,8 +203,9 @@ public class CtepImportAction extends ActionSupport {
     static class PersonImporter implements Importer {
         /**
          * {@inheritDoc}
+         * @throws CtepImportException 
          */
-        public Object invoke(Ii value) throws JMSException, EntityValidationException {
+        public Object invoke(Ii value) throws JMSException, EntityValidationException, CtepImportException {
             return PoRegistry.getInstance().getServiceLocator().
             getCtepImportService().importCtepPerson(value);
         }
@@ -232,8 +235,9 @@ public class CtepImportAction extends ActionSupport {
     static class OrgImporter implements Importer {
         /**
          * {@inheritDoc}
+         * @throws CtepImportException 
          */
-        public Object invoke(Ii value) throws JMSException, EntityValidationException {
+        public Object invoke(Ii value) throws JMSException, EntityValidationException, CtepImportException {
             return PoRegistry.getInstance().getServiceLocator().getCtepImportService().importCtepOrganization(value);
         }
         /**
@@ -331,7 +335,11 @@ public class CtepImportAction extends ActionSupport {
             hh.unbindAndCleanupSession();
             hh.openAndBindSession();
             LOG.error("Error importing " + callback.getType() + " with id:  " +  line, e);
-            erroredRecords.add(line);
+            if (e instanceof CtepImportException) {
+                erroredRecords.add(line + " (" + ((CtepImportException) e).getShortMessage() + ")"); 
+            } else {
+                erroredRecords.add(line);
+            }
         }
 
         private BufferedReader getReader() throws FileNotFoundException {

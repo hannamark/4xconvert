@@ -5,6 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
@@ -297,7 +302,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
     private void helperOrgAndAllHCFRolesAreLeftPendingIfPendingInitiallyOnUpdateAndChangesAreMadeDirectlyToOrganization(
             Organization importedOrg, CTEPOrganizationServiceStub service, EntityStatus initialOrgStatus) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         importer.setCtepOrgService(service);
         OrganizationDTO org = service.getOrg();
         assertNotNull(org);
@@ -994,5 +999,57 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(ResearchOrganization.class)
         .uniqueResult();
         assertEquals(hcf.getPlayer(), hcf.getPlayer());
+    }
+
+    @Test
+    public void badOrganizationAddress() throws Exception {
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithBadOrgAddressStub();
+        try {
+            helperOrgAndAllRolesAreSetToPendingOnCreate(service);
+            fail();
+        }catch (CtepImportException e) {
+            assertEquals("zip missing", e.getShortMessage());
+        }
+    }
+
+    @Test
+    public void badHcfAddress() throws Exception {
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithBadRoleAddressStub();
+        try {
+            helperOrgAndAllRolesAreSetToPendingOnCreate(service);
+            fail();
+        }catch (CtepImportException e) {
+            assertEquals("zip missing", e.getShortMessage());
+        }
+    }
+
+    @Test
+    public void badRoAddress() throws Exception {
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithBadRoleAddressStub();
+        try {
+            helperOrgAndAllRolesAreSetToPendingOnCreate(service);
+            fail();
+        }catch (CtepImportException e) {
+            assertEquals("zip missing", e.getShortMessage());
+        }
+    }
+
+    @Test
+    public void ctepException() throws Exception {
+        // create org with status pending
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFStub();
+        Ii ctepOrgIi = service.getOrgId();
+        helperOrgAndAllRolesAreSetToPendingOnCreate(service);
+
+        // throw exception, fail to set org inactive because status pending
+        service = mock(CTEPOrganizationServiceStub.class);
+        when(service.getOrganizationById(any(Ii.class))).thenThrow(new CTEPEntException());
+        importer.setCtepOrgService(service);
+        try {
+            importer.importOrganization(ctepOrgIi);
+            fail();
+        }catch (CtepImportException e) {
+            assertEquals("not found in ctep, PENDING in po", e.getShortMessage());
+        }
     }
 }

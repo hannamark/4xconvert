@@ -158,14 +158,15 @@ public class CtepImportServiceBean implements CtepImportService {
     /**
      * {@inheritDoc}
      */
-    public Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException {
+    public Organization importCtepOrganization(Ii orgId) throws JMSException, EntityValidationException, 
+            CtepImportException {
         return orgImporter.importOrganization(orgId);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Person importCtepPerson(Ii personId) throws JMSException, EntityValidationException {
+    public Person importCtepPerson(Ii personId) throws JMSException, EntityValidationException, CtepImportException {
         return personImporter.importPerson(personId);
     }
 

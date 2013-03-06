@@ -167,8 +167,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * @return the org
      * @throws JMSException on error
      * @throws EntityValidationException if a validation error occurs anywhere throughout
+     * @throws CtepImportException ctep import exception
      */
-    public Organization getCtepOrganization() throws JMSException, EntityValidationException {
+    public Organization getCtepOrganization() throws JMSException, EntityValidationException, CtepImportException {
         if (persistedCtepOrg == null) {
             Ii ctepIi = new Ii();
             ctepIi.setExtension(CTEP_EXTENSION);
@@ -186,8 +187,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * @return the org
      * @throws JMSException on error
      * @throws EntityValidationException if validation errors occur anywhere throughout
+     * @throws CtepImportException ctep import exception
      */
-    public Organization importOrgNoUpdate(Ii ctepOrgId) throws JMSException, EntityValidationException {
+    public Organization importOrgNoUpdate(Ii ctepOrgId) throws JMSException, EntityValidationException, 
+            CtepImportException {
         IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
         if (identifiedOrg == null) {
             return importOrganization(ctepOrgId);
@@ -202,9 +205,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * @return the organization record.
      * @throws JMSException on error
      * @throws EntityValidationException if validation errors occur anywhere throughout
+     * @throws CtepImportException ctep import exception 
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException {
+    public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException, 
+            CtepImportException {
         try {
             // get org from ctep and convert to local data model
             OrganizationDTO ctepOrgDto = getCtepOrgService().getOrganizationById(ctepOrgId);
@@ -212,13 +217,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             Ii assignedId = ctepOrgDto.getIdentifier();
             assignedId.setReliability(IdentifierReliability.VRF);
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
+            CtepUtils.validateAddress(ctepOrg.getPostalAddress());
             ctepOrg.setStatusCode(EntityStatus.PENDING);
 
             // search for org based on the ctep provided ii
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(assignedId);
             HealthCareFacility hcf = getCtepHealthCareFacility(assignedId);
+            CtepUtils.validateAddresses(hcf);
             ResearchOrganization ro = getCtepResearchOrganization(assignedId);
-
+            CtepUtils.validateAddresses(ro);
             if (isNewCtepOrg(identifiedOrg, hcf, ro)) {
                 return createCtepOrg(ctepOrg, assignedId, RoleStatus.PENDING);
             }
@@ -233,8 +240,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
             if (identifiedOrg != null) {
                 Organization org = identifiedOrg.getPlayer();
-                org.setStatusCode(EntityStatus.INACTIVE);
-                this.orgService.curate(org);
+                if (org.getStatusCode().canTransitionTo(EntityStatus.INACTIVE)) {
+                    org.setStatusCode(EntityStatus.INACTIVE);
+                    this.orgService.curate(org);
+                } else {
+                    String shortMessage = "not found in ctep, " + org.getStatusCode() + " in po";
+                    String message = "Organization " + ctepOrgId + " not found in CTEP ECM. Could not set INACTIVE "
+                            + "in PO because transition from " + org.getStatusCode() + " to INACTIVE not allowed.";
+                    throw new CtepImportException(shortMessage, message, e);
+                }
             }
             return null;
         }
@@ -288,12 +302,16 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private Organization createCtepOrg(Organization ctepOrg, Ii ctepOrgId, RoleStatus roleStatus) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         // create the local record
         this.orgService.curate(ctepOrg);
 
         HealthCareFacility hcf = getCtepHealthCareFacility(ctepOrgId);
         if (hcf != null) {
+            if (hcf.getId() != null) {
+                throw new CtepImportException("org not in po but ctep has po hcf id", "CTEP ECM provided a po hcf id "
+                        + hcf.getId() + " but org not found in database. ECM and PO are out of synch.");
+            }
             hcf.setPlayer(ctepOrg);
             hcf.setStatus(roleStatus);
             // CTEP already sets their ID in the identifiers set, but they set the reliability as ISS
@@ -306,6 +324,10 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         ResearchOrganization ro = getCtepResearchOrganization(ctepOrgId);
         if (ro != null) {
+            if (ro.getId() != null) {
+                throw new CtepImportException("org not in po but ctep has po ro id", "CTEP provided a po ro id "
+                        + ro.getId() + " but org not found in database. ECM and PO are out of synch.");
+            }
             ro.setPlayer(ctepOrg);
             ro.setStatus(roleStatus);
             // CTEP already sets their ID in the identifiers set, but they set the reliability as ISS
@@ -325,7 +347,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private IdentifiedOrganization genIdentifiedOrg(HealthCareFacility hcf, ResearchOrganization ro, Ii assignedId,
-            Organization ctepOrg, RoleStatus roleStatus) throws JMSException, EntityValidationException {
+            Organization ctepOrg, RoleStatus roleStatus) 
+            throws JMSException, EntityValidationException, CtepImportException {
 
         IdentifiedOrganization identifiedOrg = new IdentifiedOrganization();
         identifiedOrg.setStatus(roleStatus);
@@ -351,7 +374,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private Organization updateCtepOrg(Organization src, IdentifiedOrganization identifiedOrg, Ii assignedId,
-            HealthCareFacility hcf, ResearchOrganization ro) throws JMSException, EntityValidationException {
+            HealthCareFacility hcf, ResearchOrganization ro) throws JMSException, EntityValidationException,
+            CtepImportException {
 
         Organization org = identifiedOrg.getPlayer();
 
@@ -405,10 +429,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateRoRole(Organization org, ResearchOrganization ro, Ii assignedId) throws JMSException {
+    private void updateRoRole(Organization org, ResearchOrganization ro, Ii assignedId) throws JMSException,
+            CtepImportException {
         ResearchOrganization toSave = null;
         if (ro.getId() != null) {
             ResearchOrganization persistedRo = roService.getById(ro.getId());
+            if (persistedRo == null) {
+                throw new CtepImportException("po ro id " + ro.getId() + " from ctep not valid", "The po ro id "
+                        + ro.getId() + " pulled from ctep not found in database. ECM and PO are out of synch.");
+            }
             toSave = updateExistingRo(persistedRo, ro, assignedId);
         } else {
             ResearchOrganization persistedRo = getRoInDbByCtepId(assignedId, "CTEP ID");
@@ -463,10 +492,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return toSave;
     }
 
-    private void updateHcfRole(Organization org, HealthCareFacility hcf, Ii assignedId) throws JMSException {
+    private void updateHcfRole(Organization org, HealthCareFacility hcf, Ii assignedId) throws JMSException,
+            CtepImportException {
         HealthCareFacility toSave = null;
         if (hcf.getId() != null) {
             HealthCareFacility persistedHcf = hcfService.getById(hcf.getId());
+            if (persistedHcf == null) {
+                throw new CtepImportException("po hcf id " + hcf.getId() + " from ctep not valid", "The po hcf id "
+                        + hcf.getId() + " pulled from ctep not found in database. ECM and PO are out of synch.");
+            }
             toSave = updateExistingHcf(persistedHcf, hcf, assignedId);
         } else {
             HealthCareFacility persistedHcf = getHcfInDbByCtepId(assignedId, "CTEP ID");
@@ -497,7 +531,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private Organization getScoper(Organization defaultScoper, Ii ctepOrgId) throws JMSException,
-            EntityValidationException {
+            EntityValidationException, CtepImportException {
         Organization scoper;
         if (ctepOrgId.getExtension().equals(CTEP_EXTENSION) && ctepOrgId.getRoot().equals(CTEP_ORG_ROOT)) {
             // we are currently importing ctep, therefore this org is its own scoper.
@@ -599,7 +633,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return false;
     }
 
-    private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) {
+    private HealthCareFacility getCtepHealthCareFacility(Ii ctepOrgId) throws CtepImportException {
         // In case ctep does not have the latest version of iso datatypes which
         // has the VRF reliability, we set it back to ISS before querying and
         // then change it to VRF for the rest of the import process.
@@ -608,7 +642,6 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             HealthCareFacilityDTO hcfDto = getCtepOrgService().getHealthCareFacility(ctepOrgId);
             CtepUtils.converPhoneNumberFormats(hcfDto);
             printHcf(hcfDto);
-
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
         } catch (CTEPEntException e) {
             return null;
@@ -621,7 +654,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         LOG.info(CtepUtils.toString(hcfDto));
     }
 
-    private ResearchOrganization getCtepResearchOrganization(Ii ctepOrgId) {
+    private ResearchOrganization getCtepResearchOrganization(Ii ctepOrgId) throws CtepImportException {
         // In case ctep does not have the latest version of iso datatypes which
         // has the VRF reliability, we set it back to ISS before querying and
         // then change it to VRF for the rest of the import process.

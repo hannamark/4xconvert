@@ -5,6 +5,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.po.data.bo.AbstractContactableOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
@@ -257,5 +258,40 @@ public final class CtepUtils {
                         "x-text-fax:$1-$2")
                 .replaceFirst("^x-text-tel:\\((\\d+)\\)\\s*?(\\d)",
                         "x-text-tel:$1-$2");
+    }
+
+    /**
+     * Validate an addresses received from CTEP. Throw meaningful exception if incomplete.
+     * @param role the organization role (either hcf or ro)
+     * @throws CtepImportException exception
+     */
+    public static void validateAddresses(AbstractContactableOrganizationRole role) throws CtepImportException {
+        if (role != null && CollectionUtils.isNotEmpty(role.getPostalAddresses())) {
+            for (Address addr : role.getPostalAddresses()) {
+                validateAddress(addr);
+            }
+        }
+    }
+
+    /**
+     * Validate an address received from CTEP. Throw meaningful exception if incomplete.
+     * @param addr the address
+     * @throws CtepImportException exception
+     */
+    public static void validateAddress(Address addr) throws CtepImportException {
+        if (addr != null) {
+            if (StringUtils.isBlank(addr.getStreetAddressLine())) {
+                throw new CtepImportException("street address missing", "Street missing in CTEP address.");
+            }
+            if (StringUtils.isBlank(addr.getCityOrMunicipality())) {
+                throw new CtepImportException("city missing", "City missing in CTEP address.");
+            }
+            if (StringUtils.isBlank(addr.getPostalCode())) {
+                throw new CtepImportException("zip missing", "Postal code missing in CTEP address.");
+            }
+            if (null == addr.getCountry()) {
+                throw new CtepImportException("country missing", "Country missing in CTEP address.");
+            }
+        }
     }
 }
