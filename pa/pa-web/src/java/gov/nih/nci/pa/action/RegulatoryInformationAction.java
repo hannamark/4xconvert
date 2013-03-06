@@ -83,6 +83,7 @@ import gov.nih.nci.logging.api.util.StringUtils;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthorityWebDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -119,9 +120,15 @@ public class RegulatoryInformationAction extends ActionSupport {
      * Method to save the regulatory information to the database.
      *
      * @return String success or failure
+     * @throws PAException PAException
      */
-    public String update() {
-        validateForm();
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    public String update() throws PAException {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        // Update InterventionalSP
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        validateForm(spDTO);
         String orgName;
         try {
             if (hasFieldErrors()) {
@@ -132,11 +139,7 @@ public class RegulatoryInformationAction extends ActionSupport {
             String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
                     Long.valueOf(getLst()), "Country");
             webDTO.setTrialOversgtAuthOrgName(orgName);
-            webDTO.setTrialOversgtAuthCountry(countryName);
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
-            // Update InterventionalSP
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            webDTO.setTrialOversgtAuthCountry(countryName);            
             if (webDTO.getSection801Indicator() == null) {
                 spDTO.setSection801Indicator(BlConverter.convertToBl(null));
             } else {
@@ -237,7 +240,7 @@ public class RegulatoryInformationAction extends ActionSupport {
         return SUCCESS;
     }
 
-    private void validateForm() {
+    private void validateForm(StudyProtocolDTO spDTO) {
         if (StringUtils.isBlank(getLst())) {
             addFieldError("lst", "Country is required field");
         }
@@ -248,6 +251,12 @@ public class RegulatoryInformationAction extends ActionSupport {
         if (StringUtils.isBlank(webDTO.getFdaRegulatedInterventionIndicator())) {
             addFieldError("webDTO.fdaRegulatedInterventionIndicator",
                     "FDA Regulated Intervention Indicator is required field");
+        }
+        if (Boolean.TRUE
+                .equals(Boolean.valueOf(webDTO.getSection801Indicator()))
+                && spDTO instanceof NonInterventionalStudyProtocolDTO) {
+            addFieldError("webDTO.section801Indicator",
+                    "Section 801 Indicator should be No for Non-interventional trials");
         }
     }
 

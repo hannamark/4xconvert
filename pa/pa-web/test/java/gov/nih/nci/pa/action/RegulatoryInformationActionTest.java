@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import org.junit.Before;
@@ -29,9 +30,10 @@ public class RegulatoryInformationActionTest extends AbstractPaActionTest {
     
     /**
      * Test method for {@link gov.nih.nci.pa.action.RegulatoryInformationAction#update()}.
+     * @throws PAException 
      */
     @Test(expected=Exception.class)
-    public void testUpdate() {
+    public void testUpdate() throws PAException {
         regulatoryInformationAction.setLst("");
         regulatoryInformationAction.setSelectedRegAuth("");
         regulatoryInformationAction.update();
