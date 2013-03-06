@@ -3,6 +3,7 @@ package gov.nih.nci.registry.rest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.rest.domain.StudyProtocolXmlLean;
+import gov.nih.nci.registry.rest.exception.BadRequestException;
 
 import java.util.List;
 
@@ -13,8 +14,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 
@@ -36,8 +37,11 @@ public class StudyProtocolsRsrc {
     @Wrapped(element = "studyProtocols")
     @GET
     public Response getStudiesXML(@QueryParam("agentNsc") String agentNsc) {
-        if (agentNsc == null) {
-            return Response.status(Status.BAD_REQUEST).build();
+        if (StringUtils.isEmpty(agentNsc)) {
+            throw new BadRequestException("Agent NSC number missing from request.");
+        }
+        if (!StringUtils.isNumeric(agentNsc)) {
+            throw new BadRequestException("Agent NSC number must contain digits only."); 
         }
         try {
             List<StudyProtocolQueryDTO> results = 

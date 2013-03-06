@@ -10,6 +10,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.registry.rest.exception.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,15 +55,26 @@ public class StudyProtocolRsrcTest {
         assertEquals(200, resp.getStatus());
     }
 
-    @Test
+    @Test(expected = BadRequestException.class)
     public void getStudiesXMLNullTest() {
         StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
-        Response resp = rsrc.getStudiesXML(null);
-        assertEquals(400, resp.getStatus());
+        rsrc.getStudiesXML(null);
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void getStudiesXMLEmptyTest() {
+        StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
+        rsrc.getStudiesXML("");
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void getStudiesXMLAlphaTest() {
+        StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
+        rsrc.getStudiesXML("a");
     }
 
     @Test
-    public void getStudiesXMLInternalServerErroTest() throws Exception {
+    public void getStudiesXMLInternalServerErrorTest() throws Exception {
         when(pcs.getStudyProtocolByAgentNsc(anyString())).thenThrow(new RuntimeException());
         StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
         Response resp = rsrc.getStudiesXML("123456");
