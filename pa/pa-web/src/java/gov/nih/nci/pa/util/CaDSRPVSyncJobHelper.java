@@ -53,12 +53,12 @@ public class CaDSRPVSyncJobHelper {
      * @throws PAException
      *             exception
      */
-
+    
     public List<CaDSRDTO> getAllValuesFromCaDSR()
             throws PAException {
         List<CaDSRDTO> values = new ArrayList<CaDSRDTO>();
-        try {
-            appService = ApplicationServiceProvider.getApplicationService();
+        
+            appService = getApplicationService();
             try {
                 DataElement dataElement = new DataElement();
                 dataElement.setPublicID(CDE_PUBLIC_ID);
@@ -71,22 +71,34 @@ public class CaDSRPVSyncJobHelper {
             } catch (Exception e) {
                 LOG.error("Error while querying caDSR", e);
             }
+        return values;
+    }
+    /**
+     * 
+     * @return ApplicationService appService
+     */
+    public ApplicationService getApplicationService() {
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error(
                     "Error attempting to instantiate caDSR Application Service.",
                     e);
         }
-        return values;
+        return appService;
     }
-
     private DetachedCriteria constructSearchCriteria(String vdId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(
                 ValueDomainPermissibleValue.class, "vdpv");
         criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
         return criteria;
     }
-
-    private List<CaDSRDTO> getSearchResults(
+    /**
+     * gets the results 
+     * @param permissibleValues permissibleValues
+     * @return List resultsList
+     */
+    protected List<CaDSRDTO> getSearchResults(
             List<Object> permissibleValues) {
         List<CaDSRDTO> resultsList = new ArrayList<CaDSRDTO>();
         for (Object obj : permissibleValues) {

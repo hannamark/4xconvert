@@ -87,7 +87,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 
 import java.util.ArrayList;
@@ -104,17 +108,19 @@ import org.junit.Test;
 public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     private BioMarkersQueryAction bioMarkersQueryAction;
     StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
+    PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     
     @Before
     public void setUp() throws Exception {
         bioMarkersQueryAction = new BioMarkersQueryAction();
         bioMarkersQueryAction.prepare();
         bioMarkersQueryAction.setStudyProtocolService(studyProtocolService);
+        bioMarkersQueryAction.setPlannedMarkerService(plannedMarkerService);
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
         webDTO.setName("Marker #1");
         webDTO.setMeaning("Marker #1");
         webDTO.setStatus("PENDING");
-        
+        webDTO.setId(1L);
         List<PlannedMarkerWebDTO> plannedMarkerWebDTOs = new ArrayList<PlannedMarkerWebDTO>();
         plannedMarkerWebDTOs.add(webDTO);
         
@@ -157,7 +163,19 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testUpdate() throws PAException{
+    public void testUpdate() throws PAException {
+        PlannedMarkerDTO marker = new PlannedMarkerDTO();
+        PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
+        webDTO.setName("Marker #1");
+        webDTO.setMeaning("Marker #1");
+        webDTO.setStatus("PENDING");
+        webDTO.setId(1L);
+        marker.setName(StConverter.convertToSt("Marker #1"));
+        marker.setLongName(StConverter.convertToSt("Marker #1"));
+        marker.setStudyProtocolIdentifier(IiConverter.convertToIi(123456L));
+        marker.setIdentifier(IiConverter.convertToIi(1L));
+        bioMarkersQueryAction.setPlannedMarker(webDTO);
+        when(plannedMarkerService.get(IiConverter.convertToIi(1L))).thenReturn(marker);
         assertEquals(bioMarkersQueryAction.update(), "success");
     }
 
@@ -166,5 +184,61 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         assertEquals(bioMarkersQueryAction.accept(), "success");
     }
     
+
+    @Test
+    public void testSearch() throws PAException{
+        Map<Long, String> identifierMap = new HashMap<Long, String>();
+        List<Long> identifiersList = new ArrayList<Long>();
+        List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setName(StConverter.convertToSt("name"));
+        dto.setLongName(StConverter.convertToSt("LongName"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(123L));
+        markers.add(dto);
+        identifierMap.put(123456L, "NCI-2012-00260");
+        identifierMap.put(123457L, "NCI-2012-00261");
+        identifiersList.add(123456L);
+        identifiersList.add(123457L);
+        Map<Long, String> statusMap = new HashMap<Long, String>();
+        statusMap.put(123456L, "REJECTED");
+        statusMap.put(123457L, "VERIFICATION_PENDING");
+        when(plannedMarkerService.getPendingPlannedMarkersShortNameAndNCIId("NCI", "NCI-2012-00260")).thenReturn(markers);
+        when(studyProtocolService.getTrialNciId(identifiersList)).thenReturn(identifierMap);
+        when(studyProtocolService.getTrialProcessingStatus(identifiersList)).thenReturn(statusMap);
+        assertEquals(bioMarkersQueryAction.search(), "success");
+        assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());   
+    }
+
+    @Test
+    public void testSearchElse() throws PAException{
+        Map<Long, String> identifierMap = new HashMap<Long, String>();
+        List<Long> identifiersList = new ArrayList<Long>();
+        List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
+        bioMarkersQueryAction.setTrialId("NCI-2012-00260");
+        bioMarkersQueryAction.setMarkerName("Marker #1");
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setLongName(StConverter.convertToSt("Marker #1"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(123456L));
+        PlannedMarkerDTO dto1 = new PlannedMarkerDTO();
+        dto1.setIdentifier(IiConverter.convertToIi(2L));
+        dto1.setName(StConverter.convertToSt("Marker #2"));
+        dto1.setLongName(StConverter.convertToSt("Marker #2"));
+        dto1.setStudyProtocolIdentifier(IiConverter.convertToIi(123457L));
+        markers.add(dto);
+        markers.add(dto1);
+        identifierMap.put(123456L, "NCI-2012-00260");
+        identifierMap.put(123457L, "NCI-2012-00261");
+        identifiersList.add(123456L);
+        identifiersList.add(123457L);
+        Map<Long, String> statusMap = new HashMap<Long, String>();
+        statusMap.put(123456L, "PENDING");
+        when(plannedMarkerService.getPendingPlannedMarkersShortNameAndNCIId("Marker #1", "NCI-2012-00260")).thenReturn(markers);
+        when(studyProtocolService.getTrialNciId(identifiersList)).thenReturn(identifierMap);
+        when(studyProtocolService.getTrialProcessingStatus(identifiersList)).thenReturn(statusMap);
+        assertEquals(bioMarkersQueryAction.search(), "success");
+        assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());   
+    }
 
 }

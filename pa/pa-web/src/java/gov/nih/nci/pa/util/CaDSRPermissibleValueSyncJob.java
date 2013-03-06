@@ -27,12 +27,6 @@ public class CaDSRPermissibleValueSyncJob implements Job {
             LOG.info("Success permissible value job...........");
         } catch (Exception e) {
             LOG.error("error", e);
-//            try {
-//                PaRegistry.getMailManagerService().sendErrorToCTROMail
-//                ("reshma.koganti@gmail.com", "reshma.koganti@semanticbits.com", e.getMessage());
-//            } catch (PAException e1) { 
-//                LOG.error("error  sending mail", e1);
-//            }
         }
     }
 }
