@@ -10,9 +10,12 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 public class DownloadTerminology {
     private static final Logger LOG = Logger.getLogger(DownloadTerminology.class);
@@ -33,19 +36,33 @@ public class DownloadTerminology {
 
 
     private void download() throws IOException {
-      final FTPClient client = new FTPClient();
-      try {
-          client.connect("cipsftp.nci.nih.gov");
-          if (!client.login("scenpro", "UO8cbV^")) {
-              LOG.error("Unable to login to PDQ");
-              throw new IOException("Unable to login to FTP Server.");
+      final JSch jsch = new JSch();
+      Session session = null;
+      try {    	  
+    	  session = jsch.getSession("ctrppdq", "cancerinfo.nci.nih.gov", 22);          
+          session.setConfig("StrictHostKeyChecking", "no");               
+          session.setPassword("Df0211$$");
+          session.connect();
+          
+          if(!session.isConnected()) {
+              LOG.error("Unable to connect to PDQ");
+              throw new IOException("Unable to connect to SFTP Server.");        	  
           }
-          client.setFileType(FTP.BINARY_FILE_TYPE);
+                      
+          Channel channel = session.openChannel("sftp");
+          channel.connect();
+          ChannelSftp sftpChannel = (ChannelSftp) channel;
+    	  
           FileOutputStream fos = null;
           fos = new FileOutputStream(filename);
-          client.retrieveFile("/" + filename, fos);
+          sftpChannel.get("/ncicb/" + filename, fos);
+          
           fos.close();
-      } catch (IOException e) {
+          sftpChannel.exit();  
+          sftpChannel.disconnect();
+          channel.disconnect();
+          session.disconnect();
+      } catch (Exception e) {
           LOG.error(e);
       }
 

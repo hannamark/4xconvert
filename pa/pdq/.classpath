@@ -12,14 +12,12 @@
 	<classpathentry kind="lib" path="lib/commons-net-ftp-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/jdom-1.0.jar" sourcepath="C:/Users/dkrylov/.m2/repository/jdom/jdom/1.0/jdom-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/nci-commons-core-1.2.20.jar"/>
-	<classpathentry kind="lib" path="/pa/pdq/lib/commons-lang-2.4.jar"/>
-	<classpathentry kind="lib" path="/pa/pdq/lib/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="/pa/pdq/lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="/pa/pdq/lib/nci-commons-core-1.2.20.jar"/>
-	<classpathentry kind="lib" path="/pa/pdq"/>
-	<classpathentry kind="lib" path="/pa/pdq/lib/po-services-3.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.49.jar"/>
+	<classpathentry kind="lib" path="lib/nci-commons-ctrp-core-1.4.5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/po-services-3.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/jollyday-0.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-1.6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
