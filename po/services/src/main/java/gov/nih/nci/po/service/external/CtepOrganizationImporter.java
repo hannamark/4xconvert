@@ -309,8 +309,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         HealthCareFacility hcf = getCtepHealthCareFacility(ctepOrgId);
         if (hcf != null) {
             if (hcf.getId() != null) {
-                throw new CtepImportException("org not in po but ctep has po hcf id", "CTEP ECM provided a po hcf id "
-                        + hcf.getId() + " but org not found in database. ECM and PO are out of synch.");
+                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po hcf id", 
+                        "CTEP ECM provided a po hcf id " + hcf.getId() + " for the org " + ctepOrgId
+                        + " but org not found in database. ECM and PO are out of synch.");
             }
             hcf.setPlayer(ctepOrg);
             hcf.setStatus(roleStatus);
@@ -325,8 +326,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         ResearchOrganization ro = getCtepResearchOrganization(ctepOrgId);
         if (ro != null) {
             if (ro.getId() != null) {
-                throw new CtepImportException("org not in po but ctep has po ro id", "CTEP provided a po ro id "
-                        + ro.getId() + " but org not found in database. ECM and PO are out of synch.");
+                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po ro id", 
+                        "CTEP provided a po ro id " + ro.getId() + " for the org " + ctepOrgId
+                        + " but org not found in database. ECM and PO are out of synch.");
             }
             ro.setPlayer(ctepOrg);
             ro.setStatus(roleStatus);
@@ -368,7 +370,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         } else if (ro != null && ro.getId() != null) {
             identifiedOrg.setPlayer(ro.getPlayer());
         } else {
-            throw new IllegalArgumentException("Either the HCF or the RO must be not null so we may get player id.");
+            throw new CtepImportException("no role id", 
+                    "Either the HCF or the RO must be not null so we may get player id.");
         }
         return identifiedOrg;
     }

@@ -179,6 +179,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             comparePersonIi(ctepPersonId, ctepPersonDto.getIdentifier());
             printPersonDataToLog(ctepPersonDto);
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
+            CtepUtils.validateAddress(ctepPerson.getPostalAddress());
             // search for org based on the ctep provided ii
             IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
             if (identifiedPerson == null) {
@@ -198,12 +199,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void comparePersonIi(Ii originalIi, Ii newIi) throws JMSException {
+    private void comparePersonIi(Ii originalIi, Ii newIi) throws CtepImportException {
         if (originalIi == null || newIi == null) {
-            throw new JMSException("Person import aborted, null CTEP Id found: " + originalIi + " or " + newIi);
+            throw new CtepImportException("null CTEP id found",
+                    "Person import aborted, null CTEP Id found: " + originalIi + " or " + newIi);
         } else if (!originalIi.getExtension().equals(newIi.getExtension())
                 || !originalIi.getRoot().equals(newIi.getRoot())) {
-            throw new JMSException("Person import aborted, mismatch in CTEP Ids: (" + originalIi.getRoot() + ", "
+            throw new CtepImportException("mismatch CTEP ids",
+                    "Person import aborted, mismatch in CTEP Ids: (" + originalIi.getRoot() + ", "
                     + originalIi.getExtension() + ") and (" + newIi.getRoot() + ", " + newIi.getExtension() + ")");
         }
     }

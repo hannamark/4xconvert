@@ -6,6 +6,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.PersonService;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
@@ -32,6 +34,7 @@ import gov.nih.nci.po.service.external.stubs.CTEPPerServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPPersonServiceStub;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -175,7 +178,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         when(service.getPersonById(any(Ii.class))).thenReturn(personDTO);
         importer.setCtepPersonService(service);
         PersonDTO per = stubPersonService.getPer();
-        thrown.expect(JMSException.class);
+        thrown.expect(CtepImportException.class);
         thrown.expectMessage("Person import aborted, null CTEP Id found");
         importer.importPerson(per.getIdentifier());
     }
@@ -189,8 +192,23 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         when(service.getPersonById(any(Ii.class))).thenReturn(personDTO);
         importer.setCtepPersonService(service);
         PersonDTO per = stubPersonService.getPer();
-        thrown.expect(JMSException.class);
+        thrown.expect(CtepImportException.class);
         thrown.expectMessage("Person import aborted, mismatch in CTEP Ids");
+        importer.importPerson(per.getIdentifier());
+    }
+    
+    @Test
+    public void testInvalidPersonImportReturnBadAddress() throws Exception, JMSException, EntityValidationException {
+        CTEPPersonServiceStub stubPersonService = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
+        PersonDTO per = stubPersonService.getPer();
+        per.getIdentifier().setExtension("xyzzy");
+        per.setPostalAddress(new Ad());
+        per.getPostalAddress().setPart(new ArrayList<Adxp>());
+        PersonService service = mock(PersonService.class);
+        when(service.getPersonById(any(Ii.class))).thenReturn(per);
+        importer.setCtepPersonService(service);
+        thrown.expect(CtepImportException.class);
+        thrown.expectMessage("Street missing in CTEP address.");
         importer.importPerson(per.getIdentifier());
     }
 }
