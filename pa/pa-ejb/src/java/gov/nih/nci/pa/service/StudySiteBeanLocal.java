@@ -6,21 +6,23 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
+import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
-import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
-import gov.nih.nci.pa.iso.convert.StudySiteContactConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -36,17 +38,19 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -70,9 +74,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         StudySiteServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
-
-    @EJB
-    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
 
     /**
      * @param dto StudySiteDTO
@@ -112,47 +113,89 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException on error
      */
     @Override
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
-        List<StudySiteDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
-        Map<Ii, Ii> map = new HashMap<Ii, Ii>();
-        List<StudySiteContactDTO> spcDtos = null;
-        List<StudySiteAccrualStatusDTO> accDtos = null;
         Session session = PaHibernateUtil.getCurrentSession();
-        StudySite bo = null;
-        Ii from = null;
-        Ii to = null;
-        StudySiteContactConverter ssc = new StudySiteContactConverter();
-
-        for (StudySiteDTO dto : dtos) {
-            from = dto.getIdentifier();
-            to = new Ii();
-            dto.setIdentifier(null);
-            dto.setStudyProtocolIdentifier(toStudyProtocolIi);
-            bo = convertFromDtoToDomain(dto);
-            session.save(bo);
+        session.flush();        
+        
+        Map<Ii, Ii> map = new HashMap<Ii, Ii>();        
+        StudyProtocol targetProtocol = new StudyProtocol();
+        targetProtocol.setId(IiConverter.convertToLong(toStudyProtocolIi));
+                
+        Collection<StudySite> studySites = getAllSitesByProtocol(fromStudyProtocolIi);        
+        for (StudySite site : studySites) {
+            List<StudySiteContact> contacts = new ArrayList<StudySiteContact>(site.getStudySiteContacts());
+            List<StudySiteAccrualStatus> accrualStatuses = new ArrayList<StudySiteAccrualStatus>(
+                    site.getStudySiteAccrualStatuses());
+            session.evict(site);
+            
+            Ii from = IiConverter.convertToStudySiteIi(site.getId());
+            Ii to = new Ii();
+            
+            site.setId(null);
+            site.setStudyProtocol(targetProtocol);     
+            site.setAccrualCounts(new TreeSet<StudySiteSubjectAccrualCount>());
+            site.setStudySiteAccrualAccess(new ArrayList<StudySiteAccrualAccess>());
+            site.setStudySiteAccrualStatuses(new ArrayList<StudySiteAccrualStatus>());
+            site.setStudySiteContacts(new ArrayList<StudySiteContact>());
+            site.setStudySiteOwners(new HashSet<RegistryUser>());
+            site.setStudySubjects(new ArrayList<StudySubject>());                        
+            session.save(site);
+            session.flush();
+                        
             to.setIdentifierName(from.getIdentifierName());
             to.setRoot(from.getRoot());
-            to.setExtension(bo.getId().toString());
+            to.setExtension(site.getId().toString());
+            
             // create study contact
-            spcDtos = PaRegistry.getStudySiteContactService().getByStudySite(from);
-            for (StudySiteContactDTO spcDto : spcDtos) {
-                spcDto.setIdentifier(null);
-                spcDto.setStudySiteIi(to);
-                spcDto.setStudyProtocolIdentifier(toStudyProtocolIi);
-                session.save(ssc.convertFromDtoToDomain(spcDto));
+            for (StudySiteContact ssc : contacts) {
+                session.evict(ssc);
+                ssc.setId(null);
+                ssc.setStudySite(site);
+                ssc.setStudyProtocol(targetProtocol); 
+                session.save(ssc);
             }
+            
             // create study accrual status
-            if (StudySiteFunctionalCode.TREATING_SITE.getCode().equals(dto.getFunctionalCode().getCode())) {
-                accDtos = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(from);
-                for (StudySiteAccrualStatusDTO accDto : accDtos) {
-                    accDto.setIdentifier(null);
-                    accDto.setStudySiteIi(to);
-                    session.save(new StudySiteAccrualStatusConverter().convertFromDtoToDomain(accDto));
+            if (StudySiteFunctionalCode.TREATING_SITE.equals(site
+                    .getFunctionalCode())) {
+                for (StudySiteAccrualStatus status : accrualStatuses) {
+                    session.evict(status);
+                    status.setId(null);
+                    status.setStudySite(site);
+                    session.save(status);
                 }
             }
             map.put(from, to);
         }
         return map;
+    }
+     
+    @SuppressWarnings("unchecked")
+    private Collection<StudySite> getAllSitesByProtocol(Ii ii) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select alias from "
+                + StudySite.class.getSimpleName()
+                + " alias join alias.studyProtocol sp left join fetch alias.studySiteAccrualStatuses "
+                + "left join fetch alias.researchOrganization "
+                + "left join fetch alias.researchOrganization.organization left join fetch alias.healthCareFacility "
+                + "left join fetch alias.healthCareFacility.organization where sp.id = :studyProtocolId";
+        Query query = session.createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
+        // left join fetch on studySiteAccrualStatuses may produce duplicate site entries.
+        return filterOutDuplicateSites((List<StudySite>) query.list());
+    }
+
+    private Collection<StudySite> filterOutDuplicateSites(List<StudySite> list) {
+        Collection<StudySite> set = new TreeSet<StudySite>(
+                new Comparator<StudySite>() {
+                    @Override
+                    public int compare(StudySite o1, StudySite o2) {
+                        return o1.getId().compareTo(o2.getId());
+                    }
+                });
+        set.addAll(list);
+        return set;
     }
 
     private StudySiteDTO businessRules(StudySiteDTO dto) throws PAException {
