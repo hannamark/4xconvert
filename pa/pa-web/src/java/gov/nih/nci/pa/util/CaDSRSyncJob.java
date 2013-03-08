@@ -21,11 +21,12 @@ public class CaDSRSyncJob implements Job {
     @Override
     public void execute(JobExecutionContext context)
             throws JobExecutionException {
-        LOG.info("executing job");
+        LOG.info("executing CaDSRSyncJob job");
         try {
             CaDSRSyncHelper helper = new CaDSRSyncHelper();
             helper.syncPlannedMarkerAttributes();
             helper.updateMarkerTables();
+            LOG.info("CaDSRSyncJob job success.....");
         } catch (Exception e) {
             LOG.error("error", e);
         }

@@ -11,9 +11,12 @@ import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
@@ -30,10 +33,11 @@ import org.junit.Test;
  * @author Reshma Koganti
  * 
  */
-public class CaDSRSyncHelperTest extends AbstractPaActionTest {
+public class CaDSRSyncHelperTest extends AbstractHibernateTestCase {
     CaDSRSyncHelper helper;
     private MarkerAttributesServiceLocal markerAttributesService = mock(MarkerAttributesServiceLocal.class);
     private PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
+    LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     ApplicationService appService = mock(ApplicationService.class);
     CaDSRSyncHelper helperMock = mock(CaDSRSyncHelper.class);
     /** The CDE public Id for Assay Type Attribute. */
@@ -53,6 +57,12 @@ public class CaDSRSyncHelperTest extends AbstractPaActionTest {
         helper = new CaDSRSyncHelper();
         helper.setMarkerAttributesService(markerAttributesService);
         helper.setPlannedMarkerService(plannedMarkerService);
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        when(PaRegistry.getMarkerAttributesService()).thenReturn(markerAttributesService);
+        when(PaRegistry.getPlannedMarkerService()).thenReturn(plannedMarkerService);
+        when(PaRegistry.getLookUpTableService()).thenReturn(lookUpTableSrv);
+        helper.setLookUpTableService(lookUpTableSrv);
         EnumeratedValueDomain vd = new EnumeratedValueDomain();
         vd.setId("1");
         
@@ -84,6 +94,8 @@ public class CaDSRSyncHelperTest extends AbstractPaActionTest {
         when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
 
         helper.setAppService(appService);
+        TestSchema.caDSRSyncJobProperties();
+        
     }
 
     @Test
@@ -92,34 +104,34 @@ public class CaDSRSyncHelperTest extends AbstractPaActionTest {
         Map<String, String> result = new HashMap<String, String>();
         result.put("ELISA","ELISA");
         map.put(2558713L, result);
-        when(helperMock.getCaDSRValues(CDE_PUBLIC_ID_ASSAY)).thenReturn(map);
+        when(helperMock.getCaDSRValues(CDE_PUBLIC_ID_ASSAY, 4.0F)).thenReturn(map);
         helper.updateMarkerTables();        
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_ASSAY);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_ASSAY, 4.0F);
         assertTrue(map.size() > 0);
         Map<String, String> value = map.get(2575508L);
         
         assertTrue(value.get("Microarray").equals("Microarray"));
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_USE);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_USE, 1.0F);
         assertTrue(map.size() > 0);
         value.clear();
         value = map.get(2944941L);
         assertTrue(value.get("Integral").equals("Integral"));
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_PURPOSE);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_PURPOSE, 1.0F);
         assertTrue(map.size() > 0);
         value.clear();
         value = map.get(2939394L);
         assertTrue(value.get("Stratification Factor").equals("Stratification Factor"));
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_SPECIMEN);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_SPECIMEN, 1.0F);
         assertTrue(map.size() > 0);
         value.clear();
         value = map.get(3004972L);
         assertTrue(value.get("Serum").equals("Serum"));
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_SP_COL);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_SP_COL, 1.0F);
         assertTrue(map.size() > 0);
         value.clear();
         value = map.get(2939403L);
         assertTrue(value.get("Mandatory").equals("Mandatory"));
-        map = helper.getCaDSRValues(CDE_PUBLIC_ID_EVAL);
+        map = helper.getCaDSRValues(CDE_PUBLIC_ID_EVAL, 1.0F);
         assertTrue(map.size() > 0);
         value.clear();
         value = map.get(3079271L);

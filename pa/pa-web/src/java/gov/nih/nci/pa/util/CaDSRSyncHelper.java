@@ -8,6 +8,7 @@ import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 import java.util.Collection;
@@ -38,12 +39,25 @@ public class CaDSRSyncHelper {
     /** The CDE public Id for Specimen Collection Attribute. */
     private static final Long CDE_PUBLIC_ID_SP_COL = 2939404L;
     /** The CDE public Id for EvaluationType Attribute. */
-    private static final Long CDE_PUBLIC_ID_EVAL = 3645784L;
+    private static final Long CDE_PUBLIC_ID_EVAL = 3645784L; 
+    /** The CDE version for Assay Type Attribute. */
+    private static final String CDE_VERSION_ASSAY = "CDE_version_assay";
+    /** The CDE version for BioMarker Use Attribute. */
+    private static final String CDE_VERSION_USE = "CDE_version_use";
+    /** The CDE version for BioMarker Purpose Attribute. */
+    private static final String CDE_VERSION_PURPOSE = "CDE_version_purpose";
+    /** The CDE version for Specimen Type Attribute. */
+    private static final String CDE_VERSION_SPECIMEN = "CDE_version_specimen";
+    /** The CDE version for Specimen Collection Attribute. */
+    private static final String CDE_VERSION_SP_COL = "CDE_version_sp_col";
+    /** The CDE version for EvaluationType Attribute. */
+    private static final String CDE_VERSION_EVAL = "CDE_version_eval";
     /** The LOG details. */
     private static final Logger LOG = Logger.getLogger(CaDSRSyncHelper.class);
 
     private MarkerAttributesServiceLocal markerAttributesService;
     private PlannedMarkerServiceLocal plannedMarkerService;
+    private LookUpTableServiceRemote lookUpTableService;
     /**
      * updates Marker Tables.
      * 
@@ -52,36 +66,39 @@ public class CaDSRSyncHelper {
      */
     public void updateMarkerTables() throws PAException {
         markerAttributesService = PaRegistry.getMarkerAttributesService();
-        Map<Long, Map<String, String>> map = getCaDSRValues(CDE_PUBLIC_ID_ASSAY);
+        lookUpTableService = PaRegistry.getLookUpTableService();
+        String version = lookUpTableService.getPropertyValue(CDE_VERSION_ASSAY);
+        Map<Long, Map<String, String>> map = getCaDSRValues(CDE_PUBLIC_ID_ASSAY, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.ASSAY_TYPE, map);
         }
-        map = getCaDSRValues(CDE_PUBLIC_ID_USE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_USE);
+        map = getCaDSRValues(CDE_PUBLIC_ID_USE, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.BIOMARKER_USE, map);
         }
-
-        map = getCaDSRValues(CDE_PUBLIC_ID_PURPOSE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_PURPOSE);
+        map = getCaDSRValues(CDE_PUBLIC_ID_PURPOSE, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.BIOMARKER_PURPOSE, map);
         }
-
-        map = getCaDSRValues(CDE_PUBLIC_ID_SPECIMEN);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_SPECIMEN);
+        map = getCaDSRValues(CDE_PUBLIC_ID_SPECIMEN, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.SPECIMEN_TYPE, map);
         }
-
-        map = getCaDSRValues(CDE_PUBLIC_ID_SP_COL);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_SP_COL);
+        map = getCaDSRValues(CDE_PUBLIC_ID_SP_COL, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.SPECIMEN_COLLECTION, map);
         }
-
-        map = getCaDSRValues(CDE_PUBLIC_ID_EVAL);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_EVAL);
+        map = getCaDSRValues(CDE_PUBLIC_ID_EVAL, Float.parseFloat(version));
         if (!map.isEmpty()) {
             markerAttributesService.updateMarker(
                     BioMarkerAttributesCode.EVALUATION_TYPE, map);
@@ -91,11 +108,11 @@ public class CaDSRSyncHelper {
     /**
      * get CaDSR values.
      * 
-     * @param publicId
-     *            publicId
+     * @param publicId publicId
+     * @param version version
      * @return map<Stirng, String> map
      */
-    public Map<Long, Map<String, String>> getCaDSRValues(Long publicId) {
+    public Map<Long, Map<String, String>> getCaDSRValues(Long publicId, Float version) {
         Map<Long, Map<String, String>> values = new HashMap<Long, Map<String, String>>();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
@@ -103,6 +120,7 @@ public class CaDSRSyncHelper {
                 DataElement dataElement = new DataElement();
                 dataElement.setPublicID(publicId);
                 dataElement.setLatestVersionIndicator("Yes");
+                dataElement.setVersion(version);
                 Collection<Object> results = appService.search(
                         DataElement.class, dataElement);
                 DataElement de = (DataElement) results.iterator().next();
@@ -153,25 +171,32 @@ public class CaDSRSyncHelper {
     public void syncPlannedMarkerAttributes() throws PAException {
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         markerAttributesService = PaRegistry.getMarkerAttributesService();
+        lookUpTableService = PaRegistry.getLookUpTableService();
+        String version = lookUpTableService.getPropertyValue(CDE_VERSION_ASSAY);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.ASSAY_TYPE,
-                CDE_PUBLIC_ID_ASSAY, BioMarkerAttributesCode.ASSAY_TYPE_CODE);
+                CDE_PUBLIC_ID_ASSAY, Float.parseFloat(version), BioMarkerAttributesCode.ASSAY_TYPE_CODE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_PURPOSE);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.BIOMARKER_PURPOSE,
-                CDE_PUBLIC_ID_PURPOSE, BioMarkerAttributesCode.ASSAY_PURPOSE_CODE);
+                CDE_PUBLIC_ID_PURPOSE, Float.parseFloat(version), BioMarkerAttributesCode.ASSAY_PURPOSE_CODE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_USE);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.BIOMARKER_USE,
-                CDE_PUBLIC_ID_USE, BioMarkerAttributesCode.ASSAY_USE_CODE);
+                CDE_PUBLIC_ID_USE, Float.parseFloat(version), BioMarkerAttributesCode.ASSAY_USE_CODE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_EVAL);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.EVALUATION_TYPE,
-                CDE_PUBLIC_ID_EVAL, BioMarkerAttributesCode.EVALUATION_TYPE_CODE);
+                CDE_PUBLIC_ID_EVAL, Float.parseFloat(version), BioMarkerAttributesCode.EVALUATION_TYPE_CODE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_SPECIMEN);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.SPECIMEN_TYPE,
-                CDE_PUBLIC_ID_SPECIMEN, BioMarkerAttributesCode.TISSUE_SPECIMEN_TYPE_CODE);
+                CDE_PUBLIC_ID_SPECIMEN, Float.parseFloat(version), BioMarkerAttributesCode.TISSUE_SPECIMEN_TYPE_CODE);
+        version = lookUpTableService.getPropertyValue(CDE_VERSION_SP_COL);
         updatePlannedMarkerAttributes(BioMarkerAttributesCode.SPECIMEN_COLLECTION,
-                CDE_PUBLIC_ID_SP_COL, BioMarkerAttributesCode.TISSUE_COLLECTION_METHOD_CODE);
+                CDE_PUBLIC_ID_SP_COL, Float.parseFloat(version), BioMarkerAttributesCode.TISSUE_COLLECTION_METHOD_CODE);
     }
     
     private void updatePlannedMarkerAttributes(BioMarkerAttributesCode code, 
-            Long publicId, BioMarkerAttributesCode attributeCode) throws PAException {
+            Long publicId, Float version, BioMarkerAttributesCode attributeCode) throws PAException {
         Map<Long, Map<String, String>> map = 
             markerAttributesService.attributeValuesWithCaDSR(code);
-        Map<Long , Map<String, String>> mapCaDSR =  getCaDSRValues(publicId);
+        Map<Long , Map<String, String>> mapCaDSR =  getCaDSRValues(publicId, version);
         Iterator<Map.Entry<Long, Map<String, String>>> itr = map.entrySet().iterator();
        
         while (itr.hasNext()) {
@@ -241,6 +266,22 @@ public class CaDSRSyncHelper {
     public void setPlannedMarkerService(
             PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
+    }
+    
+    /**
+     * 
+     * @return lookUpTableService lookUpTableService
+     */
+
+    public LookUpTableServiceRemote getLookUpTableService() {
+        return lookUpTableService;
+    }
+
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
     }
     
 }

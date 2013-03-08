@@ -1179,6 +1179,38 @@ public class TestSchema {
         assayType.setCaDSRId(234567L);
         return assayType;
     }
+    
+    public static void caDSRSyncJobProperties() {
+        PAProperties prop = new PAProperties();      
+        prop.setName("CDE_version_assay");
+        prop.setValue("4.0");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();      
+        prop.setName("CDE_version_use");
+        prop.setValue("1.0");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();        
+        prop.setName("CDE_version_purpose");
+        prop.setValue("1.0");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();      
+        prop.setName("CDE_version_specimen");
+        prop.setValue("1.0");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("CDE_version_sp_col");
+        prop.setValue("1.0");
+        TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("CDE_version_eval");
+        prop.setValue("1.0");
+        TestSchema.addUpdObject(prop);
+    }
 
     public static EvaluationType createEvaluationType() {
         EvaluationType evaluationType = new EvaluationType();
