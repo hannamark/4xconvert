@@ -149,6 +149,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -1430,6 +1431,25 @@ public class PAUtil {
         return date!=null?DateUtils.setMilliseconds(DateUtils.setSeconds(
                 DateUtils.setMinutes(DateUtils.setHours(date, 23), 59), 59),
                 999):null;
+    }
+
+    /**
+     * Updates a PA Property value.
+     * 
+     * @param name
+     *            name
+     * @param value
+     *            value
+     */
+    public static void updatePaProperty(String name, String value) {
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update pa_properties set value='"
+                                + StringEscapeUtils.escapeSql(value)
+                                + "' where name='"
+                                + StringEscapeUtils.escapeSql(name) + "'")
+                .executeUpdate();
     }
     
 }

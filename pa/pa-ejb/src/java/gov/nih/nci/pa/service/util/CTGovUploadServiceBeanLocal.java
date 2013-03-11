@@ -155,21 +155,28 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
     }
 
     @Override
-    public void uploadToCTGov() {
-        LOG.info("Nightly CT.Gov FTP Upload kicked off.");
-        try {
-            List<Ii> trialIDs = getTrialIdsForUpload();
-            LOG.info("Got " + trialIDs.size() + " trials to upload.");
-            URL ftpURL = new URL(PaEarPropertyReader.getCTGovFtpURL());
-            LOG.info("CT.Gov FTP is " + hidePassword(ftpURL));
-            if (CollectionUtils.isNotEmpty(trialIDs)) {
-                uploadToCTGov(trialIDs, ftpURL);
+    public void uploadToCTGov() throws PAException {
+        if (isUploadEnabled()) {
+            LOG.info("Nightly CT.Gov FTP Upload kicked off.");
+            try {
+                List<Ii> trialIDs = getTrialIdsForUpload();
+                LOG.info("Got " + trialIDs.size() + " trials to upload.");
+                URL ftpURL = new URL(PaEarPropertyReader.getCTGovFtpURL());
+                LOG.info("CT.Gov FTP is " + hidePassword(ftpURL));
+                if (CollectionUtils.isNotEmpty(trialIDs)) {
+                    uploadToCTGov(trialIDs, ftpURL);
+                }
+                LOG.info("Done.");
+            } catch (Exception e) {
+                LOG.error("CT.Gov FTP Upload has failed due to " + e);
+                LOG.error(e, e);
             }
-            LOG.info("Done.");
-        } catch (Exception e) {
-            LOG.error("CT.Gov FTP Upload has failed due to " + e);
-            LOG.error(e, e);
         }
+    }
+
+    private boolean isUploadEnabled() throws PAException {
+        return Boolean.valueOf(lookUpTableService
+                .getPropertyValue("ctgov.ftp.enabled"));
     }
 
     private void uploadToCTGov(List<Ii> trialIDs, URL ftpURL)

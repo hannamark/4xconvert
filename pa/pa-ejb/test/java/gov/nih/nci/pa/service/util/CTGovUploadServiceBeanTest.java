@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
@@ -78,9 +79,10 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
      * Test method for
      * {@link gov.nih.nci.pa.service.util.CTGovUploadServiceBeanLocal#uploadToCTGov()}
      * .
+     * @throws PAException 
      */
     @Test
-    public final void testUploadToCTGov() {
+    public final void testUploadToCTGov() throws PAException {
         serviceBean.uploadToCTGov();
         assertTrue(fileSystem.exists("/clinical.txt"));        
     }

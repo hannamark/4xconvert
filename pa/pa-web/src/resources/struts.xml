@@ -284,6 +284,12 @@
             <result name="error">/WEB-INF/jsp/userAccountDetails.jsp</result>
             <result name="success">/WEB-INF/jsp/userAccountDetails.jsp</result>
         </action>
+        
+        <action name="manageCTGovUpload*" class="gov.nih.nci.pa.action.ManageCTGovUploadAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />           
+            <result name="error">/WEB-INF/jsp/manageCTGovUpload.jsp</result>
+            <result name="success">/WEB-INF/jsp/manageCTGovUpload.jsp</result>
+        </action>        
                 
         <action name="home">
             <result>studyProtocolshowCriteria.action</result>

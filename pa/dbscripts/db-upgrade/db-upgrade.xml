@@ -1244,5 +1244,9 @@
      <changeSet id="PO-5874" author="Reshma">
         <comment>insert values in to pa_properties table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5874.sql"/>
-     </changeSet> 
+     </changeSet>
+     <changeSet id="PO-5970" author="krylovd">
+        <comment>Add a new property to pa_properties to turn CT.Gov upload on and off.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5970.sql"/>
+     </changeSet>      
 </databaseChangeLog>
