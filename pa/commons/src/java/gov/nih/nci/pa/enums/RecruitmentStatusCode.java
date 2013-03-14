@@ -99,7 +99,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /** In Review. */
     IN_REVIEW("In Review", false),
     /** Approved. */
-    APPROVED("Approved", false),
+    APPROVED("Approved", true),
     /** Active. */
     ACTIVE("Active", true),
     /** Enrolling by invitation. */
@@ -113,7 +113,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /** Temporarily Closed to Accrual and Intervention. */
     TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", true),
     /** Withdrawn. */
-    WITHDRAWN("Withdrawn", false),
+    WITHDRAWN("Withdrawn", true),
     /** Administratively Complete. */
     ADMINISTRATIVELY_COMPLETE("Administratively Complete", true),
     /** Completed. */

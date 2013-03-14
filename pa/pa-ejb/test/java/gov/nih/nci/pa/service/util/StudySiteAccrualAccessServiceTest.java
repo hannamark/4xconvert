@@ -265,7 +265,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
 
     @Test
     public void createOnlyForAccruingSites() throws Exception {
-        assertFalse(RecruitmentStatusCode.WITHDRAWN.isEligibleForAccrual());
+        assertTrue(RecruitmentStatusCode.WITHDRAWN.isEligibleForAccrual());
+        assertTrue(RecruitmentStatusCode.APPROVED.isEligibleForAccrual());
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
         dto.setStudySiteIi(IiConverter.convertToStudySiteIi(ssId));
         dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
