@@ -123,6 +123,7 @@ import javax.ejb.EJB;
  * @author mshestopalov
  *
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class AbstractCTGovXmlGeneratorServiceBean {
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
@@ -166,6 +167,8 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     private StudyRecruitmentStatusServiceLocal studyRecruitmentService;
     @EJB
     private StudyResourcingServiceLocal studyResourcingService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private CorrelationUtils corUtils = new CorrelationUtils();
     private PAServiceUtils paServiceUtil = new PAServiceUtils();
@@ -564,6 +567,21 @@ public class AbstractCTGovXmlGeneratorServiceBean {
             return getNv().get(cd.getCode());
         }
         return cd.getCode();
+    }
+
+    /**
+     * @return the protocolQueryService
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 
 }

@@ -195,6 +195,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGeneratorServiceBean
     implements CTGovXmlGeneratorServiceLocal {
 
+    private static final String OTHER_IDENTIFIER = "Other Identifier";
     private static final String PRS_PLACEHOLDER = "replace with PRS Organization Name you log in with";
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBeanLocal.class);
     private static final String YYYYMMDD = "yyyy-MM-dd";
@@ -781,32 +782,70 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
         return result;
     }
+    
+    private void addSecondaryId(Document doc, Element idInfo, String id,
+            String type, String domain) {
+        if (!StringUtils.isBlank(id)) {
+            Element secondaryID = doc.createElement("secondary_id");
+            XmlGenHelper.appendElement(secondaryID,
+                    XmlGenHelper.createElementWithTextblock("id", id, doc));
+            XmlGenHelper.appendElement(secondaryID, XmlGenHelper
+                    .createElementWithTextblock("id_type", type, doc));
+            XmlGenHelper.appendElement(secondaryID, XmlGenHelper
+                    .createElementWithTextblock("id_domain", domain, doc));
+            XmlGenHelper.appendElement(idInfo, secondaryID);
+        }
+    }
 
+    @SuppressWarnings({ "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void createIdInfo(StudyProtocolDTO spDTO, Document doc, Element root, CTGovXmlGeneratorOptions[] options) 
             throws PAException {
         Element idInfo = doc.createElement("id_info");
         
         createOrgStudyId(spDTO, doc, idInfo);
 
-        Element assignedId = doc.createElement("secondary_id");
-        XmlGenHelper.appendElement(assignedId,
-                XmlGenHelper.createElementWithTextblock("id", PAUtil.getAssignedIdentifierExtension(spDTO), doc));
-        XmlGenHelper.appendElement(assignedId, XmlGenHelper.createElementWithTextblock(
-                "id_type", "Registry Identifier", doc));
-        XmlGenHelper.appendElement(assignedId,
-                XmlGenHelper.createElementWithTextblock("id_domain", "CTRP (Clinical Trial Reporting Program)", doc));
-        XmlGenHelper.appendElement(idInfo, assignedId);
+        addSecondaryId(doc, idInfo,
+                PAUtil.getAssignedIdentifierExtension(spDTO),
+                "Registry Identifier",
+                "CTRP (Clinical Trial Reporting Program)");
 
         boolean isProprietaryTrial = !ISOUtil.isBlNull(spDTO.getProprietaryTrialIndicator())
                 && BlConverter.convertToBoolean(spDTO.getProprietaryTrialIndicator());
         if (!isProprietaryTrial) {
             List<Ii> otherIdentifierIis = PAUtil.getOtherIdentifiers(spDTO);
             for (Ii otherIdIi : otherIdentifierIis) {
-                Element otherIdentifier = doc.createElement("secondary_id");
-                XmlGenHelper.appendElement(otherIdentifier,
-                        XmlGenHelper.createElementWithTextblock("id", otherIdIi.getExtension(), doc));                
-                XmlGenHelper.appendElement(idInfo, otherIdentifier);
+                addSecondaryId(doc, idInfo, otherIdIi.getExtension(), "", "");
             }
+            addSecondaryId(
+                    doc,
+                    idInfo,
+                    getPaServiceUtil().getStudyIdentifier(
+                            spDTO.getIdentifier(),
+                            PAConstants.LEAD_IDENTIFER_TYPE),
+                    OTHER_IDENTIFIER,
+                    getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                            IiConverter.convertToLong(spDTO.getIdentifier()))
+                            .getLeadOrganizationName());
+            addSecondaryId(
+                    doc,
+                    idInfo,
+                    getPaServiceUtil().getStudyIdentifier(
+                            spDTO.getIdentifier(),
+                            PAConstants.NCT_IDENTIFIER_TYPE), OTHER_IDENTIFIER, "CTgov");
+            addSecondaryId(
+                    doc,
+                    idInfo,
+                    getPaServiceUtil().getStudyIdentifier(
+                            spDTO.getIdentifier(),
+                            PAConstants.DCP_IDENTIFIER_TYPE), OTHER_IDENTIFIER, "DCP");
+            addSecondaryId(
+                    doc,
+                    idInfo,
+                    getPaServiceUtil().getStudyIdentifier(
+                            spDTO.getIdentifier(),
+                            PAConstants.CTEP_IDENTIFIER_TYPE), OTHER_IDENTIFIER, "CTEP");
+            
+            
         }
         addTrialSecondaryIdInfo(spDTO, doc, idInfo);
 

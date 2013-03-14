@@ -120,6 +120,7 @@ public abstract class AbstractXmlGeneratorTest extends AbstractMockitoTest {
         getBean().setRegistryUserService(regUserSvc);
         getBean().setStudySiteService(studySiteSvc);
         getBean().setStudyProtocolService(spSvc);
+        getBean().setProtocolQueryService(protocolQueryServiceLocal);
     }
 
 }

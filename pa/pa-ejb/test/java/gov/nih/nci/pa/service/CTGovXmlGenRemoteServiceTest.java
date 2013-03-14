@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -14,6 +15,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ErrorCode;
@@ -21,7 +23,6 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.PAExceptionAssertHelper;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.TestSchema;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,11 +39,17 @@ public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
         }
     };
     private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
 
     @Before
     public void init() throws Exception {
         CSMUserService.setInstance(new MockCSMUserService());
-        bean.setStudyProtocolService(studyProtocolService);        
+        bean.setStudyProtocolService(studyProtocolService);    
+        bean.setProtocolQueryService(protocolQueryService);
+        when(
+                protocolQueryService
+                        .getTrialSummaryByStudyProtocolId(any(Long.class)))
+                .thenReturn(new StudyProtocolQueryDTO());        
     }
 
     @Test

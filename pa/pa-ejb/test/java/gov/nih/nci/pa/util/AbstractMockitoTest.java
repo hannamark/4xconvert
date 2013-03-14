@@ -841,6 +841,12 @@ public class AbstractMockitoTest {
 
     private void setupProtocolQueryServiceMock() throws PAException {
         protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
+        final StudyProtocolQueryDTO summaryDTO = new StudyProtocolQueryDTO();
+        summaryDTO.setLeadOrganizationName("NCI");
+        when(
+                protocolQueryServiceLocal
+                        .getTrialSummaryByStudyProtocolId(any(Long.class)))
+                .thenReturn(summaryDTO);
         when(
                 protocolQueryServiceLocal
                         .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
