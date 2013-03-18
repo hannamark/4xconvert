@@ -4,11 +4,11 @@
 	<property name="ireport.x" value="760"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="Start Date" class="java.util.Date">
-		<parameterDescription><![CDATA[Month and year of earliest registration date (only for non-industrial).]]></parameterDescription>
+		<parameterDescription><![CDATA[Earliest registration date (EEE MM/dd/yyyy) for non-industrial.]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="End Date" class="java.util.Date">
-		<parameterDescription><![CDATA[Month and year of latest registration date (only for non-industrial).]]></parameterDescription>
+		<parameterDescription><![CDATA[Latest registration date (EEE MM/dd/yyyy) for non-industrial.]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Center" class="java.lang.String">
@@ -188,7 +188,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Center}]]></textFieldExpression>
 			</textField>
-			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="false">
+			<textField pattern="DDD MM/dd/yyyy" isBlankWhenNull="true">
 				<reportElement uuid="dac7ee3e-5085-447f-9a36-49fde25c8dd8" x="912" y="0" width="160" height="48"/>
 				<textElement>
 					<font size="12"/>
