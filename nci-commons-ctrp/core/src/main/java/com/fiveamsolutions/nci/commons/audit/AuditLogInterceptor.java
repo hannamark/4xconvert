@@ -140,7 +140,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "rawtypes" })
 public class AuditLogInterceptor extends EmptyInterceptor {
-
+   
     private HibernateHelper hibernateHelper;
     private DefaultProcessor processor = new DefaultProcessor();
 
@@ -172,6 +172,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private final transient ThreadLocal<Map<RecordKey, AuditLogRecord>> records =
         new ThreadLocal<Map<RecordKey, AuditLogRecord>>();
+    
+    private final transient ThreadLocal<Boolean> disabledFlag = new ThreadLocal<Boolean>();
 
     /**
      *@param helper the helper used for persistence operations.
@@ -227,7 +229,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public boolean onFlushDirty(Object obj, Serializable id, Object[] newValues, Object[] oldValues,
             String[] properties, Type[] types) {
-        if (processor.isAuditableEntity(obj)) {
+        if (isEnabled() && processor.isAuditableEntity(obj)) {
             auditChangesIfNeeded(obj, id, newValues, oldValues, properties,
                                       types, AuditType.UPDATE);
         }
@@ -240,7 +242,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     @Override
     public boolean onSave(Object obj, Serializable id, Object[] newValues, String[] properties, Type[] types) {
-        if (processor.isAuditableEntity(obj)) {
+        if (isEnabled() && processor.isAuditableEntity(obj)) {
             auditChangesIfNeeded(obj, id, newValues, new Object[properties.length],
                                       properties, types, AuditType.INSERT);
         }
@@ -253,7 +255,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     @Override
     public void onDelete(Object obj, Serializable id, Object[] newValues, String[] properties, Type[] types) {
-        if (processor.isAuditableEntity(obj)) {
+        if (isEnabled() && processor.isAuditableEntity(obj)) {
             // there are not new values since this object is being deleted.
             // a null is passed in for the old values so that we will be forced
             // to retrieve a fresh set of values from the session which will include
@@ -268,7 +270,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     @Override
     public void onCollectionUpdate(Object collection, Serializable key) {
-        if (!(collection instanceof PersistentCollection)) {
+        if (!(collection instanceof PersistentCollection) || !isEnabled()) {
             return;
         }
 
@@ -363,6 +365,13 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     @Override
     public void afterTransactionCompletion(Transaction arg0) {
+        clearCurrentAuditLog();
+    }
+
+    /**
+     * 
+     */
+    private void clearCurrentAuditLog() {
         if (audits.get() != null) {
             audits.get().clear();
         }
@@ -826,7 +835,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     /**
      * Simple interface to generate id's and select a scheme.
      */
-    static interface TxIdGenerator {
+    interface TxIdGenerator {
         Long generateId(Dialect dialect, Session session);
 
         boolean isSupported(Dialect dialect);
@@ -893,6 +902,36 @@ public class AuditLogInterceptor extends EmptyInterceptor {
                 return false;
             }
         }
+    }
+    
+    /**
+     * Enables the auditing for the current thread, if previously disabled. Auditing is always enabled by default.
+     */
+    public synchronized void enable() {
+        if (!isEnabled()) {
+            clearCurrentAuditLog();
+            disabledFlag.remove();
+        }
+    }
+    
+    /**
+     * Disables the auditing for the current thread, if previously enabled. Auditing is always enabled
+     * by default.
+     */
+    public synchronized void disable() {
+        clearCurrentAuditLog();
+        disabledFlag.set(Boolean.TRUE);
+    }
+
+    /**
+     * Whether the auditing is enabled for the current thread, which is always
+     * the case by default.
+     * 
+     * @return the enabled
+     */
+    public boolean isEnabled() {
+        return disabledFlag.get() == null
+                || Boolean.FALSE.equals(disabledFlag.get());
     }
 
 }

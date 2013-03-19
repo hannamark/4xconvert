@@ -20,7 +20,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa"    name="nci-commons-ctrp-struts2"  rev="1.4.5-SNAPSHOT"  conf="runtime->default">
+    <dependency org="gov.nih.nci.coppa"    name="nci-commons-ctrp-struts2"  rev="1.4.6-SNAPSHOT"  conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
     </dependency>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
@@ -79,7 +79,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.9-SNAPSHOT"  conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="security"                rev="4.2"             conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.5-SNAPSHOT"  conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.6-SNAPSHOT"  conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>

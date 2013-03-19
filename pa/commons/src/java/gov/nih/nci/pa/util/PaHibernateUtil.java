@@ -124,5 +124,20 @@ public class PaHibernateUtil {
     public static void setHibernateHelper(HibernateHelper helper) {
         hibernateHelper = helper;
     }
+    
+    /**
+     * Disables audit by {@link AuditLogInterceptor} for the current thread. Do
+     * not forget to enable it back.
+     */
+    public static void disableAudit() {
+        AUDIT_LOG_INTERCEPTOR.disable();
+    }
+
+    /**
+     * Enables audit by {@link AuditLogInterceptor} for the current thread.
+     */
+    public static void enableAudit() {
+        AUDIT_LOG_INTERCEPTOR.enable();
+    }
 
 }

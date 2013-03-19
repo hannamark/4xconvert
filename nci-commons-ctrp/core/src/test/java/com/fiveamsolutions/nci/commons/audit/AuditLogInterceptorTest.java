@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentList;
@@ -127,6 +128,20 @@ public class AuditLogInterceptorTest {
 
     @SuppressWarnings("unchecked")
     public List<AuditLogRecord> find(Class<?> type, Long entityId) {
+        List<AuditLogRecord> result = findAuditLogRecords(type, entityId);
+        assertTrue(!result.isEmpty());
+        return result;
+    }
+
+
+    /**
+     * @param type
+     * @param entityId
+     * @return
+     * @throws HibernateException
+     */
+    private List<AuditLogRecord> findAuditLogRecords(Class<?> type,
+            Long entityId) throws HibernateException {
         String str = "FROM " + AuditLogRecord.class.getName() + " alr "
                      + "WHERE alr.entityName = :entityName "
                      + "  AND alr.entityId = :entityId";
@@ -134,9 +149,6 @@ public class AuditLogInterceptorTest {
         q.setLong("entityId", entityId);
         q.setString("entityName", type.getSimpleName());
         List<AuditLogRecord> result = q.list();
-
-        assertTrue(!result.isEmpty());
-
         return result;
     }
 
@@ -487,6 +499,40 @@ public class AuditLogInterceptorTest {
 
         assertDetail(find(DummyCompositeEntity.class, dummyEntity.getId()), AuditType.INSERT, "compositeFields", null,
                 getAuditString(dummyEntity.getCompositeFields()));
+    }
+    
+    @Test
+    public void enableDisable() {
+        AuditLogInterceptor interceptor = new AuditLogInterceptor();
+        interceptor.disable();
+        assertFalse(interceptor.isEnabled());
+        interceptor.enable();
+        assertTrue(interceptor.isEnabled());
+    }
+    
+    @Test
+    public void noAuditsWhenDisabled() {
+        UsernameHolder.setUser("me");
+
+        try {
+            audit.disable();
+            DummyInvoice i = new DummyInvoice();
+            i.setOrderDate(new Date());
+            DummyLineItem l = new DummyLineItem("Dummy Item", 1.0, 1.0);
+            l.setInvoice(i);
+            i.getItems().add(l);
+            helper.getCurrentSession().save(i);
+            helper.getCurrentSession().flush();
+            helper.getCurrentSession().delete(i);
+            helper.getCurrentSession().clear();
+            List<AuditLogRecord> alr = findAuditLogRecords(DummyInvoice.class, i.getId());
+            assertTrue(alr.isEmpty());           
+        } finally {
+            audit.enable();
+        }
+
+       
+
     }
 
     @SuppressWarnings("unchecked")

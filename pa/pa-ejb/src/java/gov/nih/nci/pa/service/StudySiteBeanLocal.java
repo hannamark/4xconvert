@@ -123,50 +123,55 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         targetProtocol.setId(IiConverter.convertToLong(toStudyProtocolIi));
                 
         Collection<StudySite> studySites = getAllSitesByProtocol(fromStudyProtocolIi);        
-        for (StudySite site : studySites) {
-            List<StudySiteContact> contacts = new ArrayList<StudySiteContact>(site.getStudySiteContacts());
-            List<StudySiteAccrualStatus> accrualStatuses = new ArrayList<StudySiteAccrualStatus>(
-                    site.getStudySiteAccrualStatuses());
-            session.evict(site);
-            
-            Ii from = IiConverter.convertToStudySiteIi(site.getId());
-            Ii to = new Ii();
-            
-            site.setId(null);
-            site.setStudyProtocol(targetProtocol);     
-            site.setAccrualCounts(new TreeSet<StudySiteSubjectAccrualCount>());
-            site.setStudySiteAccrualAccess(new ArrayList<StudySiteAccrualAccess>());
-            site.setStudySiteAccrualStatuses(new ArrayList<StudySiteAccrualStatus>());
-            site.setStudySiteContacts(new ArrayList<StudySiteContact>());
-            site.setStudySiteOwners(new HashSet<RegistryUser>());
-            site.setStudySubjects(new ArrayList<StudySubject>());                        
-            session.save(site);
-            session.flush();
-                        
-            to.setIdentifierName(from.getIdentifierName());
-            to.setRoot(from.getRoot());
-            to.setExtension(site.getId().toString());
-            
-            // create study contact
-            for (StudySiteContact ssc : contacts) {
-                session.evict(ssc);
-                ssc.setId(null);
-                ssc.setStudySite(site);
-                ssc.setStudyProtocol(targetProtocol); 
-                session.save(ssc);
-            }
-            
-            // create study accrual status
-            if (StudySiteFunctionalCode.TREATING_SITE.equals(site
-                    .getFunctionalCode())) {
-                for (StudySiteAccrualStatus status : accrualStatuses) {
-                    session.evict(status);
-                    status.setId(null);
-                    status.setStudySite(site);
-                    session.save(status);
+        try {
+            PaHibernateUtil.disableAudit();
+            for (StudySite site : studySites) {
+                List<StudySiteContact> contacts = new ArrayList<StudySiteContact>(site.getStudySiteContacts());
+                List<StudySiteAccrualStatus> accrualStatuses = new ArrayList<StudySiteAccrualStatus>(
+                        site.getStudySiteAccrualStatuses());
+                session.evict(site);
+                
+                Ii from = IiConverter.convertToStudySiteIi(site.getId());
+                Ii to = new Ii();
+                
+                site.setId(null);
+                site.setStudyProtocol(targetProtocol);     
+                site.setAccrualCounts(new TreeSet<StudySiteSubjectAccrualCount>());
+                site.setStudySiteAccrualAccess(new ArrayList<StudySiteAccrualAccess>());
+                site.setStudySiteAccrualStatuses(new ArrayList<StudySiteAccrualStatus>());
+                site.setStudySiteContacts(new ArrayList<StudySiteContact>());
+                site.setStudySiteOwners(new HashSet<RegistryUser>());
+                site.setStudySubjects(new ArrayList<StudySubject>());                        
+                session.save(site);
+                session.flush();
+                            
+                to.setIdentifierName(from.getIdentifierName());
+                to.setRoot(from.getRoot());
+                to.setExtension(site.getId().toString());
+                
+                // create study contact
+                for (StudySiteContact ssc : contacts) {
+                    session.evict(ssc);
+                    ssc.setId(null);
+                    ssc.setStudySite(site);
+                    ssc.setStudyProtocol(targetProtocol); 
+                    session.save(ssc);
                 }
+                
+                // create study accrual status
+                if (StudySiteFunctionalCode.TREATING_SITE.equals(site
+                        .getFunctionalCode())) {
+                    for (StudySiteAccrualStatus status : accrualStatuses) {
+                        session.evict(status);
+                        status.setId(null);
+                        status.setStudySite(site);
+                        session.save(status);
+                    }
+                }
+                map.put(from, to);
             }
-            map.put(from, to);
+        } finally {
+            PaHibernateUtil.enableAudit();
         }
         return map;
     }
