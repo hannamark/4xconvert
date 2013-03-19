@@ -258,7 +258,8 @@ public class BaseBatchUploadReader {
         Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
         if (StringUtils.startsWith(protocolId, "NCI")) {
             foundStudy = spSvc.loadStudyProtocol(protocolIi);
-        } else {
+        }
+        if (foundStudy == null) {
             //No good way to distinguish if the id is CTEP or DCP so we'll just have to perform a lookup and see
             //if we get a match.
             protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);

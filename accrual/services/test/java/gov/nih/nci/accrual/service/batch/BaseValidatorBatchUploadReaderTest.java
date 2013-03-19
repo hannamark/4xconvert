@@ -203,6 +203,21 @@ public class BaseValidatorBatchUploadReaderTest {
     }
 
     @Test
+    public void getStudyProtocolCTEPNumberStartsNCI() throws PAException {
+        String ctepStr = "NCI-xyzzy";
+        Ii ctepIi = IiConverter.convertToAssignedIdentifierIi(ctepStr);
+        ctepIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, new StringBuffer());
+        StringBuffer errMsg = new StringBuffer();
+        StudyProtocolDTO resultDto = new StudyProtocolDTO();
+        when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(resultDto);
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
+        StudyProtocolDTO dto = bean.getStudyProtocol(ctepStr, errMsg);
+        assertNotNull(dto);
+        assertEquals("", errMsg.toString());
+    }
+
+    @Test
     public void validateDiseaseCodeValidationFails() {
         // code not found
         StringBuffer errMsg = new StringBuffer();
