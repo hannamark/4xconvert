@@ -289,7 +289,12 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return (Organization) PoXsnapshotHelper.createModel(dto);
     }
 
-    private IdentifiedOrganization searchForPreviousRecord(Ii ctepOrgId) {
+    /**
+     * Find the persisted instance of a given organization using ctep id.
+     * @param ctepOrgId the ctep id
+     * @return existing organization
+     */
+    public IdentifiedOrganization searchForPreviousRecord(Ii ctepOrgId) {
         IdentifiedOrganization identifiedOrg = new IdentifiedOrganization();
         identifiedOrg.setAssignedIdentifier(ctepOrgId);
         SearchCriteria<IdentifiedOrganization> sc = new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(

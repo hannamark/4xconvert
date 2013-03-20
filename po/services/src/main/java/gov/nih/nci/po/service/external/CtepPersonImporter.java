@@ -94,6 +94,7 @@ import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
@@ -330,13 +331,13 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private void updateCrsRoles(Person p, ClinicalResearchStaffDTO crsDto) throws JMSException,
             EntityValidationException, CtepImportException {
-        // we don't handle merge here, iterate over roles nullifying them out, except the last one,
-        // which we will update with ctep's data.
+        IdentifiedOrganization  identifiedOrg = this.orgImporter.searchForPreviousRecord(crsDto.getScoperIdentifier());
+        Long orgId = identifiedOrg == null ? -1L : identifiedOrg.getPlayer().getId();
         Iterator<ClinicalResearchStaff> i = p.getClinicalResearchStaff().iterator();
         boolean ctepDataSaved = false;
         while (i.hasNext()) {
             ClinicalResearchStaff persistedCrs = i.next();
-            if (i.hasNext()) {
+            if (ctepDataSaved || !orgId.equals(persistedCrs.getScoper().getId())) {
                 persistedCrs.setStatus(RoleStatus.NULLIFIED);
                 LOG.warn("Nullifying clinical research staff role during import, curator must have added new data.");
             } else {
@@ -378,13 +379,13 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
     private void updateHcpRoles(Person p, HealthCareProviderDTO hcpDto) throws JMSException, EntityValidationException, 
             CtepImportException {
-        // we don't handle merge here, iterate over roles nullifying them out, except the last one,
-        // which we will update with ctep's data.
+        IdentifiedOrganization  identifiedOrg = this.orgImporter.searchForPreviousRecord(hcpDto.getScoperIdentifier());
+        Long orgId = identifiedOrg == null ? -1L : identifiedOrg.getPlayer().getId();
         Iterator<HealthCareProvider> i = p.getHealthCareProviders().iterator();
         boolean ctepDataSaved = false;
         while (i.hasNext()) {
             HealthCareProvider persistedHcp = i.next();
-            if (i.hasNext()) {
+            if (ctepDataSaved || !orgId.equals(persistedHcp.getScoper().getId())) {
                 persistedHcp.setStatus(RoleStatus.NULLIFIED);
                 LOG.warn("Nullifying health care provider role during import, curator must have added new data.");
             } else {
