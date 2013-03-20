@@ -6,15 +6,22 @@
                         <label for="trialDTO.primaryPurposeCode"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
+                    <s:set name="interventionalTypeCodeValues" 
+                        value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames(@gov.nih.nci.pa.enums.StudyTypeCode@INTERVENTIONAL)" />
+                    <s:set name="noninterventionalTypeCodeValues" 
+                        value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames(@gov.nih.nci.pa.enums.StudyTypeCode@NON_INTERVENTIONAL)" />
                 <td>
-                    <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode" list="#typeCodeValues"  cssStyle="width:206px" 
-                    value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode();"/>
-                     <span class="formErrorMsg">
+                    <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode" list="#interventionalTypeCodeValues"  cssStyle="width:206px" 
+                        cssClass="interventional interventional-input-ctr"
+                        value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode(this);"/>
+                    <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode2" name="trialDTO.primaryPurposeCode" list="#noninterventionalTypeCodeValues"  cssStyle="width:206px; display: none;"
+                        cssClass="non-interventional non-interventional-input-ctr" 
+                        value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode(this);" disabled="true"/>                                        
+                    <span class="formErrorMsg">
                         <s:fielderror>
                         <s:param>trialDTO.primaryPurposeCode</s:param>
                        </s:fielderror>
-                     </span>
+                    </span>
                 </td>
           </tr>
             <tr id="purposeOtherTextDiv" style="display:'none'">
@@ -119,9 +126,17 @@
           
           
 <SCRIPT LANGUAGE="JavaScript">
-displayPrimaryPurposeOtherCode();
-function displayPrimaryPurposeOtherCode(){
-    if ($('trialDTO.primaryPurposeCode').value == 'Other') {
+
+displayPrimaryPurposeOtherCode(null);
+
+function displayPrimaryPurposeOtherCode(el) {
+	if (el==null) {
+		el = $('trialDTO.primaryPurposeCode');
+		if (el.disabled==true) {
+			el = $('trialDTO.primaryPurposeCode2');
+		}
+	}
+    if (el.value == 'Other') {
         $('purposeOtherTextDiv').show();
         document.getElementById('trialDTO.primaryPurposeOtherText').disabled = false;
         document.getElementById('trialDTO.primaryPurposeAdditionalQualifierCode').value = 'Other';

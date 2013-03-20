@@ -137,9 +137,13 @@ function setDisplayBasedOnTrialType() {
 	if ($('trialDTO.trialType.Interventional').checked) {
 		hideElements('.non-interventional');
 		showElements('.interventional');
+		disableElements('.non-interventional-input-ctr');
+		enableElements('.interventional-input-ctr');		
 	} else {
 		showElements('.non-interventional');
         hideElements('.interventional');
+        enableElements('.non-interventional-input-ctr');
+        disableElements('.interventional-input-ctr');        
 	}
 }
 
@@ -152,6 +156,18 @@ function hideElements(cssRule) {
 function showElements(cssRule) {
     $$(cssRule).each(function (e) {
         e.show();
+    });
+}
+
+function disableElements(cssRule) {
+	$$(cssRule).each(function (e) {
+		e.disable();
+	});
+}
+
+function enableElements(cssRule) {
+    $$(cssRule).each(function (e) {
+        e.enable();
     });
 }
 

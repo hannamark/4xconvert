@@ -78,12 +78,15 @@
 */
 package gov.nih.nci.pa.lov;
 
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -126,6 +129,12 @@ public class PrimaryPurposeCode implements Lov {
     private String name;
 
     private String code;
+    
+    /**
+     * This field is used to distinguish between purpose codes applicable to different study types. If null,
+     * this indicates the purpose is applicable to all study types.
+     */
+    private StudyTypeCode studyTypeCode;
 
     /**
      * @param name name
@@ -134,6 +143,18 @@ public class PrimaryPurposeCode implements Lov {
     public PrimaryPurposeCode(String name, String code) {
         this.name = name;
         this.code = code;
+    }
+
+    /**
+     * @param name name
+     * @param code code
+     * @param studyTypeCode studyTypeCode
+     */
+    public PrimaryPurposeCode(String name, String code,
+            StudyTypeCode studyTypeCode) {
+        this.name = name;
+        this.code = code;
+        this.studyTypeCode = studyTypeCode;
     }
 
     /**
@@ -261,6 +282,37 @@ public class PrimaryPurposeCode implements Lov {
     public static String[] getDisplayNames() {
         List<PrimaryPurposeCode> list = PaHibernateUtil.getCurrentSession()
                 .createCriteria(PrimaryPurposeCode.class).list();
+        return loadDisplayNamesArray(list);
+    }
+    
+    /**
+     * Returns display names applicable for the given {@link StudyTypeCode}.
+     * @param studyCode studyCode
+     * @return String[] display names of enums
+     */
+    @SuppressWarnings("unchecked")
+    public static String[] getDisplayNames(final StudyTypeCode studyCode) {
+        List<PrimaryPurposeCode> list = PaHibernateUtil
+                .getCurrentSession()
+                .createCriteria(PrimaryPurposeCode.class)
+                .add(Restrictions.or(
+                        Restrictions.eq("studyTypeCode", studyCode),
+                        Restrictions.isNull("studyTypeCode"))).list();
+        return loadDisplayNamesArray(list);
+    }
+
+    /**
+     * @param list
+     * @return
+     */
+    private static String[] loadDisplayNamesArray(List<PrimaryPurposeCode> list) {
+        // Make sure OTHER is always at the end of the list. After PO-5998, the order or returned rows
+        // has changed from the original INSERT order.
+        if (list.contains(OTHER)) {
+            PrimaryPurposeCode other = list.get(list.indexOf(OTHER));
+            list.remove(other);
+            list.add(other);
+        }
         PrimaryPurposeCode[] l = list.toArray(new PrimaryPurposeCode[0]); //NOPMD
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -275,6 +327,26 @@ public class PrimaryPurposeCode implements Lov {
     @Override
     public String toString() {        
         return getName();
+    }
+
+    /**
+     * This field is used to distinguish between purpose codes applicable to different study types. If null,
+     * this indicates the purpose is applicable to all study types.
+     * @return the studyTypeCode
+     */
+    @Column(name = "study_type_code")
+    @Enumerated(EnumType.STRING)    
+    public StudyTypeCode getStudyTypeCode() {
+        return studyTypeCode;
+    }
+
+    /**
+     * This field is used to distinguish between purpose codes applicable to different study types. If null,
+     * this indicates the purpose is applicable to all study types.
+     * @param studyTypeCode the studyTypeCode to set
+     */
+    public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
+        this.studyTypeCode = studyTypeCode;
     }
     
 }

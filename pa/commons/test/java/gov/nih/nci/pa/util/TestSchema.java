@@ -172,6 +172,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.enums.UserOrgType;
@@ -866,19 +867,19 @@ public class TestSchema {
     public static void loadPrimaryPurposeCodes() {
         Session session = PaHibernateUtil.getCurrentSession();
         PrimaryPurposeCode code1 = new PrimaryPurposeCode("TREATMENT",
-                "Treatment");
+                "Treatment", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code2 = new PrimaryPurposeCode("PREVENTION",
-                "Prevention");
+                "Prevention", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code3 = new PrimaryPurposeCode("SUPPORTIVE_CARE",
-                "Supportive Care");
+                "Supportive Care", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code4 = new PrimaryPurposeCode("SCREENING",
-                "Screening");
+                "Screening", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code5 = new PrimaryPurposeCode("DIAGNOSTIC",
-                "Diagnostic");
+                "Diagnostic", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code6 = new PrimaryPurposeCode(
-                "HEALTH_SERVICES_RESEARCH", "Health Services Research");
+                "HEALTH_SERVICES_RESEARCH", "Health Services Research", StudyTypeCode.INTERVENTIONAL);
         PrimaryPurposeCode code7 = new PrimaryPurposeCode("BASIC_SCIENCE",
-                "Basic Science");
+                "Basic Science", StudyTypeCode.NON_INTERVENTIONAL);
         PrimaryPurposeCode code8 = new PrimaryPurposeCode("OTHER", "Other");
         session.saveOrUpdate(code1);
         session.saveOrUpdate(code2);

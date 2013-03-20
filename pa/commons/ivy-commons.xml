@@ -60,6 +60,17 @@ This is the definition of a virtual module called bda-download that has a depend
     <!-- test -->
     <dependency org="org.hsqldb"             name="hsqldb"                  rev="1.8.0.10"        conf="test->master"/>
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
+    <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>    
+    <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>    
+    <dependency org="jboss"                  name="cglib"                   rev="4.0.5.GA"        conf="test->master"/>    
+    <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="test->master"/>    
+    <dependency org="org.slf4j"            name="slf4j-api"             rev="1.6.0"           conf="test->master"/>
+    <dependency org="org.slf4j"            name="slf4j-log4j12"             rev="1.6.0"           conf="test->master"/>
+    <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="test->master"/>
+    <dependency org="commons-io"             name="commons-io"              rev="1.4"             conf="test->master"/>
+    <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="test->master"/>
+    <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="test->master"/>
+    <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>   
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
