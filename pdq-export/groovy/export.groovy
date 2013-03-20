@@ -261,12 +261,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             }
             
             xml.lead_org {
-                def roRow = rosMap.get(spRow.leadRoId.toLong())
-                xml.name(roRow.orgname)
-                xml.po_id(roRow.org_poid)
-                xml.ctep_id(roRow.ctep_id)
-                addressAndPhoneDetail(xml, roRow, null,false)
-            
+                if(spRow.leadRoId != null){
+                    def roRow = rosMap.get(spRow.leadRoId.toLong())
+                    xml.name(roRow.orgname)
+                    xml.po_id(roRow.org_poid)
+                    xml.ctep_id(roRow.ctep_id)
+                    addressAndPhoneDetail(xml, roRow, null,false)
+                }
             }
             
             xml.nci_specific_information {
@@ -290,11 +291,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
     
             xml.sponsors {
                 xml.lead_sponsor {
-                    def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-                    xml.name(changeSponsorNameIfNeeded(roRow.orgname))
-                    xml.po_id(roRow.org_poid)
-                    xml.ctep_id(roRow.ctep_id)
-                    addressAndPhoneDetail(xml, roRow, null, false)
+                    if(spRow.sponsorRoId != null) {
+                        def roRow = rosMap.get(spRow.sponsorRoId.toLong())
+                        xml.name(changeSponsorNameIfNeeded(roRow.orgname))
+                        xml.po_id(roRow.org_poid)
+                        xml.ctep_id(roRow.ctep_id)
+                        addressAndPhoneDetail(xml, roRow, null, false)
+                    }
                 }
                 xml.resp_party {
                     xml.resp_party_person {
@@ -318,11 +321,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                 }
                 sourceConnection.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
                     xml.collaborator {
-                        def roRow = rosMap.get(collabRow.ro_poid.toLong())
-                        xml.name(collabRow.name)
-                        xml.po_id(collabRow.org_poid)
-                        xml.ctep_id(roRow.ctep_id)
-                        addressAndPhoneDetail(xml, roRow, null, false)
+                        if(collabRow.ro_poid != null){
+                            def roRow = rosMap.get(collabRow.ro_poid.toLong())
+                            xml.name(collabRow.name)
+                            xml.po_id(collabRow.org_poid)
+                            xml.ctep_id(roRow.ctep_id)
+                            addressAndPhoneDetail(xml, roRow, null, false)
+                        } 
                     }
                 }
             } // end sponsors
@@ -492,16 +497,20 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             }
             
             xml.overall_official {
-                def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
-                crsDetail(xml, crsRow)
-                addressAndPhoneDetail(xml, crsRow, null, false)
-                xml.role("Principal Investigator")
-                xml.affiliation {
-                    def roRow = rosMap.get(spRow.leadRoId.toLong())
-                    xml.name(roRow.orgname)
-                    xml.po_id(roRow.org_poid)
-                    xml.ctep_id(roRow.ctep_id)
-                    addressAndPhoneDetail(xml, roRow, null, false)
+                if(spRow.ovOffCrsId != null){
+                    def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
+                    crsDetail(xml, crsRow)
+                    addressAndPhoneDetail(xml, crsRow, null, false)
+                    xml.role("Principal Investigator")
+                    xml.affiliation {
+                        if(spRow.leadRoId != null){
+                            def roRow = rosMap.get(spRow.leadRoId.toLong())
+                            xml.name(roRow.orgname)
+                            xml.po_id(roRow.org_poid)
+                            xml.ctep_id(roRow.ctep_id)
+                            addressAndPhoneDetail(xml, roRow, null, false)
+                        }
+                    }
                 }
             }
             
@@ -517,11 +526,13 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
             sourceConnection.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
                 xml.location {
                     xml.facility {
-                        def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
-                        xml.name(row.name)
-                        xml.po_id(row.org_poid)
-                        xml.ctep_id(hcfRow.ctep_id)
-                        addressAndPhoneDetail(xml, hcfRow, null, false)
+                        if(row.hcf_poid != null){
+                            def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
+                            xml.name(row.name)
+                            xml.po_id(row.org_poid)
+                            xml.ctep_id(hcfRow.ctep_id)
+                            addressAndPhoneDetail(xml, hcfRow, null, false)
+                        }
                     }
                     xml.status(row.status)
                     if (row.prim_crs_id != null && crsMap.get(row.prim_crs_id.toLong()) != null) {
@@ -548,7 +559,8 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         nbOfTrials++
     }catch(Exception e){
         e.printStackTrace();
-        failedTrials.add(spRow.nciId)
+        new File("temp/" + spRow.nciId +  ".xml").delete();
+        failedTrials.add(spRow.nciId);
     }
 }
 
