@@ -825,13 +825,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                     OTHER_IDENTIFIER,
                     getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                             IiConverter.convertToLong(spDTO.getIdentifier()))
-                            .getLeadOrganizationName());
-            addSecondaryId(
-                    doc,
-                    idInfo,
-                    getPaServiceUtil().getStudyIdentifier(
-                            spDTO.getIdentifier(),
-                            PAConstants.NCT_IDENTIFIER_TYPE), OTHER_IDENTIFIER, "CTgov");
+                            .getLeadOrganizationName());            
             addSecondaryId(
                     doc,
                     idInfo,
@@ -844,8 +838,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                     getPaServiceUtil().getStudyIdentifier(
                             spDTO.getIdentifier(),
                             PAConstants.CTEP_IDENTIFIER_TYPE), OTHER_IDENTIFIER, "CTEP");
-            
-            
         }
         addTrialSecondaryIdInfo(spDTO, doc, idInfo);
 
