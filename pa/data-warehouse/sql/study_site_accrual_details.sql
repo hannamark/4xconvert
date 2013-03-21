@@ -8,7 +8,7 @@ CREATE TABLE stg_dw_study_site_accrual_details (
     ethnicity character varying(200),
     gender character varying(200),
     icd9_disease_code character varying(10),
-    icd9_disease_term character,
+    icd9_disease_term character varying,
     nci_id character varying(255),
     org_name character varying(200),
     org_org_family character varying(160),
