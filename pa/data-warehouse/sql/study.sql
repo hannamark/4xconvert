@@ -102,6 +102,8 @@ CREATE TABLE STG_DW_STUDY (
     SUMMARY_4_FUNDING_SPONSOR_FAMILY character varying(200),
     WHY_STUDY_STOPPED character varying(2000),
     CATEGORY character varying (12),
+    COMMENTS varchar(4000),
+    PROCESSING_PRIORITY int,
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 

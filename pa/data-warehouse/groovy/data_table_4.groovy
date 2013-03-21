@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 import  org.apache.commons.lang.StringUtils
 
-def sql = """SELECT sp.identifier spid, soi.extension nci_id, sp.study_protocol_type, '3.9 Data Element' study_subtype_code,
+def sql = """SELECT sp.identifier spid, soi.extension nci_id, sp.study_protocol_type, sp.study_subtype_code,
                     sr.type_code study_source, org.name specific_funding_source,
                     (select count(*) from study_anatomic_site where sp.identifier = study_protocol_identifier) asite_count,
                     anat.code AS asite, pi.last_name, pi.first_name, sp.program_code_text, sp.start_date, sos_close.status_date close_date,
