@@ -225,7 +225,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult)
             throws PAException {
         AccrualCollections collection = new AccrualCollections();
-        collection.setChangeCode(validationResult.getChangeCode());
         collection.setNciNumber(validationResult.getNciIdentifier());
         collection.setPassedValidation(validationResult.isPassedValidation());
         batchFileSvc.update(batchFile, collection);
@@ -244,6 +243,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             collection.setTotalImports(importResults.getTotalImports());
             sendConfirmationEmail(importResults, batchFile);
         }
+        collection.setChangeCode(validationResult.getChangeCode());
         if (StringUtils.isNotBlank(collection.getResults())) {
             batchFile.setResults(collection.getResults());
         }
@@ -268,6 +268,13 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, errMsg);
         Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
         importResult.setNciIdentifier(ii.getExtension());
+        if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
+            Long accrualCnts = subjectAccrualService.getAccrualCounts(spDto.getProprietaryTrialIndicator().getValue(), 
+                    IiConverter.convertToLong(spDto.getIdentifier()));
+            if (accrualCnts == 0) {
+                validationResult.setChangeCode(AccrualChangeCode.YES);
+            }
+        }
         if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
             importResult.setSkipBecauseOfChangeCode(true);
             return importResult;

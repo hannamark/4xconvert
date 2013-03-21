@@ -114,6 +114,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
@@ -152,6 +153,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
@@ -624,7 +626,23 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
                     TsConverter.convertToTs(startDate), TsConverter.convertToTs(endDate), pagingParams);
         verify(studySubjectService).search(studyIdentifier, participatingSiteIdentifier, startDate, endDate,
                                            pagingParams);
-    }   
+    }
+    
+    @Test
+    public void getAccrualCounts() throws Exception {
+    	Long spId = TestSchema.studyProtocols.get(0).getId();
+    	Long cnts = bean.getAccrualCounts(false, spId);
+    	assertEquals(Long.valueOf(2), cnts);
+    	
+    	final Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol protocol = (StudyProtocol) session.get(
+                StudyProtocol.class, TestSchema.studyProtocols.get(3).getId());
+        protocol.setProprietaryTrialIndicator(true);
+        session.update(protocol);
+        session.flush();
+        cnts = bean.getAccrualCounts(true, protocol.getId());
+    	assertEquals(Long.valueOf(0), cnts);
+    }
     
     @Test
     public void testCreateAC() throws Exception {

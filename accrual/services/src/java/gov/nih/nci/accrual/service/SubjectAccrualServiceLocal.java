@@ -144,4 +144,13 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @throws PAException on error
      */
     void createAccrualAccess(RegistryUser ru, Long ssId) throws PAException;
+    
+    /**
+     * get the accrual counts for the trial 
+     * @param industrialTrial trial type 
+     * @param studyProtocolId trial id
+     * @return counts
+     * @throws PAException on error
+     */
+    Long getAccrualCounts(Boolean industrialTrial, Long studyProtocolId) throws PAException;
 }

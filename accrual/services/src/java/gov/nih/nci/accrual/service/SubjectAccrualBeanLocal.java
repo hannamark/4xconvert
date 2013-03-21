@@ -167,6 +167,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -668,6 +669,26 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                     TsConverter.convertToTimestamp(startDate), TsConverter.convertToTimestamp(endDate), pagingParams);
 
         return convertStudySubjectDtoToSubjectAccrualDTOList(studySubjectDtoList);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long getAccrualCounts(Boolean industrialTrial, Long studyProtocolId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long result = 0L;
+        Query sqlCount;
+        if (industrialTrial) {
+            sqlCount = session.createSQLQuery("select count(*) from study_site_subject_accrual_count where "
+                        + "study_protocol_identifier = " + studyProtocolId);
+            result = Long.valueOf(sqlCount.uniqueResult().toString());
+        } else {
+            sqlCount = session.createSQLQuery("select count(*) from study_subject where "
+                        + "study_protocol_identifier = " + studyProtocolId + " and status_code <> 'NULLIFIED'");
+            result = Long.valueOf(sqlCount.uniqueResult().toString());
+        }
+        return result;
     }
 
     private List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(

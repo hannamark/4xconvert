@@ -788,6 +788,32 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).getValidatedLines().isEmpty());
     }
 
+    @Test
+     public void processChangeCode2BatchValidation() throws URISyntaxException, PAException {
+         File file = new File(this.getClass().getResource("/CDUS-changecode2.txt").toURI());
+         BatchFile batchFile = getBatchFile(file);
+         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+         assertEquals(1, results.size());
+         assertTrue(results.get(0).isPassedValidation());
+         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+         assertFalse(results.get(0).getValidatedLines().isEmpty());
+         verifyEmailsSent(0, 1);
+
+         BatchFile r = getResultFromDb();
+         assertTrue(r.isPassedValidation());
+         assertTrue(r.isProcessed());
+         assertTrue(r.getFileLocation().contains("CDUS-changecode2.txt"));
+         assertTrue(StringUtils.isEmpty(r.getResults()));
+         assertEquals(1, r.getAccrualCollections().size());
+         AccrualCollections collection = r.getAccrualCollections().get(0);
+         assertTrue(collection.isPassedValidation());
+         assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+         assertEquals("NCI-2010-00003", collection.getNciNumber());
+         assertTrue(StringUtils.isEmpty(collection.getResults()));
+         assertEquals((Integer) 2, collection.getTotalImports());
+         
+     }
+
     private void setStudyProtocolSvc() throws PAException {        
         StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
         when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
