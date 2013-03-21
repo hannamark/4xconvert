@@ -14,7 +14,7 @@ function submitForm(btnSelected){
         document.forms[0].action = "disClaimerActionaccept.action";
         document.forms[0].submit();
     } else{
-        document.forms[0].action="logout.action";
+        document.forms[0].action="<%=request.getContextPath()%>/logout.action";
         document.forms[0].submit();
     } 
     
