@@ -677,6 +677,11 @@ public class TSRReportLabelText { //NOPMD
      * Marker Name.
      */
     public static final String PLANNED_MARKER_NAME = "Marker Name";
+    
+    /**
+     * Evaluation Type.
+     */
+    public static final String PLANNED_MARKER_EVALUATION_TYPE = "Evaluation Type";
 
     /**
      * Assay Type.
@@ -684,19 +689,19 @@ public class TSRReportLabelText { //NOPMD
     public static final String PLANNED_MARKER_ASSAY_TYPE = "Assay Type";
 
     /**
-     * Assay Use.
+     * Biomarker Use.
      */
-    public static final String PLANNED_MARKER_ASSAY_USE = "Assay Use";
+    public static final String PLANNED_MARKER_BIOMARKER_USE = "Biomarker Use";
 
     /**
-     * Assay Purpose.
+     * Biomarker Purpose.
      */
-    public static final String PLANNED_MARKER_ASSAY_PURPOSE = "Assay Purpose";
+    public static final String PLANNED_MARKER_BIOMARKER_PURPOSE = "Biomarker Purpose";
 
     /**
-     * Tissue Specimen Type.
+     * Specimen Type.
      */
-    public static final String PLANNED_MARKER_TISSUE_SPECIMEN_TYPE = "Tissue Specimen Type";
+    public static final String PLANNED_MARKER_SPECIMEN_TYPE = "Specimen Type";
 
     /**
      * Tissue Collection Method.
