@@ -23,7 +23,8 @@
     <ul class="btnrow">
        <li>
            <s:a href="javascript:void(0)" cssClass="btn" onclick="createTitle()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-           <s:a href="javascript:void(0)" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Search</span></span></s:a>          
+           <s:a href="javascript:void(0)" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Search</span></span></s:a>
+           <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>          
        </li>
        </ul>   
   </del>
