@@ -273,7 +273,10 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                 || !ObjectUtils.equals(
                         conv.convertLowToString(original.getStatusDateRange()),
                         conv.convertLowToString(updated.getStatusDateRange()))) {
-            comments.append("Participating Site information was changed." + SEPARATOR);
+            final String msg = "Participating Site information was changed." + SEPARATOR;
+            if (comments.indexOf(msg) == -1) {
+                comments.append(msg);
+            }
         }
     }
 
