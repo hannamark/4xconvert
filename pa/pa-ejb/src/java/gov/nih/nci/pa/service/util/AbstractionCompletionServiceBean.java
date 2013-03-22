@@ -987,13 +987,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                   "Treating site can not have duplicate investigator.", ErrorMessageTypeEnum.ADMIN, 8);
                 break;
             }
-            // abstraction validation rule for participating site contact and central contact
+            // abstraction validation rule for participating site contact and
+            // central contact
             if (!contactFound && !centralContactDefined) {
-                messages.addError("Select General Trial Details from Administrative Data menu"
-                        + " screen to complete Central Contact or Participating Sites screen to"
-                        + " complete Participating Site Contact information.", "Participating Site Contact"
-                        + " or Central Contact information is mandatory. Complete Central Contact"
-                        + " or each Participating Site Contact information.", ErrorMessageTypeEnum.ADMIN, 1);
+                messages.addError(
+                        "Either select General Trial Details from Administrative Data menu"
+                                + " to provide a Central Contact for the trial or select Participating Sites "
+                                + "from Administrative Data menu to"
+                                + " provide Participating Site Contact information.",
+                        "Either Participating Site Contact information"
+                                + " or the trial's Central Contact information is mandatory. "
+                                + "Complete either Central Contact for the trial"
+                                + " or Participating Site Contact information for each site.",
+                        ErrorMessageTypeEnum.ADMIN, 1);
             }
 
         }
