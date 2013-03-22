@@ -115,6 +115,7 @@ public class UsernameFilter implements Filter {
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
+        final String previousUsername = UsernameHolder.getUser();
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String username = httpRequest.getRemoteUser();
         if (caseSensitive) {
@@ -122,7 +123,12 @@ public class UsernameFilter implements Filter {
         } else {
             UsernameHolder.setUser(username);
         }
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } finally {
+            // See PO-6019. Username needs to be cleaned up after the thread is done.
+            UsernameHolder.setUserCaseSensitive(previousUsername);
+        }
     }
 
     /**

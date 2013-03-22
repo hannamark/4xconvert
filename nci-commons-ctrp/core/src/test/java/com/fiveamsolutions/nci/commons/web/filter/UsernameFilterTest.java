@@ -86,7 +86,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterChain;
@@ -133,38 +136,62 @@ public class UsernameFilterTest {
         runTest(filterConfig, false);
     }
 
-    private void runTest(final MockFilterConfig filterConfig, boolean caseSensitive) throws IOException,
+    private void runTest(final MockFilterConfig filterConfig, final boolean caseSensitive) throws IOException,
             ServletException {
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         UsernameFilter uf = new UsernameFilter();
         uf.init(filterConfig);
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain chain = new MockFilterChain();
+        FilterChain chain = new MockFilterChain();
         uf.doFilter(request, response, chain);
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
 
         request.setRemoteUser("test");
-        chain = new MockFilterChain();
+        chain = new FilterChain() {
+            @Override
+            public void doFilter(ServletRequest arg0, ServletResponse arg1)
+                    throws IOException, ServletException {
+                assertEquals("test", UsernameHolder.getUser());
+            }
+        };
         uf.doFilter(request, response, chain);
-        assertEquals("test", UsernameHolder.getUser());
+        assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
 
         request.setRemoteUser("TEST");
-        chain = new MockFilterChain();
+        chain = new FilterChain() {            
+            @Override
+            public void doFilter(ServletRequest arg0, ServletResponse arg1)
+                    throws IOException, ServletException {
+                if (caseSensitive) {
+                    assertEquals("TEST", UsernameHolder.getUser());
+                } else {
+                    assertEquals("test", UsernameHolder.getUser());
+                }
+            }
+        };
         uf.doFilter(request, response, chain);
-        if (caseSensitive) {
-            assertEquals("TEST", UsernameHolder.getUser());
-        } else {
-            assertEquals("test", UsernameHolder.getUser());
-        }
+        assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());        
 
         request.setRemoteUser(null);
-        chain = new MockFilterChain();
+        chain = new FilterChain() {            
+            @Override
+            public void doFilter(ServletRequest arg0, ServletResponse arg1)
+                    throws IOException, ServletException {
+                assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
+            }
+        };
         uf.doFilter(request, response, chain);
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
 
         request.setRemoteUser(UsernameHolder.ANONYMOUS_USERNAME);
-        chain = new MockFilterChain();
+        chain = new FilterChain() {            
+            @Override
+            public void doFilter(ServletRequest arg0, ServletResponse arg1)
+                    throws IOException, ServletException {
+                assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
+            }
+        };
         uf.doFilter(request, response, chain);
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         uf.destroy();

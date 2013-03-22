@@ -118,7 +118,8 @@ public class AuthorizationInterceptor {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     // method invocation wrapper requires throws Exception
     public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        if (StringUtils.equalsIgnoreCase(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser())) {
+        final String currentUser = UsernameHolder.getUser();
+        if (StringUtils.equalsIgnoreCase(UsernameHolder.ANONYMOUS_USERNAME, currentUser)) {
             String username;
             try {
                 username = sessionContext.getCallerPrincipal().getName();
@@ -127,7 +128,12 @@ public class AuthorizationInterceptor {
             }
             UsernameHolder.setUser(username);
         }
-        return invContext.proceed();
+        try {
+            return invContext.proceed();
+        } finally {
+            // See PO-6019. Username needs to be cleaned up after the thread is done.
+            UsernameHolder.setUserCaseSensitive(currentUser);
+        }
     }
 
     /**
