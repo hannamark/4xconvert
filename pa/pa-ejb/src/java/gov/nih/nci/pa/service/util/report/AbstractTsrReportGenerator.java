@@ -89,6 +89,8 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -793,13 +795,20 @@ public abstract class AbstractTsrReportGenerator {
 
     private void addPlannedMarkers() throws DocumentException {
         if (CollectionUtils.isNotEmpty(getPlannedMarkers())) {
+            List<TSRReportPlannedMarker> plannedMarkersList = getPlannedMarkers();
+            Collections.sort(plannedMarkersList, new Comparator<TSRReportPlannedMarker>() {
+                @Override
+                public int compare(TSRReportPlannedMarker o1, TSRReportPlannedMarker o2) {
+                    return (o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase()));
+                }
+            });
             Table table = getOuterTable(TSRReportLabelText.TABLE_PLANNED_MARKERS, true);
             Table markerTable = getInnerTable(Arrays.asList(TSRReportLabelText.PLANNED_MARKER_NAME,
                     TSRReportLabelText.PLANNED_MARKER_EVALUATION_TYPE,
                     TSRReportLabelText.PLANNED_MARKER_ASSAY_TYPE, TSRReportLabelText.PLANNED_MARKER_BIOMARKER_USE,
                     TSRReportLabelText.PLANNED_MARKER_BIOMARKER_PURPOSE,
                     TSRReportLabelText.PLANNED_MARKER_SPECIMEN_TYPE));
-            for (TSRReportPlannedMarker marker : getPlannedMarkers()) {
+            for (TSRReportPlannedMarker marker : plannedMarkersList) {
                 markerTable.addCell(getItemValueCell(marker.getName()));
                 markerTable.addCell(getItemValueCell(marker.getEvaluationType()));
                 markerTable.addCell(getItemValueCell(marker.getAssayType()));
