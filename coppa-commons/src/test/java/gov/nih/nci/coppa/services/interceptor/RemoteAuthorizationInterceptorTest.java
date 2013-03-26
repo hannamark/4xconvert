@@ -87,7 +87,9 @@ import static org.junit.Assert.assertNotSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.Map;
 
 import javax.ejb.SessionContext;
 import javax.interceptor.InvocationContext;
@@ -116,8 +118,38 @@ public class RemoteAuthorizationInterceptorTest {
 
         when(principal.getName()).thenReturn(USER_NAME);
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
-        interceptor.prepareReturnValue(invocationContext);
-        assertEquals(USER_NAME, UsernameHolder.getUser());
+        interceptor.prepareReturnValue(new InvocationContext() {            
+            @Override
+            public void setParameters(Object[] arg0) {
+            }
+            
+            @Override
+            public Object proceed() throws Exception {
+                assertEquals(USER_NAME, UsernameHolder.getUser());
+                return null;
+            }
+            
+            @Override
+            public Object getTarget() {
+                return null;
+            }
+            
+            @Override
+            public Object[] getParameters() {
+                return null;
+            }
+            
+            @Override
+            public Method getMethod() {
+                return null;
+            }
+            
+            @Override
+            public Map<String, Object> getContextData() {
+                return null;
+            }
+        });
+        assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         
         UsernameHolder.setUser(UsernameHolder.ANONYMOUS_USERNAME);
         when(principal.getName()).thenReturn(USER_NAME.toUpperCase());
@@ -128,8 +160,38 @@ public class RemoteAuthorizationInterceptorTest {
         UsernameHolder.setUser(UsernameHolder.ANONYMOUS_USERNAME);
         when(principal.getName()).thenThrow(new IllegalStateException());
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
-        interceptor.prepareReturnValue(invocationContext);
-        assertEquals("unknown", UsernameHolder.getUser());
+        interceptor.prepareReturnValue(new InvocationContext() {            
+            @Override
+            public void setParameters(Object[] arg0) {
+            }
+            
+            @Override
+            public Object proceed() throws Exception {
+                assertEquals("unknown", UsernameHolder.getUser());
+                return null;
+            }
+            
+            @Override
+            public Object getTarget() {
+                return null;
+            }
+            
+            @Override
+            public Object[] getParameters() {
+                return null;
+            }
+            
+            @Override
+            public Method getMethod() {
+                return null;
+            }
+            
+            @Override
+            public Map<String, Object> getContextData() {
+                return null;
+            }
+        });
+       
     }
 
 }
