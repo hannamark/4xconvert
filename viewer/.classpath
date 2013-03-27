@@ -46,7 +46,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/iso-datatypes-2.0.0-alpha1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/coppa-commons-test-1.3.7.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/pa-commons-3.9.1.0-SNAPSHOT-test.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/pa-commons-3.9.1.1-SNAPSHOT-test.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/selenium-java-client-driver-1.0.2.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/selenium-server-1.0.3-standalone.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/selenium/selenium-server-coreless-1.0.3.jar"/>
