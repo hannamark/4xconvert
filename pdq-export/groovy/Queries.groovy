@@ -30,7 +30,7 @@ class Queries {
         FROM Study_Site ss
         join healthcare_facility hcf on hcf.identifier = ss.healthcare_facility_identifier
         join organization org on org.identifier = hcf.organization_identifier
-        left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier
+        left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier and ssas.identifier = (select max(identifier) from study_site_accrual_status ssas2 where ssas2.study_site_identifier = ss.identifier)
         left outer join study_site_contact prim_ssc on prim_ssc.study_site_identifier = ss.identifier and prim_ssc.role_code = 'PRIMARY_CONTACT'
         left outer join clinical_research_staff prim_crs on prim_crs.identifier = prim_ssc.clinical_research_staff_identifier
         left outer join study_site_contact inv_ssc on inv_ssc.study_site_identifier = ss.identifier and inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR'
