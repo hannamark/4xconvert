@@ -11,6 +11,7 @@
 function callOnloadFunctions(){
     toggleFields();  
     displayPrimaryPurposeOtherText();
+    displayPhaseAdditonalCode();
 }
 
 function toggleFields(){
@@ -59,6 +60,14 @@ function displayPrimaryPurposeOtherText(){
 	        $('purposeOtherTextDiv').hide();
 	  }
 }
+
+function displayPhaseAdditonalCode(){
+	   if ($('webDTO.phaseCode').value == 'NA') {
+	         $('phaseOtherDiv').show();
+	   } else {
+	       $('phaseOtherDiv').hide();
+	   }
+	}
 
 </SCRIPT>
 <body>
@@ -146,6 +155,36 @@ function displayPrimaryPurposeOtherText(){
          </td>
       </tr>
 
+    <tr>
+        <td scope="row" class="label"><label for="webDTO.phaseCode">
+             <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
+        <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+        <td>
+            <s:select headerKey="" headerValue="" name="webDTO.phaseCode" id="webDTO.phaseCode" list="#phaseCodeValues" 
+                value="webDTO.phaseCode" cssStyle="width:100px" onchange="displayPhaseAdditonalCode()" />
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.phaseCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+    
+    <tr id ="phaseOtherDiv" style="display:'none'">
+        <td   scope="row" class="label"><label for="comment">
+            <fmt:message key="isdesign.details.phase.comment"/>
+            </label></td>
+        <td>
+        <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+        <s:select id="comment" headerKey="" headerValue="No" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+                value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
+               <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.phaseAdditionalQualifierCode</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
 
 	<tr>
 	 	<td  scope="row" class="label"><label>

@@ -81,6 +81,8 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.OSDesignDetailsWebDTO;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
@@ -153,6 +155,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry
                     .getStudyProtocolService()
                     .getNonInterventionalStudyProtocol(studyProtocolIi);
+            setPhase(ospFromDatabaseDTO);
             ospFromDatabaseDTO.setPrimaryPurposeCode(CdConverter
                     .convertToCd(PrimaryPurposeCode.getByCode(webDTO
                             .getPrimaryPurposeCode())));
@@ -202,6 +205,19 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         }
         return "details";
     }
+    
+    /**
+     * @param ispDTO
+     */
+    private void setPhase(NonInterventionalStudyProtocolDTO ispDTO) {
+        ispDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(webDTO.getPhaseCode())));
+        if (PAUtil.isPhaseCodeNA(webDTO.getPhaseCode())) {
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(
+                    PhaseAdditionalQualifierCode.getByCode(webDTO.getPhaseAdditionalQualifierCode())));
+        } else {
+            ispDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd((Lov) null));
+        }       
+    }
 
     /**
      * @return String
@@ -236,7 +252,8 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     }
 
     private void validateBaseFields() {
-        addErrors(webDTO.getStudySubtypeCode(), "webDTO.studySubtypeCode", "error.studytype");        
+        addErrors(webDTO.getStudySubtypeCode(), "webDTO.studySubtypeCode", "error.studytype"); 
+        addErrors(webDTO.getPhaseCode(), "webDTO.phaseCode", "error.phase");
     }
 
     /**
@@ -325,7 +342,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     private OSDesignDetailsWebDTO setDesignDetailsDTO(NonInterventionalStudyProtocolDTO ospDTO) {
         OSDesignDetailsWebDTO dto = new OSDesignDetailsWebDTO();
         if (ospDTO != null) {
-
+            convertPhase(ospDTO, dto);
             convertTimePerspective(ospDTO, dto);
             convertBiospecimenFields(ospDTO, dto);
             convertGroupsCohorts(ospDTO, dto);
@@ -335,6 +352,17 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
 
         }
         return dto;
+    }
+
+    private void convertPhase(NonInterventionalStudyProtocolDTO ospDTO,
+            OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getPhaseCode() != null) {
+            dto.setPhaseCode(ospDTO.getPhaseCode().getCode());
+        }
+        if (ospDTO.getPhaseAdditionalQualifierCode() != null) {
+            dto.setPhaseAdditionalQualifierCode(ospDTO.getPhaseAdditionalQualifierCode().getCode());
+        }
+        
     }
 
     private void convertBaseFields(NonInterventionalStudyProtocolDTO ospDTO,

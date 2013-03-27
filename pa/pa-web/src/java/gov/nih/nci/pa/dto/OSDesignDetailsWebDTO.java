@@ -100,6 +100,8 @@ public class OSDesignDetailsWebDTO {
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
     private String minimumTargetAccrualNumber;
+    private String phaseCode;
+    private String phaseAdditionalQualifierCode;
     
     /**
      * @return biospecimenDescription
@@ -258,6 +260,30 @@ public class OSDesignDetailsWebDTO {
      */
     public void setStudyType(String studyType) {
         this.studyType = studyType;
+    }
+    /**
+     * @return the phaseCode
+     */
+    public String getPhaseCode() {
+        return phaseCode;
+    }
+    /**
+     * @param phaseCode the phaseCode to set
+     */
+    public void setPhaseCode(String phaseCode) {
+        this.phaseCode = phaseCode;
+    }
+    /**
+     * @return the phaseAdditionalQualifierCode
+     */
+    public String getPhaseAdditionalQualifierCode() {
+        return phaseAdditionalQualifierCode;
+    }
+    /**
+     * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
+     */
+    public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
+        this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
     
 }
