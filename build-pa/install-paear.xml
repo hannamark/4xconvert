@@ -226,14 +226,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
   <target name="install:pa-ear-jboss:app:configure" description="Configure pa-ear application" unless="exclude.pa-ear">
       <copy file="${jboss-conf.dir.dest}/${pa-ear.ds.file}" todir="${jboss.home}/server/${jboss.server.name}/deploy" overwrite="true" />
       <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" log.level.hibernate="${app.log.level.hibernate}" config.dir="${jboss.home}/server/${jboss.server.name}/conf"/>
-	<echo message="replace server.xml - ${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"/>
-    <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+      <echo message="replace server.xml - ${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"/>
+      <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
                  match='&lt;Connector acceptCount="100" address="\$\{jboss.bind.address\}"'
                  replace='&lt;Connector acceptCount="100" address="${jboss.bind.address}" maxSavePostSize="16384"'
                   />
-    <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+      <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
                  match='emptySessionPath="false" enableLookups="false" port="8009"'
                  replace='emptySessionPath="false" enableLookups="false" port="8009" maxSavePostSize="16384"'
+                  />
+      <echo message="Changing AccessLogValue logging pattern to include request processing time -- ${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"/>
+      <replaceregexp file="${jboss.home}/server/${jboss.server.name}/deploy/jbossweb-tomcat55.sar/server.xml"
+		 flags="g"
+                 match='pattern="common"'
+                 replace='pattern="%h %l %u %t &amp;quot;%r&amp;quot; %s %b %T"'
                   />
   </target>
 
