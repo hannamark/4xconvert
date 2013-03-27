@@ -85,15 +85,12 @@ package com.fiveamsolutions.nci.commons.util;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Holds the name of the currently-logged in user in a ThreadLocal.  If the
  * value is unset, return the username for the 'anonymous' user.
  */
 public class UsernameHolder {
-
-    private static final Logger LOG = Logger.getLogger(UsernameHolder.class);
 
     private static ThreadLocal<String> usernameThreadLocal = new ThreadLocal<String>();
 
@@ -107,9 +104,6 @@ public class UsernameHolder {
      * @param user the user to set for the current thread
      */
     public static void setUser(String user) {
-        if (ANONYMOUS_USERNAME.equals(user)) {
-            LOG.warn("explicitly setting user to the ANONYMOUS_USERNAME");
-        }
         usernameThreadLocal.set((user == null) ? null : user.toLowerCase(Locale.US));
     }
 
@@ -117,10 +111,7 @@ public class UsernameHolder {
      * Sets the username for the current thread, maintaining the case of the username.
      * @param user the user to set for the current thread
      */
-    public static void setUserCaseSensitive(String user) {
-        if (ANONYMOUS_USERNAME.equals(user)) {
-            LOG.warn("explicitly setting user to the ANONYMOUS_USERNAME");
-        }
+    public static void setUserCaseSensitive(String user) {       
         usernameThreadLocal.set(user);
     }
 
