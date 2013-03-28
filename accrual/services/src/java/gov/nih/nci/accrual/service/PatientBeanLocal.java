@@ -85,9 +85,7 @@ import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Patient;
-import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
-import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -95,7 +93,6 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -126,25 +123,6 @@ public class PatientBeanLocal implements PatientServiceLocal {
             throw new PAException("Update method should be used to modify existing.");
         }
         return createOrUpdate(dto);
-    }
-    
-    /**
-     * Enforce the business rules for the Patient creation and update.
-     * @param dto The new patientDto
-     * @throws PAException If the patient is not valid.
-     */
-    void enforceBusinessRules(PatientDto dto) throws PAException {
-        Set<String> raceCodes = DSetEnumConverter.convertDSetToSet(dto.getRaceCode());
-        boolean containsUnique = false;
-        for (String raceCode : raceCodes) {
-            if (PatientRaceCode.getByCode(raceCode).isUnique()) {
-                containsUnique = true;
-            }
-        }
-        if (raceCodes.size() > 1 && containsUnique) {
-           throw new PAException("Business rule is violated. No multiple selection"
-                + " when race code is Not Reported or Unknown.");
-        }
     }
 
     /**
@@ -183,7 +161,6 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     private PatientDto createOrUpdate(PatientDto dto) throws PAException {
-        enforceBusinessRules(dto);
         Patient bo = convertDtoToDomain(dto);
         bo = setDomainAuditFields(dto, bo);
         return convertDomainToDTO(bo);

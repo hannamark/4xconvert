@@ -93,33 +93,30 @@ import java.util.TreeMap;
 public enum PatientRaceCode implements CodedEnum<String> {
 
     /** White. */
-    WHITE("White", false, "WHITE"),
+    WHITE("White", "WHITE"),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("American Indian or Alaska Native", false, "AMERICAN_INDIAN_OR_ALASKA_NATIVE"),
+    AMERICAN_INDIAN("American Indian or Alaska Native", "AMERICAN_INDIAN_OR_ALASKA_NATIVE"),
     /** Asian. */
-    ASIAN("Asian", false, "ASIAN"),
+    ASIAN("Asian", "ASIAN"),
     /** Black or African American. */
-    BLACK("Black or African American", false, "BLACK_OR_AFRICAN_AMERICAN"),
+    BLACK("Black or African American", "BLACK_OR_AFRICAN_AMERICAN"),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("Native Hawaiian or Other Pacific Islander", false, "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER"),
+    HAWAIIAN("Native Hawaiian or Other Pacific Islander", "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER"),
     /** Not Reported. */
-    NOT_REPORTED("Not Reported", true, "NOT_REPORTED"),
+    NOT_REPORTED("Not Reported", "NOT_REPORTED"),
     /** Unknown. */
-    UNKNOWN("Unknown", true, "UNKNOWN");
+    UNKNOWN("Unknown", "UNKNOWN");
 
     private final String code;
-    private final boolean unique;
     private final String personRace;
 
     /**
      * Constructor.
      * @param code The code of this enumeration value
-     * @param unique True if this value must be unique for a patient
      * @param personRace The name of the corresponding value in the PO PersonRace enumeration
      */
-    PatientRaceCode(String code, boolean unique, String personRace) {
+    PatientRaceCode(String code, String personRace) {
         this.code = code;
-        this.unique = unique;
         this.personRace = personRace;
         register(this);
     }
@@ -130,13 +127,6 @@ public enum PatientRaceCode implements CodedEnum<String> {
     @Override
     public String getCode() {
         return code;
-    }
-
-    /**
-     * @return unique unique
-     */
-    public boolean isUnique() {
-        return unique;
     }
 
     /**

@@ -162,6 +162,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     
     private static final int RESULTS_LEN = 1000;
     private static final String DATE_PATTERN = "MM/dd/yyyy";
+    private static final String DEFAULTBIRTHDATE = "100101";
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
 
     // Cache for disease Ii's
@@ -345,7 +346,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         saDTO.setRegistrationDate(
                 TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
         saDTO.setZipCode(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
-        saDTO.setBirthDate(AccrualUtil.yearMonthStringToTs(line[BatchFileIndex.PATIENT_DOB_INDEX]));
+        saDTO.setBirthDate(AccrualUtil.yearMonthStringToTs(StringUtils.isEmpty(line[BatchFileIndex.PATIENT_DOB_INDEX]) 
+                ? DEFAULTBIRTHDATE : line[BatchFileIndex.PATIENT_DOB_INDEX]));
         saDTO.setGender(CdConverter.convertToCd(
                 CDUSPatientGenderCode.getByCode(line[BatchFileIndex.PATIENT_GENDER_INDEX]).getValue()));
         saDTO.setEthnicity(CdConverter.convertToCd(

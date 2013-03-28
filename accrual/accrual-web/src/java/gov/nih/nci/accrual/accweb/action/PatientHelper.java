@@ -85,9 +85,7 @@ package gov.nih.nci.accrual.accweb.action;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -120,7 +118,6 @@ public class PatientHelper {
         if (!action.hasActionErrors()) {
             validateNoPatientDuplicates();
             validateUnitedStatesRules();
-            validateEligibilityCriteria();
         }
     }
 
@@ -154,16 +151,6 @@ public class PatientHelper {
                     action.addActionError("Method of payment should only be entered if country is United States.");
                 }
             }
-        }
-    }
-
-    private void validateEligibilityCriteria() {
-        if (EligibleGenderCode.FEMALE.equals(action.getGenderCriterion())
-                && action.getPatient().getGenderCode().equals(PatientGenderCode.MALE.getCode())
-            || EligibleGenderCode.MALE.equals(action.getGenderCriterion())
-                && action.getPatient().getGenderCode().equals(PatientGenderCode.FEMALE.getCode())) {
-            action.addActionError("Gender must not be " + action.getPatient().getGenderCode()
-                    + " for subjects in this study.");
         }
     }
 }

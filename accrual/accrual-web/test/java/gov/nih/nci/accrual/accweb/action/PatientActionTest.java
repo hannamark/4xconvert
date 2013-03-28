@@ -231,6 +231,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");
         patient.setStudyProtocolId(1L);
+        patient.setDateLastUpdated("12/10/2009");
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -246,6 +247,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
+        raceCode.add(PatientRaceCode.NOT_REPORTED.getName());
         patient.setRaceCode(raceCode);
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
@@ -296,6 +298,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
         Set<String> raceCode = new HashSet<String>();
         raceCode.add(PatientRaceCode.WHITE.getName());
+        raceCode.add(PatientRaceCode.UNKNOWN.getName());
         patient.setRaceCode(raceCode);
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier(currentAssignedIdentifier);
@@ -427,6 +430,45 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., " +
         		"Ethnicity is required., Country is required., Participating Site is required., " +
         		"Registration Date is required."));
+    }
+    
+    @Test
+    public void validateUnitedStatesTest() throws Exception {
+        patient.setStudyProtocolId(1L);
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        patient.setBirthDate("7/16/2009");
+        patient.setCountryIdentifier(Long.valueOf(1));
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setRegistrationDate("12/10/2009");
+        patient.setStudyProtocolId(1L);
+        patient.setDateLastUpdated("12/10/2009");
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertTrue(action.hasActionErrors());
+        assertEquals(1, action.getActionErrors().size());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Zip code is mandatory if country is United States."));
+
+        patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setZip("123456");
+        patient.setPaymentMethodCode("paymentMethodCode");
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertTrue(action.hasActionErrors());
+        assertEquals(2, action.getActionErrors().size());
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Zip code should only be entered if country is United States., " + 
+                "Method of payment should only be entered if country is United States."));
+        
     }
     
     @Test

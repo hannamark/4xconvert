@@ -174,35 +174,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
             // expected behavior
         }
     }
-
-    @Test
-    public void enforceBusinessRules() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        dto.setCountryIdentifier(countryIi);
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        bean.enforceBusinessRules(dto);
-        Set<String> races = new HashSet<String>();
-        races.add(PatientRaceCode.AMERICAN_INDIAN.getCode());
-        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
-        bean.enforceBusinessRules(dto);
-        races = new HashSet<String>();
-        races.add(PatientRaceCode.NOT_REPORTED.getCode());
-        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
-        bean.enforceBusinessRules(dto);
-        races.add(PatientRaceCode.BLACK.getCode());
-        dto.setRaceCode(DSetEnumConverter.convertSetToDSet(races));
-        try {
-            bean.enforceBusinessRules(dto);
-            fail("Should have failed for unique code violation.");
-        } catch (PAException e) {
-            // expected behavior
-        }
-    }
-
+    
     @Test
     public void create() throws Exception {
         PatientDto r = bean.create(loadPatientDto());

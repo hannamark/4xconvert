@@ -84,25 +84,18 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
-import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -154,7 +147,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private final Map<String, Long> listOfPoIds = new HashMap<String, Long>();
     private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
     private final Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
-    private PatientGenderCode genderCriterion = PatientGenderCode.UNKNOWN;
     private static final int TIME_SECONDS = 1000;
     private static final String SUABSTRACTOR = "SuAbstractor";
     private String codeSystemFile;
@@ -234,16 +226,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                                     }
                                 }
                             }
-                            List<PlannedEligibilityCriterionDTO> pecList = PaServiceLocator.getInstance()
-                                    .getPlannedActivityService()
-                                    .getPlannedEligibilityCriterionByStudyProtocol(sp.getIdentifier());
-                                for (PlannedEligibilityCriterionDTO pec : pecList) {
-                                    if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
-                                            StConverter.convertToString(pec.getCriterionName()))) {
-                                        genderCriterion = PatientGenderCode.getByCode(
-                                                CdConverter.convertCdToString(pec.getEligibleGenderCode()));
-                                    }
-                                }
                         } catch (PAException e) {
                             LOG.error("Error loading study sites for a trial in validateBatchData.", e);
                         }
@@ -266,18 +248,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 if (races == null) {
                     errMsg.append("Patient race code is missing for patient ID ")
                     .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
-                } else {
-                boolean containsUnique = false;
-                for (String raceCode : CDUSPatientRaceCode.getCodesByCdusCodes(races)) {
-                    if (PatientRaceCode.getByCode(raceCode).isUnique()) {
-                        containsUnique = true;
-                    }
-                }
-                if (CDUSPatientRaceCode.getCodesByCdusCodes(races).size() > 1 && containsUnique) {
-                    errMsg.append("No multiple selection when race code is Not Reported or Unknown for patient ID ")
-                    .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
-                }
-               }
+                } 
               }
              validateDiseaseCodeSystem(errMsg);
             }
@@ -363,8 +334,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
             }
         }
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, genderCriterion, codeSystemFile, 
-                checkDisease);
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, codeSystemFile, checkDisease);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccrualCount(key, values, errMsg, lineNumber, sp);

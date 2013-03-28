@@ -82,10 +82,8 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
-import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.AccrualDisease;
-import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.ArrayList;
@@ -137,16 +135,12 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      * @param sp study protocol
-     * @param genderCriterion gender
      * @param codeSystem diseasecode
-     * @param checkDisease 
+     * @param checkDisease checkDisease
      */
     @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
- // CHECKSTYLE:OFF More than 7 Parameters
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
-            StudyProtocolDTO sp, PatientGenderCode genderCriterion, String codeSystem, 
-            boolean checkDisease) {
-        // CHECKSTYLE:ON
+            StudyProtocolDTO sp, String codeSystem, boolean checkDisease) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean trialType = true;            
             if (sp != null && sp.getProprietaryTrialIndicator().getValue()) {
@@ -156,10 +150,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 List<String> patientsIdList = new ArrayList<String>();
                 isPatientIdUnique(getPatientId(values), errMsg, lineNumber, patientsIdList);
                 String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);
-                if (StringUtils.isEmpty(pBirthDate)) {
-                    errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
-                    .append(appendLineNumber(lineNumber)).append("\n");
-                } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
+                if (!StringUtils.isEmpty(pBirthDate) 
+                        && !new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
                     errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
                 }
@@ -168,7 +160,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                     errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
                         .append(appendLineNumber(lineNumber)).append("\n");
                 }
-                validateGender(values, errMsg, lineNumber, genderCriterion);
+                validateGender(values, errMsg, lineNumber);
                 validateEthnicity(values, errMsg, lineNumber);
                 validateDateOfEntry(values, errMsg, lineNumber);
                 validateDiseaseCode(values, errMsg, lineNumber, sp, codeSystem, checkDisease);
@@ -244,20 +236,13 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber, 
-            PatientGenderCode genderCriterion) {
+    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
         String genderCode = AccrualUtil.safeGet(values, PATIENT_GENDER_CODE_INDEX);
         if (StringUtils.isEmpty(genderCode)) {
             errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append("\n");
         } else if (!PATIENT_GENDER.contains(genderCode.trim())) {
             errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
-        } else if (PatientGenderCode.FEMALE.equals(genderCriterion)
-                && CDUSPatientGenderCode.getByCode(genderCode).getCode().equals(PatientGenderCode.MALE.getCode())
-            || PatientGenderCode.MALE.equals(genderCriterion)
-                && CDUSPatientGenderCode.getByCode(genderCode).getCode().equals(PatientGenderCode.FEMALE.getCode())) {
-            errMsg.append("Gender must not be " + genderCode + " for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append("\n");
         }
     }

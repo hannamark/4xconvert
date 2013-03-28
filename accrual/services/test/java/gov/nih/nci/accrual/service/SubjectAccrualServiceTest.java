@@ -525,6 +525,20 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
     
+    @Test
+    public void updateSubjectAccrualNullSiteCheck() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Study Site Ii cannot be null.");
+        bean.updateSubjectAccrualCount(null, null, null, AccrualSubmissionTypeCode.UNKNOWN);    	
+    }
+   
+    @Test 
+    public void updateSubjectAccrualNullUserAuthFailure() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("User does not have accrual access to site.");
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100), TestSchema.registryUsers.get(0),AccrualSubmissionTypeCode.UNKNOWN); 
+    }
+    
     @Test 
     public void deleteSubjectAccrualIiFailureNull() throws PAException {
         thrown.expect(PAException.class);
