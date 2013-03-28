@@ -146,6 +146,21 @@
     <listener>
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
     </listener>
+
+    <context-param>
+        <param-name>resteasy.server.cache.maxsize</param-name>
+        <param-value>100</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.server.cache.eviction.wakeup.interval</param-name>
+        <param-value>5000</param-value>
+    </context-param>
+    <listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.cache.server.ServletServerCache
+        </listener-class>
+    </listener>
+
     <listener>
         <description>Sets the various paths variables in the servlet context for use in jsps</description>
         <listener-class>gov.nih.nci.registry.util.ServletContextConfigurator</listener-class>

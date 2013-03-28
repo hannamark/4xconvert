@@ -25,6 +25,7 @@ This is the definition of a virtual module called bda-download that has a depend
     </dependency>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
     <dependency org="javax.servlet"          name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
+    <dependency org="jgroups"                name="jgroups"                 rev="2.9.0.GA"        conf="runtime->master"/>
     <dependency org="net.htmlparser.jericho" name="jericho-html"            rev="2.4"             conf="runtime->master"/>
     <dependency org="org.scannotation"       name="scannotation"            rev="1.0.3"           conf="runtime->master"/>
     <dependency org="ognl"                   name="ognl"                    rev="2.7"             conf="runtime->default"/>
@@ -38,9 +39,13 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.freemarker"         name="freemarker"              rev="2.3.13"          conf="runtime->default"/>
     <dependency org="org.hibernate"          name="hibernate-validator"     rev="3.0.0.ga"        conf="runtime->master"/>
     <dependency org="org.hibernate"          name="hibernate-commons-annotations" rev="3.3.0.ga"  conf="runtime->master"/>
-    <dependency org="org.jboss.resteasy"     name="resteasy-jaxrs"          rev="2.3.5.Final"     conf="runtime->master"/>
-    <dependency org="org.jboss.resteasy"     name="resteasy-jaxb-provider"  rev="2.3.5.Final"     conf="runtime->master"/>
-    <dependency org="org.jboss.resteasy"     name="jaxrs-api"               rev="2.3.5.Final"     conf="runtime->master"/>
+
+    <dependency org="org.jboss"              name="jboss-common-core"       rev="2.2.20.GA"       conf="runtime->master"/>
+    <dependency org="org.jboss.cache"        name="jbosscache-core"         rev="3.2.5.GA"        conf="runtime->master"/>
+    <dependency org="org.jboss.resteasy"     name="resteasy-cache-core"     rev="2.3.0.GA"        conf="runtime->master"/>
+    <dependency org="org.jboss.resteasy"     name="resteasy-jaxrs"          rev="2.3.0.GA"        conf="runtime->master"/>
+    <dependency org="org.jboss.resteasy"     name="resteasy-jaxb-provider"  rev="2.3.0.GA"        conf="runtime->master"/>
+    <dependency org="org.jboss.resteasy"     name="jaxrs-api"               rev="2.3.0.GA"        conf="runtime->master"/>
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
 
     <!-- Grid Registration runtime dependencies -->

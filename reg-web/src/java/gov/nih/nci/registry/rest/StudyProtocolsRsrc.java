@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.cache.Cache;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 
 /**
@@ -27,6 +28,7 @@ import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 @Produces(MediaType.APPLICATION_XML)
 public class StudyProtocolsRsrc {
     private static final Logger LOG = Logger.getLogger(StudyProtocolsRsrc.class);
+    private static final int ONE_HOUR = 3600;
 
     /**
      * Query study protocols returning minimal data for each trial.
@@ -36,6 +38,7 @@ public class StudyProtocolsRsrc {
     @Path("/")
     @Wrapped(element = "studyProtocols")
     @GET
+    @Cache(maxAge = ONE_HOUR)
     public Response getStudiesXML(@QueryParam("agentNsc") String agentNsc) {
         if (StringUtils.isEmpty(agentNsc)) {
             throw new BadRequestException("Agent NSC number missing from request.");
