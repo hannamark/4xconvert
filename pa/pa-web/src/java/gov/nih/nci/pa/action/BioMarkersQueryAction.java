@@ -282,16 +282,18 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                 }
                 } else {
                     addActionError("An exact match in caDSR could not be found. Please check" 
-                            + " the permissible value name before editing"); 
+                            + " the permissible value name. Unable to update new Biomarker."); 
                 }
             }
-           
-            try {                                
-                PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
-                        webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);           
-            } catch (PAException e) {
-                addActionError(e.getMessage());
+            if (!hasActionErrors()) {
+                try {                                
+                    PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
+                            webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);           
+                } catch (PAException e) {
+                    addActionError(e.getMessage());
+                }
             }
+            
         return execute();
     }
 
@@ -317,18 +319,20 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                 }
             } else {
                 addActionError("An exact match in caDSR could not be found. Please check" 
-                        + " the permissible value name before accepting"); 
+                        + " the permissible value name. Unable to accept new Biomarker."); 
             }
         }
        
-       
-        marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-        try {            
-            PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
-                    webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);
-        } catch (PAException e) {
-            addActionError(e.getMessage());
+        if (!hasActionErrors()) {
+            marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+            try {            
+                PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
+                        webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);
+            } catch (PAException e) {
+                addActionError(e.getMessage());
+            }
         }
+        
         return execute();
     }        
 
