@@ -22,6 +22,7 @@ public class BaseTrialDTO { // NOPMD
     private String primaryPurposeCode;
     private String primaryPurposeAdditionalQualifierCode;
     private String primaryPurposeOtherText;
+    private String secondaryPurposeOtherText;
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
@@ -399,10 +400,14 @@ public class BaseTrialDTO { // NOPMD
         return secondaryPurposes;
     }
     /**
-     * @param secondaryPurposes the secondaryPurposes to set
+     * @param purposes the secondaryPurposes to set
      */
-    public void setSecondaryPurposes(List<String> secondaryPurposes) {
-        this.secondaryPurposes = secondaryPurposes;
+    public void setSecondaryPurposes(List<String> purposes) { // NOPMD
+        if (purposes != null) {
+            purposes = new ArrayList<String>(purposes);
+            purposes.remove("");
+        }
+        this.secondaryPurposes = purposes;
     }
     
     /**
@@ -427,6 +432,18 @@ public class BaseTrialDTO { // NOPMD
     public String getSecondaryPurposeAsReadableString() {
         return secondaryPurposes != null ? StringUtils.join(secondaryPurposes,
                 ", ") : StringUtils.EMPTY;
+    }
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    public String getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
 
 

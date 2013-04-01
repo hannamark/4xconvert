@@ -154,7 +154,12 @@
 		          <c:if test="${trialDTO.trialType!='NonInterventional'}">	    
 		                <reg-web:valueRow labelFor="submit.trial.secondaryPurpose" labelKey="submit.trial.secondaryPurpose">
 		                    <s:property value="trialDTO.secondaryPurposesAsString" />
-		                </reg-web:valueRow>                      
+		                </reg-web:valueRow>   
+		                <c:if test="${trialDTO.secondaryPurposeAsReadableString == 'Other'}">
+                                <reg-web:valueRow labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
+                                    <c:out value="${trialDTO.secondaryPurposeOtherText}"/>
+                                </reg-web:valueRow>
+                        </c:if>                    
 		          </c:if>
           
                  <c:if test="${trialDTO.trialType=='NonInterventional'}">

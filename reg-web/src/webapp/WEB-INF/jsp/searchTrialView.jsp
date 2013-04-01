@@ -164,11 +164,18 @@
                             </reg-web:valueRow>
                         </c:if>
                         <c:if test="${trialSummary.studyProtocolType.value=='InterventionalStudyProtocol' || trialSummary.studyProtocolType.value=='Interventional'}">
+                            <c:set var="otherSecPurpose" scope="request" value="${false}"/>
 	                        <reg-web:valueRow labelKey="view.trial.secondaryPurpose">           
 	                           <c:forEach items="${requestScope.trialSummary.secondaryPurposes.item}" var="st">
 	                               <c:out value="${st.value}"/><br/>
+	                               <c:set var="otherSecPurpose" scope="request" value="${otherSecPurpose==false?(st.value=='Other'):true}"/>
 	                           </c:forEach>
-	                        </reg-web:valueRow>                        
+	                        </reg-web:valueRow>
+	                        <c:if test="${otherSecPurpose}">
+                                <reg-web:valueRow labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
+                                    <c:out value="${requestScope.trialSummary.secondaryPurposeOtherText.value}"/>
+                                </reg-web:valueRow>
+                            </c:if>                     
                         </c:if>
                         <c:if test="${trialSummary.studyProtocolType.value!='InterventionalStudyProtocol' && trialSummary.studyProtocolType.value!='Interventional'}">
                             <reg-web:valueRow labelKey="submit.trial.studySubtypeCode">                            

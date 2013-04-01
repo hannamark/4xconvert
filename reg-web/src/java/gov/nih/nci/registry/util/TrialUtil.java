@@ -133,6 +133,7 @@ public class TrialUtil extends TrialConvertUtils {
         if (spDTO.getSecondaryPurposes() != null) {
             trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
         }
+        trialDTO.setSecondaryPurposeOtherText(spDTO.getSecondaryPurposeOtherText().getValue());
         
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
@@ -914,7 +915,8 @@ public class TrialUtil extends TrialConvertUtils {
         copyParticipatingSites(studyProtocolIi, trialDTO);
         if (spDTO.getSecondaryPurposes() != null) {
             trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
-        }        
+        }   
+        trialDTO.setSecondaryPurposeOtherText(spDTO.getSecondaryPurposeOtherText().getValue());
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 

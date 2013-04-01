@@ -88,6 +88,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String timePerspectiveOtherText;
     private StudySubtypeCode studySubtypeCode;
     private String secondaryPurposes;
+    private String secondaryPurposeOtherText;
     
     
     /**
@@ -631,6 +632,21 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
      */
     public void setSecondaryPurposes(String secondaryPurposes) {
         this.secondaryPurposes = secondaryPurposes;
+    }
+    
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    @Column(name = "secondary_purpose_other_text")
+    public String getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
    
 }

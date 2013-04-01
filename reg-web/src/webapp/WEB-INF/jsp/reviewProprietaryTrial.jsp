@@ -112,8 +112,14 @@
 	                        <c:if test="${trialDTO.trialType != 'NonInterventional'}">
 	                            <reg-web:valueRow labelKey="view.trial.secondaryPurpose">
 	                                <c:out value="${trialDTO.secondaryPurposeAsReadableString}"/> 
-	                            </reg-web:valueRow>                        
+	                            </reg-web:valueRow>
+	                            <c:if test="${trialDTO.secondaryPurposeAsReadableString == 'Other'}">
+	                                <reg-web:valueRow labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
+	                                    <c:out value="${trialDTO.secondaryPurposeOtherText}"/>
+	                                </reg-web:valueRow>
+                                </c:if>                         
 	                        </c:if>
+                                                    
 	                        <c:if test="${trialDTO.trialType == 'NonInterventional'}">
 	                            <reg-web:valueRow labelKey="submit.trial.studySubtypeCode" noLabelTag="true">
 	                                <c:out value="${trialDTO.studySubtypeCode}"/>

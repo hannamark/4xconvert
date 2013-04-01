@@ -329,6 +329,7 @@ public class StudyProtocolConverter {
             }
             dto.setSecondaryPurposes(dset);
         }
+        dto.setSecondaryPurposeOtherText(StConverter.convertToSt(bo.getSecondaryPurposeOtherText()));
     }
     
     private static void convertSecondaryPurposeToDomain(
@@ -343,6 +344,7 @@ public class StudyProtocolConverter {
                                 .convertToString(st)));
             }
         }
+        bo.setSecondaryPurposeOtherText(StConverter.convertToString(dto.getSecondaryPurposeOtherText()));
     }
     
     /**

@@ -125,6 +125,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Ivl<Int> targetAccrualNumber;
     private List<DocumentWorkflowStatusCode> processingStatuses;
     private DSet<St> secondaryPurposes = new DSet<St>();
+    private St secondaryPurposeOtherText;   
     private St comments;
     private Int processingPriority;
     private Ii assignedUser;    
@@ -508,6 +509,20 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setCtroOverride(Bl ctroOverride) {
         this.ctroOverride = ctroOverride;
+    }
+
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    public St getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(St secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
 
 }

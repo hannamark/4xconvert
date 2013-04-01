@@ -180,8 +180,9 @@ public abstract class AbstractTrialRegistrationBean {
             returnStudyProtocolDTO
                     .setPrimaryPurposeAdditionalQualifierCode(CdConverter
                             .convertToCd((CodedEnum) null));
-        }
+        }     
         returnStudyProtocolDTO.setSecondaryPurposes(studyProtocolDTO.getSecondaryPurposes());
+        returnStudyProtocolDTO.setSecondaryPurposeOtherText(studyProtocolDTO.getSecondaryPurposeOtherText());
     }
     
     

@@ -7,6 +7,7 @@
         <s:hidden id="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode"/>
         <s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
         <s:hidden id="trialDTO.secondaryPurposesAsString" name="trialDTO.secondaryPurposesAsString"/>                
+        <s:hidden id="trialDTO.secondaryPurposeOtherText" name="trialDTO.secondaryPurposeOtherText"/>
 		<s:hidden id="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode"/>
 		<s:hidden id="trialDTO.studyModelCode" name="trialDTO.studyModelCode"/>
 		<s:hidden id="trialDTO.studyModelOtherText" name="trialDTO.studyModelOtherText"/>
@@ -90,6 +91,18 @@
         <s:property value="trialDTO.secondaryPurposeAsReadableString"/>
     </td>
 </tr>
+<c:if test="${trialDTO.secondaryPurposeAsReadableString=='Other'}">
+	<tr>
+	    <td  scope="row" class="label">
+	        <label>
+	            <fmt:message key="view.trial.secOtherPurposeText"/>
+	        </label>
+	    </td>
+	    <td>
+	        <s:property value="trialDTO.secondaryPurposeOtherText"/>
+	    </td>
+	</tr>
+</c:if>
 </s:if>
 <s:if test="trialDTO.trialType != 'InterventionalStudyProtocol' && trialDTO.trialType != 'Interventional'">
 <tr>

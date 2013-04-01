@@ -115,6 +115,10 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStageDTO.setIdentifier(IiConverter.convertToIi(studyProtocolStage.getId()));
         studyProtocolStageDTO.setNctIdentifier(StConverter.convertToSt(studyProtocolStage.getNctIdentifier()));
         studyProtocolStageDTO.setSecondaryPurposes(StConverter.convertToSt(studyProtocolStage.getSecondaryPurposes()));
+        studyProtocolStageDTO
+                .setSecondaryPurposeOtherText(StConverter
+                        .convertToSt(studyProtocolStage
+                                .getSecondaryPurposeOtherText()));
         studyProtocolStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(
                 studyProtocolStage.getLocalProtocolIdentifier()));
         studyProtocolStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(
@@ -219,6 +223,8 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStage.setNctIdentifier(StConverter.convertToString(studyProtocolStageDTO.getNctIdentifier()));
         studyProtocolStage.setSecondaryPurposes(StConverter
                 .convertToString(studyProtocolStageDTO.getSecondaryPurposes()));
+        studyProtocolStage.setSecondaryPurposeOtherText(StConverter
+                .convertToString(studyProtocolStageDTO.getSecondaryPurposeOtherText()));
         studyProtocolStage.setLocalProtocolIdentifier(StConverter.convertToString(
                 studyProtocolStageDTO.getLocalProtocolIdentifier()));
         studyProtocolStage.setLeadOrganizationIdentifier(IiConverter.convertToString(

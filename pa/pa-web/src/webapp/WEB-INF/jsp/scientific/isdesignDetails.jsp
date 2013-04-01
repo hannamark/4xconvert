@@ -114,6 +114,13 @@ function displayPrimaryPurposeOtherText(){
         $('purposeOtherTextDiv').hide();
   }
 }
+function displaySecondaryPurposeOtherText(){
+	   if ($('webDTO.secondaryPurposes').value == 'Other') {
+	        $('secondaryPurposeOtherTextDiv').show();
+	   } else {
+	        $('secondaryPurposeOtherTextDiv').hide();
+	  }
+}
 function displayPhaseAdditonalCode(){
    if ($('webDTO.phaseCode').value == 'NA') {
          $('phaseOtherDiv').show();
@@ -123,6 +130,7 @@ function displayPhaseAdditonalCode(){
 }
 function initialize() {
     displayPrimaryPurposeOtherText();
+    displaySecondaryPurposeOtherText();
     displayPhaseAdditonalCode();
 }
 </SCRIPT>
@@ -202,11 +210,26 @@ function initialize() {
         </td>
         <s:set name="secondaryPurposeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
         <td>
-          <s:select name="webDTO.secondaryPurposes" id="webDTO.secondaryPurposes" list="#secondaryPurposeCodeValues"
-                   value="webDTO.secondaryPurposes" cssStyle="width:150px" multiple="true"/>
-                   <p class="info">You can select more than one purpose by holding down the CTRL key and clicking on multiple items.</p>
+          <s:select headerKey="" headerValue="" 
+                   name="webDTO.secondaryPurposes" id="webDTO.secondaryPurposes" list="#secondaryPurposeCodeValues"
+                   value="webDTO.secondaryPurposes" cssStyle="width:150px" onchange="displaySecondaryPurposeOtherText()"/>
+                   
         </td>
     </tr>
+    
+    <tr id="secondaryPurposeOtherTextDiv" style="display:'none'">
+         <td scope="row" class="label">
+            <label for="otherText"><fmt:message key="isdesign.details.secondary.purpose.otherText"/></label>
+         </td>
+         <td>
+               <s:textarea id="secondaryOtherText" name="webDTO.secondaryPurposeOtherText"  cols="50" rows="2" maxlength="1000" cssClass="charcounter"/><br/>               
+               <span class="formErrorMsg"> 
+               <s:fielderror>
+               <s:param>webDTO.secondaryPurposeOtherText</s:param>
+               </s:fielderror>                            
+               </span>
+         </td>
+      </tr>    
       
     <tr>
         <td scope="row" class="label"><label for="webDTO.phaseCode">

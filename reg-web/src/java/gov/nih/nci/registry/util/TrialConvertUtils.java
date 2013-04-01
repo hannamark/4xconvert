@@ -250,7 +250,13 @@ public class TrialConvertUtils {
         if (CollectionUtils.isNotEmpty(trialDTO.getSecondaryPurposes())) {
             isoDto.setSecondaryPurposes(DSetConverter
                     .convertListStToDSet(trialDTO.getSecondaryPurposes()));
+            isoDto.setSecondaryPurposeOtherText(
+                    StConverter.convertToSt(trialDTO.getSecondaryPurposeOtherText()));
+        } else {
+            isoDto.setSecondaryPurposeOtherText(
+                    StConverter.convertToSt(null));
         }
+        
     }
 
     /**
@@ -935,6 +941,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
             spStageDTO.setSecondaryPurposes(StConverter.convertToSt(StringUtils.join(
                     trialDto.getSecondaryPurposes(), ';')));
         }
+        spStageDTO.setSecondaryPurposeOtherText(StConverter.convertToSt(trialDto.getSecondaryPurposeOtherText()));
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
        spStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
@@ -1090,7 +1097,10 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
             trialDto.setSecondaryPurposes(Arrays.asList(StConverter
                     .convertToString(spStageDTO.getSecondaryPurposes()).split(
                             ";")));
-       }       
+       }
+        trialDto.setSecondaryPurposeOtherText(StConverter
+                .convertToString(spStageDTO.getSecondaryPurposeOtherText()));    
+       
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
        if (!ISOUtil.isIiNull(spStageDTO.getLeadOrganizationIdentifier())) {

@@ -101,6 +101,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
     private String allocationCode;
     private String primaryPurposeAdditionalQualifierCode;
     private String primaryPurposeOtherText;
+    private String secondaryPurposeOtherText;
     private String phaseAdditionalQualifierCode;
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
@@ -390,7 +391,24 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
      * @param secondaryPurposes the secondaryPurposes to set
      */
     public void setSecondaryPurposes(List<String> secondaryPurposes) {
+        if (secondaryPurposes != null) {
+            secondaryPurposes.remove("");
+        }
         this.secondaryPurposes = secondaryPurposes;
+    }
+
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    public String getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
 
 }

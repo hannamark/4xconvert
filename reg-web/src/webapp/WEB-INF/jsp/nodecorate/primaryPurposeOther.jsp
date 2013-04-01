@@ -50,10 +50,28 @@
                 <s:set name="typeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
                 <td>
                     <s:select id ="trialDTO.secondaryPurposes" name="trialDTO.secondaryPurposes" list="#typeCodeValues"  cssStyle="width:206px"
-                        value="trialDTO.secondaryPurposes" multiple="true"/>
-                      <p class="info">You can select more than one purpose by holding down the CTRL or SHIFT key and clicking on multiple items.</p>
+                        headerKey="" headerValue="--Select--" onchange="displaySecondaryPurposeOtherCode(this);"
+                        value="trialDTO.secondaryPurposes"/>                      
                 </td>
           </tr>
+          
+          <tr id="secondaryPurposeOtherTextDiv" style="display:'none'">
+                <td scope="row" class="label">                    
+                    <label for="trialDTO.secondaryPurposeOtherText">
+                        <fmt:message key="submit.trial.secOtherPurposeText"/>
+                    </label>                    
+                </td>
+                <td>
+                    <s:textarea id="trialDTO.secondaryPurposeOtherText" name="trialDTO.secondaryPurposeOtherText"  cols="50" rows="2"
+                        maxlength="1000" cssClass="charcounter" /><br/>
+                     <span class="formErrorMsg"> 
+                        <s:fielderror>
+                        <s:param>trialDTO.secondaryPurposeOtherText</s:param>
+                       </s:fielderror>                            
+                     </span>
+                </td>
+          </tr>
+          
           
 		<tr class="non-interventional">        
 		      <td  scope="row" class="label">                    
@@ -128,6 +146,7 @@
 <SCRIPT LANGUAGE="JavaScript">
 
 displayPrimaryPurposeOtherCode(null);
+displaySecondaryPurposeOtherCode($('trialDTO.secondaryPurposes'));
 
 function displayPrimaryPurposeOtherCode(el) {
 	if (el==null) {
@@ -144,6 +163,16 @@ function displayPrimaryPurposeOtherCode(el) {
         $('purposeOtherTextDiv').hide();
         document.getElementById('trialDTO.primaryPurposeOtherText').disabled = true;
         document.getElementById('trialDTO.primaryPurposeAdditionalQualifierCode').value = null;
+    }
+}
+
+function displaySecondaryPurposeOtherCode(el) { 
+    if (el.value == 'Other') {
+        $('secondaryPurposeOtherTextDiv').show();
+        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = false;        
+    } else {
+        $('secondaryPurposeOtherTextDiv').hide();
+        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = true;        
     }
 }
 

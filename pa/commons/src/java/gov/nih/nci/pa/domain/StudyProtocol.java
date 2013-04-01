@@ -192,6 +192,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Set<StudyInbox> studyInbox = new TreeSet<StudyInbox>(new StudyInboxComparator());
     private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
     private Set<SecondaryPurpose> secondaryPurposes = new LinkedHashSet<SecondaryPurpose>();
+    private String secondaryPurposeOtherText;
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
 
@@ -907,6 +908,21 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setCtroOverride(Boolean ctroOverride) {
         this.ctroOverride = ctroOverride;
+    }
+    
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    @Column(name = "secondary_purpose_other_text")
+    public String getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
 
 }

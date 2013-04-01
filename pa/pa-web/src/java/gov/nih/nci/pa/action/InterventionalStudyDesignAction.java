@@ -283,6 +283,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         } else {
             ispDTO.setSecondaryPurposes(DSetConverter
                     .convertListStToDSet(webDTO.getSecondaryPurposes()));
+            ispDTO.setSecondaryPurposeOtherText(StConverter.convertToSt(webDTO.getSecondaryPurposeOtherText()));
         }
     }
 
@@ -400,7 +401,10 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
         if (ispDTO.getSecondaryPurposes() != null) {
             dto.setSecondaryPurposes(DSetConverter.convertDSetStToList(ispDTO
-                    .getSecondaryPurposes()));
+                    .getSecondaryPurposes()));            
+        }
+        if (ispDTO.getSecondaryPurposeOtherText() != null) {
+            dto.setSecondaryPurposeOtherText(StConverter.convertToString(ispDTO.getSecondaryPurposeOtherText()));
         }
     }
 
