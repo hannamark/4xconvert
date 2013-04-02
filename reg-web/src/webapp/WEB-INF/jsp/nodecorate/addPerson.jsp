@@ -56,7 +56,7 @@
      <td scope="row" class="label"><label for="poOrganizations_zip">ZIP :</label><span class="required">*</span></td><td><s:textfield name="zip"  maxlength="20" size="100"  cssStyle="width:200px" /></td>
   </tr>
    <tr>
-       <td scope="row" class="label"><label for="poOrganizations_email">Email :</label><span class="required">*</span></td><td><s:textfield name="email"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
+       <td scope="row" class="label"><label for="poOrganizations_email">Email :</label></td><td><s:textfield name="email"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
        <td scope="row" class="label"><label for="poOrganizations_phone">Phone :</label></td><td><s:textfield name="phone"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
     </tr>
    <tr>

@@ -541,9 +541,10 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Last Name is a required field");
         }
 
-        if (StringUtils.isEmpty(email)) {
-            addActionError("Email is a required field");
-        } else if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
+        if (StringUtils.isEmpty(email) && StringUtils.isEmpty(getPhone())) {
+            addActionError("Either an email address or a phone is required");
+        }
+        if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
         }
 
@@ -634,9 +635,11 @@ public class PopupAction extends ActionSupport implements Preparable {
                 telurl.setValue(new URI(url));
                 list.getItem().add(telurl);
             }
-            TelEmail telemail = new TelEmail();
-            telemail.setValue(new URI("mailto:" + email));
-            list.getItem().add(telemail);
+            if (StringUtils.isNotBlank(email)) {
+                TelEmail telemail = new TelEmail();
+                telemail.setValue(new URI("mailto:" + email));
+                list.getItem().add(telemail);
+            }
             dto.setTelecomAddress(list);
             //PO Service requires upper case state codes for US and Canada
             if (StringUtils.isNotEmpty(state)) {
