@@ -153,7 +153,7 @@
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="person" usOrCanadaFormatForValidationOnly="true"/>
+                <po:contacts emailOrPhoneRequired="true" emailRequired="false" phoneRequired="false" contactableKeyBase="person" usOrCanadaFormatForValidationOnly="true"/>
             </div>
         </div>
 <s:if test="%{isNotCreate}">

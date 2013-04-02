@@ -2,9 +2,9 @@
 function handlePhoneReq() {
 
 if ($('curateRoleForm.role.status').value != 'ACTIVE') {
-	$('onload_phone_number_required').hide();
+	$('onload_phone_or_email_required').hide();
 } else {
-	$('onload_phone_number_required').show();
+	$('onload_phone_or_email_required').show();
 }
 	return true;
 }

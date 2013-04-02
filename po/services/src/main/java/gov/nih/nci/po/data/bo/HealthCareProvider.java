@@ -85,7 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
-import gov.nih.nci.po.util.PhoneNotEmptyValidator;
+import gov.nih.nci.po.util.PhoneOrEmailRequiredValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoper;
 import gov.nih.nci.po.util.ValidIi;
@@ -130,7 +130,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @RoleStatusChange
 @UniquePlayerScoper(friendlyName = "Health Care Provider")
-@PhoneNotEmptyValidator.PhoneNotEmpty
+@PhoneOrEmailRequiredValidator.PhoneOrEmailRequired
 public class HealthCareProvider extends AbstractHealthCareProvider implements Correlation, PersonRole {
     private static final long serialVersionUID = 2L;
     private static final String INDEX_NAME = "idx";

@@ -332,6 +332,7 @@ public class OrganizationalContactServiceTest extends AbstractPersonRoleServiceT
         PoHibernateUtil.getCurrentSession().update(obj);
 
         obj.getPhone().clear();
+        obj.getEmail().clear();
         Map<String, String[]> errors = getService().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);

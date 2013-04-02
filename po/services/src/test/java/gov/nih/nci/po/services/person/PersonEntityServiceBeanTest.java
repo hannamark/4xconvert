@@ -295,8 +295,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Map<String, String[]> errors = remote.validate(dto);
         assertEquals(3, errors.size());
         assertTrue(errors.containsKey("lastName"));
-        assertTrue(errors.containsKey("postalAddress"));
-        assertTrue(errors.containsKey("email"));
+        assertTrue(errors.containsKey("postalAddress"));        
 
         Ad add = new Ad();
         add.setPart(new ArrayList<Adxp>());
@@ -312,7 +311,7 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         assertTrue(errors.containsKey("postalAddress.postalCode"));
         assertTrue(errors.containsKey("postalAddress.country"));
         assertFalse(errors.containsKey("postalAddress.stateOrProvince"));// for clarity
-        assertTrue(errors.containsKey("email"));
+        
 
     }
 

@@ -85,7 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
-import gov.nih.nci.po.util.PhoneNotEmptyValidator;
+import gov.nih.nci.po.util.PhoneOrEmailRequiredValidator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoper;
@@ -129,7 +129,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @RoleStatusChange
 @UniquePlayerScoper(friendlyName = "Clinical Research Staff")
-@PhoneNotEmptyValidator.PhoneNotEmpty
+@PhoneOrEmailRequiredValidator.PhoneOrEmailRequired
 public class ClinicalResearchStaff extends AbstractPersonRole implements Correlation, PersonRole {
     private static final long serialVersionUID = 2L;
     private static final String JOIN_COLUMN = "crs_id";

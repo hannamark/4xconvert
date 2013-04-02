@@ -138,7 +138,8 @@
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="${role.status == 'ACTIVE'}" 
+                <po:contacts contactableKeyBase="role" emailRequired="false" phoneRequired="false"
+                    emailOrPhoneRequired="${role.status == 'ACTIVE'}" 
                     usOrCanadaFormatForValidationOnly="true"
                     defaultEmails="${usePlayerDefaults && person.id != null}" defaultPhones="${usePlayerDefaults && person.id != null}" 
                     defaultFaxes="${usePlayerDefaults && person.id != null}"/>

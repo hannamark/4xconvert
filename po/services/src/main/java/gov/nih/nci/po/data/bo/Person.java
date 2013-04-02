@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.PhoneOrEmailRequiredValidator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -119,6 +119,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
+@PhoneOrEmailRequiredValidator.PhoneOrEmailRequired
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Person extends AbstractPerson implements Auditable, CuratableEntity<Person, PersonCR>, Entity {
     private static final long serialVersionUID = 1L;
@@ -159,8 +160,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     @ForeignKey(name = "PER_EMAIL_FK", inverseName = "EMAIL_PER_FK")
     @Valid
     @Override
-    @Searchable(nested = true)
-    @NotEmpty(message = "{validator.notEmpty.collection}")
+    @Searchable(nested = true)    
     public List<Email> getEmail() {
         return super.getEmail();
     }

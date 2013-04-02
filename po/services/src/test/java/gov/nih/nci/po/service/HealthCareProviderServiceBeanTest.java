@@ -210,6 +210,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         PoHibernateUtil.getCurrentSession().update(obj);
 
         obj.getPhone().clear();
+        obj.getEmail().clear();
         Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);

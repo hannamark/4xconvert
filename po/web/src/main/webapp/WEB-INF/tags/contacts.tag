@@ -2,6 +2,7 @@
 <%@ attribute name="contactableKeyBase" type="java.lang.String" required="true" %>
 <%@ attribute name="emailRequired" type="java.lang.Boolean" required="false" description="By default email is required"%>
 <%@ attribute name="phoneRequired" type="java.lang.Boolean" required="false" description="By default phone is not required"%>
+<%@ attribute name="emailOrPhoneRequired" type="java.lang.Boolean" required="false" description="Either email or phone required"%>
 <%@ attribute name="readonly" type="java.lang.Boolean" required="false" description="Display read-only view, if not provied readonly is false"%>
 <%@ attribute name="defaultEmails" type="java.lang.Boolean" required="false" description="Use player's emails to pre-populate with."%>
 <%@ attribute name="defaultPhones" type="java.lang.Boolean" required="false" description="Use player's phones to pre-populate with."%>
@@ -24,6 +25,14 @@
 <s:else>
 <s:set name="phoneRequiredStyle" value=""/>
 </s:else>
+
+<s:if test="%{#attr.emailOrPhoneRequired == null || #attr.emailOrPhoneRequired == false}">
+    <s:set name="phoneOrEmailRequiredStyle" value="'display:none'"/>
+</s:if>
+<s:else>
+    <s:set name="phoneOrEmailRequiredStyle" value=""/>
+</s:else>
+
 
 <s:if test="%{#attr.readonly == true}">
 <s:set name="readonlyBool" value="true"/>
@@ -73,7 +82,10 @@ function isTelecomFieldsBlank() {
  }
 //-->
 </script>
-<fieldset>
+    <span id="onload_phone_or_email_required" style="${phoneOrEmailRequiredStyle}">
+        <span class="required">*</span>&nbsp; Please note: either an email address or a phone number is required.
+    </span>
+<fieldset>    
     <legend><s:if test="%{emailRequiredBool}"><span class="required">*</span>&nbsp;</s:if>Email Addresses</legend>
    <s:fielderror>
         <s:param value="%{#attr.contactableKeyBase + '.email'}"/>
