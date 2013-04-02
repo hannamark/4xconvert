@@ -104,6 +104,10 @@ public class TSRReportTrialDesign {
     private String allocation;
     private String studyClassification;
     private String targetEnrollment;
+    private String studyModel;
+    private String timePerspective;
+    private String studyModelOtherText;
+    private String timePerspectiveOtherText;
 
     /**
      * @return the type
@@ -286,5 +290,61 @@ public class TSRReportTrialDesign {
      */
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the studyModel
+     */
+    public String getStudyModel() {
+        return studyModel;
+    }
+
+    /**
+     * @param studyModel the studyModel to set
+     */
+    public void setStudyModel(String studyModel) {
+        this.studyModel = studyModel;
+    }
+
+    /**
+     * @return the timePerspective
+     */
+    public String getTimePerspective() {
+        return timePerspective;
+    }
+
+    /**
+     * @param timePerspective the timePerspective to set
+     */
+    public void setTimePerspective(String timePerspective) {
+        this.timePerspective = timePerspective;
+    }
+
+    /**
+     * @return the studyModelOtherText
+     */
+    public String getStudyModelOtherText() {
+        return studyModelOtherText;
+    }
+
+    /**
+     * @param studyModelOtherText the studyModelOtherText to set
+     */
+    public void setStudyModelOtherText(String studyModelOtherText) {
+        this.studyModelOtherText = studyModelOtherText;
+    }
+
+    /**
+     * @return the timePerspectiveOtherText
+     */
+    public String getTimePerspectiveOtherText() {
+        return timePerspectiveOtherText;
+    }
+
+    /**
+     * @param timePerspectiveOtherText the timePerspectiveOtherText to set
+     */
+    public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
+        this.timePerspectiveOtherText = timePerspectiveOtherText;
     }
 }

@@ -720,4 +720,20 @@ public class TSRReportLabelText { //NOPMD
      * 
      */
     public static final String STUDY_POPULATION_DESC = "Study Population Description";
+    /**
+     * 
+     */
+    public static final String TD_STUDY_MODEL = "Study Model";
+    /**
+     * 
+     */
+    public static final String TD_STUDY_MODEL_OTHER_TEXT = "Study Model Description";
+    /**
+     * 
+     */
+    public static final String TD_TIME_PERSPECTIVE = "Time Perspective";
+    /**
+     * 
+     */
+    public static final String TD_TIME_PERSPECTIVE_OTHER_TEXT = "Time Perspective Description";
 }

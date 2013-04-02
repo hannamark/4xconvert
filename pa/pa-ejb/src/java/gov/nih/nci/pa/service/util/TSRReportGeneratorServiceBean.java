@@ -880,7 +880,24 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 }
                 trialDesign.setAllocation(getValue(intDTO.getAllocationCode()));
                 trialDesign.setStudyClassification(getValue(intDTO.getStudyClassificationCode()));
-            }
+            } else if (ispDTO instanceof NonInterventionalStudyProtocolDTO) {
+                NonInterventionalStudyProtocolDTO dto = (NonInterventionalStudyProtocolDTO) ispDTO;
+                final String timePerspective = CdConverter
+                        .convertCdToString(dto.getTimePerspectiveCode());
+                final String studyModel = CdConverter.convertCdToString(dto
+                        .getStudyModelCode());
+
+                trialDesign.setTimePerspective(timePerspective);
+                trialDesign.setTimePerspectiveOtherText("Other"
+                        .equalsIgnoreCase(timePerspective) ? StConverter
+                        .convertToString(dto.getTimePerspectiveOtherText())
+                        : null);
+
+                trialDesign.setStudyModel(studyModel);
+                trialDesign.setStudyModelOtherText("Other"
+                        .equalsIgnoreCase(studyModel) ? StConverter
+                        .convertToString(dto.getStudyModelOtherText()) : null);
+            }            
             
         }
         tsrReportGenerator.setTrialDesign(trialDesign);

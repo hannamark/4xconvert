@@ -613,6 +613,17 @@ public abstract class AbstractTsrReportGenerator {
                     getTrialDesign().getPrimaryPurposeOtherText());
             addPhaseRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase(), getTrialDesign()
                     .getPhaseAdditonalQualifier());
+            
+            addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL,
+                    getTrialDesign().getStudyModel());
+            addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL_OTHER_TEXT,
+                    getTrialDesign().getStudyModelOtherText());
+            addTableRow(table, TSRReportLabelText.TD_TIME_PERSPECTIVE,
+                    getTrialDesign().getTimePerspective());
+            addTableRow(table,
+                    TSRReportLabelText.TD_TIME_PERSPECTIVE_OTHER_TEXT,
+                    getTrialDesign().getTimePerspectiveOtherText());            
+            
             addTableRow(table, TSRReportLabelText.TD_INTERVENTION_MODEL, getTrialDesign().getInterventionModel());
             addTableRow(table, TSRReportLabelText.TD_NUM_OF_ARMS, getTrialDesign().getNumberOfArms());
             addTableRow(table, TSRReportLabelText.TD_MASKING, getTrialDesign().getMasking());
