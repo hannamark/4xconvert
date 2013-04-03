@@ -950,27 +950,30 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         Session session = PaHibernateUtil.getCurrentSession();
         Map<Long, String> resultSet = new HashMap<Long, String>();
         List<Object[]> queryList = null;
-        SQLQuery query = session
-        .createSQLQuery("select so.study_protocol_id, so.extension, " 
-                + "so.root from study_otheridentifiers as so " 
-                + "join study_protocol as sp on sp.identifier=so.study_protocol_id where sp.status_code ='ACTIVE'"
-                + " and so.study_protocol_id IN (:ids)"
-                + " and so.root = '"
-                + IiConverter.STUDY_PROTOCOL_ROOT
-                + "' order by so.root");
-        query.setParameterList("ids", listOfTrialIDs);
-        queryList = query.list();
-        
-        for (Object[] oArr : queryList) {
-            BigInteger ret = null;
-            if (oArr[0] instanceof BigInteger) { 
-                ret =  (BigInteger) oArr[0];
-                if (oArr[1] != null) {
-                    resultSet.put(ret.longValue(), oArr[1].toString());
-                }
-            }       
+        if (!listOfTrialIDs.isEmpty()) {
+            SQLQuery query = session
+            .createSQLQuery("select so.study_protocol_id, so.extension, " 
+                    + "so.root from study_otheridentifiers as so " 
+                    + "join study_protocol as sp on sp.identifier=so.study_protocol_id where sp.status_code ='ACTIVE'"
+                    + " and so.study_protocol_id IN (:ids)"
+                    + " and so.root = '"
+                    + IiConverter.STUDY_PROTOCOL_ROOT
+                    + "' order by so.root");
+            
+            query.setParameterList("ids", listOfTrialIDs);
+            
+            queryList = query.list();
+            
+            for (Object[] oArr : queryList) {
+                BigInteger ret = null;
+                if (oArr[0] instanceof BigInteger) { 
+                    ret =  (BigInteger) oArr[0];
+                    if (oArr[1] != null) {
+                        resultSet.put(ret.longValue(), oArr[1].toString());
+                    }
+                }       
+            }
         }
-
         return resultSet;
     }
     /**
