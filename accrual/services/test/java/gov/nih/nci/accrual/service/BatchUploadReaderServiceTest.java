@@ -294,6 +294,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.contains(errorMsg, "PATIENTS at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));
         assertTrue(StringUtils.contains(errorMsg, "Please enter valid alpha2 country code for patient ID 223694 at line 4"));
+        assertTrue(StringUtils.contains(errorMsg, "Please enter valid patient payment method for patient ID 207747 at line 2"));
+        assertTrue(StringUtils.contains(errorMsg, "Patient birth date must be in YYYYMM format for patient ID 208847 at line 3"));
+        assertTrue(StringUtils.contains(errorMsg, "Please enter valid patient ethnicity for patient ID 208847 at line 3"));
         assertTrue(results.get(0).getValidatedLines().isEmpty()); 
 
         file = new File(this.getClass().getResource("/no_protocol.txt").toURI());

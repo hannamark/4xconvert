@@ -102,7 +102,9 @@ public class CDUSPaymentMethodCodeTest {
         assertEquals(PaymentMethodCode.MEDICAID_AND_MEDICARE, CDUSPaymentMethodCode.getByCode("5").getValue());
         assertEquals(PaymentMethodCode.MILITARY_OR_VETERANS, CDUSPaymentMethodCode.getByCode("6").getValue());
         assertEquals(PaymentMethodCode.MILITARY, CDUSPaymentMethodCode.getByCode("6A").getValue());
+        assertEquals(PaymentMethodCode.MILITARY, CDUSPaymentMethodCode.getByCode("6a").getValue());
         assertEquals(PaymentMethodCode.VETERANS, CDUSPaymentMethodCode.getByCode("6B").getValue());
+        assertEquals(PaymentMethodCode.VETERANS, CDUSPaymentMethodCode.getByCode("6b").getValue());
         assertEquals(PaymentMethodCode.SELF, CDUSPaymentMethodCode.getByCode("7").getValue());
         assertEquals(PaymentMethodCode.NO_MEANS_OF_PAYMENT, CDUSPaymentMethodCode.getByCode("8").getValue());
         assertEquals(PaymentMethodCode.OTHER, CDUSPaymentMethodCode.getByCode("98").getValue());

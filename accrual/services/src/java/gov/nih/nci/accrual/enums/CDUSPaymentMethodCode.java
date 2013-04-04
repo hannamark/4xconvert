@@ -113,6 +113,10 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     MILITARY("6A", PaymentMethodCode.MILITARY.getCode(), PaymentMethodCode.MILITARY),
     /** Veterans Sponsored. */
     VETERANS("6B", PaymentMethodCode.VETERANS.getCode(), PaymentMethodCode.VETERANS),
+    /** Military Sponsored (including CHAMPUS or TRICARE). */
+    ALT_MILITARY_6A("6a", PaymentMethodCode.MILITARY.getCode(), PaymentMethodCode.MILITARY),
+    /** Veterans Sponsored. */
+    ALT_VETERANS("6b", PaymentMethodCode.VETERANS.getCode(), PaymentMethodCode.VETERANS),
     /** Self pay (no insurance). */
     SELF("7", PaymentMethodCode.SELF.getCode(), PaymentMethodCode.SELF),
     /** No means of payment (no insurance). */
