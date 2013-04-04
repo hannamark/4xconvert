@@ -104,6 +104,7 @@ CREATE TABLE STG_DW_STUDY (
     CATEGORY character varying (12),
     COMMENTS varchar(4000),
     PROCESSING_PRIORITY int,
+    CTRO_OVERRIDE boolean,
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 

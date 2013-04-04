@@ -60,7 +60,7 @@ def sql =
             sponsor.name as sponsor, sp.start_date, sp.start_date_type_code, sp.submission_number,
             submitter.first_name || ' ' || submitter.last_name as submitter, submitter.affiliate_org as submitter_org,
             summary4.type_code as summary4_type_code, summary4_sponsor.name as summary4_sponsor, stopped.comment_text as why_stopped,
-            sp.comments, sp.processing_priority
+            sp.comments, sp.processing_priority, sp.ctro_override
             from STUDY_PROTOCOL sp
                 left outer join study_checkout as admin on admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE'
                 left outer join study_checkout as scientific on scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC'
@@ -146,7 +146,7 @@ sourceConnection.eachRow(sql) { row ->
                     section_801_indicator: row.section801_indicator, sponsor: row.sponsor, start_date: row.start_date, start_date_type_code: row.start_date_type_code,
                     submission_number: row.submission_number, submitter_name: row.submitter, submitter_organization: row.submitter_org,
                     summary_4_funding_category: row.summary4_type_code, summary_4_funding_sponsor: row.summary4_sponsor, why_study_stopped: row.why_stopped,
-                    category: row.category, comments: row.comments, processing_priority: row.processing_priority)
+                    category: row.category, comments: row.comments, processing_priority: row.processing_priority, ctro_override: row.ctro_override)
         } catch (Exception e) {
             println "Error adding row : " + row
         }
