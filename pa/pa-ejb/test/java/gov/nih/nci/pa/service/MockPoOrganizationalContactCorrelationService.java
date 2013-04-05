@@ -11,6 +11,7 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
@@ -107,6 +108,12 @@ public class MockPoOrganizationalContactCorrelationService implements
             throws NullifiedRoleException {
         // TODO Auto-generated method stub
         return new ArrayList<OrganizationalContactDTO>();
+    }
+
+    @Override
+    public Ii createActiveCorrelation(OrganizationalContactDTO arg0)
+            throws EntityValidationException, CurationException {
+        return IiConverter.convertToPoOrganizationalContactIi("1");   
     }
 
 }

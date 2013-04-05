@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.services.correlation;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationService;
 
 import javax.ejb.Remote;
@@ -91,4 +94,20 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface OrganizationalContactCorrelationServiceRemote extends CorrelationService<OrganizationalContactDTO> {
+    
+    /**
+     * Attempts to create a new correlation in ACTIVE state. If failed, falls
+     * back to create the correlation in PENDING state. PO-5962.
+     * 
+     * @param dto
+     *            the dto.
+     * @return the identifier of the correlation.
+     * @throws EntityValidationException
+     *             the validation errors, if any.
+     * @throws CurationException
+     *             if any unrecoverable error occurred
+     */
+    Ii createActiveCorrelation(OrganizationalContactDTO dto)
+            throws EntityValidationException, CurationException;
+    
 }

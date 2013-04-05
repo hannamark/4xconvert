@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
@@ -137,6 +138,12 @@ public class MockOrganizationalContactCorrelationService implements
     public List<OrganizationalContactDTO> getCorrelationsByPlayerIds(Ii[] arg0)
             throws NullifiedRoleException {
         return new ArrayList<OrganizationalContactDTO>();
+    }
+
+    @Override
+    public Ii createActiveCorrelation(OrganizationalContactDTO arg0)
+            throws EntityValidationException, CurationException {       
+        return IiConverter.convertToIi(1l);
     }
 
 }

@@ -60,4 +60,11 @@ public class ClinicalResearchStaffServiceStub implements ClinicalResearchStaffSe
         return null;
     }
 
+    @Override
+    public long createActiveWithFallback(ClinicalResearchStaff structuralRole)
+            throws EntityValidationException, JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

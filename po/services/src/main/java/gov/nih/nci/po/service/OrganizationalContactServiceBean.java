@@ -124,4 +124,10 @@ public class OrganizationalContactServiceBean extends AbstractCuratableServiceBe
         return super.getScoperHotRoleCount(org.getId(), OrganizationalContact.class);
     }
 
+    @Override
+    public long createActiveWithFallback(OrganizationalContact structuralRole) // NOPMD
+            throws EntityValidationException, JMSException {       
+        return super.createActiveWithFallback(structuralRole);
+    }
+
 }

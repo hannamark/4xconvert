@@ -13,6 +13,7 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -119,6 +120,12 @@ public class MockPoClinicalResearchStaffCorrelationService implements
         crsDTO.setIdentifier(DSetConverter.convertIiToDset(crsIi));
         crsList.add(crsDTO);
         return crsList;
+    }
+
+    @Override
+    public Ii createActiveCorrelation(ClinicalResearchStaffDTO arg0)
+            throws EntityValidationException, CurationException {
+        return IiConverter.convertToPoClinicalResearchStaffIi("1");
     }
 
 }

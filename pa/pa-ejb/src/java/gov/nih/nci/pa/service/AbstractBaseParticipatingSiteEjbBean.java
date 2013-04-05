@@ -83,10 +83,12 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -94,12 +96,15 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.HashMap;
 import java.util.List;
@@ -232,11 +237,12 @@ public class AbstractBaseParticipatingSiteEjbBean {
     private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO) throws EntityValidationException,
             CurationException, PAException {
         Ii poPersonIi = null;
+        final PersonEntityServiceRemote personService = PoRegistry.getPersonEntityService();
         if (!ISOUtil.isIiNull(investigatorDTO.getIdentifier())
                 && IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
             PersonDTO personDTO = null;
             try {
-                personDTO = PoRegistry.getPersonEntityService().getPerson(investigatorDTO.getIdentifier());
+                personDTO = personService.getPerson(investigatorDTO.getIdentifier());
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e));
             }
@@ -260,7 +266,11 @@ public class AbstractBaseParticipatingSiteEjbBean {
             }
             poPersonIi = idps.get(0).getPlayerIdentifier();
         } else {
-            poPersonIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);
+            boolean autoCurate = new PAServiceUtils().isAutoCurationEnabled();
+            investigatorDTO.setStatusCode(autoCurate ? CdConverter
+                    .convertStringToCd("ACTIVE") : CdConverter
+                    .convertStringToCd(null));
+            poPersonIi = personService.createPerson(investigatorDTO);
         }
         return poPersonIi;
     }
@@ -291,11 +301,15 @@ public class AbstractBaseParticipatingSiteEjbBean {
 
     private Ii checkExistingCrs(ClinicalResearchStaffDTO crsDTO) throws PAException, EntityValidationException,
             CurationException, NullifiedRoleException {
-        List<ClinicalResearchStaffDTO> crsList = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
+        final ClinicalResearchStaffCorrelationServiceRemote service = PoRegistry
+                .getClinicalResearchStaffCorrelationService();
+        List<ClinicalResearchStaffDTO> crsList = service.search(crsDTO);
         ClinicalResearchStaffDTO freshDTO = null;
         if (CollectionUtils.isEmpty(crsList)) {
-            Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-            freshDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+            Ii ii = new PAServiceUtils().isAutoCurationEnabled() ? service
+                    .createActiveCorrelation(crsDTO) : service
+                    .createCorrelation(crsDTO);
+            freshDTO = service.getCorrelation(ii);
         } else if (crsList.size() > 1) {
             throw new PAException("For a given Person id " + crsDTO.getPlayerIdentifier().getExtension()
                     + " and Organization id " + crsDTO.getScoperIdentifier()
@@ -308,11 +322,14 @@ public class AbstractBaseParticipatingSiteEjbBean {
 
     private Ii checkExistingHcp(HealthCareProviderDTO hcpDTO) throws PAException, EntityValidationException,
             CurationException, NullifiedRoleException {
-        List<HealthCareProviderDTO> hcpList = PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
+        final HealthCareProviderCorrelationServiceRemote service = PoRegistry.getHealthCareProviderCorrelationService();
+        List<HealthCareProviderDTO> hcpList = service.search(hcpDTO);
         HealthCareProviderDTO freshDTO = null;
         if (CollectionUtils.isEmpty(hcpList)) {
-            Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-            freshDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
+            Ii ii = new PAServiceUtils().isAutoCurationEnabled() ? service
+                    .createActiveCorrelation(hcpDTO) : service
+                    .createCorrelation(hcpDTO);
+            freshDTO = service.getCorrelation(ii);
         } else if (hcpList.size() > 1) {
             throw new PAException("For a given Person id " + hcpDTO.getPlayerIdentifier().getExtension()
                     + " and Organization id " + hcpDTO.getScoperIdentifier()

@@ -49,7 +49,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.10-SNAPSHOT"           conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.9-SNAPSHOT"    conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.9.1-SNAPSHOT"    conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>

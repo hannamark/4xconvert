@@ -91,7 +91,8 @@ import javax.ejb.Local;
  * @author Scott Miller
  */
 @Local
-public interface HealthCareProviderServiceLocal extends GenericStructrualRoleServiceLocal<HealthCareProvider> {
+public interface HealthCareProviderServiceLocal extends
+        GenericAutoCuratableStructuralRoleServiceLocal<HealthCareProvider> {
 
     /**
      * Get the number of roles that need attention from the curator.

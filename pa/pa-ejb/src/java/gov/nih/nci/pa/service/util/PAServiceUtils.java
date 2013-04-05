@@ -161,8 +161,10 @@ import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
@@ -1905,15 +1907,18 @@ public class PAServiceUtils {
           ClinicalResearchStaffDTO crsDTO = null;
           List<ClinicalResearchStaffDTO> poCrsList;
           try {
-            poCrsList = filterByScoper(PoRegistry
-                    .getClinicalResearchStaffCorrelationService()
+            final ClinicalResearchStaffCorrelationServiceRemote service = PoRegistry
+                    .getClinicalResearchStaffCorrelationService();
+            poCrsList = filterByScoper(service
                     .getCorrelationsByPlayerIds(new Ii[] {investigatorIi}), poOrgId);
             if (poCrsList.isEmpty()) {
                 crsDTO = new ClinicalResearchStaffDTO();
                 crsDTO.setPlayerIdentifier(investigatorIi);
                 crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(newCrsIi);
+                Ii newCrsIi = isAutoCurationEnabled() ? service
+                        .createActiveCorrelation(crsDTO) : service
+                        .createCorrelation(crsDTO);
+                crsDTO = service.getCorrelation(newCrsIi);
             } else {
                 crsDTO = poCrsList.get(0);
             }
@@ -1939,15 +1944,18 @@ public class PAServiceUtils {
           if (trialType.startsWith("Interventional")) {
               List<HealthCareProviderDTO> poHcpList;
               try {
-                  poHcpList = filterByScoper(PoRegistry
-                          .getHealthCareProviderCorrelationService()
+                final HealthCareProviderCorrelationServiceRemote service = 
+                        PoRegistry.getHealthCareProviderCorrelationService();
+                poHcpList = filterByScoper(service
                           .getCorrelationsByPlayerIds(new Ii[]{investigatorIi}), poOrgId);
                   if (poHcpList.isEmpty()) {
                       hcpDTO = new HealthCareProviderDTO();
                       hcpDTO.setPlayerIdentifier(investigatorIi);
                       hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                      Ii newHcpIi = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-                      hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(newHcpIi);
+                      Ii newHcpIi = isAutoCurationEnabled() ? service
+                              .createActiveCorrelation(hcpDTO) : service
+                              .createCorrelation(hcpDTO);                      
+                      hcpDTO = service.getCorrelation(newHcpIi);
                   } else {
                       hcpDTO = poHcpList.get(0);
                   }
@@ -2073,6 +2081,18 @@ public class PAServiceUtils {
                         + "'");
         List<String> list = query.list();
         return list.isEmpty() ? "" : list.get(0);
+    }
+    
+    /**
+     * Returns true if automated PO curation (i.e. elimination of curation
+     * events) should be attempted for the current user.
+     * 
+     * @return isAutoCurationEnabled
+     * @throws PAException PAException
+     */
+    public boolean isAutoCurationEnabled() throws PAException {
+        return CSMUserService.getInstance().isCurrentUserAutoCuration()
+                || CSMUserService.getInstance().isCurrentUserAbstractor();
     }
     
 }

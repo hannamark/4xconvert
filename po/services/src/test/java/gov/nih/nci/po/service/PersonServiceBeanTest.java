@@ -153,6 +153,22 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     public void create() throws EntityValidationException, JMSException {
         createPerson();
     }
+    
+    @Test
+    public void createActive() throws EntityValidationException, JMSException {
+        Person person = getBasicPerson();
+        person.setStatusCode(EntityStatus.ACTIVE);
+        
+        long id = personServiceBean.create(person);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+
+        // adjust the expected value to NEW
+        person.setStatusCode(EntityStatus.ACTIVE);
+        verifyEquals(person, savedPerson);
+        PoHibernateUtil.getCurrentSession().flush();        
+    }
 
     public long createPerson() throws EntityValidationException, JMSException {
         return createPerson(getBasicPerson());
@@ -191,7 +207,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
         Person savedPerson = personServiceBean.getById(id);
 
         // adjust the expected value to NEW
-        person.setStatusCode(EntityStatus.PENDING);
+        person.setStatusCode(EntityStatus.ACTIVE);
         verifyEquals(person, savedPerson);
     }
 

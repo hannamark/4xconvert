@@ -82,15 +82,22 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.ChangeRequest;
+import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.po.data.bo.PersonRole;
+import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
@@ -105,7 +112,8 @@ import org.hibernate.Session;
  * @param <T>
  */
 public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractBaseServiceBean<T> {
-
+    
+    
     /**
      * message publisher used on update notification.
      */
@@ -138,6 +146,47 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         long id = super.createAndValidate(obj);
         getPublisher().sendCreate(getTypeArgument(), obj);
         return id;
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws JMSException
+     */
+    @SuppressWarnings(UNCHECKED)
+    protected long createActiveWithFallback(AbstractPersonRole obj)
+            throws EntityValidationException, JMSException {
+        Session s = PoHibernateUtil.getCurrentSession();
+        long id = create((T) obj);
+        s.flush();
+        T createdRole = getById(id);
+
+        ((Correlation) createdRole).setStatus(RoleStatus.ACTIVE);
+        copyContactInfoFromPersonToRole(((PersonRole) createdRole).getPlayer(),
+                (Contactable) createdRole);
+        Map<String, String[]> errors = validate(createdRole);
+        if (errors != null && !errors.isEmpty()) {            
+            s.evict(createdRole);
+        } else {
+            curate(createdRole);
+        }
+        return id;
+    }
+    
+
+    private void copyContactInfoFromPersonToRole(Person player,
+            Contactable createdRole) {
+        for (Email email : player.getEmail()) {
+            Email roleEmail = new Email();
+            roleEmail.setValue(email.getValue());
+            createdRole.getEmail().add(roleEmail);
+        }
+        for (PhoneNumber phone : player.getPhone()) {
+            PhoneNumber rolePhone = new PhoneNumber();
+            rolePhone.setValue(phone.getValue());
+            createdRole.getPhone().add(rolePhone);
+        }
+
     }
 
     /**
@@ -183,7 +232,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         return q.list();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private void handleExistingObjectCuration(final Session s, Curatable object) {
         Curatable target = null;
         ArrayList<ChangeRequest<Curatable>> crs = new ArrayList<ChangeRequest<Curatable>>(

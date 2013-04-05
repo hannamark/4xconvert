@@ -92,11 +92,13 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -646,6 +648,9 @@ public class PopupAction extends ActionSupport implements Preparable {
                 state = state.trim().toUpperCase();
             }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
+            dto.setStatusCode(new PAServiceUtils().isAutoCurationEnabled() ? CdConverter
+                    .convertStringToCd("ACTIVE") : CdConverter
+                    .convertStringToCd(null));
             Ii id = PoRegistry.getPersonEntityService().createPerson(dto);
             persons.add(PADomainUtils.convertToPaPersonDTO(PoRegistry.getPersonEntityService().getPerson(id)));
         } catch (Exception e) {

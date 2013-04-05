@@ -109,7 +109,10 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 public abstract class AbstractBaseServiceBean<T extends PersistentObject>
     extends com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean<T> {
 
-    private static final String UNCHECKED = "unchecked";
+    /**
+     * UNCHECKED.
+     */
+    static final String UNCHECKED = "unchecked";
     private final Class<T> typeArgument;
 
     /**

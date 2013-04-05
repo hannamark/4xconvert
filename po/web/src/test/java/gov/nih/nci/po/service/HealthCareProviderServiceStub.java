@@ -156,4 +156,11 @@ public class HealthCareProviderServiceStub implements HealthCareProviderServiceL
     public List<HealthCareProvider> getByPlayerIds(Long[] pids) {
         return null;
     }
+
+    @Override
+    public long createActiveWithFallback(HealthCareProvider structuralRole)
+            throws EntityValidationException, JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }

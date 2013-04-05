@@ -115,4 +115,14 @@ public class HealthCareProviderServiceBean extends AbstractCuratableServiceBean<
     public int getHotRoleCount(Person per) {
         return super.getHotRoleCount(per.getId(), HealthCareProvider.class);
     }
+
+    /**
+     * {@inheritDoc}
+     * @throws JMSException 
+     */
+    @Override
+    public long createActiveWithFallback(HealthCareProvider structuralRole) // NOPMD
+            throws EntityValidationException, JMSException {       
+        return super.createActiveWithFallback(structuralRole);
+    }
 }

@@ -65,4 +65,11 @@ public class OrganizationalContactServiceStub implements OrganizationalContactSe
         return null;
     }
 
+    @Override
+    public long createActiveWithFallback(OrganizationalContact structuralRole)
+            throws EntityValidationException, JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

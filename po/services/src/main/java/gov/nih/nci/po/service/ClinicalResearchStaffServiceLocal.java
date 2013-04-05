@@ -91,7 +91,8 @@ import javax.ejb.Local;
  * @author Scott Miller
  */
 @Local
-public interface ClinicalResearchStaffServiceLocal extends GenericStructrualRoleServiceLocal<ClinicalResearchStaff> {
+public interface ClinicalResearchStaffServiceLocal extends
+        GenericAutoCuratableStructuralRoleServiceLocal<ClinicalResearchStaff> {
 
     /**
      * Get the number of roles that need attention from the curator.

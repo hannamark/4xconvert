@@ -189,4 +189,23 @@ public interface CSMUserUtil {
      */
     Map<Long, String> getAbstractors() throws PAException;
     
+    /**
+     * Checks to see whether the currently logged in user (UsernameHolder) is an
+     * abstractor.
+     * 
+     * @return boolean
+     * @throws PAException PAException
+     */
+    boolean isCurrentUserAbstractor() throws PAException;
+    
+    /**
+     * Checks to see whether the currently logged in user (UsernameHolder) has automated curation enabled.
+     * 
+     * 
+     * @return boolean
+     * @throws PAException PAException
+     */
+    boolean isCurrentUserAutoCuration() throws PAException;
+
+    
 }

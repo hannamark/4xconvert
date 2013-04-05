@@ -87,11 +87,13 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -153,14 +155,18 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         List<ClinicalResearchStaffDTO> crsDTOs = null;
         crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         crsDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifier));
-        crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
+        final ClinicalResearchStaffCorrelationServiceRemote crsService = PoRegistry
+                .getClinicalResearchStaffCorrelationService();
+        crsDTOs = crsService.search(crsDTO);
         if (crsDTOs != null && crsDTOs.size() > 1) {
             throw new PAException("PO CRS Correlation should not have more than 1  ");
         }
         if (crsDTOs == null || crsDTOs.isEmpty()) {
             try {
-                Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+                Ii ii = new PAServiceUtils().isAutoCurationEnabled() ? crsService
+                        .createActiveCorrelation(crsDTO) : crsService
+                        .createCorrelation(crsDTO);
+                crsDTO = crsService.getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 throw new PAException(PAUtil.handleNullifiedRoleException(e));
             } catch (EntityValidationException e) {

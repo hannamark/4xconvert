@@ -86,11 +86,13 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -157,15 +159,19 @@ public class HealthCareProviderCorrelationBean {
         List<HealthCareProviderDTO> hcpDTOs = null;
         hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
         hcpDTO.setPlayerIdentifier(IiConverter.convertToPoPersonIi(personPoIdentifier));
-        hcpDTOs = PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
+        final HealthCareProviderCorrelationServiceRemote hcpService = PoRegistry
+                .getHealthCareProviderCorrelationService();
+        hcpDTOs = hcpService.search(hcpDTO);
         if (hcpDTOs != null && hcpDTOs.size() > 1) {
             throw new PAException(
                     "PO HealthCareProvider Correlation should not have more than 1 role for a given org and person ");
         }
         if (hcpDTOs == null || hcpDTOs.isEmpty()) {
             try {
-                Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-                hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
+                Ii ii = new PAServiceUtils().isAutoCurationEnabled() ? hcpService
+                        .createActiveCorrelation(hcpDTO) : hcpService
+                        .createCorrelation(hcpDTO);
+                hcpDTO = hcpService.getCorrelation(ii);
             } catch (NullifiedRoleException e) {
                 throw new PAException(PAUtil.handleNullifiedRoleException(e));
             } catch (EntityValidationException e) {

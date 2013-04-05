@@ -83,16 +83,19 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiConverter.CorrelationIiConverter;
+import gov.nih.nci.po.service.AbstractCuratableServiceBean;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -102,6 +105,7 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.hibernate.Session;
 import org.junit.Test;
 /**
  * @author Scott Miller
@@ -137,6 +141,48 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         s.create(hcf);
         int c = s.getHotRoleCount(hcf.getPlayer());
         assertEquals(1, c);
+    }
+    
+    /**
+     * Test a simple create and get.
+     */
+    @Test
+    public void testCreateActiveFallback() throws Exception {
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.createActiveWithFallback(hcf);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        ClinicalResearchStaff retrievedRole = s.getById(hcf.getId());
+        assertEquals(RoleStatus.PENDING, retrievedRole.getStatus());
+                
+    }
+    
+    /**
+     * Test a simple create and get.
+     */
+    @Test
+    public void testCreateActiveSuccess() throws Exception {
+        final Session session = PoHibernateUtil.getCurrentSession();        
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        
+        hcf.getScoper().setStatusCode(EntityStatus.ACTIVE);
+        session.save(hcf.getScoper());
+        hcf.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        session.save(hcf.getPlayer());
+        session.flush();
+        
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();        
+        s.createActiveWithFallback(hcf);
+        
+        session.flush();
+        session.clear();
+
+        ClinicalResearchStaff retrievedRole = s.getById(hcf.getId());
+        assertEquals(RoleStatus.ACTIVE, retrievedRole.getStatus());
+                
     }
 
     @Test

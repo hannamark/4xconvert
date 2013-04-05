@@ -98,6 +98,8 @@ import javax.jms.JMSException;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ClinicalResearchStaffServiceBean extends AbstractCuratableServiceBean<ClinicalResearchStaff>
     implements ClinicalResearchStaffServiceLocal {
+    
+   
 
     /**
      * {@inheritDoc}
@@ -108,11 +110,23 @@ public class ClinicalResearchStaffServiceBean extends AbstractCuratableServiceBe
         obj.setStatus(RoleStatus.PENDING);
         return super.create(obj);
     }
+    
 
     /**
      * {@inheritDoc}
      */
     public int getHotRoleCount(Person per) {
         return super.getHotRoleCount(per.getId(), ClinicalResearchStaff.class);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     * @throws JMSException 
+     */
+    @Override
+    public long createActiveWithFallback(ClinicalResearchStaff structuralRole) // NOPMD
+            throws EntityValidationException, JMSException {        
+        return super.createActiveWithFallback(structuralRole);
     }
 }

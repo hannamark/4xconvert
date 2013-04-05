@@ -1256,5 +1256,9 @@
      <changeSet id="PO-6018" author="krylovd">
         <comment>Added secondary_purpose_other_text to study_protocol</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6018.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-5962" author="krylovd">
+        <comment>Added a flag to csm_user to indicate auto curation.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5962.sql"/>
+     </changeSet>
 </databaseChangeLog>

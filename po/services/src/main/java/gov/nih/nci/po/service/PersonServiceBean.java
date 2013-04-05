@@ -150,7 +150,9 @@ public class PersonServiceBean extends
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Person p) throws EntityValidationException, JMSException {
-        p.setStatusCode(EntityStatus.PENDING);
+        if (p.getStatusCode() == null) {
+            p.setStatusCode(EntityStatus.PENDING);
+        }
         String middleName = p.getMiddleName();
         if (StringUtils.isNotEmpty(middleName) 
                 && (middleName.contains("(") || middleName.contains(")"))) {

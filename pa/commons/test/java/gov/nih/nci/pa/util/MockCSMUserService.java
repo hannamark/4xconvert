@@ -222,4 +222,14 @@ public class MockCSMUserService implements CSMUserUtil {
     public Map<Long, String> getAbstractors() throws PAException {       
         return new HashMap<Long, String>();
     }
+
+    @Override
+    public boolean isCurrentUserAbstractor() throws PAException {       
+        return false;
+    }
+
+    @Override
+    public boolean isCurrentUserAutoCuration() throws PAException {       
+        return false;
+    }
 }

@@ -96,6 +96,7 @@ import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.CorrelationSortCriterion;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.GenericAutoCuratableStructuralRoleServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -124,6 +125,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  * @param <CR> the CR type for T
  * @param <DTO> the dto type for T
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public abstract class AbstractCorrelationServiceBean
         <T extends Correlation, CR extends CorrelationChangeRequest<T>, DTO extends CorrelationDto> {
 
@@ -185,6 +187,35 @@ public abstract class AbstractCorrelationServiceBean
             throw new CurationException("Unable to publish the creation message.");
         }
     }
+    
+    /**
+     * Attempts to create a new correlation in ACTIVE state. If failed, falls back to create the correlation
+     * in PENDING state. PO-5962.
+     *
+     * @param dto dto
+     * @return identifier
+     * @throws EntityValidationException on error
+     * @throws CurationException if any unrecoverable error occurred
+     */
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
+    @SuppressWarnings({UNCHECKED, "PMD.PreserveStackTrace" })
+    public Ii createActiveCorrelation(DTO dto) throws EntityValidationException, CurationException {
+        T po = (T) PoXsnapshotHelper.createModel(dto);
+        try {
+            final GenericStructrualRoleServiceLocal<T> localService = getLocalService();
+            if (localService instanceof GenericAutoCuratableStructuralRoleServiceLocal) {
+                return getIdConverter()
+                        .convertToIi(
+                                ((GenericAutoCuratableStructuralRoleServiceLocal<T>) localService)
+                                        .createActiveWithFallback(po));
+            }
+            throw new CurationException("The operation is not supported.");
+        } catch (JMSException e) {
+            LOG.error("Problem is JMS, unable to complete request to create data.", e);
+            throw new CurationException("Unable to publish the creation message.");
+        }
+    }
+    
 
     /**
      * {@inheritDoc}

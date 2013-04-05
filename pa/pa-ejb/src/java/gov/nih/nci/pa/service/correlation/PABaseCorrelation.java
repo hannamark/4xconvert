@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.convert.POConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -18,6 +19,8 @@ import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.CorrelationService;
+import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -115,7 +118,14 @@ public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends Co
         }
         if (poDtos == null || poDtos.isEmpty()) {
             try {
-                srPoIi = corrService.createCorrelation(cDto);
+                if (new PAServiceUtils().isAutoCurationEnabled()
+                        && corrService instanceof OrganizationalContactCorrelationServiceRemote
+                        && cDto instanceof OrganizationalContactDTO) {
+                    srPoIi = ((OrganizationalContactCorrelationServiceRemote) corrService)
+                            .createActiveCorrelation((OrganizationalContactDTO) cDto);
+                } else {
+                    srPoIi = corrService.createCorrelation(cDto);
+                }
             } catch (EntityValidationException e) {
                 throw new PAException("Validation exception during  structural role creation" , e);
             } catch (CurationException e) {

@@ -100,10 +100,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Service for managing csm users (create, retrieve and update).
@@ -391,6 +394,30 @@ public class CSMUserService implements CSMUserUtil {
             map.put(key, fullName);
         }
         return map;
+    }
+    
+    @Override
+    public boolean isCurrentUserAbstractor() throws PAException {
+        User user = getCSMUser(UsernameHolder.getUser());
+        if (user != null) {
+            return getAbstractors().containsKey(user.getUserId());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isCurrentUserAutoCuration() throws PAException {
+        User user = getCSMUser(UsernameHolder.getUser());
+        if (user != null) {
+            return Boolean.valueOf(ObjectUtils.defaultIfNull(
+                    PaHibernateUtil
+                            .getCurrentSession()
+                            .createSQLQuery(
+                                    "select automated_curation from csm_user where user_id="
+                                            + user.getUserId()).uniqueResult(),
+                    false).toString());
+        }
+        return false;
     }
 
 
