@@ -56,12 +56,40 @@
                             <s:set name="plannedMarkerList" value="plannedMarkerList" scope="request"/>
                             <display:table name="plannedMarkerList" htmlId="plannedMarkerTable" id="row" class="data" sort="list" pagesize="200" requestURI="plannedMarker.action">
                                 <display:column escapeXml="true" property="name" sortable="true" titleKey="plannedMarker.name" headerClass="sortable"/>
-                                <display:column escapeXml="true" property="evaluationType" sortable="true" titleKey="plannedMarker.evaluationType" headerClass="sortable"/>
-                                <display:column escapeXml="true" property="assayType" sortable="true" titleKey="plannedMarker.assayType" headerClass="sortable"/>
+                                <display:column escapeXml="true" titleKey="plannedMarker.evaluationType" headerClass="sortable" sortable="true">
+                                   <s:if test='%{#attr.row.evaluationType.contains("Other")}'>  
+                                        <c:out value="${row.evaluationType}"/>
+                                        <c:out value=":"/>
+                                        <c:out value="${row.evaluationTypeOtherText}"/>    
+                                    </s:if> 
+                                    <s:else>  
+                                        <c:out value="${row.evaluationType}"/>    
+                                    </s:else>   
+                                </display:column>  
+                                
+                                
+                                <display:column escapeXml="true" titleKey="plannedMarker.assayType" headerClass="sortable" sortable="true">
+                                   <s:if test='%{#attr.row.assayType.contains("Other")}'>  
+                                        <c:out value="${row.assayType}"/>
+                                        <c:out value=":"/>
+                                        <c:out value="${row.assayTypeOtherText}"/>    
+                                    </s:if> 
+                                    <s:else>  
+                                        <c:out value="${row.assayType}"/>    
+                                    </s:else>   
+                                </display:column>  
                                 <display:column escapeXml="true" property="assayUse" sortable="true" titleKey="plannedMarker.assayUse" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="assayPurpose" sortable="true" titleKey="plannedMarker.assayPurpose" headerClass="sortable"/>
-                                <display:column escapeXml="true" property="tissueSpecimenType" sortable="true" titleKey="plannedMarker.tissueSpecimenType" headerClass="sortable"/>
-                                
+                                 <display:column escapeXml="true" titleKey="plannedMarker.tissueSpecimenType" headerClass="sortable" sortable="true">
+                                   <s:if test='%{#attr.row.tissueSpecimenType.contains("Other")}'>  
+                                        <c:out value="${row.tissueSpecimenType}"/>
+                                        <c:out value=":"/>
+                                        <c:out value="${row.specimenTypeOtherText}"/>    
+                                    </s:if> 
+                                    <s:else>  
+                                        <c:out value="${row.tissueSpecimenType}"/>    
+                                    </s:else>   
+                                </display:column>
                                 <display:column escapeXml="true" property="status" sortable="true" titleKey="plannedMarker.status" headerClass="sortable" />
                                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="plannedMarker.edit" headerClass="centered" class="action">

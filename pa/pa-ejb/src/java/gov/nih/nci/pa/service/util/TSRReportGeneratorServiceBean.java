@@ -1067,7 +1067,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             String specimenType = getValue(marker.getTissueSpecimenTypeCode());
             if (TissueSpecimenTypeCode.getByCode(specimenType) == TissueSpecimenTypeCode.OTHER) {
                 specimenType = StringUtils.join(new Object[] {
-                        specimenType, ": ", getValue(marker.getTissueSpecimenTypeCode())});
+                        specimenType, ": ", getValue(marker.getSpecimenTypeOtherText())});
             }
             
             tsrMarker.setTissueSpecimenType(specimenType);
