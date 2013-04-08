@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Collection;
 import java.util.List;
@@ -148,6 +149,14 @@ public interface RegistryUserService {
      * @throws PAException on error
      */
     List<RegistryUser> search(RegistryUser regUser) throws PAException;
+    
+    /**
+     * @param uSet uSet
+     * @return List<RegistryUser>
+     * @throws PAException PAException
+     */
+    List<RegistryUser> searchByCsmUsers(Collection<User> uSet) throws PAException;
+
 
     /**
      * @param trialOwnershipInfo the criteria object.

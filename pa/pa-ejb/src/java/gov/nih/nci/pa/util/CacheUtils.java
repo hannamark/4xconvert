@@ -20,6 +20,7 @@ public final class CacheUtils {
 
     private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE";
     private static final String SEARCH_RESULTS_CACHE_KEY = "SEARCH_RESULTS_CACHE";
+    private static final String SUBMITTER_REGISTRY_USERS_KEY = "SUBMITTER_REGISTRY_USERS";
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
@@ -39,6 +40,15 @@ public final class CacheUtils {
      */
     public static Cache getSearchResultsCache() {
         return CACHE_MANAGER.getCache(SEARCH_RESULTS_CACHE_KEY);
+    }
+    
+    /**
+     * Cache used for storing Submitters.
+     * 
+     * @return Cache
+     */
+    public static Cache getSubmittersCache() {
+        return CACHE_MANAGER.getCache(SUBMITTER_REGISTRY_USERS_KEY);
     }
 
     /**

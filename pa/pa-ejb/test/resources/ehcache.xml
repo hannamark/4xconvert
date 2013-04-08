@@ -39,6 +39,15 @@
         memoryStoreEvictionPolicy="LRU"
          />
 
+    <!--  Cache used to temporarily store all Submitters  -->
+    <cache
+         name="SUBMITTER_REGISTRY_USERS"
+         maxElementsInMemory="1"
+         eternal="false"         
+         timeToLiveSeconds="120"
+         overflowToDisk="false"
+    />
+
     <!-- Caches used for trial search optimizations. -->
     <cache
          name="CRITERIA_COLLECTIONS_CACHE"

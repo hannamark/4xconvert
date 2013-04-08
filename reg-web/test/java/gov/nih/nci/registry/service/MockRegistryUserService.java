@@ -8,6 +8,7 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -301,5 +302,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     public List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+   
+    public List<RegistryUser> searchByCsmUsers(Collection<User> uSet)
+            throws PAException {
+        return new ArrayList<RegistryUser>();
     }
 }

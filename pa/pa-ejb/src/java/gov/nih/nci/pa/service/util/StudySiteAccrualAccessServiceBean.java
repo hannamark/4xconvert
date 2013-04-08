@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
@@ -237,16 +238,23 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);
         queryList = query.list();
-        Map<Long, Organization> result = new LinkedHashMap<Long, Organization>();
-        for (Object[] oArr : queryList) {
-            StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
-            .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteIi((Long) oArr[0]));
 
-            RecruitmentStatusCode recruitmentStatus = null;
+        List<Long> siteIDs = new ArrayList<Long>();
+        Map<Long, Organization> siteIdToOrgMap = new HashMap<Long, Organization>();
+        for (Object[] oArr : queryList) {
+            siteIDs.add((Long) oArr[0]);
+            siteIdToOrgMap.put((Long) oArr[0], (Organization) oArr[1]);
+        }
+        
+        Map<Long, StudySiteAccrualStatus> accrualStatusMap = studySiteAccrualStatusService
+                .getCurrentStudySiteAccrualStatus(siteIDs.toArray(new Long[0])); // NOPMD
+        Map<Long, Organization> result = new LinkedHashMap<Long, Organization>();
+        for (Long siteID : accrualStatusMap.keySet()) {
+            StudySiteAccrualStatus ssas = accrualStatusMap.get(siteID);            
             if (ssas != null) {
-                recruitmentStatus = RecruitmentStatusCode.getByCode(ssas.getStatusCode().getCode());
+                RecruitmentStatusCode recruitmentStatus = ssas.getStatusCode();
                 if (recruitmentStatus.isEligibleForAccrual()) {
-                    result.put((Long) oArr[0], (Organization) oArr[1]);
+                    result.put(siteID, siteIdToOrgMap.get(siteID));
                 }
             }
         }

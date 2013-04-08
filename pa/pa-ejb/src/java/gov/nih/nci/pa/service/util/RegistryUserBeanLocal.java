@@ -116,6 +116,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -729,6 +730,19 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Restrictions.in("affiliatedOrganizationId", orgIds));
         criteria.add(Restrictions.isNotNull("regUser.csmUser"));
+        return criteria.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<RegistryUser> searchByCsmUsers(Collection<User> users)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);     
+        criteria.add(Restrictions.in("csmUser", users));
+        criteria.setFetchMode("csmUser", FetchMode.JOIN);
+        criteria.setFetchMode("studyProtocols.otherIdentifiers", FetchMode.JOIN);
         return criteria.list();
     }
 

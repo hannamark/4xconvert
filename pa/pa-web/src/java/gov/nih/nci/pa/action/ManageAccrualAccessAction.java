@@ -91,18 +91,20 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.util.CacheUtils;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.LabelValueBean;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -333,40 +335,33 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @return
      * @throws PAException
      */
+    @SuppressWarnings("unchecked")
     private List<LabelValueBean> getDisplayUsersList() throws PAException {
-        Set<User> uSet = accrualAccessService.getSubmitters();
-
+        List<RegistryUser> submitters = (List<RegistryUser>) CacheUtils
+                .getFromCacheOrBackend(CacheUtils.getSubmittersCache(),
+                        "Submitters", new Closure() {
+                            @Override
+                            public Object execute() throws PAException {
+                                final Collection<User> uSet = accrualAccessService
+                                        .getSubmitters();
+                                return registryUserService
+                                        .searchByCsmUsers(uSet);
+                            }
+                        });
         List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
-        for (User u : uSet) {
-            RegistryUser usr = getRegistryUser(u);
-            if (usr != null) {
-                regUsers.put(usr.getId(), usr);
-                String loginId = u.getLoginName() != null ? u.getLoginName() : " ";
-                LabelValueBean lvBean = new LabelValueBean();
-                lvBean.setId(usr.getId());
-                lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
-                            + CsmUserUtil.getGridIdentityUsername(loginId));
-                lvBeanList.add(lvBean);
-            }
+        for (RegistryUser usr : submitters) {
+            regUsers.put(usr.getId(), usr);
+            String loginId = usr.getCsmUser().getLoginName() != null ? usr
+                    .getCsmUser().getLoginName() : " ";
+            LabelValueBean lvBean = new LabelValueBean();
+            lvBean.setId(usr.getId());
+            lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr)
+                    + " - " + CsmUserUtil.getGridIdentityUsername(loginId));
+            lvBeanList.add(lvBean);
         }
         return lvBeanList;
     }
-    
-    private RegistryUser getRegistryUser(User user) {
-        if (user == null) {
-            return null;
-        }
-        try {
-            RegistryUser regUser = registryUserService.getUser(user.getLoginName());
-            if (regUser == null) {
-                return null;
-            }
-            return regUser;
-        } catch (PAException e) {
-            addActionError("Error getting csm users email.");
-            return null;
-        }
-    }
+        
 
     private StudySiteAccrualAccessWebDTO populateWebDTO(StudySiteAccrualAccessDTO dto) {
         StudySiteAccrualAccessWebDTO webDTO = new StudySiteAccrualAccessWebDTO();

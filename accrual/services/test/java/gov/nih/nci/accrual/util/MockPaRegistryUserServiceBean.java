@@ -270,4 +270,10 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         return new ArrayList<RegistryUser>();
     }
 
+   
+    public List<RegistryUser> searchByCsmUsers(Collection<User> uSet)
+            throws PAException {
+        return new ArrayList<RegistryUser>();
+    }
+
 }

@@ -264,4 +264,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         // TODO Auto-generated method stub
         return null;
     }
+    
+
+    @Override
+    public List<RegistryUser> searchByCsmUsers(Collection<User> uSet)
+            throws PAException {
+        return new ArrayList<RegistryUser>();
+    }
 }
