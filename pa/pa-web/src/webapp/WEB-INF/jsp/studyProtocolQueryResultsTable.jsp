@@ -32,8 +32,8 @@
                 sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
-                <c:out value="${row.milestones.studyMilestone.milestone.code}" />
-                <fmt:formatDate value="${row.milestones.studyMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+                <c:out value="${row.milestones.lastMilestone.milestone.code}" />
+                <fmt:formatDate value="${row.milestones.lastMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
             </display:column>
             <display:column escapeXml="true" titleKey="studyProtocol.adminMilestone" sortable="true" headerClass="sortable">
                 <c:out value="${row.milestones.adminMilestone.milestone.code}" />
