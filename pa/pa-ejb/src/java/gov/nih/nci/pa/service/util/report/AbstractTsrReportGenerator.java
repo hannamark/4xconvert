@@ -611,17 +611,17 @@ public abstract class AbstractTsrReportGenerator {
             addTableRow(table, TSRReportLabelText.TYPE, getTrialDesign().getType());
             addPrimaryPurposeRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose(),
                     getTrialDesign().getPrimaryPurposeOtherText());
+            addSecondaryPurposeRow(table, TSRReportLabelText.TD_SECONDARY_PURPOSE, 
+                    getTrialDesign().getSecondaryPurpose(), getTrialDesign().getSecondaryPurposeOtherText());
             addPhaseRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase(), getTrialDesign()
                     .getPhaseAdditonalQualifier());
-            
-            addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL,
-                    getTrialDesign().getStudyModel());
+            addTableRow(table, TSRReportLabelText.NON_INTERVENTIONAL_STUDY_TYPE, 
+                    getTrialDesign().getStudySubtypeCode());
+            addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL, getTrialDesign().getStudyModel());
             addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL_OTHER_TEXT,
                     getTrialDesign().getStudyModelOtherText());
-            addTableRow(table, TSRReportLabelText.TD_TIME_PERSPECTIVE,
-                    getTrialDesign().getTimePerspective());
-            addTableRow(table,
-                    TSRReportLabelText.TD_TIME_PERSPECTIVE_OTHER_TEXT,
+            addTableRow(table, TSRReportLabelText.TD_TIME_PERSPECTIVE, getTrialDesign().getTimePerspective());
+            addTableRow(table, TSRReportLabelText.TD_TIME_PERSPECTIVE_OTHER_TEXT,
                     getTrialDesign().getTimePerspectiveOtherText());            
             
             addTableRow(table, TSRReportLabelText.TD_INTERVENTION_MODEL, getTrialDesign().getInterventionModel());
@@ -630,9 +630,25 @@ public abstract class AbstractTsrReportGenerator {
             addTableRow(table, TSRReportLabelText.TD_MASKED_ROLES, getTrialDesign().getMaskedRoles());
             addTableRow(table, TSRReportLabelText.TD_ALLOCATION, getTrialDesign().getAllocation());
             addTableRow(table, TSRReportLabelText.TD_STUDY_CLASSIFICATION, getTrialDesign().getStudyClassification());
+            addTableRow(table, TSRReportLabelText.BIO_SPECIMEN_RETENTION, 
+                    getTrialDesign().getBiospecimenRetentionCode());
+            addTableRow(table, TSRReportLabelText.BIO_SPECIMEN_DESCRIPTION, 
+                    getTrialDesign().getBiospecimenDescription());
+            addTableRow(table, TSRReportLabelText.NUMBER_OF_GROUPS_COHORTS, getTrialDesign().getNumberOfGroups());
             addTableRow(table, TSRReportLabelText.TD_TARGET_ENROLLMENT, getTrialDesign().getTargetEnrollment());
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
+        }
+    }
+
+    private void addSecondaryPurposeRow(Table table, String label, String secondaryPurpose, String secPurposeOtherText)
+            throws BadElementException {
+        if (!StringUtils.isEmpty(secondaryPurpose)) {
+            StringBuffer secondaryPurposeBuffer = new StringBuffer(secondaryPurpose);
+            if (StringUtils.isNotEmpty(secPurposeOtherText)) {
+                secondaryPurposeBuffer.append(", ").append(secPurposeOtherText);
+            }
+            addTableRow(table, label, secondaryPurposeBuffer.toString());
         }
     }
 
@@ -858,12 +874,15 @@ public abstract class AbstractTsrReportGenerator {
     private void addPhaseRow(Table table, String label, String phase, String additionalQualifier)
             throws BadElementException {
         if (!StringUtils.isEmpty(phase)) {
-            StringBuffer primaryPurposeBuffer = new StringBuffer(phase);
+            StringBuffer phaseBuffer = new StringBuffer(phase);
             if (StringUtils.isNotEmpty(additionalQualifier)
                     && PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier)) {
-                primaryPurposeBuffer.append(", ").append(additionalQualifier);
+                phaseBuffer.append(", ").append(additionalQualifier);
+            } else if (StringUtils.isNotEmpty(additionalQualifier)
+                    && (!PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier))) {
+                phaseBuffer.append(", Not Pilot");
             }
-            addTableRow(table, label, primaryPurposeBuffer.toString());
+            addTableRow(table, label, phaseBuffer.toString());
         }
     }
 

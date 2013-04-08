@@ -880,23 +880,31 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 }
                 trialDesign.setAllocation(getValue(intDTO.getAllocationCode()));
                 trialDesign.setStudyClassification(getValue(intDTO.getStudyClassificationCode()));
+                StringBuilder secondaryPurpose = new StringBuilder();
+                if (intDTO.getSecondaryPurposes() != null) {
+                    for (String sec : DSetConverter.convertDSetStToList(intDTO.getSecondaryPurposes())) {
+                        secondaryPurpose.append(sec).append(" ");
+                    }
+                }
+                trialDesign.setSecondaryPurpose(secondaryPurpose.toString());
+                trialDesign.setSecondaryPurposeOtherText(getValue(ispDTO.getSecondaryPurposeOtherText()));
             } else if (ispDTO instanceof NonInterventionalStudyProtocolDTO) {
                 NonInterventionalStudyProtocolDTO dto = (NonInterventionalStudyProtocolDTO) ispDTO;
                 final String timePerspective = CdConverter
                         .convertCdToString(dto.getTimePerspectiveCode());
-                final String studyModel = CdConverter.convertCdToString(dto
-                        .getStudyModelCode());
+                final String studyModel = CdConverter.convertCdToString(dto.getStudyModelCode());
 
                 trialDesign.setTimePerspective(timePerspective);
-                trialDesign.setTimePerspectiveOtherText("Other"
-                        .equalsIgnoreCase(timePerspective) ? StConverter
-                        .convertToString(dto.getTimePerspectiveOtherText())
-                        : null);
+                trialDesign.setTimePerspectiveOtherText("Other".equalsIgnoreCase(timePerspective) ? StConverter
+                        .convertToString(dto.getTimePerspectiveOtherText()) : null);
 
                 trialDesign.setStudyModel(studyModel);
-                trialDesign.setStudyModelOtherText("Other"
-                        .equalsIgnoreCase(studyModel) ? StConverter
+                trialDesign.setStudyModelOtherText("Other".equalsIgnoreCase(studyModel) ? StConverter
                         .convertToString(dto.getStudyModelOtherText()) : null);
+                trialDesign.setBiospecimenRetentionCode(getValue(dto.getBiospecimenRetentionCode()));
+                trialDesign.setBiospecimenDescription(getValue(dto.getBiospecimenDescription()));
+                trialDesign.setNumberOfGroups(getValue(dto.getNumberOfGroups()));
+                trialDesign.setStudySubtypeCode(getValue(dto.getStudySubtypeCode()));
             }            
             
         }

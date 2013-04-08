@@ -462,15 +462,23 @@ public class TSRReportLabelText { //NOPMD
     /**
      * Trial Design primary purpose Other text.
      */
-    public static final String TD_PRIMARY_PURPOSE_OTHER_TEXT = "If Primary Purpose is 'Other', describe";
+    public static final String TD_PRIMARY_PURPOSE_OTHER_TEXT = "If Primary Purpose is 'Other', describe";    
+    /**
+     * Trial Design Secondary Purpose.
+     */
+    public static final String TD_SECONDARY_PURPOSE = "Secondary Purpose";
+    /**
+     * Trial Design Secondary purpose Other text.
+     */
+    public static final String TD_SECONDARY_PURPOSE_OTHER_TEXT = "If Secondary Purpose is 'Other', describe";
     /**
      * Trial Design phase.
      */
     public static final String TD_PHASE = "Phase";
     /**
-     * Trial Design Phase comment.
+     * Trial Design Non-interventional Study Type.
      */
-    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Pilot Trial?";
+    public static final String NON_INTERVENTIONAL_STUDY_TYPE = "Non-interventional Study Type";
     /**
      * Trial Design Intervention Model.
      */
@@ -494,7 +502,19 @@ public class TSRReportLabelText { //NOPMD
     /**
      * Trial Design Study Classification.
      */
-    public static final String TD_STUDY_CLASSIFICATION = "Classification";
+    public static final String TD_STUDY_CLASSIFICATION = "Classification";    
+    /**
+     * Trial Design Bio-specimen Retention.
+     */
+    public static final String BIO_SPECIMEN_RETENTION = "Bio-specimen Retention";    
+    /**
+     * Trial Design Bio-specimen Description.
+     */
+    public static final String BIO_SPECIMEN_DESCRIPTION = "Bio-specimen Description";    
+    /**
+     * Trial Design Number of Groups/Cohorts.
+     */
+    public static final String NUMBER_OF_GROUPS_COHORTS = "Number of Groups/Cohorts";
     /**
      * Trial Design Target Enrollment.
      */

@@ -108,6 +108,12 @@ public class TSRReportTrialDesign {
     private String timePerspective;
     private String studyModelOtherText;
     private String timePerspectiveOtherText;
+    private String secondaryPurpose;
+    private String secondaryPurposeOtherText;
+    private String biospecimenDescription;
+    private String biospecimenRetentionCode;
+    private String numberOfGroups;
+    private String studySubtypeCode;
 
     /**
      * @return the type
@@ -346,5 +352,82 @@ public class TSRReportTrialDesign {
      */
     public void setTimePerspectiveOtherText(String timePerspectiveOtherText) {
         this.timePerspectiveOtherText = timePerspectiveOtherText;
+    }
+
+    /**
+     * @return the secondaryPurpose
+     */
+    public String getSecondaryPurpose() {
+        return secondaryPurpose;
+    }
+
+    /**
+     * @param secondaryPurpose the secondaryPurpose to set
+     */
+    public void setSecondaryPurpose(String secondaryPurpose) {
+        this.secondaryPurpose = secondaryPurpose;
+    }
+
+    /**
+     * @return the secondaryPurposeOtherText
+     */
+    public String getSecondaryPurposeOtherText() {
+        return secondaryPurposeOtherText;
+    }
+
+    /**
+     * @param secondaryPurposeOtherText the secondaryPurposeOtherText to set
+     */
+    public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
+        this.secondaryPurposeOtherText = secondaryPurposeOtherText;
+    }
+    
+    /**
+     * @return biospecimenDescription
+     */
+    public String getBiospecimenDescription() {
+        return biospecimenDescription;
+    }
+    /**
+     * @param biospecimenDescription biospecimenDescription
+     */
+    public void setBiospecimenDescription(String biospecimenDescription) {
+        this.biospecimenDescription = biospecimenDescription;
+    }
+    /**
+     * @return biospecimenRetentionCode
+     */
+    public String getBiospecimenRetentionCode() {
+        return biospecimenRetentionCode;
+    }
+    /**
+     * @param biospecimenRetentionCode biospecimenRetentionCode
+     */
+    public void setBiospecimenRetentionCode(String biospecimenRetentionCode) {
+        this.biospecimenRetentionCode = biospecimenRetentionCode;
+    }
+    /**
+     * @return numberOfGroups
+     */
+    public String getNumberOfGroups() {
+        return numberOfGroups;
+    }
+    /**
+     * @param numberOfGroups numberOfGroups
+     */
+    public void setNumberOfGroups(String numberOfGroups) {
+        this.numberOfGroups = numberOfGroups;
+    }
+    /**
+     * @return the studySubtypeCode
+     */
+    public String getStudySubtypeCode() {
+        return studySubtypeCode;
+    }
+    /**
+     * @param studySubtypeCode the studySubtypeCode to set
+     */
+    public void setStudySubtypeCode(String studySubtypeCode) {
+        this.studySubtypeCode = studySubtypeCode;
     }
 }

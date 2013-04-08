@@ -318,7 +318,10 @@ public class TSRReportGeneratorTest {
         // Trial Design
         TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
         trialDesign.setPrimaryPurpose("Treatment");
-        trialDesign.setPhase("Pilot");
+        trialDesign.setSecondaryPurpose("secondaryPurpose");
+        trialDesign.setSecondaryPurposeOtherText("secondaryPurposeOtherText");
+        trialDesign.setPhase("NA");
+        trialDesign.setPhaseAdditonalQualifier("Pilot");
         trialDesign.setInterventionModel("Single Group");
         trialDesign.setNumberOfArms("2");
         trialDesign.setMasking("Single Blind");
