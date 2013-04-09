@@ -363,7 +363,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     /**
      * @return the studyProtocols
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "STUDY_OWNER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(
             name = "STUDY_ID"))
     public Set<StudyProtocol> getStudyProtocols() {

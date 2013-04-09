@@ -151,6 +151,7 @@ public abstract class AbstractHibernateTestCase {
         se.drop(false, true);
         se.create(false, true);
         TestSchema.loadPrimaryPurposeCodes();
+        TestSchema.alterStudyOwnerTable();
         tx.commit();
         
     }

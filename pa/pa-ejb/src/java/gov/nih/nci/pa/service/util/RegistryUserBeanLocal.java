@@ -444,12 +444,20 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException on error
      */
     @Override
-    public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
-        RegistryUser usr = getUser(userId, studyProtocolId);
-        StudyProtocol sp = new StudyProtocol();
-        sp.setId(studyProtocolId);
-        usr.getStudyProtocols().add(sp);
-        PaHibernateUtil.getCurrentSession().update(usr);
+    public void assignOwnership(Long userId, Long studyProtocolId)
+            throws PAException {
+        if (!isTrialOwner(userId, studyProtocolId)) {
+            try {
+                PaHibernateUtil
+                        .getCurrentSession()
+                        .createSQLQuery(
+                                "insert into study_owner(study_id,user_id,enable_emails) values("
+                                        + studyProtocolId + "," + userId
+                                        + ", true)").executeUpdate();
+            } catch (Exception cse) {
+                throw new PAException(cse);
+            }
+        }
         PaHibernateUtil.getCurrentSession().flush();
     }
 
@@ -460,32 +468,19 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException on error
      */
     @Override
-    public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
-        RegistryUser usr = getUser(userId, studyProtocolId);
-        Set<StudyProtocol> studyProtocols = usr.getStudyProtocols();
-        for (Iterator<StudyProtocol> iter = studyProtocols.iterator(); iter.hasNext();) {
-            StudyProtocol sp = iter.next();
-            if (sp.getId().equals(studyProtocolId)) {
-                iter.remove();
-            }
+    public void removeOwnership(Long userId, Long studyProtocolId)
+            throws PAException {
+        try {
+            PaHibernateUtil
+                    .getCurrentSession()
+                    .createSQLQuery(
+                            "delete from study_owner where study_id="
+                                    + studyProtocolId + " and user_id="
+                                    + userId).executeUpdate();
+        } catch (Exception cse) {
+            throw new PAException(cse);
         }
-        PaHibernateUtil.getCurrentSession().saveOrUpdate(usr);
         PaHibernateUtil.getCurrentSession().flush();
-    }
-
-    private RegistryUser getUser(Long userId, Long studyProtocolId) throws PAException {
-        // to assign the ownership add a record to study_owner
-        if (userId == null) {
-            throw new PAException("user id cannot be null.");
-        }
-        if (studyProtocolId == null) {
-            throw new PAException("studyProtocol id cannot be null.");
-        }
-        RegistryUser usr =  getUserById(userId);
-        if (usr == null) {
-            throw new PAException("user not found.");
-        }
-        return usr;
     }
 
     /**
@@ -741,8 +736,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);     
         criteria.add(Restrictions.in("csmUser", users));
-        criteria.setFetchMode("csmUser", FetchMode.JOIN);
-        criteria.setFetchMode("studyProtocols.otherIdentifiers", FetchMode.JOIN);
+        criteria.setFetchMode("csmUser", FetchMode.JOIN);        
         return criteria.list();
     }
 

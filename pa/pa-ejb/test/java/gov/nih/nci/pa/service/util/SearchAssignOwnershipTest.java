@@ -106,12 +106,7 @@ public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
-                .executeUpdate();     
-
+       
     }
 
 
@@ -122,6 +117,7 @@ public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.trialOwnerUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
         List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, Long.parseLong("1"));
         assertNotNull(usrLst);

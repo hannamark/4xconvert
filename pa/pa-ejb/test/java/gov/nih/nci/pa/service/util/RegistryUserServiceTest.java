@@ -147,13 +147,8 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
 
         CSMUserService.setInstance(csmSvc);
 
-        paHibernateHelper = PaHibernateUtil.getHibernateHelper();
-        
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
-                .executeUpdate();      
+        paHibernateHelper = PaHibernateUtil.getHibernateHelper();        
+          
     }
 
     @Test
@@ -288,6 +283,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         List<String> list = remoteEjb.getTrialOwnerNames(spId);
         assertTrue(list.contains("random random"));
     }
@@ -298,9 +294,10 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void getTrialOwners() throws PAException {
-        Long spId = TestRegistryUserSchema.studyProtocolId;
+         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.trialOwnerUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         Set<RegistryUser> regUsers = remoteEjb.getAllTrialOwners(spId);
         assertEquals(1, regUsers.size());
         assertEquals("owner", regUsers.iterator().next().getLastName());
@@ -325,6 +322,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
     }
     
@@ -443,6 +441,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
 
         PaHibernateUtil
@@ -478,6 +477,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
+        PaHibernateUtil.getCurrentSession().clear();
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
 
         PaHibernateUtil

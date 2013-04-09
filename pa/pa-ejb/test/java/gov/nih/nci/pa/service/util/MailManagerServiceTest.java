@@ -415,11 +415,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
 
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
-                .executeUpdate();
+      
     }
 
     private User createUser(String loginName, String firstName, String lastName) {

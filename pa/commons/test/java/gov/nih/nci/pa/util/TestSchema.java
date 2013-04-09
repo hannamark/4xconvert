@@ -1619,4 +1619,13 @@ public class TestSchema {
         return ru;
     }
 
+    public static void alterStudyOwnerTable() {
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
+                .executeUpdate();
+
+    }
+
 }
