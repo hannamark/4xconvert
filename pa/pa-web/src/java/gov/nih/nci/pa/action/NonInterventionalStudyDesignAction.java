@@ -293,9 +293,12 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
             addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
         } else {
             try {
-                Integer.valueOf(webDTO.getMinimumTargetAccrualNumber());
+                Integer tarAccrual = NumberUtils.createInteger(webDTO.getMinimumTargetAccrualNumber());
+                if (tarAccrual != null && tarAccrual < 0) {
+                    addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.negative"));
+                }
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
+                    addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
             }
         }
     }

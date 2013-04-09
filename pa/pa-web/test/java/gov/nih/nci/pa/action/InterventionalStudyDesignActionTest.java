@@ -219,7 +219,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         webDTO.setNumberOfInterventionGroups("");
         webDTO.setBlindingSchemaCode("");
         webDTO.setAllocationCode("");
-        webDTO.setMinimumTargetAccrualNumber("");
+        webDTO.setMinimumTargetAccrualNumber("-1");
         webDTO.getOutcomeMeasure().setName("Name");
         webDTO.getOutcomeMeasure().setTimeFrame("designConfigurationCode");
         webDTO.getOutcomeMeasure().setSafetyIndicator(true);

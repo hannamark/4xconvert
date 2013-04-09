@@ -476,9 +476,9 @@ public class TSRReportLabelText { //NOPMD
      */
     public static final String TD_PHASE = "Phase";
     /**
-     * Trial Design Non-interventional Study Type.
+     * Trial Phase comment.
      */
-    public static final String NON_INTERVENTIONAL_STUDY_TYPE = "Non-interventional Study Type";
+    public static final String TD_PHASE_ADDITIONAL_QUALIFIER = "Pilot Study?";
     /**
      * Trial Design Intervention Model.
      */

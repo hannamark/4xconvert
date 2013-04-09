@@ -4,7 +4,9 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
 import gov.nih.nci.pa.dto.OSDesignDetailsWebDTO;
+import gov.nih.nci.pa.dto.OutcomeMeasureWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -53,5 +55,16 @@ public class NonInterventionalStudyDesignActionTest extends AbstractPaActionTest
 		observationalStudy.setWebDTO(webDTO);
 		assertEquals("details", observationalStudy.updateDesign());
 	}
+    @Test
+    public void testUpdateErr() {
+    	OSDesignDetailsWebDTO webDTO = new OSDesignDetailsWebDTO();
+		webDTO.setBiospecimenDescription("Test");
+		webDTO.setBiospecimenRetentionCode("Retained");
+		webDTO.setMinimumTargetAccrualNumber("-1");
+		webDTO.setNumberOfGroups("1");
+		observationalStudy.setWebDTO(webDTO);
+		assertEquals("details", observationalStudy.updateDesign());
+
+    }
 
 }

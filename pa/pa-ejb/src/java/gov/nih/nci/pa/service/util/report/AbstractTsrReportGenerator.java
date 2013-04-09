@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service.util.report;
 
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.service.PAException;
 
 import java.awt.Color;
@@ -609,14 +610,17 @@ public abstract class AbstractTsrReportGenerator {
         if (getTrialDesign() != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_TRIAL_DESIGN, false);
             addTableRow(table, TSRReportLabelText.TYPE, getTrialDesign().getType());
+            addTableRow(table, TSRReportLabelText.SUBTYPE, getTrialDesign().getStudySubtypeCode());
             addPrimaryPurposeRow(table, TSRReportLabelText.TD_PRIMARY_PURPOSE, getTrialDesign().getPrimaryPurpose(),
                     getTrialDesign().getPrimaryPurposeOtherText());
             addSecondaryPurposeRow(table, TSRReportLabelText.TD_SECONDARY_PURPOSE, 
                     getTrialDesign().getSecondaryPurpose(), getTrialDesign().getSecondaryPurposeOtherText());
-            addPhaseRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase(), getTrialDesign()
-                    .getPhaseAdditonalQualifier());
-            addTableRow(table, TSRReportLabelText.NON_INTERVENTIONAL_STUDY_TYPE, 
-                    getTrialDesign().getStudySubtypeCode());
+            addTableRow(table, TSRReportLabelText.TD_PHASE, getTrialDesign().getPhase());
+            if (StringUtils.isNotEmpty(getTrialDesign().getPhase())
+                    && PhaseCode.NA.getCode().equals(getTrialDesign().getPhase())) {
+                addPhaseAdditionalQualifierRow(table, TSRReportLabelText.TD_PHASE_ADDITIONAL_QUALIFIER, 
+                        getTrialDesign().getPhaseAdditonalQualifier());
+            }
             addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL, getTrialDesign().getStudyModel());
             addTableRow(table, TSRReportLabelText.TD_STUDY_MODEL_OTHER_TEXT,
                     getTrialDesign().getStudyModelOtherText());
@@ -878,9 +882,21 @@ public abstract class AbstractTsrReportGenerator {
             if (StringUtils.isNotEmpty(additionalQualifier)
                     && PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier)) {
                 phaseBuffer.append(", ").append(additionalQualifier);
+            }
+            addTableRow(table, label, phaseBuffer.toString());
+        }
+    }
+    
+    private void addPhaseAdditionalQualifierRow(Table table, String label, String additionalQualifier)
+            throws BadElementException {
+        if (!StringUtils.isEmpty(additionalQualifier)) {
+            StringBuffer phaseBuffer = new StringBuffer();
+            if (StringUtils.isNotEmpty(additionalQualifier)
+                    && PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier)) {
+                phaseBuffer.append("Yes");
             } else if (StringUtils.isNotEmpty(additionalQualifier)
                     && (!PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier))) {
-                phaseBuffer.append(", Not Pilot");
+                phaseBuffer.append("No");
             }
             addTableRow(table, label, phaseBuffer.toString());
         }
