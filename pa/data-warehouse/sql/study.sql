@@ -105,6 +105,15 @@ CREATE TABLE STG_DW_STUDY (
     COMMENTS varchar(4000),
     PROCESSING_PRIORITY int,
     CTRO_OVERRIDE boolean,
+    BIO_SPECIMEN_DESCRIPTION character varying(800),
+    BIO_SPECIMEN_RETENTION_CODE character varying(200),
+    SAMPLING_METHOD_CODE CHARACTER varying(200),
+    STUDY_MODEL_CODE character varying(200),
+    STUDY_MODEL_OTHER_TEXT character varying(200),
+    STUDY_POPULATION_DESCRIPTION character varying(800),
+    TIME_PERSPECTIVE_CODE character varying(200),
+    TIME_PERSPECTIVE_OTHER_TEXT character varying(200),
+    STUDY_SUBTYPE_CODE character varying(64),
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 
