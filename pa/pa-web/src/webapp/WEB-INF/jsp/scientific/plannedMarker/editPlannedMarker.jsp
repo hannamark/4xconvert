@@ -209,6 +209,28 @@
                         <s:form id="plannedMarkerForm" action="%{#submitUrl}">
                             <s:token/>
                             <pa:studyUniqueToken/>
+                            <div class="actionstoprow">
+                                <del class="btnwrapper">
+                                    <ul class="btnrow">
+                                        <li>
+                                            <s:a cssClass="btn" href="javascript:void(0)" onclick="document.forms[0].submit();">
+                                                <span class="btn_img"><span class="add">Save</span></span>
+                                            </s:a>
+                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
+                                                <span class="btn_img"><span class="cancel">Cancel</span></span>
+                                            </s:a>
+                                            <s:if test="%{plannedMarker.id == null}">   
+                                                <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
+                                                    <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
+                                                </s:a>
+                                                <s:a cssClass="btn" href="javascript:void(0)" id="addMarkerReset" onclick="addMarkerReset('true');">
+                                                    <span class="btn_img"><fmt:message key="plannedMarker.addMarkerReset"/></span>
+                                                </s:a>                                                 
+                                            </s:if>  
+                                        </li>
+                                    </ul>
+                                </del>
+                            </div>
                             <div id="plannedMarkerDetails">
                                 <%@ include file="/WEB-INF/jsp/scientific/plannedMarker/selectedPlannedMarker.jsp"%>
                             </div>
