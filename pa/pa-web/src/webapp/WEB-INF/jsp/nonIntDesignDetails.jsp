@@ -36,11 +36,31 @@ function toggleFields(){
    		}
 	}
 
-function handleAction(){
- document.forms[0].action="noninterventionalStudyDesignupdateDesign.action";
- document.forms[0].submit(); 
+function handleAction() {
+	 var conf = checkValue();
+	 if(conf == true) {
+		 document.forms[0].action="noninterventionalStudyDesignupdateDesign.action";
+		 document.forms[0].submit(); 
+	 }
 } 
 
+
+function checkValue() {
+    var input="webDTO.minimumTargetAccrualNumber";
+    var conf = true;
+    var inputElement = document.forms[0].elements[input];
+    
+        if (inputElement.value == "0")
+        {
+            conf = confirm("Please confirm if Target Enrollment 0 is OK");
+            if(conf != true) {
+              inputElement.value='';
+              inputElement.focus();
+            }
+            
+        }
+       return conf; 
+}
 
 function changeStudyType() {
     displayWaitPanel();
