@@ -8,11 +8,13 @@ def sql =
             sp.identifier as system_id,
 			sp.submission_number,
 			submitter.first_name || ' ' || submitter.last_name as submitter,
-			nci_id.extension		
+            nci_id.extension,		
+            org.name
             from STUDY_PROTOCOL sp
             inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sp.identifier
             and nci_id.root = '2.16.840.1.113883.3.26.4.3'
             left outer join registry_user as submitter on submitter.csm_user_id = sp.user_last_created_id
+            left outer join organization as org on submitter.affiliated_org_id = org.assigned_identifier::integer
             where sp.amendment_date is not null"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
@@ -30,7 +32,8 @@ sourceConnection.eachRow(sql) { row ->
             internal_system_id: row.system_id,
             submission_number: row.submission_number, 
             nci_id: row.extension,
-            submitter_name: row.submitter)
+            submitter_name: row.submitter,
+            associated_organization: row.name)
         } catch (Exception e) {
             println "Error adding row : " + row + " - " + e.getMessage(); 
         }
