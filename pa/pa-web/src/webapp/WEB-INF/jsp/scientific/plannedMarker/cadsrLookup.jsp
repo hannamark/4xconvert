@@ -23,14 +23,32 @@
                  $('searchDescription').value = '';
                  $('searchPublicId').value = '';
              }
-
+              function loadTopDiv(value) {
+                var eval = $('plannedMarker.evaluationType').value;
+                var assayType =$('plannedMarker.assayType').value; 
+                var bioUse =$('plannedMarker.assayUse').value;
+                var bioPurpose =$('plannedMarker.assayPurpose').value;
+                var specimenType =$('plannedMarker.tissueSpecimenType').value;
+                var evalOther =$('plannedMarker.evaluationTypeOtherText').value;
+                var assayOther = $('plannedMarker.assayTypeOtherText').value;
+                var specimenOther = $('plannedMarker.specimenTypeOtherText').value;
+                top.window.loadDiv(value,eval,assayType,bioUse,bioPurpose,specimenType,evalOther,assayOther,specimenOther);
+             }
              function loadResults() {     
                  var url= '/pa/protected/popupPlannedMarkerlookup.action';
                  var params = {
                          description: $('searchDescription').value,
                          meaning: $('searchMeaning').value,
                          name: $('searchName').value,
-                         publicId: $('searchPublicId').value
+                         publicId: $('searchPublicId').value,
+                         eval: $('plannedMarker.evaluationType').value,
+                         evalOther: $('plannedMarker.evaluationTypeOtherText').value,
+                         assayType : $('plannedMarker.assayType').value,
+                         assayOther: $('plannedMarker.assayTypeOtherText').value,
+                         bioUse : $('plannedMarker.assayUse').value,
+                         bioPurpose : $('plannedMarker.assayPurpose').value,
+                         specimenType : $('plannedMarker.tissueSpecimenType').value,
+                         specimenOther : $('plannedMarker.specimenTypeOtherText').value
                  };
                  var div = $('getCaDSR');
                  div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
@@ -52,6 +70,14 @@
     </head>
     <body>
         <s:form id="cadsrLookup" name="cadsrLookup">
+        <s:hidden id="plannedMarker.evaluationType" name="plannedMarker.evaluationType"/>
+        <s:hidden id="plannedMarker.assayType" name="plannedMarker.assayType"/>
+        <s:hidden id="plannedMarker.assayUse" name="plannedMarker.assayUse"/>
+        <s:hidden id="plannedMarker.assayPurpose" name="plannedMarker.assayPurpose"/>
+        <s:hidden id="plannedMarker.tissueSpecimenType" name="plannedMarker.tissueSpecimenType"/>
+        <s:hidden id="plannedMarker.evaluationTypeOtherText" name="plannedMarker.evaluationTypeOtherText"/>
+        <s:hidden id="plannedMarker.assayTypeOtherText" name="plannedMarker.assayTypeOtherText"/>
+        <s:hidden id="plannedMarker.specimenTypeOtherText" name="plannedMarker.specimenTypeOtherText"/>
             <div class="box" id="searchcaDSR">
                 <h2><fmt:message key="plannedMarker.lookup.title"/></h2>
                 <table class="form">

@@ -83,21 +83,75 @@
             }
             
             function cadsrLookup(){
-                showPopWin('${lookupUrl}', 1000, 600, '', 'Marker Search in caDSR');
+                var element = document.getElementsByName("plannedMarker.evaluationType");
+                var element1 = document.getElementsByName("plannedMarker.assayType");
+                var element2 = document.getElementsByName("plannedMarker.assayUse");
+                var element3 = document.getElementsByName("plannedMarker.assayPurpose");
+                var element4 = document.getElementsByName("plannedMarker.tissueSpecimenType");
+                var element5 =document.getElementsByName("plannedMarker.evaluationTypeOtherText");
+                var element6 = document.getElementsByName("plannedMarker.assayTypeOtherText");
+                var element7 = document.getElementsByName("plannedMarker.specimenTypeOtherText");
+                var evalFinal ='';
+                var assayFinal ='';
+                var bioUseFinal ='';
+                var bioPurposeFinal ='';
+                var specimenType ='';
+                var evalOther =element5[0].value;
+                var assayOther = element6[0].value;
+                var specimenOther = element7[0].value;
+               
+                for (var i=0; i < element.length; i++) {
+                    if (element[i].checked == true) { 
+                        evalFinal = (element[i].value) + ", " + evalFinal;     
+                    } 
+                } 
+                bioUseFinal = element2[0].value;
+                for (var i=0; i < element1.length; i++) {
+                    if (element1[i].checked == true) { 
+                        assayFinal = (element1[i].value) + ", " + assayFinal;     
+                    } 
+                } 
+                
+                for (var i=0; i < element3.length; i++) {
+                    if (element3[i].checked == true) { 
+                        bioPurposeFinal = (element3[i].value) + ", " + bioPurposeFinal;     
+                    } 
+                } 
+               
+                for (var i=0; i < element4.length; i++) {
+                    if (element4[i].checked == true) { 
+                        specimenType = (element4[i].value) + ", " + specimenType;     
+                    } 
+                } 
+               
+                var updatedUrl = '${lookupUrl}?plannedMarker.evaluationType='+evalFinal+ 
+                '&plannedMarker.assayType='+assayFinal+'&plannedMarker.assayPurpose='+bioPurposeFinal+'&plannedMarker.tissueSpecimenType='+specimenType
+                +'&plannedMarker.assayUse='+bioUseFinal+'&plannedMarker.evaluationTypeOtherText='+evalOther
+                +'&plannedMarker.assayTypeOtherText='+assayOther+'&plannedMarker.specimenTypeOtherText='+specimenOther;
+               
+                showPopWin(updatedUrl, 1000, 600, '', 'Marker Search in caDSR');
             }
             
             function addVariation(status){               
-                $('saveReset').value=status;
+                $('saveResetAttribute').value=status;
                 document.forms[0].submit();
             }
-            function loadDiv(markerId) {
+            function addMarkerReset(status){               
+                $('saveResetMarker').value=status;
+                document.forms[0].submit();
+            }
+            function loadDiv(markerId, evaluationType, assayType, bioUse, bioPurpose, specimenType, evalOther, assayOther, specimenOther) {
                 window.top.hidePopWin(true);
                 var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action';
                 var split = location.search.replace('?', '').split('=');
                 if (split != null) {
                  var rowValue = split[1];
                 }
-                var params = { cdeId: markerId, selectedRowIdentifier:rowValue};
+                var params = { cdeId: markerId, selectedRowIdentifier:rowValue, preSelectedEvalType:evaluationType,
+                                preSelectedAssayType:assayType, preSelectedBioUse:bioUse, 
+                                preSelectedBioPurpose:bioPurpose, preSelectedSpecimenType:specimenType,
+                                preSelEvalOtherText:evalOther, preSelAssayOtherText:assayOther,
+                                preSelSpecimenOtherText:specimenOther};
                 
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
@@ -168,6 +222,14 @@
                                             <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
                                                 <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
+                                              <s:if test="%{plannedMarker.id == null}"> 
+                                                    <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
+                                                        <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
+                                                    </s:a>
+                                                    <s:a cssClass="btn" href="javascript:void(0)" id="addMarkerReset" onclick="addMarkerReset('true');">
+                                                        <span class="btn_img"><fmt:message key="plannedMarker.addMarkerReset"/></span>
+                                                    </s:a>                                                 
+                                              </s:if> 
                                         </li>
                                     </ul>
                                 </del>

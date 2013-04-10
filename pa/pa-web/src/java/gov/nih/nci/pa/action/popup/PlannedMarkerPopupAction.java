@@ -89,9 +89,11 @@ import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
@@ -104,6 +106,8 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -119,6 +123,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyFields" })
 public class PlannedMarkerPopupAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     /**
@@ -133,23 +138,31 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String publicId;
     private String subject;
     private String toEmail;
+    private String eval;
+    private String evalOther;
+    private String assayType;
+    private String assayOther;
+    private String bioUse;
+    private String bioPurpose;
+    private String specimenType;
+    private String specimenOther;
     private List<CaDSRWebDTO> markers;
-    private PlannedMarkerWebDTO plannedMarker;
+    private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private boolean passedValidation = false;
     private ApplicationService appService;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
-
+    private MarkerAttributesServiceLocal markerAttributesService;
     /**
      * {@inheritDoc}
      */
     public void prepare() {
         markers = new ArrayList<CaDSRWebDTO>();
-        plannedMarker = new PlannedMarkerWebDTO();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error("Error attempting to instantiate caDSR Application Service.", e);
         }
+        markerAttributesService = PaRegistry.getMarkerAttributesService();
     }
 
     /**
@@ -171,13 +184,65 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             List<Object> permissibleValues = appService.query(constructSearchCriteria(vdId));
             List<CaDSRWebDTO> values = getSearchResults(permissibleValues);
             markers.addAll(values);
+            setSelectedAttributeValues();
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.caDSRLookup"));
         }
         return CADSR_RESULTS;
     }
+    private void setSelectedAttributeValues() throws PAException {
+        Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
+        if (eval != null) {
+            List<String> evalTypeList = selectedTypeValues(eval, markerValues,
+                    BioMarkerAttributesCode.EVALUATION_TYPE.getName());
+            plannedMarker.setSelectedEvaluationType(evalTypeList);
+        }
+        if (evalOther != null) {
+            plannedMarker.setEvaluationTypeOtherText(evalOther);
+        }
+        if (assayType != null) {
+            List<String> assayTypeList = selectedTypeValues(assayType, markerValues,
+                    BioMarkerAttributesCode.ASSAY_TYPE.getName());
+            plannedMarker.setSelectedAssayType(assayTypeList);
+        }
+        if (assayOther != null) {
+            plannedMarker.setAssayTypeOtherText(assayOther);
+        }
+        if (bioUse != null) {
+            plannedMarker.setAssayUse(bioUse);
+        }
+        if (bioPurpose != null) {
+            List<String> bioPurposeList = selectedTypeValues(bioPurpose, markerValues,
+                    BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName());
+            plannedMarker.setSelectedAssayPurpose(bioPurposeList);
+        }
+        if (specimenType != null) {
+            List<String> specimenTypeList = selectedTypeValues(specimenType, markerValues,
+                    BioMarkerAttributesCode.SPECIMEN_TYPE.getName());
+            plannedMarker.setSelectedTissueSpecType(specimenTypeList);
+        }
+        if (specimenOther != null) {
+            plannedMarker.setSpecimenTypeOtherText(specimenOther);
+        }
+    }
+    private List<String> selectedTypeValues(String typeValue, Map<String, String> markerValues, String type) {
+        List<String> typeList = new ArrayList<String>();
+        if (typeValue != null) {
+            String[] typeSplit = typeValue.split(",\\s*");
+            for (String typeValues : typeSplit) {
+                for (int i = 0; markerValues != null && i < markerValues.size()
+                        && markerValues.containsKey(type + i); i++) {
+                    if (markerValues.get(type + i).equals(typeValues)) {
+                        typeList.add(typeValues);
+                        break;
+                    }
+                }
+            }
+        }
+        return typeList;
 
+    }
     /**
      * Setup CDE creation request.
      * @return email
@@ -462,4 +527,127 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public void setToEmail(String toEmail) {
         this.toEmail = toEmail;
     }
+    /**
+     * 
+     * @return the eval
+     */
+    public String getEval() {
+        return eval;
+    }
+    /**
+     * 
+     * @param eval eval
+     */
+    public void setEval(String eval) {
+        this.eval = eval;
+    }
+    
+    /**
+     * 
+     * @return the assayType
+     */
+    public String getAssayType() {
+        return assayType;
+    }
+    /**
+     * 
+     * @param assayType assayType
+     */
+    public void setAssayType(String assayType) {
+        this.assayType = assayType;
+    }
+    /**
+     * 
+     * @return the bioUse
+     */
+    public String getBioUse() {
+        return bioUse;
+    }
+    /**
+     * 
+     * @param bioUse bioUse
+     */
+    public void setBioUse(String bioUse) {
+        this.bioUse = bioUse;
+    }
+    /**
+     * 
+     * @return the bioPurpose
+     */
+    public String getBioPurpose() {
+        return bioPurpose;
+    }
+    /**
+     * 
+     * @param bioPurpose bioPurpose
+     */
+    public void setBioPurpose(String bioPurpose) {
+        this.bioPurpose = bioPurpose;
+    }
+    /**
+     * 
+     * @return the specimenType
+     */
+    public String getSpecimenType() {
+        return specimenType;
+    }
+    /**
+     * 
+     * @param specimenType specimenType
+     */
+    public void setSpecimenType(String specimenType) {
+        this.specimenType = specimenType;
+    }
+
+    /**
+     * @param markerAttributesService
+     *            the markerAttributesService to set
+     */
+    public void setMarkerAttributesService(
+            MarkerAttributesServiceLocal markerAttributesService) {
+        this.markerAttributesService = markerAttributesService;
+    }
+    /**
+     * 
+     * @return the evalOther
+     */
+    public String getEvalOther() {
+        return evalOther;
+    }
+    /**
+     * 
+     * @param evalOther evalOther
+     */
+    public void setEvalOther(String evalOther) {
+        this.evalOther = evalOther;
+    }
+    /**
+     * 
+     * @return the assayOther
+     */
+    public String getAssayOther() {
+        return assayOther;
+    }
+    /**
+     * 
+     * @param assayOther assayOther
+     */
+    public void setAssayOther(String assayOther) {
+        this.assayOther = assayOther;
+    }
+    /**
+     * 
+     * @return specimenOther
+     */
+    public String getSpecimenOther() {
+        return specimenOther;
+    }
+    /**
+     * 
+     * @param specimenOther specimenOther
+     */
+    public void setSpecimenOther(String specimenOther) {
+        this.specimenOther = specimenOther;
+    }
+    
 }

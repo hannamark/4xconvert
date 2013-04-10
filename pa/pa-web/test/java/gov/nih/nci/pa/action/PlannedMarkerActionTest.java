@@ -192,7 +192,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
     @Test
     public void testAddSave() throws PAException {
         plannedMarkerAction.add();
-        plannedMarkerAction.setSaveReset(true);
+        plannedMarkerAction.setSaveResetAttribute(true);
         assertTrue(plannedMarkerAction.hasFieldErrors());
         plannedMarkerAction.clearErrorsAndMessages();
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
@@ -215,6 +215,33 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals("list", plannedMarkerAction.add());
 
     }
+    @Test
+    public void testAddSaveMarker() throws PAException {
+        plannedMarkerAction.add();
+        plannedMarkerAction.setSaveResetMarker(true);
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        plannedMarkerAction.clearErrorsAndMessages();
+        PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
+        webDTO.setName("Marker #1");
+        webDTO.setAssayType("Other");
+        webDTO.setAssayUse("Correlative");
+        webDTO.setAssayPurpose("Stratification Factor");
+        webDTO.setTissueSpecimenType("Serum");
+        webDTO.setTissueCollectionMethod("Unspecified");
+        webDTO.setEvaluationType("Subtyping");
+        plannedMarkerAction.setPlannedMarker(webDTO);
+
+        plannedMarkerAction.add();
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertEquals("edit", plannedMarkerAction.add());
+        plannedMarkerAction.clearErrorsAndMessages();
+        webDTO.setAssayTypeOtherText("More Text");
+        
+        plannedMarkerAction.setPlannedMarker(webDTO);
+        assertEquals("list", plannedMarkerAction.add());
+
+    }
+    
     @Test
     public void testEdit() throws PAException {
         plannedMarkerAction.setSelectedRowIdentifier("1");
