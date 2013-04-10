@@ -29,6 +29,7 @@
             </ul>
         </td>
     </tr>
+    
     <tr>
         <td class="label">
             <label for="plannedMarker.evaluationType"><fmt:message key="plannedMarker.evaluationType" />:</label>
@@ -68,25 +69,7 @@
             </span>
         </td>
     </tr>
-    <tr>
-        <td class="label">
-            <s:label for="plannedMarker.meaning"><fmt:message key="plannedMarker.meaning" />:</s:label>
-        </td>
-        <td>
-            <s:hidden name="plannedMarker.meaning" id="meaning"/>
-            <s:property value="plannedMarker.meaning"/>
-        </td>
-    </tr>
-    <tr>
-        <td class="label">
-            <s:label for="plannedMarker.description"><fmt:message key="plannedMarker.description" />:</s:label>
-        </td>
-        <td>
-            <s:hidden name="plannedMarker.description" id="description"/>
-            <s:property value="plannedMarker.description"/>
-            
-        </td>
-    </tr>
+    
     <tr id="hugoCodeRow" style="display:none">
         <td class="label">
             <s:label for="plannedMarker.hugoCode"><fmt:message key="plannedMarker.hugoCode"/>:</s:label>
@@ -105,6 +88,7 @@
             <s:property value="plannedMarker.cadsrId"/>
         </td>
     </tr>
+    <tr> <td>  </td> </tr>
     <tr>
         <td class="label">
             <s:label for="plannedMarker.assayType"><fmt:message key="plannedMarker.assayType" />:</s:label><span class="required">*</span>
