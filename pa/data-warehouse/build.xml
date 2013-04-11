@@ -65,6 +65,12 @@
             <transaction src="${basedir}/sql/accrual_batch_submission.sql"/>
             <transaction src="${basedir}/sql/data_table_4.sql"/>
             <transaction src="${basedir}/sql/study_association.sql"/>
+            <transaction src="${basedir}/sql/assay_type.sql"/>
+            <transaction src="${basedir}/sql/biomarker_purpose.sql"/>
+            <transaction src="${basedir}/sql/biomarker_use.sql"/>
+            <transaction src="${basedir}/sql/evaluation_type.sql"/>
+            <transaction src="${basedir}/sql/specimen_collection.sql"/>
+            <transaction src="${basedir}/sql/specimen_type.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -255,6 +261,35 @@
         <stopwatch name="timer1"/>
         <echo message = "Running Study Associations"/>
         <groovy src="groovy/study_association.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1"/>
+        <echo message = "Running Assay Type"/>
+        <groovy src="groovy/assay_type.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Biomarker Purpose"/>
+        <groovy src="groovy/biomarker_purpose.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Biomarker Use"/>
+        <groovy src="groovy/biomarker_use.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Evaluation Type"/>
+        <groovy src="groovy/evaluation_type.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Specimen Collection"/>
+        <groovy src="groovy/specimen_collection.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Specimen Type"/>
+        <groovy src="groovy/specimen_type.groovy"/>
         <stopwatch name="timer1" action="total"/>
     </target>
 
