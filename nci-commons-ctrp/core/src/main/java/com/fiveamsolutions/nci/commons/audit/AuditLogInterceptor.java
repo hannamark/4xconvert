@@ -553,29 +553,47 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     }
 
     private boolean collectionNeedsAuditing(Object auditableObj, Object newValue, Object oldValue, String property) {
-
+        // PO-6030: this method has undesirable side-effect that may impact
+        // performance: it initializes lazy
+        // collections on the auditableObj entity even if the collections don't
+        // need to be audited.
+        // Initialization happens during the CollectionUtils.isEqualCollection
+        // check below. We should skip the check at least
+        // when oldValue and newValue point to the same uninitialized collection
+        // instance, because in such case it is obvious that the collection hasn't been touched.       
         try {
-            String cn = ProxyUtils.unEnhanceCGLIBClassName(auditableObj.getClass());
-            Method getter = getHibernateHelper().getConfiguration().getClassMapping(cn).getProperty(property)
-                    .getGetter(auditableObj.getClass()).getMethod();
-            if (getter.getAnnotation(MapKey.class) != null || getter.getAnnotation(MapKeyManyToMany.class) != null) {
-                // this is some sort of map
-                Map<?, ?> oldMap = (Map<?, ?>) oldValue;
-                Map<?, ?> newMap = (Map<?, ?>) newValue;
-                oldMap = oldMap == null ? Collections.emptyMap() : oldMap;
-                newMap = newMap == null ? Collections.emptyMap() : newMap;
-                return !equalsMap(oldMap, newMap);
-            } else if (getter.getAnnotation(JoinTable.class) != null || getter.getAnnotation(OneToMany.class) != null) {
-                Collection<?> oldSet = (Collection<?>) oldValue;
-                Collection<?> newSet = (Collection<?>) newValue;
-                return !CollectionUtils.isEqualCollection(oldSet == null ? Collections.emptySet() : oldSet,
-                                                          newSet == null ? Collections.emptySet() : newSet);
+            if (!sameNonInitializedCollection(newValue, oldValue)) {
+                String cn = ProxyUtils.unEnhanceCGLIBClassName(auditableObj.getClass());
+                Method getter = getHibernateHelper().getConfiguration().getClassMapping(cn).getProperty(property)
+                        .getGetter(auditableObj.getClass()).getMethod();
+                if (getter.getAnnotation(MapKey.class) != null
+                        || getter.getAnnotation(MapKeyManyToMany.class) != null) {
+                    // this is some sort of map
+                    Map<?, ?> oldMap = (Map<?, ?>) oldValue;
+                    Map<?, ?> newMap = (Map<?, ?>) newValue;
+                    oldMap = oldMap == null ? Collections.emptyMap() : oldMap;
+                    newMap = newMap == null ? Collections.emptyMap() : newMap;
+                    return !equalsMap(oldMap, newMap);
+                } else if (getter.getAnnotation(JoinTable.class) != null
+                        || getter.getAnnotation(OneToMany.class) != null) {
+                    Collection<?> oldSet = (Collection<?>) oldValue;
+                    Collection<?> newSet = (Collection<?>) newValue;
+                    return !CollectionUtils.isEqualCollection(oldSet == null ? Collections.emptySet() : oldSet,
+                                                              newSet == null ? Collections.emptySet() : newSet);
+                }
             }
         } catch (SecurityException e) {
             LOG.error(e.getMessage(), e);
         }
 
         return false;
+    }
+
+    private boolean sameNonInitializedCollection(Object newValue,
+            Object oldValue) {
+        return (newValue == oldValue // NOPMD
+                && newValue instanceof PersistentCollection && !((PersistentCollection) newValue)
+                    .wasInitialized());
     }
 
     /**
