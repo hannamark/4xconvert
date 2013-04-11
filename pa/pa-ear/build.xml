@@ -4,7 +4,7 @@
 <!-- pa-ear ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-ear" default="compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="pa-ear" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -41,15 +41,10 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-pa-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-    
+
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
-
-    <property name="compile.jar.dir" location="${lib.dir}/pa-ear/compile" />
-    <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
-    </path>
 
     <property name="runtime.jar.dir" location="${lib.dir}/pa-ear/runtime" />
     <property name="container.jar.dir" location="${lib.dir}/pa-ear/container" />
@@ -76,7 +71,7 @@
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/pa-ear"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-    
+
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
@@ -84,17 +79,6 @@
     <target name="clean" description="Clean the output directory">
         <delete dir="${pa-ear.build.dir}"/>
         <delete dir="${pa.report.dir}/pa-ear"/>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- Compilation target                                                     -->
-    <!-- ====================================================================== -->
-
-    <target name="compile" description="Compile the code">
-        <mkdir dir="${pa-ear.build.outputDir}"/>
-        <copy todir="${pa-ear.build.outputDir}">
-            <fileset dir="${pa-ear.build.resourceDir.0}"/>
-        </copy>
     </target>
 
     <!-- ====================================================================== -->
@@ -150,7 +134,7 @@
 
     <target name="package-viewer" depends="package-inc-viewer,package-exc-viewer"/>
 
-    <target name="package" depends="ivy-get,compile,package-setup,package-viewer" description="Package the application">
+    <target name="package" depends="ivy-get,package-setup,package-viewer" description="Package the application">
     	<copy file="${pa-commons.package}"
     	             todir="${pa-ear.build.dir}/${pa-ear.build.finalName}"/>
     	<copy file="${pa-ejb.package}"
@@ -228,7 +212,7 @@
         <fail unless="pa-ear.ear.present" message="Ear file not found."/>
         <copy todir="${jboss.deploy.directory}" file="${pa-ear.build.dir}/${pa-ear.ear}"/>
     </target>
- 
+
     <target name="start-jboss-server" description="Starts a local JBoss instance">
         <property name="jboss.home" value="${jboss.deploy.directory}/../../../"/>
         <sequential>
@@ -248,7 +232,7 @@
             </waitfor>
         </sequential>
     </target>
-    
+
     <target name="stop-jboss-server">
         <property name="jboss.home" value="${jboss.deploy.directory}/../../../"/>
         <sequential>
@@ -282,10 +266,6 @@
     <target name="ivy-test-junit" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-junit" />
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit" />
-    </target>
-    <target name="ivy-compile" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-junit">
