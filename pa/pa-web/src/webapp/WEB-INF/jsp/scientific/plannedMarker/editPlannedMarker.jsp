@@ -219,14 +219,14 @@
                                             <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
                                                 <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
-                                            <s:if test="%{plannedMarker.id == null}">   
+                                              
                                                 <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
                                                     <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
                                                 </s:a>
                                                 <s:a cssClass="btn" href="javascript:void(0)" id="addMarkerReset" onclick="addMarkerReset('true');">
                                                     <span class="btn_img"><fmt:message key="plannedMarker.addMarkerReset"/></span>
                                                 </s:a>                                                 
-                                            </s:if>  
+                                           
                                         </li>
                                     </ul>
                                 </del>
@@ -244,14 +244,14 @@
                                             <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
                                                 <span class="btn_img"><span class="cancel">Cancel</span></span>
                                             </s:a>
-                                              <s:if test="%{plannedMarker.id == null}"> 
+                                              
                                                     <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
                                                         <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
                                                     </s:a>
                                                     <s:a cssClass="btn" href="javascript:void(0)" id="addMarkerReset" onclick="addMarkerReset('true');">
                                                         <span class="btn_img"><fmt:message key="plannedMarker.addMarkerReset"/></span>
                                                     </s:a>                                                 
-                                              </s:if> 
+                                               
                                         </li>
                                     </ul>
                                 </del>

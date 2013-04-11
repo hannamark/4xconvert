@@ -224,9 +224,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     }
 
     private String currentActionType() throws PAException {
-        if (saveResetAttribute) {
-            return save();
-        } else if (saveResetMarker) {
+        if (saveResetAttribute || saveResetMarker) {
             return save();     
           } else {
             return super.add();
@@ -251,34 +249,46 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     public String update() throws PAException {
-        enforceBusinessRules();
-        if (!hasFieldErrors()) {
-            PlannedMarkerDTO marker = populateDTO(true);
-            try {
-                Long cadsrId2 = IiConverter.convertToLong(marker.getCadsrId());
-                List<Number> listofValues = permissibleService
-                        .getIdentifierByCadsrId(cadsrId2);
-                if (!listofValues.isEmpty()) {
-                    marker.setPermissibleValue(IiConverter.convertToIi(listofValues.get(0).longValue()));
-                } else {
-                    marker.setPermissibleValue(IiConverter.convertToIi(cadsrId2));
+        if (getPlannedMarker().getId() != null) {
+            enforceBusinessRules();
+            if (!hasFieldErrors()) {
+                PlannedMarkerDTO marker = populateDTO(true);
+                try {
+                    Long cadsrId2 = IiConverter.convertToLong(marker.getCadsrId());
+                    List<Number> listofValues = permissibleService
+                            .getIdentifierByCadsrId(cadsrId2);
+                    if (!listofValues.isEmpty()) {
+                        marker.setPermissibleValue(IiConverter.convertToIi(listofValues.get(0).longValue()));
+                    } else {
+                        marker.setPermissibleValue(IiConverter.convertToIi(cadsrId2));
+                    }
+    
+                    plannedMarkerService.update(marker);
+                } catch (PAException e) {
+                    addActionError(e.getMessage());
                 }
-
-                plannedMarkerService.update(marker);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
             }
+            if (hasActionErrors() || hasFieldErrors()) {
+                PlannedMarkerDTO marker = populateDTO(false);
+                Map<String, String> values = markerAttributesService
+                        .getAllMarkerAttributes();
+                plannedMarker = populateWebDTO(marker, values);
+                return AR_EDIT;
+            }
+        } else {
+            return add();
         }
-        if (hasActionErrors() || hasFieldErrors()) {
-            PlannedMarkerDTO marker = populateDTO(false);
-            Map<String, String> values = markerAttributesService
-                    .getAllMarkerAttributes();
-            plannedMarker = populateWebDTO(marker, values);
-            return AR_EDIT;
-        }
-        return super.update();
+        return currentEditActionType();
     }
-
+    
+    private String currentEditActionType() throws PAException {
+        if (saveResetAttribute || saveResetMarker) {
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+            return super.edit();   
+        } else {
+            return super.update();
+        }
+    }
     /**
      * {@inheritDoc}
      */
