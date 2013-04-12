@@ -21,6 +21,7 @@ public final class CacheUtils {
     private static final String CRITERIA_COLLECTIONS_CACHE_KEY = "CRITERIA_COLLECTIONS_CACHE";
     private static final String SEARCH_RESULTS_CACHE_KEY = "SEARCH_RESULTS_CACHE";
     private static final String SUBMITTER_REGISTRY_USERS_KEY = "SUBMITTER_REGISTRY_USERS";
+    private static final String CADSR_CLASSIFICATION_SCHEMES_KEY = "CADSR_CLASSIFICATION_SCHEMES";
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
@@ -49,6 +50,15 @@ public final class CacheUtils {
      */
     public static Cache getSubmittersCache() {
         return CACHE_MANAGER.getCache(SUBMITTER_REGISTRY_USERS_KEY);
+    }
+    
+    /**
+     * Cache used for storing caDSR classification schemes.
+     * 
+     * @return Cache
+     */
+    public static Cache getCaDSRClassificationSchemesCache() {
+        return CACHE_MANAGER.getCache(CADSR_CLASSIFICATION_SCHEMES_KEY);
     }
 
     /**

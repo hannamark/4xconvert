@@ -31,6 +31,8 @@ public class CacheUtilsTest {
     public void setUp() throws Exception {
         CacheUtils.getCriteriaCollectionsCache().removeAll();
         CacheUtils.getSearchResultsCache().removeAll();
+        CacheUtils.getSubmittersCache().removeAll();
+        CacheUtils.getCaDSRClassificationSchemesCache().removeAll();
     }
 
     /**
@@ -40,6 +42,8 @@ public class CacheUtilsTest {
     public void tearDown() throws Exception {
         CacheUtils.getCriteriaCollectionsCache().removeAll();
         CacheUtils.getSearchResultsCache().removeAll();
+        CacheUtils.getSubmittersCache().removeAll();
+        CacheUtils.getCaDSRClassificationSchemesCache().removeAll();
     }
 
     /**
@@ -61,6 +65,20 @@ public class CacheUtilsTest {
         assertEquals("SEARCH_RESULTS_CACHE", CacheUtils.getSearchResultsCache()
                 .getName());
     }
+    
+    @Test
+    public final void testGetSubmittersCache() {
+        assertEquals("SUBMITTER_REGISTRY_USERS", CacheUtils.getSubmittersCache()
+                .getName());
+    }
+    
+    @Test
+    public final void testGetCaDSRClassificationSchemesCache() {
+        assertEquals("CADSR_CLASSIFICATION_SCHEMES", CacheUtils.getCaDSRClassificationSchemesCache()
+                .getName());
+    }
+
+
 
     /**
      * Test method for

@@ -108,6 +108,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CacheUtils;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -128,6 +130,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
@@ -141,6 +144,8 @@ import org.springframework.remoting.RemoteAccessException;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
+    private static final Logger LOG  = Logger.getLogger(EligibilityCriteriaAction.class);
+    
     private static final String STRUCTURED = "Structured";
     private static final String LAB_TEST_VALUES = "labTestNameValues";
     private static final String LAB_TEST_UOM_VALUES = "labTestUoMValues";
@@ -246,29 +251,52 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
 
     /**
      * this is will return list of category.
-     * @return result
+     * @return result List<ClassificationSchemeItem>
+     * @throws PAException PAException
      */
-    public String getClassSchemeItems() {
-        try {
-            if (csisResult == null) {
-                csisResult = new ArrayList<ClassificationSchemeItem>();
-            }
-            ClassificationScheme cs = new ClassificationScheme();
-            cs.setPublicID(cadsrCsId);
-            cs.setVersion(cadsrCsVersion);
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-            Collection<Object> csResult = appService.search(ClassificationScheme.class, cs);
-            ClassificationScheme classifSch = (ClassificationScheme) csResult.iterator().next();
-
-            Collection<ClassSchemeClassSchemeItem> csItem = classifSch.getClassSchemeClassSchemeItemCollection();
+    @SuppressWarnings("unchecked")
+    public String getClassSchemeItems() throws PAException {
+        csisResult = (List<ClassificationSchemeItem>) CacheUtils
+                .getFromCacheOrBackend(
+                        CacheUtils.getCaDSRClassificationSchemesCache(), CSIS,
+                        new Closure() {
+                            @Override
+                            public Object execute() throws PAException {                                
+                                try {
+                                    List<ClassificationSchemeItem> results = new ArrayList<ClassificationSchemeItem>();
+                                    ClassificationScheme cs = new ClassificationScheme();
+                                    cs.setPublicID(cadsrCsId);
+                                    cs.setVersion(cadsrCsVersion);
+                                    ApplicationService appService = ApplicationServiceProvider
+                                            .getApplicationService();
+                                    Collection<Object> csResult = appService
+                                            .search(ClassificationScheme.class,
+                                                    cs);
+                                    ClassificationScheme classifSch = (ClassificationScheme) csResult
+                                            .iterator().next();
+                                    Collection<ClassSchemeClassSchemeItem> csItem = classifSch
+                                            .getClassSchemeClassSchemeItemCollection();
+                                    for (ClassSchemeClassSchemeItem csCsi : csItem) {
+                                        results.add(csCsi
+                                                .getClassificationSchemeItem());
+                                    }
+                                    return results;
+                                } catch (RemoteAccessException e) {
+                                    LOG.error(
+                                            "Error attempting to instantiate caDSR Application Service.",
+                                            e);
+                                } catch (Exception e) {
+                                    LOG.error(e, e);
+                                    ServletActionContext.getRequest()
+                                            .setAttribute(
+                                                    Constants.FAILURE_MESSAGE,
+                                                    e.getMessage());
+                                }
+                                return null;
+                            }
+                        });
+        if (csisResult == null) {
             csisResult = new ArrayList<ClassificationSchemeItem>();
-            for (ClassSchemeClassSchemeItem csCsi : csItem) {
-                csisResult.add(csCsi.getClassificationSchemeItem());
-            }
-        }  catch (RemoteAccessException e) {
-            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
-        } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return CSIS;
     }
@@ -318,6 +346,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         } catch (RemoteAccessException e) {
             LOG.error("Error while instantiating caDSR Application Service.", e);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return CDES_BY_CSI;
@@ -411,6 +440,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         } catch (RemoteAccessException e) {
             LOG.error("Error attempting to instantiate caDSR Application Service.", e);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
 
@@ -535,6 +565,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             reOrder();
             query();
         } catch (PAException e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return ELIGIBILITY;
@@ -595,6 +626,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 }
             }
         } catch (PAException e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return ELIGIBILITY;
@@ -713,6 +745,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
             return ELIGIBILITY;
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ELIGIBILITYADD;
         }
@@ -729,6 +762,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                 .getPlannedEligibilityCriterion(IiConverter.convertToIi(id));
             webDTO = setEligibilityDetailsDTO(sgDTO);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return ELIGIBILITYADD;
@@ -1085,25 +1119,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         }
 
         return containsInList;
-    }
-
-    private Map<String, String> buildDisplayOrderDBList() throws PAException {
-        Map<String, String> orderListDB = new HashMap<String, String>();
-        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-            .getAttribute(Constants.STUDY_PROTOCOL_II);
-        List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
-            .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-        if (CollectionUtils.isNotEmpty(pecList)) {
-            for (PlannedEligibilityCriterionDTO dto : pecList) {
-                if (dto.getCategoryCode() != null
-                        && ActivityCategoryCode.OTHER.getCode().equals(dto.getCategoryCode().getCode())
-                        && dto.getDisplayOrder().getValue() != null) {
-                    orderListDB.put(dto.getIdentifier().getExtension(),
-                                    Integer.toString(dto.getDisplayOrder().getValue().intValue()));
-                }
-            }
-        }
-        return orderListDB;
     }
 
     private Map<String, String> buildDisplayOrderUIList() throws PAException {

@@ -47,6 +47,15 @@
          timeToLiveSeconds="120"
          overflowToDisk="false"
     />
+    
+    <!--  Cache used to temporarily store all caDSR classification schemes  -->
+    <cache
+         name="CADSR_CLASSIFICATION_SCHEMES"
+         maxElementsInMemory="1"
+         eternal="false"         
+         timeToLiveSeconds="600"
+         overflowToDisk="false"
+    />
 
     <!-- Caches used for trial search optimizations. -->
     <cache
