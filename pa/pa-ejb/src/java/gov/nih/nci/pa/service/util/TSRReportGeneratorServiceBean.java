@@ -95,16 +95,13 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
-import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
-import gov.nih.nci.pa.enums.EvaluationTypeCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
@@ -288,7 +285,18 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String AS_OF = " as of ";
     private static final String EMAIL = " email: ";
     private static final String PHONE = " phone: ";
-    
+    /**
+     * to compare the Attribute values with Other
+     */
+    protected static final String OTHER = "Other";
+    /**
+     * to compare the if attribute Text not present
+     */
+    protected static final String NOTPRESENT = "notPresent";
+    /**
+     * to compare the if other Text Present or not
+     */
+    protected static final String EMPTY = "empty";
     private static final Logger LOG = Logger.getLogger(TSRReportGeneratorServiceBean.class);
 
     /**
@@ -1058,26 +1066,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             TSRReportPlannedMarker tsrMarker = new TSRReportPlannedMarker();
             tsrMarker.setName(getValue(marker.getName()));
             String evaluationType = getValue(marker.getEvaluationType());
-            if (EvaluationTypeCode.getByCode(evaluationType) == EvaluationTypeCode.OTHER) {
-                evaluationType = StringUtils.join(new Object[] {
-                        evaluationType, ": ", getValue(marker.getEvaluationTypeOtherText())});
-            }
+            evaluationType = otherTextPresentAndJoin(evaluationType, getValue(marker.getEvaluationTypeOtherText()));
             tsrMarker.setEvaluationType(evaluationType);
             String assayType = getValue(marker.getAssayTypeCode());
-            if (AssayTypeCode.getByCode(assayType) == AssayTypeCode.OTHER) {
-                assayType = StringUtils.join(new Object[] {assayType, ": ", getValue(marker.getAssayTypeOtherText())});
-            }
+            assayType = otherTextPresentAndJoin(assayType, getValue(marker.getAssayTypeOtherText()));        
             tsrMarker.setAssayType(assayType);
             tsrMarker.setAssayUse(getValue(marker.getAssayUseCode()));
-            String assayPurpose = getValue(marker.getAssayPurposeCode());
-           
+            String assayPurpose = getValue(marker.getAssayPurposeCode());   
             tsrMarker.setAssayPurpose(assayPurpose);
             String specimenType = getValue(marker.getTissueSpecimenTypeCode());
-            if (TissueSpecimenTypeCode.getByCode(specimenType) == TissueSpecimenTypeCode.OTHER) {
-                specimenType = StringUtils.join(new Object[] {
-                        specimenType, ": ", getValue(marker.getSpecimenTypeOtherText())});
-            }
-            
+            specimenType = otherTextPresentAndJoin(specimenType, getValue(marker.getSpecimenTypeOtherText()));
             tsrMarker.setTissueSpecimenType(specimenType);
             tsrMarker.setTissueCollectionMethod(getValue(marker.getTissueCollectionMethodCode()));
             tsrMarkers.add(tsrMarker);
@@ -1093,7 +1091,35 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         });
         tsrReportGenerator.setPlannedMarkers(tsrMarkers);
     }
-
+    private String otherTextPresentAndJoin(String typeValue, String otherText) {
+        StringBuffer otherTextValue = new StringBuffer();
+        if (typeValue != null) {
+            String[] typeList = typeValue.split(",\\s*");
+            if (typeList != null) {
+                for (int i = 0, j = typeList.length; i < typeList.length; i++, j--) {
+                    if (j == 1) {
+                        if (StringUtils.equals(typeList[i], OTHER)) {
+                            otherTextValue.append(StringUtils.join(new Object[] {
+                                    typeList[i], ": ", otherText}));     
+                        } else {
+                            otherTextValue.append(typeList[i]);
+                        }
+                    } else {
+                        if (StringUtils.equals(typeList[i], OTHER)) {
+                            otherTextValue.append(StringUtils.join(new Object[] {
+                                    typeList[i], ": ", otherText + ", "}));      
+                        } else {
+                            otherTextValue.append(typeList[i]);
+                            otherTextValue.append(", ");
+                        }
+                    }
+                }
+            }
+        }
+        return otherTextValue.toString();
+    }
+    
+    
     private void setSubGroupStratificationCriteria(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<StratumGroupDTO> stratumGrpDtos = stratumGroupService.getByStudyProtocol(studyProtocolDto.getIdentifier());
         if (!stratumGrpDtos.isEmpty()) {

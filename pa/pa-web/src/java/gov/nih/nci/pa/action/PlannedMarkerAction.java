@@ -103,9 +103,9 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -607,7 +607,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             for (String typeValues : typeSplit) {
                 for (int i = 0; markerValues != null && i < markerValues.size()
                         && markerValues.containsKey(type + i); i++) {
-                    if (markerValues.get(type + i).equals(typeValues)) {
+                    if (markerValues.get(type + i).equalsIgnoreCase(typeValues)) {
                         typeList.add(typeValues);
                         break;
                     }
@@ -621,21 +621,33 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private List<String> deletedTypeValues(String typeValue,
             Map<String, String> markerValues, String type) {
         List<String> typeList = new ArrayList<String>();
+        List<String> valueList = new ArrayList<String>();
         if (typeValue != null) {
+            for (int i = 0; markerValues != null && i < markerValues.size()
+            && markerValues.containsKey(type + i); i++) {
+                valueList.add(markerValues.get(type + i));
+            }
             String[] typeSplit = typeValue.split(",\\s*");
             for (String typeValues : typeSplit) {
-                for (int i = 0; markerValues != null && i < markerValues.size()
-                        && markerValues.containsKey(type + i); i++) {
-                    if (!markerValues.containsValue(typeValues)) {
+               if (!containsIgnoreCase(valueList, typeValues)) {
                         typeList.add(typeValues);
                         break;
                     }
-                }
-            }
+                }   
         }
         return typeList;
     }
-
+    
+    
+    private boolean containsIgnoreCase(List <String> list, String value) {
+        Iterator <String> it = list.iterator();
+        while (it.hasNext()) {
+            if (it.next().equalsIgnoreCase(value)) {
+                 return true;
+             }
+        }
+        return false;
+   }
     @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NPathComplexity" })
     private PlannedMarkerDTO populateDTO(boolean isEdit) throws PAException {
         PlannedMarkerDTO marker = new PlannedMarkerDTO();

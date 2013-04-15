@@ -30,7 +30,7 @@ public enum EvaluationTypeCode implements CodedEnum<String> {
     /**
      * Protein Activity.
      */
-    PROTEIN_ACTIVITY("Protein  Activity"),
+    PROTEIN_ACTIVITY("Protein Activity"),
     /**
      * Proteolytic Cleavage.
      */
