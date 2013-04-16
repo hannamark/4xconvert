@@ -93,8 +93,10 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -669,18 +671,24 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
          */
         private void addNciSponsoredClause(StringBuffer whereClause,
                 Map<String, Object> params, boolean negation) {
-            String operator = determineOperator(whereClause);
-            whereClause
-                    .append(String
-                            .format(" %s (%s exists (select sponsor.id from StudySite sponsor where "
-                                    + "sponsor.studyProtocol.id = %s.id and sponsor.functionalCode = :"
-                                    + SPONSOR_FUNCTIONAL_CODE_PARAM
-                                    + " and sponsor.researchOrganization.organization.name='"
-                                    + PAConstants.NCI_ORG_NAME + "')) ",
-                                    operator, (negation ? "not" : ""),
-                                    SearchableUtils.ROOT_OBJ_ALIAS));
-            params.put(SPONSOR_FUNCTIONAL_CODE_PARAM,
-                    StudySiteFunctionalCode.SPONSOR);
+            try {
+                String operator = determineOperator(whereClause);
+                whereClause
+                        .append(String
+                                .format(" %s (%s exists (select sponsor.id from StudySite sponsor where "
+                                        + "sponsor.studyProtocol.id = %s.id and sponsor.functionalCode = :"
+                                        + SPONSOR_FUNCTIONAL_CODE_PARAM
+                                        + " and sponsor.researchOrganization.organization.identifier='"
+                                        + PaRegistry.getLookUpTableService()
+                                                .getPropertyValue("nci.poid")
+                                        + "')) ", operator, (negation ? "not"
+                                        : ""), SearchableUtils.ROOT_OBJ_ALIAS));
+
+                params.put(SPONSOR_FUNCTIONAL_CODE_PARAM,
+                        StudySiteFunctionalCode.SPONSOR);
+            } catch (PAException e) {
+                throw new RuntimeException(e); // NOPMD
+            }
         }
 
         /**
