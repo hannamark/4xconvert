@@ -173,15 +173,18 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Set<StudyMilestone> getTrialSummarySentMilestones(DateTime threshold) {
-        String queryString = "select sm1 from StudyMilestone sm1 where sm1.milestoneCode = :tss and "
+        String queryString = "select sm1 from StudyMilestone sm1 inner join fetch sm1.studyProtocol "
+                + "where sm1.milestoneCode = :tss and "
                 + "sm1.milestoneDate <= :threshold and not exists"
                 + "(select sm2 from StudyMilestone sm2 where sm2.studyProtocol.id = sm1.studyProtocol.id and "
                 + "((sm2.milestoneCode =  :tss and sm2.milestoneDate>sm1.milestoneDate)or(sm2.milestoneCode = :abs)))";
-        Query query = PaHibernateUtil.getCurrentSession().createQuery(queryString);
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(
+                queryString);
         query.setParameter("threshold", threshold.toDate());
         query.setParameter("tss", MilestoneCode.TRIAL_SUMMARY_SENT);
         query.setParameter("abs", MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
-        Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(new MilestoneComparator());
+        Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(
+                new MilestoneComparator());
         mileStoneList.addAll(query.list());
         return mileStoneList;
     }
@@ -207,9 +210,9 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
             } catch (Exception e) {
                 // swallowing the exception in order to continue processing the rest of the records
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Exception creating the milestone: ", e);
+                    LOG.debug("Exception auto-creating the milestone: ", e);
                 } else {
-                    LOG.info("Exception creating the milestone: " + e.getMessage());
+                    LOG.error("Exception auto-creating the milestone: " + e.getMessage());
                 }
                 errors.add(milestone, e.getMessage());
             }
