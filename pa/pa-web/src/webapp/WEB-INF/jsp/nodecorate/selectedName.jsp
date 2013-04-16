@@ -1,7 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>	
 <table class="form">
 	<tr>
-	    <td scope="row" class="label"><s:label name="personContactWebDTO.firstName" for="personContactWebDTO.firstName">First Name:</s:label><span class="required">*</span></td>
+	    <td scope="row" class="label"><s:label for="personContactWebDTO.firstName">First Name:</s:label><span class="required">*</span></td>
 		<td class="value" style="width:250px">
 		<s:textfield name="personContactWebDTO.firstName" id="personContactWebDTO.firstName" maxlength="80" size="80" cssStyle="width: 200px" disabled="disabled" readonly="true" />                            
 		<span class="formErrorMsg"> 
@@ -17,14 +17,14 @@
 		</td> 
 	</tr>
 	<tr>
-	    <td scope="row" class="label"><s:label name="personContactWebDTO.middleName" for="personContactWebDTO.middleName">Middle Name:</s:label></td>
+	    <td scope="row" class="label"><s:label for="personContactWebDTO.middleName">Middle Name:</s:label></td>
 	    <td class="value" colspan="2">
 	        <s:textfield name="personContactWebDTO.middleName" id="personContactWebDTO.middleName" maxlength="200" size="200" 
 	        disabled="disabled" cssStyle="width: 200px" readonly="true"/>
 	    </td>
 	</tr>
 	<tr>
-	    <td scope="row" class="label"><s:label name="personContactWebDTO.lastName" for="personContactWebDTO.lastName">Last Name:</s:label></td>
+	    <td scope="row" class="label"><s:label for="personContactWebDTO.lastName">Last Name:</s:label></td>
 	    <td class="value" colspan="2">
 	        <s:textfield name="personContactWebDTO.lastName" id="personContactWebDTO.lastName" maxlength="200" size="200" 
 	        disabled="disabled" cssStyle="width: 200px" readonly="true"/>

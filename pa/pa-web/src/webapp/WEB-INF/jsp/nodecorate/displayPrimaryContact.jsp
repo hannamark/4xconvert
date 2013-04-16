@@ -36,7 +36,7 @@
     </tr>
     <tr>
         <td scope="row" colspan="3">
-            <span class="required">**</span>At least one of Email or Phone is required.
+            <span class="required">**</span>Enter either the contact's phone number or email address. You can provide both if the information is available.
         </td>
     </tr>
     <tr>
