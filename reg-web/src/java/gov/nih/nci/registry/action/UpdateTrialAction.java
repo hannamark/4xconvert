@@ -32,6 +32,7 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
+import gov.nih.nci.registry.util.AccessTrackingMap;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialSessionUtil;
@@ -40,7 +41,9 @@ import gov.nih.nci.registry.util.TrialUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -113,6 +116,19 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private int indIdeUpdateDtosLen = 0;
 
     private String currentUser;
+    
+    //  PO-6093 raised an interesting issue. Before an update, trial goes through formal validation process
+    // (see TrialValidator().validateTrial(trialDTO) below). This validation process sometimes (not often)
+    // can produce keyed field errors that are inapplicable to the Trial Update operation in Registry, i.e.
+    // those field errors will not be picked up by <s:fielderror> tags in updateTrial.jsp simply because such
+    // fields are unavailable for update. As a result, the page comes back to the user saying "there are field
+    // error below, please review", but as the user scrolls the page, she sees no field errors. A good solution
+    // would be to summarize such field errors, which are inapplicable to the actual update, at the top of the page.
+    // However, we would need to track which field errors ARE consumed by the JSP and which are 'swallowed'.
+    // To avoid duplication of field keys throughout, this special Map will remember all keys that have been
+    // requested and then we can find out which field errors have not been consumed by individual <s:fielderror>
+    // tags.
+    private final AccessTrackingMap<String, List<String>> fieldErrors = new AccessTrackingMap<String, List<String>>();
 
     /**
      * {@inheritDoc}
@@ -131,6 +147,12 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
         }
+        setFieldErrors(this.fieldErrors);
+    }
+    
+    @Override
+    public Map<String, List<String>> getFieldErrors() {        
+        return this.fieldErrors;
     }
 
     /**
@@ -222,6 +244,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 TrialSessionUtil.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 synchActionWithDTO();
+                this.fieldErrors.clearTrackedKeys();
                 return ERROR;
             }
             if (hasActionErrors()) {
@@ -284,12 +307,27 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         } else {
             enforceBusinessRules();
             if (hasFieldErrors()) {
-                failureMessage =
-                        "The form has errors and could not be submitted, please check the "
-                                + "fields highlighted below";
+                failureMessage = "The form has errors and could not be submitted, please check the "
+                        + "fields highlighted below as well as any general trial errors, if displayed.";              
             }
         }
         return failureMessage;
+    }
+
+   
+    
+    /**
+     * See above comment.
+     * 
+     * @return List<String>
+     */
+    public Collection<String> getFlattenedRemainingFieldErrors() {
+        Collection<String> list = new LinkedHashSet<String>();
+        for (List<String> fieldErrorList : ((AccessTrackingMap<String, List<String>>) getFieldErrors())
+                .getValuesWhoseKeysNeverAccessed()) {
+            list.addAll(fieldErrorList);
+        }
+        return list;
     }
 
     /**

@@ -162,6 +162,7 @@
         <c:set var="topic" scope="request" value="updatetrial"/>
         <div class="box" id="filters">
             <reg-web:failureMessage/>
+            <div id="general_trial_errors"></div>
             <s:form name="updateTrial" id="updateTrial" method="POST" validate="false" enctype="multipart/form-data" cssStyle="display:block; width:100%;">
                 <s:token/>
                 <s:if test="hasActionErrors()">
@@ -210,5 +211,25 @@
                 </div>
             </s:form>
         </div>
+        <div id="general_trial_errors_container" style="display: none;">
+            <span class="info">
+                The following errors may not be related to the update you are trying to submit, but rather may indicate a general problem
+                with the abstraction of the trial that is preventing your update from submitting properly. If so, please
+                communicate these error messages to the CTRO office, so that the abstraction could be fixed and the update could proceed. 
+            </span>
+            <br/> <br/>
+            <c:forEach items="${flattenedRemainingFieldErrors}" var="error">
+	           <div class="error_msg">	            
+	               <strong>Trial Abstraction Error:</strong> <c:out value="${error}"></c:out>	            
+	           </div>
+	        </c:forEach>
+        </div>
+        <c:if test="${not empty flattenedRemainingFieldErrors}">
+        <script type="text/javascript">
+           Event.observe(window, "load", function() {
+        	   $('general_trial_errors').innerHTML = $('general_trial_errors_container').innerHTML;
+           });
+        </script>
+        </c:if>
     </body>
 </html>

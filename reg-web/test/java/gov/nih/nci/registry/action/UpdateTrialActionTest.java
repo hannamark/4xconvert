@@ -12,7 +12,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
@@ -27,6 +26,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -654,7 +655,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         when(action.hasFieldErrors()).thenReturn(true);
         String result = action.validateTrial();
         assertEquals("Wrong error message returned",
-                     "The form has errors and could not be submitted, please check the fields highlighted below",
+                     "The form has errors and could not be submitted, please check the fields highlighted below as well as any general trial errors, if displayed.",
                      result);
     }
 
@@ -675,4 +676,28 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         inOrder.verify(action).enforceBusinessRules();
         inOrder.verify(action).hasFieldErrors();
     }
+    
+    @Test
+    public void testGetFlattenedRemainingFieldErrors() {
+        UpdateTrialAction action = new UpdateTrialAction();
+        action.prepare();
+        action.clearFieldErrors();
+        action.addFieldError("field1", "error1");
+        action.addFieldError("field2", "error2");
+        
+        Collection<String> c = action.getFlattenedRemainingFieldErrors();
+        assertEquals(2, c.size());
+        Iterator<String> iterator = action.getFlattenedRemainingFieldErrors().iterator();
+        assertEquals("error1", iterator.next());
+        assertEquals("error2", iterator.next());
+        
+        action.getFieldErrors().get("field1");
+        c = action.getFlattenedRemainingFieldErrors();
+        assertEquals(1, c.size());
+        iterator = action.getFlattenedRemainingFieldErrors().iterator();        
+        assertEquals("error2", iterator.next());
+                
+    }
+    
+     
 }
