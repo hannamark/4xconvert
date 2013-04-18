@@ -47,6 +47,7 @@
                <s:param>gtdDTO.primaryPurposeOtherText</s:param>
                </s:fielderror>                            
                </span>
+               <s:hidden name="gtdDTO.primaryPurposeAdditionalQualifierCode" id= "gtdDTO.primaryPurposeAdditionalQualifierCode"></s:hidden>
          </td>
       </tr>
 <SCRIPT LANGUAGE="JavaScript">
@@ -67,9 +68,11 @@ function displayPrimaryPurposeOtherText() {
    if ($('gtdDTO.primaryPurposeCode').value == 'Other') {
        $('purposeOtherTextDiv').show();
        document.getElementById('gtdDTO.primaryPurposeOtherText').disabled = false;
+       document.getElementById('gtdDTO.primaryPurposeAdditionalQualifierCode').value = 'Other';
    } else {
        $('purposeOtherTextDiv').hide();
        document.getElementById('gtdDTO.primaryPurposeOtherText').disabled = true;
+       document.getElementById('gtdDTO.primaryPurposeAdditionalQualifierCode').value = null;
   }
 }
 </SCRIPT>
