@@ -9,9 +9,11 @@ join person on (person.identifier = crs.person_identifier)
 join healthcare_facility hcf on (ss.healthcare_facility_identifier = hcf.identifier)
 join organization on (hcf.organization_identifier = organization.identifier)
 join study_otheridentifiers so on (ss.study_protocol_identifier = so.study_protocol_id)
+join study_protocol sp on (so.study_protocol_id = sp.identifier)
 where functional_code = 'TREATING_SITE'
   and contact.role_code IN ('PRINCIPAL_INVESTIGATOR','SUB_INVESTIGATOR')
   and so.root = '2.16.840.1.113883.3.26.4.3'
+  and sp.status_code = 'ACTIVE'
 """
   
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
