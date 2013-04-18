@@ -534,21 +534,28 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
                             addressAndPhoneDetail(xml, hcfRow, null, false)
                         }
                     }
+                    
                     xml.status(row.status)
-                    if (row.prim_crs_id != null && crsMap.get(row.prim_crs_id.toLong()) != null) {
-                        xml.contact {
-                            def crsRow = crsMap.get(row.prim_crs_id.toLong())
-                            crsDetail(xml, crsRow)
-                            addressAndPhoneDetail(xml, crsRow, row, true)
+                    
+                    sourceConnection.eachRow(Queries.primaryContactSQL, [row.ss_identifier,studyProtocolID]) { primconrow ->
+                        if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
+                            xml.contact {
+                                def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
+                                crsDetail(xml, crsRow)
+                                addressAndPhoneDetail(xml, crsRow, primconrow, true)
+                            }
                         }
                     }
-                    if (row.inv_crs_id != null && crsMap.get(row.inv_crs_id.toLong()) != null) {
-                         xml.investigator {
-                             def crsRow = crsMap.get(row.inv_crs_id.toLong())
-                             crsDetail(xml, crsRow)
-                             addressAndPhoneDetail(xml, crsRow, null, false)
-                             xml.role("Principal Investigator")
-                         }
+                    
+                    sourceConnection.eachRow(Queries.investigatorsSQL, [row.ss_identifier,studyProtocolID]) { invsrow ->
+                        if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
+                            xml.investigator {
+                                def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
+                                crsDetail(xml, crsRow)
+                                addressAndPhoneDetail(xml, crsRow, null, false)
+                                xml.role("Principal Investigator")
+                            }
+                       }
                     }
                 }
             }  // end part sites

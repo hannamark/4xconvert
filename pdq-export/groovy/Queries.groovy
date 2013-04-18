@@ -5,15 +5,11 @@ class Queries {
     """
     
     public static def partSitesSQL = """
-        select org.name,
+        select
+            org.name,
             hcf.assigned_identifier as hcf_poid,
             org.assigned_identifier as org_poid,
-            prim_crs.assigned_identifier as prim_crs_id,
-            prim_ssc.telephone as prim_phone,
-            prim_ssc.email as prim_email,
-            inv_crs.assigned_identifier as inv_crs_id,
-            inv_ssc.telephone as inv_phone,
-            inv_ssc.email as inv_email,
+            ss.identifier as ss_identifier,
             CASE 
                 WHEN ssas.status_code = 'APPROVED' then 'Approved'
                 WHEN ssas.status_code = 'IN_REVIEW' then 'In Review'
@@ -31,10 +27,6 @@ class Queries {
         join healthcare_facility hcf on hcf.identifier = ss.healthcare_facility_identifier
         join organization org on org.identifier = hcf.organization_identifier
         left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier and ssas.identifier = (select max(identifier) from study_site_accrual_status ssas2 where ssas2.study_site_identifier = ss.identifier)
-        left outer join study_site_contact prim_ssc on prim_ssc.study_site_identifier = ss.identifier and prim_ssc.role_code = 'PRIMARY_CONTACT'
-        left outer join clinical_research_staff prim_crs on prim_crs.identifier = prim_ssc.clinical_research_staff_identifier
-        left outer join study_site_contact inv_ssc on inv_ssc.study_site_identifier = ss.identifier and inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR'
-        left outer join clinical_research_staff inv_crs on inv_crs.identifier = inv_ssc.clinical_research_staff_identifier
         where ss.functional_code = 'TREATING_SITE'
         and ss.study_protocol_identifier = ?
     """
@@ -146,5 +138,32 @@ class Queries {
             join planned_activity pa on pa.identifier = elig.identifier 
         where pa.study_protocol_identifier = ?
     """
+    
+   public static def primaryContactSQL = """
+        select 
+        prim_crs.assigned_identifier as prim_crs_id,
+        prim_ssc.telephone as prim_phone,
+        prim_ssc.email as prim_email
+        from study_site_contact prim_ssc, clinical_research_staff prim_crs 
+        where 
+        prim_ssc.role_code = 'PRIMARY_CONTACT' and
+        prim_crs.identifier = prim_ssc.clinical_research_staff_identifier and
+        prim_ssc.study_site_identifier = ? and
+        prim_ssc.study_protocol_identifier = ?
+   """
+   
+   public static def investigatorsSQL = """
+        select 
+        inv_crs.assigned_identifier as inv_crs_id,
+        inv_ssc.telephone as inv_phone,
+        inv_ssc.email as inv_email
+        from study_site_contact inv_ssc, clinical_research_staff inv_crs
+        where
+        inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR' and
+        inv_crs.identifier = inv_ssc.clinical_research_staff_identifier and
+        inv_ssc.study_site_identifier = ? and
+        inv_ssc.study_protocol_identifier = ?
+   """
+    
     
 }
