@@ -2,6 +2,7 @@ import groovy.sql.Sql
 
 def sql = """
 select ss.identifier, contact.role_code, person.first_name, person.last_name, organization.name, so.extension
+       , organization.assigned_identifier::integer
 from study_site ss
 join study_site_contact as contact on (contact.study_site_identifier = ss.identifier)
 join clinical_research_staff crs on (contact.clinical_research_staff_identifier = crs.identifier)
@@ -29,6 +30,7 @@ sourceConnection.eachRow(sql) { row ->
     INVESTIGATOR_FIRST_NAME: row.first_name,
     INVESTIGATOR_LAST_NAME: row.last_name,
     INVESTIGATOR_ROLE: row.role_code,
-    PARTICIPATING_SITE_ORG_NAME: row.name
+    PARTICIPATING_SITE_ORG_NAME: row.name,
+    ORG_PO_ID: row.assigned_identifier
   )
 }
