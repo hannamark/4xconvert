@@ -32,7 +32,7 @@ function cancelAdd() {
 }
 
 function lookUpTrial() {
-	showWidePopup('/pa/bare/studyProtocolexecute.action', null, 'Select a Trial');
+	showWidePopup('/pa/bare/studyProtocolexecute.action?pageFrom=associate', null, 'Select a Trial');
 }
 
 function trialSelected(trialId, trialNciId) {
@@ -174,7 +174,16 @@ function trialSelected(trialId, trialNciId) {
 	                </ul>   
 	            </del>
 	        </div>
-        </c:if>                   
+        </c:if>
+        <c:if test="${disableControls}"> 
+        <div class="actionsrow">
+                <del class="btnwrapper">
+                    <ul class="btnrow">
+                        <li><s:a href="javascript:void(0)" cssClass="btn" onclick="cancelAdd()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a></li>                
+                    </ul>   
+                </del>
+            </div>
+        </c:if>                  
     </s:form>
    </div>
  </body>

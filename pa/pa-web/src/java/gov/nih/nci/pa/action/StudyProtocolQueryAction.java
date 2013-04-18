@@ -152,7 +152,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private Long assignedTo;
     private String newProcessingPriority;
     private String processingComments;
-    
+    private String pageFrom;
     /**
      * {@inheritDoc}
      */
@@ -590,6 +590,20 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     public void setProtocolQueryService(
             ProtocolQueryServiceLocal protocolQueryService) {
         this.protocolQueryService = protocolQueryService;
+    }
+    /**
+     * 
+     * @return the pageFrom
+     */
+    public String getPageFrom() {
+        return pageFrom;
+    }
+    /**
+     * 
+     * @param pageFrom pageFrom
+     */
+    public void setPageFrom(String pageFrom) {
+        this.pageFrom = pageFrom;
     }
     
     

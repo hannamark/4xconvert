@@ -12,6 +12,10 @@
                  document.forms[0].action="studyProtocolquery.action";
                  document.forms[0].submit();
             }
+            function cancelAction() {
+                 document.forms[0].action="trialAssociationsquery.action";
+                 document.forms[0].submit();  
+            }
             function generateReport(pid) {
                 showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=' + pid, null, 'View Trial Summary Report');
             }
@@ -39,7 +43,7 @@
                 studyProtocolTypeChanged();
                 
             }
-
+    
             document.onkeypress = runEnterScript;
             function runEnterScript(e) {
                 var KeyID = (window.event) ? event.keyCode : e.keyCode;
@@ -266,6 +270,11 @@
                             <li>
                                 <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>
                                 <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                               
+                                <s:if test="%{pageFrom == 'associate'}">
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();">
+                                <span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
+                                </s:if>
                             </li>
                         </ul>
                     </del>
