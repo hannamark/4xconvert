@@ -145,6 +145,17 @@ function setDisplayBasedOnTrialType() {
         enableElements('.non-interventional-input-ctr');
         disableElements('.interventional-input-ctr');        
 	}
+	if (typeof displayPrimaryPurposeOtherCode=='function') {
+		displayPrimaryPurposeOtherCode();
+	}
+	if (typeof displaySecondaryPurposeOtherCode=='function') {
+		displaySecondaryPurposeOtherCode();
+	}
+	if (!($('trialDTO.trialType.Interventional').checked) && $('secondaryPurposeOtherTextDiv')!=null) {
+		$('secondaryPurposeOtherTextDiv').hide();
+        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = true;   		
+	}
+	
 }
 
 function hideElements(cssRule) {

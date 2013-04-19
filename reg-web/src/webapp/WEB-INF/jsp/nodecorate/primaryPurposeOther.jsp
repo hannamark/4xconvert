@@ -167,13 +167,18 @@ function displayPrimaryPurposeOtherCode(el) {
 }
 
 function displaySecondaryPurposeOtherCode(el) { 
-    if (el.value == 'Other') {
-        $('secondaryPurposeOtherTextDiv').show();
-        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = false;        
-    } else {
-        $('secondaryPurposeOtherTextDiv').hide();
-        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = true;        
-    }
+	if (el==null) {
+		el = $('trialDTO.secondaryPurposes');
+	}
+	if (el!=null) {
+	    if (el.value == 'Other') {
+	        $('secondaryPurposeOtherTextDiv').show();
+	        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = false;        
+	    } else {
+	        $('secondaryPurposeOtherTextDiv').hide();
+	        document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = true;        
+	    }
+	}
 }
 
 displayStudyModelOtherTextDiv();
