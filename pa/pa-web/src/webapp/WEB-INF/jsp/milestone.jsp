@@ -181,18 +181,22 @@
 		                                                    </a>
 		                                                </td> 
 		                                            </tr>
-		                                            <tr>
-		                                                <td class="label">
+		                                            <tr >
+		                                                <td class="label" id="milestoneComments">
 		                                                  <label for="milestoneComments"><fmt:message key="milestone.comment"/></label>
 		                                                </td>
-		                                                <td class="label" id="latemilestoneComments" style="display: none;">
-		                                                    <s:label>Late Rejection <fmt:message key="milestone.comment"/></s:label>
-		                                                    <span class="required">*</span>
-		                                                </td>
-		                                                <td class="value" id="milestoneComments">
-		                                                    <s:textarea id="milestoneComments" name="milestone.comment" rows="4" cssStyle="width:280px;"/>
-		                                                </td>
+		                                                
+                                                        <td class="label" id="latemilestoneComments" style="display: none;">
+                                                            <label for="milestoneLateComments"><fmt:message key="milestone.latecomment"/></label>
+                                                            <span class="required">*</span>
+                                                        </td>
+		                                                  
+                                                      <td class="value">
+                                                            <s:textarea id="milestoneComments" name="milestone.comment" rows="4" cssStyle="width:280px;"/>
+                                                        </td> 
 		                                            </tr>
+		                                            
+                                                    
 		                                        </table>
 		                                    </s:form>
 		                                    <div class="actionsrow">
