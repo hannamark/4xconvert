@@ -38,7 +38,7 @@ function handleAction(){
             <td scope="row" class="label"><label for="registerUser_registryUserWebDTO_emailAddress">
             <fmt:message
                 key="register.user.emailAddress" /><span class="required">*</span></label></td>
-            <td><s:textfield name="registryUserWebDTO.emailAddress" maxlength="200" size="100"
+            <td><s:textfield id="registerUser_registryUserWebDTO_emailAddress" name="registryUserWebDTO.emailAddress" maxlength="200" size="100"
                 cssStyle="width:200px" /> <span class="formErrorMsg"> <s:fielderror>
                 <s:param>registryUserWebDTO.emailAddress</s:param>
             </s:fielderror> </span></td>
