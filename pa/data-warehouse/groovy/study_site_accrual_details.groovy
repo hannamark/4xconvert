@@ -1,6 +1,7 @@
 import groovy.sql.Sql
 def sql = """
-    SELECT 
+    SELECT
+       soi.extension AS nci_id,
        co.name AS country,
        ssub.date_last_created AS date_last_created,
        ssub.date_last_created AS date_last_updated,
@@ -20,10 +21,14 @@ def sql = """
        dis.code_system,
        dis.preferred_name
     FROM study_subject ssub
+    JOIN study_protocol sp ON (ssub.study_protocol_identifier = sp.identifier)
+    JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
     JOIN performed_activity pact ON (ssub.identifier = pact.study_subject_identifier)
     JOIN patient pat ON (ssub.patient_identifier = pat.identifier)
     JOIN country co ON (pat.country_identifier = co.identifier)
     LEFT OUTER JOIN accrual_disease dis ON (ssub.disease_identifier = dis.identifier)
+    WHERE soi.root = '2.16.840.1.113883.3.26.4.3'
+      AND sp.status_code = 'ACTIVE'
 """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
@@ -34,6 +39,7 @@ def ssad = destinationConnection.dataSet("stg_dw_study_site_accrual_details");
 
 sourceConnection.eachRow(sql) { row ->
     ssad.add(
+        nci_id: row.nci_id,
         country : row.country,
         date_last_created : row.date_last_created,
         date_last_updated : row.date_last_updated,
@@ -63,8 +69,7 @@ destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
                                  FROM stg_dw_user us where ssad.user_last_updated_id = us.csm_user_id""");
    
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
-                                 SET nci_id = ps.nci_id, 
-                                     org_name = ps.org_name, 
+                                 SET org_name = ps.org_name, 
                                      org_org_family = ps.org_org_family
                                  FROM stg_dw_study_participating_site ps where ssad.site_org_id = ps.internal_system_id""");
 
