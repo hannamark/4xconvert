@@ -144,9 +144,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
     private RegistryUser ru;
     private StudyProtocolDTO sp;
-    private final Map<String, Long> listOfPoIds = new HashMap<String, Long>();
-    private final Map<String, String> listOfCtepIds = new HashMap<String, String>();
-    private final Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
+    private Map<String, Long> listOfPoIds;
+    private Map<String, String> listOfCtepIds;
+    private Map<String, Ii> listOfOrgIds;
     private static final int TIME_SECONDS = 1000;
     private static final String SUABSTRACTOR = "SuAbstractor";
     private String codeSystemFile;
@@ -164,6 +164,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
         long startTime = System.currentTimeMillis();        
         ru = user;
+        listOfPoIds = new HashMap<String, Long>();
+        listOfCtepIds = new HashMap<String, String>();
+        listOfOrgIds = new HashMap<String, Ii>();
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
         results.setFileName(file.getName());
