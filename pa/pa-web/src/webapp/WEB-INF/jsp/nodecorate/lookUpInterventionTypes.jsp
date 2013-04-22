@@ -46,7 +46,7 @@
     <body>
         <div class="box">
             <s:form id="lookUp" name="lookUp" >
-                <h2><fmt:message key="${pagePrefix}header" /></h2>
+                <h2><fmt:message key="lookup.unitOfMeasurement.title" /></h2>
                 <s:label name="lookUpErrorMessage"/>
                 <s:hidden id="className" name="lookupSearchCriteria.type"/>  
                 <s:hidden id="divName" name="lookupSearchCriteria.divName"/>
