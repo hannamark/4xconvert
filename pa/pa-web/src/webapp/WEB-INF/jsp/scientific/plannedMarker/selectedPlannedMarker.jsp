@@ -6,7 +6,8 @@
     <s:hidden id="foundInHugo" name="plannedMarker.foundInHugo" />
     <s:hidden id="saveResetAttribute" name="saveResetAttribute"/>
     <s:hidden id="saveResetMarker" name="saveResetMarker"/>
-    
+    <s:hidden name="plannedMarker.meaning" id="meaning"/>
+    <s:hidden name="plannedMarker.description" id="description"/>
     <tr>
         <td class="label">
             <label for="name"><fmt:message key="plannedMarker.name" />:</label><span class="required">*</span>
