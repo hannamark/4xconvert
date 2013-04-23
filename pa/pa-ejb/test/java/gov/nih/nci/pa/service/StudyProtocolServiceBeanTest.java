@@ -977,6 +977,35 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         return ispDTO;
     }
     
+    public static NonInterventionalStudyProtocolDTO createNonInterventionalStudyProtocolDTOObj() {
+        NonInterventionalStudyProtocolDTO dto = new NonInterventionalStudyProtocolDTO();
+        dto.setAccrualReportingMethodCode(CdConverter.convertStringToCd(AccrualReportingMethodCode.ABBREVIATED.getCode()));
+        dto.setAcronym(StConverter.convertToSt("abcd"));        
+        dto.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        dto.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setOfficialTitle(StConverter.convertToSt("Phase Ii trial"));
+        Timestamp now = new Timestamp((new Date()).getTime());
+        dto.setStartDate(TsConverter.convertToTs(now));
+        dto.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(now));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+        dto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
+        dto.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
+        dto.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
+        dto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        dto.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));        
+        DSet<Cd> dsetSa = new DSet<Cd>();
+        dsetSa.setItem(new HashSet<Cd>());
+        Cd cdSas = new Cd();
+        cdSas.setCode("Lung");
+        cdSas.setCodeSystem("Summary 4 Anatomic Sites");
+        dsetSa.getItem().add(cdSas);
+        dto.setSummary4AnatomicSites(dsetSa);
+        return dto;
+    }
+    
     @Test
     public void testGetTrialAssociations() throws Exception {       
         

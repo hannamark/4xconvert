@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -95,6 +95,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -123,6 +125,7 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -155,11 +158,22 @@ public class AbstractionCompletionServiceBeanTest {
     /**
      * Creates a real AbstractionCompletionServiceBean and inject the mock services in it.
      * @return A real AbstractionCompletionServiceBean with mock services injected.
+     * @throws PAException 
      */
-    private AbstractionCompletionServiceBean createAbstractionCompletionServiceBean() {
+    private AbstractionCompletionServiceBean createAbstractionCompletionServiceBean() throws PAException {
         AbstractionCompletionServiceBean sbstractionCompletionServiceBean = new AbstractionCompletionServiceBean();
         setDependencies(sbstractionCompletionServiceBean);
+        prepareMocks();
         return sbstractionCompletionServiceBean;
+    }
+
+    private void prepareMocks() throws PAException {
+        PlannedEligibilityCriterionDTO criterionDTO = new PlannedEligibilityCriterionDTO();
+        criterionDTO.setCategoryCode(CdConverter.convertStringToCd("Other"));
+        when(
+                plannedActivityService
+                        .getPlannedEligibilityCriterionByStudyProtocol(any(Ii.class)))
+                .thenReturn(Arrays.asList(criterionDTO));
     }
 
     /**
@@ -349,6 +363,21 @@ public class AbstractionCompletionServiceBeanTest {
         } else {
             verify(studySiteAccrualStatusService).getStudySiteAccrualStatusByStudySite(siteId);
         }
+    }
+    
+    /**
+     * @throws PAException 
+     * 
+     */
+    @Test
+    public void testEnforceEligibilitySamplingAndPopulation() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        NonInterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createNonInterventionalStudyProtocolDTOObj();
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceEligibility(dto, errors);
+        assertTrue(errors.hasError(" Sampling Method is required "));
+        assertTrue(errors.hasError(" Study Population Description is required "));
+        
     }
 
 }

@@ -119,7 +119,7 @@ public class AbstractionMessageCollection {
         }
     }
 
-    private boolean hasError(String errorDescription) {
+    boolean hasError(String errorDescription) {
         for (AbstractionCompletionDTO error : errors) {
             if (StringUtils.equals(errorDescription,
                     error.getErrorDescription())) {

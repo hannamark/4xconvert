@@ -309,7 +309,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceTrialFunding(studyProtocolIi, messages);
             enforceDisease(studyProtocolDTO, messages);
             enforceArmOrGroupAssociationToIntervention(studyProtocolDTO, messages);
-            enforceEligibility(studyProtocolIi, messages);
+            enforceEligibility(studyProtocolDTO, messages);
             enforceCollaborator(studyProtocolIi, messages);
             enforceSummary4OrgNullification(studyProtocolIi, messages);
             enforcePlannedMarkerStatus(studyProtocolIi, messages);
@@ -1382,9 +1382,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceEligibility(Ii studyProtocolIi, AbstractionMessageCollection messages) throws PAException {
+    void enforceEligibility(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
-            .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
+            .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolDTO.getIdentifier());
 
         if (paECs == null || paECs.isEmpty()) {
             messages.addError("Select Eligibilty Criteria from specific Interventional/Non-Interventional"
@@ -1405,6 +1405,23 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     " Minimum one Other criteria must be added ",
                     ErrorMessageTypeEnum.SCIENTIFIC, 14);
 
+        }
+        if (studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO) {
+            NonInterventionalStudyProtocolDTO nonIntDTO = (NonInterventionalStudyProtocolDTO) studyProtocolDTO;
+            if (ISOUtil.isCdNull(nonIntDTO.getSamplingMethodCode())) {
+                messages.addError(
+                        "Select Eligibilty Criteria from specific Interventional/Non-Interventional under Scientific "
+                                + "Data menu.",
+                        " Sampling Method is required ",
+                        ErrorMessageTypeEnum.SCIENTIFIC, 14);
+            }
+            if (ISOUtil.isStNull(nonIntDTO.getStudyPopulationDescription())) {
+                messages.addError(
+                        "Select Eligibilty Criteria from specific Interventional/Non-Interventional under Scientific "
+                                + "Data menu.",
+                        " Study Population Description is required ",
+                        ErrorMessageTypeEnum.SCIENTIFIC, 14);
+            }
         }
     }
 
