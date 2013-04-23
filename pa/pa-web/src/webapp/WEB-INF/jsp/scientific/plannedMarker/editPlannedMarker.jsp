@@ -147,11 +147,15 @@
                 if (split != null) {
                  var rowValue = split[1];
                 }
-                var params = { cdeId: markerId, selectedRowIdentifier:rowValue, preSelectedEvalType:evaluationType,
-                                preSelectedAssayType:assayType, preSelectedBioUse:bioUse, 
-                                preSelectedBioPurpose:bioPurpose, preSelectedSpecimenType:specimenType,
-                                preSelEvalOtherText:evalOther, preSelAssayOtherText:assayOther,
-                                preSelSpecimenOtherText:specimenOther};
+                var params = { cdeId: markerId, selectedRowIdentifier:rowValue, 
+                'plannedMarker.evaluationType':evaluationType,
+                'plannedMarker.assayType':assayType, 
+                'plannedMarker.assayUse':bioUse, 
+                'plannedMarker.assayPurpose':bioPurpose, 
+                'plannedMarker.tissueSpecimenType':specimenType,
+                'plannedMarker.evaluationTypeOtherText':evalOther, 
+                'plannedMarker.assayTypeOtherText':assayOther,
+                'plannedMarker.specimenTypeOtherText':specimenOther};
                 
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';

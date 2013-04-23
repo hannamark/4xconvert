@@ -40,15 +40,7 @@
                          description: $('searchDescription').value,
                          meaning: $('searchMeaning').value,
                          name: $('searchName').value,
-                         publicId: $('searchPublicId').value,
-                         eval: $('plannedMarker.evaluationType').value,
-                         evalOther: $('plannedMarker.evaluationTypeOtherText').value,
-                         assayType : $('plannedMarker.assayType').value,
-                         assayOther: $('plannedMarker.assayTypeOtherText').value,
-                         bioUse : $('plannedMarker.assayUse').value,
-                         bioPurpose : $('plannedMarker.assayPurpose').value,
-                         specimenType : $('plannedMarker.tissueSpecimenType').value,
-                         specimenOther : $('plannedMarker.specimenTypeOtherText').value
+                         publicId: $('searchPublicId').value   
                  };
                  var div = $('getCaDSR');
                  div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    

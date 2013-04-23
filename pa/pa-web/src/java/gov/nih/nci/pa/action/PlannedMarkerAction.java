@@ -115,7 +115,7 @@ import org.apache.struts2.ServletActionContext;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyFields" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class PlannedMarkerAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = 560802697544499600L;
@@ -129,14 +129,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
-    private String preSelectedEvalType;
-    private String preSelEvalOtherText;
-    private String preSelectedAssayType;
-    private String preSelAssayOtherText;
-    private String preSelectedBioUse;
-    private String preSelectedBioPurpose;
-    private String preSelectedSpecimenType;
-    private String preSelSpecimenOtherText;
     private boolean saveResetAttribute = false;
     private boolean saveResetMarker = false;
     private String cadsrId = "";
@@ -336,41 +328,25 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         return AR_EDIT;
 
     }
-    @SuppressWarnings({ "PMD.NPathComplexity" })
+   
     private void setPreSelectedAttributeValues(PlannedMarkerWebDTO dto) throws PAException {
         Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
-        if (getPreSelectedEvalType() != null) {
-            List<String> evalTypeList = selectedTypeValues(getPreSelectedEvalType(), markerValues,
+        List<String> evalTypeList = selectedTypeValues(getPlannedMarker().getEvaluationType(), markerValues,
                     BioMarkerAttributesCode.EVALUATION_TYPE.getName());
-            dto.setSelectedEvaluationType(evalTypeList);
-        }   
-        if (getPreSelEvalOtherText() != null) {
-            dto.setEvaluationTypeOtherText(getPreSelEvalOtherText());
-        }
-        if (getPreSelectedAssayType() != null) {
-            List<String> assayTypeList = selectedTypeValues(getPreSelectedAssayType(), markerValues,
+        dto.setSelectedEvaluationType(evalTypeList);   
+        dto.setEvaluationTypeOtherText(getPlannedMarker().getEvaluationTypeOtherText());
+        List<String> assayTypeList = selectedTypeValues(getPlannedMarker().getAssayType(), markerValues,
                     BioMarkerAttributesCode.ASSAY_TYPE.getName());
-            dto.setSelectedAssayType(assayTypeList);
-        }
-        if (getPreSelAssayOtherText() != null) {
-            dto.setAssayTypeOtherText(getPreSelAssayOtherText());
-        }
-        if (getPreSelectedBioPurpose() != null) {
-            List<String> bioPurposeTypeList = selectedTypeValues(getPreSelectedBioPurpose(), markerValues,
+        dto.setSelectedAssayType(assayTypeList);
+        dto.setAssayTypeOtherText(getPlannedMarker().getAssayTypeOtherText());
+        List<String> bioPurposeTypeList = selectedTypeValues(getPlannedMarker().getAssayPurpose(), markerValues,
                     BioMarkerAttributesCode.BIOMARKER_PURPOSE.getName());
-            dto.setSelectedAssayPurpose(bioPurposeTypeList);
-        }
-        if (getPreSelectedBioUse() != null) {
-            dto.setAssayUse(getPreSelectedBioUse());
-        }
-        if (getPreSelectedSpecimenType() != null) {
-            List<String> specimenTypeList = selectedTypeValues(getPreSelectedSpecimenType(), markerValues,
+        dto.setSelectedAssayPurpose(bioPurposeTypeList);
+        dto.setAssayUse(getPlannedMarker().getAssayUse());      
+        List<String> specimenTypeList = selectedTypeValues(getPlannedMarker().getTissueSpecimenType(), markerValues,
                     BioMarkerAttributesCode.SPECIMEN_TYPE.getName());
-            dto.setSelectedTissueSpecType(specimenTypeList);
-        }
-        if (getPreSelSpecimenOtherText() != null) {
-            dto.setSpecimenTypeOtherText(getPreSelSpecimenOtherText());
-        }
+        dto.setSelectedTissueSpecType(specimenTypeList);
+        dto.setSpecimenTypeOtherText(getPlannedMarker().getSpecimenTypeOtherText()); 
     }
     /**
      * Reloads the planned marker screen with the requested marker name and hugo
@@ -930,119 +906,4 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setCadsrId(String cadsrId) {
         this.cadsrId = cadsrId;
     }
-    /**
-     * 
-     * @return the preSelectedEvalType
-     */
-    public String getPreSelectedEvalType() {
-        return preSelectedEvalType;
-    }
-    /**
-     * 
-     * @param preSelectedEvalType preSelectedEvalType
-     */
-    public void setPreSelectedEvalType(String preSelectedEvalType) {
-        this.preSelectedEvalType = preSelectedEvalType;
-    }
-    /**
-     * 
-     * @return the preSelectedAssayType
-     */
-    public String getPreSelectedAssayType() {
-        return preSelectedAssayType;
-    }
-    /**
-     * 
-     * @param preSelectedAssayType preSelectedAssayType
-     */
-    public void setPreSelectedAssayType(String preSelectedAssayType) {
-        this.preSelectedAssayType = preSelectedAssayType;
-    }
-    /**
-     * 
-     * @return the preSelectedBioUse
-     */
-    public String getPreSelectedBioUse() {
-        return preSelectedBioUse;
-    }
-    /**
-     * 
-     * @param preSelectedBioUse preSelectedBioUse
-     */
-    public void setPreSelectedBioUse(String preSelectedBioUse) {
-        this.preSelectedBioUse = preSelectedBioUse;
-    }
-    /**
-     * 
-     * @return the preSelectedBioPurpose
-     */
-    public String getPreSelectedBioPurpose() {
-        return preSelectedBioPurpose;
-    }
-    /**
-     * 
-     * @param preSelectedBioPurpose preSelectedBioPurpose
-     */
-    public void setPreSelectedBioPurpose(String preSelectedBioPurpose) {
-        this.preSelectedBioPurpose = preSelectedBioPurpose;
-    }
-    /**
-     * 
-     * @return the preSelectedSpecimenType
-     */
-    public String getPreSelectedSpecimenType() {
-        return preSelectedSpecimenType;
-    }
-    /**
-     * 
-     * @param preSelectedSpecimenType preSelectedSpecimenType
-     */
-    public void setPreSelectedSpecimenType(String preSelectedSpecimenType) {
-        this.preSelectedSpecimenType = preSelectedSpecimenType;
-    }
-    /**
-     * 
-     * @return the preSelEvalOtherText
-     */
-    public String getPreSelEvalOtherText() {
-        return preSelEvalOtherText;
-    }
-    /**
-     * 
-     * @param preSelEvalOtherText preSelEvalOtherText
-     */
-    public void setPreSelEvalOtherText(String preSelEvalOtherText) {
-        this.preSelEvalOtherText = preSelEvalOtherText;
-    }
-    /**
-     * 
-     * @return the preSelAssayOtherText
-     */
-    public String getPreSelAssayOtherText() {
-        return preSelAssayOtherText;
-    }
-    /**
-     * 
-     * @param preSelAssayOtherText preSelAssayOtherText
-     */
-    public void setPreSelAssayOtherText(String preSelAssayOtherText) {
-        this.preSelAssayOtherText = preSelAssayOtherText;
-    }
-    /**
-     * 
-     * @return the preSelSpecimenOtherText
-     */
-    public String getPreSelSpecimenOtherText() {
-        return preSelSpecimenOtherText;
-    }
-    /**
-     * 
-     * @param preSelSpecimenOtherText preSelSpecimenOtherText
-     */
-    public void setPreSelSpecimenOtherText(String preSelSpecimenOtherText) {
-        this.preSelSpecimenOtherText = preSelSpecimenOtherText;
-    }
-
-    
-
 }
