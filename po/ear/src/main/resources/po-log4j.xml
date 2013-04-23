@@ -24,7 +24,7 @@
     <appender name="POFILE" class="org.jboss.logging.appender.DailyRollingFileAppender">
         <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
         <param name="File" value="${jboss.server.log.dir}/po.log"/>
-        <param name="Append" value="false"/>
+        <param name="Append" value="true"/>
 
       <!-- Rollover at midnight each day -->
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
