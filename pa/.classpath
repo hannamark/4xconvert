@@ -33,8 +33,8 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-ctrp-struts2-1.4.8-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-ctrp-core-1.4.8-SNAPSHOT.jar" sourcepath="/NCI_COMMONS_CTRP_LOCATION"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-ctrp-struts2-1.4.9-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-ctrp-core-1.4.9-SNAPSHOT.jar" sourcepath="/NCI_COMMONS_CTRP_LOCATION"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-3.0.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.4-701.jdbc3.jar"/>

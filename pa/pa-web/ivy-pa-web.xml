@@ -20,7 +20,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.8-SNAPSHOT" conf="runtime->default">
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.9-SNAPSHOT" conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
     </dependency>
     <dependency org="displaytag"             name="displaytag"              rev="1.2"             conf="runtime->master"/>
@@ -43,7 +43,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
     <!-- compile -->
     <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.8-SNAPSHOT"  conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.9-SNAPSHOT"  conf="compile->master"/>
 
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>

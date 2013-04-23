@@ -82,7 +82,6 @@
  */
 package com.fiveamsolutions.nci.commons.util;
 
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Utils class for nci-commons.
@@ -113,16 +112,17 @@ public final class NCICommonsUtils {
      * @return The filtered String.
      */
     public static String performXSSFilter(String s, boolean filterSymbols, boolean filterControlChars,
-            boolean filterScriptTags) {
-        boolean forceFilterSymbols = filterSymbols
-                || filterScriptTags
-                && (StringUtils.containsIgnoreCase(s, "script") || StringUtils.containsIgnoreCase(s, "img")
-                        || StringUtils.containsIgnoreCase(s, "frame") || StringUtils.containsIgnoreCase(s, "href"));
+            boolean filterScriptTags) {       
+        String filteredScripts = filterScriptTags ? s
+                .replaceAll("(?i)<(\\s|\\p{Cntrl})*/?(\\s|\\p{Cntrl})*(script\\W)", "$3")
+                .replaceAll("(?i)<(\\s|\\p{Cntrl})*/?(\\s|\\p{Cntrl})*(img\\W)", "$3")
+                .replaceAll("(?i)<(\\s|\\p{Cntrl})*/?(\\s|\\p{Cntrl})*(frame\\W)", "$3")
+                .replaceAll("(?i)<(\\s|\\p{Cntrl})*/?(\\s|\\p{Cntrl})*(href\\W)", "$3") : s;
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
+        for (int i = 0; i < filteredScripts.length(); i++) {
+            char ch = filteredScripts.charAt(i);
             if (isSymbol(ch)) {
-                handleSymbol(sb, ch, forceFilterSymbols, filterScriptTags);
+                handleSymbol(sb, ch, filterSymbols);
             } else if (Character.isISOControl(ch) && !Character.isWhitespace(ch)) {
                 handleControlChar(sb, ch, filterControlChars);
             } else {
@@ -132,11 +132,9 @@ public final class NCICommonsUtils {
         return sb.toString();
     }
 
-    private static void handleSymbol(StringBuffer sb, char ch, boolean filter, boolean filterScriptTags) {
+    private static void handleSymbol(StringBuffer sb, char ch, boolean filter) {
         if (filter) {
-            if (filterScriptTags) {
-                sb.append(' ');
-            } else if (ch == '<') {
+            if (ch == '<') {
                 sb.append("&lt;");
             } else {
                 sb.append("&gt;");

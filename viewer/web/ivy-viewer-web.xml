@@ -14,7 +14,7 @@
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.8-SNAPSHOT" conf="runtime->default">
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="1.4.9-SNAPSHOT" conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
     </dependency>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.3"           conf="runtime->default">
@@ -65,7 +65,7 @@
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="test->master"/>
     <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa"    name="nci-commons-ctrp-core"     rev="1.4.8-SNAPSHOT"  conf="test->master"/>
+    <dependency org="gov.nih.nci.coppa"    name="nci-commons-ctrp-core"     rev="1.4.9-SNAPSHOT"  conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"           rev="5.0"             conf="test-checkstyle->master,runtime"/>

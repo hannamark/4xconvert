@@ -144,11 +144,24 @@ public class NCICommonsUtilsTest {
         assertFalse(s.equals(sb.toString()));
         assertTrue(s.equals(sb1.toString()));
     }
+    
+    /**
+     * See https://tracker.nci.nih.gov/browse/PO-6114.
+     */
+    @Test
+    public void testNoBlindFilteringOfLessThanGreaterThan() {
+        String input = "> is greater than; < is less than; trial description X-ray imges; high frame rate <script><img><frame><href>";
+        String filtered = NCICommonsUtils.performXSSFilter(input, false, true, true);
+        assertEquals("> is greater than; < is less than; trial description X-ray imges; high frame rate script>img>frame>href>", filtered);
+        
+        input = "<scriptaculous>This will never run as script in browser; no need to filter</scriptaculous>";
+        assertEquals(input, NCICommonsUtils.performXSSFilter(input, false, true, true));
+    }
 
     @Test
     public void testFilterScriptTag() {
         String testString = "security<script>alert(34880)</script>";
-        String fixedString = "security script alert(34880) /script ";
+        String fixedString = "securityscript>alert(34880)script>";
         // lowercase
         assertEquals(fixedString, NCICommonsUtils.performXSSFilter(testString, false, true, true));
         assertEquals(fixedString, NCICommonsUtils.performXSSFilter(testString, false, false, true));
