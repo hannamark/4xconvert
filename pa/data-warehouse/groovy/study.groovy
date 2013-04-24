@@ -62,7 +62,7 @@ def sql =
             summary4.type_code as summary4_type_code, summary4_sponsor.name as summary4_sponsor, stopped.comment_text as why_stopped,
             sp.comments, sp.processing_priority, sp.ctro_override,
             sp.bio_specimen_description, sp.bio_specimen_retention_code, sp.sampling_method_code, sp.study_model_code, sp.study_model_other_text,
-            sp.study_population_description, sp.time_perspective_code, sp.time_perspective_other_text, sp.study_subtype_code
+            sp.study_population_description, sp.time_perspective_code, sp.time_perspective_other_text, sp.study_protocol_type, sp.study_subtype_code
             from STUDY_PROTOCOL sp
                 left outer join study_checkout as admin on admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE'
                 left outer join study_checkout as scientific on scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC'
@@ -152,7 +152,7 @@ sourceConnection.eachRow(sql) { row ->
                     bio_specimen_description: row.bio_specimen_description, bio_specimen_retention_code: row.bio_specimen_retention_code, 
                     sampling_method_code: row.sampling_method_code, study_model_code: row.study_model_code, study_model_other_text: row.study_model_other_text,
                     study_population_description: row.study_population_description, time_perspective_code: row.time_perspective_code,
-                    time_perspective_other_text: row.time_perspective_other_text, study_subtype_code: row.study_subtype_code
+                    time_perspective_other_text: row.time_perspective_other_text, study_protocol_type: row.study_protocol_type, study_subtype_code: row.study_subtype_code
                     )
         } catch (Exception e) {
             println "Error adding row : " + row
@@ -404,5 +404,9 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='C
 destinationConnection.execute("""UPDATE STG_DW_STUDY SET INTERVENTIONAL_MODEL='Factorial'    
 	where INTERVENTIONAL_MODEL='FACTORIAL'""")
 
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET STUDY_PROTOCOL_TYPE='Interventional'    
+	where STUDY_PROTOCOL_TYPE='InterventionalStudyProtocol'""")
+destinationConnection.execute("""UPDATE STG_DW_STUDY SET STUDY_PROTOCOL_TYPE='Non-interventional'    
+	where STUDY_PROTOCOL_TYPE='NonInterventionalStudyProtocol'""")
 		
 		
