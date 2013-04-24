@@ -114,7 +114,8 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     private static final int THREE = 3;
     private static final String PERSON_BY_STUDY_SITE_ID_QUERY = "select sp, spc, hcp, p from StudySite as sp  "
             + " join sp.studySiteContacts as spc join spc.clinicalResearchStaff as hcp "
-            + " join hcp.person as p where sp.id in (:ids) and spc.roleCode = :roleCode";
+            + " join hcp.person as p left join fetch spc.healthCareProvider "
+            + "where sp.id in (:ids) and spc.roleCode = :roleCode";
 
     private static final String IDENTIFIER_BY_SPC_ID_QUERY = "select spc, hcp from StudySiteContact as spc"
             + " join spc.clinicalResearchStaff as hcp"

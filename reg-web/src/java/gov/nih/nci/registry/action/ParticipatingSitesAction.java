@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -107,6 +108,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -146,64 +148,117 @@ public class ParticipatingSitesAction extends ActionSupport implements Preparabl
      * @return string
      * @throws PAException PAException
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public String execute() throws PAException {
-        organizationList = new ArrayList<PaOrganizationDTO>();
-        String studyProtocolIdStr = ServletActionContext.getRequest().getParameter("studyProtocolId");
-        Long studyProtocolId;
+    public String execute() throws PAException {   // NOPMD
+        String studyProtocolIdStr = ServletActionContext.getRequest().getParameter("studyProtocolId");        
         if (!StringUtils.isEmpty(studyProtocolIdStr)) {
-            studyProtocolId = Long.parseLong(studyProtocolIdStr);
-            Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
-            StudySiteDTO srDTO = new StudySiteDTO();
-            srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
-                            .getCode()));
-            for (StudySiteDTO studySiteDTO : studySiteService.getByStudyProtocol(spIi, srDTO)) {
-                Organization orgBo = correlationUtils.getPAOrganizationByIi(studySiteDTO.getHealthcareFacilityIi());
-                PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
-                orgWebDTO.setId(IiConverter.convertToString(studySiteDTO.getIdentifier()));
-                orgWebDTO.setName(orgBo.getName());
-                orgWebDTO.setNciNumber(orgBo.getIdentifier());   
-                if (studySiteDTO.getStatusCode() != null) {
-                    orgWebDTO.setStatus(studySiteDTO.getStatusCode().getCode());
-                }
-                if (studySiteDTO.getProgramCodeText() != null) {
-                    orgWebDTO.setProgramCode(StConverter.convertToString(studySiteDTO.getProgramCodeText()));
-                }
-                if (studySiteDTO.getIdentifier() != null && studySiteDTO.getIdentifier().getExtension() != null) {
-                    final Long studySiteId = Long.valueOf(studySiteDTO.getIdentifier().getExtension().toString());
-                    orgWebDTO.setInvestigator(convertInvestigators(studySiteId));
-                }
-                organizationList.add(orgWebDTO);
-            }
-            
-            Collections.sort(organizationList, new Comparator<PaOrganizationDTO>() {
-                @Override
-                public int compare(PaOrganizationDTO o1, PaOrganizationDTO o2) {
-                    return StringUtils.defaultString(o1.getName()).compareTo(
-                            StringUtils.defaultString(o2.getName()));
-                }
-            });
+            final Long studyProtocolId = Long.parseLong(studyProtocolIdStr);
+            organizationList = (List<PaOrganizationDTO>) CacheUtils
+                    .getFromCacheOrBackend(
+                            CacheUtils.getViewParticipatingSitesCache(),
+                            studyProtocolId.toString(),
+                            new CacheUtils.Closure() {
+                                @Override
+                                public Object execute() throws PAException { // NOPMD
+                                    final List<PaOrganizationDTO> list = new ArrayList<PaOrganizationDTO>();
+                                    Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
+                                    StudySiteDTO srDTO = new StudySiteDTO();
+                                    srDTO.setFunctionalCode(CdConverter
+                                            .convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
+                                                    .getCode()));
+                                    final List<StudySiteDTO> studySites = studySiteService
+                                            .getByStudyProtocol(spIi, srDTO);
+                                    Long[] siteIds = collectSiteIDs(studySites);
+                                    Map<Long, List<PaPersonDTO>> investigatorMap = paHealthCareProviderService
+                                            .getPersonsByStudySiteId(
+                                                    siteIds,
+                                                    StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR
+                                                            .getName());
+                                    Map<Long, List<PaPersonDTO>> subInvestigatorMap = paHealthCareProviderService
+                                            .getPersonsByStudySiteId(
+                                                    siteIds,
+                                                    StudySiteContactRoleCode.SUB_INVESTIGATOR
+                                                            .getName());          
+                                    for (StudySiteDTO studySiteDTO : studySites) {
+                                        Organization orgBo = correlationUtils
+                                                .getPAOrganizationByIi(studySiteDTO
+                                                        .getHealthcareFacilityIi());
+                                        PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
+                                        orgWebDTO.setId(IiConverter.convertToString(studySiteDTO.getIdentifier()));
+                                        orgWebDTO.setName(orgBo.getName());
+                                        orgWebDTO.setNciNumber(orgBo.getIdentifier());   
+                                        if (studySiteDTO.getStatusCode() != null) {
+                                            orgWebDTO.setStatus(studySiteDTO.getStatusCode().getCode());
+                                        }
+                                        if (studySiteDTO.getProgramCodeText() != null) {
+                                            orgWebDTO.setProgramCode(StConverter
+                                                    .convertToString(studySiteDTO
+                                                            .getProgramCodeText()));
+                                        }
+                                        if (studySiteDTO.getIdentifier() != null
+                                                && studySiteDTO.getIdentifier()
+                                                        .getExtension() != null) {
+                                            final Long studySiteId = Long
+                                                    .valueOf(studySiteDTO
+                                                            .getIdentifier()
+                                                            .getExtension()
+                                                            .toString());
+                                            orgWebDTO.setInvestigator(convertInvestigators(studySiteId,
+                                                    investigatorMap, subInvestigatorMap));
+                                        }
+                                        list.add(orgWebDTO);
+                                    }
+                                    
+                                    Collections.sort(list, new Comparator<PaOrganizationDTO>() {
+                                        @Override
+                                        public int compare(PaOrganizationDTO o1, PaOrganizationDTO o2) {
+                                            return StringUtils.defaultString(o1.getName()).compareTo(
+                                                    StringUtils.defaultString(o2.getName()));
+                                        }
+                                    });
+                                    
+                                    return list.isEmpty() ? null : list;
+                                }
+                            });
         }
+        organizationList = organizationList == null ? new ArrayList<PaOrganizationDTO>()
+                : organizationList;
         return SUCCESS;
     }
     
-    private String convertInvestigators(final Long studySiteId) throws PAException {
+    private Long[] collectSiteIDs(List<StudySiteDTO> studySites) {
+        List<Long> list = new ArrayList<Long>();
+        for (StudySiteDTO studySiteDTO : studySites) {
+            if (studySiteDTO.getIdentifier() != null
+                    && studySiteDTO.getIdentifier().getExtension() != null) {
+                final Long studySiteId = Long.valueOf(studySiteDTO
+                        .getIdentifier().getExtension().toString());
+                list.add(studySiteId);
+            }
+        }
+        return list.toArray(new Long[0]); // NOPMD
+    }
+
+    private String convertInvestigators(final Long studySiteId,
+            Map<Long, List<PaPersonDTO>> investigatorMap,
+            Map<Long, List<PaPersonDTO>> subInvestigatorMap) throws PAException {
         StringBuffer invList = new StringBuffer();
-        List<PaPersonDTO> principalInvestigators = paHealthCareProviderService
-            .getPersonsByStudySiteId(studySiteId, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+        List<PaPersonDTO> principalInvestigators = investigatorMap.get(studySiteId);
         getInvestigatorDisplayString(invList, principalInvestigators);
-        List<PaPersonDTO> sublInvestigators = paHealthCareProviderService
-            .getPersonsByStudySiteId(studySiteId, StudySiteContactRoleCode.SUB_INVESTIGATOR.getName());
+        List<PaPersonDTO> sublInvestigators = subInvestigatorMap.get(studySiteId);
         getInvestigatorDisplayString(invList, sublInvestigators);
         return invList.toString();
     }
     
     private void getInvestigatorDisplayString(StringBuffer invList, List<PaPersonDTO> investigators) {
-        for (PaPersonDTO pi : investigators) {
-            String fullName = StringUtils.defaultString(pi.getFullName());
-            String roleName = PAUtil.getCode(pi.getRoleName());
-            String status = PAUtil.getCode(pi.getStatusCode());
-            invList.append(String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status));
+        if (investigators != null) {
+            for (PaPersonDTO pi : investigators) {
+                String fullName = StringUtils.defaultString(pi.getFullName());
+                String roleName = PAUtil.getCode(pi.getRoleName());
+                String status = PAUtil.getCode(pi.getStatusCode());
+                invList.append(String.format(INVESTIGATOR_DISPLAY_FMT, fullName, roleName, status));
+            }
         }
     }
 

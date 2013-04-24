@@ -56,6 +56,15 @@
          timeToLiveSeconds="600"
          overflowToDisk="false"
     />
+    
+    <cache
+         name="VIEW_PARTICIPATING_SITES_CACHE"
+         maxElementsInMemory="5"
+         eternal="false"         
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="120"
+         overflowToDisk="false"
+    />
 
     <!-- Caches used for trial search optimizations. -->
     <cache

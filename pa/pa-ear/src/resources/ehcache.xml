@@ -78,6 +78,15 @@
          overflowToDisk="false"
     />
     
+    <cache
+         name="VIEW_PARTICIPATING_SITES_CACHE"
+         maxElementsInMemory="5"
+         eternal="false"         
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="120"
+         overflowToDisk="false"
+    />
+    
 
     <!-- Hibernate Query Cache Regions -->
     <cache
