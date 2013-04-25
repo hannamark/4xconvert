@@ -1,5 +1,3 @@
-DELETE FROM study_subject where study_site_identifier is null OR (study_site_identifier IS NOT NULL AND study_site_identifier NOT IN (SELECT identifier FROM study_site where functional_code = 'TREATING_SITE'));
-
 ALTER TABLE study_subject DROP CONSTRAINT fk_study_subject_study_site;
 
 ALTER TABLE study_subject ADD CONSTRAINT fk_study_subject_study_site
