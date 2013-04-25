@@ -1272,5 +1272,9 @@
      <changeSet id="PO-6088" author="krylovd">
         <comment>Added property for keeping NCI's PO ID.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6088.sql"/>
+     </changeSet>
+     <changeSet id="PO-6112" author="Kalpana">
+        <comment>Clean up study_subject table.</comment>
+        <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.9.1/PO-6112.sql"/>
      </changeSet>     
 </databaseChangeLog>
