@@ -191,7 +191,12 @@
         <label for="registryUserWebDTO.enableEmails"> <fmt:message key="register.user.enableEmails"/></label>
     </td>
     <td>
-        <s:checkbox id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails" />
+        <s:if test="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}">
+            <s:checkbox id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails"  fieldValue="true" value="true"/>
+        </s:if>
+        <s:else>
+            <s:checkbox id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails" value="registryUserWebDTO.enableEmails"/>
+        </s:else>
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.enableEmails</s:param>
