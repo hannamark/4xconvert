@@ -128,6 +128,7 @@ import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -158,6 +159,7 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -172,6 +174,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
@@ -351,6 +354,18 @@ public class TestSchema {
         sos.setStatusDate(TODAY);
         sos.setStudyProtocol(sp);
         addUpdObject(sos);
+        
+        StudyProtocolAssociation association = new StudyProtocolAssociation();
+        association.setDateLastCreated(new Date());
+        association.setIdentifierType(IdentifierType.NCI);
+        association.setOfficialTitle("A Phase I Study of Rituximab, Lenalidomide, and Ibrutinib");
+        association.setStudyIdentifier("NCI-2013-00792");
+        association.setStudyProtocolA(sp);
+        association.setStudyProtocolType(StudyTypeCode.INTERVENTIONAL);
+        association.setStudySubtypeCode(StudySubtypeCode.ANCILLARY_CORRELATIVE);
+        association.setUserLastCreated(ru.getUserLastCreated());
+        addUpdObject(association);
+        
 
         StudyAccrualAccess studyAccrualAccess = new StudyAccrualAccess();
         studyAccrualAccess.setActionCode(AssignmentActionCode.ASSIGNED);

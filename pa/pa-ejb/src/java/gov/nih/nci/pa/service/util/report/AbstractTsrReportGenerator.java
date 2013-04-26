@@ -171,6 +171,7 @@ public abstract class AbstractTsrReportGenerator {
     private List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
     private List<TSRReportIntervention> interventions = new ArrayList<TSRReportIntervention>();
     private List<TSRReportPlannedMarker> plannedMarkers = new ArrayList<TSRReportPlannedMarker>();
+    private final List<TSRReportAssociatedTrial> associatedTrials = new ArrayList<TSRReportAssociatedTrial>();
 
     /**
      * @param tsrReport basic information about the report.
@@ -245,6 +246,7 @@ public abstract class AbstractTsrReportGenerator {
         getReportDocument().add(getLineBreak());
         if (!isProprietaryTrial()) {
             addTrialIdentificationTable();
+            addTrialAssociationsTable();
             addGeneralTrialDetailsTable();
             addStatusDatesTable();
             addRegulatoryInformationTable();
@@ -265,6 +267,7 @@ public abstract class AbstractTsrReportGenerator {
             addParticipatingSitesTable();
         } else {
             addTrialIdentificationTable();
+            addTrialAssociationsTable();
             addGeneralTrialDetailsTable();
             addSummary4InformationTable();
             addDiseaseConditionTable();
@@ -750,6 +753,34 @@ public abstract class AbstractTsrReportGenerator {
                 interventionTable.addCell(getItemValueCell(intv.getDescription()));
             }
             table.insertTable(interventionTable);
+            reportDocument.add(table);
+            reportDocument.add(getLineBreak());
+        }
+    }
+    
+    private void addTrialAssociationsTable() throws DocumentException {
+        if (CollectionUtils.isNotEmpty(getAssociatedTrials())) {
+            Table table = getOuterTable(
+                    TSRReportLabelText.TABLE_ASSOCIATED_TRIALS, true);
+            Table trialAssociationsTable = getInnerTable(Arrays.asList(
+                    TSRReportLabelText.TRIAL_IDENTIFIER,
+                    TSRReportLabelText.IDENTIFIER_TYPE,
+                    TSRReportLabelText.TRIAL_TYPE,
+                    TSRReportLabelText.TRIAL_SUBTYPE,
+                    TSRReportLabelText.OFFICIAL_TITLE));
+            for (TSRReportAssociatedTrial trial : getAssociatedTrials()) {
+                trialAssociationsTable.addCell(getItemValueCell(trial
+                        .getTrialIdentifier()));
+                trialAssociationsTable.addCell(getItemValueCell(trial
+                        .getIdentifierType()));
+                trialAssociationsTable
+                        .addCell(getItemValueCell(trial.getTrialType()));
+                trialAssociationsTable.addCell(getItemValueCell(trial
+                        .getTrialSubType()));
+                trialAssociationsTable.addCell(getItemValueCell(trial
+                        .getOfficialTitle()));
+            }
+            table.insertTable(trialAssociationsTable);
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
         }
@@ -1420,6 +1451,13 @@ public abstract class AbstractTsrReportGenerator {
      */
     public void setNonInterventionalTrial(boolean nonInterventionalTrial) {
         this.nonInterventionalTrial = nonInterventionalTrial;
+    }
+
+    /**
+     * @return the associatedTrials
+     */
+    public List<TSRReportAssociatedTrial> getAssociatedTrials() {
+        return associatedTrials;
     }
 
 }

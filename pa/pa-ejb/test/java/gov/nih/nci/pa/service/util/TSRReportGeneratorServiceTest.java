@@ -90,14 +90,17 @@ import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
 import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -140,6 +143,9 @@ public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
         bean.setStudyContactService(new StudyContactServiceBean());
 
         TestSchema.primeData();
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
     }
 
     @Test
@@ -162,7 +168,10 @@ public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
     }
 
     private void writeToFile(ByteArrayOutputStream os, String fileName) throws DocumentException, IOException {
-        OutputStream fos = new FileOutputStream(fileName);
+        File file = new File(fileName);
+        OutputStream fos = new FileOutputStream(file);
         os.writeTo(fos);
+        fos.close();
+        file.deleteOnExit();
     }
 }

@@ -575,6 +575,12 @@ public class TSRReportLabelText { //NOPMD
      * Intervention.
      */
     public static final String TABLE_INTERVENTION = "Intervention(s)";
+    
+    /**
+     * TABLE_ASSOCIATED_TRIALS
+     */
+    public static final String TABLE_ASSOCIATED_TRIALS = "Associated Trials";
+    
     /**
      * Intervention Name.
      */
@@ -755,5 +761,24 @@ public class TSRReportLabelText { //NOPMD
     /**
      * 
      */
+    /**
+     * 
+     */
     public static final String TD_TIME_PERSPECTIVE_OTHER_TEXT = "Time Perspective Description";
+    /**
+     * 
+     */
+    public static final String TRIAL_IDENTIFIER = "Trial Identifier";
+    /**
+     * 
+     */
+    public static final String IDENTIFIER_TYPE = "Identifier Type";
+    /**
+     * 
+     */
+    public static final String TRIAL_SUBTYPE = "Trial Sub-type";
+    /**
+     * 
+     */
+    public static final String OFFICIAL_TITLE = "Official Title";
 }

@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.report.AbstractTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.HtmlTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.PdfTsrReportGenerator;
@@ -85,6 +88,7 @@ import gov.nih.nci.pa.service.util.report.RtfTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.TSRErrorReport;
 import gov.nih.nci.pa.service.util.report.TSRReport;
 import gov.nih.nci.pa.service.util.report.TSRReportArmGroup;
+import gov.nih.nci.pa.service.util.report.TSRReportAssociatedTrial;
 import gov.nih.nci.pa.service.util.report.TSRReportCollaborator;
 import gov.nih.nci.pa.service.util.report.TSRReportDiseaseCondition;
 import gov.nih.nci.pa.service.util.report.TSRReportEligibilityCriteria;
@@ -106,6 +110,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -178,8 +183,11 @@ public class TSRReportGeneratorTest {
     }
 
     private void writeToFile(ByteArrayOutputStream os, String fileName) throws DocumentException, IOException {
-        OutputStream fos = new FileOutputStream(fileName);
+        File file = new File(fileName);
+        OutputStream fos = new FileOutputStream(file);
         os.writeTo(fos);
+        fos.close();
+        file.deleteOnExit();
     }
 
     private void setupDataForTsrGenerationTest(AbstractTsrReportGenerator tsrReportGenerator) throws Exception {
@@ -196,6 +204,15 @@ public class TSRReportGeneratorTest {
         trialIdentification.getOtherIdentifiers().add("OID - 2");
         trialIdentification.getOtherIdentifiers().add("OID - 3");
         tsrReportGenerator.setTrialIdentification(trialIdentification);
+        
+        StudyProtocolAssociationDTO association = new StudyProtocolAssociationDTO();
+        association.setIdentifierType(CdConverter.convertStringToCd("NCT"));
+        association.setOfficialTitle(StConverter.convertToSt("A Phase I Study of Rituximab, Lenalidomide, and Ibrutinib in Previously Untreated Follicular Lymphoma"));
+        association.setStudyIdentifier(StConverter.convertToSt("A051103"));
+        association.setStudyProtocolType(CdConverter.convertStringToCd("Interventional"));
+        association.setStudySubtypeCode(CdConverter.convertStringToCd("Ancillary-Correlative"));
+        TSRReportAssociatedTrial trial = new TSRReportAssociatedTrial(association);
+        tsrReportGenerator.getAssociatedTrials().add(trial);
 
         // General Trial Details Data
         TSRReportGeneralTrialDetails generalTrialDetails = new TSRReportGeneralTrialDetails();

@@ -117,6 +117,7 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -159,6 +160,7 @@ import gov.nih.nci.pa.service.util.report.RtfTsrReportGenerator;
 import gov.nih.nci.pa.service.util.report.TSRErrorReport;
 import gov.nih.nci.pa.service.util.report.TSRReport;
 import gov.nih.nci.pa.service.util.report.TSRReportArmGroup;
+import gov.nih.nci.pa.service.util.report.TSRReportAssociatedTrial;
 import gov.nih.nci.pa.service.util.report.TSRReportCollaborator;
 import gov.nih.nci.pa.service.util.report.TSRReportDiseaseCondition;
 import gov.nih.nci.pa.service.util.report.TSRReportEligibilityCriteria;
@@ -373,6 +375,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
     NullifiedRoleException {
         setTrialIdentificationDetails(studyProtocolDto, true);
+        setAssociatedTrials(studyProtocolDto);
         setGeneralTrialDetails(studyProtocolDto, true);
         setSummary4Information(studyProtocolDto);
         setDiseases(studyProtocolDto);
@@ -385,6 +388,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setNonProprietaryTrialReportDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
     NullifiedRoleException {
         setTrialIdentificationDetails(studyProtocolDto, false);
+        setAssociatedTrials(studyProtocolDto);
         setGeneralTrialDetails(studyProtocolDto, false);
         setStatusDatesDetails(studyProtocolDto);
         setRegulatoryInformation(studyProtocolDto);
@@ -411,6 +415,18 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     tsrReportGenerator.getInterventions().add(getIntervention(paDto));
                 }
             }
+        }
+    }
+    
+    private void setAssociatedTrials(StudyProtocolDTO studyProtocolDto)
+            throws PAException {
+        List<StudyProtocolAssociationDTO> list = PaRegistry
+                .getStudyProtocolService().getTrialAssociations(
+                        IiConverter.convertToLong(studyProtocolDto
+                                .getIdentifier()));
+        for (StudyProtocolAssociationDTO association : list) {
+            tsrReportGenerator.getAssociatedTrials().add(
+                    new TSRReportAssociatedTrial(association));
         }
     }
 
@@ -863,10 +879,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         tsrReportGenerator.setDiseaseConditions(diseaseConditions);
     }
 
-    private void setTrialDesign(StudyProtocolDTO studyProtocolDto) throws PAException {
-        TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();
-        StudyProtocolDTO ispDTO =
-            PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolDto.getIdentifier());
+    private void setTrialDesign(StudyProtocolDTO ispDTO) throws PAException {
+        TSRReportTrialDesign trialDesign = new TSRReportTrialDesign();        
         boolean interventionalType = !(ispDTO instanceof NonInterventionalStudyProtocolDTO);
         trialDesign.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_NON_INTERVENTIONAL);
         if (ispDTO != null) {
