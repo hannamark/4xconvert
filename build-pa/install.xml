@@ -150,7 +150,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
 
     <!-- Clean up destination directory -->
     <target name="install:common:clean" description="Removes all files from the local filesystem"
-            depends="pa-grid-retired:clean, install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.4-jboss:clean"/>
+            depends="install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.4-jboss:clean"/>
 
     <target name="pa-grid-retired:clean" if="retired.grid.dir.exist" depends="pa-grid-retired:exist">
         <echo message="Deleting retired grid service containers ${pagrid-3.0.dir} and ${pagrid-3.1.dir}."/>
@@ -188,7 +188,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             />
     </target>
 
-    <target name="common:init" depends="common:init:pre">
+    <target name="common:init" depends="common:init:pre, pa-grid-retired:clean">
         <!-- bda-blueprints-webapp can use either Oracle or MySQL or PostgreSQL as its database platform, this is controled by the database.type property.  Based on the value of this property sent several variables for use during install -->
         <echoproperties  prefix="database"> <propertyset negate="yes" > <propertyref regex="passw" /> </propertyset> </echoproperties>
         <switch value="${database.type}">
@@ -226,7 +226,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
             <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}"/>
             <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}"/>
-            <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}"/>            
+            <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}"/>
             <filter token="po.server.name" value="${po.server.name}"/>
             <filter token="po.port.number" value="${po.port.number}"/>
             <filter token="po.topic.serverName" value="${po.topic.serverName}"/>
