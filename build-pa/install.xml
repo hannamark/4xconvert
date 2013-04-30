@@ -149,7 +149,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <!-- Clean up destination directory -->
-    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.4-jboss:clean"/>
+    <target name="install:common:clean" description="Removes all files from the local filesystem"
+            depends="pa-grid-retired:clean, install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.4-jboss:clean"/>
+
+    <target name="pa-grid-retired:clean" if="retired.grid.dir.exist" depends="pa-grid-retired:exist">
+        <echo message="Deleting retired grid service containers ${pagrid-3.0.dir} and ${pagrid-3.1.dir}."/>
+        <sleep seconds="5" />
+        <delete dir="${pagrid-3.0.dir}"/>
+        <delete dir="${pagrid-3.1.dir}"/>
+    </target>
+
+    <target name="pa-grid-retired:exist">
+        <echo message="Checking if retired grid service containers ${pagrid-3.0.dir} and ${pagrid-3.1.dir} exist."/>
+        <available file="${pagrid-3.0.dir}" type="dir" property="retired.grid.dir.exist"/>
+        <available file="${pagrid-3.1.dir}" type="dir" property="retired.grid.dir.exist"/>
+    </target>
 
     <target name="common:init:pre">
         <!-- Set application.base.path based on platform -->
@@ -165,6 +179,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         </condition>
         <echo message="application.base.path=${application.base.path}"/>
         <property name="jboss.home" value="${application.base.path}/${jboss.relative.path}"/>
+        <property name="pagrid-3.0.dir" value="${application.base.path}/pagrid-3.0"/>
+        <property name="pagrid-3.1.dir" value="${application.base.path}/pagrid-3.1"/>
         <jboss-version
             />
         <property name="tomcat.home" value="${application.base.path}/${tomcat.relative.path}"/>
