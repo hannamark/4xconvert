@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.TelPhone;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -170,6 +171,21 @@ public class DSetConverterTest {
         assertEquals(1, DSetConverter.getTelByType(dset, "mailto:").size());
         
     }    
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void getTelByTypeEncodingTest() throws URISyntaxException {
+        DSet<Tel> dset = new DSet<Tel>();
+        dset.setItem(new HashSet<Tel>());
+
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI(("tel:555%20555%205555")));
+        dset.getItem().add(phone);
+        List<String> list = DSetConverter.getTelByType(dset, "tel:");
+        assertEquals(1, list.size());
+        assertEquals("555 555 5555", list.get(0));
+
+    }
     
     /**
      * test the isPhone method for the case of a TelPhone

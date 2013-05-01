@@ -494,6 +494,7 @@ public class DSetConverter {
      * @param type tel type
      * @return list
      */
+    @SuppressWarnings("deprecation")
     public static List<String> getTelByType(DSet<Tel> dset, String type) {
 
         List<String> returnList = new ArrayList<String>();
@@ -503,7 +504,7 @@ public class DSetConverter {
             for (Tel item : telList) {
                 String value = item.getValue().toString();
                 if (!StringUtils.isEmpty(value) && value.startsWith(type)) {
-                    returnList.add(value.replaceFirst(type, ""));
+                    returnList.add(URLDecoder.decode(value.replaceFirst(type, "")));
                 }
             }
         }
