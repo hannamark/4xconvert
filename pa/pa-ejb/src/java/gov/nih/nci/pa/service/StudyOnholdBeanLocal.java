@@ -11,6 +11,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -127,8 +128,19 @@ implements StudyOnholdServiceLocal {
         if (!onHold && newOnHold) {
             createDocumentWorkflowStatus(dto.getStudyProtocolIdentifier(), DocumentWorkflowStatusCode.ON_HOLD);
         }
-        sendOnHoldEmail(dto);
+        String[] reasonCodes = getOnHoldReminderReasons();
+        OnholdReasonCode reason = OnholdReasonCode.getByCode(CdConverter.convertCdToString(dto.getOnholdReasonCode()));
+        if (reason != null && ArrayUtils.contains(reasonCodes, reason.name())) {
+            sendOnHoldEmail(dto);
+        }
         return result;
+    }
+
+    private String[] getOnHoldReminderReasons() throws PAException {
+        String[] codes = lookUpTableServiceRemote
+                .getPropertyValue("trial.onhold.reminder.reasons").trim()
+                .split(",");
+        return codes;
     }
     
     /**
@@ -348,9 +360,7 @@ implements StudyOnholdServiceLocal {
     private void processOnHoldTrial(StudyProtocol studyProtocol)
             throws PAException {
         
-        String[] codes = lookUpTableServiceRemote
-                .getPropertyValue("trial.onhold.reminder.reasons").trim()
-                .split(",");
+        String[] codes = getOnHoldReminderReasons();
         
         List<StudyOnhold> onholds = new ArrayList<StudyOnhold>(
                 studyProtocol.getStudyOnholds());    

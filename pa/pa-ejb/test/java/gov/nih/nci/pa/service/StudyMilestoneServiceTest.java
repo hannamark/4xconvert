@@ -201,6 +201,11 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                 lookUpTableServiceRemote
                         .getPropertyValue(eq("trial.onhold.deadline")))
                 .thenReturn("21");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.onhold.reminder.reasons")))
+                .thenReturn("SUBMISSION_INCOM,SUBMISSION_INCOM_MISSING_DOCS");
+        
         ohs.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
         bean.setDocumentWorkflowStatusService(dws);
