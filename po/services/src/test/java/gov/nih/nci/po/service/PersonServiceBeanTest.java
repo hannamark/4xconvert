@@ -102,7 +102,7 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 
-public class PersonServiceBeanTest extends AbstractBeanTest {
+public class PersonServiceBeanTest extends AbstractServiceBeanTest {
 
     private PersonServiceBean personServiceBean;
 
@@ -111,7 +111,7 @@ public class PersonServiceBeanTest extends AbstractBeanTest {
     }
 
     @Before
-    public void setUpData() {
+    public void setUpData() {        
         personServiceBean = EjbTestHelper.getPersonServiceBean();
     }
 

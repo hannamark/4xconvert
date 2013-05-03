@@ -99,6 +99,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.RoleStatusConverter;
 import gov.nih.nci.po.service.AbstractBeanTest;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationServiceBeanTest;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
@@ -120,7 +121,7 @@ import org.junit.Test;
  *
  */
 public abstract class AbstractStructrualRoleRemoteServiceTest<T extends CorrelationDto, CR extends CorrelationChangeRequest<?>>
-        extends AbstractBeanTest {
+        extends AbstractServiceBeanTest {
 
     protected Person basicPerson = null;
     protected Organization basicOrganization = null;
