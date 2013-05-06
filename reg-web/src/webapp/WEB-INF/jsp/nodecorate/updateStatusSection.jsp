@@ -99,7 +99,7 @@
         </s:fielderror>
     </span>
 </reg-web:valueRow>
-<reg-web:valueRow labelKey="blank.label" noLabelTag="true">
-    <span class="info">Please refer to the <a href="https://wiki.nci.nih.gov/x/SaZiAw" target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
+<reg-web:valueRow labelKey="blank.label" noLabelTag="true"> 
+    <span class="info">Please refer to the <a href="javascript:void(0)" onclick="Help.popHelp('statusdates');">Trial Status Rules for Start and Completion dates</a>.</span>
 </reg-web:valueRow>
 <reg-web:spaceRow/> 
