@@ -206,6 +206,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     
     private static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator";
     private static final String SPONSOR = "Sponsor";
+    private static final String NCT_ID_PATTERN = "^NCT\\d+$";
 
     static {
         createCtGovValues();
@@ -814,7 +815,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (!isProprietaryTrial) {
             List<Ii> otherIdentifierIis = PAUtil.getOtherIdentifiers(spDTO);
             for (Ii otherIdIi : otherIdentifierIis) {
-                addSecondaryId(doc, idInfo, otherIdIi.getExtension(), "", "");
+                final String idValue = StringUtils.defaultString(otherIdIi.getExtension());
+                if (!idValue.matches(NCT_ID_PATTERN)) {
+                    addSecondaryId(doc, idInfo, idValue, "", "");
+                }
             }
             addSecondaryId(
                     doc,
