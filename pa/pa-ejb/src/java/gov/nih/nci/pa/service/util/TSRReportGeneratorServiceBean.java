@@ -400,6 +400,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         setDiseases(studyProtocolDto);
         setTrialDesign(studyProtocolDto);
         setEligibilityCriteria(studyProtocolDto);
+        setInterventions(studyProtocolDto);
         setArmGroups(studyProtocolDto);
         setPrimaryAndSecondaryOutcomeMeasures(studyProtocolDto);
         setSubGroupStratificationCriteria(studyProtocolDto);

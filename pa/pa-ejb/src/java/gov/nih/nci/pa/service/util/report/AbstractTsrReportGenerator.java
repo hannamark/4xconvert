@@ -258,6 +258,7 @@ public abstract class AbstractTsrReportGenerator {
             addDiseaseConditionTable();
             addTrialDesignTable();
             addEligibilityCriteriaTable();
+            addInterventionsTable();
             addArmGroupsTable();
             addPrimaryOutcomesMeasuresTable();
             addSecondaryOutcomesMeasuresTable();
