@@ -117,6 +117,7 @@ public class ProtocolQueryResultsServiceTest {
     private Date scientific_checkout_date;
     private String comments;    
     private String onholdDescription;
+    private Boolean biomarker = true;
         
     Object[] qryResult = { studyProtocolIdentifier, officialTitle,
             proprietaryTrialIndicator, recordVerificationDate,
@@ -143,7 +144,7 @@ public class ProtocolQueryResultsServiceTest {
             scientific_checkout_csm_lname, scientific_checkout_reg_fname,
             scientific_checkout_reg_lname, onhold_reason_code, onhold_date,
             offhold_date, cdr_id, amendment_number, admin_checkout_date,
-            scientific_checkout_date, comments, onholdDescription };
+            scientific_checkout_date, comments, onholdDescription, biomarker };
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

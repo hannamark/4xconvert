@@ -85,7 +85,6 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
-import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -239,8 +238,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
                         CacheUtils.getSearchResultsCache(),
                         criteria.getUniqueCriteriaKey());
             }     
-            records = protocolQueryService.getStudyProtocolByCriteria(criteria);
-            setBioMarkersExistenceFlag();
+            records = protocolQueryService.getStudyProtocolByCriteria(criteria);            
             ActionUtils.sortTrialsByNciId(records);
             return SUCCESS;
         } catch (Exception e) {
@@ -249,17 +247,6 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         }
     }
     
-    private void setBioMarkersExistenceFlag() throws PAException { 
-        for (StudyProtocolQueryDTO record : records) {
-            List<PlannedMarkerDTO> results =
-            plannedMarkerService.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(record.getStudyProtocolId()));
-            if (!results.isEmpty()) {
-                record.setTrialHasBioMarkers(true);
-            } else {
-                record.setTrialHasBioMarkers(false);
-            }
-        }   
-    }
 
     /**
      * Validates the identifier portion of the search.

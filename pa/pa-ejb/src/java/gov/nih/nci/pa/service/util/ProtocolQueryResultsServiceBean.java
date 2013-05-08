@@ -164,7 +164,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "admin_checkout_csm_fname, admin_checkout_csm_lname, admin_checkout_reg_fname, admin_checkout_reg_lname, "
             + "scientific_checkout_csm_fname, scientific_checkout_csm_lname, scientific_checkout_reg_fname, "
             + "scientific_checkout_reg_lname, onhold_reason_code, onhold_date, offhold_date, cdr_id, amendment_number,"
-            + "admin_checkout_date, scientific_checkout_date, comments, onhold_reason_text"
+            + "admin_checkout_date, scientific_checkout_date, comments, onhold_reason_text, "
+            + "planned_marker_existence_indicator"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
@@ -268,6 +269,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int SCIENTIFIC_CHECKOUT_DATE_IDX = 69;
     private static final int COMMENTS_IDX = 70;
     private static final int ONHOLD_REASON_DESCRIPTION = 71;    
+    private static final int BIOMARKER_INDICATOR = 72;
     
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
@@ -583,6 +585,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setSubmitterOrgName((String) row[SUBMITTER_ORG_NAME_IDX]);
         
         loadRecentHoldData(dto, row);
+        
+        dto.setTrialHasBioMarkers(row[BIOMARKER_INDICATOR] != null ? (Boolean) row[BIOMARKER_INDICATOR]
+                : false);
     }
 
     /**

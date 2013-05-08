@@ -1276,5 +1276,9 @@
      <changeSet id="PO-6112" author="Kalpana">
         <comment>Clean up study_subject table.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/3.9.1/PO-6112.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-6140" author="krylovd">
+        <comment>Added new view to retrieve biomarker existence information.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6140.sql"/>
+     </changeSet>
 </databaseChangeLog>
