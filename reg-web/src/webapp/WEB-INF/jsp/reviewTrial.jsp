@@ -184,13 +184,12 @@
                                     <c:out value="${trialDTO.sitePiName}"/>
                                 </reg-web:valueRow>
                             </c:if>
-                            <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'
-                                            && trialDTO.xmlRequired == true}">
+                            <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
                                 <reg-web:valueRow labelKey="view.trial.principalInvestigator" noLabelTag="true">
                                     <c:out value="${trialDTO.piName}"/>
                                 </reg-web:valueRow>            
                                 <reg-web:spaceRow/>
-                                <c:if test="${trialDTO.sponsorName != null}">
+                                <c:if test="${trialDTO.sponsorName != null && trialDTO.xmlRequired == true}">
                                     <reg-web:titleRow titleKey="view.trial.sponsorResParty"/>
                                     <reg-web:valueRow labelKey="view.trial.sponsor" noLabelTag="true">
                                         <c:out value="${trialDTO.sponsorName}"/>
