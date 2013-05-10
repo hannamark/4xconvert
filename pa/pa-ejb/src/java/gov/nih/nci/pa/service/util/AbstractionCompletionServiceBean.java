@@ -176,6 +176,12 @@ import org.apache.commons.lang.BooleanUtils;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
+    private static final String NO_GROUPS_COHORTS_EXISTS_FOR_THE_TRIAL = "No Groups/Cohorts exists for the trial.";
+    private static final String SELECT_GROUPS_COHORTS_HINT = "Select Groups/Cohorts from "
+            + "Non-Interventional Trial Design "
+            + "under Scientific Data menu.";
+    private static final String NO_ARM_EXISTS_FOR_THE_TRIAL = "No Arm exists for the trial.";
+    private static final String SELECT_ARM_UNDER_SCIENTIFIC_DATA_MENU = "Select Arm under Scientific Data menu.";
     private static final String SELECT = "Select ";
     private static final String INTERVENTIONAL_STUDY_PROTOCOL = "InterventionalStudyProtocol";
     private static final String NON_INTERVENTIONAL_STUDY_PROTOCOL = "NonInterventionalStudyProtocol";
@@ -671,9 +677,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         .getInterventionalStudyProtocol(studyProtocolIi);
                 final Integer arms = ispDTO.getNumberOfInterventionGroups().getValue();
                 if (!(Integer.valueOf(1).equals(arms))) {
-                    messages.addError("Select Arm under Scientific Data menu.",
-                            "No Arm exists for the trial.",
+                    messages.addError(SELECT_ARM_UNDER_SCIENTIFIC_DATA_MENU,
+                            NO_ARM_EXISTS_FOR_THE_TRIAL,
                             ErrorMessageTypeEnum.SCIENTIFIC, 19);
+                } else {
+                    messages.addWarning(
+                            SELECT_ARM_UNDER_SCIENTIFIC_DATA_MENU,
+                            NO_ARM_EXISTS_FOR_THE_TRIAL, 19);
                 }
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
                     .equalsIgnoreCase(NON_INTERVENTIONAL_STUDY_PROTOCOL)) {
@@ -683,11 +693,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 final int interventions = getNumberOfInterventions(studyProtocolIi);
                 if (!(Integer.valueOf(1).equals(groups) && interventions <= 1)) {
                     messages.addError(
-                            "Select Groups/Cohorts from Non-Interventional Trial Design "
-                                    + "under Scientific Data menu.",
-                            "No Groups/Cohorts exists for the trial.",
+                            SELECT_GROUPS_COHORTS_HINT,
+                            NO_GROUPS_COHORTS_EXISTS_FOR_THE_TRIAL,
                             ErrorMessageTypeEnum.SCIENTIFIC, 19);
-                }              
+                } else {
+                    messages.addWarning(
+                            SELECT_GROUPS_COHORTS_HINT,
+                            NO_GROUPS_COHORTS_EXISTS_FOR_THE_TRIAL, 19);
+                }
             }
         } else {
             for (ArmDTO dto : dtos) {
