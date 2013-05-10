@@ -107,7 +107,10 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
      * Whole Blood.
      */
     WHOLE_BLOOD("Whole Blood"),
-    
+    /**
+     * Blood.
+     */
+    Blood("Blood"),
     /**
      * Tissue.
      */
@@ -120,17 +123,26 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
      * Peripheral Blood Monocytic Cells (PBMCs).
      */
     PERIPHERAL("Peripheral Blood Monocytic Cells (PBMCs)"),
-
+    /**
+     * PBMCs.
+     */
+    PBMC("PBMCs"),
     /**
      * Cerebrospinal Fluid (CSF).
      */
     CEREBROSPINAL_FLUID("Cerebrospinal Fluid (CSF)"),
-
+    /**
+     * CSF.
+     */
+    CSF("CSF"),
     /**
      * Bone Marrow (BM).
      */
-    BONE_MARROW("Bone Marrow (BM)"),
-    
+    BONE_MARROW_BM("Bone Marrow (BM)"),
+    /**
+     * Bone Marrow.
+     */
+    BONE_MARROW("Bone Marrow"),
     /**
      * Saliva.
      */

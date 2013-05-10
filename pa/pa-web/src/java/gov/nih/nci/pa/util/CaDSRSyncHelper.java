@@ -29,7 +29,7 @@ import org.hibernate.criterion.Expression;
 public class CaDSRSyncHelper {
     private ApplicationService appService;
     /** The CDE public Id for Assay Type Attribute. */
-    private static final Long CDE_PUBLIC_ID_ASSAY = 64731L;
+    private static final Long CDE_PUBLIC_ID_ASSAY = 2189871L;
     /** The CDE public Id for BioMarker Use Attribute. */
     private static final Long CDE_PUBLIC_ID_USE = 2939411L;
     /** The CDE public Id for BioMarker Purpose Attribute. */
@@ -119,7 +119,6 @@ public class CaDSRSyncHelper {
             try {
                 DataElement dataElement = new DataElement();
                 dataElement.setPublicID(publicId);
-                dataElement.setLatestVersionIndicator("Yes");
                 dataElement.setVersion(version);
                 Collection<Object> results = appService.search(
                         DataElement.class, dataElement);
@@ -130,7 +129,7 @@ public class CaDSRSyncHelper {
                         .query(constructSearchCriteria(vdId));
                 values = getSearchResults(permissibleValues);
             } catch (Exception e) {
-                LOG.error("Error while querying caDSR", e);
+                LOG.error("Error while querying caDSR" + publicId, e);
             }
         } catch (Exception e) {
             LOG.error(
