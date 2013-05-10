@@ -174,15 +174,16 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
-        RegistryUser myUser = getUserById(userId);
-        StudyProtocol studyProtocol =
-            (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
-        if (myUser == null) {
-            throw new PAException("Could not find user.");
-        }
-        return studyProtocol.getStudyOwners().contains(myUser);
+    public boolean isTrialOwner(Long userId, Long studyProtocolId)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select * from study_owner where study_id="
+                        + studyProtocolId + " and user_id=" + userId); // NOPMD
+        List<Boolean> results = query.list();
+        return !results.isEmpty();
     }
 
     /**
