@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 
 def sql = """select marker.assay_purpose_code, marker.assay_purpose_other_text, marker.assay_type_code, marker.assay_type_other_text,
-            marker.assay_use_code, marker.identifier, nci_id.extension, marker.status_code,
+            marker.assay_use_code, marker.identifier, marker.name, marker.long_name, nci_id.extension, marker.status_code,
             marker.tissue_collection_method_code, marker.tissue_specimen_type_code, marker.hugo_biomarker_code, marker.evaluation_type_code,
             marker.evaluation_type_other_text, marker.specimen_type_other_text
             from planned_activity pa
@@ -18,7 +18,7 @@ def biomarkers = destinationConnection.dataSet("STG_DW_STUDY_BIOMARKER");
 sourceConnection.eachRow(sql) { row ->
     biomarkers.add(assay_purpose: row.assay_purpose_code, assay_purpose_description: row.assay_purpose_other_text, assay_type_code: row.assay_type_code,
             assay_type_description: row.assay_type_other_text, assay_use:row.assay_use_code, internal_system_id: row.identifier,
-            nci_id: row.extension, status_code: row.status_code,
+            long_name:row.long_name, name: row.name, nci_id: row.extension, status_code: row.status_code,
             tissue_collection_method_code: row.tissue_collection_method_code, tissue_specimen_type_code: row.tissue_specimen_type_code,
             hugo_biomarker_code: row.hugo_biomarker_code, evaluation_type_code: row.evaluation_type_code,
             evaluation_type_other_text: row.evaluation_type_other_text, specimen_type_other_text: row.specimen_type_other_text)

@@ -6,6 +6,8 @@ CREATE TABLE STG_DW_STUDY_BIOMARKER (
     ASSAY_TYPE_DESCRIPTION character varying(200),
     ASSAY_USE character varying(200),
     INTERNAL_SYSTEM_ID INTEGER not null,
+    LONG_NAME character varying(1000),
+    NAME character varying(1000),
     NCI_ID character varying(255),
     STATUS_CODE character varying(200),
     TISSUE_COLLECTION_METHOD_CODE character varying(200),
