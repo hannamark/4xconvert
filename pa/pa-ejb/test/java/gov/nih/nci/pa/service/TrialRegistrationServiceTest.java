@@ -1276,6 +1276,67 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         assertEquals(userCreated, studyProtocolDTO.getUserLastCreated());
     }
     
+    @Test
+    public void amendTrialTestPO6151() throws Exception {
+        
+        Ii ii = registerTrial();
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO.setPublicTitle(StConverter.convertToSt("Public title"));
+        studyProtocolDTO.setPublicDescription(StConverter.convertToSt("Public descr"));
+        studyProtocolDTO.setScientificDescription(StConverter.convertToSt("Scientific descr"));
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        
+        
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        St userCreated = studyProtocolDTO.getUserLastCreated();
+        PaHibernateUtil.getCurrentSession().createSQLQuery(
+                "update study_protocol set user_last_created_id=null where identifier="
+                        + studyProtocolDTO.getIdentifier().getExtension());
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertEquals("Public title", studyProtocolDTO.getPublicTitle().getValue());
+        assertEquals("Public descr", studyProtocolDTO.getPublicDescription().getValue());
+        assertEquals("Scientific descr", studyProtocolDTO.getScientificDescription().getValue());
+    }
+
+    
 
     @Test
     public void amendTrialTestMissingConditionallyRequiredDocs() throws Exception {

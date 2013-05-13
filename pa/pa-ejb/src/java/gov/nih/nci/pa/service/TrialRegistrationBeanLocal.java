@@ -255,7 +255,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+    public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO, // NOPMD
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
@@ -271,16 +271,19 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
-            StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
+            
+            // This will get us current protocol records with amendment applied on top of it.
+            studyProtocolDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
             
             Timestamp amendmentCreationDate = new Timestamp(System.currentTimeMillis());
             Timestamp previousProtocolRecordDate = TsConverter
-                    .convertToTimestamp(spDTO.getDateLastCreated());
+                    .convertToTimestamp(studyProtocolDTO.getDateLastCreated());
             
             if (studyRegAuthDTO != null) {
-                studyRegAuthDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
-                StudyRegulatoryAuthorityDTO tempDTO = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO
-                    .getIdentifier());
+                studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+                StudyRegulatoryAuthorityDTO tempDTO = studyRegulatoryAuthorityService
+                        .getCurrentByStudyProtocol(studyProtocolDTO
+                                .getIdentifier());
                 if (tempDTO != null) {
                     studyRegAuthDTO.setIdentifier(tempDTO.getIdentifier());
                 }
@@ -917,6 +920,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     .getIdentifier());
             createStudyProtocolDTO.setAmendmentDate(studyProtocolDTO.getAmendmentDate());
             createStudyProtocolDTO.setAmendmentNumber(studyProtocolDTO.getAmendmentNumber());
+            createStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
         } else {
             createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
             createStudyProtocolDTO.setIdentifier(null);
