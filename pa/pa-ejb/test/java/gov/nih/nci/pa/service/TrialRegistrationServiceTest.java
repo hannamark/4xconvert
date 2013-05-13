@@ -1324,6 +1324,11 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 "update study_protocol set user_last_created_id=null where identifier="
                         + studyProtocolDTO.getIdentifier().getExtension());
         
+        // Change next 3 fields and then ensure that the changes have been ignored.        
+        studyProtocolDTO.setPublicTitle(StConverter.convertToSt("Public title changed"));
+        studyProtocolDTO.setPublicDescription(StConverter.convertToSt("Public descr changed"));
+        studyProtocolDTO.setScientificDescription(StConverter.convertToSt("Scientific descr changed"));
+        
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
