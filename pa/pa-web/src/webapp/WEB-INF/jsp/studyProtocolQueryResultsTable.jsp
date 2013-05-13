@@ -51,9 +51,7 @@
             <display:column titleKey="studyProtocol.trialSubType" sortable="true" headerClass="sortable">
                 <c:out value="${row.studyProtocolType=='NonInterventionalStudyProtocol'?row.studySubtypeCode:''}"/>
             </display:column>
-             <display:column escapeXml="false" titleKey="studyProtocol.trialHasBioMarkers" sortable="true" headerClass="sortable">
-                    <c:out value="${row.trialHasBioMarkers?'Yes':'No'}"/>
-            </display:column>
+            
             <display:column escapeXml="false" titleKey="studyProtocol.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdDates" property="onHoldDate" headerClass="sortable"/>
