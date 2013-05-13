@@ -119,4 +119,11 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService<StudyIndl
         return "";
     }
 
+   
+    public void matchToExistentIndIde(List<StudyIndldeDTO> studyIndldeDTOs,
+            Ii identifier) throws PAException {
+       
+        
+    }
+
 }

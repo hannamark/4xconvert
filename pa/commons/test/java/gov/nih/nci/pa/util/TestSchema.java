@@ -94,11 +94,13 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.EvaluationType;
+import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.OversightCommittee;
@@ -874,6 +876,14 @@ public class TestSchema {
         studyProtocolIds.add(sp.getId());
         inactiveProtocolId = sp.getId();
         addAbstractedWorkflowStatus(inactiveProtocolId);
+        
+        NIHinstitute hinstitute = new NIHinstitute();
+        hinstitute.setNihInstituteCode("AI");
+        addUpdObject(hinstitute);
+        
+        FundingMechanism mechanism = new FundingMechanism();
+        mechanism.setFundingMechanismCode("D71");
+        addUpdObject(mechanism);        
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

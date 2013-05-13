@@ -129,4 +129,12 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
         return null;
     }
 
+   
+    public void matchToExistentGrants(
+            List<StudyResourcingDTO> studyResourcingDTOs, Ii identifier)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

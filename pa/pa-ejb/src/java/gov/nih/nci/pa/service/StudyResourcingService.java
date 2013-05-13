@@ -149,5 +149,15 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @throws PAException e
      */
     void validate(StudyResourcingDTO studyResourcingDTO) throws PAException;
+    
+    /**
+     * Checks the given grants against the existent grants of the given trial in the database.
+     * If matches found, copies the fields of the existent grant onto the given grant.
+     * @param studyResourcingDTOs studyResourcingDTOs
+     * @param identifier identifier
+     * @throws PAException PAException
+     */
+    void matchToExistentGrants(List<StudyResourcingDTO> studyResourcingDTOs,
+            Ii identifier) throws PAException;
 
 }

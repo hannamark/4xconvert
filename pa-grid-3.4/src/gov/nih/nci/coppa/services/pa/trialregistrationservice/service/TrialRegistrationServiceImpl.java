@@ -95,6 +95,8 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
+            Bl handleDuplicateGrantAndINDsGracefully = new Bl();
+            handleDuplicateGrantAndINDsGracefully.setValue(Boolean.TRUE);
             defaultingUserLoggedIn(studyProtocolDTO);
 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO =
@@ -104,7 +106,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs, studyContactDTO,
                             studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi, studyRegAuthDTO, isBatch);
+                            responsiblePartyContactIi, studyRegAuthDTO, isBatch, handleDuplicateGrantAndINDsGracefully);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

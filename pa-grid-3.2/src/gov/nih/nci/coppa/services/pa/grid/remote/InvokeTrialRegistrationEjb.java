@@ -334,4 +334,26 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         throw new PAException(
                 "Unsupported operation; available in v3.4.1 and onwards only");
     }
+
+   
+    public Ii amend(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            Bl handleDuplicateGrantAndINDsGracefully) throws PAException {
+        throw new PAException(
+                "Unsupported operation; available in v3.4 and onwards only");
+    }
 }

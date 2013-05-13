@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
@@ -29,7 +30,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author asharma
@@ -43,6 +46,8 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
    private static final int IND_FIELD_COUNT = 6;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+   
+   private static final Logger LOG = Logger.getLogger(StudyIndldeBeanLocal.class);
 
    /**
      * @param paServiceUtils the paServiceUtils to set
@@ -226,5 +231,25 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
           }
           return nullCount;
        }
+
+    @Override
+    public void matchToExistentIndIde(List<StudyIndldeDTO> studyIndldeDTOs,
+            Ii identifier) throws PAException {
+        if (studyIndldeDTOs != null) {
+            for (StudyIndldeDTO existent : getByStudyProtocol(identifier)) {
+                for (StudyIndldeDTO newOne : studyIndldeDTOs) {
+                    if (ISOUtil.isIiNull(newOne.getIdentifier())
+                            && paServiceUtils.isIndIdeDuplicate(existent,
+                                    newOne)) {
+                        try {
+                            PropertyUtils.copyProperties(newOne, existent);
+                        } catch (Exception e) {
+                            LOG.error(e, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

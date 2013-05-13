@@ -109,8 +109,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.mockito.cglib.core.CollectionUtils;
 import org.mockito.cglib.core.Predicate;
 
@@ -125,6 +127,8 @@ public class StudyResourcingBeanLocal extends
         AbstractStudyIsoService<StudyResourcingDTO, StudyResourcing, StudyResourcingConverter> implements
         StudyResourcingServiceLocal {
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
+    private static final Logger LOG = Logger.getLogger(StudyResourcingBeanLocal.class);
 
     /**
      * @param paServiceUtils the paServiceUtils to set
@@ -361,5 +365,29 @@ public class StudyResourcingBeanLocal extends
             }
         });
         return list;
+    }
+
+    @Override
+    public void matchToExistentGrants(
+            List<StudyResourcingDTO> studyResourcingDTOs, Ii identifier)
+            throws PAException {
+        if (studyResourcingDTOs != null) {
+            List<StudyResourcingDTO> existentGrants = getStudyResourcingByStudyProtocol(identifier);
+            for (StudyResourcingDTO existentGrant : existentGrants) {
+                for (StudyResourcingDTO newGrant : studyResourcingDTOs) {
+                    if (ISOUtil.isIiNull(newGrant.getIdentifier())
+                            && paServiceUtils.isGrantDuplicate(newGrant,
+                                    existentGrant)) {
+                        try {
+                            PropertyUtils.copyProperties(newGrant,
+                                    existentGrant);
+                        } catch (Exception e) {
+                            LOG.error(e, e);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

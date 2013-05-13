@@ -225,6 +225,43 @@ public interface TrialRegistrationServiceRemote {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
+    
+    /**
+     * Amends a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs List of study Identifier DTOS
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @param handleDuplicateGrantAndINDsGracefully PO-6172: ensure that the registration service does not fail
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, 
+            Bl handleDuplicateGrantAndINDsGracefully) throws PAException;
+
+    // CHECKSTYLE:ON
 
     /**
      * Updates a study protocol.

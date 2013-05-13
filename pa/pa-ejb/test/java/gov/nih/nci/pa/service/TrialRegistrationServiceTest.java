@@ -91,7 +91,12 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
+import gov.nih.nci.pa.enums.GrantorCode;
+import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -1046,8 +1051,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
-        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
-        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudyIndldeDTO> studyIndldeDTOs = getListOfINDs();
+        
+        List<StudyResourcingDTO> studyResourcingDTOs = getListOfGrants();
+        
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
         List<DocumentDTO> documents = getStudyDocuments();
 
@@ -1074,6 +1081,20 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().clear();
 
         return ii;
+    }
+
+    /**
+     * @return
+     */
+    private List<StudyResourcingDTO> getListOfGrants() {
+        List<StudyResourcingDTO> studyResourcingDTOs  = new ArrayList<StudyResourcingDTO>();
+        final StudyResourcingDTO grant = new StudyResourcingDTO();
+        grant.setFundingMechanismCode(CdConverter.convertStringToCd("D71"));
+        grant.setNciDivisionProgramCode(CdConverter.convertStringToCd("CTEP"));
+        grant.setNihInstitutionCode(CdConverter.convertStringToCd("AI"));
+        grant.setSerialNumber(StConverter.convertToSt("023099"));
+        studyResourcingDTOs.add(grant);
+        return studyResourcingDTOs;
     }
 
     @Test
@@ -1276,6 +1297,142 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         assertEquals(userCreated, studyProtocolDTO.getUserLastCreated());
     }
     
+    @Test
+    public void amendTrialTestPO6172DuplicateGrantsHandledGracefully() throws Exception {
+        
+        Ii ii = registerTrial();
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        
+        // Make grants appear as 'new' by nullifying their identifiers. This is what happens when DCIM is submitting
+        // via the service. In 3.9.1RC2 and prior this would fail due to 'duplicate' grants.
+        List<StudyResourcingDTO> studyResourcingDTOs = getListOfGrants();       
+        
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        PaHibernateUtil.getCurrentSession().createSQLQuery(
+                "update study_protocol set user_last_created_id=null where identifier="
+                        + studyProtocolDTO.getIdentifier().getExtension());
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
+                BlConverter.convertToBl(Boolean.TRUE));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        
+        studyResourcingDTOs = studyResourcingService
+                .getStudyResourcingByStudyProtocol(ii);
+        assertEquals(1, studyResourcingDTOs.size());
+        StudyResourcingDTO grant = studyResourcingDTOs.get(0);
+        assertEquals(grant.getFundingMechanismCode().getCode(), ("D71"));
+        assertEquals(grant.getNciDivisionProgramCode().getCode(), ("CTEP"));
+        assertEquals(grant.getNihInstitutionCode().getCode(), ("AI"));
+        assertEquals(grant.getSerialNumber().getValue(), ("023099"));
+    }
+    
+    @Test
+    public void amendTrialTestPO6172DuplicateINDsHandledGracefully() throws Exception {
+        
+        Ii ii = registerTrial();
+
+        createMilestones(ii);
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = getListOfINDs();   
+        List<StudyResourcingDTO> studyResourcingDTOs = getListOfGrants();       
+        
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        List<DocumentDTO> documents = getStudyDocuments();
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        PaHibernateUtil.getCurrentSession().createSQLQuery(
+                "update study_protocol set user_last_created_id=null where identifier="
+                        + studyProtocolDTO.getIdentifier().getExtension());
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
+                BlConverter.convertToBl(Boolean.TRUE));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        assertEquals(1, studyIndldeDTOs.size());
+        StudyIndldeDTO grant = studyIndldeDTOs.get(0);
+        assertEquals(grant.getIndldeNumber().getValue(), ("1234"));
+    }
+
+
+    
+    private List<StudyIndldeDTO> getListOfINDs() {
+        List<StudyIndldeDTO> list = new ArrayList<StudyIndldeDTO>();
+        StudyIndldeDTO si = new StudyIndldeDTO();
+        si.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        si.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        si.setIndldeNumber(StConverter.convertToSt("1234"));
+        si.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));        
+        si.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        si.setExemptIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        si.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        si.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCMHD));
+        list.add(si);
+        return list;
+    }
+
     @Test
     public void amendTrialTestPO6151() throws Exception {
         

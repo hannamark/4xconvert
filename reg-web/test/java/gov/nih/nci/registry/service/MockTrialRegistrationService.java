@@ -177,6 +177,30 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
                 isBatchMode);
     }
 
+    @Override
+    public Ii amend(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            Bl handleDuplicateGrantAndINDsGracefully) throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("2");
+    }
+
 
 
 }

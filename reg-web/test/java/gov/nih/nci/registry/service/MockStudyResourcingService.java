@@ -170,6 +170,14 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
     public List<StudyResourcingDTO> getActiveStudyResourcingByStudyProtocol(
             Ii studyProtocolIi) throws PAException {
         return getStudyResourcingByStudyProtocol(studyProtocolIi);
+    }
+
+   
+    public void matchToExistentGrants(
+            List<StudyResourcingDTO> studyResourcingDTOs, Ii identifier)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
     }    
 
 }

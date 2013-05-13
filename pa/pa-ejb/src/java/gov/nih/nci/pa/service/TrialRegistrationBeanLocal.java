@@ -248,7 +248,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -263,6 +263,30 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
+        return amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO,
+                leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
+                studyContactDTO, studySiteContactDTO, summary4OrganizationDTO,
+                summary4StudyResourcingDTO, responsiblePartyContactIi,
+                studyRegAuthDTO, isBatchMode, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO, // NOPMD
+            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
+                    throws PAException {
         // CHECKSTYLE:ON
 
         try {
@@ -288,6 +312,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     studyRegAuthDTO.setIdentifier(tempDTO.getIdentifier());
                 }
             }
+            
+            // PO-6172.
+            if (BlConverter
+                    .convertToBool(handleDuplicateGrantAndINDsGracefully)) {
+                studyResourcingService.matchToExistentGrants(
+                        studyResourcingDTOs, studyProtocolDTO.getIdentifier());
+                studyIndldeService.matchToExistentIndIde(studyIndldeDTOs,
+                        studyProtocolDTO.getIdentifier());
+            }
+            
             TrialRegistrationValidator validator = createValidator();
             validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
                                         sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,

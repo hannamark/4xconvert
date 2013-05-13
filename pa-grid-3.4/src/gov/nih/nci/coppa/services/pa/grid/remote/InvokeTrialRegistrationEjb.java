@@ -143,6 +143,36 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    // CHECKSTYLE:OFF    
+    public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch, Bl handleDuplicateGrantAndINDsGracefully) 
+                    throws PAException {
+        // CHECKSTYLE:ON
+
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService().amend(studyProtocolDTO,
+                    overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
+                    principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
+                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, isBatch, 
+                    handleDuplicateGrantAndINDsGracefully);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
 
     /**
      * {@inheritDoc}

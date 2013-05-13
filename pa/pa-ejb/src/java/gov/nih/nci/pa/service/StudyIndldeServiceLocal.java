@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 
 import javax.ejb.Local;
@@ -111,4 +114,12 @@ public interface StudyIndldeServiceLocal extends StudyPaService<StudyIndldeDTO> 
      * @return String empty string indicates absense of validation errors.
      */
     String validateWithoutRollback(StudyIndldeDTO studyIndldeDTO);
+
+    /**
+     * @param studyIndldeDTOs studyIndldeDTOs
+     * @param identifier identifier
+     * @throws PAException PAException
+     */
+    void matchToExistentIndIde(List<StudyIndldeDTO> studyIndldeDTOs,
+            Ii identifier) throws PAException;
 }
