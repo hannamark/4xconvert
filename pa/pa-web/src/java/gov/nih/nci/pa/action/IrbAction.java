@@ -356,14 +356,15 @@ public class IrbAction extends ActionSupport implements Preparable {
                 addActionError("The organziation name must be selected.  ");
             } else {
                 validateAddress();
-                validateEmail();
+                validateEmailAndPhone();
             }
         }
     }
 
-    private void validateEmail() {
-        if (StringUtils.isEmpty(ct.getEmail())) {
-            addActionError("A contact e-mail address must be set; use PO Curation tool.  ");
+    private void validateEmailAndPhone() {
+        if (StringUtils.isEmpty(ct.getEmail())
+                && StringUtils.isEmpty(ct.getPhone())) {
+            addActionError("Either a contact e-mail address or a contact phone must be set; use PO Curation tool.  ");
         }
     }
 

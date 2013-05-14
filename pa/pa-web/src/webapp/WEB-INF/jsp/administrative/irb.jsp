@@ -193,8 +193,10 @@
                     </tr>
                     <tr  id="phonerow">
                         <td class="label"><label for="phone">Board Contact Phone:</label></td>
-                        <td class="value" colspan="2">
+                        <td class="value" colspan="2" nowrap="nowrap">
                             <s:textfield id="phone" name="ct.phone" cssStyle="width:100px;float:left" readonly="true" cssClass="readonly"/>
+                            &nbsp;&nbsp;&nbsp;
+                            <span class="info">Either a contact phone or an email address is required</span>
                         </td>
                     </tr>
                     <tr id="emailrow">
