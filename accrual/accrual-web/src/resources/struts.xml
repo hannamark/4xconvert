@@ -123,6 +123,7 @@
         <action name="ajaxpatients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="displayDiseases">/WEB-INF/jsp/nodecorate/displayDisease.jsp</result>
+            <result name="displaySiteDiseases">/WEB-INF/jsp/nodecorate/displaySiteDisease.jsp</result>
             <result name="deleteReason">/WEB-INF/jsp/nodecorate/subjectDeleteReason.jsp</result>
         </action>
 

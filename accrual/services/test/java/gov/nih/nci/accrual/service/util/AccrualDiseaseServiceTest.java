@@ -96,6 +96,10 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         assertEquals(1, bean.search(criteria).size());
         criteria.setPreferredName("ame2");
         assertEquals(1, bean.search(criteria).size());
+        criteria.setCodeSystem(null);
+        criteria.setPreferredName(null);
+        criteria.setDiseaseCode("c341");
+        assertEquals(1, bean.search(criteria).size());
     }
 
     @Test
@@ -117,8 +121,10 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
     @Test
     public void getValidCodeSystemsTest() throws Exception {
         List<String> csList = bean.getValidCodeSystems(1L);
-        assertEquals("ICD9", csList.get(0));
-        assertEquals("SDC", csList.get(1));
+        assertEquals(3, csList.size());
+        assertEquals(true, csList.contains("ICD9"));
+        assertEquals(true, csList.contains("SDC"));
+        assertEquals(true, csList.contains("ICD-O-3"));
 
         StudySubject ss = new StudySubject();
         AccrualDisease ad = new AccrualDisease();

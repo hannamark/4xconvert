@@ -107,6 +107,7 @@ public class SubjectAccrualDTO extends BaseDTO {
     private Ts registrationDate;
     private Cd paymentMethod;
     private Ii diseaseIdentifier;
+    private Ii siteDiseaseIdentifier;
     private Ii participatingSiteIdentifier;
     private St registrationGroupId;
     private Cd submissionTypeCode;
@@ -235,6 +236,18 @@ public class SubjectAccrualDTO extends BaseDTO {
      */
     public void setDiseaseIdentifier(Ii diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
+    }
+    /**
+     * @return the siteDiseaseIdentifier
+     */
+    public Ii getSiteDiseaseIdentifier() {
+        return siteDiseaseIdentifier;
+    }
+    /**
+     * @param siteDiseaseIdentifier the siteDiseaseIdentifier to set
+     */
+    public void setSiteDiseaseIdentifier(Ii siteDiseaseIdentifier) {
+        this.siteDiseaseIdentifier = siteDiseaseIdentifier;
     }
     
     /**

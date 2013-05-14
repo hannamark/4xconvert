@@ -119,11 +119,13 @@ import org.apache.commons.lang.StringUtils;
  */
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
 
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
     private static final String DELETED_STATUS_CODE = FunctionalRoleStatusCode.NULLIFIED.getCode();
+    private static final String DIDENTIFIERSTRING = "Disease Identifier";
 
     @EJB
     private StudySubjectServiceLocal studySubjectService;
@@ -257,14 +259,21 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         Long spId = IiConverter.convertToLong(studySite.getStudyProtocolIdentifier());
         String testCS = diseaseCodeSystem;
         if (ISOUtil.isIiNull(subjectAccrual.getDiseaseIdentifier())) {
-            if (diseaseService.diseaseCodeMandatory(spId)) {
-                errMsg.append(String.format(REQUIRED_MSG, "Disease Identifier"));
+            if (diseaseService.diseaseCodeMandatory(spId)) {            
+                List<String> dCode = diseaseService.getValidCodeSystems(spId);
+                if (dCode.contains("ICD-O-3") 
+                        && subjectAccrual.getDiseaseIdentifier() == null 
+                        && subjectAccrual.getSiteDiseaseIdentifier() == null) {
+                    errMsg.append(String.format(REQUIRED_MSG, DIDENTIFIERSTRING));
+                } else if (!dCode.contains("ICD-O-3")) {
+                    errMsg.append(String.format(REQUIRED_MSG, DIDENTIFIERSTRING));
+                }
             }
         } else {
             AccrualDisease disease = diseaseService.get(subjectAccrual.getDiseaseIdentifier());
             if (disease == null) {
                 errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
-                                            "Disease Identifier"));
+                        DIDENTIFIERSTRING));
             } else {
                 if (testCS == null) {
                     testCS = diseaseService.getTrialCodeSystem(spId);
@@ -274,9 +283,27 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
                 }
                 if (!testCS.equals(disease.getCodeSystem())) {
                     errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
-                            "Disease Identifier"));
+                            DIDENTIFIERSTRING));
                 }
             }
+            if (!ISOUtil.isIiNull(subjectAccrual.getSiteDiseaseIdentifier())) {
+            disease = diseaseService.get(subjectAccrual.getSiteDiseaseIdentifier());
+            if (disease == null) {
+                errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getSiteDiseaseIdentifier().getExtension(),
+                                            "Site Disease Identifier"));
+            } else {
+                if (testCS == null) {
+                    testCS = diseaseService.getTrialCodeSystem(spId);
+                    if (testCS == null) {
+                        testCS = disease.getCodeSystem();
+                    }
+                }
+                if (!testCS.equals(disease.getCodeSystem())) {
+                    errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getSiteDiseaseIdentifier().getExtension(),
+                            "Site Disease Identifier"));
+                }
+            }
+          }
         }
         return testCS;
     }

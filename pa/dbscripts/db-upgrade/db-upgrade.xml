@@ -1281,4 +1281,12 @@
         <comment>Added new view to retrieve biomarker existence information.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6140.sql"/>
      </changeSet>
+     <changeSet id="PO-6136" author="Kalpana">
+        <comment>Added new column to study_subject table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6136.sql"/>
+     </changeSet>
+     <changeSet id="PO-6136-2" author="Kalpana">
+        <comment>Insert ICD-O-3 codes in accrual_disease table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6136-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

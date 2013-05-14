@@ -180,7 +180,8 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", 
+    "PMD.NPathComplexity" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
     private static final String IDENTIFIER = "identifier";
@@ -293,6 +294,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 AccrualDisease disease = diseaseSvc.get(subject.getDiseaseIdentifier()); 
                 if (disease != null) {
                     subject.setDiseaseIdentifier(IiConverter.convertToIi(disease.getId()));
+                }
+                AccrualDisease siteDisease = diseaseSvc.get(subject.getSiteDiseaseIdentifier()); 
+                if (siteDisease != null) {
+                    subject.setSiteDiseaseIdentifier(IiConverter.convertToIi(siteDisease.getId()));
                 }
 
                 Long userId = AccrualCsmUtil.getInstance().getCSMUser(
@@ -485,14 +490,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         dto.setPaymentMethod(CdConverter.convertToCd(
                 CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
         Ii dii = dto.getDiseaseIdentifier();
+        Ii siteDii = dto.getSiteDiseaseIdentifier();
         String diseaseString = ISOUtil.isIiNull(dii) ? "NULL" : IiConverter.convertToString(dii);
+        String siteDiseaseString = ISOUtil.isIiNull(siteDii) ? "NULL" : IiConverter.convertToString(siteDii);
         Long result;
         if (ids != null) {
             result = ids[0];
             sql = "UPDATE study_subject SET study_site_identifier= :study_site_identifier, " 
                 + "payment_method_code=:pmCode, status_code= :status_code, date_last_updated=now(), "
                 + "assigned_identifier= :assigned_identifier, user_last_updated_id= :user_id, " 
-                + "disease_identifier=" + diseaseString + ", "
+                + "disease_identifier=" + diseaseString + ", " 
+                + "site_disease_identifier=" + siteDiseaseString + ", "
                 + "registration_group_id= :registration_group_id, submission_type= :submission_type "
                 + "WHERE identifier= :identifier";
 
@@ -502,11 +510,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
                     + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
                     + "date_last_created, date_last_updated, assigned_identifier, submission_type," 
-                    + "user_last_created_id, registration_group_id) "
+                    + "user_last_created_id, registration_group_id, site_disease_identifier) "
                     + "VALUES (:identifier, :patient_identifier, :study_protocol_identifier, "
                     + ":study_site_identifier, " + diseaseString + ", :pmCode, :status_code, "
                     + "now(), now(), :assigned_identifier, :submission_type," 
-                    + ":user_id,  :registration_group_id)";
+                    + ":user_id,  :registration_group_id, " + siteDiseaseString + ")";
             queryObject = session.createSQLQuery(sql);
             queryObject.setParameter("patient_identifier", newPatientId);
             queryObject.setParameter("study_protocol_identifier", spId);

@@ -382,4 +382,17 @@ public class AccrualUtil {
         }
         return displayName.trim();
     }
+
+    /**
+     * check if the disease has any forward slash then remove the data from the slash and get the substring.
+     * @param disease  the disease
+     * @return diseasecode
+     */
+    public static String checkIfStringHasForwardSlash(String disease) {
+        String diseaseCode = disease;
+        if (!StringUtils.isEmpty(diseaseCode) && diseaseCode.contains("/")) {
+            diseaseCode = diseaseCode.substring(0, diseaseCode.indexOf('/'));
+        }
+        return diseaseCode;
+    }
 }

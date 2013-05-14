@@ -1,11 +1,11 @@
 <%@ taglib prefix="s" uri="/struts-tags"%> 
 <div class="padme5">
-  <s:textfield id ="disease" readonly="true" name="patient.diseasePreferredName" maxlength="400" size="50" 
+  <s:textfield id ="disease" readonly="true" name="patient.siteDiseasePreferredName" maxlength="400" size="50" 
                cssStyle="width:280px;float:left" cssClass="readonly"/> 
-  <s:hidden name="patient.diseaseIdentifier"/>
+  <s:hidden name="patient.siteDiseaseIdentifier"/>
   <ul>
       <li style="padding-left: 0"><a href="#" class="btn"
-          onclick="lookup('false');" /><span class="btn_img"><span
+          onclick="lookup('true');" /><span class="btn_img"><span
           class="search">Look Up</span></span></a>
       </li>
   </ul>

@@ -100,6 +100,7 @@ public class PopUpAction extends AbstractAccrualAction {
     private String searchCode;
     private String searchCodeSystem;
     private String page;
+    private boolean siteLookUp;
     private List<String> listOfDiseaseCodeSystems = null;
 
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
@@ -136,6 +137,16 @@ public class PopUpAction extends AbstractAccrualAction {
         criteria.setDiseaseCode(searchCode);
         criteria.setCodeSystem(searchCodeSystem);
         List<AccrualDisease> diseaseList = getDiseaseSvc().search(criteria);
+        if (siteLookUp && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase("ICD-O-3")) {
+            List<AccrualDisease> siteDiseaseList = new ArrayList<AccrualDisease>();
+            siteDiseaseList.addAll(diseaseList);
+            diseaseList = new ArrayList<AccrualDisease>();
+            for (AccrualDisease disease : siteDiseaseList) {
+                if (disease.getDiseaseCode().charAt(0) == 'C') {
+                    diseaseList.add(disease);
+                }
+            }
+        }
         if (diseaseList.size() >= PAConstants.MAX_SEARCH_RESULTS) {
             error("Too many diseases found.  Please narrow search.");
         } else {
@@ -254,5 +265,18 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setListOfDiseaseCodeSystems(List<String> listOfDiseaseCodeSystems) {
         this.listOfDiseaseCodeSystems = listOfDiseaseCodeSystems;
+    }
+    /**
+     * @return siteLookUp
+     */
+    public boolean isSiteLookUp() {
+        return siteLookUp;
+    }
+
+    /**
+     * @param siteLookUp siteLookUp to set
+     */
+    public void setSiteLookUp(boolean siteLookUp) {
+        this.siteLookUp = siteLookUp;
     }
 }

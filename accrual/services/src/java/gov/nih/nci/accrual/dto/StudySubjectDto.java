@@ -94,6 +94,7 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Ii patientIdentifier;
     private Ii studySiteIdentifier;
     private Ii diseaseIdentifier;
+    private Ii siteDiseaseIdentifier;
     private Cd paymentMethodCode;
     private Cd statusCode;
     private St registrationGroupId;
@@ -172,6 +173,18 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setDiseaseIdentifier(Ii diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
+    }
+    /**
+     * @return the siteDiseaseIdentifier
+     */
+    public Ii getSiteDiseaseIdentifier() {
+        return siteDiseaseIdentifier;
+    }
+    /**
+     * @param siteDiseaseIdentifier the siteDiseaseIdentifier to set
+     */
+    public void setSiteDiseaseIdentifier(Ii siteDiseaseIdentifier) {
+        this.siteDiseaseIdentifier = siteDiseaseIdentifier;
     }    
     /**
      * @return the registrationGroupId

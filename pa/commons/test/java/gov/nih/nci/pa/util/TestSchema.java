@@ -801,6 +801,11 @@ public class TestSchema {
                 "code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
+        
+        AccrualDisease icdo3 = TestSchema.createAccrualDisease("ICD-O-3",
+                "C34.1", "icdo3 site code");
+        addUpdObject(icdo3);
+        
 
         // Study On-Hold
         sp = new InterventionalStudyProtocol();

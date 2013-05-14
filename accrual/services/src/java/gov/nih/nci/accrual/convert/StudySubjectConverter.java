@@ -123,6 +123,8 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setStudySiteIdentifier(IiConverter.convertToIi(bo.getStudySite() == null ? null 
                 : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
+        dto.setSiteDiseaseIdentifier(IiConverter.convertToIi(
+                bo.getSiteDisease() == null ? null : bo.getSiteDisease().getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         dto.setDeleteReason(StConverter.convertToSt(bo.getDeleteReason()));
@@ -153,6 +155,11 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             ad.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
             bo.setDisease(ad);
         }
+        if (!ISOUtil.isIiNull(dto.getSiteDiseaseIdentifier())) {
+            AccrualDisease ad = new AccrualDisease();
+            ad.setId(IiConverter.convertToLong(dto.getSiteDiseaseIdentifier()));
+            bo.setSiteDisease(ad);
+        }
         bo.setRegistrationGroupId(StConverter.convertToString(dto.getRegistrationGroupId()));
         if (!ISOUtil.isCdNull(dto.getSubmissionTypeCode())) {
             bo.setSubmissionTypeCode(AccrualSubmissionTypeCode.getByCode(dto.getSubmissionTypeCode().getCode()));
@@ -178,6 +185,8 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
                 IiConverter.convertToIi(bo.getStudySite() == null ? null : bo.getStudySite().getId()));
         Long diseaseId = bo.getDisease() == null ? null : bo.getDisease().getId();
         dto.setDiseaseIdentifier(IiConverter.convertToIi(diseaseId));
+        dto.setSiteDiseaseIdentifier(IiConverter.convertToIi(
+                bo.getSiteDisease() == null ? null : bo.getSiteDisease().getId()));
         dto.setRegistrationGroupId(StConverter.convertToSt(bo.getRegistrationGroupId()));
         dto.setSubmissionTypeCode(CdConverter.convertToCd(bo.getSubmissionTypeCode()));
         return dto;

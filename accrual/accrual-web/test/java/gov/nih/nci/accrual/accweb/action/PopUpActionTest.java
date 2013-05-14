@@ -171,6 +171,29 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.SUCCESS, action.displayList());
 
     }
+    
+    @Test
+    public void testICDO3Values() {
+    	action.setSearchCodeSystem("ICD-O-3");
+    	assertNotNull(action.getSearchCodeSystem());
+    	assertNotNull(action.isSiteLookUp());
+    	AccrualDisease disease1 = new AccrualDisease();
+    	disease1.setId(1L);
+	    disease1.setCodeSystem("ICD-O-3");
+	    disease1.setDiseaseCode("C34.1");
+	    AccrualDisease disease2 = new AccrualDisease();
+    	disease2.setId(2L);
+	    disease2.setCodeSystem("ICD-O-3");
+	    disease2.setDiseaseCode("8000");
+	    List<AccrualDisease> disList = new ArrayList<AccrualDisease>();
+	    disList.add(disease1);
+	    disList.add(disease2);
+    	when(action.getDiseaseSvc().search(any(AccrualDisease.class))).thenReturn(disList);
+    	action.setSearchCode("c34.1");
+    	action.setSearchCodeSystem("ICD-O-3");
+    	action.setSiteLookUp(true);
+        assertEquals(ActionSupport.SUCCESS, action.displayList());
+    }
 
     private AccrualDisease createICD9DiseaseDTO() {
         AccrualDisease dto = new AccrualDisease();

@@ -115,6 +115,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -152,7 +153,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private String codeSystemFile;
     private boolean checkDisease;
     private boolean patientCheck;
-    private final Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
+    private Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
 
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
@@ -167,6 +168,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         listOfPoIds = new HashMap<String, Long>();
         listOfCtepIds = new HashMap<String, String>();
         listOfOrgIds = new HashMap<String, Ii>();
+        codeSystemFile = null;
+        checkDisease = false;
+        patientCheck = false;
+        patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
         results.setFileName(file.getName());
@@ -330,11 +335,16 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && codeSystemFile == null) {
             String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
             if (StringUtils.isNotEmpty(code)) {
-                AccrualDisease disease = getDiseaseService().getByCode(code);
-                if (disease != null) {
-                    codeSystemFile = disease.getCodeSystem();
-                    patientCheck = true;
-                }
+                StringTokenizer disease = new StringTokenizer(code, ";");
+                while (disease.hasMoreElements()) {
+                    String diseaseCode = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
+                    AccrualDisease dis = getDiseaseService().getByCode(diseaseCode);
+                    if (dis != null) {
+                        codeSystemFile = dis.getCodeSystem();
+                        patientCheck = true;
+                        break;
+                    }
+                }                
             }
         }
         validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, codeSystemFile, checkDisease);

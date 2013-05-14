@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.DateValidator;
@@ -261,10 +262,19 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
             }
         } else {
-            AccrualDisease dis = getDiseaseService().getByCode(code);
-            if (dis == null || !StringUtils.equals(dis.getCodeSystem(), codeSystem)) {
-                errMsg.append("Patient Disease Code is invalid for patient ID ").append(getPatientId(values))
-                    .append(appendLineNumber(lineNumber)).append("\n");
+            StringTokenizer disease = new StringTokenizer(code, ";");
+            if (!disease.hasMoreElements()) {
+                errMsg.append("Patient Disease Code is missing or not recognized for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");            
+            } else {
+                while (disease.hasMoreElements()) {
+                   String diseaseCode = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
+                   AccrualDisease dis = getDiseaseService().getByCode(diseaseCode);
+                   if (dis == null || !StringUtils.equals(dis.getCodeSystem(), codeSystem)) {
+                        errMsg.append("Patient Disease Code is invalid for patient ID ").append(getPatientId(values))
+                        .append(appendLineNumber(lineNumber)).append("\n");
+                   }
+                }
             }
         }
     }

@@ -115,7 +115,8 @@ import org.apache.commons.lang.time.DateFormatUtils;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList", "PMD.ExcessiveClassLength",
+    "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
 public class PatientWebDto {
     // from PatientDto
     private Long patientId;
@@ -150,6 +151,8 @@ public class PatientWebDto {
     // disease    
     private String diseasePreferredName;
     private Long diseaseIdentifier;
+    private String siteDiseasePreferredName;
+    private Long siteDiseaseIdentifier;
 
     /**
      * Perform basic validations.
@@ -169,7 +172,12 @@ public class PatientWebDto {
             action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
             action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
             if (checkDisease) {
-                action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+                List<String> dCode = action.getDiseaseSvc().getValidCodeSystems(spId);
+                if (dCode.contains("ICD-O-3") && dto.getSiteDiseaseIdentifier() == null) {
+                    action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+                } else if (!dCode.contains("ICD-O-3")) {
+                    action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
+                }
             }
             action.addActionErrorIfEmpty(dto.getStudySiteId(), "Participating Site is required.");
             action.addActionErrorIfEmpty(dto.getRegistrationDate(), "Registration Date is required.");
@@ -226,6 +234,10 @@ public class PatientWebDto {
         if (ss.getDisease() != null) {
             diseasePreferredName = ss.getDisease().getPreferredName();
             diseaseIdentifier = ss.getDisease().getId();
+        }
+        if (ss.getSiteDisease() != null) {
+            siteDiseasePreferredName = ss.getSiteDisease().getPreferredName();
+            siteDiseaseIdentifier = ss.getSiteDisease().getId();
         }
         dateLastUpdated = DateFormatUtils.format(ss.getDateLastUpdated() == null 
                 ? ss.getDateLastCreated() : ss.getDateLastUpdated(), "MM/dd/yyyy HH:mm");
@@ -296,6 +308,7 @@ public class PatientWebDto {
         ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
         ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
         ssub.setDiseaseIdentifier(IiConverter.convertToIi(getDiseaseIdentifier()));
+        ssub.setSiteDiseaseIdentifier(IiConverter.convertToIi(getSiteDiseaseIdentifier()));
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
         ssub.setRegistrationGroupId(StConverter.convertToSt(getRegistrationGroupId()));
@@ -615,5 +628,33 @@ public class PatientWebDto {
      */
     public void setSubmissionTypeCode(String submissionTypeCode) {
         this.submissionTypeCode = submissionTypeCode;
+    }
+
+    /**
+     * @return the sitedisease Preferred Name
+     */
+    public String getSiteDiseasePreferredName() {
+        return siteDiseasePreferredName;
+    } 
+    
+    /**
+     * @param siteDiseasePreferredName the siteDiseasePreferredName to set
+     */
+    public void setSiteDiseasePreferredName(String siteDiseasePreferredName) {
+        this.siteDiseasePreferredName = siteDiseasePreferredName;
+    } 
+
+    /**
+     * @return the diseaseIdentifier
+     */
+    public Long getSiteDiseaseIdentifier() {
+        return siteDiseaseIdentifier;
+    }
+
+    /**
+     * @param siteDiseaseIdentifier the siteDiseaseIdentifier to set
+     */
+    public void setSiteDiseaseIdentifier(Long siteDiseaseIdentifier) {
+        this.siteDiseaseIdentifier = siteDiseaseIdentifier;
     }    
 }

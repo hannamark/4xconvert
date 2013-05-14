@@ -135,6 +135,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     private final PatientHelper helper = new PatientHelper(this);
     private String deleteReason;
     private static List<String> reasonsList = new ArrayList<String>();
+    private boolean showSite;
     
     /**
      * {@inheritDoc}
@@ -148,6 +149,10 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
                 SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
                 // put an entry in the session
                 ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+            }
+            List<String> dCode = getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi()));
+            if (dCode.contains("ICD-O-3")) {
+                showSite = true;
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -388,6 +393,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
      */
     public String getDisplayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
+        String siteLookUp = ServletActionContext.getRequest().getParameter("siteLookUp");
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
         if (StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
@@ -396,14 +402,22 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
             webDTO.setPreferredName(bo.getPreferredName());
             webDTO.setDiseaseIdentifier(bo.getId().toString());
         }
-        setPatientDisease(webDTO);
+        setPatientDisease(webDTO, siteLookUp);
+        if (!StringUtils.isEmpty(siteLookUp) && siteLookUp.equalsIgnoreCase("true")) {
+            return "displaySiteDiseases";
+        }
         return "displayDiseases";
     }
 
-    void setPatientDisease(DiseaseWebDTO webDTO) {
+    void setPatientDisease(DiseaseWebDTO webDTO, String siteLookUp) {
         patient = new PatientWebDto();
-        patient.setDiseasePreferredName(webDTO.getPreferredName());
-        patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+        if (!StringUtils.isEmpty(siteLookUp) && siteLookUp.equalsIgnoreCase("true")) {
+            patient.setSiteDiseasePreferredName(webDTO.getPreferredName());
+            patient.setSiteDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+        } else {
+            patient.setDiseasePreferredName(webDTO.getPreferredName());
+            patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+        }
     }
 
     /**
@@ -571,5 +585,19 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
      */
     public static List<String> getReasonsList() {
         return reasonsList;
+    }
+
+    /**
+     * @return showSite
+     */
+    public boolean isShowSite() {
+        return showSite;
+    }
+
+    /**
+     * @param showSite the showSite to set
+     */
+    public void setShowSite(boolean showSite) {
+        this.showSite = showSite;
     }
 }

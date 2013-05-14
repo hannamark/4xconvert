@@ -117,6 +117,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
@@ -150,6 +151,7 @@ import org.apache.log4j.Logger;
 @Local(CdusBatchUploadReaderServiceLocal.class)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class); 
     
@@ -375,16 +377,28 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
         if (StringUtils.isEmpty(diseaseCode)) {
             return;
-        }
-        Element element = getDiseaseCache().get(diseaseCode);
-        if (element == null) {
-            AccrualDisease disease = getDiseaseService().getByCode(diseaseCode);
-            if (disease != null) {
-                element = new Element(diseaseCode, IiConverter.convertToIi(disease.getId()));
-                getDiseaseCache().put(element);
+        }        
+        AccrualDisease dis = null;
+        StringTokenizer disease = new StringTokenizer(diseaseCode, ";");
+        while (disease.hasMoreElements()) {
+            String code = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
+            if (StringUtils.isEmpty(code)) {
+                continue;
+            }
+            Element element = getDiseaseCache().get(code);
+            if (element == null) {
+                dis = getDiseaseService().getByCode(code);
+                if (dis != null) {
+                    element = new Element(dis.getDiseaseCode(), IiConverter.convertToIi(dis.getId()));
+                    getDiseaseCache().put(element);
+                }
+            }
+            if (code.toUpperCase(Locale.US).charAt(0) == 'C') {
+                saDTO.setSiteDiseaseIdentifier((Ii) element.getValue());
+            } else {
+                saDTO.setDiseaseIdentifier((Ii) element.getValue());
             }
         }
-        saDTO.setDiseaseIdentifier((Ii) element.getValue());
     }
 
     /**

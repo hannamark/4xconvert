@@ -327,4 +327,10 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         String nowYrMoStr = sdf.format(now);
         assertEquals(nowYrMoStr, AccrualUtil.timestampToYearMonthString(nowTstamp));
     }
+    
+    @Test
+    public void testforwardslash() {
+    	String histologyCode = "8000/6";
+    	assertEquals("8000", AccrualUtil.checkIfStringHasForwardSlash(histologyCode));
+    }
 }

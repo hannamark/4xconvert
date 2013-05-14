@@ -187,6 +187,13 @@ public class PatientWebDtoTest {
         icd9.setPreferredName("adfasdf");
         icd9.setDiseaseCode("jklfds");
         ss.setDisease(icd9);
+        
+        AccrualDisease icdo3 = new AccrualDisease();
+        icdo3.setId(87988L);
+        icdo3.setPreferredName("icdo3adfasdf");
+        icdo3.setDiseaseCode("icdo3jklfds");
+        ss.setSiteDisease(icdo3);
+        
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setSexCode(PatientGenderCode.FEMALE);
         HealthCareFacility hcf = new HealthCareFacility();
@@ -219,6 +226,7 @@ public class PatientWebDtoTest {
         assertEquals(r.getRaceCode().toString(), "[White, Asian]");
         assertEquals(r.getRegistrationDate(), null);
         assertEquals(r.getZip(), p.getZip());
+        assertNotNull(r.getDateLastUpdated());
     }
 
     @Test

@@ -120,6 +120,7 @@ public class StudySubject extends Subject {
     private Patient patient;
     private StudySite studySite;
     private AccrualDisease disease;
+    private AccrualDisease siteDisease;
     private String registrationGroupId;
     private AccrualSubmissionTypeCode submissionTypeCode;
     private String deleteReason;
@@ -206,6 +207,22 @@ public class StudySubject extends Subject {
      */
     public void setDisease(AccrualDisease disease) {
         this.disease = disease;
+    }
+
+    /**
+     * @return the siteDisease
+     */
+    @ManyToOne
+    @JoinColumn(name = "site_disease_identifier")
+    public AccrualDisease getSiteDisease() {
+        return siteDisease;
+    }
+
+    /**
+     * @param siteDisease the siteDisease to set
+     */
+    public void setSiteDisease(AccrualDisease siteDisease) {
+        this.siteDisease = siteDisease;
     }
 
     /**

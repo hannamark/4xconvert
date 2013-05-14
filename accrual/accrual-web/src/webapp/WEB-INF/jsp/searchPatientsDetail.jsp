@@ -56,14 +56,20 @@
                 form.submit();
             }
             
-            function lookup(){
-                showPopWin('${lookupUrl}', 900, 400, '', 'Disease');
+            function lookup(siteLookUp){
+            	var result = '${lookupUrl}' + "?siteLookUp=" + siteLookUp;
+            	showPopWin(result, 900, 400, '', 'Disease');
             }
             
-            function loadDiv(intid, type) {
+            function loadDiv(intid, type, siteLookUp) {
                  var url = '/accrual/protected/ajaxpatientsgetDisplayDisease.action';
-                 var params = { diseaseId: intid, dType: type };
-                 var div = document.getElementById('loadDetails');   
+                 var params = { diseaseId: intid, dType: type, siteLookUp: siteLookUp };
+                 var div; 
+                 if (siteLookUp == 'true') {
+                	 div = document.getElementById('loadSiteDetails');
+                 } else {
+                     div = document.getElementById('loadDetails');                	 
+                 }   
                  div.innerHTML = '<div align="left"><img  alt="Indicator" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
                  var aj = callAjaxPost(div, url, params);
             }     
@@ -89,6 +95,7 @@
                 <s:hidden name = "patient.performedSubjectMilestoneId" />
                 <s:hidden name = "patient.submissionTypeCode" />
                 <s:hidden name = "patient.registrationGroupId" />
+                <s:hidden name = "showSite" />
                 <table class="form">
                     <tr>
                         <td class="label">
@@ -247,11 +254,34 @@
                             </s:elseif>
                         </td>
                     </tr>
+                    
+                    <s:if test="%{showSite}">
+	                    <tr>
+	                        <td class="label">
+	                            <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}"><div class="padme5"></div></s:if>
+	                            <s:if test="%{currentAction != 'retrieve'}"><label for="sitedisease"></s:if>
+	                            <fmt:message key="patient.sitedisease"/><span class="required">*</span><span class="required">*</span>
+	                            <s:if test="%{currentAction != 'retrieve'}"></label></s:if>
+	                        </td>
+	                        <td class="value">
+	                            <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}">
+	                                <div id="loadSiteDetails" >
+	                                     <%@ include file="/WEB-INF/jsp/nodecorate/displaySiteDisease.jsp" %>
+	                                </div>
+	                                <span class="info">For ICD-O-3, atleast one value is required i.e Site or Disease.Users have the option to provide both values.</span>
+	                            </s:if>
+	                            <s:elseif test="%{currentAction == 'retrieve'}">
+	                                <c:out value="${patient.siteDiseasePreferredName}"/>
+	                            </s:elseif>
+	                        </td>
+	                    </tr>
+                    </s:if>
+                    
                     <tr>
                         <td class="label">
                             <s:if test="%{(currentAction == 'create') || (currentAction == 'update')}"><div class="padme5"></div></s:if>
                             <s:if test="%{currentAction != 'retrieve'}"><label for="disease"></s:if>
-                            <fmt:message key="patient.disease"/><span class="required">*</span>
+                            <fmt:message key="patient.disease"/><span class="required">*</span><s:if test="%{showSite}"><span class="required">*</span></s:if>
                             <s:if test="%{currentAction != 'retrieve'}"></label></s:if>
                         </td>
                         <td class="value">
@@ -259,6 +289,7 @@
                                 <div id="loadDetails" >
                                      <%@ include file="/WEB-INF/jsp/nodecorate/displayDisease.jsp" %>
                                 </div>
+                                <span class="info">For ICD9 and SDC disease codes, users only need to select Disease.</span>
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <c:out value="${patient.diseasePreferredName}"/>

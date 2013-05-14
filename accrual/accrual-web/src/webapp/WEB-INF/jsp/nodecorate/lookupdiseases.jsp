@@ -16,12 +16,12 @@
 	        });
 	        
             function submitform(disid, type) {
-                top.window.loadDiv(disid, type);
+                top.window.loadDiv(disid, type, $("siteLookUp").value);
                 window.top.hidePopWin(true); 
             }
             
             function loadDiv() {     
-                var url = '/accrual/protected/popupdisplayList.action';
+                var url = '/accrual/protected/popupdisplayList.action?siteLookUp=' + $("siteLookUp").value;
                 var params = { searchName: $("searchName").value,
                 		searchCode: $("searchCode").value,
                         page: "searchLookup",
@@ -37,6 +37,7 @@
         <div class="box">
             <s:form id="diseases" name="diseases" >
                 <h2><fmt:message key="disease.search"/></h2>
+                <s:hidden id="siteLookUp" name="siteLookUp"/>
                 <table class="form">
                     <tr>
                         <td scope="row" class="label"><label for="searchName"><fmt:message key="disease.name"/></label></td>

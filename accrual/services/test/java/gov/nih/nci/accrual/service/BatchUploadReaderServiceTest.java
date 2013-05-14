@@ -257,6 +257,40 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.contains(errorMsg, "Patient race code is missing for patient ID 200708"));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
 	}
+
+	@Test
+	public void patientICDO3Coverage() throws URISyntaxException, PAException {
+		 AccrualDisease disease1 = new AccrualDisease();
+	     disease1.setCodeSystem("ICD-O-3");
+	     disease1.setDiseaseCode("C34.1");
+	     AccrualDisease disease2 = new AccrualDisease();
+	     disease2.setCodeSystem("ICD-O-3");
+	     disease2.setDiseaseCode("8000");
+	     when(diseaseSvc.getByCode("C34.1")).thenReturn(disease1);
+	     when(diseaseSvc.getByCode("C341")).thenReturn(disease1);
+	     when(diseaseSvc.getByCode("8000")).thenReturn(disease2);
+	        
+		File file = new File(this.getClass().getResource("/ICD-O-3_coverage.txt").toURI());
+		BatchFile batchFile = getBatchFile(file);
+		List<BatchValidationResults> results = readerService .validateBatchData(batchFile);
+		assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+
+        BatchFile r = getResultFromDb();
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("ICD-O-3_coverage.txt"));
+        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        AccrualCollections collection = r.getAccrualCollections().get(0);
+        assertTrue(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertEquals("NCI-2009-00001", collection.getNciNumber());
+        assertTrue(StringUtils.isEmpty(collection.getResults()));
+        assertEquals((Integer) 3, collection.getTotalImports());
+	}
         
 	@Test
 	public void junitCoverage() throws URISyntaxException, PAException {

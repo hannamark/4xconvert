@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -153,6 +154,13 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         action.setStudyProtocolId(1L);
         action.prepare();
         assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
+        List<String> codes = new ArrayList<String>();
+        codes.add("SDC");
+        codes.add("ICD9");
+        codes.add("ICD-O-3");
+        when(action.getDiseaseSvc().getValidCodeSystems(any(Long.class))).thenReturn(codes);
+        action.prepare();
+        assertTrue(action.isShowSite());
     }
     
     @Test
@@ -396,10 +404,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         webDTO.setDiseaseIdentifier("1");
         webDTO.setPreferredName("preferredName");
         
-        action.setPatientDisease(webDTO);
+        action.setPatientDisease(webDTO, "false");
         
         assertEquals(Long.valueOf(1), action.getPatient().getDiseaseIdentifier());
         assertEquals("preferredName", action.getPatient().getDiseasePreferredName());
+        
+        action.setPatientDisease(webDTO, "true");
+        
+        assertEquals(Long.valueOf(1), action.getPatient().getSiteDiseaseIdentifier());
+        assertEquals("preferredName", action.getPatient().getSiteDiseasePreferredName());
     }
 
     @Test
@@ -479,5 +492,26 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Test
     public void testGetDeleteReasonsList() throws Exception {
         assertEquals(5, action.getReasonsList().size());
+    }
+    
+    @Test
+    public void testICDO3Validation() throws Exception {
+    	List<String> codes = new ArrayList<String>();
+        codes.add("SDC");
+        codes.add("ICD9");
+        codes.add("ICD-O-3");
+        when(action.getDiseaseSvc().getValidCodeSystems(any(Long.class))).thenReturn(codes);
+        when(action.getDiseaseSvc().diseaseCodeMandatory(any(Long.class))).thenReturn(true);
+    	patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setZip("123456");
+        patient.setPaymentMethodCode("paymentMethodCode");
+        action.setPatient(patient);
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertNull(patient.getUserCreated());
+        assertTrue(action.hasActionErrors());
+        assertEquals(8, action.getActionErrors().size());
+        System.out.println("Testing : " + Arrays.toString(action.getActionErrors().toArray()));
+        assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
+        		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., Ethnicity is required., Disease is required., Participating Site is required., Registration Date is required."));
     }
 }

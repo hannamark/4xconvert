@@ -18,6 +18,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -128,8 +129,18 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
     public List<AccrualDisease> search(AccrualDisease searchCriteria) {
         PageSortParams<AccrualDisease> params = new PageSortParams<AccrualDisease>(PAConstants.MAX_SEARCH_RESULTS, 0, 
                 AccrualDiseaseBeanLocal.AccrualDiseaseSortCriterion.DISEASE_CODE, false);
-        SearchCriteria<AccrualDisease> criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria); 
-        return super.search(criteria, params);
+        SearchCriteria<AccrualDisease> criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
+        List<AccrualDisease> result = super.search(criteria, params);
+        if (result.isEmpty() && searchCriteria.getDiseaseCode().toUpperCase(Locale.US).charAt(0) == 'C') {
+            searchCriteria.setCodeSystem("ICD-O-3");
+            int length = searchCriteria.getDiseaseCode().length();
+            String appendedDC = searchCriteria.getDiseaseCode().substring(0, length - 1) 
+                    + "." + searchCriteria.getDiseaseCode().substring(length - 1, length);
+            searchCriteria.setDiseaseCode(appendedDC);
+            criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
+            result = super.search(criteria, params);
+        }
+        return result;
     }
 
     /**
