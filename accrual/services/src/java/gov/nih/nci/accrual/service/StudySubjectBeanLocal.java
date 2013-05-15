@@ -576,7 +576,7 @@ public class StudySubjectBeanLocal extends
             String hql = "from StudySubject ssub "
                     + "where ssub.studyProtocol.id = :studyProtocolId "
                     + " and ssub.statusCode = '" + FunctionalRoleStatusCode.ACTIVE.getName() + "'"
-                    + " and ssub.disease.id is not null "
+                    + " and (ssub.disease.id is not null or ssub.siteDisease.id is not null)"
                     + " order by ssub.id ";
             Query query = session.createQuery(hql);
             query.setParameter("studyProtocolId", spId);

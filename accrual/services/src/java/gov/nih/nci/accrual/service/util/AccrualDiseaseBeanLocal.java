@@ -153,7 +153,8 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
             try {
                 StudySubject ss = studySubjectSvc.searchActiveByStudyProtocol(spId);
                 if (ss != null) {
-                    result = ss.getDisease().getCodeSystem();
+                    result = ss.getDisease() != null ? ss.getDisease().getCodeSystem() 
+                                : ss.getSiteDisease().getCodeSystem();
                 }
             } catch (PAException e) {
                 LOG.error(e);

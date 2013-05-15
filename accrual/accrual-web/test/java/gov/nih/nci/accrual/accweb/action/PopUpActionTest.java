@@ -122,6 +122,12 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     @Test 
     public void testExecute() {
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertNotNull(action.getListOfDiseaseCodeSystems());
+        action.setSiteLookUp(true);
+        action.setSelectedSite(true);
+        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertNotNull(action.isSelectedSite());
+        assertNotNull(action.isSiteLookUp());
     }
 
     @Test
@@ -135,6 +141,8 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
         assertNotNull(StringUtils.isEmpty(action.getSearchName()));
         action.setSearchName(searchName);
         assertEquals(ActionSupport.SUCCESS, action.displayList());
+        action.setSearchName(null);
+        action.displayList();
 
     }
 
@@ -192,6 +200,9 @@ public class PopUpActionTest extends AbstractAccrualActionTest {
     	action.setSearchCode("c34.1");
     	action.setSearchCodeSystem("ICD-O-3");
     	action.setSiteLookUp(true);
+        assertEquals(ActionSupport.SUCCESS, action.displayList());
+        action.setSearchCode("8000");
+        action.setSiteLookUp(false);
         assertEquals(ActionSupport.SUCCESS, action.displayList());
     }
 

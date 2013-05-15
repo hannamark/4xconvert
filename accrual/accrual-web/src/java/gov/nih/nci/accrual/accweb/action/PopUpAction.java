@@ -94,13 +94,16 @@ import org.apache.struts2.ServletActionContext;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PopUpAction extends AbstractAccrualAction {
+    private static final String ICD_O_3 = "ICD-O-3";
+
     private static final long serialVersionUID = 8987838321L;
 
     private String searchName;
     private String searchCode;
     private String searchCodeSystem;
     private String page;
-    private boolean siteLookUp;
+    private boolean siteLookUp = false;
+    private boolean selectedSite = false;
     private List<String> listOfDiseaseCodeSystems = null;
 
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
@@ -110,7 +113,13 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
-        setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi())));
+        if (siteLookUp || selectedSite) {
+            List<String> siteDisease = new ArrayList<String>();
+            siteDisease.add(ICD_O_3);
+            setListOfDiseaseCodeSystems(siteDisease);
+        } else {
+            setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi())));
+        }
         return super.execute();
     }
 
@@ -137,12 +146,25 @@ public class PopUpAction extends AbstractAccrualAction {
         criteria.setDiseaseCode(searchCode);
         criteria.setCodeSystem(searchCodeSystem);
         List<AccrualDisease> diseaseList = getDiseaseSvc().search(criteria);
-        if (siteLookUp && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase("ICD-O-3")) {
+        if (siteLookUp && searchCodeSystem != null
+                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3)) {
+            // this is to remove the histology codes and show Site codes
             List<AccrualDisease> siteDiseaseList = new ArrayList<AccrualDisease>();
             siteDiseaseList.addAll(diseaseList);
             diseaseList = new ArrayList<AccrualDisease>();
             for (AccrualDisease disease : siteDiseaseList) {
                 if (disease.getDiseaseCode().charAt(0) == 'C') {
+                    diseaseList.add(disease);
+                }
+            }
+        } else if (!siteLookUp && searchCodeSystem != null
+                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3)) {
+            // this is to remove the site codes and just show histology codes
+            List<AccrualDisease> histologyDiseaseList = new ArrayList<AccrualDisease>();
+            histologyDiseaseList.addAll(diseaseList);
+            diseaseList = new ArrayList<AccrualDisease>();
+            for (AccrualDisease disease : histologyDiseaseList) {
+                if (disease.getDiseaseCode().charAt(0) != 'C') {
                     diseaseList.add(disease);
                 }
             }
@@ -278,5 +300,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setSiteLookUp(boolean siteLookUp) {
         this.siteLookUp = siteLookUp;
+    }
+    
+    /**
+     * @return selectedSite
+     */
+    public boolean isSelectedSite() {
+        return selectedSite;
+    }
+
+    /**
+     * @param selectedSite selectedSite to set
+     */
+    public void setSelectedSite(boolean selectedSite) {
+        this.selectedSite = selectedSite;
     }
 }

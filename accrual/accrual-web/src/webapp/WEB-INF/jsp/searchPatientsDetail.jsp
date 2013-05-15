@@ -57,7 +57,14 @@
             }
             
             function lookup(siteLookUp){
-            	var result = '${lookupUrl}' + "?siteLookUp=" + siteLookUp;
+            	var sitePN = document.getElementById('sitedisease').value;
+            	var selectedSite;
+            	if (sitePN.length == 0) {
+            		selectedSite = "false";
+                } else {
+                	selectedSite = "true";
+                }
+            	var result = '${lookupUrl}' + "?siteLookUp=" + siteLookUp + "&selectedSite=" + selectedSite;
             	showPopWin(result, 900, 400, '', 'Disease');
             }
             
@@ -268,7 +275,7 @@
 	                                <div id="loadSiteDetails" >
 	                                     <%@ include file="/WEB-INF/jsp/nodecorate/displaySiteDisease.jsp" %>
 	                                </div>
-	                                <span class="info">For ICD-O-3, atleast one value is required i.e Site or Disease.Users have the option to provide both values.</span>
+	                                <span class="info" style="font-size:10px">Site applies ONLY if ICD-O-3 disease terminology is being used. Either Site or Disease is required for ICD-O-3.</span>
 	                            </s:if>
 	                            <s:elseif test="%{currentAction == 'retrieve'}">
 	                                <c:out value="${patient.siteDiseasePreferredName}"/>
@@ -289,7 +296,7 @@
                                 <div id="loadDetails" >
                                      <%@ include file="/WEB-INF/jsp/nodecorate/displayDisease.jsp" %>
                                 </div>
-                                <span class="info">For ICD9 and SDC disease codes, users only need to select Disease.</span>
+                                <span class="info" style="font-size:10px">If you are using ICD-O-3 terminology then Disease is optional (refer to the note above). If you are not using ICD-O-3, then Disease is mandatory.</span>
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <c:out value="${patient.diseasePreferredName}"/>
