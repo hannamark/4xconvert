@@ -128,7 +128,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String recentHoldDescription;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
-    private boolean trialHasBioMarkers;
+    
    
 
     /**
@@ -679,21 +679,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public void setRecentHoldDescription(String recentHoldDescription) {
         this.recentHoldDescription = recentHoldDescription;
     }
-    /**
-     * 
-     * @return trialHasBioMarkers trialHasBioMarkers
-     */
-    public boolean isTrialHasBioMarkers() {
-        return trialHasBioMarkers;
-    }
     
-    /**
-     * 
-     * @param trialHasBioMarkers trialHasBioMarkers
-     */
-    public void setTrialHasBioMarkers(boolean trialHasBioMarkers) {
-        this.trialHasBioMarkers = trialHasBioMarkers;
-    }
     
     
 }
