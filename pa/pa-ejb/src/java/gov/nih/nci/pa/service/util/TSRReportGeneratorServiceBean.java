@@ -270,7 +270,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private static final String REPORT_TITLE = TSRReportLabelText.REPORT_TITLE;
     private static final String YES = "Yes";
     private static final String NO = "No";
-    private static final String INFORMATION_NOT_PROVIDED = "Information Not Provided";
+    private static final String INFORMATION_NOT_PROVIDED = "No Data Available";
     private static final String BLANK = "";
     private static final String PROPRIETARY = "Abbreviated";
     private static final String NON_PROPRIETARY = "Complete";

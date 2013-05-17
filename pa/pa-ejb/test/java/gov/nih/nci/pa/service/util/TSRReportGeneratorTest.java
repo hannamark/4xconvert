@@ -218,7 +218,7 @@ public class TSRReportGeneratorTest {
         TSRReportGeneralTrialDetails generalTrialDetails = new TSRReportGeneralTrialDetails();
         generalTrialDetails.setOfficialTitle("NPT for 5AM_NCI_1_2_3. lets seee if this spans correctly . bcos this can be (line break) \none or two paragraphs.");
         generalTrialDetails.setBriefTitle("A very brief title for the abstraction validation title.");
-        generalTrialDetails.setAcronym("Information not provided");
+        generalTrialDetails.setAcronym("No Data Available");
         generalTrialDetails.setBriefSummary("This is the summary of abstraction validation brief summary.");
         generalTrialDetails.setDetailedDescription("Detailed description. This should be detailed!");
         generalTrialDetails.setKeywords("Certain Keywords");
@@ -252,7 +252,7 @@ public class TSRReportGeneratorTest {
         // Human Subject Study
         TSRReportHumanSubjectSafety humanSubjectSafety = new TSRReportHumanSubjectSafety();
         humanSubjectSafety.setBoardApprovalStatus("Submitted, Pending");
-        humanSubjectSafety.setBoardApprovalNumber("Information Not Provided");
+        humanSubjectSafety.setBoardApprovalNumber("No Data Available");
         humanSubjectSafety.setBoard("ORGANIZATION Name");
         humanSubjectSafety.setAffiliation("Board Affiliated with NCI, 123 Main Street, Fairfax VA 22033, phone: 000-111-2222, email: email@example.org");
         tsrReportGenerator.setHumanSubjectSafety(humanSubjectSafety);

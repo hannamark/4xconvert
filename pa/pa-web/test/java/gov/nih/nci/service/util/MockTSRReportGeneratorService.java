@@ -50,7 +50,7 @@ public class MockTSRReportGeneratorService implements TSRReportGeneratorServiceR
 	  private static final String BLD_E = "</B>";
 
 	  /** The Constant NO_INFO. */
-	  private static final String NO_INFO = " <I> Information Not Provided </I>";
+	  private static final String NO_INFO = " <I> No Data Available </I>";
 
 	  /** The Constant EMPTY. */
 	  private static final String EMPTY = "";

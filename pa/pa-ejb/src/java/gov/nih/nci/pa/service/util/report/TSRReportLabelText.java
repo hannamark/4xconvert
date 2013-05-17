@@ -94,7 +94,7 @@ public class TSRReportLabelText { //NOPMD
     /**
      * Information not provided.
      */
-    public static final String INFORMATION_NOT_PROVIDED = "Information Not Provided";
+    public static final String INFORMATION_NOT_PROVIDED = "No Data Available";
 
     /**
      * type.
