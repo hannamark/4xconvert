@@ -132,13 +132,22 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
         disease.setDiseaseCode("diseaseCode 01");
         disease.setDisplayName("menu 01");
         disease.setPreferredName("perferredName 01");
+        disease.setCodeSystem("ICD9");
         dtos.put(1L, disease);
         disease = new AccrualDisease();
         disease.setId(2L);
+        disease.setCodeSystem("ICD9");
         disease.setDiseaseCode("diseaseCode 02");
         disease.setDisplayName("menu 02");
         disease.setPreferredName("perferredName 02");
         dtos.put(2L, disease);
+        disease = new AccrualDisease();
+        disease.setId(10L);
+        disease.setDiseaseCode("diseaseCode 10");
+        disease.setDisplayName("menu 10");
+        disease.setPreferredName("perferredName 10");
+        disease.setCodeSystem("ICD-O-3");
+        dtos.put(10L, disease);
     }
 
     public MockServiceLocator() {

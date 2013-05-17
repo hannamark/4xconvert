@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 
@@ -118,6 +119,7 @@ public class PatientHelper {
         if (!action.hasActionErrors()) {
             validateNoPatientDuplicates();
             validateUnitedStatesRules();
+            validateDiseaseCodes();
         }
     }
 
@@ -150,6 +152,19 @@ public class PatientHelper {
                 if (StringUtils.isNotEmpty(action.getPatient().getPaymentMethodCode())) {
                     action.addActionError("Method of payment should only be entered if country is United States.");
                 }
+            }
+        }
+    }
+
+    private void validateDiseaseCodes() {
+        if (action.getPatient().getDiseaseIdentifier() != null 
+                && action.getPatient().getSiteDiseaseIdentifier() != null) {
+            AccrualDisease dis = action.getDiseaseSvc().get(action.getPatient().getDiseaseIdentifier());
+            AccrualDisease siteDis = action.getDiseaseSvc().get(action.getPatient().getSiteDiseaseIdentifier());
+            if (dis != null && siteDis != null && !dis.getCodeSystem().equals(siteDis.getCodeSystem())) {
+                action.addActionError("Unable to save because Site and Disease terminologies do not match.");
+                action.getPatient().setSiteDiseaseIdentifier(null);
+                action.getPatient().setSiteDiseasePreferredName(null);
             }
         }
     }

@@ -1,6 +1,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+        <s:if test="%{siteLookUp}">
+            <fmt:message key="site.title" var="pageTitle" />
+        </s:if>
+        <s:else>
+            <fmt:message key="disease.title" var="pageTitle" />
+        </s:else>
+        <title>${pageTitle}</title>        
+        <s:head/>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.7.1.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -36,17 +44,45 @@
     <body>
         <div class="box">
             <s:form id="diseases" name="diseases" >
-                <h2><fmt:message key="disease.search"/></h2>
                 <s:hidden id="siteLookUp" name="siteLookUp"/>
+                <h2>
+	                <s:if test="%{siteLookUp}">
+	                     <fmt:message key="site.search"/>
+	                </s:if>
+	                <s:else>
+	                    <fmt:message key="disease.search"/>
+	                </s:else>
+                </h2>
                 <table class="form">
                     <tr>
-                        <td scope="row" class="label"><label for="searchName"><fmt:message key="disease.name"/></label></td>
+                        <td scope="row" class="label"><label for="searchName">
+                        <s:if test="%{siteLookUp}">
+                            <fmt:message key="site.name"/>
+                        </s:if>
+                        <s:else>
+                            <fmt:message key="disease.name"/>
+                        </s:else>
+                        </label></td>
                         <td><s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px" /></td>
-                        <td scope="row" class="label"><label for="searchCode"><fmt:message key="disease.code"/></label></td>
+                        <td scope="row" class="label"><label for="searchCode">
+	                        <s:if test="%{siteLookUp}">
+	                            <fmt:message key="site.code"/>
+	                        </s:if>
+	                        <s:else>
+	                            <fmt:message key="disease.code"/>
+	                        </s:else>
+                        </label></td>
                         <td><s:textfield id="searchCode" name="searchCode" maxlength="60" size="60" cssStyle="width:200px" /></td>
                     </tr>
                     <tr> 
-                        <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.codeSystem"/></label></td>
+                        <td scope="row" class="label"><label for="includeSDC">
+	                        <s:if test="%{siteLookUp}">
+	                            <fmt:message key="site.codeSystem"/>
+	                        </s:if>
+	                        <s:else>
+	                            <fmt:message key="disease.codeSystem"/>
+	                        </s:else>    
+                        </label></td>
                         <td>
                             <s:select id ="searchCodeSystem" name="searchCodeSystem" list="listOfDiseaseCodeSystems"/>
                         </td>

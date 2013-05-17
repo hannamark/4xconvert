@@ -57,15 +57,22 @@
             }
             
             function lookup(siteLookUp){
-            	var sitePN = document.getElementById('sitedisease').value;
-            	var selectedSite;
-            	if (sitePN.length == 0) {
-            		selectedSite = "false";
-                } else {
-                	selectedSite = "true";
-                }
+            	var selectedSite = "false";
+            	var sitePN = document.getElementById('sitedisease');
+            	if (sitePN != null && (sitePN.value != null || sitePN.value != 'undefined')) {
+	            	var selectedSite;
+	            	if (sitePN.length == 0) {
+	            		selectedSite = "false";
+	                } else {
+	                	selectedSite = "true";
+	                }
+            	}
             	var result = '${lookupUrl}' + "?siteLookUp=" + siteLookUp + "&selectedSite=" + selectedSite;
-            	showPopWin(result, 900, 400, '', 'Disease');
+            	if(siteLookUp == 'true') {
+            		showPopWin(result, 900, 400, '', 'Site');
+            	} else {
+            		showPopWin(result, 900, 400, '', 'Disease');
+            	}            	
             }
             
             function loadDiv(intid, type, siteLookUp) {

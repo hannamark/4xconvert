@@ -265,6 +265,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudyProtocolId(1L);
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
+        patient.setSiteDiseaseIdentifier(Long.valueOf("10"));
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
+        assertTrue(action.hasActionErrors());
+        assertTrue(action.getActionErrors().contains("Unable to save because Site and Disease terminologies do not match."));
+        assertNull(action.getPatient().getSiteDiseaseIdentifier());
+        assertNull(action.getPatient().getSiteDiseasePreferredName());
+        patient.setDiseaseIdentifier(Long.valueOf("20"));
+        patient.setSiteDiseaseIdentifier(Long.valueOf("100"));
+        assertEquals(AccrualConstants.AR_DETAIL, action.add());
         patient.setIdentifier(null);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
         assertTrue(action.hasActionErrors());
@@ -367,6 +376,8 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         }
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
         assertEquals("displayDiseases", action.getDisplayDisease());
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("siteLookUp", "true");
+        assertEquals("displaySiteDiseases", action.getDisplayDisease());
     }
 
     @Test

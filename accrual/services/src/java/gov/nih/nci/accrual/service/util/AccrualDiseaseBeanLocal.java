@@ -131,7 +131,8 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
                 AccrualDiseaseBeanLocal.AccrualDiseaseSortCriterion.DISEASE_CODE, false);
         SearchCriteria<AccrualDisease> criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
         List<AccrualDisease> result = super.search(criteria, params);
-        if (result.isEmpty() && searchCriteria.getDiseaseCode().toUpperCase(Locale.US).charAt(0) == 'C') {
+        if (result.isEmpty() && searchCriteria.getDiseaseCode() != null && !searchCriteria.getDiseaseCode().isEmpty()
+                && searchCriteria.getDiseaseCode().toUpperCase(Locale.US).charAt(0) == 'C') {
             searchCriteria.setCodeSystem("ICD-O-3");
             int length = searchCriteria.getDiseaseCode().length();
             String appendedDC = searchCriteria.getDiseaseCode().substring(0, length - 1) 
