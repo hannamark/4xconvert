@@ -61,7 +61,7 @@
             	var sitePN = document.getElementById('sitedisease');
             	if (sitePN != null && (sitePN.value != null || sitePN.value != 'undefined')) {
 	            	var selectedSite;
-	            	if (sitePN.length == 0) {
+	            	if (sitePN.value.length == 0) {
 	            		selectedSite = "false";
 	                } else {
 	                	selectedSite = "true";
