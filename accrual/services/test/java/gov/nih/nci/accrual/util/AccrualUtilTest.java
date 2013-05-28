@@ -326,6 +326,8 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         sdf.applyPattern("MM/yyyy");
         String nowYrMoStr = sdf.format(now);
         assertEquals(nowYrMoStr, AccrualUtil.timestampToYearMonthString(nowTstamp));
+        AccrualUtil au = new AccrualUtil();
+        assertNull(au.timestampToYearMonthString(null));
     }
     
     @Test

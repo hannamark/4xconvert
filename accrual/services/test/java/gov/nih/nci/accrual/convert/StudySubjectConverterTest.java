@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.convert;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
@@ -160,6 +161,7 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(stTest(dto.getRegistrationGroupId()));
         
         subject.setDisease(disease);
+        subject.setSiteDisease(null);
         subject.setPatient(patient);
         subject.setStudySite(participatingSite);
         dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
@@ -177,7 +179,8 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(dto.getDiseaseIdentifier()));
         assertTrue(iiTest(dto.getParticipatingSiteIdentifier()));
         assertTrue(stTest(dto.getRegistrationGroupId()));
-        assertTrue(cdTest(dto.getSubmissionTypeCode()));
+        assertTrue(cdTest(dto.getSubmissionTypeCode()));        
+        assertNull(Converters.get(StudySubjectConverter.class).fKeySetter(StudySite.class, null));
     }
 
     private StudySubjectDto createStudySubjectDTO() {
@@ -192,6 +195,7 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         dto.setSubmissionTypeCode(cdVal);
         dto.setAssignedIdentifier(stVal);
         dto.setDiseaseIdentifier(iiVal);
+        dto.setSiteDiseaseIdentifier(iiVal);
         return dto;
     }
 }

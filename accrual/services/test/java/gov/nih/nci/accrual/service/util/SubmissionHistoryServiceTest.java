@@ -1,6 +1,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
@@ -188,6 +189,15 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         List<HistoricalSubmissionDto> rList = bean.search(PAUtil.dateStringToTimestamp("1/5/2012"), 
                 PAUtil.dateStringToTimestamp("1/15/2012"), user);
         assertEquals(3, rList.size());
+        
+        HistoricalSubmissionDto dto = rList.get(0);
+        assertNotNull(dto.getCompleteTrialId());
+        //assertNotNull(dto.getAssignedIdentifier());
+        assertNotNull(dto.getStudySubjectId());
+        dto = rList.get(1);
+        assertNotNull(dto.getAbbreviatedTrialId());
+        dto = rList.get(2);
+        assertNotNull(dto.getBatchFileIdentifier());
     }
 
     @Test

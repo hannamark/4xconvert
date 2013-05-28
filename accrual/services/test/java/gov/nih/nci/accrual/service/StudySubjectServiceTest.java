@@ -447,6 +447,19 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         assertEquals(ss1.getId(), bean.get(key1).getId());
         assertEquals(ss2.getId(), bean.get(key2).getId());
         assertNull(bean.get(new SubjectAccrualKey(-3L, "xyldksfj")));
+        assertTrue(key1.equals(key1));
+        assertFalse(key1.equals(null));
+        assertFalse(key1.equals(new StudySubject()));
+        assertFalse(key1.equals(key2));
+        key1.setStudySiteId(null);
+        key2.setAssignedIdentifier("001");
+        assertFalse(key1.equals(key2));
+        key1.setAssignedIdentifier(null);
+        assertFalse(key1.equals(key2));
+        key1.setAssignedIdentifier("001");
+        key2.setAssignedIdentifier("001");
+        key1.setStudySiteId(TestSchema.studySites.get(0).getId());
+        assertFalse(key1.equals(key2));
     }
 
     @Test(expected = PAException.class) 

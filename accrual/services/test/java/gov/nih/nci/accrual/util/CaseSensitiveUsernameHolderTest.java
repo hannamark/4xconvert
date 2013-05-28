@@ -13,6 +13,8 @@ public class CaseSensitiveUsernameHolderTest {
 		holder.setUser(null);
 		holder.setUser("Testing");
 		assertEquals("Testing", holder.getUser());
+		holder.setUser("");
+		assertEquals("__anonymous__", holder.getUser());
 	}
 
 }

@@ -17,7 +17,6 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
 
     private Long batchFileIdentifier;
     private String nciNumber;
-    private String fileHtml;
     private AccrualSubmissionTypeCode submissionType;
     private Timestamp date;
     private String username;
@@ -51,18 +50,6 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
      */
     public void setNciNumber(String nciNumber) {
         this.nciNumber = nciNumber;
-    }
-    /**
-     * @return the fileHtml
-     */
-    public String getFileHtml() {
-        return fileHtml;
-    }
-    /**
-     * @param fileHtml the fileHtml to set
-     */
-    public void setFileHtml(String fileHtml) {
-        this.fileHtml = fileHtml;
     }
     /**
      * @return the submissionType

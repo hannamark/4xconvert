@@ -81,12 +81,14 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActivityNameCode;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -158,8 +160,10 @@ public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedA
    
         PerformedActivityDto padto2 = bean.get(pa.getIdentifier());
         padto2.setName(StConverter.convertToSt("test"));
+        padto2.setNameCode(CdConverter.convertToCd(ActivityNameCode.DISEASE_STATUS));
         PerformedActivityDto par2 = bean.update(padto2);
         assertTrue(padto2.getName().getValue().equals(par2.getName().getValue()));
+        assertTrue(padto2.getNameCode().getCode().equals(par2.getNameCode().getCode()));
         
         //PerformedSubjectMilestone
         PerformedSubjectMilestoneDto psmdto = new  PerformedSubjectMilestoneDto();
@@ -188,7 +192,7 @@ public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedA
     @Test
     public void subjectMilestoneExceptions() throws Exception {
         Ii ii = IiConverter.convertToIi(TestSchema.studySubjects.get(0).getId());
-        
+        assertNull(bean.getPerformedSubjectMilestoneByStudySubject(null));
         List<PerformedSubjectMilestoneDto> dto = bean.getPerformedSubjectMilestoneByStudySubject(ii);
         assertNotNull(dto);
     }
