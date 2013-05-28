@@ -589,16 +589,7 @@
     </target>
 
     <target name="dist:tools:retrieve:cgmm" if="jboss.cgmm.enable">
-        <ivy-retrieve-cgmm ivy.dir="${bda-utils.dir}/resource/ivy"
-            project.lib.dir.base = "${target.dir}/lib"
-        />
-        <copy todir="${dist.exploded.dir}/cgmm-libs">
-            <fileset dir="${lib.dir}">
-                <include name="cgmm/*" />
-                <include name="jboss-default-lib/*" />
-                <include name="jbossweb-tomcat55-sar-jars/*" />
-            </fileset>
-        </copy>
+        <ant dir="${common.dir}/cgmm" />
     </target>
 
     <target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)" depends="remote:upgrade:po-ear,remote:upgrade:po-grid-3.2,remote:upgrade:po-grid-3.1,remote:upgrade:po-grid-3.0">

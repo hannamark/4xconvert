@@ -640,8 +640,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             <copy todir="@{jboss.tomcat.dir}" overwrite="true">
                 <fileset dir="@{cgmm.jars.base.dir}/jbossweb-tomcat55-sar-jars">
                     <include name="*.jar"/>
-                    <exclude name="xerces*.jar"/>
-                    <exclude name="xalan*.jar"/>
+                    <exclude name="catalina-5.0.jar"/>
                 </fileset>
             </copy>
             <copy file="@{cgmm.jars.base.dir}/cgmm/cgmmapi-@{cgmm.version}.jar" todir="@{jboss.tomcat.dir}" overwrite="true"/>

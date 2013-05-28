@@ -891,15 +891,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             -->
     </target>
     <target name="dist:tools:retrieve:cgmm" if="jboss.cgmm.enable">
-            <ivy-retrieve-cgmm ivy.dir="${bda-utils.dir}/resource/ivy"
-                />
-            <copy todir="${dist.exploded.dir}/cgmm-libs">
-                <fileset dir="${lib.dir}">
-                    <include name="cgmm/*"/>
-                    <include name="jboss-default-lib/*"/>
-                    <include name="jbossweb-tomcat55-sar-jars/*"/>
-                </fileset>
-            </copy>
+        <ant dir="${common.dir}/cgmm" />        <unzip src="${common.dir}/cgmm/cgmm-libs.zip" dest="${dist.exploded.dir}"/>
     </target>
 
     <target name="deploy:remote:install:ahp"

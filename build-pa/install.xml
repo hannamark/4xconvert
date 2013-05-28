@@ -83,12 +83,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-    
+
     <property name="pa-grid-3.4.dir.dist" value="${basedir}/${pa-grid-3.4.dist.relative.dir}" />
     <property name="pa-grid-3.4.dir.src" value="${basedir}/${pa-grid-3.4.dist.relative.dir}" />
     <property name="pa-grid-3.4.dir.target" value="wsrf.war" />
     <property name="pa-grid-3.4.introduce.skeleton.service.name" value="PAServices"/>
-    
+
     <property name="pa-grid-3.3.dir.dist" value="${basedir}/${pa-grid-3.3.dist.relative.dir}" />
     <property name="pa-grid-3.3.dir.src" value="${basedir}/${pa-grid-3.3.dist.relative.dir}" />
     <property name="pa-grid-3.3.dir.target" value="wsrf.war" />
@@ -656,8 +656,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <copy todir="@{jboss.tomcat.dir}" overwrite="true">
                 <fileset dir="@{cgmm.jars.base.dir}/jbossweb-tomcat55-sar-jars">
                     <include name="*.jar"/>
-                    <exclude name="xerces*.jar"/>
-                    <exclude name="xalan*.jar"/>
+                    <exclude name="catalina-5.0.jar"/>
                 </fileset>
             </copy>
             <copy file="@{cgmm.jars.base.dir}/cgmm/cgmmapi-@{cgmm.version}.jar" todir="@{jboss.tomcat.dir}" overwrite="true"/>
