@@ -1292,5 +1292,9 @@
      <changeSet id="PO-6140-2" author="krylovd">
         <comment>Not using the biomarker view anymore.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-6140-2.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-6207" author="krylovd">
+        <comment>Created a table to store history of CT.Gov uploads.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6207.sql"/>
+     </changeSet>
 </databaseChangeLog>

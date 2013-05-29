@@ -3,14 +3,24 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.TestSchema;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +33,7 @@ import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
  * @author Denis G. Krylov
  * 
  */
-public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
+public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
 
     private CTGovUploadServiceBeanLocal serviceBean;
     private FakeFtpServer fakeFtpServer;
@@ -36,11 +46,14 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
      */
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+                
+        AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
+        mockitoTest.setUp();
+        
         serviceBean = new CTGovUploadServiceBeanLocal();
-        serviceBean.setQueryServiceLocal(protocolQueryServiceLocal);
-        serviceBean.setGeneratorServiceLocal(ctGovXmlGeneratorServiceLocal);
-        serviceBean.setLookUpTableService(lookupSvc);
+        serviceBean.setQueryServiceLocal(mockitoTest.getProtocolQueryServiceLocal());
+        serviceBean.setGeneratorServiceLocal(mockitoTest.getCtGovXmlGeneratorServiceLocal());
+        serviceBean.setLookUpTableService(mockitoTest.getLookupSvc());
 
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.setServerControlPort(51239); // use any free port
@@ -61,13 +74,14 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
         Properties props = (Properties) propsField.get(null);
         props.put("ctgov.ftp.url", "ftp://ctrppa:ctrppa@localhost:51239/");
 
+        TestSchema.primeData();
     }
 
     /**
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown() throws Exception {
+    public void done() throws Exception {
         try {
             fakeFtpServer.stop();
         } catch (Exception e) {
@@ -79,12 +93,32 @@ public class CTGovUploadServiceBeanTest extends AbstractMockitoTest {
      * Test method for
      * {@link gov.nih.nci.pa.service.util.CTGovUploadServiceBeanLocal#uploadToCTGov()}
      * .
-     * @throws PAException 
+     * 
+     * @throws PAException
+     * @throws IOException 
+     * @throws HibernateException 
      */
     @Test
-    public final void testUploadToCTGov() throws PAException {
+    public final void testUploadToCTGov() throws PAException,
+            HibernateException, IOException {
+        Session s = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "insert into prs_sync_history(sync_date, data) values(:date,:data)");
+        query.setText("data", "old");
+        query.setTimestamp("date", DateUtils.addDays(new Date(), -31));
+        query.executeUpdate();
+        s.flush();
+
         serviceBean.uploadToCTGov();
-        assertTrue(fileSystem.exists("/clinical.txt"));        
+        assertTrue(fileSystem.exists("/clinical.txt"));
+
+        assertEquals(IOUtils.toString(getClass().getResourceAsStream(
+                "/CDR360805.xml")),
+                s.createSQLQuery("select data from prs_sync_history")
+                        .uniqueResult());
+
     }
 
 }

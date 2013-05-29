@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -27,8 +29,10 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
 
 /**
  * @author Denis G. Krylov
@@ -40,6 +44,8 @@ import org.apache.log4j.Logger;
         PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
+
+    private static final int DAYS_TO_KEEP_HISTORY = -30;
 
     private static final String PRS_UPLOAD_FILENAME = "clinical.txt";
 
@@ -127,7 +133,7 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         this.queryServiceLocal = queryServiceLocal;
     }
 
-    private void uploadFileToCTGov(String xml, URL ftpURL) {
+    private void uploadFileToCTGovAndUpdateHistory(String xml, URL ftpURL) {
         OutputStream os = null;
         InputStream fileIs = null;
         try {
@@ -143,7 +149,7 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
             os.flush();
             LOG.info(PRS_UPLOAD_FILENAME + " uploaded to "
                     + hidePassword(completeUploadURL));
-
+            updateHistory(xml);
         } catch (Exception e) {
             LOG.error("Upload of " + PRS_UPLOAD_FILENAME + " failed due to "
                     + e.getMessage());
@@ -151,6 +157,23 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
             IOUtils.closeQuietly(fileIs);
             IOUtils.closeQuietly(os);
         }
+
+    }
+
+    private void updateHistory(String xml) {
+        SQLQuery query = PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "insert into prs_sync_history(sync_date, data) values(current_timestamp,:data)");
+        query.setText("data", xml);
+        query.executeUpdate();
+
+        SQLQuery deleteQuery = PaHibernateUtil.getCurrentSession()
+                .createSQLQuery(
+                        "delete from prs_sync_history where sync_date<:date");
+        deleteQuery.setTimestamp("date",
+                DateUtils.addDays(new Date(), DAYS_TO_KEEP_HISTORY));
+        deleteQuery.executeUpdate();
 
     }
 
@@ -184,7 +207,7 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         try {
             String xml = generatorServiceLocal.generateCTGovXml(trialIDs,
                     CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
-            uploadFileToCTGov(xml, ftpURL);
+            uploadFileToCTGovAndUpdateHistory(xml, ftpURL);
         } catch (PAException e) {
             LOG.error(ExceptionUtils.getFullStackTrace(e));
         }

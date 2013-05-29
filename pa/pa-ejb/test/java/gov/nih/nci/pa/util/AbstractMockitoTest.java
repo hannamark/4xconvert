@@ -162,7 +162,6 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.Lov;
@@ -830,6 +829,7 @@ public class AbstractMockitoTest {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void setupCtGovXmlMock() throws PAException, IOException {
         ctGovXmlGeneratorServiceLocal = mock(CTGovXmlGeneratorServiceLocal.class);
         when(
@@ -837,6 +837,11 @@ public class AbstractMockitoTest {
                         any(CTGovXmlGeneratorOptions[].class))).thenReturn(
                 IOUtils.toString(getClass().getResourceAsStream(
                         "/CDR360805.xml")));
+        when(
+                ctGovXmlGeneratorServiceLocal.generateCTGovXml(any(List.class),
+                        any(CTGovXmlGeneratorOptions[].class))).thenReturn(
+                IOUtils.toString(getClass().getResourceAsStream(
+                        "/CDR360805.xml")));        
     }
 
     private void setupProtocolQueryServiceMock() throws PAException {
@@ -1443,6 +1448,14 @@ public class AbstractMockitoTest {
 
     public IdentifiedPersonDTO getIdentifiedPersonDto() {
         return identifiedPersonDto;
+    }
+    
+    public ProtocolQueryServiceLocal getProtocolQueryServiceLocal() {
+        return protocolQueryServiceLocal;
+    }
+    
+    public CTGovXmlGeneratorServiceLocal getCtGovXmlGeneratorServiceLocal() {
+        return ctGovXmlGeneratorServiceLocal;
     }
 
 }
