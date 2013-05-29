@@ -102,7 +102,7 @@
 	<classpathentry kind="lib" path="build/lib/core-services-stubs-3.2.jar"/>
 	<classpathentry kind="lib" path="build/lib/jaxb-api-2.2.5.jar"/>
 	<classpathentry kind="lib" path="build/lib/po-services-client-3.2.0-m10.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-commons-3.9.1.2-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.9.1.2-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-commons-3.10.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.10.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
