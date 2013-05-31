@@ -677,6 +677,20 @@
             </result>
             <result name="criteriaProtected">/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>
         </action>
+        
+        <action name="manageSiteAdmins*" class="gov.nih.nci.pa.action.ManageSiteAdminsAction" method="{1}">
+            <interceptor-ref name="scopedModelDriven">
+                <param name="scope">session</param>
+            </interceptor-ref>
+            <interceptor-ref name="paDefaultInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">assign,assignAll,unassign,unassignAll</param>
+                <param name="excludeMethods">execute, query</param>
+            </interceptor-ref>             
+            <result name="error">/WEB-INF/jsp/manageSiteAdmins.jsp</result>            
+            <result name="success">/WEB-INF/jsp/manageSiteAdmins.jsp</result>
+        </action>
+                   
         <action name="assignOwnership*" class="gov.nih.nci.pa.action.AssignOwnershipAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/assignOwnership.jsp</result>

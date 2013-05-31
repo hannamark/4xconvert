@@ -332,5 +332,14 @@ public interface RegistryUserService {
      * @throws PAException PAException
      */
     List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds) throws PAException;
+    
+    /**
+     * Changes {@link UserOrgType} of the given user sending a email notification if needs be.
+     * @param userID userID
+     * @param userOrgType userOrgType
+     * @param rejectReason rejectReason
+     * @throws PAException PAException
+     */
+    void changeUserOrgType(Long userID, UserOrgType userOrgType, String rejectReason) throws PAException;
 
 }

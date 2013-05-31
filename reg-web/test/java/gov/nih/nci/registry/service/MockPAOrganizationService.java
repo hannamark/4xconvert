@@ -66,6 +66,12 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
     @Override
     public List<Long> getOrganizationIdsByNames(List<String> names) throws PAException {
         return null;
+    }
+
+    
+    public List<Organization> getOrganizationsWithUserAffiliations()
+            throws PAException {       
+        return orgList;
     }  
 
 }

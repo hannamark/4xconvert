@@ -77,4 +77,10 @@ public final class PAOrganizationServiceCachingDecorator implements
         return serviceRemote.getOrganizationIdsByNames(names);
     }
 
+    @Override
+    public List<Organization> getOrganizationsWithUserAffiliations()
+            throws PAException {
+        return serviceRemote.getOrganizationsWithUserAffiliations();
+    }
+
 }

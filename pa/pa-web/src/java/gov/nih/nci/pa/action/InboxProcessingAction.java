@@ -310,19 +310,12 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      * @param userId
      * @throws PAException
      */
-    private void updateUserRole(UserOrgType affiliatedOrgUserType, String userId, String rejectReason)
-            throws PAException {
-        RegistryUser pendingUsr = PaRegistry.getRegistryUserService().getUserById(Long.parseLong(userId));
-        if (pendingUsr == null) {
-            throw new PAException("User not found");
-        }
-        pendingUsr.setAffiliatedOrgUserType(affiliatedOrgUserType);
-        PaRegistry.getRegistryUserService().updateUser(pendingUsr);
-        if (pendingUsr.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
-            PaRegistry.getMailManagerService().sendAdminAcceptanceEmail(pendingUsr.getId());
-        } else {
-            PaRegistry.getMailManagerService().sendAdminRejectionEmail(pendingUsr.getId(), rejectReason);
-        }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+    private void updateUserRole(UserOrgType affiliatedOrgUserType,
+            String userId, String rejectReason) throws PAException {
+
+        PaRegistry.getRegistryUserService().changeUserOrgType(
+                Long.parseLong(userId), affiliatedOrgUserType, rejectReason);
+        ServletActionContext.getRequest().setAttribute(
+                Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
     }
 }

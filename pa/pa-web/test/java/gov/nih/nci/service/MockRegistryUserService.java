@@ -271,4 +271,10 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
             throws PAException {
         return new ArrayList<RegistryUser>();
     }
+
+  
+    public void changeUserOrgType(Long userID, UserOrgType userOrgType, String rejectReason)
+            throws PAException {
+        
+    }
 }

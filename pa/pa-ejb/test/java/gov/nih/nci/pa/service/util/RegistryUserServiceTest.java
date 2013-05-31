@@ -82,12 +82,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.*;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -121,7 +121,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
     public ExpectedException thrown = ExpectedException.none();
 
 
-    private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+    private final RegistryUserBeanLocal remoteEjb = new MockRegistryUserServiceBean();
     private final CSMUserService csmSvc = mock(CSMUserService.class);
     private final RegistryUserBeanLocal bean = new RegistryUserBeanLocal();
     private final RegistryUser regUser = new RegistryUser();
@@ -147,7 +147,10 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
 
         CSMUserService.setInstance(csmSvc);
 
-        paHibernateHelper = PaHibernateUtil.getHibernateHelper();        
+        paHibernateHelper = PaHibernateUtil.getHibernateHelper();    
+        
+        bean.setMailManagerService(mock(MailManagerServiceLocal.class));
+        remoteEjb.setMailManagerService(mock(MailManagerServiceLocal.class));
           
     }
 
@@ -514,4 +517,61 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertEquals(1, ruList.size());
         assertEquals(id, ruList.get(0).getId());
     }
+    
+    /**
+     * @throws PAException 
+     * 
+     */
+    @Test
+    public void changeUserOrgType() throws PAException {
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser create = createRegisterUser(csmUser);
+        RegistryUser saved = remoteEjb.createUser(create);
+        assertEquals(UserOrgType.ADMIN, saved.getAffiliatedOrgUserType());
+        
+        remoteEjb.changeUserOrgType(saved.getId(), UserOrgType.MEMBER, "");
+        RegistryUser changedUser = remoteEjb.getUserById(saved.getId());
+        assertEquals(UserOrgType.MEMBER, changedUser.getAffiliatedOrgUserType());
+    }
+    
+    /**
+     * @throws PAException 
+     * 
+     */
+    @Test
+    public void changeUserOrgTypeAcceptanceEmail() throws PAException {
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser create = createRegisterUser(csmUser);
+        create.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
+        RegistryUser saved = remoteEjb.createUser(create);
+        assertEquals(UserOrgType.PENDING_ADMIN, saved.getAffiliatedOrgUserType());
+        
+        MailManagerServiceLocal mailMock = mock(MailManagerServiceLocal.class);
+        remoteEjb.setMailManagerService(mailMock);
+        remoteEjb.changeUserOrgType(saved.getId(), UserOrgType.ADMIN, "");
+        RegistryUser changedUser = remoteEjb.getUserById(saved.getId());
+        assertEquals(UserOrgType.ADMIN, changedUser.getAffiliatedOrgUserType());
+        verify(mailMock).sendAdminAcceptanceEmail(saved.getId());
+    }
+    
+    /**
+     * @throws PAException 
+     * 
+     */
+    @Test
+    public void changeUserOrgTypeRejectionEmail() throws PAException {
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser create = createRegisterUser(csmUser);
+        create.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
+        RegistryUser saved = remoteEjb.createUser(create);
+        assertEquals(UserOrgType.PENDING_ADMIN, saved.getAffiliatedOrgUserType());
+        
+        MailManagerServiceLocal mailMock = mock(MailManagerServiceLocal.class);
+        remoteEjb.setMailManagerService(mailMock);
+        remoteEjb.changeUserOrgType(saved.getId(), UserOrgType.MEMBER, "Rejection reason");
+        RegistryUser changedUser = remoteEjb.getUserById(saved.getId());
+        assertEquals(UserOrgType.MEMBER, changedUser.getAffiliatedOrgUserType());
+        verify(mailMock).sendAdminRejectionEmail(saved.getId(), "Rejection reason");
+    }
+    
 }

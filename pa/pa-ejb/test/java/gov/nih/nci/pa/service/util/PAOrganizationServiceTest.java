@@ -3,11 +3,11 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -19,6 +19,7 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +38,7 @@ public class PAOrganizationServiceTest extends AbstractHibernateTestCase {
     private Long orgId;
 
     @Before
-    public void setUp(  ) throws Exception {
+    public void setUp(  ) throws Exception {        
         StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         Organization o = TestSchema.createOrganizationObj();
@@ -97,6 +99,25 @@ public class PAOrganizationServiceTest extends AbstractHibernateTestCase {
         Collections.sort(testBean.output);
         Collections.sort(result);
         assertTrue(CollectionUtils.isEqualCollection(testBean.output, result));
+    }
+    
+    @Test
+    public void getOrganizationsWithUserAffiliations() throws PAException {
+        Session s = PaHibernateUtil.getCurrentSession();
+        
+        List<Organization> list = remoteEjb
+                .getOrganizationsWithUserAffiliations();
+        assertEquals(0, list.size());
+        
+        RegistryUser user = TestSchema.getRegistryUser();
+        user.setAffiliatedOrganizationId(1L);
+        s.update(user);
+        s.flush();
+        
+        list = remoteEjb
+                .getOrganizationsWithUserAffiliations();
+        assertEquals(1, list.size());
+        assertEquals(orgId, list.get(0).getId());
     }
     
     

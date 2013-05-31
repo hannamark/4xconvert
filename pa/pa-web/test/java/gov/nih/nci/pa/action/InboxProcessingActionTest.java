@@ -80,12 +80,6 @@ public class InboxProcessingActionTest extends AbstractPaActionTest {
 	@Test
 	public void testprocessUserRole() {
 	    getRequest().setupAddParameter("action", "accept");
-	    getRequest().setupAddParameter("id","2");
-	    assertEquals("success",inboxAction.processUserRole());
-	    assertNotNull(getRequest().getAttribute("failureMessage"));
-	    assertEquals("User not found",getRequest().getAttribute("failureMessage"));
-
-	    getRequest().setupAddParameter("action", "accept");
         getRequest().setupAddParameter("id","1");
         assertEquals("success",inboxAction.processUserRole());
         assertNotNull(getRequest().getAttribute("successMessage"));

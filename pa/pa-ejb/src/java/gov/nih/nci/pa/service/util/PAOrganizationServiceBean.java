@@ -235,4 +235,18 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         }
         return organizationDTOs;
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Organization> getOrganizationsWithUserAffiliations()
+            throws PAException {
+        return (List<Organization>) PaHibernateUtil
+                .getCurrentSession()
+                .createQuery(
+                        "select o from Organization o where o.identifier in "
+                                + "(select str(ru.affiliatedOrganizationId) from RegistryUser ru " 
+                                + "where ru.csmUser is not null and ru.affiliatedOrganizationId is not null) "
+                                + "order by o.name")
+                .list();
+    }
 }

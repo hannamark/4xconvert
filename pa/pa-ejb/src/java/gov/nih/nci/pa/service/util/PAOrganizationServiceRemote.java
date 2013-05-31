@@ -122,5 +122,11 @@ public interface PAOrganizationServiceRemote  {
      */
     List<Long> getOrganizationIdsByNames(List<String> names) throws PAException;
     
+    /**
+     * @return all organizations that have at least one affiliated {@link RegistryUser} 
+     * @throws PAException PAException
+     */
+    List<Organization> getOrganizationsWithUserAffiliations() throws PAException;
+    
 
 }

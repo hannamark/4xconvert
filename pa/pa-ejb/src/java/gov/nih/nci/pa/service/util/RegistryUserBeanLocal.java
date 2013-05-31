@@ -106,6 +106,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -123,6 +124,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.annotation.IgnoreDependency;
 
 /**
  * @author aevansel@5amsolutions.com
@@ -144,6 +146,11 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_LEAD_ID = 7;
     private static final String SEARCH_USER_BY_EMAIL_QUERY = "select ru from RegistryUser as ru "
             + "join fetch ru.csmUser as csmu where ru.emailAddress = :emailAddress";
+    
+    @EJB
+    @IgnoreDependency
+    private MailManagerServiceLocal mailManagerService;
+    
     /**
      * {@inheritDoc}
      */
@@ -174,7 +181,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public boolean isTrialOwner(Long userId, Long studyProtocolId)
             throws PAException {
@@ -660,7 +667,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     }
 
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private boolean isEmailNotificationsEnabledOnGlobalLevel(Long userId) {
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery query = session
@@ -715,7 +722,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return findByAffiliatedOrgs(Arrays.asList(new Long[] {orgId}));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds) throws PAException {
         if (CollectionUtils.isEmpty(orgIds)) {
@@ -729,7 +736,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return criteria.list();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<RegistryUser> searchByCsmUsers(Collection<User> users)
             throws PAException {
@@ -739,6 +746,32 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         criteria.add(Restrictions.in("csmUser", users));
         criteria.setFetchMode("csmUser", FetchMode.JOIN);        
         return criteria.list();
+    }
+
+    @Override
+    public void changeUserOrgType(Long userID, UserOrgType userOrgType,
+            String rejectReason) throws PAException {
+        RegistryUser pendingUsr = getUserById(userID);
+        UserOrgType previousOrgType = pendingUsr.getAffiliatedOrgUserType();
+        pendingUsr.setAffiliatedOrgUserType(userOrgType);
+        updateUser(pendingUsr);
+        
+        if (userOrgType.equals(UserOrgType.ADMIN)
+                && UserOrgType.PENDING_ADMIN.equals(previousOrgType)) {
+            mailManagerService.sendAdminAcceptanceEmail(pendingUsr.getId());
+        }
+        if (!(userOrgType.equals(UserOrgType.ADMIN))
+                && UserOrgType.PENDING_ADMIN.equals(previousOrgType)) {
+            mailManagerService.sendAdminRejectionEmail(pendingUsr.getId(),
+                    StringUtils.defaultString(rejectReason));
+        }
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
     }
 
 }
