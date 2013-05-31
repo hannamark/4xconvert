@@ -94,7 +94,7 @@ public enum AssignmentActionCode implements CodedEnum<String> {
     /**
      * UNASSIGNED.
      */
-    UNASSIGNED("Un-assigned");
+    UNASSIGNED("Unassigned");
 
     private String code;
 

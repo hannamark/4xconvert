@@ -105,7 +105,7 @@ function selectTrialType(){
                                     <li><a href="javascript:void(0)" class="fakelink">Manage Accrual Access</a></li>
                                     <li class="stdsub">
                                     <ul>                               
-                                        <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccess.action');"  class="${requestScope.topic == 'accrualaccess'?'selected':''}">Assign &amp; Un-assign Access</a></li>
+                                        <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccess.action');"  class="${requestScope.topic == 'accrualaccess'?'selected':''}">Assign &amp; Unassign Access</a></li>
                                         <li><a id="viewAccrualAccessAssignmentHistoryMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentHistory.action');"  class="${requestScope.topic == 'assignmentHistory'?'selected':''}">Assignment History</a></li>
                                         <li><a id="viewAccrualAccessAssignmentByTrialMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentByTrial.action');"  class="${requestScope.topic == 'assignmentByTrial'?'selected':''}">Assignment By Trial</a></li>
                                     </ul>            

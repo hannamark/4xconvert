@@ -632,7 +632,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(2, list.size());
         
         AccrualAccessAssignmentHistoryDTO unassign = list.get(0);
-        assertEquals("Un-assigned", unassign.getAction());        
+        assertEquals("Unassigned", unassign.getAction());        
         assertEquals("Test User", unassign.getAssigner());
         assertEquals("TEST-UNASSIGN", unassign.getComments());
         assertEquals("NCI-2009-00001", unassign.getTrialNciId());

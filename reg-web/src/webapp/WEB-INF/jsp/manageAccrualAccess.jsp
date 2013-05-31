@@ -220,7 +220,7 @@
                                     listKey="id"  
                                     listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
                                 headerKey="" headerValue=" " value="model.user.id" />
-                     <input type="button" value="Assign/Un-Assign Site Accrual Submitter"
+                     <input type="button" value="Assign/Unassign Site Accrual Submitter"
                                                     onclick="assignUnassignSASubmitter(this);" />  </td> 
                 </tr>
                 <tr>
@@ -233,7 +233,7 @@
                                 listKey="id"  
                                 listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
                                 headerKey="" headerValue=" " value="ofUserId" />
-                       <input type="button" value="Assign/Un-Assign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);" />
+                       <input type="button" value="Assign/Unassign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);" />
                     </td> 
                 </tr>
                 <tr>
