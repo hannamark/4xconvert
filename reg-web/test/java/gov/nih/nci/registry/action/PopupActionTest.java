@@ -195,28 +195,34 @@ public class PopupActionTest extends AbstractRegWebTest {
                 "e.g. 555-555-5555 or 555-555-5555x123"));
     }
 
-
-    /**
-     *
-     */
     private void populateValidUSAOrg() {
         popUpAction.setOrgName("Some Name");
+        popUpAction.setOrgStAddress("1 Main St.");
         popUpAction.setCountryName("USA");
         popUpAction.setCityName("rock");
         popUpAction.setStateName("MD");
         popUpAction.setZipCode("20663");
         popUpAction.setEmail("org@org.com");
-        popUpAction.setPhoneNumber("phoneNumber");
-        popUpAction.setFax("fax");
-        popUpAction.setTty("tty");
+        popUpAction.setPhoneNumber("555-555-5555");
+        popUpAction.setFax("555-555-5555");
+        popUpAction.setTty("555-555-5555");
         popUpAction.setUrl("http://org@org.com");
     }
 
     @Test
     public void testCreateOrgWithEmptyStAddress() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("aaa");
-        popUpAction.setOrgStAddress("aaa");
+        populateValidUSAOrg();
+        popUpAction.setOrgStAddress(null);
+        assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().contains("Street address is a required field"));
+    }
+
+    @Test
+    public void testCreateOrgWithEmptyCountry() throws PAException{
+        popUpAction = new PopupAction();
+        populateValidUSAOrg();
+        popUpAction.setCountryName(null);
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Country is a required field"));
     }
@@ -254,42 +260,55 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction = new PopupAction();
         populateValidUSAOrg();
         assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().isEmpty());
     }
 
     @Test
     public void testCreateOrg_CAN() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("Some Name");
+        populateValidUSAOrg();
         popUpAction.setCountryName("CAN");
-        popUpAction.setCityName("rock");
-        popUpAction.setStateName("MD");
-        popUpAction.setZipCode("20663");
-        popUpAction.setEmail("org@org.com");
         assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().isEmpty());
     }
 
     @Test
     public void testCreateOrg_AUS2LetterStateCode() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("Some Name");
+        populateValidUSAOrg();
         popUpAction.setCountryName("AUS");
-        popUpAction.setCityName("rock");
         popUpAction.setStateName("MD");
-        popUpAction.setZipCode("20663");
-        popUpAction.setEmail("org@org.com");
         assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().isEmpty());
     }
 
     @Test
     public void testCreateOrg_AUS3LetterStateCode() throws PAException{
         popUpAction = new PopupAction();
-        popUpAction.setOrgName("Some Name");
-        popUpAction.setCountryName("CAN");
-        popUpAction.setCityName("rock");
-        popUpAction.setStateName("MDA");
-        popUpAction.setZipCode("20663");
-        popUpAction.setEmail("org@org.com");
+        populateValidUSAOrg();
+        popUpAction.setCountryName("AUS");
+        popUpAction.setStateName("mdd");
         assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().isEmpty());
+    }
+
+    @Test
+    public void testCreateOrg_UpcaseStateCode() throws PAException{
+        popUpAction = new PopupAction();
+        populateValidUSAOrg();
+        popUpAction.setStateName("md");
+        popUpAction.createOrganization();
+        assertEquals("MD", popUpAction.getStateName());
+
+        popUpAction.setStateName("md");
+        popUpAction.setCountryName("AUS");
+        popUpAction.createOrganization();
+        assertEquals("md", popUpAction.getStateName());
+
+        popUpAction.setStateName("md");
+        popUpAction.setCountryName("CAN");
+        popUpAction.createOrganization();
+        assertEquals("MD", popUpAction.getStateName());
     }
 
     @Test
@@ -512,6 +531,25 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setZip("20663");
         popUpAction.setEmail("org@org.com");
         assertEquals("create_pers_response", popUpAction.createPerson());
+    }
+
+    @Test
+    public void testCreatePerson_UpcaseStateCode() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setCountry("USA");
+        popUpAction.setState("md");
+        popUpAction.createPerson();
+        assertEquals("MD", popUpAction.getState());
+
+        popUpAction.setCountry("AUS");
+        popUpAction.setState("md");
+        popUpAction.createPerson();
+        assertEquals("md", popUpAction.getState());
+
+        popUpAction.setCountry("CAN");
+        popUpAction.setState("md");
+        popUpAction.createPerson();
+        assertEquals("MD", popUpAction.getState());
     }
 
     @Test

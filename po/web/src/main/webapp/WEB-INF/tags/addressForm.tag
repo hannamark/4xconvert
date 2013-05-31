@@ -82,7 +82,7 @@ function loadStateProvince(formNameBase, addressKeyBase, code, v, flagRequired) 
     </po:inputRowElement>
     <po:inputRowElement>
         <s:textfield name="%{#attr.addressKeyBase + '.postalCode'}"
-            required="%{#attr.required}" cssClass="%{cssClass}" size="18"
+            size="18"
             label="%{getText(#attr.addressKeyBase + '.postalCode')}" />
     </po:inputRowElement>
 </po:inputRow>

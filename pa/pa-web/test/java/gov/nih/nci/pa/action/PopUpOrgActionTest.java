@@ -81,7 +81,6 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
         assertTrue(errors.contains("Street address is a required field"));
         assertTrue(errors.contains("Country is a required field"));
         assertTrue(errors.contains("City is a required field"));
-        assertTrue(errors.contains("Zip is a required field"));        
         assertFalse(errors.contains("Email address is invalid"));
 
         popUpAction.setOrgName("OrgName");

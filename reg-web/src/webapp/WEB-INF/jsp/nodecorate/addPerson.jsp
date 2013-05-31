@@ -53,7 +53,7 @@
        <br><span class="tiny">(2-letter state code for Canada <br> and 2 or 3-letter state code for Australia.)</span>
       </div> 
      </td>
-     <td scope="row" class="label"><label for="poOrganizations_zip">ZIP :</label><span class="required">*</span></td><td><s:textfield name="zip"  maxlength="20" size="100"  cssStyle="width:200px" /></td>
+     <td scope="row" class="label"><label for="poOrganizations_zip">ZIP :</label></td><td><s:textfield name="zip"  maxlength="20" size="100"  cssStyle="width:200px" /></td>
   </tr>
    <tr>
        <td scope="row" class="label"><label for="poOrganizations_email">Email :</label></td><td><s:textfield name="email"  maxlength="254" size="100"  cssStyle="width:200px" /></td>

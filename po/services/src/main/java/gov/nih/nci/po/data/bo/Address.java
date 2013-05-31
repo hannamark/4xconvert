@@ -85,6 +85,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ValidStateCountry;
+import gov.nih.nci.po.util.ValidZip;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -109,6 +110,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @ValidStateCountry
+@ValidZip
 public class Address implements Auditable, PersistentObject {
     private static final long serialVersionUID = 1L;
 
@@ -234,7 +236,6 @@ public class Address implements Auditable, PersistentObject {
     /**
      * @return postal code
      */
-    @NotEmpty
     @Length(max = POSTAL_LENGTH)
     @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "postalCode")
     @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)

@@ -304,11 +304,11 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         add.getPart().add(apart);
         dto.setPostalAddress(add);
         errors = remote.validate(dto);
-        assertEquals(6, errors.size());
+        assertEquals(5, errors.size());
         assertTrue(errors.containsKey("lastName"));
         assertTrue(errors.containsKey("postalAddress.streetAddressLine"));
         assertTrue(errors.containsKey("postalAddress.cityOrMunicipality"));
-        assertTrue(errors.containsKey("postalAddress.postalCode"));
+        assertFalse(errors.containsKey("postalAddress.postalCode"));
         assertTrue(errors.containsKey("postalAddress.country"));
         assertFalse(errors.containsKey("postalAddress.stateOrProvince"));// for clarity
         

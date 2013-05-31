@@ -12,6 +12,7 @@ import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.util.AddressUtil;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -26,7 +27,7 @@ import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -45,9 +46,6 @@ import org.apache.struts2.ServletActionContext;
  */
 public class PopUpOrgAction extends AbstractPopUpPoAction {
     private static final long serialVersionUID = -6795733516099098037L;
-    private static final Set<String> US_OR_CANADA = new HashSet<String>(Arrays.asList("USA", "CAN"));
-    private static final String AUSTRALIA = "AUS";
-    private static final Set<Integer> AUSTRALIA_STATE_LENGTHS = new HashSet<Integer>(Arrays.asList(2, 3));
 
     private List<PaOrganizationDTO> orgs = new ArrayList<PaOrganizationDTO>();
     private final OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
@@ -94,16 +92,24 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
      * @return result
      */
     public String createOrganization() {
-        validateRequiredField(getOrgName(), "Organization");
-        validateRequiredField(getOrgStAddress(), "Street address");
-        validateRequiredField(getCountryName(), "Country");
-        validateRequiredField(getCityName(), "City");
-        validateRequiredField(getZipCode(), "Zip");
-        validateEmail(getEmail());
+        setStateName(AddressUtil.fixState(getStateName(), getCountryName()));
+
+        addActionErrors(AddressUtil.addressValidations(getOrgStAddress(), getCityName(), getStateName(),
+                getZipCode(), getCountryName()));
+        addActionErrors(AddressUtil.requiredField("Organization", getOrgName()));
+
+        if (StringUtils.isNotBlank(getEmail()) && !PAUtil.isValidEmail(getEmail())) {
+            addActionError("Email address is invalid");
+        }
         if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
-        countrySpecificValidations();
+        if (AddressUtil.usaOrCanada(getCountryName())) {
+            validateUsCanadaPhoneNumber(getTelephone(), "phone");
+            validateUsCanadaPhoneNumber(fax, "fax");
+            validateUsCanadaPhoneNumber(tty, "TTY");
+        }
+
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
@@ -112,6 +118,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
             return "create_org_response";
         }
+
         String result = null;
         try {
             result = updatePo();
@@ -121,41 +128,17 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         return result;
     }
 
-    private void validateRequiredField(String value, String type) {
-        if (StringUtils.isEmpty(value)) {
-            addActionError(type + " is a required field");
-        }
-    }
-
-    private void validateEmail(String value) {
-        if (StringUtils.isNotBlank(value) && !PAUtil.isValidEmail(value)) {
-            addActionError("Email address is invalid");
-        }
-    }
-
-    private void countrySpecificValidations() {
-        Integer stateLen = StringUtils.length(getStateName());
-        if (US_OR_CANADA.contains(getCountryName())) {
-            if (stateLen != 2) {
-                addActionError("2-letter State/Province Code required for USA/Canada");
-            } else {
-                // PO Service requires upper case state codes for US and Canada
-                setStateName(getStateName().toUpperCase());
-            }
-            validateUsCanadaPhoneNumber(getTelephone(), "phone");
-            validateUsCanadaPhoneNumber(fax, "fax");
-            validateUsCanadaPhoneNumber(tty, "TTY");
-        }
-        if (StringUtils.equals(AUSTRALIA, getCountryName()) && !AUSTRALIA_STATE_LENGTHS.contains(stateLen)) {
-            addActionError("2/3-letter State/Province Code required for Australia");
-        }
-    }
-
     private void validateUsCanadaPhoneNumber(String number, String type) {
         String badPhoneMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
                 + "555-555-5555 or 555-555-5555x123";
         if (StringUtils.isNotBlank(number) && !PAUtil.isUsOrCanadaPhoneNumber(number)) {
             addActionError(String.format(badPhoneMsg, type));
+        }
+    }
+
+    private void addActionErrors(Collection<String> errors) {
+        for (String error : errors) {
+            addActionError(error);
         }
     }
 
@@ -273,10 +256,6 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         orgs.clear();
         orgs.add(paOrg);
     }
-
-    
-    
-    
 
     /**
      * @return the orgs

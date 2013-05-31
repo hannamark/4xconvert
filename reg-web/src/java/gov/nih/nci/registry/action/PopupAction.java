@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.AddressUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -116,6 +117,7 @@ import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -155,7 +157,6 @@ public class PopupAction extends ActionSupport implements Preparable {
     private PaPersonDTO personDTO = new PaPersonDTO();
     private final PersonSearchCriteriaDTO personSearchCriteria = new PersonSearchCriteriaDTO();
     private static final String PERS_CREATE_RESPONSE = "create_pers_response";
-    private static final int AUS_STATE_CODE_LEN = 3;
 
     private static final Logger LOG  = Logger.getLogger(PopupAction.class);
 
@@ -404,39 +405,10 @@ public class PopupAction extends ActionSupport implements Preparable {
      * @return result
      */
     public String createOrganization() throws PAException {
-        OrganizationDTO orgDto = new OrganizationDTO();
-        if (StringUtils.isEmpty(orgName)) {
-            addActionError("Organization is a required field");
-        }
+        stateName = AddressUtil.fixState(stateName, countryName);
 
-        if (StringUtils.isEmpty(orgStAddress)) {
-            addActionError("Street address is a required field");
-        }
-
-        if (StringUtils.isEmpty(countryName)) {
-            addActionError("Country is a required field");
-        }
-
-        if (StringUtils.isEmpty(cityName)) {
-            addActionError("City is a required field");
-        }
-
-        if (StringUtils.isEmpty(zipCode)) {
-            addActionError("Zip is a required field");
-        }
-
-        final boolean usaOrCanada = countryName != null
-                && (countryName.equalsIgnoreCase("USA") || countryName
-                        .equalsIgnoreCase("CAN"));
-        if (usaOrCanada
-                && (StringUtils.isEmpty(stateName) || stateName.trim().length() > 2)) {
-            addActionError("2-letter State/Province Code required for USA/Canada");
-        }
-
-        if (countryName != null && countryName.equalsIgnoreCase("AUS")
-                && (StringUtils.isEmpty(stateName) || stateName.trim().length() > AUS_STATE_CODE_LEN)) {
-            addActionError("2/3-letter State/Province Code required for Australia");
-        }
+        addActionErrors(AddressUtil.requiredField("Organization", orgName));
+        addActionErrors(AddressUtil.addressValidations(orgStAddress, cityName, stateName, zipCode, countryName));
 
         if (StringUtils.isNotEmpty(email) && !PAUtil.isValidEmail(email)) {
             addActionError("Email address is invalid");
@@ -456,11 +428,9 @@ public class PopupAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(FAILURE_MSG_ATTR, sb.toString());
             return CREATE_ORG_RESPONSE;
         }
+
+        OrganizationDTO orgDto = new OrganizationDTO();
         orgDto.setName(EnOnConverter.convertToEnOn(orgName));
-        //PO Service requires upper case state codes for US and Canada
-        if (StringUtils.isNotEmpty(stateName)) {
-            stateName = stateName.trim().toUpperCase();
-        }
         orgDto.setPostalAddress(AddressConverterUtil.create(orgStAddress, null, cityName, stateName, zipCode,
                 countryName));
         DSet<Tel> telco = new DSet<Tel>();
@@ -535,13 +505,8 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public String createPerson() {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        if (StringUtils.isEmpty(firstName)) {
-            addActionError("First Name is a required field");
-        }
-
-        if (StringUtils.isEmpty(lastName)) {
-            addActionError("Last Name is a required field");
-        }
+        addActionErrors(AddressUtil.requiredField("First Name", firstName));
+        addActionErrors(AddressUtil.requiredField("Last Name", lastName));
 
         if (StringUtils.isEmpty(email) && StringUtils.isEmpty(getPhone())) {
             addActionError("Either an email address or a phone is required");
@@ -550,30 +515,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             addActionError("Email address is invalid");
         }
 
-        if (StringUtils.isEmpty(streetAddr)) {
-            addActionError("Street address is a required field");
-        }
+        addActionErrors(AddressUtil.addressValidations(streetAddr, city, state, zip, country));
 
-        if (StringUtils.isEmpty(city)) {
-            addActionError("City is a required field");
-        }
-
-        if (StringUtils.isEmpty(zip)) {
-            addActionError("Zip is a required field");
-        }
-
-        if (StringUtils.isEmpty(country)) {
-            addActionError("Country is a required field");
-        }
-
-        if (country != null && (country.equalsIgnoreCase("USA") || country.equalsIgnoreCase("CAN"))
-                && (StringUtils.isEmpty(state) || state.trim().length() > 2)) {
-            addActionError("2-letter State/Province Code required for USA/Canada");
-        }
-        if (country != null && country.equalsIgnoreCase("AUS")
-                && (StringUtils.isEmpty(state) || state.trim().length() > AUS_STATE_CODE_LEN)) {
-            addActionError("2/3-letter State/Province Code required for Australia");
-        }
         if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
@@ -588,6 +531,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             request.setAttribute(FAILURE_MSG_ATTR, sb.toString());
             return PERS_CREATE_RESPONSE;
         }
+        state = AddressUtil.fixState(state, country);
 
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
@@ -643,10 +587,6 @@ public class PopupAction extends ActionSupport implements Preparable {
                 list.getItem().add(telemail);
             }
             dto.setTelecomAddress(list);
-            //PO Service requires upper case state codes for US and Canada
-            if (StringUtils.isNotEmpty(state)) {
-                state = state.trim().toUpperCase();
-            }
             dto.setPostalAddress(AddressConverterUtil.create(streetAddr, null, city, state, zip, country));
             dto.setStatusCode(new PAServiceUtils().isAutoCurationEnabled() ? CdConverter
                     .convertStringToCd("ACTIVE") : CdConverter
@@ -663,15 +603,13 @@ public class PopupAction extends ActionSupport implements Preparable {
         if (StringUtils.isBlank(number)) {
             return;
         }
-        final boolean usaOrCanada = cnt != null
-                && (cnt.equalsIgnoreCase("USA") || cnt.equalsIgnoreCase("CAN"));
         String badUsaMsg = "Valid USA/Canada %s numbers must match ###-###-####x#*, e.g. "
                 + "555-555-5555 or 555-555-5555x123";
         String badOtherMsg = "The %s number is invalid";
         if (!PAUtil.isValidPhone(number)) {
-            addActionError(String.format(usaOrCanada ? badUsaMsg : badOtherMsg, type));
+            addActionError(String.format(AddressUtil.usaOrCanada(cnt) ? badUsaMsg : badOtherMsg, type));
         } else {
-            if (usaOrCanada && !PAUtil.isUsOrCanadaPhoneNumber(number)) {
+            if (AddressUtil.usaOrCanada(cnt) && !PAUtil.isUsOrCanadaPhoneNumber(number)) {
                 addActionError(String.format(badUsaMsg, type));
             }
         }
@@ -724,6 +662,12 @@ public class PopupAction extends ActionSupport implements Preparable {
                             .getName()));
         }
         return retMap;
+    }
+
+    private void addActionErrors(Collection<String> errors) {
+        for (String error : errors) {
+            addActionError(error);
+        }
     }
 
     /**

@@ -183,5 +183,9 @@
     <changeSet id="PO-5803-3" author="Kalpana">
        <comment>added PK to ctep jms messages table.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803-3.sql"/>
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-5922" author="Hugh">
+       <comment>Remove not null constraint from zip.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.10/PO-5922.sql"/>
+    </changeSet>
 </databaseChangeLog>
