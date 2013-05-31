@@ -505,6 +505,8 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public String createPerson() {
         final HttpServletRequest request = ServletActionContext.getRequest();
+
+        state = AddressUtil.fixState(state, country);
         addActionErrors(AddressUtil.requiredField("First Name", firstName));
         addActionErrors(AddressUtil.requiredField("Last Name", lastName));
 
@@ -531,7 +533,6 @@ public class PopupAction extends ActionSupport implements Preparable {
             request.setAttribute(FAILURE_MSG_ATTR, sb.toString());
             return PERS_CREATE_RESPONSE;
         }
-        state = AddressUtil.fixState(state, country);
 
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
