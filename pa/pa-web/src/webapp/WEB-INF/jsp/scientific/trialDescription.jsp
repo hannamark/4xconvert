@@ -38,6 +38,9 @@
 <s:form name="trialDescription" validate="true" method="POST">
     <s:token/>
     <pa:studyUniqueToken/>
+    <s:hidden name="primary" id="primary"/>
+    <s:hidden name="secondary" id="secondary"/>
+    <s:hidden name="ternary" id="ternary"/>
     <s:hidden name="studyObjectiveIip" id="studyObjectiveIip"/>
     <s:hidden name="studyObjectiveIis" id="studyObjectiveIis"/>
     <s:hidden name="studyObjectiveIit" id="studyObjectiveIit"/>
@@ -90,55 +93,6 @@
             </span> 
         </td>
     </tr>
-        <tr>
-        <td class="label">
-           <label for="primary">
-                    <fmt:message key="trial.primary"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textarea readonly="true"  id="primary" name="primary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
-            maxlength="2000" /> 
-            <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>primary</s:param>
-                </s:fielderror>                            
-            </span>
-        </td>
-    </tr>
-        <tr>
-        <td class="label">
-           <label for="secondary">
-                    <fmt:message key="trial.secondary"/>
-           </label>
-         </td>
-         <td class="value">
-        <s:textarea readonly="true"  id="secondary" name="secondary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
-            maxlength="2000" /> 
-        <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>secondary</s:param>
-                </s:fielderror>                            
-            </span>
-        </td>
-    </tr>
-        <tr>
-        <td class="label">
-           <label for="ternary">
-                    <fmt:message key="trial.ternary" />
-           </label>
-         </td>
-         <td class="value">
-        <s:textarea id="ternary" readonly="true"  name="ternary" cssStyle="width:606px" rows="2" cssClass="readonly charcounter"
-            maxlength="2000" />
-        <span class="formErrorMsg"> 
-                <s:fielderror>
-                    <s:param>ternary</s:param>
-                </s:fielderror>                            
-            </span>
-        </td>
-    </tr>
-
     </table>
    
 <div class="actionsrow">
