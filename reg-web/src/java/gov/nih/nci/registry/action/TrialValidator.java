@@ -419,11 +419,6 @@ public class TrialValidator {
                 addActionError.add("Primary Completion Date cannot be 'Anticipated' when "
                         + "Current Trial Status is '" + newCode.getCode() + "'.");
             }
-            if (PAUtil.dateStringToTimestamp(trialDto.getPrimaryCompletionDate())
-                .before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
-                addActionError.add("Primary Completion Date must be the same or greater than "
-                        + "Current Trial Status Date when Current Trial Status is '" + newCode.getCode() + "'.");
-            }
         }
     }
 
