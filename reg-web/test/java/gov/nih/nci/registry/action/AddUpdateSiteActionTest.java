@@ -33,6 +33,7 @@ import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.person.PersonDTO;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -84,6 +85,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
 
         researchStaffDTO = new ClinicalResearchStaffDTO();
         healthCareProviderDTO = new HealthCareProviderDTO();
+        when(paServiceUtils.getPoPersonEntity(any(Ii.class))).thenReturn(new PersonDTO());        
         when(paServiceUtils.getPoHcfIi("1")).thenReturn(
                 IiConverter.convertToPoHealthCareFacilityIi("1"));
         when(
@@ -439,6 +441,27 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 "Date Closed for Acrual must not be empty for "
                         + RecruitmentStatusCode.COMPLETED.getCode()
                         + " recruitment status"));
+
+    }
+    
+    @Test
+    public void testAddSiteValidationErrors_nullifiedInvestigator()
+            throws PAException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        prepareAction();
+        SubmittedOrganizationDTO newSiteDTO = new SubmittedOrganizationDTO();
+        PropertyUtils.copyProperties(newSiteDTO, existentSiteDTO);
+        newSiteDTO.setId(null);
+
+        when(paServiceUtils.getPoPersonEntity(any(Ii.class))).thenReturn(null);
+        action.setSiteDTO(newSiteDTO);
+        String fwd = action.save();
+        assertEquals(ActionSupport.ERROR, fwd);
+        assertTrue(action.hasFieldErrors());
+
+        Map<String, List<String>> fieldErrs = action.getFieldErrors();
+        assertEquals(fieldErrs.get("investigator"),
+                Arrays.asList("error.nullifiedInvestigator"));
 
     }
 

@@ -402,6 +402,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     // into common functionality and stay DRY. TO DO. Sorry.
     private void enforceBusinessRulesForProprietary() {
         String err = "error.submit.invalidDate"; // validate date and its format
+        checkInvestigatorStatus();
         enforcePartialRulesForProp1(err);
         String strDateOpenedForAccrual = "accrualOpenedDate";
         String strDateClosedForAccrual = "accrualClosedDate";
@@ -411,6 +412,18 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 strDateClosedForAccrual);
         enforcePartialRulesForProp4(strDateOpenedForAccrual,
                 strDateClosedForAccrual);
+    }
+
+    private void checkInvestigatorStatus() {
+        if (siteDTO.getInvestigatorId() != null) {
+            Ii investigatorIi = IiConverter.convertToPoPersonIi(siteDTO
+                    .getInvestigatorId().toString());
+            if (paServiceUtil.getPoPersonEntity(investigatorIi) == null) {
+                addFieldError("investigator",
+                        getText("error.nullifiedInvestigator"));
+            }
+        }
+
     }
 
     private void enforcePartialRulesForProp1(String err) {
