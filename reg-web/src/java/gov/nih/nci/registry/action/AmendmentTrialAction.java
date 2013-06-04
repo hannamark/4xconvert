@@ -426,8 +426,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
     private void validateStatusAndDate() throws PAException {
         if (doStatusDatesRequireBusinessRuleValidation()) {
             findStatusDateBusinessRulesErrors();
-        }
-        validateStatusCode();
+        }        
     }
 
     private boolean doStatusDatesRequireBusinessRuleValidation() throws PAException {
@@ -445,16 +444,6 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             for (String msg : errDate) {
                 addActionError(msg);
             }
-        }
-    }
-
-    private void validateStatusCode() {
-        // Only allow completing amendment submission of the pre-IRB approved study is the
-        // current trial status 'In-Review' is replaced with 'Approved'.
-        if (StringUtils.isNotBlank(getTrialDTO().getStatusCode())
-                && getTrialDTO().getStatusCode().equalsIgnoreCase("In Review")) {
-            addActionError("To Amend Submission of pre-IRB approved study replace "
-                    + " current trial status 'In-Review' with 'Approved'");
         }
     }
    

@@ -783,10 +783,6 @@ public class TrialBatchDataValidator {
             if (StringUtils.isEmpty(batchDto.getChangeRequestDocFileName())) {
                    fieldErr.append("Change Request Document is required. \n");
             }
-            if (batchDto.getCurrentTrialStatus().equalsIgnoreCase("In Review")) {
-                fieldErr.append("To Amend Submission of pre-IRB approved study replace "
-                  + " current trial status 'In-Review' with 'Approved'");
-            }
 
         }
         return fieldErr;
