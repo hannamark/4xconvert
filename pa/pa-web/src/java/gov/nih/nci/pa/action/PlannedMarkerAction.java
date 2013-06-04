@@ -459,8 +459,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                     getText("error.plannedMarker.assayPurposeOtherText"));
         }
 
-        if (StringUtils
-                .equals(otherTextPresent(
+        if (StringUtils.equals(otherTextPresent(
                         getPlannedMarker().getEvaluationType(),
                         getPlannedMarker().getEvaluationTypeOtherText()), EMPTY)) {
             addFieldError("plannedMarker.evaluationTypeOtherText",
@@ -470,6 +469,12 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (StringUtils.isEmpty(getPlannedMarker().getTissueSpecimenType())) {
             addFieldError("plannedMarker.tissueSpecimenType",
                     getText("error.plannedMarker.tissueSpecimenType"));
+        }
+        if (StringUtils.equals(
+                otherTextPresent(getPlannedMarker().getTissueSpecimenType(),
+                        getPlannedMarker().getSpecimenTypeOtherText()), EMPTY)) {
+            addFieldError("plannedMarker.specimenTypeOtherText",
+                    getText("error.plannedMarker.specimenTypeOtherText"));
         }
     }
 
