@@ -191,6 +191,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
+                    <excludes>
+                        <!-- CPD violations necessary to maintain compatibility with CTEP services. -->
+                        <exclude>**/AbstractEnhancedOrganizationRole.java</exclude>
+                        <exclude>**/AbstractOversightCommittee.java</exclude>
+                    </excludes>
                     <excludeRoots>
                         <excludeRoot>target/generated-sources/xsnapshot/</excludeRoot>
                     </excludeRoots>

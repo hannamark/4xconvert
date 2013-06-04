@@ -5,8 +5,10 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.po.data.bo.AbstractContactableOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
@@ -20,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -265,9 +268,19 @@ public final class CtepUtils {
      * @param role the organization role (either hcf or ro)
      * @throws CtepImportException exception
      */
-    public static void validateAddresses(AbstractContactableOrganizationRole role) throws CtepImportException {
-        if (role != null && CollectionUtils.isNotEmpty(role.getPostalAddresses())) {
-            for (Address addr : role.getPostalAddresses()) {
+    public static void validateAddresses(AbstractOrganizationRole role) throws CtepImportException {
+        if (role == null) {
+            return;
+        } else if (role instanceof AbstractOversightCommittee) {
+            validatePostalAddresses(((AbstractOversightCommittee) role).getPostalAddresses());
+        } else if (role instanceof AbstractEnhancedOrganizationRole) {
+            validatePostalAddresses(((AbstractEnhancedOrganizationRole) role).getPostalAddresses());
+        }
+    }
+
+    private static void validatePostalAddresses(Set<Address> addresses) throws CtepImportException {
+        if (addresses != null) {
+            for (Address addr : addresses) {
                 validateAddress(addr);
             }
         }

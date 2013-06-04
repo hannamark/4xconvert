@@ -8,7 +8,8 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelPhone;
-import gov.nih.nci.po.data.bo.AbstractContactableOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -353,7 +354,7 @@ public class CtepUtilsTest {
     @Test
     public void testValidateAddresses() throws Exception {
         CtepUtils.validateAddresses(null);
-        AbstractContactableOrganizationRole role = new AbstractContactableOrganizationRole() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {};
         CtepUtils.validateAddresses(role);
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
@@ -368,7 +369,34 @@ public class CtepUtilsTest {
 
     @Test(expected = CtepImportException.class)
     public void testValidateAddressesException() throws Exception {
-        AbstractContactableOrganizationRole role = new AbstractContactableOrganizationRole() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {};
+        Set<Address> addrs = new HashSet<Address>();
+        Address addr = new Address();
+        addrs.add(addr);
+        role.setPostalAddresses(addrs);
+        CtepUtils.validateAddresses(role);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testValidateOversightCommitteeAddresses() throws Exception {
+        CtepUtils.validateAddresses(null);
+        AbstractOversightCommittee role = new AbstractOversightCommittee() {};
+        CtepUtils.validateAddresses(role);
+        Set<Address> addrs = new HashSet<Address>();
+        Address addr = new Address();
+        addr.setStreetAddressLine("streetAddressLine");
+        addr.setCityOrMunicipality("cityOrMunicipality");
+        addr.setPostalCode("postalCode");
+        addr.setCountry(new Country());
+        addrs.add(addr);
+        role.setPostalAddresses(addrs);
+        CtepUtils.validateAddresses(role);
+    }
+
+    @Test(expected = CtepImportException.class)
+    public void testValidateOversightCommitteeAddressesException() throws Exception {
+        AbstractOversightCommittee role = new AbstractOversightCommittee() {};
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
         addrs.add(addr);
