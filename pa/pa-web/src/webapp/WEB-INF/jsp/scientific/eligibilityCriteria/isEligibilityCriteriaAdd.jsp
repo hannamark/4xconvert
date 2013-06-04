@@ -43,25 +43,12 @@
             function handleAction() {
                 var page = document.forms[0].page.value;
                 var form = document.forms["eligibilityCriteraiAdd"];
-                var UOM = form.elements["webDTO.unit"].value;
-                if (UOM == '' || UOM == 'undefined') {
-                    input_uom_box = confirm("Criterion does not include UOM.  Do you want to save criterion anyway?");
-                    if (input_uom_box == true){
-                        if (page == "Edit"){
-                            form.action="eligibilityCriteriaupdate.action";
-                        } else {
-                            form.action="eligibilityCriteriacreate.action";
-                        } 
-                        form.submit();
-                     }
+                if (page == "Edit") {
+                    form.action="eligibilityCriteriaupdate.action";
                 } else {
-                    if (page == "Edit") {
-                        form.action="eligibilityCriteriaupdate.action";
-                    } else {
-                        form.action="eligibilityCriteriacreate.action";
-                    } 
-                    form.submit();
-                }
+                    form.action="eligibilityCriteriacreate.action";
+                } 
+                form.submit();
             } 
 
             function activate(selected) {
@@ -217,19 +204,9 @@
                         <td scope="row"  class="label"><label>
                             <fmt:message key="isdesign.eligibilitycriteria.structuredOrUnstructured"/><span class="required">*</span>:</label>
                         </td>
-                        <td class="value">
-                            <s:if test="%{webDTO.structuredType == 'Structured'}">
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  checked="checked" onclick='activate(this)'/>Structured<br/>
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" onclick='activate(this)'/>Un-structured
-                            </s:if>
-                            <s:elseif test="%{webDTO.structuredType == 'Unstructured'}">
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  onclick='activate(this)'/>Structured<br/>
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" checked="checked" onclick='activate(this)'/>Un-structured
-                            </s:elseif>
-                            <s:else>
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Structured" onclick='activate(this)' />Structured<br/>
-                                <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" onclick='activate(this)'/>Un-structured
-                            </s:else>
+                        <td class="value">                            
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Structured"  disabled onclick='activate(this)'/>Structured<br/>
+                            <input type="radio" id="group3" name="webDTO.structuredType" value="Unstructured" checked="checked" onclick='activate(this)'/>Unstructured
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                     <s:param>webDTO.structuredType</s:param>
@@ -241,9 +218,31 @@
                         </td>
                     </tr>                               
                 </table>
-                <div id="eligibility.build.criterion">
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp" />
-                </div>
+                <!-- Adding eligibility description field here. -->
+                <table class="form">
+                	<tr>
+                		<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></th>              
+                	</tr>
+                	<tr>
+                		<span class="formErrorMsg"> 
+                			<s:fielderror>
+                			<s:param>webDTO.mandatory</s:param>
+                			</s:fielderror>                            
+                		</span>
+                		<td scope="row"  class="label"><label>
+                		    <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/><span class="required">*</span></label>
+                		</td>
+                		<td class="value">
+                			<s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' 
+                				maxlength="5000" cssClass="charcounter"/>
+                			<span class="formErrorMsg"> 
+                				<s:fielderror>
+                                <s:param>webDTO.TextDescription</s:param>
+                               </s:fielderror>                            
+                           </span>
+                       </td>
+                   </tr>  
+                </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
