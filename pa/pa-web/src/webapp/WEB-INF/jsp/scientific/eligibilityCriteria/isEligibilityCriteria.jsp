@@ -29,6 +29,8 @@
 		    			var inputId = '#eligibilityList_' + rows[i].id + '_displayOrder';
 		                jQuery(inputId).val(i);
 		            }
+		    		 $('ajaxIndicator').show();
+		    		 handleAction();
 			    }
 	    	});
 		    jQuery('#table-1 tr:even').addClass('alt');
@@ -109,6 +111,9 @@ BubbleTips.activateTipOn("dfn");
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
+   <div id="ajaxIndicator" class="info" style="display: none;">
+        <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="osdesign.outcome.order.saving"/>
+   </div>
     <s:form>
         <s:token/>
         <s:actionerror/>
