@@ -995,11 +995,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     BigDecimal low = PqConverter.convertToPqToDecimal(pq.getLow());
                     BigDecimal high = PqConverter.convertToPqToDecimal(pq.getHigh());
                     if (low != null) {
-                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? INFORMATION_NOT_PROVIDED
+                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? "N/A"
                                         : PAUtil.getAge(low) + SPACE + pq.getLow().getUnit());
                     }
                     if (high != null) {
-                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? INFORMATION_NOT_PROVIDED
+                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? "N/A"
                                         : PAUtil.getAge(high) + SPACE + pq.getHigh().getUnit());
                     }
                 } else {
