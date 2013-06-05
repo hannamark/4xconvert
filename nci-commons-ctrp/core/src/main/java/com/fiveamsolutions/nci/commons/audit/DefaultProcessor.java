@@ -91,6 +91,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -276,10 +277,26 @@ public class DefaultProcessor {
             if (isPersistent(a)) {
                 sb.append(getId(a));
             } else {
-                escape(sb, ObjectUtils.toString(a, null));
+                escape(sb, ObjectUtils.toString(decomposeIi(a), null));
             }
         }
         return StringUtils.abbreviate(sb.toString(), AuditLogDetail.VALUE_LENGTH);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object decomposeIi(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value.getClass().getName().equals("gov.nih.nci.iso21090.Ii")) {
+            try {
+                return PropertyUtils.describe(value).toString();
+            } catch (Exception e) {
+                LOG.warn(e, e);
+            }
+        }
+        return value;
+
     }
 
     /**

@@ -33,7 +33,7 @@
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="security"                rev="4.2"             conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.9-SNAPSHOT"  conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.10-SNAPSHOT"  conf="compile->master"/>
     <dependency org="asm"                    name="asm"                     rev="3.1"             conf="compile->master"/>
     <dependency org="asm"                    name="asm-attrs"               rev="1.5.3"           conf="compile->master"/>
     <dependency org="org.directwebremoting"  name="dwr"                     rev="2.0.1"           conf="compile->master"/>
