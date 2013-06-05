@@ -525,9 +525,11 @@ public class StudyOverallStatusBeanLocal extends
         }
         return errMsg;
     }
-
-    private StringBuffer validateTrialDates(StudyProtocolDTO dto, StudyOverallStatusDTO statusDto) {
-        StringBuffer errors = new StringBuffer();
+    
+    @Override
+    public List<String> validateTrialStatusAndDates(StudyProtocolDTO dto,
+            StudyOverallStatusDTO statusDto) {  
+        List<String> errors = new ArrayList<String>();       
         DateMidnight statusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
         String statusCode = CdConverter.convertCdToString(statusDto.getStatusCode());
 
@@ -543,30 +545,30 @@ public class StudyOverallStatusBeanLocal extends
 
         // Constraint/Rule: 22 Current Trial Status Date must be current or past.
         if (today.isBefore(statusDate)) {
-            errors.append("Current Trial Status Date cannot be in the future.\n");
+            errors.add("Current Trial Status Date cannot be in the future.\n");
         }
         // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type
         // is selected and must be future if 'anticipated' trial start date type is selected.
         if (dates.getStartDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL
                 && today.isBefore(startDate)) {
-            errors.append("Actual Trial Start Date must be current or in the past. \n");
+            errors.add("Actual Trial Start Date must be current or in the past. \n");
         } else if (dates.getStartDateTypeCode() == ActualAnticipatedTypeCode.ANTICIPATED
                 && today.isAfter(startDate)) {
-            errors.append("Anticipated Start Date must be current or in the future. \n");
+            errors.add("Anticipated Start Date must be current or in the future. \n");
         }
         // Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type
         // is selected and must be future if 'anticipated'trial primary completion date type is selected.
         if (unknownPrimaryCompletionDate) {
             if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL) {
-                errors.append("Unknown Primary Completion date must be marked as Anticipated.\n");
+                errors.add("Unknown Primary Completion date must be marked as Anticipated.\n");
             }
         } else {
             if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL
                     && today.isBefore(primaryCompletionDate)) {
-                errors.append("Actual Primary Completion Date must be current or in the past.\n");
+                errors.add("Actual Primary Completion Date must be current or in the past.\n");
             } else if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ANTICIPATED
                     && today.isAfter(primaryCompletionDate)) {
-                errors.append("Anticipated Primary Completion Date must be current or in the future. \n");
+                errors.add("Anticipated Primary Completion Date must be current or in the future. \n");
             }
 
         }
@@ -577,7 +579,7 @@ public class StudyOverallStatusBeanLocal extends
         compareStatusCodes.add(StudyStatusCode.WITHDRAWN.getCode());
         if (!compareStatusCodes.contains(statusCode)
                 && ActualAnticipatedTypeCode.ACTUAL != dates.getStartDateTypeCode()) {
-            errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
+            errors.add("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
         }
 
         // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as
@@ -586,7 +588,7 @@ public class StudyOverallStatusBeanLocal extends
         //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
         if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (startDate.isAfter(statusDate)
                 || dates.getStartDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL)) {
-            errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
+            errors.add("If Current Trial Status is Active, Trial Start Date must be Actual "
                     + " and same as or smaller than Current Trial Status Date.\n");
         }
 
@@ -595,7 +597,7 @@ public class StudyOverallStatusBeanLocal extends
         // same as Current Trial Status Date and have 'actual' type.
         if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                 && (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL)) {
-            errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual. ");
+            errors.add("If Current Trial Status is Completed, Primary Completion Date must be Actual. ");
         }
 
         // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed',
@@ -604,7 +606,7 @@ public class StudyOverallStatusBeanLocal extends
         if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                 || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(statusCode)) {
             if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL) {
-                errors.append("If Current Trial Status is Complete or Administratively Complete, "
+                errors.add("If Current Trial Status is Complete or Administratively Complete, "
                         + " Primary Completion Date must be  Actual.\n");
             }
         }
@@ -614,29 +616,35 @@ public class StudyOverallStatusBeanLocal extends
                 && dates.getPrimaryCompletionDate() != null
                 && dates.getPrimaryCompletionDate()
                         .before(dates.getStartDate())) {
-            errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");
+            errors.add("Trial Start Date must be same or earlier than Primary Completion Date.\n");
         }
 
         if (completionDate != null) {
             if (dates.getCompletionDateTypeCode() == null) {
-                errors.append("Completion Date Type must be specified.\n");
+                errors.add("Completion Date Type must be specified.\n");
             } else {
                 if (dates.getCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL) {
                     if (today.isBefore(completionDate)) {
-                        errors.append("Actual Trial Completion Date must be current or in the past.\n");
+                        errors.add("Actual Trial Completion Date must be current or in the past.\n");
                     }
                 } else {
                     if (today.isAfter(completionDate)) {
-                        errors.append("Anticipated Completion Date must be current or in the future\n");
+                        errors.add("Anticipated Completion Date must be current or in the future\n");
                     }
                 }
             }
             if (!unknownPrimaryCompletionDate && completionDate.isBefore(primaryCompletionDate)) {
-                errors.append("Completion date must be >= Primary completion date.\n");
+                errors.add("Completion date must be >= Primary completion date.\n");
             }
         }
-
+        
         return errors;
+    }
+
+    private StringBuffer validateTrialDates(StudyProtocolDTO dto,
+            StudyOverallStatusDTO statusDto) {
+        return new StringBuffer(StringUtils.join(
+                validateTrialStatusAndDates(dto, statusDto), ""));
     }
 
     /**

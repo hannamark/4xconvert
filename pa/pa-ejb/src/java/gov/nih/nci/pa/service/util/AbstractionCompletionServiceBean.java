@@ -739,7 +739,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         .getCode() == null) {
             messages.addError(SELECT_TRIAL_STATUS,
                               "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
-        }        
+        }    
+        if (sos != null) {
+            for (String error : studyOverallStatusService
+                    .validateTrialStatusAndDates(studyProtocolDTO, sos)) {
+                messages.addError(SELECT_TRIAL_STATUS, error,
+                        ErrorMessageTypeEnum.ADMIN, 6);
+            }
+        }
     }
 
     private void enforceTrialINDIDE(StudyProtocolDTO studyProtocolDto, AbstractionMessageCollection messages)

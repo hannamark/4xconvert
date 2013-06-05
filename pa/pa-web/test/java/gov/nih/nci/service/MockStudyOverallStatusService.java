@@ -240,4 +240,10 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         
     }
 
+  
+    public List<String> validateTrialStatusAndDates(StudyProtocolDTO dto,
+            StudyOverallStatusDTO statusDto) {       
+        return new ArrayList<String>();
+    }
+
 }

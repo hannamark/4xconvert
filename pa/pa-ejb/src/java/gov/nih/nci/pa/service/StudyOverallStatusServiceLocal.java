@@ -83,6 +83,8 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 /**
@@ -139,6 +141,14 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      */
     void validate(StudyOverallStatusDTO overallStatusDTO,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg);
+    
+    /**
+     * Validate trial status and dates for correctness. 
+     * @param dto StudyProtocolDTO
+     * @param statusDto StudyOverallStatusDTO
+     * @return List<String> 
+     */
+    List<String> validateTrialStatusAndDates(StudyProtocolDTO dto, StudyOverallStatusDTO statusDto);
 
     /**
      * Rolls back the transition to this status.
