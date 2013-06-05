@@ -219,7 +219,7 @@
                                         </c:if>
                                         <c:if test="${not empty model.admins}">                                        
                                             <div>
-                                                <b>Un-assign</b>
+                                                <b>Unassign</b>
                                             </div>
                                             <div>
                                                 <input class="user_btn" type="button" value="&lt;" 
