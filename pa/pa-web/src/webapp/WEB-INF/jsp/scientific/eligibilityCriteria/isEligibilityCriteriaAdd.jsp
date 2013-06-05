@@ -33,7 +33,7 @@
                    }
                  }  
                 activate(selElement);
-                activateMax();    
+                //activateMax();    
             }
 
             function lookup() {
@@ -79,7 +79,8 @@
                 var uElement = form.elements[unit];
                 if (selected.value == 'Unstructured')
                     {
-                        cnElement.disabled = true;
+                	 	//Uncomment this if we decide to display Build Criterion Description fields again 
+                        /*cnElement.disabled = true;
                         opElement.disabled = true;
                         if (minElement != "") {
                          minElement.disabled = true;
@@ -92,12 +93,11 @@
                         } 
                         if (uElement != "") {
                          uElement.disabled = true;
-                        } 
-                        inputElement.disabled=false;
+                        }
                         $("loadUOMDetails").disabled=true;
                         $("criteriaNameLookup").disabled=true;
-                        $("generateTextButton").disabled=true;
-                        
+                        $("generateTextButton").disabled=true;*/
+                        inputElement.disabled=false;
                     } else {
                         cnElement.disabled = false;
                         opElement.disabled = false;
@@ -237,7 +237,7 @@
                 				maxlength="5000" cssClass="charcounter"/>
                 			<span class="formErrorMsg"> 
                 				<s:fielderror>
-                                <s:param>webDTO.TextDescription</s:param>
+                					<s:param>webDTO.TextDescription</s:param>
                                </s:fielderror>                            
                            </span>
                        </td>

@@ -1050,7 +1050,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
                     addFieldError("webDTO.valueIntegerMin", "Minimum value must be entered");
                 }
             } else if (StringUtils.isEmpty(webDTO.getTextDescription())) {
-                addFieldError("webDTO.buldcriterion", getText("error.unstructured.description"));
+                addFieldError("webDTO.TextDescription", getText("error.unstructured.description"));
             }
         } else {
             addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
