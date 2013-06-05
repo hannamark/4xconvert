@@ -386,7 +386,7 @@
       -->
     <target name="checkstyle" depends="defineClasspaths, -checkstyle" description="Verify coding styles and conventions." />
     <target name="-checkstyle" description="Hidden to work with Introduce" >
-        <checkstyle config="../pa/resources/checkstyle.xml">
+        <checkstyle config="checkstyle.xml">
             <classpath>
                 <path location="${build.dest}" />
                 <path location="${stubs.dest}" />
