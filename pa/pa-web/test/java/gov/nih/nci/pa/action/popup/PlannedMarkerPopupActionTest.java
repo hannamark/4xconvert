@@ -225,7 +225,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
      * Tests sending of cde marker request.
      */
     @Test
-    public void testSendEmailRequest() {
+    public void testSendEmailRequest() throws PAException {
         assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
         assertTrue(plannedMarkerAction.hasFieldErrors());
         assertFalse(plannedMarkerAction.isPassedValidation());

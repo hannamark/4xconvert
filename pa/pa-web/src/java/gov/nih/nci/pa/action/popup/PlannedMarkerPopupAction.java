@@ -205,10 +205,12 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     /**
      * Sends the CDE request request.
      * @return email
+     * @throws PAException on error
      */
-    public String sendEmailRequest() {
+    public String sendEmailRequest() throws PAException {
         validateEmailRequest();
         if (hasFieldErrors()) {
+            setToEmail(PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL"));
             return EMAIL;
         }
         Ii studyProtocolIi =

@@ -18,14 +18,14 @@
          div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
          var options = {
              onComplete: function(transport) {
-                             if ($('passedValidation').value) {
+                             if ($('passedValidation').value == 'true') {
                                  top.window.loadMarkerWithRequestedCDE($('name').value, 
                                 		 $('foundInHugo').checked, 
                                 		 $('foundInHugo').checked?$('hugoCode').value:'');
                              } else {
                                 toggleHugoCode();
                              }
-                         }
+                         }      
          };
          var aj = callAjaxPost(div, url, params, options);
      }
