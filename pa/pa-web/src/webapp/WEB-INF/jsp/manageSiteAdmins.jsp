@@ -141,7 +141,7 @@
     <body>
     <!-- main content begins-->
         <h1><fmt:message key="manageSiteAdmins.title"/></h1>
-        <c:set var="topic" scope="request" value="manageSiteAdmins"/>
+        <c:set var="topic" scope="request" value="siteadmins"/>
         <div class="box" id="filters">
             <div class="fixedTopHeader">
 	            <s:form id="manageSiteAdminsForm">   

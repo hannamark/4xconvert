@@ -18,7 +18,7 @@
             <pa:menuLink href="${pageContext.request.contextPath}/protected/userAccountDetailsexecute.action" id="userAccountDetailsMenuOption" labelKey="pamenu.abstraction.useraccountdetails" selected="${requestScope.topic == 'accountdetails'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'userdetails'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'manageSiteAdmins'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'siteadmins'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>            
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
