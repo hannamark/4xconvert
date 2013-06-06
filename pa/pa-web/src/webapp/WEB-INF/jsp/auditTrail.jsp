@@ -20,6 +20,7 @@
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 
         <div class="box">
+        	<h2><fmt:message key="auditTrail.title"/></h2>
             <table class="form">
                 <s:form action="auditTrailview.action" id="auditTrailForm">
                     <s:if test="hasActionErrors()">
