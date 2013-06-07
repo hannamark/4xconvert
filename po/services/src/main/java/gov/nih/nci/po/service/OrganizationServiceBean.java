@@ -385,7 +385,15 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         for (Correlation x : getAssociatedRoles(e, s)) {
             if (x.getStatus() == RoleStatus.PENDING && isCtepRole(x)) {
                 x.setStatus(RoleStatus.ACTIVE);
-                GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+                GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());                
+                Map<String, String[]> correlationErrorMsgs = service.validate(x);
+                if (correlationErrorMsgs != null
+                        && !correlationErrorMsgs.isEmpty()) {
+                    PoHibernateUtil.getCurrentSession().clear();
+                    throw new InvalidStructuralRoleException(
+                            "The organization's status could not be changed "
+                                    + "because one or more of the organization's roles would become invalid");
+                }               
                 service.curate(x);
             }
         }

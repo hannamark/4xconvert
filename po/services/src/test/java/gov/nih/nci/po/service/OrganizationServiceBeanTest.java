@@ -106,6 +106,7 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
@@ -373,7 +374,11 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-
+        
+        // type code
+        final ResearchOrganizationType type = (ResearchOrganizationType) PoHibernateUtil
+                .getCurrentSession().get(ResearchOrganizationType.class, 1L);
+       
         // create ctep ro
         ResearchOrganization ro = new ResearchOrganization();
         Address mailingAddress4 = new Address("test", "test", "test", "test", country);
@@ -381,7 +386,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         ro.setStatus(RoleStatus.PENDING);
         ro.getEmail().add(new Email("foo@example.com"));
         ro.getUrl().add(new URL("http://example.com"));
-        ro.setPlayer(retrievedOrg);
+        ro.setPlayer(retrievedOrg);       
+        ro.setTypeCode(type);
         Ii ctepRoIi = new Ii();
         ctepRoIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
         ctepRoIi.setIdentifierName("ro id name");

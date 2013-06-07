@@ -38,6 +38,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle curation of Organization entities.
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class CurateOrganizationAction extends ActionSupport implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
@@ -140,7 +141,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
             PoRegistry.getOrganizationService().curate(getOrganization());
         } catch (EJBException e) {
             /*
-             * we are catching the EJBExcetion and then interrogating it for the root cause and if the root cause is
+             * we are catching the EJBException and then interrogating it for the root cause and if the root cause is
              * what we expect then we'll throw the root cause. Next, our custom result exception-mapping within our
              * action mapping will ultimately redirects to our curateError.jsp page. NOTE: We are redirecting and
              * passing the organization and duplicateOf as request params to ensure that a separate HB Session is used
@@ -148,15 +149,30 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
              * will abandon any changes made by the user to the Organization but, is of little concern in this case
              * because the Organization was being NULLIFIED.
              */
-            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            Throwable rootCause = ExceptionUtils.getRootCause(e);            
             if (rootCause instanceof CurateEntityValidationException) {
-                throw (CurateEntityValidationException) rootCause;
+                final CurateEntityValidationException ex = (CurateEntityValidationException) rootCause;
+                storeAsActionMessages(ex);
+                throw ex;
             }
             throw e;
         }
 
         ActionHelper.saveMessage(getText("organization.curate.success"));
         return SUCCESS;
+    }
+
+    private void storeAsActionMessages(CurateEntityValidationException ex) {
+        Map<String, String[]> errors = ex.getErrors();
+        if (errors != null) {
+            for (String[] errArray : errors.values()) {
+                if (errArray != null) {
+                    for (String msg : errArray) {
+                        addActionError(msg);
+                    }
+                }
+            }
+        }
     }
 
     private void addCommentToOrg() throws CSException {
