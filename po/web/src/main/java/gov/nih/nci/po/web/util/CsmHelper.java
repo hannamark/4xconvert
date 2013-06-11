@@ -2,10 +2,6 @@ package gov.nih.nci.po.web.util;
 
 import org.apache.commons.lang.StringUtils;
 
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSException;
-
 /**
  * A class that provides access to CSMUser fields such as
  * first and last name.
@@ -16,9 +12,7 @@ import gov.nih.nci.security.exceptions.CSException;
 public class CsmHelper {
 
     private final String username;
-    private String firstName;
-    private String lastName;
-    
+
     /**
      * Instantiate class with csm username.
      * @param username the csm username
@@ -26,55 +20,24 @@ public class CsmHelper {
     public CsmHelper(String username) {
         this.username = username;
     }
-    
+
     /**
      * returns the CSM username.
-     * 
      * @return the username
      */
     public String getUsername() {
         return username;
     }
-    
+
     /**
-     * get the user's first name as recorded in CSM.
-     * @return the first name
+     * Given a username string, determines if its in the grid format, returns the CN.
+     * @return the username or the grid identity.
      */
-    public String getFirstName() {
-        if (firstName == null) {
-            init();
+    public String getDisplayname() {
+        String splitString = "CN=";
+        if (StringUtils.contains(getUsername(), splitString)) {
+            return getUsername().split(splitString)[1];
         }
-        return firstName;
+        return getUsername();
     }
-    
-    /**
-     * get the user's last name as recorded in CSM.
-     * @return the last name
-     */
-    public String getLastName() {
-        if (lastName == null) {
-            init();
-        }
-        return lastName;
-    }   
-    
-    /**
-     * Whether user has no first/last name specified.
-     * @return true or false
-     */
-    public boolean isEmptyName() {
-        return StringUtils.isBlank(getFirstName())
-                && StringUtils.isBlank(getLastName());
-    }
-    
-    private void init() {
-        try {
-            User csmUser = SecurityServiceProvider.getUserProvisioningManager("po").getUser(username);
-            firstName = csmUser.getFirstName();
-            lastName = csmUser.getLastName();
-        } catch (CSException cse) {
-            throw new SecurityException("CSM exception while retrieving CSM user :" + username, cse);
-        }
-    }
-    
 }

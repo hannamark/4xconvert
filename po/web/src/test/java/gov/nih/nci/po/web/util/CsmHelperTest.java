@@ -1,29 +1,24 @@
 package gov.nih.nci.po.web.util;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 
 public class CsmHelperTest {
 
-    private static final String username = "myUser";
-    
     @Test
-    public void testConst() {
-        CsmHelper helper = new CsmHelper("myUser");        
-        assertEquals(username, helper.getUsername());
-        
-        try {
-            helper.getFirstName();
-        } catch (Throwable t) {
-            
-        }
-        try {
-            helper.getLastName();
-        } catch (Throwable t) {
-            
-        }
+    public void testGrid() {
+        CsmHelper helper = new CsmHelper("myUser");
+        assertEquals("myUser", helper.getUsername());
+        assertEquals("myUser", helper.getDisplayname());
     }
-    
+
+
+    @Test
+    public void testNonGrid() {
+        CsmHelper helper = new CsmHelper("/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=myUser");
+        assertEquals("/O=caBIG/OU=caGrid/OU=LOA1/OU=NCI/CN=myUser", helper.getUsername());
+        assertEquals("myUser", helper.getDisplayname());
+    }
 }
