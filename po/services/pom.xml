@@ -91,12 +91,6 @@
             <version>3.2.3</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-             <groupId>weblogic</groupId>
-             <artifactId>wlthint3client-trimmed</artifactId>
-             <version>10.3.6nci</version>
-             <scope>provided</scope>
-        </dependency>
 
         <!-- Jars required -->
         <dependency>

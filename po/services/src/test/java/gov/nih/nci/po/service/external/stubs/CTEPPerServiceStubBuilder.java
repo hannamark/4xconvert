@@ -11,7 +11,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
-import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -41,7 +40,7 @@ public class CTEPPerServiceStubBuilder {
         return createGeneric();
     }
    
-    public CTEPPersonServiceStub buildCreateHCPStub() throws URISyntaxException {
+    public CTEPPersonServiceStub buildCreateHCPStub(Ii scoper) throws URISyntaxException {
         Cd statusPending = new Cd();
         statusPending.setCode("pending");
 
@@ -53,7 +52,7 @@ public class CTEPPerServiceStubBuilder {
         hcp.setStatus(statusPending);
         hcp.setPostalAddress(getAds());
         hcp.setPlayerIdentifier(getId1());
-        hcp.setScoperIdentifier(getCtepOrgId());
+        hcp.setScoperIdentifier(scoper);
         hcp.setTelecomAddress(new DSet<Tel>());
         hcp.getTelecomAddress().setItem(new LinkedHashSet<Tel>());
         Tel tel = new Tel();
@@ -71,15 +70,7 @@ public class CTEPPerServiceStubBuilder {
         
         return id;
     }
-    
-    private Ii getCtepOrgId() {
-        Ii id2 = new Ii();
-        id2.setExtension("CTEP");
-        id2.setIdentifierName("CTEP ID");
-        id2.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
-        return id2;
-    }
-    
+
     private DSet<Ad> getAds() {
         DSet<Ad> ads = new DSet<Ad>();
         ads.setItem(new LinkedHashSet<Ad>());

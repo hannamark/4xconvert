@@ -20,6 +20,7 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
@@ -52,10 +53,12 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
 
     private IdentifiedPersonServiceBean ipSvc;
     private Organization affOrg;
+    private Organization scoper;
     private OrganizationServiceBean oSvc;
     private IdentifiedOrganizationServiceBean ioSvc;
     private CtepPersonImporter importer;
     private HealthCareProviderServiceBean hcpSvc;
+    private Ii ctepIi;
 
     @Rule public ExpectedException thrown = ExpectedException.none();
     
@@ -83,9 +86,8 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
        
         createCTEPOrg();
     }
-    
-    private void createCTEPOrg() throws Exception {
 
+    private void createCTEPOrg() throws Exception {
         affOrg = new Organization();
         affOrg.setName("Cancer Therapy Evaluation Program");
         affOrg.setStatusCode(EntityStatus.ACTIVE);
@@ -119,6 +121,32 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         MessageProducerTest.assertMessageCreated(io, ioSvc, true);
         MessageProducerTest.clearMessages(ioSvc);
 
+        ctepIi = new Ii();
+        ctepIi.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
+        ctepIi.setIdentifierName("CTEP ID");
+        ctepIi.setExtension("CTEP");
+    }
+
+    private Ii createPendingScoper() throws Exception {
+        scoper = new Organization();
+        scoper.setName("Scoper Organization");
+        scoper.setStatusCode(EntityStatus.PENDING);
+        scoper.setPostalAddress(new Address());
+        scoper.getPostalAddress().setStreetAddressLine("bogus");
+        scoper.getPostalAddress().setCityOrMunicipality("city");
+        scoper.getPostalAddress().setStateOrProvince("VA");
+        scoper.getPostalAddress().setPostalCode("12345");
+        scoper.getPostalAddress().setCountry(getDefaultCountry());
+        scoper.getEmail().add(new Email("abc@example.com"));
+        oSvc.curate(scoper);
+        MessageProducerTest.assertMessageCreated(scoper, oSvc, true);
+        MessageProducerTest.clearMessages(oSvc);
+        Ii result = new Ii();
+        result.setExtension(scoper.getId().toString());
+        result.setIdentifierName(IdConverter.ORG_IDENTIFIER_NAME);
+        result.setRoot(IdConverter.ORG_ROOT);
+        return result;
+
     }
    
     private IdentifiedPerson getByCtepPersonId(Ii ctepPerId) {
@@ -132,9 +160,45 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         }
         return identifiedPers.get(0);
     }
-    
+
     @Test
-    public void testPersonImport() throws Exception, JMSException, EntityValidationException {
+    public void testPersonImportActiveOrg() throws Exception, JMSException, EntityValidationException {
+        // create Person and IdentifiedPerson via Import
+        CTEPPersonServiceStub service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
+        importer.setCtepPersonService(service);
+        PersonDTO per = service.getPer();
+        assertNotNull(per);
+        assertNotNull(service.getPerId());
+        
+        Person importedPer = importer.importPerson(per.getIdentifier());
+        assertNotNull(importedPer);
+        assertNotNull(service.getPerId());
+        IdentifiedPerson ip = getByCtepPersonId(service.getPerId());
+        assertNotNull(ip);
+        assertNotNull(ip.getPlayer());
+        assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
+
+        // update record to add HCP
+        service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateHCPStub(ctepIi);
+        importer.setCtepPersonService(service);
+        per = service.getPer();
+        assertNotNull(per);
+        assertNotNull(service.getPerId());
+        
+        importedPer = importer.importPerson(per.getIdentifier());
+        assertNotNull(importedPer);
+        assertNotNull(service.getPerId());
+        ip = getByCtepPersonId(service.getPerId());
+        assertNotNull(ip);
+        assertNotNull(ip.getPlayer());
+        assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
+        List<HealthCareProvider> hcpList = hcpSvc.getByPlayerIds(new Long[] {ip.getPlayer().getId()});
+        assertEquals(1, hcpList.size());    
+        assertEquals(RoleStatus.ACTIVE, hcpList.get(0).getStatus());
+    }
+
+    @Test
+    public void testPersonImportPendingOrg() throws Exception, JMSException, EntityValidationException {
         // create Person and IdentifiedPerson via Import
         CTEPPersonServiceStub service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
         importer.setCtepPersonService(service);
@@ -151,8 +215,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
         
         // update record to add HCP
-        
-        service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateHCPStub();
+        service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateHCPStub(createPendingScoper());
         importer.setCtepPersonService(service);
         per = service.getPer();
         assertNotNull(per);
@@ -166,9 +229,10 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertNotNull(ip.getPlayer());
         assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
         List<HealthCareProvider> hcpList = hcpSvc.getByPlayerIds(new Long[] {ip.getPlayer().getId()});
-        assertEquals(1, hcpList.size());    
+        assertEquals(1, hcpList.size());
+        assertEquals(RoleStatus.PENDING, hcpList.get(0).getStatus());
     }
-    
+
     @Test
     public void testInvalidPersonImportReturnNullPersonId() throws Exception, JMSException, EntityValidationException {
         CTEPPersonServiceStub stubPersonService = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();

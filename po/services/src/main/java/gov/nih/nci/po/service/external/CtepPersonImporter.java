@@ -356,7 +356,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 ClinicalResearchStaff crs = (ClinicalResearchStaff) PoXsnapshotHelper.createModel(crsDto);
 
                 // set fields that we need to, clear the fields not provided by ctep
-                persistedCrs.setStatus(RoleStatus.ACTIVE);
+                persistedCrs.setStatus(getPersonRoleStatus(persistedCrs.getScoper()));
                 persistedCrs.getEmail().clear();
                 persistedCrs.getEmail().addAll(crs.getEmail());
                 persistedCrs.getFax().clear();
@@ -403,7 +403,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
                 // convert to local db model
                 HealthCareProvider hcp = (HealthCareProvider) PoXsnapshotHelper.createModel(hcpDto);
                 // set fields that we need to, clear the fields not provided by ctep
-                persistedHcp.setStatus(RoleStatus.ACTIVE);
+                persistedHcp.setStatus(getPersonRoleStatus(persistedHcp.getScoper()));
                 persistedHcp.setCertificateLicenseText(hcp.getCertificateLicenseText());
                 persistedHcp.getEmail().clear();
                 persistedHcp.getEmail().addAll(hcp.getEmail());
@@ -475,7 +475,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // set fields that we need to
         hcp.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
         hcp.setPlayer(ctepPerson);
-        hcp.setStatus(RoleStatus.ACTIVE);
+        hcp.setStatus(getPersonRoleStatus(hcp.getScoper()));
 
         // store role
         this.hcpService.curate(hcp);
@@ -509,7 +509,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
 
         // set fields that we need to
         crs.setScoper(this.orgImporter.importOrgNoUpdate(scoperIi));
-        crs.setStatus(RoleStatus.ACTIVE);
+        crs.setStatus(getPersonRoleStatus(crs.getScoper()));
         crs.setPlayer(ctepPerson);
 
         // store role
@@ -570,5 +570,9 @@ public class CtepPersonImporter extends CtepEntityImporter {
         for (Tel obj : tels.getItem()) {
             LOG.info("\t" + obj.getValue());
         }
+    }
+
+    private RoleStatus getPersonRoleStatus(Organization scoper) {
+        return scoper.getStatusCode() == EntityStatus.PENDING ? RoleStatus.PENDING : RoleStatus.ACTIVE;
     }
 }
