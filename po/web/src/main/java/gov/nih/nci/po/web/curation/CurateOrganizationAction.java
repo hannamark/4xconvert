@@ -60,6 +60,7 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
     private OrganizationCR cr = new OrganizationCR();
     private Organization duplicateOf = new Organization();
     private String comments;
+    private boolean showNewStatusField = true;
 
     /**
      * {@inheritDoc}
@@ -97,6 +98,10 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
       org.getHealthCareFacilities().size();
       org.getResearchOrganizations().size();
       org.isAssociatedWithCtepRoles();
+      
+      if (org.isAssociatedWithCtepRoles()) {
+          showNewStatusField = false;
+      }      
     }
 
     private void initializeCollections(Organization org) {
@@ -366,5 +371,19 @@ public class CurateOrganizationAction extends ActionSupport implements Addressab
      */
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    /**
+     * @return the showNewStatusField
+     */
+    public boolean isShowNewStatusField() {
+        return showNewStatusField;
+    }
+
+    /**
+     * @param showNewStatusField the showNewStatusField to set
+     */
+    public void setShowNewStatusField(boolean showNewStatusField) {
+        this.showNewStatusField = showNewStatusField;
     }
 }

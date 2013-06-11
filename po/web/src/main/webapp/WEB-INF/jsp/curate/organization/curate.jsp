@@ -90,15 +90,20 @@
                 <s:date name="organization.statusDate"  format="yyyy-MM-dd" /></po:field>
                 </po:inputRowElement>
                 </po:inputRow>
-                <s:select
-                   label="New %{getText('organization.statusCode')}"
-                   name="organization.statusCode"
-                   list="organization.priorEntityStatus.allowedTransitions"
-                   value="organization.statusCode"
-                   headerKey="" headerValue="--Select a Status--"
-                   onchange="handleDuplicateOf();"
-                   required="true" cssClass="required"
-                   id="curateEntityForm.organization.statusCode"/>
+                <s:if test="%{showNewStatusField}">
+	                <s:select
+	                   label="New %{getText('organization.statusCode')}"
+	                   name="organization.statusCode"
+	                   list="organization.priorEntityStatus.allowedTransitions"
+	                   value="organization.statusCode"
+	                   headerKey="" headerValue="--Select a Status--"
+	                   onchange="handleDuplicateOf();"
+	                   required="true" cssClass="required"
+	                   id="curateEntityForm.organization.statusCode"/>
+	            </s:if>
+	            <s:else>
+	               <s:hidden name="organization.statusCode" id="curateEntityForm.organization.statusCode" value="%{organization.statusCode}" />
+	            </s:else>
                 <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
                     <script type="text/javascript">
                         var dupeOrgName = '';
