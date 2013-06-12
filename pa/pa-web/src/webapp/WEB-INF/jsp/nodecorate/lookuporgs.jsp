@@ -30,9 +30,7 @@
             function createOrg() {
                 var url = '/pa/protected/popupOrgcreateOrganization.action';
                 var country = $("orgCountry").value;
-                var params = {                	                 		
-               		'struts.token.name': document.getElementsByName("struts.token.name")[0].value,
-               		'struts.token': document.getElementsByName("struts.token")[0].value,
+                var params = {
                     cityName: $("orgCity").value,
                     countryName: country,
                     email: $("orgEmail").value,
@@ -115,7 +113,6 @@
     <body>
         <div class="box">
         <s:form id="poOrganizations" name="poOrganizations" >
-            <s:token/>
             <div id="searchOrgJsp">
             <h2><fmt:message key="popUpOrg.header"/></h2>
             

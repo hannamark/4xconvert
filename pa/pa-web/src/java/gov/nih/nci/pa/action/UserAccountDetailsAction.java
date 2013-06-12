@@ -16,7 +16,6 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.fiveamsolutions.nci.commons.util.NCICommonsUtils;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -69,13 +68,11 @@ public class UserAccountDetailsAction extends ActionSupport implements Preparabl
      */
     public String save() throws PAException {
         user = userService.getCSMUser(UsernameHolder.getUser());
-        user.setFirstName(NCICommonsUtils.performXSSFilter(
-                StringUtils.defaultString(getFirstName()), true, false, true));
-        user.setLastName(NCICommonsUtils.performXSSFilter(StringUtils.defaultString(getLastName()), true, false, true));
+        user.setFirstName(getFirstName());
+        user.setLastName(getLastName());
         user.setOrganization(getOrganization());
-        user.setPhoneNumber(NCICommonsUtils.performXSSFilter(
-                StringUtils.defaultString(getPhoneNumber()), true, false, true));
-        user.setEmailId(NCICommonsUtils.performXSSFilter(StringUtils.defaultString(getEmailId()), true, false, true));
+        user.setPhoneNumber(getPhoneNumber());
+        user.setEmailId(getEmailId());
         user = userService.updateCSMUser(user);
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
