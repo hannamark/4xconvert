@@ -87,8 +87,8 @@
                                 <s:param>familyOrgRelationship.startDate</s:param>
                             </s:fielderror>
                             <po:field labelKey="familyOrgRelationship.startDate" fieldRequired="true">
-                                <sj:datepicker readonly="true" required="true" name="familyOrgRelationship.startDate"
-                                    displayFormat="mm/dd/yy"  labelposition="left" minDate="familyOrgRelationship.family.startDate" maxDate="@gov.nih.nci.po.web.util.validator.ValidDateRangeHelper@getLatestAllowableStartDate(familyOrgRelationship)"/>
+                                <sj:datepicker readonly="true" required="false" name="familyOrgRelationship.startDate"
+                                    displayFormat="mm/dd/yy"  labelposition="left"/>
                             </po:field>
                         </po:inputRowElement>
                         <s:if test="%{isEdit}" >
@@ -97,9 +97,9 @@
                                     <s:param>familyOrgRelationship.endDate</s:param>
                                 </s:fielderror>
                                 <po:field labelKey="familyOrgRelationship.endDate">
-                                    <sj:datepicker name="familyOrgRelationship.endDate" readonly="true" 
+                                    <sj:datepicker name="familyOrgRelationship.endDate" readonly="false" 
                                          displayFormat="mm/dd/yy"  labelposition="left"
-                                         id="familyOrgRelationshipForm.familyOrgRelationship.endDate" minDate="@gov.nih.nci.po.web.util.validator.ValidDateRangeHelper@getEarliestAllowableEndDate(familyOrgRelationship)" maxDate="new Date()"/>
+                                         id="familyOrgRelationshipForm.familyOrgRelationship.endDate"/>
                                 </po:field>
                             </po:inputRowElement>
                         </s:if>
