@@ -35,10 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+
 
 /**
  * @author Hugh Reinhart
@@ -92,6 +95,13 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
      * @return result
      */
     public String createOrganization() {
+        // Because this is an Ajax request, Struts token field will not get updated in the HTML form
+        // after execution of this method; this will cause an Invalid Token error on any subsequent request.
+        // Since this token was put in to deal with an AppScan CSRF issue anyway (PO-6232), we don't need to
+        // refresh the token value and thus will retain the "original" token value from the request.
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        request.getSession().setAttribute("struts.token.popup",
+                request.getParameter("struts.token.popup"));
         setStateName(AddressUtil.fixState(getStateName(), getCountryName()));
 
         addActionErrors(AddressUtil.addressValidations(getOrgStAddress(), getCityName(), getStateName(),
@@ -101,6 +111,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         if (StringUtils.isNotBlank(getEmail()) && !PAUtil.isValidEmail(getEmail())) {
             addActionError("Email address is invalid");
         }
+
         if (StringUtils.isNotBlank(getUrl()) && !PAUtil.isCompleteURL(getUrl())) {
             addActionError("Please provide a full URL that includes protocol and host, e.g. http://cancer.gov/");
         }
@@ -115,7 +126,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
             for (String actionErr : getActionErrors()) {
                 sb.append(" - ").append(actionErr);
             }
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+            request.setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
             return "create_org_response";
         }
 
@@ -123,7 +134,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         try {
             result = updatePo();
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         return result;
     }
