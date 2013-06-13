@@ -57,10 +57,11 @@
                 <h2><fmt:message key="trialHistory.title"/></h2>
                 <table class="form">
                     <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                             <ul id="maintabs" class="tabs">
                                 <li><a href="#submissions">Submissions</a></li>
                                 <li><a href="#updates">Updates</a></li>
+                                <li><a href="#auditTrail">Audit Trail</a></li>
                             </ul>
                             <!--/Tabs -->
                             <!--
@@ -71,9 +72,10 @@
                             <script type="text/javascript">
                                 //<![CDATA[
                                 Event.observe(window,'load',function() {
-                                    $$('.tabs').each(function(tabs) {
-                                        new Control.Tabs(tabs);
-                                    });
+                                	var tabs = new Control.Tabs($('maintabs'));
+                                	<c:if test="${param.activeTab=='auditTrail'}">
+                                		tabs.setActiveTab('auditTrail');
+                                	</c:if>                                                                        	
                                 });
                                 //]]>
                             </script>
@@ -85,8 +87,10 @@
                                 <div id="updates" class="box" style="display:none;">
                                     <jsp:include page="/WEB-INF/jsp/displayTrialUpdates.jsp"/>
                                 </div>
-                            </div>                                                  
-
+                                <div id="auditTrail" class="box" style="display:none;">
+                                    <jsp:include page="/WEB-INF/jsp/auditTrail.jsp"/>                                    
+                                </div>
+                            </div>                                                   
                         </td>
                     </tr>
                 </table>

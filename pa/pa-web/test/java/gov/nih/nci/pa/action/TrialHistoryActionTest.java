@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -109,6 +110,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.util.AuditTrailCode;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -122,6 +124,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.opensymphony.xwork2.Action;
 
 /**
  * @author Anupama Sharma
@@ -295,5 +300,26 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     @Test(expected=UnsupportedOperationException.class)
     public void testDeleteObject() throws PAException {
         trialHistory.deleteObject(1l);
+    }
+    
+    @Test
+    public void testView() throws Exception {
+    	trialHistory.setAuditTrailCode(AuditTrailCode.MARKERS);
+        assertEquals(TrialHistoryAction.AR_LIST, trialHistory.view());
+        assertNotNull(trialHistory.getAuditTrail());
+        assertEquals(1, trialHistory.getAuditTrail().size());
+        AuditLogDetail detail = trialHistory.getAuditTrail().iterator().next();
+        assertEquals("PLANNED_MARKER", detail.getRecord().getEntityName());
+        assertEquals("name", detail.getAttribute());
+        assertEquals("name", detail.getNewValue());
+
+        trialHistory.setAuditTrailCode(AuditTrailCode.NCI_SPECIFIC_INFORMATION);
+        assertEquals(TrialHistoryAction.AR_LIST, trialHistory.view());
+        assertNotNull(trialHistory.getAuditTrail());
+        assertEquals(1, trialHistory.getAuditTrail().size());
+        detail = trialHistory.getAuditTrail().iterator().next();
+        assertEquals("STUDY_RESOURCING", detail.getRecord().getEntityName());
+        assertEquals("programCodeText", detail.getAttribute());
+        assertEquals("programCode", detail.getNewValue());
     }
 }

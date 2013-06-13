@@ -322,11 +322,7 @@
             <result name="proprietaryEdit">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="error_proprietary">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
-        </action>
-        <action name="auditTrail*" class="gov.nih.nci.pa.action.AuditTrailAction" method="{1}">
-            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
-            <result>/WEB-INF/jsp/auditTrail.jsp</result>
-        </action>
+        </action>        
         <action name="checkOutHistory" class="gov.nih.nci.pa.action.CheckOutHistoryAction">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/checkOutHistory.jsp</result>

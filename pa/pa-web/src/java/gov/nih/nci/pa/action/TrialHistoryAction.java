@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -101,8 +103,11 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailService;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.AuditTrailCode;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -114,21 +119,29 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+
 /**
- * The Class TrialHistoryAction.
+ * Action for handling history of trial submissions, updates and
+ * audit trail.
  * 
  * @author Anupama Sharma
  * @since 04/16/2009
@@ -153,6 +166,14 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private final StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private List<TrialDocumentWebDTO> deletedDocuments = new ArrayList<TrialDocumentWebDTO>();
 
+    private static final int DEFAULT_AUDIT_PERIOD = -30;
+    private AuditTrailCode auditTrailCode;
+    private Set<AuditLogDetail> auditTrail;
+    private AuditTrailServiceLocal auditTrailService;
+
+    private String startDate;
+    private String endDate;
+    
     /**
      * {@inheritDoc}
      */
@@ -164,6 +185,14 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         studyProtocolService = PaRegistry.getStudyProtocolService();
         registryUserServiceLocal = PaRegistry.getRegistryUserService();
         documentWorkflowStatusServiceLocal = PaRegistry.getDocumentWorkflowStatusService();
+        
+        auditTrailService  = PaRegistry.getAuditTrailService();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        Date thirtyDaysAgo = DateUtils.addDays(today, DEFAULT_AUDIT_PERIOD);
+        setStartDate(PAUtil.normalizeDateString(sdf.format(thirtyDaysAgo)));
+        setEndDate(PAUtil.normalizeDateString(sdf.format(today)));
     }
 
     /**
@@ -243,7 +272,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     @Override
     public String execute() throws PAException {
         loadListForm();
-        loadTrialUpdates();
+        loadTrialUpdates();        
         return AR_LIST;
     }
 
@@ -669,7 +698,141 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             DocumentWorkflowStatusServiceLocal documentWorkflowStatusServiceLocal) {
         this.documentWorkflowStatusServiceLocal = documentWorkflowStatusServiceLocal;
     }
-
-  
     
+    /**
+     * @param auditTrail the auditTrail to set
+     */
+    public void setAuditTrail(Set<AuditLogDetail> auditTrail) {
+        this.auditTrail = auditTrail;
+    }
+
+    /**
+     * @return the auditTrailCode
+     */
+    public AuditTrailCode getAuditTrailCode() {
+        return auditTrailCode;
+    }
+
+    /**
+     * @param auditTrailCode the auditTrailCode to set
+     */
+    public void setAuditTrailCode(AuditTrailCode auditTrailCode) {
+        this.auditTrailCode = auditTrailCode;
+    }
+
+    /**
+     * @return the auditTrail
+     */
+    public Set<AuditLogDetail> getAuditTrail() {
+        return auditTrail;
+    }
+
+    /**
+     * @return the auditTrailService
+     */
+    public AuditTrailService getAuditTrailService() {
+        return auditTrailService;
+    }
+
+    /**
+     * @return the startDate
+     */
+    public String getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the endDate
+     */
+    public String getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }        
+    
+    /**
+     * Retrieves the audit trail for the given object, in the order in which they were created.
+     * @return success
+     * @throws PAException on error
+     */
+    @SuppressWarnings("unchecked")
+    public String view() throws PAException {
+        loadListForm();
+        loadTrialUpdates(); 
+        validateDateFilters();
+        if (hasActionErrors() || hasFieldErrors()) {
+            return AR_LIST;
+        }
+        Ii studyProtocolIi =
+            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        setAuditTrail(new TreeSet<AuditLogDetail>(new BeanComparator("id")));
+        if (getAuditTrailCode() == AuditTrailCode.NCI_SPECIFIC_INFORMATION) {
+            loadNciSpecificInformation(studyProtocolIi);
+        } else if (getAuditTrailCode() != null) {
+            List<AuditLogDetail> results =
+                getAuditTrailService().getAuditTrailByStudyProtocol(getAuditTrailCode().getClazz(), studyProtocolIi,
+                        PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate));
+            getAuditTrail().addAll(results);
+        }
+        return AR_LIST;
+    }       
+    
+    /**
+     * Loads the audit trail for NCI specific information. NCI specific information is split between the study
+     * protocol object itself and in the study resourcing object.
+     */
+    private void loadNciSpecificInformation(Ii studyProtocolIi) throws PAException {
+        StudyResourcingDTO nciSpecificInfo =
+            PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi);
+
+        List<AuditLogDetail> studyContactDetails =
+            getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), nciSpecificInfo.getIdentifier(),
+                    PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate));
+
+        List<AuditLogDetail> spDetails = getAuditTrailService().getAuditTrailByFields(StudyProtocol.class,
+                studyProtocolIi, PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate),
+                "programCodeText", "accrualReportingMethodCode");
+
+        getAuditTrail().addAll(studyContactDetails);
+        getAuditTrail().addAll(spDetails);
+    }
+
+
+    /**
+     * Validates date input.
+     */
+    private void validateDateFilters() {
+        Date start = PAUtil.dateStringToDateTime(startDate);
+        Date end = PAUtil.dateStringToDateTime(endDate);
+        if (startDate != null && start == null) {
+            addFieldError("startDate", getText("error.auditTrail.startDate"));
+        }
+        if (endDate != null && end == null) {
+            addFieldError("endDate", getText("error.auditTrail.endDate"));
+        }
+        validateDateOrder(start, end);
+    }
+    
+    /**
+     * Validates end date should be after start date.
+     * @param start start date
+     * @param end end date
+     */
+    private void validateDateOrder(Date start, Date end) {
+        if (start != null && end != null && start.after(end)) {            
+            addFieldError("startDate", getText("error.auditTrail.orderedDate"));
+        }
+    }
 }
