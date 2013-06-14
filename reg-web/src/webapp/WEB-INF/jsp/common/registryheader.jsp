@@ -1,5 +1,5 @@
 <%@ page import="gov.nih.nci.registry.util.Constants" %>
-<%@page import="gov.nih.nci.registry.dto.RegistryUserWebDTO"%>
+<%@page import="gov.nih.nci.pa.util.CsmHelper"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="header">
@@ -8,7 +8,7 @@
       <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
         <c:url value="registerUsershowMyAccount.action" var="showMyAccountUrl"/>
-        <div id="userarea">Welcome, <a href="javascript:void(0)" onclick="submitXsrfForm('${showMyAccountUrl}');">${regUserWebDto.firstName} ${regUserWebDto.lastName} </a>  |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
+        <div id="userarea">Welcome, <a href="javascript:void(0)" onclick="submitXsrfForm('${showMyAccountUrl}');"><c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/> </a>  |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
         </c:when>
         <c:otherwise>
         <div id="userarea"><a href='<c:url value="/protected/disClaimerAction.action?actionName=searchTrial.action"/>' class="btn_login">Log In</a></div>

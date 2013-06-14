@@ -63,51 +63,51 @@ function selectTrialType(){
 						            </ul>            
 					            </li>                                
                                 
-                                <c:if test="${sessionScope.regUserWebDto != null && sessionScope.regUserWebDto.affiliatedOrgType.code == 'Admin'}">
+                                <c:if test="${sessionScope.isSiteAdmin}">
                                     <c:choose>
                                         <c:when test="${requestScope.topic == 'siteadmin'}">
-                                            <li><a id="siteAdministrationMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/siteAdministrationsearch.action');" class="selected">Site Administration</a></li>
+                                            <li><a id="siteAdministrationMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/siteAdministrationsearch.action');" class="selected">Site Administration</a></li>
                                         </c:when>
                                         <c:otherwise>
-                                            <li><a id="siteAdministrationMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/siteAdministrationsearch.action');" >Site Administration</a></li>
+                                            <li><a id="siteAdministrationMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/siteAdministrationsearch.action');" >Site Administration</a></li>
                                         </c:otherwise>
                                     </c:choose>
                                     <li>
                                         <c:choose>
                                             <c:when test="${requestScope.topic == 'displayownership'}">
-                                                <a id="showTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/displayTrialOwnershipsearch.action');" class="selected">Display Trial Ownership</a>
+                                                <a id="showTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/displayTrialOwnershipsearch.action');" class="selected">Display Trial Ownership</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a id="showTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/displayTrialOwnershipsearch.action');" >Display Trial Ownership</a>
+                                                <a id="showTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/displayTrialOwnershipsearch.action');" >Display Trial Ownership</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </li>
                                     <li>
                                         <c:choose>
                                             <c:when test="${requestScope.topic == 'manageownership'}">
-                                                <a id="manageTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageTrialOwnershipsearch.action');" class="selected">Manage Trial Ownership</a>
+                                                <a id="manageTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageTrialOwnershipsearch.action');" class="selected">Manage Trial Ownership</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a id="manageTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageTrialOwnershipsearch.action');" >Manage Trial Ownership</a>
+                                                <a id="manageTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageTrialOwnershipsearch.action');" >Manage Trial Ownership</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </li>
                                     <li>
                                         <c:choose>
                                             <c:when test="${requestScope.topic == 'managesiteownership'}">
-                                                <a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageSiteOwnershipsearch.action');" class="selected">Manage Site Record Ownership</a>
+                                                <a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageSiteOwnershipsearch.action');" class="selected">Manage Site Record Ownership</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageSiteOwnershipsearch.action');" >Manage Site Record Ownership</a>
+                                                <a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageSiteOwnershipsearch.action');" >Manage Site Record Ownership</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </li>
                                     <li><a href="javascript:void(0)" class="fakelink">Manage Accrual Access</a></li>
                                     <li class="stdsub">
                                     <ul>                               
-                                        <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccess.action');"  class="${requestScope.topic == 'accrualaccess'?'selected':''}">Assign &amp; Unassign Access</a></li>
-                                        <li><a id="viewAccrualAccessAssignmentHistoryMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentHistory.action');"  class="${requestScope.topic == 'assignmentHistory'?'selected':''}">Assignment History</a></li>
-                                        <li><a id="viewAccrualAccessAssignmentByTrialMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/protected/manageAccrualAccessassignmentByTrial.action');"  class="${requestScope.topic == 'assignmentByTrial'?'selected':''}">Assignment By Trial</a></li>
+                                        <li><a id="manageAccrualAccessMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageAccrualAccess.action');"  class="${requestScope.topic == 'accrualaccess'?'selected':''}">Assign &amp; Unassign Access</a></li>
+                                        <li><a id="viewAccrualAccessAssignmentHistoryMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageAccrualAccessassignmentHistory.action');"  class="${requestScope.topic == 'assignmentHistory'?'selected':''}">Assignment History</a></li>
+                                        <li><a id="viewAccrualAccessAssignmentByTrialMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('/registry/siteadmin/manageAccrualAccessassignmentByTrial.action');"  class="${requestScope.topic == 'assignmentByTrial'?'selected':''}">Assignment By Trial</a></li>
                                     </ul>            
                                     </li>                                      
                                  </c:if>

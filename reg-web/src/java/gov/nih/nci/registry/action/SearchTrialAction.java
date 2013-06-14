@@ -221,6 +221,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      */
     @Override
     public String execute() {
+        boolean isSiteAdmin = ServletActionContext.getRequest().isUserInRole("SiteAdmin");
+        ServletActionContext.getRequest().getSession().setAttribute("isSiteAdmin", isSiteAdmin);
         if (EXECUTE_ACTIONS.contains(StringUtils.upperCase(trialAction))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             studyProtocolId = Long.valueOf(pId);

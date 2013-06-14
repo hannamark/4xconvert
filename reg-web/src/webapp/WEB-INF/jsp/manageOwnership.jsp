@@ -22,7 +22,7 @@
             }
             
             function updateRegUser(regUserId) {
-                var  url = '/registry/protected/${actionName}setRegUser.action';
+                var  url = '/registry/siteadmin/${actionName}setRegUser.action';
                 var params = {
                     owner: $("chk" + regUserId).checked ? "true" : "false",
                     regUserId: regUserId
@@ -32,7 +32,7 @@
             }
             
             function updateTrial(trialId) {
-                var  url = '/registry/protected/${actionName}setTrial.action';
+                var  url = '/registry/siteadmin/${actionName}setTrial.action';
                 var params = {
                     selected: $("chk" + trialId).checked ? "true" : "false",
                     trialId: trialId
@@ -42,7 +42,7 @@
             }
             
             function updateEmailPref(trialId) {
-                var  url = '/registry/protected/${actionName}updateEmailPref.action';
+                var  url = '/registry/siteadmin/${actionName}updateEmailPref.action';
                 var params = {
                     selected: $("chkEmail" + trialId).checked ? "true" : "false",
                     trialId: trialId
@@ -65,7 +65,7 @@
                     checked = true;
                     document.getElementById('checkButton').value = "Uncheck All";
                     
-                    var  url = '/registry/protected/${actionName}setTrial.action';
+                    var  url = '/registry/siteadmin/${actionName}setTrial.action';
                     var params = {
                         selected: "true",
                         trialIds: trialIds,
@@ -84,7 +84,7 @@
                     checked = false;
                     document.getElementById('checkButton').value = "Check All";
                     
-                    var  url = '/registry/protected/${actionName}setTrial.action';
+                    var  url = '/registry/siteadmin/${actionName}setTrial.action';
                     var params = {
                     selected: "false",
                     trialIds: trialIds,

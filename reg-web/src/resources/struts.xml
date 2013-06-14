@@ -316,12 +316,6 @@
             <result>/WEB-INF/jsp/nodecorate/uploadDocuments.jsp</result>
         </action>
         
-        <action name="siteAdministration*" class="gov.nih.nci.registry.action.SiteAdministrationAction" method="{1}">
-            <result name="success">/WEB-INF/jsp/siteAdministration.jsp</result>
-            <result name="input">/WEB-INF/jsp/siteAdministration.jsp</result>
-            <result name="viewResults">/WEB-INF/jsp/siteAdministration.jsp</result>
-        </action>
-        
         <action name="updateProprietaryTrial*" class="gov.nih.nci.registry.action.UpdateProprietaryTrialAction" method="{1}">
             <result name="success">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
             <result name="input">/WEB-INF/jsp/updateProprietaryTrial.jsp</result>
@@ -333,6 +327,30 @@
                 <param name="parse">true</param>
                 <param name="trialAction">${trialAction}</param>
             </result>
+        </action>        
+
+        <action name="ctGovXML*" class="gov.nih.nci.registry.action.CTGovXMLAction" method="{1}">
+            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
+            <result name="downloadXMLFile" type="stream">
+                <param name="contentType">text/xml</param>
+                <param name="inputName">xmlFile</param>
+                <param name="bufferSize">4096</param>
+                <param name="contentDisposition">attachment;filename="${id}.xml"</param>
+            </result>
+        </action>
+        
+        <action name="participatingSitespopup*" class="gov.nih.nci.registry.action.ParticipatingSitesAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/nodecorate/viewParticipatingSites.jsp</result>         
+        </action>
+
+    </package>
+    
+    <package name="siteadmin" namespace="/siteadmin" extends="protected">
+        
+        <action name="siteAdministration*" class="gov.nih.nci.registry.action.SiteAdministrationAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/siteAdministration.jsp</result>
+            <result name="input">/WEB-INF/jsp/siteAdministration.jsp</result>
+            <result name="viewResults">/WEB-INF/jsp/siteAdministration.jsp</result>
         </action>
         
         <action name="manageTrialOwnership*" class="gov.nih.nci.registry.action.ManageTrialOwnershipAction" method="{1}">
@@ -364,21 +382,7 @@
             <result name="history">/WEB-INF/jsp/viewAccrualAccessAssignmentHistory.jsp</result>
             <result name="byTrial">/WEB-INF/jsp/viewAccrualAccessAssignmentByTrial.jsp</result>
             <result name="success">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
-        </action>        
-
-        <action name="ctGovXML*" class="gov.nih.nci.registry.action.CTGovXMLAction" method="{1}">
-            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
-            <result name="downloadXMLFile" type="stream">
-                <param name="contentType">text/xml</param>
-                <param name="inputName">xmlFile</param>
-                <param name="bufferSize">4096</param>
-                <param name="contentDisposition">attachment;filename="${id}.xml"</param>
-            </result>
         </action>
-        
-        <action name="participatingSitespopup*" class="gov.nih.nci.registry.action.ParticipatingSitesAction" method="{1}">
-            <result name="success">/WEB-INF/jsp/nodecorate/viewParticipatingSites.jsp</result>         
-        </action>
-
+    
     </package>
 </struts>

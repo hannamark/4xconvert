@@ -30,7 +30,7 @@
             }
             
             function updateUserOrgType(regUserId) {
-                var  url = '/registry/protected/siteAdministrationsetUserOrgType.action';
+                var  url = '/registry/siteadmin/siteAdministrationsetUserOrgType.action';
                 var params = {
                     isAdmin: $("chk" + regUserId).checked ? "true" : "false",
                     regUserId: regUserId

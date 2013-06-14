@@ -232,8 +232,6 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
         req.setRemoteUser("RegUser");
         assertNull(req.getSession().getAttribute("regUserWebDto"));
         assertEquals("myAccount", action.updateAccount());
-        RegistryUserWebDTO sessionAttribute = (RegistryUserWebDTO) req.getSession().getAttribute("regUserWebDto");
-        assertEquals("RegUser", sessionAttribute.getFirstName());
     }
 
     @Test

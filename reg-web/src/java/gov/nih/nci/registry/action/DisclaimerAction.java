@@ -78,9 +78,6 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.registry.dto.RegistryUserWebDTO;
-import gov.nih.nci.registry.util.RegistryUtil;
-
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -91,24 +88,6 @@ import com.opensymphony.xwork2.ActionSupport;
 public class DisclaimerAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String execute() {
-        String returnString = "success";
-        String loginName = ServletActionContext.getRequest().getRemoteUser();
-        RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
-        if (regUserWebDto == null) {
-             ServletActionContext.getRequest().getSession().invalidate();
-             returnString = "redirect_to";
-             addActionError("There is no registered user for this account.");
-        } else {
-             ServletActionContext.getRequest().getSession().setAttribute("regUserWebDto", regUserWebDto);
-        }
-        return returnString;
-    }
 
     /**
      * @return string
