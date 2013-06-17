@@ -146,6 +146,11 @@
                 document.forms[0].submit();
             }   
             
+            function cancel() {
+            	document.eligibilityCriteraiAdd.action="eligibilityCriteriaquery.action";
+            	document.eligibilityCriteraiAdd.submit();
+            }            
+            
             function loadDiv(deid) {
                  window.top.hidePopWin(true);
                  var url = '/pa/protected/ajaxEligibilityCriteriadisplaycde.action';
@@ -221,7 +226,8 @@
                 <!-- Adding eligibility description field here. -->
                 <table class="form">
                 	<tr>
-                		<th colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></th>              
+                	   <td/>
+                	   <td class="info" colspan="2"><fmt:message key="isdesign.eligibilitycriteria.description"/></td>
                 	</tr>
                 	<tr>
                 		<span class="formErrorMsg"> 
@@ -240,13 +246,14 @@
                 					<s:param>webDTO.TextDescription</s:param>
                                </s:fielderror>                            
                            </span>
-                       </td>
-                   </tr>  
+                       </td>                       
+                   </tr>                     
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>                
+                            <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                            <li><s:a href="javascript:void(0)" cssClass="btn" onclick="cancel();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a></li>                
                         </ul>   
                     </del>
                 </div> 
