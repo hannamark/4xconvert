@@ -30,7 +30,7 @@
         <p class="intro">
             Want to learn more about the Reporting Program? Visit the 
             <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a>
-            web site.  You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> 
+            web site.  You can also email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> 
             if you have questions or need assistance
         </p>
     </div>

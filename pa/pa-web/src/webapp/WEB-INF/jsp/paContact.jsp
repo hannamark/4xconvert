@@ -21,17 +21,17 @@
             <p class="intro">Thank you for using the NCI&#39;s Clinical Trials Reporting Program. </p>
           
             <p>
-               If you are experiencing problems with the application, please contact NCICB Applications Support at 
-               <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> or by phone at 888.478.4423 (for Toll Free) or 301.451.4384 (for local calls).  
+               If you are experiencing problems with the application, please contact NCI CBIIT Applications Support at 
+               <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> or by phone at 888.478.4423 (for Toll Free) or 301.451.4384 (for local calls).  
             </p>
             <p>
                 Alternatively, you can submit a request for help at the following URL: 
             </p>
             <p>
-                <a href="http://ncicb.nci.nih.gov/support" target="_blank"><font size="3" ><u>http://ncicb.nci.nih.gov/support</u></font></a>
+                <a href="http://cbiit.nci.nih.gov/support" target="_blank"><font size="3" ><u>http://cbiit.nci.nih.gov/support</u></font></a>
             </p>
 
-            <p>NCICB Application Support is available Mon-Fri 8am-8pm EST, excluding Federal Government Holidays. </p>
+            <p>NCI CBIIT Application Support is available Mon-Fri 8am-8pm EST, excluding Federal Government Holidays. </p>
 
     </div>
 
