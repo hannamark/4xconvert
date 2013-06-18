@@ -38,16 +38,16 @@
 
     <li><a>&nbsp;Quick links&nbsp;&nbsp;&nbsp;</a>
       <ul id="quicklinks">
-      <li style="width: 300px;"><a href="http://www.cancer.gov/ncictrp" class="external" target="new1">Clinical
+      <li style="width: 500px;"><a href="http://www.cancer.gov/ncictrp" class="external" target="new1">Clinical
                         Trials Reporting Program (CTRP)</a>
       </li>
-      <li style="width: 300px;"><a href="http://www.cancer.gov/" class="external" target="new2">National
+      <li style="width: 500px;"><a href="http://www.cancer.gov/" class="external" target="new2">National
                         Cancer Institute (NCI)</a>
       </li>
-      <li style="width: 300px;"><a href="http://ncicb.nci.nih.gov/" class="external" target="new3">NCI
-                        Center for Bioinformatics (NCICB)</a>
+      <li style="width: 500px;"><a href="http://cbiit.nci.nih.gov/" class="external" target="new3">NCI 
+                        Center for Biomedical Informatics and Information Technology (CBIIT)</a>
       </li>
-      <li style="width: 300px;"><a href="https://cabig.nci.nih.gov/" class="external" target="new4">caBIG&trade;
+      <li style="width: 500px;"><a href="https://cabig.nci.nih.gov/" class="external" target="new4">caBIG&trade;
                         - Cancer Biomedical Informatics Grid&trade;</a>
       </li>
     </ul>
