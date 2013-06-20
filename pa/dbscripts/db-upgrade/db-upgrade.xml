@@ -1297,4 +1297,8 @@
         <comment>Created a table to store history of CT.Gov uploads.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6207.sql"/>
      </changeSet>
+     <changeSet id="PO-5961" author="monishd">
+        <comment>Revise system-generated email messages</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5961.sql"/>
+     </changeSet>     
 </databaseChangeLog>

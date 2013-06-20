@@ -340,5 +340,31 @@ public interface MailManagerService {
      */
     void sendErrorToCTROMail(String toAddress, String fromAddress, 
             String values) throws PAException;
+
+    /**
+     * Mail with HTML body and Attachments.
+     * @param mailTo to address
+     * @param mailFrom from address
+     * @param mailCc cc list
+     * @param subject mail subject
+     * @param mailBody mail body
+     * @param attachments attachments 
+     * @param deleteAttachments flag to deleteAttachments
+     */
+    void sendMailWithHtmlBodyAndAttachment(String mailTo, String mailFrom, // NOPMD
+            List<String> mailCc, String subject, String mailBody,
+            File[] attachments, boolean deleteAttachments);
+    
+    
+    /**
+     * Send HtmlMail 
+     * @param mailFrom from address
+     * @param mailTo to address
+     * @param mailCc cc list
+     * @param mailSubject mail subject
+     * @param mailBody mail body
+     */
+    void sendMailWithHtmlBody(String mailFrom, String mailTo,
+            List<String> mailCc, String mailSubject, String mailBody);
     
 }

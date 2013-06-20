@@ -220,6 +220,7 @@ public class MailManager {
             // create and fill the message Body
             MimeBodyPart mbp1 = new MimeBodyPart();
             mbp1.setText(mailBody);
+            mbp1.setContent(mailBody, "text/html");
 
             // create the second message part for attachment
             MimeBodyPart mbp2 = new MimeBodyPart();

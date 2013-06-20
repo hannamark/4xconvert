@@ -409,6 +409,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         String subj = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.subject");
         String body = PaServiceLocator.getInstance().getLookUpTableService().getPropertyValue("accrual.error.body");
         String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
+        
+        body = body.replace("${submissionDate}", getFormatedCurrentDate());
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer errorReport = new StringBuffer();
@@ -451,7 +453,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             StringBuffer studySiteCounts = new StringBuffer();
             for (String partSiteIi : result.getIndustrialCounts().keySet()) {
                 studySiteCounts.append(partSiteIi).append(" : ")
-                .append(result.getIndustrialCounts().get(partSiteIi)).append(" Study Subjects updated successfully.\n");
+                .append(result.getIndustrialCounts().get(partSiteIi));
             }
             body = body.replace("${studySiteCounts}", studySiteCounts);
         } else {
@@ -459,6 +461,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 .getPropertyValue("accrual.confirmation.body");
         }
         String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
+        body = body.replace("${submissionDate}", getFormatedCurrentDate());
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         StringBuffer confirmation = new StringBuffer();
@@ -477,8 +480,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
 
     private void sendEmail(String to, String subject, String msg) {
         if (StringUtils.isNotBlank(msg)) {
-            PaServiceLocator.getInstance().getMailManagerService().sendMailWithAttachment(to, subject, msg, 
-                    null);
+            PaServiceLocator.getInstance().getMailManagerService().sendMailWithHtmlBody(to, subject, msg);
         }
     }
 

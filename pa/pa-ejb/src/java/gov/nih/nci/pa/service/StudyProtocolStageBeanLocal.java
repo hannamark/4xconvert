@@ -425,6 +425,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             StudyProtocolStageDTO spDTO = get(studyProtocolStageIi);
             String submissionMailBody = lookUpTableService.getPropertyValue("trial.partial.register.body");
             submissionMailBody = submissionMailBody.replace("${CurrentDate}", PAUtil.today());
+            submissionMailBody = submissionMailBody.replace("${submissionDate}", PAUtil.today());
             submissionMailBody = submissionMailBody.replace("${leadOrgTrialIdentifier}",
                 StConverter.convertToString(spDTO.getLocalProtocolIdentifier()));
             submissionMailBody = submissionMailBody.replace("${leadOrgName}",
@@ -445,8 +446,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             String mailSubject = lookUpTableService.getPropertyValue("trial.partial.register.subject");
             mailSubject = mailSubject.replace("${leadOrgTrialIdentifier}",
                 StConverter.convertToString(spDTO.getLocalProtocolIdentifier()));
-            mailManagerSerivceLocal.sendMailWithAttachment(registryUser.getEmailAddress(),
-                    mailSubject, submissionMailBody, null);
+            mailManagerSerivceLocal.sendMailWithHtmlBody(registryUser.getEmailAddress(), 
+                    mailSubject, submissionMailBody);
           } catch (Exception e) {
                LOG.error("Send Mail error Partial Submission Mail", e);
           }

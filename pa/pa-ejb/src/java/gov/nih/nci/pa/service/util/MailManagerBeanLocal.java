@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -179,6 +180,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
+    private static final String LEAD_ORG_NAME = "${leadOrgName}";
     private static final String FROMADDRESS = "fromaddress";
     private static final String PLACEHOLDER_2 = "{2}";
     private static final String PLACEHOLDER_0 = "{0}";
@@ -211,6 +213,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
     private static final int ERROR_MSG_LENGTH = 12;
     private static final String SIR_OR_MADAM = "Sir or Madam";
+    private static final String OTHER_TRIAL_IDENTIFIER = "${otherTrialIdentifiers}";
+    private static final String SUBMISSION_DATE = "${submissionDate}";
+    private static final String NOT_AVAILABLE = "";
+    private static final String CTEP_TRIAL_IDENTIFIER = "${ctepTrialIdentifier}";
+    private static final String DCP_TRIAL_IDENTIFIER = "${dcpTrialIdentifier}";
+    private static final String NCT_IDENTIFIER = "${nctIdentifier}";
+    private static final String EMAIL_ADDRESS = "${emailAddress}";
+    
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -229,7 +239,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     
     private final ExecutorService mailDeliveryExecutor = Executors
             .newSingleThreadExecutor();
-
+    
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
     /**
      * {@inheritDoc}
      */
@@ -312,6 +324,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
     }
 
+    
+    private String getCTEPIdentifier(Long studyProtocolID) throws PAException {
+        return paServiceUtils.getStudyIdentifier(
+                IiConverter.convertToStudyProtocolIi(studyProtocolID),
+                PAConstants.CTEP_IDENTIFIER_TYPE);
+    }
+    
+    private String getDCPIdentifier(Long studyProtocolID) throws PAException {
+        return paServiceUtils.getStudyIdentifier(
+                IiConverter.convertToStudyProtocolIi(studyProtocolID),
+                PAConstants.DCP_IDENTIFIER_TYPE);
+    }
+    
     private String getTSRFile(Ii studyProtocolID, String nciIdentifier, StringBuffer pathToFile, String format)
         throws PAException {
 
@@ -497,23 +522,79 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
         StudyProtocolQueryDTO spDTO = protocolQueryService
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
-
-        String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        String mailBody = lookUpTableService.getPropertyValue("trial.amend.body");
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(AMENDMENT_NUMBER, amendNumber);
         mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace("${leadOrgName}", spDTO.getLeadOrganizationName());
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
+    }
+    
+    /**
+     * Common Mail Body replacements.
+     * @param sp
+     * @param mailBody
+     * @return
+     */
+    String commonMailBodyReplacements(StudyProtocolQueryDTO spDTO, String mailBody) throws PAException {
+        String body = mailBody;
+        body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
+        body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        body = body.replace(LEAD_ORG_NAME, spDTO.getLeadOrganizationName());
+        body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        body = body.replace(SUBMISSION_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
+        body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
+        body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
 
+        String nctIdentiferRow = "";
+        if (StringUtils.isNotEmpty(spDTO.getNctNumber())) {
+            nctIdentiferRow = lookUpTableService.getPropertyValue("nct.identifier.row");
+            nctIdentiferRow = nctIdentiferRow.replace(NCT_IDENTIFIER, spDTO.getNctNumber());
+        }
+        body = body.replace("${nctIdentifierRow}", nctIdentiferRow);
+        
+        String otherIdentifiersRow = "";
+        if (StringUtils.isNotEmpty(spDTO.getOtherIdentifiersAsString())) {
+            otherIdentifiersRow = lookUpTableService.getPropertyValue("other.identifiers.row");
+            otherIdentifiersRow = otherIdentifiersRow
+                    .replace(OTHER_TRIAL_IDENTIFIER, StringUtils.join(spDTO.getOtherIdentifiers(), ","));
+        }
+        body = body.replace("${otherIdentifiersRow}", otherIdentifiersRow);
+        
+        String ctepIdRow = "";
+        String ctepID = getCTEPIdentifier(spDTO.getStudyProtocolId());
+        if (StringUtils.isNotEmpty(ctepID)) {
+            ctepIdRow = lookUpTableService.getPropertyValue("ctep.identifier.row");
+            ctepIdRow = ctepIdRow.replace(CTEP_TRIAL_IDENTIFIER, ctepID);
+        }
+        body = body.replace("${ctepIdentifierRow}", ctepIdRow);
+        
+        String dcpIdRow = "";
+        String dcpID = getDCPIdentifier(spDTO.getStudyProtocolId());
+        if (StringUtils.isNotEmpty(dcpID)) {
+            dcpIdRow = lookUpTableService.getPropertyValue("dcp.identifier.row");
+            dcpIdRow = dcpIdRow.replace(DCP_TRIAL_IDENTIFIER, dcpID);
+        }
+        body = body.replace("${dcpIdentifierRow}", dcpIdRow);
+        return body;
+    }
+    
+    /**
+     * Common Mail Subject Replacements
+     * @param spDTO
+     * @param mailSubject
+     * @return
+     */
+    String commonMailSubjectReplacements(StudyProtocolQueryDTO spDTO, String mailSubject) {
+        String subject =  mailSubject;
+        subject = subject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        subject = subject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        return subject;
     }
 
     /**
@@ -530,15 +611,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(AMENDMENT_NUMBER, amendNumber);
         mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.accept.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
     }
 
     /**
@@ -559,6 +637,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String propertyPrefix = (spDTO.isProprietaryTrial()) ? "proprietarytrial" : "trial";
         String mailBody = lookUpTableService.getPropertyValue(propertyPrefix + ".register.body");
         String mailSubject = lookUpTableService.getPropertyValue(propertyPrefix + ".register.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        
+        String regUserName = user.getFirstName() + " " + user.getLastName();
+        mailBody = mailBody.replace(OWNER_NAME, regUserName);
+        
         if (spDTO.isProprietaryTrial()) {
             String subOrgTrialIdentifier = "";
             PAServiceUtils serviceUtil = new PAServiceUtils();
@@ -575,13 +659,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             mailSubject = mailSubject.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
         }
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace("${leadOrgName}", spDTO.getLeadOrganizationName());
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-        String regUserName = user.getFirstName() + " " + user.getLastName();
-        mailBody = mailBody.replace(OWNER_NAME, regUserName);
         
         if (CollectionUtils.isNotEmpty(unmatchedEmails)) {
             mailBody = mailBody
@@ -597,10 +674,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         } else {
             mailBody = mailBody.replace(ERRORS, "");
         }
-
-        mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        sendMailWithAttachment(user.getEmailAddress(), mailSubject, mailBody, null);
+        sendMailWithHtmlBody(user.getEmailAddress(), mailSubject, mailBody);
     }
     
     /* (non-Javadoc)
@@ -615,8 +689,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
         
         String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
         String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, true);
-        return sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
+        return sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, true);
     }
     
     
@@ -634,8 +709,37 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
         
         String mailSubject = lookUpTableService.getPropertyValue("trial.onhold.reminder.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
         String mailBody = prepareOnHoldMailBody(onhold, deadline, spDTO, false);
-        sendEmail(spDTO, mailBody, new File[0], mailSubject, true, false);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, true);        
+    }
+
+    /**
+     * @param spDTO
+     * @param mailSubject
+     * @param mailBody
+     * @throws PAException
+     */
+    private List<String> sendEmailToAllTrialOwners(StudyProtocolQueryDTO sp, 
+            String subject, String body, boolean includeSubmitter) throws PAException {
+        String mailBody = body;
+        Set<String> emails = new HashSet<String>();
+        Collection<RegistryUser> recipients = new HashSet<RegistryUser>(getStudyOwners(sp));
+        if (includeSubmitter) {
+            RegistryUser submitter = registryUserService.getUser(sp.getLastCreated().getUserLastCreated());
+            if (submitter != null) {
+                recipients.add(submitter);
+            }
+        }
+        String emailAddress = null;
+        for (RegistryUser recipient : recipients) {
+            emailAddress = recipient.getEmailAddress();
+            String regUserName = recipient.getFirstName() + " " + recipient.getLastName();
+            mailBody = mailBody.replace(OWNER_NAME, regUserName);
+            sendMailWithHtmlBody(emailAddress, subject, mailBody);
+            emails.add(emailAddress);
+        }
+        return new ArrayList<String>(emails);
     }    
     
     
@@ -659,15 +763,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             mailBody = lookUpTableService
                     .getPropertyValue("trial.onhold.email.body");
         }
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER,
-                spDTO.getNciIdentifier());
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER,
-                spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO
-                .getLastCreated().getDateLastCreated()));
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(HOLD_DATE,
                 getFormatedDate(onhold.getOnholdDate()));
         mailBody = mailBody.replace(DEADLINE, getFormatedDate(deadline));
@@ -693,17 +789,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
         }
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(AMENDMENT_NUMBER, amendNumber);
         mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
         mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, true, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, true);
     }
 
     /**
@@ -723,16 +816,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 commentText = dto.getCommentText().getValue();
             }
         }
-        String body = lookUpTableService.getPropertyValue("rejection.body");
-        body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        body = body.replace("${reasoncode}", commentText);
-        body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
-        body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
-        body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
+        String mailBody = lookUpTableService.getPropertyValue("rejection.body");
+        
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailBody = mailBody.replace("${reasoncode}", commentText);
 
         String mailSubject = lookUpTableService.getPropertyValue("rejection.subject");
-        sendEmail(spDTO, body, null, mailSubject, false, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
     }
 
     /**
@@ -761,13 +852,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
             .convertToLong(studyProtocolIi));
         String mailBody = lookUpTableService.getPropertyValue("trial.accept.body");
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace("${title}", spDTO.getOfficialTitle());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         String mailSubject = lookUpTableService.getPropertyValue("trial.accept.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
     }
 
   
@@ -782,15 +870,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             .convertToLong(studyProtocolIi));
 
         String mailBody = lookUpTableService.getPropertyValue("trial.update.body");
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(UPDATES,
                 StringUtils.isNotBlank(updatesList) ? updatesList : NONE);
-
         String mailSubject = lookUpTableService.getPropertyValue("trial.update.subject");
-        sendEmail(spDTO, mailBody, null, mailSubject, false, false);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, false);
 
     }
 
@@ -836,6 +921,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
 
             String body = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_BODY");
+            body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
             body = body.replace("${trialIdentifier}", spDTO.getNciIdentifier());
             body = body.replace("${markerName}", StConverter.convertToString(marker.getName()));
             body = body.replace("${foundInHugo}", BooleanUtils.toStringYesNo(foundInHugo));
@@ -869,20 +955,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             } 
             String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
-            subject = subject.replace("${trialIdentifier}", spDTO.getNciIdentifier());
-            subject = subject.replace("${markerName}", StConverter.convertToString(marker.getName()));
             List<String> copyList = new ArrayList<String>();
             copyList.add(lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
             if (StringUtils.isBlank(csmUser.getEmailId())) {
                 if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
                     copyList.add(registryUser.getEmailAddress());
-                    sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false);
+                    sendMailWithHtmlBody(from, toAddress, copyList, subject, body);
                 } else {
-                    sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
+                    sendMailWithHtmlBody(from, toAddress, null, subject, body);
                 }
             } else {
                 copyList.add(csmUser.getEmailId());
-                sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false); 
+                sendMailWithHtmlBody(from, toAddress, copyList, subject, body);
             } 
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
@@ -1050,11 +1134,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .convertToLong(studyProtocolIi));
 
             String body = lookUpTableService.getPropertyValue("xml.body");
-            body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
-            body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier().toString());
-            body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
-            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
-            body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier().toString());
+            body = commonMailBodyReplacements(spDTO, body);
             body = body.replace("${fileName}", spDTO.getNciIdentifier().toString() + ".xml");
             body = body.replace(OWNER_NAME, fullName);
 
@@ -1067,27 +1147,33 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO.getNciIdentifier(), sb3, EXTENSION_HTML);
 
             String mailSubject = lookUpTableService.getPropertyValue("xml.subject");
-            mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-            mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+            mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
 
             File[] attachments = {new File(xmlFile), new File(rtfTsrFile), new File(htmlTsrFile)};
-            sendMailWithAttachment(mailTo, mailSubject, body, attachments, true);
+            String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+            sendMailWithHtmlBodyAndAttachment(mailTo, mailFrom, null, mailSubject, body, attachments, true);
+            
         } catch (Exception e) {
             throw new PAException("Exception occured while sending XML and TSR Report to submitter", e);
         }
     }
 
-    private List<String> sendEmail(StudyProtocolQueryDTO spDTO, String body, File[] attachments, String mailSubject, 
-            boolean includeSubmitter, boolean deleteAttachments)
-            throws PAException {
+    private List<String> sendEmail(StudyProtocolQueryDTO spDTO, String body, // NOPMD
+            File[] attachments, String mailSubject, boolean includeSubmitter,
+            boolean deleteAttachments) throws PAException {
         Set<String> emails = new HashSet<String>();
         String emailSubject = mailSubject;
-        emailSubject = emailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        emailSubject = emailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        emailSubject = emailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER,
+                spDTO.getLocalStudyProtocolIdentifier());
+        emailSubject = emailSubject.replace(NCI_TRIAL_IDENTIFIER,
+                spDTO.getNciIdentifier());
 
-        // We are making the assumption here that if the user created the trial then they have a registry
-        // account and thus an email address saved in our system - aevansel 05/18/2010.
-        // Sending email to all study owners, and not just the submitter - kanchink
+        // We are making the assumption here that if the user created the trial
+        // then they have a registry
+        // account and thus an email address saved in our system - aevansel
+        // 05/18/2010.
+        // Sending email to all study owners, and not just the submitter -
+        // kanchink
         String emailAddress = null;
         try {
             Collection<RegistryUser> recipients = new HashSet<RegistryUser>(
@@ -1101,13 +1187,16 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
             for (RegistryUser recipient : recipients) {
                 emailAddress = recipient.getEmailAddress();
-                String regUserName = recipient.getFirstName() + " " + recipient.getLastName();
+                String regUserName = recipient.getFirstName() + " "
+                        + recipient.getLastName();
                 String emailBodyText = body.replace(OWNER_NAME, regUserName);
-                sendMailWithAttachment(emailAddress, emailSubject, emailBodyText, attachments, deleteAttachments);
+                sendMailWithAttachment(emailAddress, emailSubject,
+                        emailBodyText, attachments, deleteAttachments);
                 emails.add(emailAddress);
             }
         } catch (Exception e) {
-            throw new PAException("Error attempting to send email to " + emailAddress, e);
+            throw new PAException("Error attempting to send email to "
+                    + emailAddress, e);
         }
         return new ArrayList<String>(emails);
     }
@@ -1174,9 +1263,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             emailBody = emailBody.replace("${affliateOrgName}", admin.getAffiliateOrg());
             if (StringUtils.isNotEmpty(reason)) {
                 emailBody = emailBody.replace("${rejectReason}", reason);
+                emailSubject = emailSubject.replace("${adminAccessRequestStatus}", "REJECTED");
+            } else {
+                emailSubject = emailSubject.replace("${adminAccessRequestStatus}", "ACCEPTED");
             }
             emailBody = emailBody.replace(OWNER_NAME, admin.getFirstName() + " " + admin.getLastName());
-            sendMailWithAttachment(admin.getEmailAddress(), emailSubject, emailBody, null);
+            sendMailWithHtmlBody(admin.getEmailAddress(), emailSubject, emailBody);
         } catch (PAException e) {
             LOG.error("Error attempting to send email to ", e);
         }
@@ -1225,7 +1317,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         body = body.replace("${lastName}", user.getLastName());
         String userNamesString = StringUtils.join(getGridIdentityUsernames(users), ", ");
         body = body.replace("${userNames}", userNamesString);
-        sendMailWithAttachment(emailAddress, subject, body, null);
+        sendMailWithHtmlBody(emailAddress, subject, body);
     }
 
     /**
@@ -1276,6 +1368,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     public void setStudySiteService(StudySiteServiceLocal studySiteService) {
         this.studySiteService = studySiteService;
     }
+    
+    
+    /**
+     * @param paServiceUtil the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtil) {
+        this.paServiceUtils = paServiceUtil;
+    }
+
 
     @Override
     public void sendUnidentifiableOwnerEmail(Long studyProtocolId,
@@ -1294,25 +1395,22 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private void sendUnidentifiableOwnerEmailToMismatchedUsers(
             StudyProtocolQueryDTO study, Collection<String> emails) throws PAException {
 
-        String mailSubjectTemplate = lookUpTableService
+        String mailSubject = lookUpTableService
                 .getPropertyValue("trial.register.mismatchedUser.email.subject");       
         String mailBodyTemplate = lookUpTableService
                 .getPropertyValue("trial.register.mismatchedUser.email.body");
-        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
        
         String nciID = study.getNciIdentifier();        
         String submitter = identifySubmitter(study);
         
         for (String email : emails) {
             if (PAUtil.isValidEmail(email)) {
-                String mailSubject = mailSubjectTemplate.replace(PLACEHOLDER_0,
-                        submitter).replace(PLACEHOLDER_1, nciID);
                 String mailBody = mailBodyTemplate
-                        .replace(PLACEHOLDER_0, nciID).replace(PLACEHOLDER_1,
-                                submitter).replace(PLACEHOLDER_2,
-                                        email);
-                sendMailWithAttachment(email, mailFrom, null, mailSubject,
-                        mailBody, new File[0], false);
+                        .replace(CURRENT_DATE, getFormatedCurrentDate())
+                        .replace(NCI_TRIAL_IDENTIFIER, nciID)
+                        .replace(OWNER_NAME, submitter)
+                        .replace(EMAIL_ADDRESS, email);
+                sendMailWithHtmlBody(email, mailSubject, mailBody);
             }
         }
     }
@@ -1330,19 +1428,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 .getPropertyValue("abstraction.script.mailTo");
         String mailBody = lookUpTableService
                 .getPropertyValue("trial.register.unidentifiableOwner.email.body");
-        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);              
         
-        String nciID = study.getNciIdentifier();
         String submitter = identifySubmitter(study);
-        String badEmails = StringUtils.join(emails, "\r\n");        
-
-        mailSubject = mailSubject.replace(PLACEHOLDER_0, submitter).replace(PLACEHOLDER_1,
-                nciID);
-        mailBody = mailBody.replace(PLACEHOLDER_0, nciID).replace(PLACEHOLDER_1, submitter)
-                .replace(PLACEHOLDER_2, badEmails);
+        String badEmails = StringUtils.join(emails, ",");        
         
-        sendMailWithAttachment(mailTo, mailFrom, null, mailSubject,
-                mailBody, new File[0], false);
+        mailBody = commonMailBodyReplacements(study, mailBody);
+        mailBody = mailBody.replace(OWNER_NAME, submitter);
+        mailBody = mailBody.replace("${badEmail}", badEmails);
+
+        sendMailWithHtmlBody(mailTo, mailSubject, mailBody);
     }
 
     /**
@@ -1381,6 +1475,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         return servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
                 .valueOf(user.getAffiliatedOrganizationId())));
     }
+    
+    @Override
+    public void sendMailWithHtmlBody(String mailFrom, String mailTo,
+            List<String> mailCc, String mailSubject, String mailBody) {
+        try {
+            MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc, mailSubject);
+            message.setContent(mailBody, "text/html");
+            // Send Message
+            invokeTransportAsync(message, null);
+        } catch (Exception e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }
+    }
 
     @Override
     public void sendMailWithHtmlBody(String mailTo, String subject, String mailBody) {
@@ -1390,6 +1497,47 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             message.setContent(mailBody, "text/html");
             // Send Message
             invokeTransportAsync(message, null);
+        } catch (Exception e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }
+    }
+    
+    
+    @Override
+    public void sendMailWithHtmlBodyAndAttachment(String mailTo, String mailFrom, // NOPMD
+            List<String> mailCc, String subject, String mailBody,
+            File[] attachments, boolean deleteAttachments) { 
+        try {
+            // Define Message
+            MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc,
+                    subject);
+            // body
+            Multipart multipart = new MimeMultipart();
+            BodyPart msgPart = new MimeBodyPart();
+            msgPart.setText(mailBody);
+            msgPart.setContent(mailBody, "text/html");
+            multipart.addBodyPart(msgPart);
+
+            List<File> postDeletes = new ArrayList<File>();
+
+            if (!ArrayUtils.isEmpty(attachments)) {
+                // Add attachments to message
+                for (File attachment : attachments) {
+                    MimeBodyPart attPart = new MimeBodyPart();
+                    final File guardCopy = createGuardCopy(attachment);
+                    attPart.setDataHandler(new DataHandler(new FileDataSource(
+                            guardCopy)));
+                    attPart.setFileName(attachment.getName());
+                    multipart.addBodyPart(attPart);
+
+                    postDeletes.add(attachment);
+                    postDeletes.add(guardCopy);
+                }
+            }
+            message.setContent(multipart);
+            // Send Message
+            invokeTransportAsync(message,
+                    deleteAttachments ? postDeletes.toArray(new File[0]) : null); // NOPMD
         } catch (Exception e) {
             LOG.error(SEND_MAIL_ERROR, e);
         }
@@ -1404,10 +1552,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String ctroEmail = lookUpTableService
                 .getPropertyValue("abstraction.script.mailTo");
         
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-        sendMailWithAttachment(ctroEmail, mailSubject, mailBody, new File[0]);        
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        sendMailWithHtmlBody(ctroEmail, mailSubject, mailBody);
     }
 
     MimeMessage prepareMessage(String mailTo, String mailFrom, 
@@ -1473,28 +1620,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         StudyProtocolQueryDTO spDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(trialID);
 
-        mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO
-                .getNciIdentifier().toString());
-        mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO
-                .getLocalStudyProtocolIdentifier().toString());
-
-        mailBody = mailBody.replace(USER_NAME, getFullUserName(user));
-        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle()
-                .toString());
-        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO
-                .getNciIdentifier().toString());
-        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO
-                .getLocalStudyProtocolIdentifier().toString());
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
         
-        try {
-            String mailFrom = lookUpTableService
-                    .getPropertyValue(FROMADDRESS);
-            sendMailWithAttachment(user.getEmailAddress(), mailFrom, null, 
-                    mailSubject, mailBody, new File[0], false);
-        } catch (Exception e) {
-            LOG.error(SEND_MAIL_ERROR, e);
-        }
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailBody = mailBody.replace(USER_NAME, getFullUserName(user));
+        sendMailWithHtmlBody(user.getEmailAddress(), mailSubject, mailBody);
     }
 
     /**

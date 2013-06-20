@@ -881,8 +881,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     }
 
     private void verifyEmailsSent(int errorCount, int confirmationCount) {
-        verify(mailService, times(errorCount)).sendMailWithAttachment(anyString(), contains("accrual.error.subject"), anyString(), any(File[].class));
-        verify(mailService, times(confirmationCount)).sendMailWithAttachment(anyString(), contains("accrual.confirmation.subject"), anyString(), any(File[].class));
+        verify(mailService, times(errorCount)).sendMailWithHtmlBody(anyString(), contains("accrual.error.subject"), anyString());
+        verify(mailService, times(confirmationCount)).sendMailWithHtmlBody(anyString(), contains("accrual.confirmation.subject"), anyString());
     }
 
     private BatchFile getResultFromDb() {
