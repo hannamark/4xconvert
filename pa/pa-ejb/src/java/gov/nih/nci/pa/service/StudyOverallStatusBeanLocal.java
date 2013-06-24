@@ -87,7 +87,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -127,7 +126,7 @@ import org.joda.time.DateMidnight;
  *
  */
 @Stateless
-@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
@@ -366,6 +365,7 @@ public class StudyOverallStatusBeanLocal extends
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.NPathComplexity")
     public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi)
             throws PAException {
         DocumentWorkflowStatusDTO dwsDTO = documentWorkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
@@ -379,17 +379,21 @@ public class StudyOverallStatusBeanLocal extends
             statusOrDateChanged = false;
         }
         StudyOverallStatusDTO currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
-        StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
-        DateMidnight currentStatusDate = TsConverter.convertToDateMidnight(currentDBdto.getStatusDate());
-        StudyStatusCode newStatusCode = StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
-        DateMidnight newStatusDate = TsConverter.convertToDateMidnight(newStatusDto.getStatusDate());
- 
-        boolean codeChanged =
-                (newStatusCode == null) ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
-        boolean statusDateChanged =
-                (currentStatusDate == null) ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);       
-        if (!codeChanged && !statusDateChanged) {
-            statusOrDateChanged = false;
+        if (currentDBdto != null) {
+            StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
+            DateMidnight currentStatusDate = TsConverter.convertToDateMidnight(currentDBdto.getStatusDate());
+            StudyStatusCode newStatusCode = StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
+            DateMidnight newStatusDate = TsConverter.convertToDateMidnight(newStatusDto.getStatusDate());
+     
+            boolean codeChanged = (newStatusCode == null) ? (currentStatusCode != null)
+                    : !newStatusCode.equals(currentStatusCode);
+            boolean statusDateChanged = (currentStatusDate == null) ? (newStatusDate != null)
+                    : !currentStatusDate.equals(newStatusDate);     
+            if (!codeChanged && !statusDateChanged) {
+                statusOrDateChanged = false;
+            }
+        } else {
+            statusOrDateChanged = true;
         }
         return statusOrDateChanged;
     }
@@ -459,13 +463,14 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException
      * @return
      */
-    private StringBuffer enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto,
+    private StringBuffer enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto, // NOPMD
             StudyProtocolDTO studyProtocolDTO, boolean relaxed) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         StudyStatusCode newCode = StudyStatusCode.getByCode(statusDto.getStatusCode().getCode());
         DateMidnight newStatusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
         StudyOverallStatusDTO  currentDBdto = getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-        StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
+        StudyStatusCode oldStatusCode = currentDBdto != null ? StudyStatusCode
+                .getByCode(currentDBdto.getStatusCode().getCode()) : null;
         DateMidnight newStartDate = TsConverter.convertToDateMidnight(studyProtocolDTO.getStartDate());
         String actualString = "Actual";
         String anticipatedString = "Anticipated";
@@ -544,7 +549,9 @@ public class StudyOverallStatusBeanLocal extends
         boolean unknownPrimaryCompletionDate = dto.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
 
         // Constraint/Rule: 22 Current Trial Status Date must be current or past.
-        if (today.isBefore(statusDate)) {
+        if (statusDate == null) {
+            errors.add("Current Trial Status Date must be provided.\n");
+        } else if (today.isBefore(statusDate)) {
             errors.add("Current Trial Status Date cannot be in the future.\n");
         }
         // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type
@@ -586,7 +593,8 @@ public class StudyOverallStatusBeanLocal extends
         //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.
         //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
-        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (startDate.isAfter(statusDate)
+        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode)
+                && (startDate == null || startDate.isAfter(statusDate)
                 || dates.getStartDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL)) {
             errors.add("If Current Trial Status is Active, Trial Start Date must be Actual "
                     + " and same as or smaller than Current Trial Status Date.\n");
@@ -605,7 +613,7 @@ public class StudyOverallStatusBeanLocal extends
         // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
         if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                 || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equals(statusCode)) {
-            if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL) {
+            if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL) { // NOPMD
                 errors.add("If Current Trial Status is Complete or Administratively Complete, "
                         + " Primary Completion Date must be  Actual.\n");
             }

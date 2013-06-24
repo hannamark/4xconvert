@@ -93,6 +93,7 @@ import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -172,18 +173,19 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
 
     /**
      * @return res
+     * @throws PAException PAException
      */
-    public String update() {
-        enforceBusinessRules();
+    public String update() throws PAException {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        InterventionalStudyProtocolDTO ispDTO = PaRegistry
+                .getStudyProtocolService().getInterventionalStudyProtocol(
+                        studyProtocolIi);
+        enforceBusinessRules(ispDTO);
         if (hasFieldErrors()) {
             return "details";
         }
-        try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
-            InterventionalStudyProtocolDTO ispDTO = PaRegistry
-                    .getStudyProtocolService().getInterventionalStudyProtocol(
-                            studyProtocolIi);
+        try {            
             setPhaseAndPurpose(ispDTO);
             ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.getByCode(
                     webDTO.getBlindingSchemaCode())));
@@ -287,16 +289,19 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         }
     }
 
-    private void enforceBusinessRules() {
+    private void enforceBusinessRules(StudyProtocolDTO ispDTO) {
+        boolean abbr = BlConverter.convertToBool(ispDTO.getProprietaryTrialIndicator());
         addErrors(webDTO.getPrimaryPurposeCode(), "webDTO.primaryPurposeCode", "error.primary");
         addErrors(webDTO.getPhaseCode(), "webDTO.phaseCode", "error.phase");
-        addErrors(webDTO.getDesignConfigurationCode(), "webDTO.designConfigurationCode", "error.intervention");
         final String arms = webDTO.getNumberOfInterventionGroups();
-        addErrors(arms, "webDTO.numberOfInterventionGroups", "error.arms");
-        addErrors(webDTO.getBlindingSchemaCode(), "webDTO.blindingSchemaCode", "error.masking");
-        addErrors(webDTO.getAllocationCode(), "webDTO.allocationCode", "error.allocation");
-        addErrors(webDTO.getMinimumTargetAccrualNumber(), "webDTO.minimumTargetAccrualNumber",
-                "error.target.enrollment");
+        if (!abbr) {
+            addErrors(webDTO.getDesignConfigurationCode(), "webDTO.designConfigurationCode", "error.intervention");
+            addErrors(arms, "webDTO.numberOfInterventionGroups", "error.arms");
+            addErrors(webDTO.getBlindingSchemaCode(), "webDTO.blindingSchemaCode", "error.masking");
+            addErrors(webDTO.getAllocationCode(), "webDTO.allocationCode", "error.allocation");
+            addErrors(webDTO.getMinimumTargetAccrualNumber(), "webDTO.minimumTargetAccrualNumber",
+                    "error.target.enrollment");
+        }
         validateTragetAccrualNumber();
         if (StringUtils.isNotBlank(arms) && !NumberUtils.isDigits(arms)) {
             addFieldError("webDTO.numberOfInterventionGroups", getText("error.numeric"));

@@ -79,12 +79,16 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -99,6 +103,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -114,11 +119,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
     private static final long serialVersionUID = -541776965053776382L;
 
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+    
+    private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
 
     private static final String SPONSOR = "sponsor";
     private static final String RESULT = "edit";
 
     private static final String FALSE = "FALSE";
+    
+    private static final Logger LOG = Logger.getLogger(GeneralTrialDesignAction.class);
 
     /**
      * @return res
@@ -143,13 +152,18 @@ public class GeneralTrialDesignAction extends ActionSupport {
      */
     public String update() {
         enforceBusinessRules();
+        final HttpServletRequest req = ServletActionContext.getRequest();
         if (hasFieldErrors()) {
+            req.setAttribute(
+                    Constants.FAILURE_MESSAGE,
+                    "Update failed; please see errors below");
             return RESULT;
         }
         try {
             save();
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            LOG.error(e, e);
+            req.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         return RESULT;
     }
@@ -167,6 +181,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
                                                                       PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
         request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        if (studyProtocolQueryDTO.getPiId() != null) {
+            Person piPersonInfo =
+                    correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
+                            .getPiId()));
+            session.setAttribute(Constants.PI_PO_ID, piPersonInfo.getIdentifier());
+        }
         populateOtherIdentifiers();
         query();
     }
@@ -176,8 +196,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
      * @return result
      */
     public String removeCentralContact() {
+        final HttpServletRequest req = ServletActionContext.getRequest();
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            Ii studyProtocolIi = (Ii) req.getSession()
                 .getAttribute(Constants.STUDY_PROTOCOL_II);
             StudyContactDTO scDto = new StudyContactDTO();
 
@@ -194,9 +215,11 @@ public class GeneralTrialDesignAction extends ActionSupport {
             gtdDTO.setCentralContactPhone("");
             gtdDTO.setCentralContactIdentifier("");
             gtdDTO.setCentralContactTitle("");
+            
+            req.setAttribute(Constants.SUCCESS_MESSAGE, "Central contact removed");
 
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            req.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
 
         return RESULT;
@@ -209,26 +232,16 @@ public class GeneralTrialDesignAction extends ActionSupport {
         if (StringUtils.isEmpty(gtdDTO.getOfficialTitle())) {
             addFieldError("gtdDTO.officialTitle", getText("OfficialTitle must be Entered"));
         }
-        if (isNotProprietary()) {
-            if (gtdDTO.isCtGovXmlRequired()) {
-                validateCtGovXmlRequiredFields();
-            }
-            if (isCentralContactSet()) {
-                validateCentralContact();
-            }
-        } else {
-            validateProprietaryFields();
+        if (isCentralContactSet()) {
+            validateCentralContact();
+        }
+        if ((isNotProprietary() && gtdDTO.isCtGovXmlRequired())
+                || (!isNotProprietary() && StringUtils.isNotEmpty(gtdDTO
+                        .getSponsorIdentifier()))) {
+            validateCtGovXmlRequiredFields();
         }
     }
-
-    private void validateProprietaryFields() {
-        if (StringUtils.isEmpty(gtdDTO.getPrimaryPurposeCode())) {
-            addFieldError("gtdDTO.primaryPurposeCode", getText("error.primary"));
-        }
-        if (StringUtils.isEmpty(gtdDTO.getPhaseCode())) {
-            addFieldError("gtdDTO.phaseCode", getText("error.phase"));
-        }
-    }
+   
 
     private boolean isNotProprietary() {
         return gtdDTO.getProprietarytrialindicator() == null
@@ -301,5 +314,12 @@ public class GeneralTrialDesignAction extends ActionSupport {
      */
     public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
         this.gtdDTO = gtdDTO;
+    }
+    
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
     }
 }

@@ -137,6 +137,7 @@ function initialize() {
 <body>
 <h1><fmt:message key="isdesign.details.title"/></h1>
 <c:set var="topic" scope="request" value="abstractdesign"/>
+<c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
@@ -262,7 +263,7 @@ function initialize() {
 	</tr>	
 	<tr>
 		<td scope="row" class="label"><label for="conf">
-	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.intervention.model"/><span class="required">${asterisk}</span></label></td>
 		<s:set name="designConfigurationCodeValues" value="@gov.nih.nci.pa.enums.DesignConfigurationCode@getDisplayNames()" />
         <td>
            <s:select id="conf" headerKey="" headerValue="" name="webDTO.designConfigurationCode" list="#designConfigurationCodeValues"  value="webDTO.designConfigurationCode" cssStyle="width:150px" />
@@ -275,7 +276,7 @@ function initialize() {
 	</tr>
 	<tr>
 		<td scope="row" class="label"><label for="interventionGroup">
-	 		<fmt:message key="isdesign.details.no.arms"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.no.arms"/><span class="required">${asterisk}</span></label></td>
 		<td>
          	<s:textfield id="interventionGroup" name="webDTO.numberOfInterventionGroups" maxlength="3" cssStyle="width:25px"/>
          	<span class="formErrorMsg"> 
@@ -287,7 +288,7 @@ function initialize() {
 	</tr>
     <tr>
 		<td scope="row" class="label"><label for="masking">
-	 		<fmt:message key="isdesign.details.masking"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.masking"/><span class="required">${asterisk}</span></label></td>
 		<s:set name="blindingSchemaCodeValues" value="@gov.nih.nci.pa.enums.BlindingSchemaCode@getDisplayNames()" />
         <td>
            <s:select id="masking" headerKey="" headerValue="" name="webDTO.blindingSchemaCode" list="#blindingSchemaCodeValues"  
@@ -301,7 +302,7 @@ function initialize() {
 	</tr>
 	<tr id="blindingRoleCode">
 		<td   scope="row" class="label"><label for="role">
-	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">${asterisk}</span></label></td>
 		<td>
            <s:checkbox id="role" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
            <label for="subject">Subject</label>
@@ -315,7 +316,7 @@ function initialize() {
 	</tr>
 	<tr> 
         <td scope="row" class="label"><label for="allocation">
-	 		<fmt:message key="isdesign.details.allocation"/><span class="required">*</span></label> </td>
+	 		<fmt:message key="isdesign.details.allocation"/><span class="required">${asterisk}</span></label> </td>
         <s:set name="allocationCodeValues" value="@gov.nih.nci.pa.enums.AllocationCode@getDisplayNames()" />
         <td>
         	<s:select id="allocation" headerKey="" headerValue="" name="webDTO.allocationCode" list="#allocationCodeValues"  value="webDTO.allocationCode" cssStyle="width:206px" />
@@ -341,7 +342,7 @@ function initialize() {
 	</tr>
 	<tr>
 		<td scope="row" class="label"><label for="enrollment">
-	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">${asterisk}</span></label></td>
 		<td>
          	<s:textfield id="enrollment" name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px" />
          	<span class="formErrorMsg"> 

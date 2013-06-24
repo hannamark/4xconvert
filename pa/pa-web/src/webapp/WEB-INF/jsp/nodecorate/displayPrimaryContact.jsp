@@ -1,4 +1,5 @@
-<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<br/>
 <pa:failureMessage/>
 <pa:sucessMessage /> 
 <div id="saveAndShowPersons">

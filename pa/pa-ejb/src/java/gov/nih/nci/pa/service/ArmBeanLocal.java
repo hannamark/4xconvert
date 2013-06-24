@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.PlannedActivity;
-import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.ArmConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
@@ -127,7 +126,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({ PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 

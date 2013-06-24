@@ -113,6 +113,7 @@
             <c:set var="topic" scope="request" value="abstractregulatory"/>
         </c:if>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+         <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <div class="box">
             <pa:sucessMessage/>
             <pa:failureMessage/>
@@ -125,7 +126,7 @@
                     <!--  Trial Oversight Authority Country -->
                     <tr>
                         <td scope="row" class="label">
-                            <label for="countries"><fmt:message key="regulatory.oversight.country.name"/></label><span class="required">*</span>
+                            <label for="countries"><fmt:message key="regulatory.oversight.country.name"/></label><span class="required">${asterisk}</span>
                         </td>
                         <td class="value">
                             <s:select id="countries" headerValue="-Select-" headerKey=""
@@ -142,7 +143,7 @@
                     <tr>
                         <td scope="row" class="label">
                             <label for="auths"><fmt:message key="regulatory.oversight.auth.name"/></label>
-                            <span class="required">*</span>
+                            <span class="required">${asterisk}</span>
                         </td>
                         <td class="value">
                             <div id="loadAuthField">
@@ -153,7 +154,7 @@
                     <!--   FDA Regulated Intervention Indicator-->
                     <tr>
                         <td scope="row"  class="label">
-                            <label for="fdaindid"><fmt:message key="regulatory.FDA.regulated.interv.ind"/></label><span class="required">*</span> 
+                            <label for="fdaindid"><fmt:message key="regulatory.FDA.regulated.interv.ind"/></label><span class="required">${asterisk}</span> 
                         </td>
                         <td class="value">
                             <s:select id="fdaindid" name="webDTO.fdaRegulatedInterventionIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkFDADropDown();"/>
@@ -165,7 +166,7 @@
                     <!--   Section 801 Indicator-->
                     <tr id="sec801row">
                         <td scope="row" class="label">
-                            <label for="sec801id"><fmt:message key="regulatory.section801.ind"/></label><span class="required">*</span>
+                            <label for="sec801id"><fmt:message key="regulatory.section801.ind"/></label><span class="required">${asterisk}</span>
                         </td>
                         <td class="value">
                             <s:select id="sec801id" name="webDTO.section801Indicator" list="#{'':'', 'false':'No', 'true':'Yes'}" onchange="checkSection108DropDown();"/>
@@ -178,7 +179,7 @@
                     <!--   Delayed Posting Indicator-->
                     <tr id="delpostindrow">
                         <td scope="row" class="label">
-                            <label for="delpostindid"><fmt:message key="regulatory.delayed.posting.ind"/></label><span class="required">*</span>
+                            <label for="delpostindid"><fmt:message key="regulatory.delayed.posting.ind"/></label><span class="required">${asterisk}</span>
                         </td>
                         <td class="value">
                             <s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" />

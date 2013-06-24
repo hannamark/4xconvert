@@ -55,6 +55,7 @@
     <body>
         <h1><fmt:message key="nciSpecificInformation.title" /></h1>
         <c:set var="topic" scope="request" value="abstractnci"/>
+        <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">  
             <pa:sucessMessage/>
@@ -64,10 +65,10 @@
                 <pa:studyUniqueToken/>
                 <h2><fmt:message key="nciSpecificInformation.title" /></h2>
                 <table class="form" >
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                    
                         <tr>
                             <td scope="row" class="label">
-                                <label for="accrualReportingMethodCode"><fmt:message key="studyProtocol.accrualReportingMethodCode"/><span class="required">*</span></label>
+                                <label for="accrualReportingMethodCode"><fmt:message key="studyProtocol.accrualReportingMethodCode"/><span class="required">${asterisk}</span></label>
                             </td>
                             <s:set name="accrualReportingMethodCodeValues" value="@gov.nih.nci.pa.enums.AccrualReportingMethodCode@getDisplayNames()" />
                             <td class="value">
@@ -83,7 +84,7 @@
                                 </span>
                             </td>                           
                         </tr> 
-                    </c:if>              
+                                  
                     <tr>
                         <td scope="row" class="label">
                             <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -93,6 +94,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -148,6 +151,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     private PersonEntityServiceRemote personEntityService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private TrialRegistrationServiceLocal trialRegistrationService;
+    private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
 
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg;
@@ -216,6 +220,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         try {
             save(null);
         } catch (Exception e) {
+            LOG.error(e, e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         populateOtherIdentifiers();
@@ -378,6 +383,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         StudyProtocolQueryDTO studyProtocolQueryDTO = refreshStudyProtocol(studyProtocolIi);
         studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                                                                       PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
+        if (studyProtocolQueryDTO.getPiId() != null) {
+            Person piPersonInfo =
+                    correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
+                            .getPiId()));
+            session.setAttribute(Constants.PI_PO_ID, piPersonInfo.getIdentifier());
+        }
+                
         query();
     }
 
@@ -398,13 +410,17 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         } else {
             validatePhasePurpose();
         }
-        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
-            validateCtGovReqElement();
-        }
+        
+        validateCtGovReqElement();
+        
     }
 
     private void validateCtGovReqElement() {
-        if (BooleanUtils.isTrue(gtdDTO.isCtGovXmlRequired())) {
+        final boolean isAbbr = BooleanUtils.toBoolean(gtdDTO
+                .getProprietarytrialindicator());
+        if ((!isAbbr && BooleanUtils.isTrue(gtdDTO.isCtGovXmlRequired()))
+                || (isAbbr && StringUtils.isNotBlank(gtdDTO
+                        .getSponsorIdentifier()))) {
             addErrors(gtdDTO.getSponsorIdentifier(), "gtdDTO.sponsorName", "Sponsor must be entered");
             if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
                     && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
@@ -754,5 +770,10 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     public long getStudyProtocolIdentifier() {        
         return studyProtocolIdentifier;
     }
-
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
+    }
 }

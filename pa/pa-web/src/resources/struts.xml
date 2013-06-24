@@ -317,10 +317,6 @@
             <result name="display_spContacts">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="input">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
-            <result name="proprietaryList">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrg.jsp</result>
-            <result name="proprietaryCreate">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
-            <result name="proprietaryEdit">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
-            <result name="error_proprietary">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
         </action>        
         <action name="checkOutHistory" class="gov.nih.nci.pa.action.CheckOutHistoryAction">

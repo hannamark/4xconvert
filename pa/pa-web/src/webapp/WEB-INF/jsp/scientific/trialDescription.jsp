@@ -31,6 +31,8 @@
 <body>
 <h1><fmt:message key="trial.description" /></h1>
 <c:set var="topic" scope="request" value="abstractdescription"/>
+<c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
+<c:set var="mandatoryText" value="${!sessionScope.trialSummary.proprietaryTrial?'Mandatory at Abstraction Validation':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
@@ -51,12 +53,12 @@
     <table class="form">
          <tr> 
                 <td/>
-                <td class="info" colspan="2">Mandatory at Abstraction Validation</td>
+                <td class="info" colspan="2">${mandatoryText}</td>
        </tr>
         <tr>
             <td class="label">
             <label for="trialBriefTitle">
-                <fmt:message key="trial.briefTitle"/> <span class="notRequired">*</span>
+                <fmt:message key="trial.briefTitle"/> <span class="notRequired">${asterisk}</span>
             </label>
             </td>
             <td colspan="2" class="value"><s:textarea id="trialBriefTitle" name="trialBriefTitle" maxlength="300" cssClass="charcounter" 
@@ -64,12 +66,12 @@
         </tr> 
         <tr> 
                 <td/>
-                <td class="info" colspan="2">Mandatory at Abstraction Validation</td>
+                <td class="info" colspan="2">${mandatoryText}</td>
        </tr>
           <tr>
             <td class="label">
             <label for="trialBriefSummary">
-                <fmt:message key="trial.briefSummary"/><span class="notRequired">*</span>
+                <fmt:message key="trial.briefSummary"/><span class="notRequired">${asterisk}</span>
             </label>
             </td>
             <td colspan="2" class="value">

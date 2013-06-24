@@ -200,9 +200,11 @@ public class IrbAction extends ActionSupport implements Preparable {
 
     /**
      * @return action
+     * @throws PAException PAException 
      */
-    public String save() {
-        checkBusinessRules();
+    public String save() throws PAException {
+        StudyProtocolDTO dto = sProtService.getStudyProtocol(spIdIi);
+        checkBusinessRules(dto);
         if (hasActionErrors()) {
             return SUCCESS;
         }
@@ -341,8 +343,10 @@ public class IrbAction extends ActionSupport implements Preparable {
         this.newOrgName = newOrgName;
     }
 
-    private void checkBusinessRules() {
-        if (StringUtils.isEmpty(getApprovalStatus())) {
+    private void checkBusinessRules(StudyProtocolDTO dto) {
+        if (StringUtils.isEmpty(getApprovalStatus())
+                && !BlConverter.convertToBool(dto
+                        .getProprietaryTrialIndicator())) {
             addActionError("Must select an approval status.  ");
         }
         if (isSubmissionRequired(getApprovalStatusEnum())) {

@@ -52,7 +52,12 @@
             function displayTrialStatusDefinition(selectBoxId) {
                 $('allTrialStatusDefinitions').childElements().invoke('hide');
                 var selectedValue = $(selectBoxId).value;
-                $(selectedValue).show();
+                if (selectedValue!='') {
+                    $(selectedValue).show();
+                    $$('span.required').each(function (el) {el.show()});
+                } else {
+                	$$('span.required').each(function (el) {el.hide()});
+                }
             }
             
             document.observe("dom:loaded", function() {
@@ -68,6 +73,7 @@
         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  != 'Submitted'}">
             <c:set var="topic" scope="request" value="abstractstatus"/>
         </c:if>
+        <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">
             <pa:sucessMessage/>
@@ -83,10 +89,17 @@
                         <td width="0">
                             <table>
                                 <tr>
-                                    <pa:valueRow cellOnly="true" labelFor="currentTrialStatus" labelKey="trialStatus.current.trial.status" required="true">
+                                    <pa:valueRow cellOnly="true" labelFor="currentTrialStatus" labelKey="trialStatus.current.trial.status" required="${!sessionScope.trialSummary.proprietaryTrial}">
                                         <s:set name="currentTrialStatusValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-                                        <s:select onchange="statusChange();displayTrialStatusDefinition('currentTrialStatus');" 
-                                                  onfocus="statusChange()" id="currentTrialStatus" name="currentTrialStatus" list="#currentTrialStatusValues" />
+                                        <s:if test="sosDto==null">
+	                                        <s:select onchange="statusChange();displayTrialStatusDefinition('currentTrialStatus');" 
+	                                                  headerKey="" headerValue=""
+	                                                  onfocus="statusChange()" id="currentTrialStatus" name="currentTrialStatus" list="#currentTrialStatusValues" />
+                                        </s:if>
+                                        <s:else>
+	                                        <s:select onchange="statusChange();displayTrialStatusDefinition('currentTrialStatus');"
+	                                                  onfocus="statusChange()" id="currentTrialStatus" name="currentTrialStatus" list="#currentTrialStatusValues" />                                        
+                                        </s:else>
                                     </pa:valueRow>
                                     <td>
                                         <ul class="btnrow">            

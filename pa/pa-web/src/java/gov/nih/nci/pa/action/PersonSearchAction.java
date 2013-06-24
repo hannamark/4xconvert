@@ -96,8 +96,11 @@ public class PersonSearchAction extends ActionSupport {
             PAException, NullifiedRoleException, TooManyResultsException {
         PersonSearchCriteriaDTO criteriaDTO = new PersonSearchCriteriaDTO();
         criteriaDTO.setId((personID));
-        person = PADomainUtils.searchPoPersons(criteriaDTO).get(0);
-        PADomainUtils.retrieveAddressAndContactInfoFromRole(person);
+        final List<PaPersonDTO> persons = PADomainUtils.searchPoPersons(criteriaDTO);
+        if (!persons.isEmpty()) {
+            person = persons.get(0);
+            PADomainUtils.retrieveAddressAndContactInfoFromRole(person);
+        }
         return DETAILS;
     }
     

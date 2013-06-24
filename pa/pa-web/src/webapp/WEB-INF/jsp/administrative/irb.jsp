@@ -107,6 +107,7 @@
     <body>
         <h1><fmt:message key="irb.main.title" /></h1>
         <c:set var="topic" scope="request" value="abstractsafety"/>
+        <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage />
@@ -128,7 +129,7 @@
                     <tr>
                         <td class="label">
                         <label for="approve">
-                            Board Approval Status:<span class="required">*</span></label>
+                            Board Approval Status:<span class="required">${asterisk}</span></label>
                         </td>
                         <s:set name="approvalStatusValues"  value="@gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode@getDisplayNames()" />
                         <td class="value" colspan="2">

@@ -40,9 +40,10 @@ public class NonInterventionalStudyDesignActionTest extends AbstractPaActionTest
 
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.NonInterventionalStudyDesignAction#update()}.
+	 * @throws PAException 
 	 */
 	@Test
-	public void testUpdate() {
+	public void testUpdate() throws PAException {
 		OSDesignDetailsWebDTO webDTO = new OSDesignDetailsWebDTO();
 		webDTO.setBiospecimenDescription("Test");
 		webDTO.setBiospecimenRetentionCode("Retained");
@@ -56,7 +57,7 @@ public class NonInterventionalStudyDesignActionTest extends AbstractPaActionTest
 		assertEquals("details", observationalStudy.updateDesign());
 	}
     @Test
-    public void testUpdateErr() {
+    public void testUpdateErr() throws PAException {
     	OSDesignDetailsWebDTO webDTO = new OSDesignDetailsWebDTO();
 		webDTO.setBiospecimenDescription("Test");
 		webDTO.setBiospecimenRetentionCode("Retained");

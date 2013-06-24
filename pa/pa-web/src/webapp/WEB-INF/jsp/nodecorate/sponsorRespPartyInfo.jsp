@@ -1,11 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <table>
     <tr>
          <th colspan="2">Sponsor/Responsible Party</th>
     </tr>          
     <tr>
         <td scope="row" class="label">
-            <label for="sponsor"> Sponsor:<span class="required">*</span></label> 
+            <label for="sponsor"> Sponsor:<span class="required">${asterisk}</span></label> 
         </td>
         <td class="value">
             <div id="loadSponsorField">
@@ -14,7 +15,7 @@
         </td>
     </tr>   
     <tr>
-        <td scope="row" class="label">Responsible Party:<span class="required">*</span></td>
+        <td scope="row" class="label">Responsible Party:<span class="required">${asterisk}</span></td>
         <td>
             <s:radio id="gtdDTO.responsiblePartyType"  name="gtdDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
         </td>
@@ -67,7 +68,7 @@
         </s:else>
         <tr>
             <td scope="row" class="label">
-               Email Address:<span class="required">*</span>
+               Email Address:<span class="required">${asterisk}</span>
             </td>
             <td class="value">
                 <s:textfield name="gtdDTO.contactEmail"  id="gtdDTO.contactEmail" maxlength="199" size="100"  cssStyle="width:200px" />
@@ -79,7 +80,7 @@
             </td>
         </tr>
         <tr>
-            <td scope="row" class="label">Phone Number:<span class="required">*</span></td>
+            <td scope="row" class="label">Phone Number:<span class="required">${asterisk}</span></td>
             <td class="value">
                 <s:textfield name="gtdDTO.contactPhone" id="gtdDTO.contactPhone" maxlength="199" size="100"  cssStyle="width:100px" />
                 Extn:<s:textfield name="gtdDTO.contactPhoneExtn" id="gtdDTO.contactPhoneExtn" maxlength="15" size="10"  cssStyle="width:60px" />

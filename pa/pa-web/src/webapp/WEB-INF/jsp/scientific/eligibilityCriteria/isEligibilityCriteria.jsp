@@ -95,6 +95,7 @@ BubbleTips.activateTipOn("dfn");
 }
 </SCRIPT>
 <body>
+<c:set var="asterisk" value="${(!sessionScope.trialSummary.proprietaryTrial)||(not empty fieldErrors)?'*':''}" scope="request"/>
  <c:choose>
      <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
      <c:set var="topic" scope="request" value="abstracteligibilitynoninterventional"/>
@@ -138,9 +139,19 @@ BubbleTips.activateTipOn("dfn");
     </div>
     </c:if> 
     <table class="form">
+    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
+	    <tr>
+	       <td colspan="5" align="center">
+	           <span class="info" >
+		           For abbreviated trials Eligibility Criteria is optional. However, if provided, the criteria must be
+		           complete.<br/><br/>
+	           </span>
+	       </td>
+	    </tr>
+    </c:if>
     <tr>
         <td scope="row"  class="label"><label for="acceptHealthy">
-            <fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">*</span></label>
+            <fmt:message key="isdesign.eligibilitycriteria.ahv"/><span class="required">${asterisk}</span></label>
          </td> <td class="value">   
             <s:select id="acceptHealthy" name="acceptHealthyVolunteersIndicator" list="#{'':'','false':'No', 'true':'Yes'}" />
             <span class="formErrorMsg"> 
@@ -152,7 +163,7 @@ BubbleTips.activateTipOn("dfn");
         <td style="width: 5%;">&nbsp;</td>
         <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
          <td scope="row"  class="label"><label>
-                <fmt:message key="osdesign.eligibilitycriteria.samplingMethod"/><span class="required">*</span></label>
+                <fmt:message key="osdesign.eligibilitycriteria.samplingMethod"/><span class="required">${asterisk}</span></label>
             </td>   
                <s:set name="samplingMethodValues" value="@gov.nih.nci.pa.enums.SamplingMethodCode@getDisplayNames()" />
               <td class="value">
@@ -171,7 +182,7 @@ BubbleTips.activateTipOn("dfn");
     <tr>
          <td scope="row" class="label">
          <label for="gender">
-                <fmt:message key="isdesign.eligibilitycriteria.eligibleGender"/><span class="required">*</span>
+                <fmt:message key="isdesign.eligibilitycriteria.eligibleGender"/><span class="required">${asterisk}</span>
          </label>
         </td> 
         <s:set name="genderValues" value="@gov.nih.nci.pa.enums.EligibleGenderCode@getDisplayNames()" />
@@ -191,7 +202,7 @@ BubbleTips.activateTipOn("dfn");
           <c:if test="${sessionScope.trialSummary.studyProtocolType  == 'NonInterventionalStudyProtocol'}">
         <td scope="row"  class="label">
             <label>
-                <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/><span class="required">*</span>
+                <fmt:message key="osdesign.eligibilitycriteria.trialPopulationDescription"/><span class="required">${asterisk}</span>
              </label>
              </td> <td class="value">               
                 <s:textarea name="studyPopulationDescription" rows="3" cssStyle="width:250px" maxlength="800" cssClass="charcounter" />
@@ -206,7 +217,7 @@ BubbleTips.activateTipOn("dfn");
     <tr>
          <td scope="row" class="label">
          <label for="typeCode">
-                <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">*</span>
+                <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">${asterisk}</span>
          </label>
          </td> <td class="value" colspan="1">    
                 <s:textfield id="typeCode" name="minimumValue" maxlength="12" cssStyle="width:85px" />
@@ -219,7 +230,7 @@ BubbleTips.activateTipOn("dfn");
           <td></td>
            <td scope="row" class="label" >
          <label for="typeCode1">
-                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
+                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">${asterisk}</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
@@ -237,7 +248,7 @@ BubbleTips.activateTipOn("dfn");
           <tr>
           <td scope="row" class="label" >
          <label for="typeCode2">
-                <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">*</span>
+                <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">${asterisk}</span>
          </label>
          </td> <td class="value" colspan="1">   
                 <s:textfield id="typeCode2" name="maximumValue" maxlength="12" cssStyle="width:85px" />
@@ -250,7 +261,7 @@ BubbleTips.activateTipOn("dfn");
           <td></td>
          <td scope="row" class="label" >
          <label for="typeCode3">
-                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">*</span>
+                <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">${asterisk}</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />

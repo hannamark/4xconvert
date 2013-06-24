@@ -19,10 +19,11 @@
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
         <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
+        <c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" scope="request" />
 
         <script language="javascript" type="text/javascript">
 
-            addCalendar("Cal1", "Select Date", "recStatusDate", "facility");
+            addCalendar("Cal1", "Select Date", "recStatusDate", "facility");                 
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
 
@@ -44,7 +45,9 @@
                     programCode: form.programCode.value,
                     recStatus: form.recStatus.value,
                     recStatusDate: form.recStatusDate.value,
-                    targetAccrualNumber: form.targetAccrualNumber.value
+                    targetAccrualNumber: form.targetAccrualNumber.value,
+                    dateOpenedForAccrual: form.dateOpenedForAccrual.value,
+                    dateClosedForAccrual: form.dateClosedForAccrual.value
                 };
                 var div = $('loadOrgDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
@@ -65,6 +68,10 @@
                 var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
                 showPopup(url, null, 'Persons');
             }
+            
+            function lookupStatusHistory() {
+                showPopup('${lookupUrlstatusHistory}', null, 'Status History');
+            } 
 
             function loadDiv(orgid) {
                 var url = '/pa/protected/ajaxptpOrgdisplayOrg.action';
@@ -187,6 +194,7 @@
     <body>
         <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
         <c:set var="topic" scope="request" value="abstractsite"/>
+        <c:set var="asterisk" value="${sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">
             <pa:sucessMessage/>

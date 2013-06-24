@@ -100,7 +100,7 @@
                             </span>
                         </td>
                     </tr>
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                    
                         <tr>
                             <td scope="row" class="labelDupe">
                                Other Trial Identifiers
@@ -112,7 +112,7 @@
                                 </c:forEach>
                             </td>
                         </tr>
-                    </c:if>
+                    
                     <tr>
                         <td scope="row" class="labelDupe">
                             NCT Number 

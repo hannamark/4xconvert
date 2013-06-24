@@ -186,7 +186,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         assertEquals("outcome",action.outcomecreate());
     }
     @Test
-    public void testUpdateErr() {
+    public void testUpdateErr() throws PAException {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
@@ -207,7 +207,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         assertEquals("details",action.update());
     }
     @Test
-    public void testUpdateErrOther() {
+    public void testUpdateErrOther() throws PAException {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
@@ -247,7 +247,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
 
     }
     @Test
-    public void testUpdate(){
+    public void testUpdate() throws PAException{
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
@@ -272,7 +272,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
 
     }
     @Test
-    public void testUpdateS(){
+    public void testUpdateS() throws PAException{
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();
@@ -314,7 +314,7 @@ public class InterventionalStudyDesignActionTest extends AbstractPaActionTest {
         assertEquals("details",action.detailsQuery());
     }
     @Test
-    public void testUpdateException(){
+    public void testUpdateException() throws PAException{
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
         OutcomeMeasureWebDTO omDto = new OutcomeMeasureWebDTO();

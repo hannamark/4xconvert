@@ -110,6 +110,9 @@
         }
     }
 </script> 
+
+<c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
+
 <tr>
     <th colspan="2"> Lead Organization/Principal Investigator</th>
 </tr>
@@ -129,12 +132,12 @@
     </td>
 </tr>
 
-<c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+
     <tr>
         <td scope="row" class="label">
            <label for="principalInvestigator">
                     Principal Investigator
-                 <span class="required">*</span>
+                 <span class="required">${asterisk}</span>
            </label>
          </td>
         <td class="value">
@@ -145,7 +148,7 @@
     </tr>
     <tr> 
         <td colspan="2" class="space">  
-           <s:if test="%{gtdDTO.ctGovXmlRequired == true}">
+           <s:if test="%{gtdDTO.ctGovXmlRequired == true || #session.trialSummary.proprietaryTrial}">
                <div id="sponsorRespDiv" style="display:''">
                    <%@ include file="/WEB-INF/jsp/nodecorate/sponsorRespPartyInfo.jsp" %>
                </div>
@@ -157,4 +160,3 @@
             </s:else>
         </td> 
     </tr>  
-</c:if>

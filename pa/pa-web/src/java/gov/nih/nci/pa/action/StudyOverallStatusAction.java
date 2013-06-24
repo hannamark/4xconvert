@@ -103,6 +103,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -138,6 +139,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private String completionDateType;
 
     private HttpServletRequest request;
+
+    private StudyOverallStatusDTO sosDto;
     
 
     /**
@@ -146,7 +149,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     @Override
     public void prepare() {
         prepareServices();
-        prepareData();
+        try {
+            prepareData();
+        } catch (PAException e) {
+            throw new RuntimeException(e); // NOPMD
+        }
     }
 
     /**
@@ -160,8 +167,9 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
 
     /**
      * Initialize the data used by this action.
+     * @throws PAException 
      */
-    void prepareData() {
+    void prepareData() throws PAException {
         dateTypeList = new HashMap<String, String>();
         String code = ActualAnticipatedTypeCode.ACTUAL.getCode();
         dateTypeList.put(code, code);
@@ -170,6 +178,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         HttpSession session = ServletActionContext.getRequest().getSession();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
         spIdIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
+        sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
     }
 
     /**
@@ -212,15 +221,20 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * Loads the form data for display.
      * @throws PAException if an error occurs
      */
+    @SuppressWarnings("PMD.NPathComplexity")
     void loadForm() throws PAException {
         StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
         if (spDto != null) {
             setStartDate(TsConverter.convertToString(spDto.getStartDate()));
             setPrimaryCompletionDate(TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
             setCompletionDate(TsConverter.convertToString(spDto.getCompletionDate()));
-            setStartDateType(spDto.getStartDateTypeCode().getCode());
-            setPrimaryCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
-            setCompletionDateType(spDto.getCompletionDateTypeCode().getCode());
+            setStartDateType(spDto.getStartDateTypeCode() != null ? spDto
+                    .getStartDateTypeCode().getCode() : null);
+            setPrimaryCompletionDateType(spDto
+                    .getPrimaryCompletionDateTypeCode() != null ? spDto
+                    .getPrimaryCompletionDateTypeCode().getCode() : null);
+            setCompletionDateType(spDto.getCompletionDateTypeCode() != null ? spDto
+                    .getCompletionDateTypeCode().getCode() : null);
         } else {
             setStartDate(null);
             setPrimaryCompletionDate(null);
@@ -228,8 +242,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             setStartDateType(null);
             setPrimaryCompletionDateType(null);
             setCompletionDateType(null);
-        }
-        StudyOverallStatusDTO sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
+        }        
+        sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
         if (sosDto != null) {
             setCurrentTrialStatus((sosDto.getStatusCode() != null) ? sosDto.getStatusCode().getCode() : null);
             setStatusDate(TsConverter.convertToString(sosDto.getStatusDate()));
@@ -264,12 +278,38 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
         studyProtocolDTO.setIdentifier(spIdIi);
         getStudyProtocolDates(studyProtocolDTO);
-        boolean isSuAbstractor = request.isUserInRole(Constants.SUABSTRACTOR);
+        StringBuilder sb = new StringBuilder();
+        if (ISOUtil.isCdNull(statusDto.getStatusCode())) {
+            sb.append("Please provide a value for Current Trial Status. ");
+        } else {
+            if (StringUtils.isBlank(statusDate)) {
+                sb.append("Current Trial Status Date is required. ");
+            }
+            if (StringUtils.isBlank(startDate)) {
+                sb.append("Trial Start Date is required. ");
+            }
+            if (StringUtils.isBlank(startDateType)) {
+                sb.append("Trial Start Date type (Anticipated or Actual) is required. ");
+            }            
+            if (StringUtils.isBlank(primaryCompletionDate)) {
+                sb.append("Primary Completion Date is required. ");
+            }
+            if (StringUtils.isBlank(primaryCompletionDateType)) {
+                sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
+            }
+        }
+        if (sb.length() > 0) {
+            throw new PAException(sb.toString());
+        }
+        boolean isSuAbstractor = request
+                .isUserInRole(Constants.SUABSTRACTOR);
         if (!isSuAbstractor) {
             studyOverallStatusService.validate(statusDto, studyProtocolDTO);
         } else {
-            studyOverallStatusService.validateRelaxed(statusDto, studyProtocolDTO);
+            studyOverallStatusService.validateRelaxed(statusDto,
+                    studyProtocolDTO);
         }
+        
     }
 
     /**
@@ -292,15 +332,16 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      */
     void insertOrUpdateStudyOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {
         boolean isSuAbstractor = request.isUserInRole(Constants.SUABSTRACTOR);
-        if (currentTrialStatus != null) {
+        if (StringUtils.isNotBlank(currentTrialStatus)) {
             StudyProtocolQueryDTO spqDTO =
                     protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
             StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIdIi);
-            // original submission
-            if (spqDTO.getDocumentWorkflowStatusCode() != null
+            // original submission            
+            if (sosDto != null
+                    && spqDTO.getDocumentWorkflowStatusCode() != null
                     && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
-                    && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
-                StudyOverallStatusDTO sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
+                    && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {                
+                sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
                 statusDto.setIdentifier(sosDto.getIdentifier());
                 studyOverallStatusService.update(statusDto);
             } else {
@@ -488,6 +529,20 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     @Override
     public void setServletRequest(HttpServletRequest r) {
         this.request = r;
+    }
+
+    /**
+     * @return the sosDto
+     */
+    public StudyOverallStatusDTO getSosDto() {
+        return sosDto;
+    }
+
+    /**
+     * @param sosDto the sosDto to set
+     */
+    public void setSosDto(StudyOverallStatusDTO sosDto) {
+        this.sosDto = sosDto;
     }
 
 }

@@ -382,9 +382,10 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
 
     /**
      * Test the getStudyOverallStatus method.
+     * @throws PAException 
      */
     @Test
-    public void testGetStudyOverallStatus() {
+    public void testGetStudyOverallStatus() throws PAException {
         sut = createStudyOverallStatusAction();
         sut.prepareData();
         sut.setStatusReason("reason");
@@ -409,27 +410,20 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
 
     /**
      * Test the validateOverallStatus method.
-     * @throws PAException if an error occurs
+     * 
+     * @throws PAException
+     *             if an error occurs
      */
-    @Test
+    @Test(expected = PAException.class)
     public void testValidateOverallStatus() throws PAException {
         sut = createStudyOverallStatusActionMock();
-        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        StudyOverallStatusDTO statusDto = createStudyOverallStatusDTO();
         doCallRealMethod().when(sut).prepareData();
         doCallRealMethod().when(sut).validateOverallStatus(statusDto);
         sut.prepareData();
 
         sut.validateOverallStatus(statusDto);
 
-        ArgumentCaptor<StudyProtocolDTO> studyProtocolCaptor1 = ArgumentCaptor.forClass(StudyProtocolDTO.class);
-        verify(sut).getStudyProtocolDates(studyProtocolCaptor1.capture());
-        ArgumentCaptor<StudyProtocolDTO> studyProtocolCaptor2 = ArgumentCaptor.forClass(StudyProtocolDTO.class);
-        verify(studyOverallStatusService).validate(eq(statusDto), studyProtocolCaptor2.capture());
-        StudyProtocolDTO studyProtocolDTO = studyProtocolCaptor2.getValue();
-        assertEquals("Wrong study protocol", studyProtocolCaptor1.getValue(), studyProtocolDTO);
-        assertNotNull("No study protocol", studyProtocolDTO);
-        assertEquals("Wrong study protocol Ii", IiConverter.convertToStudyProtocolIi(1L),
-                     studyProtocolDTO.getIdentifier());
     }
 
     /**
@@ -494,6 +488,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         existingStatus.setIdentifier(statusIi);
         when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(existingStatus);
         StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        sut.setSosDto(statusDto);
         
         sut.insertOrUpdateStudyOverallStatus(statusDto);
         

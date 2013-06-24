@@ -900,13 +900,15 @@ public class PADomainUtils {
         for (ResearchOrganizationDTO roDTO : roDTOs) {
             if (EntityStatusCode.ACTIVE.name().equalsIgnoreCase(
                     roDTO.getStatus().getCode())) {
-                if (CollectionUtils.isNotEmpty(roDTO.getPostalAddress()
-                        .getItem())) {
+                if (roDTO.getPostalAddress() != null
+                        && CollectionUtils.isNotEmpty(roDTO.getPostalAddress()
+                                .getItem())) {
                     setPostalAddressFields(countries, paOrgDTO, (Ad) roDTO
                             .getPostalAddress().getItem().iterator().next());
                 }
-                if (CollectionUtils.isNotEmpty(roDTO.getTelecomAddress()
-                        .getItem())) {
+                if (roDTO.getTelecomAddress() != null
+                        && CollectionUtils.isNotEmpty(roDTO.getTelecomAddress()
+                                .getItem())) {
                     setContactInfoFields(paOrgDTO, roDTO.getTelecomAddress());
                 }
 

@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import org.junit.Before;
@@ -123,17 +124,17 @@ public class IrbActionTest extends AbstractPaActionTest {
 		assertEquals("success", act.fromPO());
 	}
 	@Test
-	public void testSave() {
+	public void testSave() throws PAException {
 		assertEquals("success", act.save());
 		assertTrue(act.hasActionErrors());
 	}
 	@Test
-	public void testSavewithData() {
+	public void testSavewithData() throws PAException {
 		act.setApprovalStatus(ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
 		assertEquals("success", act.save());
 	}
 	@Test
-	public void testEnforceBusinessRules() {
+	public void testEnforceBusinessRules() throws PAException {
 		act.setApprovalStatus(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode());
 		assertEquals("success", act.save());
 		assertTrue(act.hasActionErrors());

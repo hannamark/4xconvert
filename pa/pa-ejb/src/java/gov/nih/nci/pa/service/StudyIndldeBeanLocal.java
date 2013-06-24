@@ -11,7 +11,6 @@ import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
-import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.StudyIndldeConverter;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -39,7 +38,7 @@ import org.apache.log4j.Logger;
  *
  */
 @Stateless
-@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
         implements StudyIndldeServiceLocal {

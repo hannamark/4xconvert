@@ -89,6 +89,8 @@ import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
@@ -143,18 +145,20 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
 
     /**
      * @return res
+     * @throws PAException PAException
      */
-    public String updateDesign() { //NOPMD
-        enforceBusinessRules();
+    public String updateDesign() throws PAException { //NOPMD
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry
+                .getStudyProtocolService()
+                .getNonInterventionalStudyProtocol(studyProtocolIi);
+
+        enforceBusinessRules(ospFromDatabaseDTO);
         if (hasFieldErrors()) {
             return "details";
         }
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
-            NonInterventionalStudyProtocolDTO ospFromDatabaseDTO = PaRegistry
-                    .getStudyProtocolService()
-                    .getNonInterventionalStudyProtocol(studyProtocolIi);
             setPhase(ospFromDatabaseDTO);
             ospFromDatabaseDTO.setPrimaryPurposeCode(CdConverter
                     .convertToCd(PrimaryPurposeCode.getByCode(webDTO
@@ -242,17 +246,23 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         return "details";
     }
 
-    private void enforceBusinessRules() {
-        validateBaseFields();
-        validatePrimaryPurpose();        
-        validateStudyModelCode();
-        validateTimePerspective();        
-        validateNumberOfGroups();
-        validateMinTargetAccrual();
+    private void enforceBusinessRules(StudyProtocolDTO spDTO) {
+        boolean abbr = BlConverter.convertToBool(spDTO
+                .getProprietaryTrialIndicator());
+        validateBaseFields(abbr);
+        validatePrimaryPurpose();
+        validateStudyModelCode(abbr);
+        validateTimePerspective(abbr);
+        validateNumberOfGroups(abbr);
+        validateMinTargetAccrual(abbr);
+
     }
 
-    private void validateBaseFields() {
-        addErrors(webDTO.getStudySubtypeCode(), "webDTO.studySubtypeCode", "error.studytype"); 
+    private void validateBaseFields(boolean abbr) {
+        if (!abbr) {
+            addErrors(webDTO.getStudySubtypeCode(), "webDTO.studySubtypeCode",
+                    "error.studytype");
+        }
         addErrors(webDTO.getPhaseCode(), "webDTO.phaseCode", "error.phase");
     }
 
@@ -274,9 +284,11 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         }
      }
 
-    private void validateStudyModelCode() {
+    private void validateStudyModelCode(boolean abbr) {
         if (StringUtils.isEmpty(webDTO.getStudyModelCode())) {
-            addFieldError("webDTO.studyModelCode", getText("error.studyModelCode"));
+            if (!abbr) {
+                addFieldError("webDTO.studyModelCode", getText("error.studyModelCode"));
+            }
         } else
         if (webDTO.getStudyModelCode().equalsIgnoreCase("Other")
                 && StringUtils.isEmpty(webDTO.getStudyModelOtherText())) {
@@ -288,9 +300,11 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         }
     }
 
-    private void validateMinTargetAccrual() {
+    private void validateMinTargetAccrual(boolean abbr) {
         if (StringUtils.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
-            addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
+            if (!abbr) {
+                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
+            }
         } else {
             try {
                 Integer tarAccrual = NumberUtils.createInteger(webDTO.getMinimumTargetAccrualNumber());
@@ -303,10 +317,12 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         }
     }
 
-    private void validateNumberOfGroups() {
+    private void validateNumberOfGroups(boolean abbr) {
         final String groups = webDTO.getNumberOfGroups();
         if (StringUtils.isEmpty(groups)) {
-            addFieldError("webDTO.numberOfGroups", getText("error.numberOfGroups"));
+            if (!abbr) {
+                addFieldError("webDTO.numberOfGroups", getText("error.numberOfGroups"));
+            }
         } else {
             try {
                 Integer.valueOf(groups);
@@ -321,11 +337,14 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
     }
 
     /**
+     * @param abbr 
      *
      */
-    private void validateTimePerspective() {
+    private void validateTimePerspective(boolean abbr) {
         if (StringUtils.isEmpty(webDTO.getTimePerspectiveCode())) {
-            addFieldError("webDTO.timePerspectiveCode", getText("error.timePerspectiveCode"));
+            if (!abbr) {
+                addFieldError("webDTO.timePerspectiveCode", getText("error.timePerspectiveCode"));
+            }
         } else
         if (webDTO.getTimePerspectiveCode().equalsIgnoreCase("Other")
                 && StringUtils.isEmpty(webDTO.getTimePerspectiveOtherText())) {

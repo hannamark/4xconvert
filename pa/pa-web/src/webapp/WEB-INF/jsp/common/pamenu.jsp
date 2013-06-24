@@ -62,7 +62,8 @@
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialDocumentquery.action" labelKey="pamenu.admin.documents" selected="${requestScope.topic == 'reviewdocs'}"/>
                         <c:choose>
                             <c:when test="${sessionScope.trialSummary.proprietaryTrial}">
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action?trialType=proprietary" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'reviewparticipatingsites'}"/>
+                                <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>
+                                <pa:menuLink href="${pageContext.request.contextPath}/protected/regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'reviewregulatory'}"/>
                             </c:when>
                             <c:otherwise>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'reviewstatus'}"/>
@@ -80,29 +81,29 @@
                         <ul>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/generalTrialDesignquery.action" labelKey="pamenu.admin.general" selected="${requestScope.topic == 'abstractgeneral'}"/> 
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/nciSpecificInformationquery.action" labelKey="pamenu.admin.nciSpecific" selected="${requestScope.topic == 'abstractnci'}"/> 
-                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                                <li class="hassubmenu">
-                                    <fmt:message key="pamenu.admin.regulatory"/>
-                                    <ul id="part_sites">
-                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'abstractregulatory'}"/> 
-                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/irb.action" labelKey="pamenu.admin.safety" selected="${requestScope.topic == 'abstractsafety'}"/>
-                                        <pa:menuLink href="${pageContext.request.contextPath}/protected/trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'abstractind'}"/> 
-                                   </ul>
-                                </li>
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'abstractstatus'}"/>
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'abstractfunding'}"/> 
-                            </c:if>
+                            
+                           <li class="hassubmenu">
+                               <fmt:message key="pamenu.admin.regulatory"/>
+                               <ul id="part_sites">
+                                   <pa:menuLink href="${pageContext.request.contextPath}/protected/regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'abstractregulatory'}"/> 
+                                   <pa:menuLink href="${pageContext.request.contextPath}/protected/irb.action" labelKey="pamenu.admin.safety" selected="${requestScope.topic == 'abstractsafety'}"/>
+                                   <pa:menuLink href="${pageContext.request.contextPath}/protected/trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'abstractind'}"/> 
+                              </ul>
+                           </li>
+                           <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'abstractstatus'}"/>
+                           <pa:menuLink href="${pageContext.request.contextPath}/protected/trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'abstractfunding'}"/> 
+                            
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>
-                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/collaborators.action" labelKey="pamenu.admin.collaborators" selected="${requestScope.topic == 'abstractcollaborator'}"/>
-                            </c:if>
+                            
+                            <pa:menuLink href="${pageContext.request.contextPath}/protected/collaborators.action" labelKey="pamenu.admin.collaborators" selected="${requestScope.topic == 'abstractcollaborator'}"/>
+                            
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/trialDocumentquery.action" labelKey="pamenu.admin.documents" selected="${requestScope.topic == 'abstractdocs'}"/>
                         </ul>
                     </li>
                     <li>
                         <div><fmt:message key="pamenu.scientific"/></div>
                         <ul>
-                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                            
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/trialDescriptionquery.action" labelKey="pamenu.scientific.description" selected="${requestScope.topic == 'abstractdescription'}"/>
                                 <c:choose>
                                     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
@@ -126,12 +127,12 @@
                                         </li>
                                     </c:otherwise>
                                 </c:choose>
-                            </c:if>
+                            
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/disease.action" labelKey="pamenu.scientific.disease" selected="${requestScope.topic == 'abstractdisease'}"/>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/anatomicSite.action" labelKey="pamenu.scientific.anatomicSite" selected="${requestScope.topic == 'anatomicsite'}"/>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/plannedMarker.action" labelKey="pamenu.scientific.markers" selected="${requestScope.topic == 'plannedmarker'}"/>
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/trialInterventions.action" labelKey="pamenu.scientific.interventions" selected="${requestScope.topic == 'abstractinterventions'}"/>
-                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                            
                                 <c:choose>
                                     <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
                                         <pa:menuLink href="${pageContext.request.contextPath}/protected/trialArms.action" labelKey="pamenu.scientific.arms" selected="${requestScope.topic == 'abstractarms'}"/>
@@ -141,7 +142,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/subGroupsquery.action" labelKey="pamenu.scientific.subGroups" selected="${requestScope.topic == 'abstractsubgroups'}"/>
-                            </c:if>
+                            
                         </ul>
                     </li>
                     <li>

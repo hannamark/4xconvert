@@ -164,6 +164,7 @@
     <body>
         <h1><fmt:message key="studyProtocol.general.title" /></h1>
         <c:set var="topic" scope="request" value="abstractgeneral"/>
+        <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">
             <pa:sucessMessage/>
@@ -188,12 +189,12 @@
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
                     <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
                     <s:hidden name="gtdDTO.programCodeText" id="gtdDTO.programCodeText"/>
+                    <s:hidden name="gtdDTO.phaseCode" id= "gtdDTO.phaseCode"></s:hidden>
+                    <s:hidden name="gtdDTO.phaseAdditionalQualifierCode" id= "gtdDTO.phaseAdditionalQualifierCode"></s:hidden>
+                    <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
+                    <s:hidden name="gtdDTO.primaryPurposeAdditionalQualifierCode" id= "gtdDTO.primaryPurposeAdditionalQualifierCode"></s:hidden>
+                    <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <s:hidden name="gtdDTO.phaseCode" id= "gtdDTO.phaseCode"></s:hidden>
-                        <s:hidden name="gtdDTO.phaseAdditionalQualifierCode" id= "gtdDTO.phaseAdditionalQualifierCode"></s:hidden>
-                        <s:hidden name="gtdDTO.primaryPurposeCode" id= "gtdDTO.primaryPurposeCode"></s:hidden>
-                        <s:hidden name="gtdDTO.primaryPurposeAdditionalQualifierCode" id= "gtdDTO.primaryPurposeAdditionalQualifierCode"></s:hidden>
-                        <s:hidden name="gtdDTO.primaryPurposeOtherText" id= "gtdDTO.primaryPurposeOtherText"></s:hidden>        
                         <tr>
                             <td scope="row" class="label">
                                 <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?
@@ -202,13 +203,6 @@
                                 <s:radio name="gtdDTO.ctGovXmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
                            </td>
                        </tr>
-                    </c:if>
-                    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
-                        <s:hidden name="gtdDTO.centralContactName" id="gtdDTO.centralContactName"></s:hidden>
-                        <s:hidden name="gtdDTO.centralContactTitle" id="gtdDTO.centralContactTitle"></s:hidden>
-                        <s:hidden name="gtdDTO.centralContactIdentifier" id="gtdDTO.centralContactIdentifier"></s:hidden>
-                        <s:hidden name="gtdDTO.centralContactEmail" id="gtdDTO.centralContactEmail"></s:hidden>
-                        <s:hidden name="gtdDTO.centralContactPhone" id="gtdDTO.centralContactPhone"></s:hidden>
                     </c:if>
                     <tr>
                         <td scope="row" class="label"><label for="gtdDTO.localProtocolIdentifier">
@@ -261,9 +255,6 @@
                             </td>
                         </tr>
                     </c:if>
-                    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/phaseAndPurpose.jsp" %>
-                    </c:if>
                     <tr>
                         <th colspan="2"> Title</th>
                     </tr>
@@ -304,7 +295,7 @@
                                 maxlength="4000" cssClass="charcounter" />
                         </td>
                     </tr>
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                    
                         <tr>
                             <th colspan="2">Other Identifiers</th>
                         </tr>
@@ -339,9 +330,9 @@
                                 </div>
                             </td>
                         </tr>
-                    </c:if>
+                    
                     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                    
                         <tr>
                             <th colspan="2"> Central Contact</th>
                         </tr>
@@ -413,7 +404,7 @@
                               </span>
                           </td>
                       </tr>
-                    </c:if>
+                   
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">

@@ -8,7 +8,9 @@
 </div>
 <table class="form">
 				    <tr>
-				        <td scope="row" class="label"><label for="siteLocalTrialIdentifier"><fmt:message key="proprietary.siteidentifier"/></label></td>
+				        <td scope="row" class="label"><label for="siteLocalTrialIdentifier"><fmt:message key="proprietary.siteidentifier"/>:</label>
+				        <span class="required">${asterisk}</span>
+				        </td>
 				    <td>
 				        <s:textfield name="siteLocalTrialIdentifier" id="siteLocalTrialIdentifier" maxlength="20" size="200" cssStyle="width: 200px" />
 				        <span class="formErrorMsg">
@@ -22,14 +24,25 @@
 					<td scope="row" class="label"><label for="recStatus">Site Recruitment Status:</label><span class="required">*</span></td>
                     <s:set name="recruitmentStatusValues" 
                            value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
-                    <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--"
-                        name="recStatus" id="recStatus"
-                        list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
-                        <span class="formErrorMsg"> 
-                              <s:fielderror>
-                              <s:param>recStatus</s:param>
-                              </s:fielderror>                            
-                        </span>
+                    <td class="value" colspan="2">
+                        <table>
+                                <tr>
+                                    <td class="value" colspan="2"><s:select headerKey="" headerValue="--Select--"
+				                        name="recStatus" id="recStatus"
+			                            list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
+			                            <span class="formErrorMsg"> 
+				                              <s:fielderror>
+				                              <s:param>recStatus</s:param>
+				                              </s:fielderror>                            
+				                        </span>
+	                        </td>
+                            <td valign="top">
+                                <ul class="btnrow">         
+                                    <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookupStatusHistory()"><span class="btn_img"><span class="history">History</span></span></a></li>
+                                </ul>
+                            </td>
+                         </tr>
+                       </table>
                     <td>
 				</tr>
 				<tr>
@@ -71,6 +84,49 @@
                     <td/>
                     <td class="info" colspan="2">Mandatory if Participating site/Lead organization is a cancer center</td>
                 </tr>
+                <c:if test="${not sessionScope.trialSummary.proprietaryTrial}">
+                    <s:hidden name="dateOpenedForAccrual"></s:hidden>
+                    <s:hidden name="dateClosedForAccrual"></s:hidden>
+                </c:if>
+                <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
+                <script>
+	                addCalendar("Cal2", "Select Date", "dateOpenedForAccrual", "facility");
+	                addCalendar("Cal3", "Select Date", "dateClosedForAccrual", "facility");     
+                </script>
+                <tr>
+                        <td scope="row" class="label">
+                            <label for="startDate"><fmt:message key="proprietary.trial.dateOpenedforAccrual" />:</label>
+                        </td>
+                        <td class="value">
+                            <s:textfield name="dateOpenedForAccrual" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal2')">
+                                <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                            </a> (mm/dd/yyyy) 
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                    <s:param>dateOpenedForAccrual</s:param>
+                               </s:fielderror>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="completionDate"><fmt:message key="proprietary.Site.dateClosedforAccrual" />:</label>
+                        </td>
+                        <td class="value">
+                            <s:textfield name="dateClosedForAccrual" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal3')">
+                                <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                            </a> (mm/dd/yyyy)
+                            <span class="info"><fmt:message key="error.proprietary.dateOpenReq" /></span>  
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                    <s:param>dateClosedForAccrual</s:param>
+                                </s:fielderror>
+                            </span>
+                        </td>
+                    </tr>
+                </c:if>
                 <tr>
                     <td class="label"><label for="statusCode">Status:</label></td>
                     <td class="value" colspan="2">

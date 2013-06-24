@@ -93,6 +93,7 @@ function displayPhaseAdditonalCode(){
 <body>
 <h1><fmt:message key="osdesign.details.title"/></h1>
 <c:set var="topic" scope="request" value="abstractdesignnoninterventional"/>
+<c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
 <div class="box">
 <pa:sucessMessage/>
@@ -131,7 +132,7 @@ function displayPhaseAdditonalCode(){
 
     <tr>
         <td  scope="row" class="label"><label>
-            <fmt:message key="osdesign.details.study.subtype"/><span class="required">*</span></label></td>
+            <fmt:message key="osdesign.details.study.subtype"/><span class="required">${asterisk}</span></label></td>
         <s:set name="StudySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
@@ -208,7 +209,7 @@ function displayPhaseAdditonalCode(){
 
 	<tr>
 	 	<td  scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.study.model"/><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.study.model"/><span class="required">${asterisk}</span></label></td>
      	<s:set name="studyModelCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
         <td>
           <s:select headerKey="" headerValue="" name="webDTO.studyModelCode" list="#studyModelCodeValues"  
@@ -222,7 +223,7 @@ function displayPhaseAdditonalCode(){
     </tr>
     <tr id="studyModelOtherText">
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.study.model.other"/><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.study.model.other"/><span class="required">${asterisk}</span></label></td>
 		<td>
 			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
@@ -234,7 +235,7 @@ function displayPhaseAdditonalCode(){
 	</tr>
     <tr>
         <td scope="row" class="label"><label for="studyPhase">
-        	 <fmt:message key="osdesign.details.time.perspective"/><span class="required">*</span></label> </td>
+        	 <fmt:message key="osdesign.details.time.perspective"/><span class="required">${asterisk}</span></label> </td>
         <s:set name="timePerspectiveCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
         <td>
         	<s:select headerKey="" headerValue="" name="webDTO.timePerspectiveCode" list="#timePerspectiveCodeValues" 
@@ -248,7 +249,7 @@ function displayPhaseAdditonalCode(){
     </tr>
     <tr id="timePerspectiveOtherText">
 		<td   scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.time.perspective.comment"/><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.time.perspective.comment"/><span class="required">${asterisk}</span></label></td>
 		<td>
 			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px"  maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
@@ -288,7 +289,7 @@ function displayPhaseAdditonalCode(){
 	</tr>	
     <tr>
 		<td scope="row" class="label"><label>
-	 		<fmt:message key="osdesign.details.groups"/><span class="required">*</span></label></td>
+	 		<fmt:message key="osdesign.details.groups"/><span class="required">${asterisk}</span></label></td>
 		<td>
            <s:textfield name="webDTO.numberOfGroups"  maxlength="5" cssStyle="width:50px" />
            <span class="formErrorMsg"> 
@@ -300,7 +301,7 @@ function displayPhaseAdditonalCode(){
 	</tr>
 	<tr>
 		<td scope="row" class="label"><label>
-	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">*</span></label></td>
+	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">${asterisk}</span></label></td>
 		<td>
          	<s:textfield name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
          	<span class="formErrorMsg"> 
