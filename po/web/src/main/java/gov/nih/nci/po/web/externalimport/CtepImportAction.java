@@ -354,8 +354,7 @@ public class CtepImportAction extends ActionSupport {
             ActionHelper.saveMessage(passed.size() + " records successfully imported.");
             String separator = ", ";
             if (CollectionUtils.isNotEmpty(skipped)) {
-                StringBuffer msg = new StringBuffer("The following line(s) did not correspond to a record in ctep, "
-                        + "any record with one of these ctep id's was inactivated: ");
+                StringBuffer msg = new StringBuffer("The following line(s) did not correspond to a record in ctep: ");
                 msg.append(StringUtils.join(skipped, separator));
                 ActionHelper.saveMessage(msg.toString());
             }

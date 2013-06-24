@@ -181,8 +181,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
         assertEquals("0 records successfully imported.", itr.next());
         assertTrue(itr.hasNext());
         String next = itr.next();
-        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep, "
-                + "any record with one of these ctep id's was inactivated: "));
+        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep: "));
         assertFalse(itr.hasNext());
     }
 
@@ -326,8 +325,7 @@ public class CtepFileUploadTest extends AbstractPoTest {
         assertEquals("0 records successfully imported.", itr.next());
         assertTrue(itr.hasNext());
         String next = itr.next();
-        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep, "
-                + "any record with one of these ctep id's was inactivated: "));
+        assertTrue(next.startsWith("The following line(s) did not correspond to a record in ctep: "));
         assertFalse(itr.hasNext());
     }
 
