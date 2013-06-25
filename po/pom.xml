@@ -389,7 +389,7 @@
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
                         <totalBranchRate>70</totalBranchRate>
-                        <totalLineRate>81</totalLineRate>
+                        <totalLineRate>80</totalLineRate>
                     </check>
                     <formats>
                         <format>html</format>
