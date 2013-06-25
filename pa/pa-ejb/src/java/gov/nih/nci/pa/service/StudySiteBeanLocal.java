@@ -16,6 +16,7 @@ import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -23,6 +24,7 @@ import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -36,8 +38,10 @@ import gov.nih.nci.pa.util.AssignedIdentifierEnum;
 import gov.nih.nci.pa.util.CorrelationUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -57,6 +61,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -74,6 +79,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         StudySiteServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
+    private CorrelationUtils corrUtils = new CorrelationUtils();
 
     /**
      * @param dto StudySiteDTO
@@ -303,6 +309,11 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     private void enforceNoDuplicateTrial(StudySiteDTO dto) throws PAException {
         Session session = null;
         List<StudySite> queryList = new ArrayList<StudySite>();
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
+        String nciId = null;
+        if (!ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            nciId = paServiceUtil.getTrialNciId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        }
         session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         // step 1: form the hql
@@ -322,7 +333,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())
             && IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equalsIgnoreCase(dto.getResearchOrganizationIi()
                                                                             .getIdentifierName())) {
-            ResearchOrganization ro = new CorrelationUtils().getStructuralRoleByIi(dto.getResearchOrganizationIi());
+            ResearchOrganization ro = corrUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi());
             query.setParameter("orgIdentifier", ro.getId());
         } else {
             query.setParameter("orgIdentifier", IiConverter.convertToLong(dto.getResearchOrganizationIi()));
@@ -342,33 +353,40 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         }
         if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equalsIgnoreCase(dto.getFunctionalCode().getCode())
             && CollectionUtils.isNotEmpty(queryList)) {
-            for (StudySite sp : queryList) {
+            for (StudySite ss : queryList) {
                 // When create DTO get Id will be null and if queryList is having value then its duplicate
                 // When update check if the record is same if not then throw ex
-                if ((dto.getIdentifier() == null)
-                    || (!String.valueOf(sp.getId()).equals(dto.getIdentifier().getExtension()))) {
+                String ssNciId = paServiceUtil.getTrialNciId(ss.getStudyProtocol().getId());
+                if ((dto.getIdentifier() == null && dto.getStudyProtocolIdentifier() == null)
+                    || (!ISOUtil.isIiNull(dto.getIdentifier()) 
+                            && !String.valueOf(ss.getId()).equals(dto.getIdentifier().getExtension()))
+                    || (StringUtils.isNotEmpty(nciId) && !nciId.equals(ssNciId))) {
                     throw new PAValidationException(
-                            "Duplicate Trial Submission: A trial exists in the system with "
-                                    + "the same " + getIdentifierName(sp)
-                                    + ". The other trial's NCI ID is "
-                                    + getOtherTrialID(sp));
+                            "The " + getIdentifierName(ss)
+                                    + " provided is tied to another trial in CTRP system. "
+                                    + getTrialInfo(ss)                                    
+                                    + ". Please check the ID provided and try again. If you believe that"
+                                    + " the ID provided is correct then please contact CTRO staff.");
                 }
             }
         }
     }
 
-    private String getOtherTrialID(StudySite ss) {
+    private String getTrialInfo(StudySite ss) {
+        StringBuffer sbuf = new StringBuffer();
         try {
             StudyProtocol sp = ss.getStudyProtocol();
-            for (Ii id : sp.getOtherIdentifiers()) {
-                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(id.getRoot())) {
-                    return id.getExtension();
-                }
-            }
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
+                    IiConverter.convertToIi(sp.getId()));
+            StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                    sp.getId());
+            sbuf.append(PAUtil.getAssignedIdentifierExtension(spDTO)).append(";")
+            .append(spDTO.getOfficialTitle().getValue()).append(";").append(spqDTO.getLocalStudyProtocolIdentifier());
+                        
         } catch (Exception e) {
             LOG.error(e, e);
         }
-        return "";
+        return sbuf.toString();
     }
 
     private String getIdentifierName(StudySite sp) {
@@ -454,11 +472,25 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         StudySiteDTO criteria = new StudySiteDTO();
         criteria.setStudyProtocolIdentifier(studyProtocolIi);
         // get the pa hcf from the po hcf
-        StructuralRole strRl = new CorrelationUtils().getStructuralRoleByIi(poHcfIi);
+        StructuralRole strRl = corrUtils.getStructuralRoleByIi(poHcfIi);
         Ii myIi = IiConverter.convertToPoHealthCareFacilityIi(strRl.getId().toString());
         criteria.setHealthcareFacilityIi(myIi);
         LimitOffset limit = new LimitOffset(1, 0);
         List<StudySiteDTO> freshStudySiteDTOList = search(criteria, limit);
         return freshStudySiteDTOList.get(0).getIdentifier();
+    }
+
+    /**
+     * @param corrUtils the corrUtils to set
+     */
+    public void setCorrUtils(CorrelationUtils corrUtils) {
+        this.corrUtils = corrUtils;
+    }
+
+    /**
+     * @return the corrUtils
+     */
+    public CorrelationUtils getCorrUtils() {
+        return corrUtils;
     }
 }

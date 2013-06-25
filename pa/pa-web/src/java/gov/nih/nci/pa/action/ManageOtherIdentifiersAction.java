@@ -84,11 +84,13 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -117,7 +119,18 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);
             return DISPLAY_OTHER_IDENTIFIERS; 
         }
-        
+        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+            PAServiceUtils util = new PAServiceUtils();
+            String nctValidationResultString = util.validateTrialObsoleteNctId(
+                    IiConverter.convertToLong(studyProtocolIi), otherIdentifier);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                String duplicateErrorMessage = otherIdentifier + " already exist for " + nctValidationResultString;
+                ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);
+                return DISPLAY_OTHER_IDENTIFIERS;
+            }
+        }
         List<Ii> secondaryIds =
             (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         Ii otherId = new Ii();

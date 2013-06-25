@@ -261,7 +261,8 @@
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="display_otherIdentifiers">/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp</result>
             <result name="display_otherIdentifiers_update">/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp</result>
-            <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
+            <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>            
+            <result name="nctIdentifier">/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp</result>         
         </action>
 
         <action name="ajaxManageIndIdeAction*" class="gov.nih.nci.registry.action.ManageIndIdeAction" method="{1}">

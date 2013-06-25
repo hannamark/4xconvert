@@ -189,3 +189,9 @@ function disableTrialTypeChangeRadios() {
 		$('trialDTO.trialType.Noninterventional').disabled = true;		
 	} 
 }
+
+function trim(val) {
+    var ret = val.replace(/^\s+/, '');
+    ret = ret.replace(/\s+$/, '');
+    return ret;
+}

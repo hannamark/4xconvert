@@ -80,13 +80,17 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -99,6 +103,7 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private int uuid;
     private String otherIdentifier;
+    private String nctIdentifier;
     /**
      * @return the uuid
      */
@@ -125,6 +130,19 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      */
     public void setOtherIdentifier(String otherIdentifier) {
         this.otherIdentifier = otherIdentifier;
+    }
+    /**
+     * @return the nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+
+    /**
+     * @param nctIdentifier the nctIdentifier to set
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
     }
 
     /**
@@ -180,5 +198,28 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      */
     public String showWaitDialog() {
         return "show_ok_create";
+    }
+
+    /**
+     * 
+     * @return s
+     */
+    public String addNCTIdentifier() {     
+        try {
+            BaseTrialDTO trialDTO =  (BaseTrialDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+            PAServiceUtils util = new PAServiceUtils();
+            String nctValidationResultString = util.validateNCTIdentifier(nctIdentifier, 
+                     IiConverter.convertToIi(trialDTO.getIdentifier()));
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                addFieldError("trialDTO.nctIdentifier", nctValidationResultString);
+                return "nctIdentifier";
+            }
+            trialDTO.setNctIdentifier(nctIdentifier);
+        } catch (Exception e) {
+            LOG.error("Exception occured while adding NctIdentifier " + e);
+            addFieldError("trialDTO.nctIdentifier", e.getMessage());
+        }
+        return "nctIdentifier";
     }
 }

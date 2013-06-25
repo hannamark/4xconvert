@@ -2094,5 +2094,82 @@ public class PAServiceUtils {
         return CSMUserService.getInstance().isCurrentUserAutoCuration()
                 || CSMUserService.getInstance().isCurrentUserAbstractor();
     }
+
+    /**
+     * @param nctIdentifier the nctIdentifier
+     * @param studyProtocolIi the identifier
+     * @return errorMsg
+     */
+    public String validateNCTIdentifier(String nctIdentifier, Ii studyProtocolIi) {
+        String errorMsg = null;
+        StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+        nctIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(nctIdentifier));
+        nctIdentifierDTO.setFunctionalCode(
+                CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        nctIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        try {
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                PAConstants.NCT_IDENTIFIER_TYPE);
+            nctIdentifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
+                getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
+            PaRegistry.getStudySiteService().validate(nctIdentifierDTO);
+        } catch (PAException e) {
+            errorMsg = e.getMessage();
+        }
+        return errorMsg;
+    }  
+    
+    /**
+     * Returns Duplicate NCI Trial Id based on Obsolete NCT identifier of the given trial.
+     * @param id ID
+     * @param nctId NCT ID
+     * @return NCI ID
+     */
+    public String validateTrialObsoleteNctId(Long id, String nctId) {
+        String nciId = getTrialNciId(id);
+        String duplicateNciId = null;
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select extension from study_otheridentifiers where study_protocol_id in "
+                        + "(select study_protocol_id from study_otheridentifiers where extension = '"
+                        + nctId
+                        + "' and identifier_name = '" 
+                        + IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME + "')"
+                        + " and root='" 
+                        + IiConverter.STUDY_PROTOCOL_ROOT
+                        + "'");
+        List<String> list = query.list();
+        for (String ext : list) {
+            if (!nciId.equals(ext)) {
+                duplicateNciId = ext;
+                break;
+            }
+        }
+        return duplicateNciId;
+    }
+
+    /**
+     * @param studyIdentifierDTOs list of studyIdentifierDTOs
+     * @return StudySiteDTO
+     * @throws PAException the exception
+     */
+    public StudySiteDTO extractNCTDto(List<StudySiteDTO> studyIdentifierDTOs) throws PAException {
+        StudySiteDTO nctIdentifierDTO = null;
+        Ii nctROIi = null;
+        if (CollectionUtils.isNotEmpty(studyIdentifierDTOs)) {
+            String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
+                   PAConstants.NCT_IDENTIFIER_TYPE);
+            nctROIi = PaRegistry.getOrganizationCorrelationService().getPoResearchOrganizationByEntityIdentifier(
+                    IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId)));
+            for (StudySiteDTO dto : studyIdentifierDTOs) {
+                if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())
+                        && dto.getResearchOrganizationIi().equals(nctROIi)) {
+                    nctIdentifierDTO = dto;
+                    break;
+                }
+            }
+        }
+        return nctIdentifierDTO;
+    }
     
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -153,6 +154,15 @@ public class GeneralTrialDesignAction extends ActionSupport {
     public String update() {
         enforceBusinessRules();
         final HttpServletRequest req = ServletActionContext.getRequest();
+        if (StringUtils.isNotEmpty(gtdDTO.getNctIdentifier())) {
+            PAServiceUtils util = new PAServiceUtils();
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+            String nctValidationResultString = util.validateNCTIdentifier(gtdDTO.getNctIdentifier(), studyProtocolIi);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                addFieldError("gtdDTO.nctIdentifier", nctValidationResultString);
+            }
+        }
         if (hasFieldErrors()) {
             req.setAttribute(
                     Constants.FAILURE_MESSAGE,

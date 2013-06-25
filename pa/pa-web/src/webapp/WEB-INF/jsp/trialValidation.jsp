@@ -188,6 +188,7 @@
                     </pa:valueRow>
                     <pa:valueRow labelFor="nctIdentifier" labelKey="trialValidation.nctNumber">
                         <s:textfield id="nctIdentifier" name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/>
+                        <pa:fieldError fieldName="gtdDTO.nctIdentifier"/>
                     </pa:valueRow>
                     <pa:valueRow labelKey="studyProtocol.proprietaryTrial">
                         <s:property value="gtdDTO.proprietarytrialindicator"/>

@@ -359,6 +359,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        
         List<DocumentDTO> documents = getStudyDocuments();
 
         OrganizationDTO leadOrganizationDTO = getLeadOrg();

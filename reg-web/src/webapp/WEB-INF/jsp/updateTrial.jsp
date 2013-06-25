@@ -51,12 +51,6 @@
                 form.submit();
             }
             
-            function trim(val) {
-                var ret = val.replace(/^\s+/, '');
-                ret = ret.replace(/\s+$/, '');
-                return ret;
-            }
-            
             function addGrant() {
                 var fundingMechanismCode = $('fundingMechanismCode').value;
                 var nihInstitutionCode = $('nihInstitutionCode').value;
@@ -147,6 +141,16 @@
                 var params = { uuid: rowid };
                 var div = $('otherIdentifierdiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
+            
+            function addNCTIdentifier() {
+                var  url = '/registry/protected/ajaxManageOtherIdentifiersActionaddNCTIdentifier.action';
+                var params = {
+                		nctIdentifier: $("nctId").value
+                };
+                var div = $('nctIdentifierdiv');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
         

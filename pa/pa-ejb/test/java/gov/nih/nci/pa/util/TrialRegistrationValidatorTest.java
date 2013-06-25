@@ -704,16 +704,17 @@ public class TrialRegistrationValidatorTest {
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
+        StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
         doCallRealMethod().when(validator).validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
                                                              sponsorOrganizationDTO, studyContactDTO,
                                                              studySiteContactDTO, summary4organizationDTO,
                                                              summary4StudyResourcingDTO, piPersonDTO,
                                                              responsiblePartyContactIi, studyRegAuthDTO,
-                                                             studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+                                                             studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
                                     studyContactDTO, studySiteContactDTO, summary4organizationDTO,
                                     summary4StudyResourcingDTO, piPersonDTO, responsiblePartyContactIi,
-                                    studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+                                    studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Amendment"), eq(true), (StringBuilder) any());
         verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
         verify(validator).validateNihGrants(eq(spIi), eq(studyResourcingDTOs), (StringBuilder) any());
@@ -1230,18 +1231,20 @@ public class TrialRegistrationValidatorTest {
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
+        StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+        
         doCallRealMethod().when(validator).validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
                                                             sponsorOrganizationDTO, studyContactDTO,
                                                             studySiteContactDTO, summary4organizationDTO,
                                                             summary4StudyResourcingDTO, principalInvestigatorDTO,
                                                             leadOrganizationSiteIdentifierDTO,
                                                             responsiblePartyContactIi, studyRegAuthDTO,
-                                                            studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+                                                            studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
                                    studyContactDTO, studySiteContactDTO, summary4organizationDTO,
                                    summary4StudyResourcingDTO, principalInvestigatorDTO,
                                    leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
-                                   studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+                                   studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         verify(validator).validateStudyProtocol(studyProtocolDTO);
         verify(validator).validateMandatoryFields(eq(studyProtocolDTO), eq(leadOrganizationSiteIdentifierDTO),
                                                   eq(documentDTOs), (StringBuilder) any());
@@ -1411,7 +1414,6 @@ public class TrialRegistrationValidatorTest {
                                                                 eq(leadOrganizationStudySiteDTO), eq(studySiteDTO),
                                                                 eq(summary4StudyResourcingDTO), (StringBuilder) any());
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
-        verify(validator).validateNCTIdentifier(eq(nctIdentifierDTO), (StringBuilder) any());
         verify(validator).validatePhasePurposeAndTemplateDocument(eq(studyProtocolDTO), eq(documentDTOs),
                                                                   eq(nctIdentifierDTO), (StringBuilder) any());
         verify(paServiceUtils).validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO);

@@ -409,10 +409,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
             updateId = studyProtocolIi;
 
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));        
+            
             // call the service to invoke the update method
-            trialRegistrationService.update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
-                                                            pssDTOList, prgCdUpdatedList,
-                                                            BlConverter.convertToBl(Boolean.FALSE));
+            trialRegistrationService.update(spDTO, sosDto, studyIdentifierDTOs, null, 
+                    studyResourcingDTOs, documentDTOs, null, null, null, null, null, 
+                    null, null, pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));
+            
             TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);

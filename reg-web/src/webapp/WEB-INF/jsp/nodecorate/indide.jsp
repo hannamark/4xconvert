@@ -1,10 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <script type="text/javascript" language="javascript">
-    function trim(val) {
-        var ret = val.replace(/^\s+/, '');
-        ret = ret.replace(/\s+$/, '');
-          return ret;
-        }
     
     function getIndIdeRadioValue(size) {
         for (var i=0; i<size; i++) {

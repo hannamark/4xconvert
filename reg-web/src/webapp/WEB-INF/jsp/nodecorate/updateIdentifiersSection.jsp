@@ -2,7 +2,6 @@
 <tr style="display:none">
     <td>
         <s:hidden name="trialDTO.leadOrgTrialIdentifier" id="trialDTO.leadOrgTrialIdentifier"/>
-        <s:hidden name="trialDTO.nctIdentifier" id="trialDTO.nctIdentifier"/>
         <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
         <s:hidden name="trialDTO.ctepIdentifier" id="trialDTO.ctepIdentifier"/>
         <s:hidden name="trialDTO.dcpIdentifier" id="trialDTO.dcpIdentifier"/>
@@ -27,7 +26,7 @@
          <fmt:message key="submit.trial.nctNumber"/>
     </td>
     <td>
-        <s:property value="trialDTO.nctIdentifier"/>
+        <%@ include file="/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp" %>
     </td>
 </tr>
 <tr>

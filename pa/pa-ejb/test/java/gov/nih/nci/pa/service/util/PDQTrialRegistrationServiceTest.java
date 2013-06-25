@@ -96,6 +96,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -137,6 +138,7 @@ import gov.nih.nci.pa.service.TrialRegistrationBeanLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.CorrelationUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -263,7 +265,13 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
         trialRegistrationSvc.setStudyProtocolService(studyProtocolService);
         trialRegistrationSvc.setOcsr(orgCorrelationSvc);
-        trialRegistrationSvc.setStudySiteService(new StudySiteServiceBean());
+        StudySiteServiceBean studySiteService = new StudySiteServiceBean();
+        CorrelationUtils corrUtils = mock(CorrelationUtils.class);
+        ResearchOrganization roBO = new ResearchOrganization();
+        roBO.setId(1L);
+        when(corrUtils.getStructuralRoleByIi(any(Ii.class))).thenReturn(roBO);
+        studySiteService.setCorrUtils(corrUtils);
+		trialRegistrationSvc.setStudySiteService(studySiteService);
         trialRegistrationSvc.setRegistryUserServiceLocal(new MockRegistryUserServiceBean());
         trialRegistrationSvc.setDocumentWorkFlowStatusService(new DocumentWorkflowStatusBeanLocal());
         trialRegistrationSvc.setStudyInboxServiceLocal(new StudyInboxServiceBean());
@@ -302,7 +310,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getStudyContactService()).thenReturn(new StudyContactServiceBean());
         when(paSvcLoc.getStudyRegulatoryAuthorityService()).thenReturn(new StudyRegulatoryAuthorityBeanLocal());
         when(paSvcLoc.getRegulatoryInformationService()).thenReturn(new RegulatoryInformationBean());
-        when(paSvcLoc.getStudySiteService()).thenReturn(new StudySiteServiceBean());
+        when(paSvcLoc.getStudySiteService()).thenReturn(studySiteService);
         when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolService);
         when(paSvcLoc.getStudyDiseaseService()).thenReturn(new StudyDiseaseServiceBean());
         when(paSvcLoc.getStudyObjectiveService()).thenReturn(new StudyObjectiveServiceBean());
@@ -418,7 +426,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         } catch (Exception e) {
             assertEquals("URL is not set, call setUrl first.", e.getMessage());
         }
-
+        
         Ii trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, "loginName");
         assertNotNull("Null identifier returned when registering a trial", trialIi);
 

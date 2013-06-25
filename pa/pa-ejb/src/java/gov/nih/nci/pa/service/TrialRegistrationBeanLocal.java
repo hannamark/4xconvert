@@ -323,11 +323,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
             
             TrialRegistrationValidator validator = createValidator();
+            StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
             validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
                                         sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
                                         summary4OrganizationDTO, summary4StudyResourcingDTO, principalInvestigatorDTO,
                                         responsiblePartyContactIi, studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
-                                        studyIndldeDTOs);
+                                        studyIndldeDTOs, nctIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             Ii toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
             updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);            
@@ -581,11 +582,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             // CHECKSTYLE:ON
             copyStudyResourcing(studyResourcingDTOs);
             TrialRegistrationValidator validator = createValidator();
+            StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
             validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
                                        studyContactDTO, studySiteContactDTO, summary4OrganizationDTO,
                                        summary4StudyResourcingDTO, principalInvestigatorDTO,
                                        leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
-                                       studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+                                       studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             
             studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -1205,8 +1207,18 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
 
+        StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
+        if (nctIdentifierDTO != null) {
+            String nctValidationResultString = getPAServiceUtils().validateNCTIdentifier(
+                   nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), studyProtocolDTO
+                   .getIdentifier());
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                throw new PAException(TrialRegistrationValidator.VALIDATION_EXCEPTION + nctValidationResultString);
+            }       
+        }
         update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, studySiteAccrualStatusDTOs,
                studySiteDTOs, isBatchMode);
+        updateStudyIdentifiers(studyProtocolDTO.getIdentifier(), studyIdentifierDTOs);
 
     }
 

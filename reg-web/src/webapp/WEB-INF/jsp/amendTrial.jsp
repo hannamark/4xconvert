@@ -155,12 +155,6 @@
                 }
             }
             
-            function trim(val) {
-                var ret = val.replace(/^\s+/, '');
-                ret = ret.replace(/\s+$/, '');
-                return ret;
-            }
-            
             function addGrant(){
                 var fundingMechanismCode = $('fundingMechanismCode').value;
                 var nihInstitutionCode = $('nihInstitutionCode').value;

@@ -412,6 +412,15 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         }
         
         validateCtGovReqElement();
+        if (StringUtils.isNotEmpty(gtdDTO.getNctIdentifier())) {
+            PAServiceUtils util = new PAServiceUtils();
+            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.STUDY_PROTOCOL_II);
+            String nctValidationResultString = util.validateNCTIdentifier(gtdDTO.getNctIdentifier(), studyProtocolIi);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                addFieldError("gtdDTO.nctIdentifier", nctValidationResultString);
+            }
+        }
         
     }
 

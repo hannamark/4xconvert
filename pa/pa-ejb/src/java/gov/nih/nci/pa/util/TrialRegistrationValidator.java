@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
@@ -92,7 +91,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -161,7 +159,10 @@ public class TrialRegistrationValidator {
     private static final String CREATION = "Create";
     private static final String REJECTION = "Reject";
     private static final String UPDATE = "Update";
-    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
+    /**
+     * Validation Exception.
+     */
+    public static final String VALIDATION_EXCEPTION = "Validation Exception ";
 
     /**
      * The set of DocumentWorkflowStatusCode that cause an error for amendment.
@@ -547,6 +548,7 @@ public class TrialRegistrationValidator {
      * @param studyResourcingDTOs The list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studyIndldeDTOs The list of study Ind/ides
+     * @param nctIdentifierDTO The NCT identifier
      * @throws PAException If any validation error happens
      */
     // CHECKSTYLE:OFF More than 7 Parameters
@@ -556,7 +558,8 @@ public class TrialRegistrationValidator {
             OrganizationDTO summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
             PersonDTO principalInvestigatorDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
-            List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
+            List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
+            StudySiteDTO nctIdentifierDTO) throws PAException {
         // CHECKSTYLE:ON
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
@@ -575,6 +578,14 @@ public class TrialRegistrationValidator {
         validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+            String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
+                   nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), studyProtocolDTO
+                   .getIdentifier());
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                errorMsg.append(nctValidationResultString);
+            }       
+        }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
@@ -866,6 +877,7 @@ public class TrialRegistrationValidator {
      * @param studyResourcingDTOs The list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studyIndldeDTOs The list of study Ind/ides
+     * @param nctIdentifierDTO The NCT identifier
      * @throws PAException If any validation error happens
      */
     // CHECKSTYLE:OFF More than 7 Parameters
@@ -876,7 +888,7 @@ public class TrialRegistrationValidator {
             PersonDTO principalInvestigatorDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
-            List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
+            List<StudyIndldeDTO> studyIndldeDTOs, StudySiteDTO nctIdentifierDTO) throws PAException {
         // CHECKSTYLE:ON
         validateStudyProtocol(studyProtocolDTO);
         StringBuilder errorMsg = new StringBuilder();
@@ -893,6 +905,13 @@ public class TrialRegistrationValidator {
                                       responsiblePartyContactIi, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+            String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
+                   nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), null);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                errorMsg.append(nctValidationResultString);
+            }       
+        }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
@@ -1031,7 +1050,13 @@ public class TrialRegistrationValidator {
                                               leadOrganizationStudySiteDTO, studySiteDTO, summary4StudyResourcingDTO,
                                               errorMsg);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
-        validateNCTIdentifier(nctIdentifierDTO, errorMsg);
+        if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+            String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
+                   nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), null);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                errorMsg.append(nctValidationResultString);
+            }       
+        }
         validatePhasePurposeAndTemplateDocument(studyProtocolDTO, documentDTOs, nctIdentifierDTO, errorMsg);
         errorMsg.append(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
         errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", false));
@@ -1072,26 +1097,6 @@ public class TrialRegistrationValidator {
         } else {
             check(ISOUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier()),
                   "Submitting Organization Local Trial Identifier cannot be null, ", errorMsg);
-        }
-    }
-
-    /**
-     * Validation of NCT identifier.
-     * @param nctIdentifierDTO The ncdIdentifier
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validateNCTIdentifier(StudySiteDTO nctIdentifierDTO, StringBuilder errorMsg) {
-        try {
-            if (!ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-                Cd functionalCode = CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-                nctIdentifierDTO.setFunctionalCode(functionalCode);
-                String poOrgId = ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
-                Ii ii = IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId));
-                nctIdentifierDTO.setResearchOrganizationIi(ocsr.getPoResearchOrganizationByEntityIdentifier(ii));
-                studySiteService.validate(nctIdentifierDTO);
-            }
-        } catch (PAException e) {
-            errorMsg.append(e.getMessage());
         }
     }
 

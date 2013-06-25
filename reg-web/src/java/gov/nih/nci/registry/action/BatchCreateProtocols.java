@@ -310,12 +310,14 @@ public class BatchCreateProtocols {
                 }
             }
         }
+        List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+        studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));        
 
         // get the values from db and update only those are needed and then convert
-        PaRegistry.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, 
-                                                        documentDTOs, null, null, 
-                                                        BlConverter.convertToBl(Boolean.TRUE));
-
+        PaRegistry.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs, null, 
+                studyResourcingDTOs, documentDTOs, null, null, null, null, null, 
+                null, null, null, null, BlConverter.convertToBl(Boolean.TRUE));
+        
         return studyProtocolIi;
     }
 

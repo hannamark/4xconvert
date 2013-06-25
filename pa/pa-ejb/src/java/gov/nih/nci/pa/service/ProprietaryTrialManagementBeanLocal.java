@@ -369,7 +369,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
         }
-        validateNctAndProtocolDoc(nctIdentifier, documentDTOs, errorMsg);
+        validateNctAndProtocolDoc(nctIdentifier, documentDTOs, studyProtocolDTO.getIdentifier(), errorMsg);
         validateStudySites(studySiteDTOs, studySiteAccrualDTOs, errorMsg);
         validateDocWrkStatus(studyProtocolDTO, errorMsg);
         validateDocuments(documentDTOs, errorMsg);
@@ -408,7 +408,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     }
 
     private void validateNctAndProtocolDoc(St nctIdentifier,
-            List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {
+            List<DocumentDTO> documentDTOs, Ii studyProtocolIi, StringBuffer errorMsg) {
         if (ISOUtil.isStNull(nctIdentifier)) {
             boolean hasProtocolDoc = false;
             for (DocumentDTO doc : documentDTOs) {
@@ -421,6 +421,13 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             if (!hasProtocolDoc) {
                 errorMsg.append("Provide either NCT Number or Protocol Trial Template ");
             }
+        }
+        if (nctIdentifier != null && StringUtils.isNotEmpty(nctIdentifier.getValue())) {
+            String nctValidationResultString = 
+                    getPAServiceUtils().validateNCTIdentifier(nctIdentifier.getValue(), studyProtocolIi);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                errorMsg.append(nctValidationResultString);
+            }       
         }
     }
 

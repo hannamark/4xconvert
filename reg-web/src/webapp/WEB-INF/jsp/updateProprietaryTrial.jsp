@@ -86,6 +86,16 @@
               $(it).style.display = (vis == "block") ? "none" : "block";
             }
             
+            function addNCTIdentifier() {
+                var  url = '/registry/protected/ajaxManageOtherIdentifiersActionaddNCTIdentifier.action';
+                var params = {
+                        nctIdentifier: trim($("nctId").value)
+                };
+                var div = $('nctIdentifierdiv');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
+            
         </script>
     </head>
     <body>
@@ -124,9 +134,14 @@
                     <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier">
                         <s:property value="trialDTO.leadOrgTrialIdentifier" />                        
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.nctIdentifier" labelKey="submit.trial.nctNumber">
-                        <s:property value="trialDTO.nctIdentifier"/>
-                    </reg-web:valueRow>
+                    <tr>
+                        <td scope="row" class="label-noinput">
+                            <fmt:message key="submit.trial.nctNumber"/>
+                        </td>
+                        <td>
+                            <%@ include file="/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp" %>                    
+                        </td>
+                    </tr>
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
                     <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title">
                         <s:property value="trialDTO.officialTitle"/>

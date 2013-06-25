@@ -204,6 +204,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         util.getProprietaryTrialDTOFromDb(studyProtocolIi, currentDTO);
         currentDTO.setParticipatingSitesList(getTrialDTO()
                 .getParticipatingSitesList());
+        currentDTO.setNctIdentifier(getTrialDTO().getNctIdentifier());
         setTrialDTO(currentDTO);
         ServletActionContext.getRequest().getSession()
                 .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, currentDTO);
