@@ -1300,5 +1300,9 @@
      <changeSet id="PO-5961" author="monishd">
         <comment>Revise system-generated email messages</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5961.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-6248" author="Hugh">
+        <comment>Add new Grants data elements and application properties.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6248.sql"/>
+     </changeSet>
 </databaseChangeLog>

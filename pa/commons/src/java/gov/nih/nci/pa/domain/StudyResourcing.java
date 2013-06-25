@@ -119,6 +119,7 @@ public class StudyResourcing extends AbstractStudyEntity implements Auditable {
     private String serialNumber;
     private Boolean activeIndicator;
     private String inactiveCommentText;
+    private Double fundingPercent;
 
     /**
      *
@@ -264,5 +265,18 @@ public class StudyResourcing extends AbstractStudyEntity implements Auditable {
      */
     public void setInactiveCommentText(String inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
+    }
+    /**
+     * @return the fundingPercent
+     */
+    @Column(name = "FUNDING_PERCENT")
+    public Double getFundingPercent() {
+        return fundingPercent;
+    }
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(Double fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
 }

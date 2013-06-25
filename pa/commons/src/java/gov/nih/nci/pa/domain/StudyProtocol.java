@@ -174,6 +174,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Integer processingPriority;
     private User assignedUser;
     private Boolean ctroOverride;
+    private Boolean nciGrant;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -923,6 +924,22 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
+    }
+
+    /**
+     * @return the nciGrant
+     */
+    @Column(name = "nci_grant")
+    @Searchable
+     public Boolean getNciGrant() {
+        return nciGrant;
+    }
+
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Boolean nciGrant) {
+        this.nciGrant = nciGrant;
     }
 
 }
