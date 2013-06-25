@@ -244,38 +244,29 @@ public abstract class AbstractTsrReportGenerator {
         addReportDate();
         addReportRecordVerificationDate();
         getReportDocument().add(getLineBreak());
-        if (!isProprietaryTrial()) {
-            addTrialIdentificationTable();
-            addTrialAssociationsTable();
-            addGeneralTrialDetailsTable();
-            addStatusDatesTable();
-            addRegulatoryInformationTable();
-            addHumanSubjectSafetyTable();
-            addIndIdeTable();
-            addNihGrantsTable();
-            addSummary4InformationTable();
-            addCollaboratorsTable();
-            addDiseaseConditionTable();
-            addTrialDesignTable();
-            addEligibilityCriteriaTable();
-            addInterventionsTable();
-            addArmGroupsTable();
-            addPrimaryOutcomesMeasuresTable();
-            addSecondaryOutcomesMeasuresTable();
-            addOtherOutcomesMeasuresTable();
-            addSubGroupsStratificationCriteriaTable();
-            addPlannedMarkers();
-            addParticipatingSitesTable();
-        } else {
-            addTrialIdentificationTable();
-            addTrialAssociationsTable();
-            addGeneralTrialDetailsTable();
-            addSummary4InformationTable();
-            addDiseaseConditionTable();
-            addInterventionsTable();
-            addPlannedMarkers();
-            addParticipatingSitesTable();
-        }
+        
+        addTrialIdentificationTable();
+        addTrialAssociationsTable();
+        addGeneralTrialDetailsTable();
+        addStatusDatesTable();
+        addRegulatoryInformationTable();
+        addHumanSubjectSafetyTable();
+        addIndIdeTable();
+        addNihGrantsTable();
+        addSummary4InformationTable();
+        addCollaboratorsTable();
+        addDiseaseConditionTable();
+        addTrialDesignTable();
+        addEligibilityCriteriaTable();
+        addInterventionsTable();
+        addArmGroupsTable();
+        addPrimaryOutcomesMeasuresTable();
+        addSecondaryOutcomesMeasuresTable();
+        addOtherOutcomesMeasuresTable();
+        addSubGroupsStratificationCriteriaTable();
+        addPlannedMarkers();
+        addParticipatingSitesTable();
+         
         getReportDocument().close();
     }
 
@@ -416,10 +407,9 @@ public abstract class AbstractTsrReportGenerator {
             }
 
             addTableRow(table, TSRReportLabelText.TI_NCT_NUMBER, trialInfo.getNctNumber());
-            addTableRow(table, TSRReportLabelText.TI_DCP_IDENTIFIER, trialInfo.getDcpIdentifier());
-            addTableRow(table, TSRReportLabelText.TI_CTEP_IDENTIFIER, trialInfo.getCtepIdentifier());
-
             if (!isProprietaryTrial()) {
+                addTableRow(table, TSRReportLabelText.TI_DCP_IDENTIFIER, trialInfo.getDcpIdentifier());
+                addTableRow(table, TSRReportLabelText.TI_CTEP_IDENTIFIER, trialInfo.getCtepIdentifier());
                 addTableRow(table, TSRReportLabelText.TI_AMENDMENT_NUMBER, trialInfo
                         .getAmendmentNumber());
                 addTableRow(table, TSRReportLabelText.TI_AMENDMENT_DATE, trialInfo.getAmendmentDate());
@@ -433,36 +423,29 @@ public abstract class AbstractTsrReportGenerator {
     private void addGeneralTrialDetailsTable() throws DocumentException {
         if (getGeneralTrialDetails() != null) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_GENERAL_TRIAL_DETAILS, false);
+            
+            addTableRow(table, TSRReportLabelText.TYPE, getGeneralTrialDetails().getType());
             addTableRow(table, TSRReportLabelText.GTD_OFFICIAL_TITLE, getGeneralTrialDetails().getOfficialTitle());
-
-            if (!isProprietaryTrial()) {
-                addTableRow(table, TSRReportLabelText.GTD_BRIEF_TITLE, getGeneralTrialDetails().getBriefTitle());
-                addTableRow(table, TSRReportLabelText.GTD_ACRONYM, getGeneralTrialDetails().getAcronym());
-                addTableRow(table, TSRReportLabelText.GTD_BRIEF_SUMMARY, getGeneralTrialDetails().getBriefSummary(), 2);
-                addTableRow(table, TSRReportLabelText.GTD_DETAILED_DESCRIPTION, getGeneralTrialDetails()
-                        .getDetailedDescription(), 2);
-                addTableRow(table, TSRReportLabelText.GTD_KEYWORDS, getGeneralTrialDetails().getKeywords());
-                addTableRow(table, TSRReportLabelText.GTD_REPORTING_DATASET_METHOD, getGeneralTrialDetails()
-                        .getReportingDatasetMethod());
-                addTableRow(table, TSRReportLabelText.GTD_SPONSOR, getGeneralTrialDetails().getSponsor());
-                addTableRow(table, TSRReportLabelText.GTD_LEAD_ORGANIZATION, getGeneralTrialDetails()
-                        .getLeadOrganization());
-                addTableRow(table, TSRReportLabelText.GTD_PI, getGeneralTrialDetails().getPi());
-                addTableRow(table, TSRReportLabelText.GTD_RESPONSIBLE_PARTY, getGeneralTrialDetails()
-                        .getResponsibleParty());
-                addTableRow(table, TSRReportLabelText.GTD_OVERALL_OFFICIAL, getGeneralTrialDetails()
-                        .getOverallOfficial());
-                addTableRow(table, TSRReportLabelText.GTD_CENTRAL_CONTACT,
-                        getGeneralTrialDetails().getCentralContact());
-            } else {
-                addTableRow(table, TSRReportLabelText.TYPE, getGeneralTrialDetails().getType());
-                addPrimaryPurposeRow(table, TSRReportLabelText.GTD_PRIMARY_PURPOSE, getGeneralTrialDetails()
-                        .getPrimaryPurpose(), getGeneralTrialDetails().getPrimaryPurposeOtherText());
-                addPhaseRow(table, TSRReportLabelText.GTD_PHASE, getGeneralTrialDetails().getPhase(),
-                        getGeneralTrialDetails().getPhaseAdditonalQualifier());
-
-            }
-            reportDocument.add(table);
+            addTableRow(table, TSRReportLabelText.GTD_BRIEF_TITLE, getGeneralTrialDetails().getBriefTitle());
+            addTableRow(table, TSRReportLabelText.GTD_ACRONYM, getGeneralTrialDetails().getAcronym());
+            addTableRow(table, TSRReportLabelText.GTD_BRIEF_SUMMARY, getGeneralTrialDetails().getBriefSummary(), 2);
+            addTableRow(table, TSRReportLabelText.GTD_DETAILED_DESCRIPTION, getGeneralTrialDetails()
+                    .getDetailedDescription(), 2);
+            addTableRow(table, TSRReportLabelText.GTD_KEYWORDS, getGeneralTrialDetails().getKeywords());
+            addTableRow(table, TSRReportLabelText.GTD_REPORTING_DATASET_METHOD, getGeneralTrialDetails()
+                    .getReportingDatasetMethod());
+            addTableRow(table, TSRReportLabelText.GTD_SPONSOR, getGeneralTrialDetails().getSponsor());
+            addTableRow(table, TSRReportLabelText.GTD_LEAD_ORGANIZATION, getGeneralTrialDetails()
+                    .getLeadOrganization());
+            addTableRow(table, TSRReportLabelText.GTD_PI, getGeneralTrialDetails().getPi());
+            addTableRow(table, TSRReportLabelText.GTD_RESPONSIBLE_PARTY, getGeneralTrialDetails()
+                    .getResponsibleParty());
+            addTableRow(table, TSRReportLabelText.GTD_OVERALL_OFFICIAL, getGeneralTrialDetails()
+                    .getOverallOfficial());
+            addTableRow(table, TSRReportLabelText.GTD_CENTRAL_CONTACT,
+                    getGeneralTrialDetails().getCentralContact());
+                    reportDocument.add(table);
+                    
             reportDocument.add(getLineBreak());
         }
     }
@@ -500,7 +483,7 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private void addHumanSubjectSafetyTable() throws DocumentException {
-        if (getHumanSubjectSafety() != null) {
+        if (getHumanSubjectSafety() != null && StringUtils.isNotBlank(getHumanSubjectSafety().getBoard())) {
             Table table = getOuterTable(TSRReportLabelText.TABLE_HUMAN_SUBJECT_SAFETY, false);
             addTableRow(table, TSRReportLabelText.HSS_BOARD_APPROVAL_STATUS, getHumanSubjectSafety()
                     .getBoardApprovalStatus());
