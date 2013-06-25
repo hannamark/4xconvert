@@ -101,6 +101,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -141,6 +142,7 @@ public class Family implements Auditable {
         new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipOrgComparator());
     private Set<OrganizationRelationship> organizationRelationships = 
         new HashSet<OrganizationRelationship>();
+    private FamilyP30 familyP30;
 
     /**
      * @return database id
@@ -271,4 +273,18 @@ public class Family implements Auditable {
         this.organizationRelationships = organizationRelationships;
     }
 
+    /**
+     * @return the familyP30
+     */
+    @OneToOne(mappedBy = "family")
+    public FamilyP30 getFamilyP30() {
+        return familyP30;
+    }
+
+    /**
+     * @param familyP30 the familyP30 to set
+     */
+    public void setFamilyP30(FamilyP30 familyP30) {
+        this.familyP30 = familyP30;
+    }
 }
