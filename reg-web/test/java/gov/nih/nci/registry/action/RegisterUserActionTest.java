@@ -231,6 +231,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
         MockHttpServletRequest req = (MockHttpServletRequest) ServletActionContext.getRequest();
         req.setRemoteUser("RegUser");
         assertNull(req.getSession().getAttribute("regUserWebDto"));
+        action.getRegistryUserWebDTO().setAffiliatedOrganizationId(2L);
         assertEquals("myAccount", action.updateAccount());
     }
 

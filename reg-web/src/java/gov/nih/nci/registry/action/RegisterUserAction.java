@@ -409,6 +409,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         if (affiliatedOrgUpdated) {
             try {
                 familyService.unassignAllAccrualAccess(registryUser, registryUser);
+                ServletActionContext.getRequest().getSession().removeAttribute("isSiteAdmin");
             } catch (PAException e) {
                 LOG.error("ERROR REMOVING ACCRUAL ACCESS.", e);
             }
