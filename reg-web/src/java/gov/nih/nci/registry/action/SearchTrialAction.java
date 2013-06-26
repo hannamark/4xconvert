@@ -385,14 +385,18 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
         trialUtils.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);        
-        ServletActionContext.getRequest().setAttribute("leadOrganizationName", trialDTO.getLeadOrganizationName());
-        ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier", trialDTO.getLeadOrgTrialIdentifier());
-        ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
-        ServletActionContext.getRequest().setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
-        ServletActionContext.getRequest().setAttribute("summaryFourOrgName", trialDTO.getSummaryFourOrgName());
-        ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode",
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        request.setAttribute("leadOrganizationName", trialDTO.getLeadOrganizationName());
+        request.setAttribute("leadOrgTrialIdentifier", trialDTO.getLeadOrgTrialIdentifier());
+        request.setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
+        request.setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
+        request.setAttribute("summaryFourOrgName", trialDTO.getSummaryFourOrgName());
+        request.setAttribute("summaryFourFundingCategoryCode",
                 trialDTO.getSummaryFourFundingCategoryCode());
-        ServletActionContext.getRequest().setAttribute("participatingSitesList", trialDTO.getParticipatingSitesList());
+        request.setAttribute("participatingSitesList", trialDTO.getParticipatingSitesList());
+        request.setAttribute(
+                "consortiaTrialCategoryCode",
+                trialDTO.getConsortiaTrialCategoryCode());
     }
 
     private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {

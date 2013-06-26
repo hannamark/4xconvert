@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -157,7 +158,9 @@ public class AbstractStudyProtocolConverter {
         dto.setProgramCodeText(StConverter.convertToSt(bo.getProgramCodeText()));
         dto.setProprietaryTrialIndicator(BlConverter.convertToBl(bo.getProprietaryTrialIndicator()));
         dto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(bo.getCtgovXmlRequiredIndicator()));
-        dto.setDateLastCreated(TsConverter.convertToTs(bo.getDateLastCreated()));        
+        dto.setDateLastCreated(TsConverter.convertToTs(bo.getDateLastCreated()));
+        dto.setConsortiaTrialCategoryCode(CdConverter.convertToCd(bo
+                .getConsortiaTrialCategoryCode()));
     }
     
     private static void convertDatesToDto(StudyProtocolDates dates, AbstractStudyProtocolDTO dto) {
@@ -219,6 +222,11 @@ public class AbstractStudyProtocolConverter {
         bo.setProprietaryTrialIndicator(BlConverter.convertToBoolean(dto.getProprietaryTrialIndicator()));
         setUserLastCreated(dto, bo);
         bo.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(dto.getCtgovXmlRequiredIndicator()));
+        
+        if (dto.getConsortiaTrialCategoryCode() != null) {
+            bo.setConsortiaTrialCategoryCode(ConsortiaTrialCategoryCode
+                    .getByCode(dto.getConsortiaTrialCategoryCode().getCode()));
+        }
     }
 
     /**

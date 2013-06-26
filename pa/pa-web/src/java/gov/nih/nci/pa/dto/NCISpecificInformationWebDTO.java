@@ -92,6 +92,7 @@ public class NCISpecificInformationWebDTO {
     private String organizationIi;
     private String programCodeText;
     private Boolean ctroOverride;
+    private String consortiaTrialCategoryCode;
 
     /**
      * 
@@ -180,6 +181,20 @@ public class NCISpecificInformationWebDTO {
      */
     public void setCtroOverride(Boolean ctroOverride) {
         this.ctroOverride = ctroOverride;
+    }
+
+    /**
+     * @return the consortiaTrialCategoryCode
+     */
+    public String getConsortiaTrialCategoryCode() {
+        return consortiaTrialCategoryCode;
+    }
+
+    /**
+     * @param consortiaTrialCategoryCode the consortiaTrialCategoryCode to set
+     */
+    public void setConsortiaTrialCategoryCode(String consortiaTrialCategoryCode) {
+        this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
 
 }

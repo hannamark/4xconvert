@@ -119,6 +119,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Cd startDateTypeCode;
     private Cd primaryCompletionDateTypeCode;
     private Cd completionDateTypeCode;
+    private Cd consortiaTrialCategoryCode;
 
     /**
      * @return the officialTitle
@@ -426,6 +427,20 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
      */
     public void setDateLastCreated(Ts dateLastCreated) {
         this.dateLastCreated = dateLastCreated;
+    }
+
+    /**
+     * @return the consortiaTrialCategoryCode
+     */
+    public Cd getConsortiaTrialCategoryCode() {
+        return consortiaTrialCategoryCode;
+    }
+
+    /**
+     * @param consortiaTrialCategoryCode the consortiaTrialCategoryCode to set
+     */
+    public void setConsortiaTrialCategoryCode(Cd consortiaTrialCategoryCode) {
+        this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
 
     

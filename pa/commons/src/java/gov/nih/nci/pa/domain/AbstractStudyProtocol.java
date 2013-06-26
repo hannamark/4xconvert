@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -108,6 +109,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  */
 @MappedSuperclass
+@SuppressWarnings("PMD.TooManyFields")
 public abstract class AbstractStudyProtocol extends AbstractEntity {
     
     private static final long serialVersionUID = -4955766661543742428L;
@@ -128,6 +130,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private String officialTitle;
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
+    private ConsortiaTrialCategoryCode consortiaTrialCategoryCode;
 
     
     /**
@@ -366,6 +369,23 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     @Column(name = "PRIMARY_PURPOSE_OTHER_TEXT")
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the consortiaTrialCategoryCode
+     */
+    @Column(name = "consortia_trial_category")
+    @Enumerated(EnumType.STRING)
+    public ConsortiaTrialCategoryCode getConsortiaTrialCategoryCode() {
+        return consortiaTrialCategoryCode;
+    }
+
+    /**
+     * @param consortiaTrialCategoryCode the consortiaTrialCategoryCode to set
+     */
+    public void setConsortiaTrialCategoryCode(
+            ConsortiaTrialCategoryCode consortiaTrialCategoryCode) {
+        this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
   
     

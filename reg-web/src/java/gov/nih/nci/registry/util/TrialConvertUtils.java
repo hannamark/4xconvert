@@ -221,10 +221,12 @@ public class TrialConvertUtils {
         if (trialDTO.getPropritaryTrialIndicator() == null) {
             isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(null));
         } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDTO.getPropritaryTrialIndicator())) {
-            isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
+            isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));            
         } else {
             isoDto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
+        isoDto.setConsortiaTrialCategoryCode(CdConverter
+                .convertStringToCd(trialDTO.getConsortiaTrialCategoryCode()));
         if (trialDTO instanceof TrialDTO) {
             convertToStudyProtocolDTO((TrialDTO) trialDTO, isoDto);
         }      
@@ -967,6 +969,8 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
            convertPropDtoToStage((ProprietaryTrialDTO) trialDto, spStageDTO);
        }
        spStageDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
+        spStageDTO.setConsortiaTrialCategoryCode(CdConverter
+                .convertStringToCd(trialDto.getConsortiaTrialCategoryCode()));
        return spStageDTO;
    }
 
@@ -1186,6 +1190,8 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        trialDto.setDateClosedforAccrual(TsConverter.convertToString(spStageDTO.getClosedForAccrualDate()));
        trialDto.setPropritaryTrialIndicator(CommonsConstant.YES);
        trialDto.setTrialType(StConverter.convertToString(spStageDTO.getTrialType()));
+       trialDto.setConsortiaTrialCategoryCode(CdConverter.convertCdToString(spStageDTO
+               .getConsortiaTrialCategoryCode()));
        return trialDto;
    }
 

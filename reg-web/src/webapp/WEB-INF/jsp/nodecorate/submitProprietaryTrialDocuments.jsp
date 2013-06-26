@@ -41,6 +41,79 @@
       </s:else>
     </td>
   </tr>
+  
+  <tr>
+    <td scope="row" class="label">
+      <reg-web:displayTooltip tooltip="tooltip.irb_approval">
+        <label for="irbApproval"><fmt:message key="submit.trial.irbApproval"/></label>
+      </reg-web:displayTooltip>
+    </td>
+    <td class="value">
+      <s:if test="%{#session.irbApprovalDoc.typeCode.equals('IRB Approval Document')}">
+        <s:property value="%{#session.irbApprovalDoc.fileName}"/>
+        <c:if test="${!(disableDocumentDeletion==true)}">
+            <input id="irbApproval" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"/>
+        </c:if>
+      </s:if>
+      <s:else>
+        <s:file id="irbApproval" name="irbApproval" cssStyle="width:270px"/>
+        <span class="formErrorMsg">
+          <s:fielderror>
+            <s:param>trialDTO.irbApprovalFileName</s:param>
+          </s:fielderror>
+        </span>
+      </s:else>
+    </td>
+  </tr>
+  <tr>
+    <td scope="row" class="label">
+      <reg-web:displayTooltip tooltip="tooltip.list_of_participating_sites">
+        <label for="participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
+      </reg-web:displayTooltip>
+    </td>
+    <td class="value">
+      <s:if test="%{#session.participatingSitesDoc.typeCode.equals('Participating sites')}">
+        <s:property value="%{#session.participatingSitesDoc.fileName}"/>
+        <c:if test="${!(disableDocumentDeletion==true)}">
+            <input id="participatingSites" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"/>
+        </c:if>
+      </s:if>
+      <s:else>
+        <s:file id="participatingSites" name="participatingSites" cssStyle="width:270px"/>
+        <span class="formErrorMsg">
+          <s:fielderror>
+            <s:param>trialDTO.participatingSitesFileName</s:param>
+          </s:fielderror>
+        </span>
+      </s:else>
+    </td>
+  </tr>
+  <tr>
+  <td scope="row" class="label">
+    <reg-web:displayTooltip tooltip="tooltip.informed_consent_document">
+      <label for="informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
+    </reg-web:displayTooltip>
+  </td>
+  <td class="value">
+    <s:if test="%{#session.informedConsentDoc.typeCode.equals('Informed Consent Document')}">
+      <s:property value="%{#session.informedConsentDoc.fileName}"/>
+      <c:if test="${!(disableDocumentDeletion==true)}">
+        <input id="informedConsentDocument" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"/>
+      </c:if>
+    </s:if>
+    <s:else>
+      <s:file id="informedConsentDocument" name="informedConsentDocument" cssStyle="width:270px"/>
+        <span class="formErrorMsg">
+          <s:fielderror>
+            <s:param>trialDTO.informedConsentDocumentFileName</s:param>
+          </s:fielderror>
+        </span>
+      </s:else>
+    </td>
+  </tr>  
+  
+  
+  
   <c:set var="hasOtherDocs" scope="request" value="${not empty sessionScope.otherDoc}"/>
   <c:forEach items="${sessionScope.otherDoc}" var="doc" varStatus="varStatus">
   <tr>

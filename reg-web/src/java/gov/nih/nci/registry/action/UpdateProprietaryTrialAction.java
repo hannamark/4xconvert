@@ -191,6 +191,9 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         final HttpSession session = ServletActionContext.getRequest().getSession();
         session.removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
+        session.removeAttribute(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName());
+        session.removeAttribute(DocumentTypeCode.PARTICIPATING_SITES.getShortName());
+        session.removeAttribute(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getShortName());
         session.removeAttribute(DocumentTypeCode.OTHER.getShortName());
         session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, getTrialDTO());
         return "review";

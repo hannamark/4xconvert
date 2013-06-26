@@ -227,6 +227,12 @@
                                 <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
                                     <c:out value="${trialDTO.summaryFourOrgName}"/>
                                 </reg-web:valueRow>
+                                <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">
+	                                <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
+	                                    <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'No':'Yes - '}"/>
+	                                    <c:out value="${trialDTO.consortiaTrialCategoryCode}"/>
+	                                </reg-web:valueRow>
+                                </c:if>
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
                                 <c:if test="${trialDTO.programCodeText != ''}">

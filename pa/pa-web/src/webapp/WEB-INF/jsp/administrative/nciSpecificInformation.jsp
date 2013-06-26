@@ -114,6 +114,27 @@
                         </td>
                         
                     </tr>
+                    
+                    <c:if test="${sessionScope.trialSummary.proprietaryTrial}">
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"><fmt:message key="studyProtocol.consortiaTrialCategoryCode"/></label>
+                        </td>                        
+                        <td class="value">
+                            <s:select headerKey="" headerValue="No"
+                                  id="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
+                                  name="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
+                                  list="#{'National':'Yes - National', 'Externally Peer-Reviewed':'Yes - Externally Peer-Reviewed'}"
+                                  cssStyle="width:206px" />                           
+                            <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                    <s:param>nciSpecificInformationWebDTO.consortiaTrialCategoryCode</s:param>
+                                </s:fielderror>                            
+                            </span>
+                        </td>                                  
+                    </tr>      
+                    </c:if>
+                    
                     <tr>
                         <td scope="row" class="label">
                             <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>

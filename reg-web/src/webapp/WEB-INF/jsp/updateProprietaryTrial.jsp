@@ -118,6 +118,7 @@
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
                 <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+                <s:hidden name="trialDTO.consortiaTrialCategoryCode" id="trialDTO.consortiaTrialCategoryCode"/>
                 <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
                     <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
                 </c:if>
@@ -220,6 +221,10 @@
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
                         <s:property value="trialDTO.summaryFourOrgName" />
+                    </reg-web:valueRow>
+                    <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
+                                    <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'No':'Yes - '}"/>
+                                    <c:out value="${trialDTO.consortiaTrialCategoryCode}"/>
                     </reg-web:valueRow>
                     <reg-web:spaceRow/>
                     <reg-web:spaceRow/>

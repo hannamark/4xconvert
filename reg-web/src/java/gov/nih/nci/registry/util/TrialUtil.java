@@ -907,6 +907,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStudyProtocolId(spqDto.getStudyProtocolId().toString());
         trialDTO.setLeadOrgTrialIdentifier(spqDto.getLocalStudyProtocolIdentifier());
+        trialDTO.setConsortiaTrialCategoryCode(CdConverter.convertCdToString(spDTO.getConsortiaTrialCategoryCode()));
         copyLO(getCorrelationUtils().getPAOrganizationByIi(
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);

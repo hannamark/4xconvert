@@ -945,6 +945,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         getPAServiceUtils().executeSql(sql);
     }
 
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     private StudyProtocolDTO getStudyProtocolForCreateOrAmend(StudyProtocolDTO studyProtocolDTO, String operation)
             throws PAException {
         StudyProtocolDTO createStudyProtocolDTO = new InterventionalStudyProtocolDTO();
@@ -981,6 +982,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(studyProtocolDTO
                 .getDataMonitoringCommitteeAppointedIndicator());
         createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
+        createStudyProtocolDTO.setConsortiaTrialCategoryCode(studyProtocolDTO.getConsortiaTrialCategoryCode());
         createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {

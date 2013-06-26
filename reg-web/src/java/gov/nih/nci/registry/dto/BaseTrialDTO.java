@@ -45,6 +45,7 @@ public class BaseTrialDTO { // NOPMD
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
     private List<String> secondaryPurposes = new ArrayList<String>();
+    private String consortiaTrialCategoryCode;
     
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
@@ -444,6 +445,18 @@ public class BaseTrialDTO { // NOPMD
      */
     public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
+    }
+    /**
+     * @return the consortiaTrialCategoryCode
+     */
+    public String getConsortiaTrialCategoryCode() {
+        return consortiaTrialCategoryCode;
+    }
+    /**
+     * @param consortiaTrialCategoryCode the consortiaTrialCategoryCode to set
+     */
+    public void setConsortiaTrialCategoryCode(String consortiaTrialCategoryCode) {
+        this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
 
 

@@ -195,6 +195,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         
         //DSETTEL
         result.setRecordOwners(DSETTELTransformer.INSTANCE.toDto(input.getRecordOwners()));
+        result.setConsortiaTrialCategoryCode(CDTransformer.INSTANCE.toDto(input.getConsortiaTrialCategoryCode()));
         return result;
     }
 
@@ -266,6 +267,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         
         // DSET<Tel>
         result.setRecordOwners(DSETTELTransformer.INSTANCE.toXml(input.getRecordOwners()));
+        result.setConsortiaTrialCategoryCode(CDTransformer.INSTANCE.toXml(input.getConsortiaTrialCategoryCode()));
 
         return result;
     }

@@ -262,6 +262,10 @@
                             <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
                                 <c:out value="${requestScope.summaryFourOrgName}"/>
                             </reg-web:valueRow>
+                            <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
+                                    <c:out value="${empty requestScope.consortiaTrialCategoryCode?'No':'Yes - '}"/>
+                                    <c:out value="${requestScope.consortiaTrialCategoryCode}"/>
+                            </reg-web:valueRow>
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                                     && requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'
@@ -272,7 +276,7 @@
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
                                 <c:out value="${requestScope.trialDTO.summaryFourOrgName}"/>
-                            </reg-web:valueRow>
+                            </reg-web:valueRow>                            
                         </c:if>
                         <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
                             <c:if test="${requestScope.trialDTO.summaryFourOrgName == null}">

@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -109,8 +110,9 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     public String review() {
         clearErrorsAndMessages();
         enforceBusinessRules();
+        final HttpServletRequest request = ServletActionContext.getRequest();
         if (hasFieldErrors()) {
-            ServletActionContext.getRequest().setAttribute("failureMessage",
+            request.setAttribute("failureMessage",
                                                            "The form has errors and could not be submitted, "
                                                                    + "please check the fields highlighted below");
             return ERROR;
@@ -121,12 +123,16 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         final ProprietaryTrialDTO trialDTO = getTrialDTO();
         trialDTO.setDocDtos(getTrialDocuments());
         
-        ServletActionContext.getRequest().getSession().removeAttribute(Constants.INDIDE_LIST);
-        ServletActionContext.getRequest().getSession().removeAttribute(Constants.GRANT_LIST);
-        ServletActionContext.getRequest().getSession()
+        final HttpSession session = request.getSession();
+        session.removeAttribute(Constants.INDIDE_LIST);
+        session.removeAttribute(Constants.GRANT_LIST);
+        session
             .removeAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+        session.removeAttribute(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName());
+        session.removeAttribute(DocumentTypeCode.PARTICIPATING_SITES.getShortName());
+        session.removeAttribute(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getShortName());
+        session.removeAttribute(DocumentTypeCode.OTHER.getShortName());
+        session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
 

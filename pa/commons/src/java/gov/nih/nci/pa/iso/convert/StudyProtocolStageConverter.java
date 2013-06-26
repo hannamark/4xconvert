@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyProtocolStage;
+import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -169,6 +170,10 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 .convertToSt(studyProtocolStage.getTimePerspectiveOtherText()));
         studyProtocolStageDTO.setStudySubtypeCode(CdConverter
                 .convertToCd(studyProtocolStage.getStudySubtypeCode()));
+        studyProtocolStageDTO
+                .setConsortiaTrialCategoryCode(CdConverter
+                        .convertToCd(studyProtocolStage
+                                .getConsortiaTrialCategoryCode()));
         
         setSecondaryIdentifiers(studyProtocolStage, studyProtocolStageDTO);
         return studyProtocolStageDTO;
@@ -283,7 +288,10 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                         .getTimePerspectiveOtherText()));
         studyProtocolStage.setStudySubtypeCode(StudySubtypeCode
                 .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
-                        .getStudySubtypeCode())));        
+                        .getStudySubtypeCode())));     
+        studyProtocolStage.setConsortiaTrialCategoryCode(ConsortiaTrialCategoryCode
+                .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                        .getConsortiaTrialCategoryCode())));          
         setOtherIdentifiers(studyProtocolStageDTO, studyProtocolStage);
     }
 

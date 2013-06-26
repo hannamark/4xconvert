@@ -216,7 +216,7 @@
     <body>
         <!-- main content begins-->
         <h1><fmt:message key="submit.trial.page.header"/></h1>
-        <c:set var="topic" scope="request" value="submittrial"/>
+        <c:set var="topic" scope="request" value="submittrial"/>        
         <div class="box" id="filters">
             <reg-web:failureMessage/>
             <s:form name="submitProprietaryTrial" method="POST" enctype="multipart/form-data">
@@ -348,6 +348,20 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
                     </reg-web:valueRow>
+                    
+                    <reg-web:valueRow labelFor="trialDTO.consortiaTrialCategoryCode" labelKey="update.proprietary.trial.consortiaTrialCategoryCode">                                               
+                        <s:select headerKey="" headerValue="No"
+                                  id="trialDTO.consortiaTrialCategoryCode"
+                                  name="trialDTO.consortiaTrialCategoryCode"
+                                  list="#{'National':'Yes - National', 'Externally Peer-Reviewed':'Yes - Externally Peer-Reviewed'}"
+                                  cssStyle="width:206px" />
+                         <span class="formErrorMsg">
+                               <s:fielderror>
+                                   <s:param>trialDTO.consortiaTrialCategoryCode</s:param>
+                               </s:fielderror>
+                         </span>
+                    </reg-web:valueRow>
+                                        
                     <reg-web:valueRow labelFor="trialDTO.siteProgramCodeText" labelKey="submit.proprietary.trial.sitePrgCode" tooltip="tooltip.summary_4_site_program_code">
                         <s:textfield id="trialDTO.siteProgramCodeText" name="trialDTO.siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
                         <span class="formErrorMsg">
