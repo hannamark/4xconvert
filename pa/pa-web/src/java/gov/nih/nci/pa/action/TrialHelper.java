@@ -236,6 +236,8 @@ public class TrialHelper {
     private void saveOtherTrialIdentifier(Ii studyProtocolIi, String otherTrialIdentifier,
             String otherTrialIdentifierType) throws PAException {
         String dbTrialIdentifier = getPaServiceUtils().getStudyIdentifier(studyProtocolIi, otherTrialIdentifierType);
+        String dcpTrialIdentifer = getPaServiceUtils().getStudyIdentifier(
+                studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
         StudySiteDTO trialIdentifierDTO = new StudySiteDTO();
         trialIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(otherTrialIdentifier));
         trialIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -253,6 +255,13 @@ public class TrialHelper {
             try {
                 List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().search(trialIdentifierDTO, pagingParams);
                 PaRegistry.getStudySiteService().delete(((StudySiteDTO) PAUtil.getFirstObj(spDtos)).getIdentifier());
+                if (PAConstants.NCT_IDENTIFIER_TYPE
+                        .equals(otherTrialIdentifierType)
+                        && StringUtils.isNotEmpty(dcpTrialIdentifer)) {
+                    PaRegistry.getMailManagerService()
+                            .sendNCTIDChangeNotificationMail(studyProtocolIi, "Null",
+                                    dbTrialIdentifier);
+                }
             } catch (TooManyResultsException e) {
                 throw new PAException(e);
             }

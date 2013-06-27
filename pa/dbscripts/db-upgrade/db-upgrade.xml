@@ -1309,4 +1309,8 @@
         <comment>Added consortia trials category</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5365.sql"/>
      </changeSet>
+     <changeSet id="PO-6244" author="Monish">
+        <comment>NCT ID value changes email template</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6244.sql"/>
+     </changeSet>      
 </databaseChangeLog>

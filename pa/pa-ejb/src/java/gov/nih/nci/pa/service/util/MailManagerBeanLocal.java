@@ -1651,4 +1651,52 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
         sendTrialOwnershipChangeEmail(userID, trialID, mailBody, mailSubject);
     }
+
+    
+    private RegistryUser getDCPUser() throws PAException {
+        RegistryUser dcpRegUser = null;
+        String dcpUser = lookUpTableService
+                .getPropertyValue("dcp.user");
+        if (StringUtils.isNotEmpty(dcpUser)) {
+            String dcpUserLoginName = PaEarPropertyReader.getNciLdapPrefix() + dcpUser;
+            dcpRegUser = registryUserService.getUser(dcpUserLoginName);
+        }
+        return dcpRegUser;
+    }
+
+    @Override
+    public void sendNCTIDChangeNotificationMail(Ii studyProtocolIi,
+            String newNCT, String oldNCT) {
+        try {
+            RegistryUser dcpRegUser = getDCPUser();
+            if (dcpRegUser != null) {
+                StudyProtocolQueryDTO spDTO = protocolQueryService
+                        .getTrialSummaryByStudyProtocolId(IiConverter
+                                .convertToLong(studyProtocolIi));
+
+                String mailBody = lookUpTableService
+                        .getPropertyValue("nct.change.notification.body");
+                mailBody = commonMailBodyReplacements(spDTO, mailBody);
+                mailBody = mailBody.replace("${previousNCTIdentifier}",
+                        StringUtils.isNotEmpty(oldNCT) ? oldNCT : "Null");
+                mailBody = mailBody.replace("${newNCTIdentifier}",
+                        StringUtils.isNotEmpty(newNCT) ? newNCT : "Null");
+                mailBody = mailBody.replace(OWNER_NAME,
+                        getFullUserName(dcpRegUser));
+
+                String mailSubject = lookUpTableService
+                        .getPropertyValue("nct.change.notification.subject");
+                mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+                mailSubject = mailSubject.replace("${dcpTrialIdentifier}",
+                        getDCPIdentifier(spDTO.getStudyProtocolId()));
+
+                sendMailWithHtmlBody(dcpRegUser.getEmailAddress(), mailSubject,
+                        mailBody);
+            }
+
+        } catch (Exception e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }
+    }
+         
 }

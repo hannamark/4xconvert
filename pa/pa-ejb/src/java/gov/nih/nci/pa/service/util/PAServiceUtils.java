@@ -1653,6 +1653,7 @@ public class PAServiceUtils {
        * @throws PAException on error
        */
     public void manageStudyIdentifiers(StudySiteDTO identifierDTO) throws PAException {
+        boolean isNCT = false;
         if (identifierDTO == null) {
             throw new PAException("Identifier DTO cannot be null");
         }
@@ -1679,8 +1680,19 @@ public class PAServiceUtils {
                 Long roId = PaRegistry.getOrganizationCorrelationService()
                     .createResearchOrganizationCorrelations(poSrDto.getPlayerIdentifier().getExtension());
                 srRO = getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(String.valueOf(roId)));
+            } else {
+                if (srRO instanceof ResearchOrganization
+                        && StringUtils.equals(PAConstants.CTGOV_ORG_NAME,
+                                ((ResearchOrganization) srRO).getOrganization()
+                                        .getName())
+                        && StringUtils.equals(
+                                StudySiteFunctionalCode.IDENTIFIER_ASSIGNER
+                                        .getCode(), identifierDTO
+                                        .getFunctionalCode().getCode())) {
+                    isNCT = true;
+                }
             }
-            // here only using pa ro id but expecting allways po ro id
+            // here only using pa ro id but expecting always po ro id
             identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));
         }
         // check if any record is there in db
@@ -1705,7 +1717,24 @@ public class PAServiceUtils {
         }
         List<StudySiteDTO> newSiteDTOS = new ArrayList<StudySiteDTO>();
         newSiteDTOS.add(identifierDTO);
+        
+        String existingNCT = getStudyIdentifier(
+                identifierDTO.getStudyProtocolIdentifier(),
+                PAConstants.NCT_IDENTIFIER_TYPE);
+        
         createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null), identifierDTO.getStudyProtocolIdentifier());
+        
+        String newNCT = StConverter.convertToString(identifierDTO.getLocalStudyProtocolIdentifier());
+        if (isNCT
+                && StringUtils.isNotEmpty(getStudyIdentifier(
+                        identifierDTO.getStudyProtocolIdentifier(),
+                        PAConstants.DCP_IDENTIFIER_TYPE))
+                && !StringUtils.equals(existingNCT, newNCT)) {
+
+            PaRegistry.getMailManagerService().sendNCTIDChangeNotificationMail(
+                    identifierDTO.getStudyProtocolIdentifier(), newNCT,
+                    existingNCT);
+        }
     }
     /**
      * Gets the country name of the entity (organization of person).
@@ -2171,5 +2200,4 @@ public class PAServiceUtils {
         }
         return nctIdentifierDTO;
     }
-    
 }

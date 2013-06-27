@@ -367,4 +367,12 @@ public interface MailManagerService {
     void sendMailWithHtmlBody(String mailFrom, String mailTo,
             List<String> mailCc, String mailSubject, String mailBody);
     
+    /**
+     * Sends an email to DCP 
+     * @param studyProtocolIi protocol id
+     * @param newNCT new NCT ID
+     * @param oldNCT old NCT ID
+     */
+    void sendNCTIDChangeNotificationMail(Ii studyProtocolIi, String newNCT, String oldNCT);
+    
 }
