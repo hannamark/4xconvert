@@ -683,11 +683,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public Long getAccrualCounts(Boolean industrialTrial, Long studyProtocolId) throws PAException {
+    public Long getAccrualCounts(Boolean subjects, Long studyProtocolId) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         Long result = 0L;
         Query sqlCount;
-        if (industrialTrial) {
+        if (!subjects) {
             sqlCount = session.createSQLQuery("select count(*) from study_site_subject_accrual_count where "
                         + "study_protocol_identifier = " + studyProtocolId);
             result = Long.valueOf(sqlCount.uniqueResult().toString());

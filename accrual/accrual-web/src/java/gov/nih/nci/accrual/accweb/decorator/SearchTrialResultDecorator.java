@@ -142,4 +142,17 @@ public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTri
        return false;
    }
 
+   /**
+    *
+    * @return trialType as a String
+    */
+   public String getTrialType() {
+       St trialType = ((SearchTrialResultDto) getCurrentRowObject()).getTrialType();
+
+       if (trialType != null) {
+           return StConverter.convertToString(trialType);
+       }
+       return "";
+   }
+
 }

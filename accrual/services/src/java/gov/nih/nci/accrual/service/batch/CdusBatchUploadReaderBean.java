@@ -271,8 +271,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, errMsg);
         Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
         importResult.setNciIdentifier(ii.getExtension());
+        List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);        
         if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
-            Long accrualCnts = subjectAccrualService.getAccrualCounts(spDto.getProprietaryTrialIndicator().getValue(), 
+            Long accrualCnts = subjectAccrualService.getAccrualCounts(CollectionUtils.isNotEmpty(patientLines), 
                     IiConverter.convertToLong(spDto.getIdentifier()));
             if (accrualCnts == 0) {
                 validationResult.setChangeCode(AccrualChangeCode.YES);
@@ -283,7 +284,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             return importResult;
         }
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
-        List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
         count = generateSubjectAccruals(spDto.getIdentifier(), patientLines, 
                 batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);

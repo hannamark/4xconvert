@@ -174,6 +174,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertEquals("invalid", action.execute());
     }
 
+    @Test
+    public void executeNonInterventionalTrial() {
+		action = new PatientAction();
+        action.setUnitedStatesId(1L);
+        action.setStudyProtocolId(2L);
+        action.prepare();
+        assertEquals("success", action.execute());
+	}
+
     @Override
     @Test
     public void executeTest() {

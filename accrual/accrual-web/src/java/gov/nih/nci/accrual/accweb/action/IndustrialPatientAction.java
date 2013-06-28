@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -157,7 +158,8 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     private boolean isSessionTrialNotIndustrial() {
         SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
                 .getAttribute("trialSummary");
-        return !BlConverter.convertToBoolean(trialSummary.getIndustrial());
+        return !BlConverter.convertToBoolean(trialSummary.getIndustrial())
+                && StConverter.convertToString(trialSummary.getTrialType()).equals("Interventional");
     }
 
     /**

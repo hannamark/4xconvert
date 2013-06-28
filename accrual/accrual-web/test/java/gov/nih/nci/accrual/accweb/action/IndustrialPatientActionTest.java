@@ -160,6 +160,13 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         action.prepare();
         assertEquals("invalid", action.execute());
     }
+    
+    @Test
+    public void executeNonInterventionalTrial() {
+		action.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        assertEquals("success", action.execute());
+	}
 
     @Test
     public void update() {

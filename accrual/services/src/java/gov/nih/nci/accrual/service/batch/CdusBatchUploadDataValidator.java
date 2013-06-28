@@ -124,6 +124,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.ArrayUtils;
@@ -258,7 +259,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
                 } 
               }
-             validateDiseaseCodeSystem(errMsg);
+              if (!sp.getProprietaryTrialIndicator().getValue() && CollectionUtils.isNotEmpty(patientLines)) {
+                validateDiseaseCodeSystem(errMsg);
+              }
             }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {

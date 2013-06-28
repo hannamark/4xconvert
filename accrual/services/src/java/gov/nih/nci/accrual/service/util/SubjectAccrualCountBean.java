@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -212,7 +213,8 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
     private void assertIndustrialAccrualAccess(StudySite site) throws PAException {
         SearchTrialResultDto trialSummary = searchTrialService.getTrialSummaryByStudyProtocolIi(IiConverter
                 .convertToStudyProtocolIi(site.getStudyProtocol().getId()));
-        if (!BlConverter.convertToBool(trialSummary.getIndustrial())) {
+        if (!BlConverter.convertToBool(trialSummary.getIndustrial())
+                && StConverter.convertToString(trialSummary.getTrialType()).equals("Interventional")) {
             throw new PAException("Action can not be performed as the participating site (" + site.getId() 
                     + ") does not belong to an Industrial trial.");
         }

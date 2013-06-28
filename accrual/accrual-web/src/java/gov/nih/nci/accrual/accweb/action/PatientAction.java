@@ -96,9 +96,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
-import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -131,7 +129,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     private SearchPatientsCriteriaWebDto criteria;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private PatientWebDto patient;
-    private EligibleGenderCode genderCriterion;
     private final PatientHelper helper = new PatientHelper(this);
     private String deleteReason;
     private static List<String> reasonsList = new ArrayList<String>();
@@ -196,7 +193,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     private boolean isSessionTrialIndustrial() {
         SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
                 .getAttribute("trialSummary");
-        return BlConverter.convertToBoolean(trialSummary.getIndustrial());
+        return BlConverter.convertToBoolean(trialSummary.getIndustrial()) 
+                && StConverter.convertToString(trialSummary.getTrialType()).equals("Interventional");
     }
 
     /**
@@ -491,26 +489,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
             }
         }
         return listOfStudySites;
-    }
-
-    EligibleGenderCode getGenderCriterion() {
-        if (genderCriterion == null) {
-            genderCriterion = EligibleGenderCode.BOTH;
-            try {
-                List<PlannedEligibilityCriterionDTO> pecList = 
-                    getPlannedActivitySvc().getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
-                for (PlannedEligibilityCriterionDTO pec : pecList) {
-                    if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
-                            StConverter.convertToString(pec.getCriterionName()))) {
-                        genderCriterion = EligibleGenderCode.getByCode(
-                                CdConverter.convertCdToString(pec.getEligibleGenderCode()));
-                    }
-                }
-            } catch (Exception e) {
-                genderCriterion = EligibleGenderCode.BOTH;
-            }
-        }
-        return genderCriterion;
     }
 
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) {

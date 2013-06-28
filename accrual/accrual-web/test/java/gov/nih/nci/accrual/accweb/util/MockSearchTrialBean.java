@@ -105,6 +105,7 @@ public class MockSearchTrialBean implements SearchTrialService {
 
     public static final long NONINDUSTRIAL_STUDY_PROTOCOL_ID = 1l;
     public static final long INDUSTRIAL_STUDY_PROTOCOL_ID = 3l;
+    public static final long NONINTERVENTIONAL_STUDY_PROTOCOL_ID = 2l;
 
     /** mock data. */
     public static List<SearchTrialResultDto> dtos;
@@ -119,15 +120,17 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
         r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
         r.setIndustrial(BlConverter.convertToBl(false));
+        r.setTrialType(StConverter.convertToSt("Interventional"));
         dtos.add(r);
 
         r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(2L));
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(NONINTERVENTIONAL_STUDY_PROTOCOL_ID));
         r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00002"));
         r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        r.setTrialType(StConverter.convertToSt("Non-interventional"));
         r.setIndustrial(BlConverter.convertToBl(false));
         dtos.add(r);
 
@@ -139,6 +142,7 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
         r.setIndustrial(BlConverter.convertToBl(true));
+        r.setTrialType(StConverter.convertToSt("Interventional"));
         dtos.add(r);
     }
 

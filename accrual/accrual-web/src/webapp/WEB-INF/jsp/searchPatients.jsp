@@ -103,6 +103,11 @@ function setDeleteReason(reason){
     </div>
   </s:form>
 
+
+<c:if test="${sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
+    <s:a cssClass="btn" href="industrialPatients.action"><span class="btn_img"><span class="save">Switch to Summary Level Accrual</span></span></s:a><br/><br/>
+</c:if>
+
    <div class="line"></div>
    <h1><fmt:message key="patient.list.header"/></h1>
    <accrual:sucessMessage />

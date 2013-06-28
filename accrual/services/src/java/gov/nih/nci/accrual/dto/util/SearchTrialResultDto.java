@@ -97,6 +97,7 @@ public class SearchTrialResultDto extends AbstractStudyDto {
     private St principalInvestigator;
     private Cd studyStatusCode;
     private Bl industrial;
+    private St trialType;
 
     /**
      * @return the assignedIdentifier
@@ -181,5 +182,17 @@ public class SearchTrialResultDto extends AbstractStudyDto {
      */
     public void setIndustrial(Bl industrial) {
         this.industrial = industrial;
+    }    
+    /**
+     * @return the trialType
+     */
+    public St getTrialType() {
+        return trialType;
+    }
+    /**
+     * @param trialType the trialType to set
+     */
+    public void setTrialType(St trialType) {
+        this.trialType = trialType;
     }
 }

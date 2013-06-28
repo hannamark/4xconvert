@@ -87,8 +87,11 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -202,7 +205,7 @@ public class SearchTrialBean implements SearchTrialService {
         Session session = PaHibernateUtil.getCurrentSession();
         String hql =
             " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
-            + "      sp.id, sos.statusCode, per, sp.proprietaryTrialIndicator "
+            + "      sp, sos.statusCode, per "
             + "from StudyProtocol as sp "
             + "left outer join sp.studyOverallStatuses as sos "
             + "left outer join sp.studyContacts as sc "
@@ -237,12 +240,20 @@ public class SearchTrialBean implements SearchTrialService {
         trial.setLeadOrgName(StConverter.convertToSt((String) obj[ORG_NAME_IDX]));
         trial.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) obj[SS_IDENTIFIER]));
         trial.setOfficialTitle(StConverter.convertToSt((String) obj[SP_TITLE_IDX]));
-        trial.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) obj[SP_ID_IDX]));
+        StudyProtocol sp = (StudyProtocol) obj[SP_ID_IDX];
+        trial.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(sp.getId()));
         trial.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) obj[SOS_STATUS_IDX]));
         trial.setIdentifier(trial.getStudyProtocolIdentifier());
-        trial.setIndustrial(BlConverter.convertToBl((Boolean) obj[TYPE_CODE_IDX]));
+        trial.setIndustrial(BlConverter.convertToBl(sp.getProprietaryTrialIndicator()));
         Person person = (Person) obj[PERSON_IDX];
         trial.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
+        if (sp instanceof NonInterventionalStudyProtocol) {
+            trial.setTrialType(StConverter.convertToSt("Non-interventional"));
+        } else if (sp instanceof InterventionalStudyProtocol) {
+            trial.setTrialType(StConverter.convertToSt("Interventional"));
+        } else {
+            trial.setTrialType(StConverter.convertToSt(sp.getClass().getName()));
+        }
         return trial;
     }
 

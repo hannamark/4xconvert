@@ -105,6 +105,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -252,6 +253,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
             public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
                 SearchTrialResultDto result = new SearchTrialResultDto();
                 result.setIndustrial(BlConverter.convertToBl(false));
+                result.setTrialType(StConverter.convertToSt("Interventional"));
                 return result;
             }
             

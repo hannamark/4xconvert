@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.AccrualDisease;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 import java.util.ArrayList;
@@ -124,7 +125,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
     }
 
     private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp) {
-        if (sp != null && !sp.getProprietaryTrialIndicator().getValue()) {
+        if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
+                && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
             errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
         }
     }
@@ -144,7 +146,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             StudyProtocolDTO sp, String codeSystem, boolean checkDisease) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean trialType = true;            
-            if (sp != null && sp.getProprietaryTrialIndicator().getValue()) {
+            if (sp != null && sp.getProprietaryTrialIndicator().getValue()
+                    && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
                 trialType = false;
             }
             if (trialType) {

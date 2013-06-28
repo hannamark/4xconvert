@@ -10,6 +10,11 @@ function setCheckbox(index) {
 }
 </script>
 <c:set var="topic" scope="request" value="accrualcount"/>
+
+<c:if test="${sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
+    <s:a cssClass="btn" href="patients.action"><span class="btn_img"><span class="save">Switch to Patient Level Accrual</span></span></s:a><br/><br/>
+</c:if>
+
 <h1>
     <fmt:message key="participatingsite.accrual.count.title" />
 </h1>

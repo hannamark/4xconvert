@@ -123,6 +123,9 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
         ii.setExtension("protocol id 1");
         dto.setStudyProtocolIdentifier(ii);
         dto.setIndustrial(BlConverter.convertToBl(true));
+        ai = new St();
+        ai.setValue("Non-interventional");
+        dto.setTrialType(ai);
         return dto;
     }
 
@@ -186,5 +189,14 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
 
         setNullRow();
         assertFalse(bean.isIndustrial());
+    }
+
+    @Test
+    public void getTrialType() {
+        setDataRow();
+        assertTrue(0 != bean.getTrialType().length());
+
+        setNullRow();
+        assertTrue(0 == bean.getTrialType().length());
     }
 }

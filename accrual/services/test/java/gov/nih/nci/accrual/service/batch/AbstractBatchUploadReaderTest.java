@@ -116,6 +116,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -229,6 +230,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 Ii ii = (Ii) args[0];
                 StudyProtocolDTO dto = new StudyProtocolDTO();
                 dto.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
+                dto.setStudyProtocolType(StConverter.convertToSt(InterventionalStudyProtocol.class.getSimpleName()));
                 Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
                 Ii spSecId = new Ii();
                 spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);

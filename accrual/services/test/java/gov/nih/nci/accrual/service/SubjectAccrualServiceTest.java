@@ -645,7 +645,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     @Test
     public void getAccrualCounts() throws Exception {
     	Long spId = TestSchema.studyProtocols.get(0).getId();
-    	Long cnts = bean.getAccrualCounts(false, spId);
+    	Long cnts = bean.getAccrualCounts(true, spId);
     	assertEquals(Long.valueOf(2), cnts);
     	
     	final Session session = PaHibernateUtil.getCurrentSession();
@@ -654,7 +654,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         protocol.setProprietaryTrialIndicator(true);
         session.update(protocol);
         session.flush();
-        cnts = bean.getAccrualCounts(true, protocol.getId());
+        cnts = bean.getAccrualCounts(false, protocol.getId());
     	assertEquals(Long.valueOf(0), cnts);
     }
     

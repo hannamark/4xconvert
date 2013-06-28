@@ -17,4 +17,5 @@
        </display:column>
        <display:column escapeXml="true" titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.trialStatus" property="studyStatusCode" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="accrual.list.trials.trialType" property="trialType" sortable="true" headerClass="sortable" headerScope="col"/>
    </display:table>

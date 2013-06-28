@@ -108,6 +108,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -117,9 +119,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
-import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -129,7 +129,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -158,6 +157,72 @@ import org.mockito.stubbing.Answer;
  * @author vrushali
  */
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
+	
+	@Test
+	public void testNoninterventionalTrialBatchupload() throws Exception {
+		StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
+        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+        	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+        		StudyProtocolDTO dto = new StudyProtocolDTO();
+        		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
+        		dto.setStudyProtocolType(StConverter.convertToSt(NonInterventionalStudyProtocol.class.getSimpleName()));
+                Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		Ii spSecId = new Ii();
+        		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        		dto.setIdentifier(completeIi);
+        		dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        		spSecId.setExtension("NCI-2013-00001");
+        		secondaryIdentifiers.add(spSecId);
+        		dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+        		return dto;
+        	}
+            });
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
+        File file = new File(this.getClass().getResource("/NonInterventional_Complete.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(0, 1);
+
+        BatchFile r = getResultFromDb();
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("NonInterventional_Complete.txt"));
+        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        AccrualCollections collection = r.getAccrualCollections().get(0);
+        assertTrue(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertEquals("NCI-2013-00001", collection.getNciNumber());
+        assertTrue(StringUtils.isEmpty(collection.getResults()));
+        assertEquals((Integer) 3, collection.getTotalImports());
+        
+        file = new File(this.getClass().getResource("/NonInterventional_accrualCounts.txt").toURI());
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(0, 2);
+
+        r = getResultFromDb();
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("NonInterventional_accrualCounts.txt"));
+        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        collection = r.getAccrualCollections().get(0);
+        assertTrue(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertEquals("NCI-2013-00001", collection.getNciNumber());
+        assertTrue(StringUtils.isEmpty(collection.getResults()));
+        assertEquals((Integer) 2, collection.getTotalImports());
+	}
 	   
     @Test
     public void testSuAbstractorBatchUpload() throws Exception {
@@ -198,7 +263,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
         		StudyProtocolDTO dto = new StudyProtocolDTO();
         		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
-        		Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		dto.setStudyProtocolType(StConverter.convertToSt(InterventionalStudyProtocol.class.getSimpleName()));
+                Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
         		Ii spSecId = new Ii();
         		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         		dto.setIdentifier(IiConverter.convertToIi(sp.getId()));
@@ -300,22 +366,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-
-		PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
-		when(plannedActivitySvc.getPlannedEligibilityCriterionByStudyProtocol(any(Ii.class)))
-        .thenAnswer(new Answer<List<PlannedEligibilityCriterionDTO>>() {
-            public List<PlannedEligibilityCriterionDTO> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
-                List<PlannedEligibilityCriterionDTO> pecList = new ArrayList<PlannedEligibilityCriterionDTO>();
-                dto.setCriterionName(StConverter.convertToSt(PaServiceLocator.ELIG_CRITERION_NAME_GENDER));
-                dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
-                pecList.add(dto);
-                return pecList;
-            }
-        });
-        when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
-        
+		       
         file = new File(this.getClass().getResource("/junit_coverage.txt").toURI());
         batchFile = getBatchFile(file);
         results = readerService.validateBatchData(batchFile);
@@ -851,11 +902,10 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
         when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
         	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
-        		Object[] args = invocation.getArguments();
-        		Ii ii = (Ii) args[0];
         		StudyProtocolDTO dto = new StudyProtocolDTO();
         		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
-        		Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		dto.setStudyProtocolType(StConverter.convertToSt(InterventionalStudyProtocol.class.getSimpleName()));
+                Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
         		Ii spSecId = new Ii();
         		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         		dto.setIdentifier(abbreviatedIi);
