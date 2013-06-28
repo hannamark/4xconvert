@@ -89,11 +89,11 @@
                         <td scope="row" class="label">
                             <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
                         </td>
-                        <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                        
                         <td class="value">
                             <s:select id="summary4TypeCode" headerKey="" headerValue="" 
                                       name="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
-                                      list="#summaryFourFundingCategoryCodeValues"  
+                                      list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"  
                                       value="nciSpecificInformationWebDTO.summaryFourFundingCategoryCode" 
                                       cssStyle="width:206px" />
                             <span class="formErrorMsg"> 
