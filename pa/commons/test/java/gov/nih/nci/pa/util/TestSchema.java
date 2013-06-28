@@ -806,6 +806,20 @@ public class TestSchema {
                 "C34.1", "icdo3 site code");
         addUpdObject(icdo3);
         
+        AccrualDisease icd906 = TestSchema.createAccrualDisease("ICD9", 
+        		"code6", "acute leukemia");
+        addUpdObject(icd906);
+        icd9DiseaseIds.add(icd906.getId());
+        
+        AccrualDisease sdc05 = TestSchema.createAccrualDisease("SDC", "SDC05", 
+        		"acute leukemia");
+        addUpdObject(sdc05);
+        sdcDiseaseIds.add(sdc05.getId());
+        
+        AccrualDisease icd907 = TestSchema.createAccrualDisease("ICD9",
+                "code7", "acute leukemia");
+        addUpdObject(icd907);
+        icd9DiseaseIds.add(icd907.getId());        
 
         // Study On-Hold
         sp = new InterventionalStudyProtocol();

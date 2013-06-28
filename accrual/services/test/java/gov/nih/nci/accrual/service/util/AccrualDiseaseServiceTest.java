@@ -85,7 +85,7 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         assertEquals(1, bean.search(criteria).size());
         criteria.setId(null);
         criteria.setCodeSystem("ICD9");
-        assertEquals(5, bean.search(criteria).size());
+        assertEquals(7, bean.search(criteria).size());
         criteria.setCodeSystem(null);
         criteria.setDiseaseCode("ode1");
         assertEquals(0, bean.search(criteria).size());
@@ -100,6 +100,18 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         criteria.setPreferredName(null);
         criteria.setDiseaseCode("c341");
         assertEquals(1, bean.search(criteria).size());
+        //exercise search results are sorted by code system followed by disease code.
+        criteria.setCodeSystem(null);
+        criteria.setDiseaseCode(null);
+        criteria.setPreferredName("acute leukemia");
+        List<AccrualDisease> diseaseList = bean.search(criteria);
+        assertEquals(3, diseaseList.size());
+        assertEquals("ICD9", diseaseList.get(0).getCodeSystem());
+        assertEquals("code6", diseaseList.get(0).getDiseaseCode());
+        assertEquals("ICD9", diseaseList.get(1).getCodeSystem());
+        assertEquals("code7", diseaseList.get(1).getDiseaseCode());
+        assertEquals("SDC", diseaseList.get(2).getCodeSystem());
+        assertEquals("SDC05", diseaseList.get(2).getDiseaseCode());
     }
 
     @Test

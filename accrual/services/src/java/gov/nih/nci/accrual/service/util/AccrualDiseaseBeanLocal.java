@@ -16,6 +16,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +52,7 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
      * Class required by the AbstractBaseSearchBean sort functionality.
      */
     private enum AccrualDiseaseSortCriterion implements SortCriterion<AccrualDisease> {
-        DISEASE_CODE("diseaseCode", null);
+        DISEASE_CODE("diseaseCode", null), CODE_SYSTEM("codeSystem", null);
 
         private final String orderField;
         private final String leftJoinField;
@@ -127,8 +128,9 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
      */
     @Override
     public List<AccrualDisease> search(AccrualDisease searchCriteria) {
-        PageSortParams<AccrualDisease> params = new PageSortParams<AccrualDisease>(PAConstants.MAX_SEARCH_RESULTS, 0, 
-                AccrualDiseaseBeanLocal.AccrualDiseaseSortCriterion.DISEASE_CODE, false);
+        PageSortParams<AccrualDisease> params = new PageSortParams<AccrualDisease>(
+        PAConstants.MAX_SEARCH_RESULTS, 0, Arrays.asList(AccrualDiseaseSortCriterion.CODE_SYSTEM, 
+        AccrualDiseaseSortCriterion.DISEASE_CODE), false);
         SearchCriteria<AccrualDisease> criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
         List<AccrualDisease> result = super.search(criteria, params);
         if (result.isEmpty() && searchCriteria.getDiseaseCode() != null && !searchCriteria.getDiseaseCode().isEmpty()
