@@ -330,11 +330,11 @@
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
                     <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
-                        <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                        
                         <s:select headerKey="" headerValue="--Select--"
                                   id="trialDTO.summaryFourFundingCategoryCode"
                                   name="trialDTO.summaryFourFundingCategoryCode"
-                                  list="#summaryFourFundingCategoryCodeValues"
+                                  list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"
                                   cssStyle="width:206px" disabled="true" />
                          <span class="formErrorMsg">
                                <s:fielderror>
