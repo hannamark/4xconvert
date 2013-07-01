@@ -46,7 +46,7 @@
 		                    </c:when>
 	                   </c:choose>                    
                     </c:when>
-                    <c:otherwise>
+                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
                         <c:choose>
                             <c:when test="${(requestScope.topic == 'accrualcount')}">
                                 <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
@@ -55,7 +55,7 @@
                                 <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
                             </c:otherwise>
                         </c:choose>
-                    </c:otherwise>                    
+                    </c:when>                    
                 </c:choose>
                 <c:choose>
                     <c:when test="${requestScope.topic == 'batchupload'}">
