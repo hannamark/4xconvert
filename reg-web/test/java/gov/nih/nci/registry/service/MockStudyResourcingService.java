@@ -104,9 +104,10 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    public void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos)
+            throws PAException {
+    }
+
     @Override
     public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
     }
@@ -178,6 +179,5 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
             throws PAException {
         // TODO Auto-generated method stub
         
-    }    
-
+    }
 }

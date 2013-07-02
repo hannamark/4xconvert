@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Real;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 
@@ -106,6 +107,7 @@ public class StudyResourcingDTO extends StudyDTO {
     private Bl activeIndicator;
     private Ts lastUpdatedDate;
     private String userLastUpdated;
+    private Real fundingPercent;
     /**
      * 
      * @return typeCode
@@ -264,7 +266,16 @@ public class StudyResourcingDTO extends StudyDTO {
     public void setUserLastUpdated(String userLastUpdated) {
         this.userLastUpdated = userLastUpdated;
     }
-    
-
-    
+    /**
+     * @return the fundingPercent
+     */
+    public Real getFundingPercent() {
+        return fundingPercent;
+    }
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(Real fundingPercent) {
+        this.fundingPercent = fundingPercent;
+    }
 }

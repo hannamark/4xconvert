@@ -79,36 +79,103 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyP30DTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
     private final StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
     Ii pid;
+ 
+    @Rule  
+    public ExpectedException thrown = ExpectedException.none();  
 
     @Before
     public void setUp() throws Exception {
+        ((StudyResourcingBeanLocal) remoteEjb).setLookUpTableSvc(new LookUpTableServiceBean());
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        setupFamilyHelper(null);
+    }
+
+    private void setupFamilyHelper(String p30SerialNumber) throws Exception {
+        PoServiceLocator psl = mock(PoServiceLocator.class);
+        OrganizationEntityServiceRemote oes = mock(OrganizationEntityServiceRemote.class);
+        when(psl.getOrganizationEntityService()).thenReturn(oes);
+        FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
+        when(psl.getFamilyService()).thenReturn(fs);
+        PoRegistry.getInstance().setPoServiceLocator(psl);
+        if (p30SerialNumber != null) {
+            OrganizationDTO org  = new OrganizationDTO();
+            DSet<Ii> dset = new DSet<Ii>();
+            org.setFamilyOrganizationRelationships(dset);
+            List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
+            result.add(org);
+            when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(result);
+            Set<Ii> familySet = new HashSet<Ii>();
+            familySet.add(IiConverter.convertToPoFamilyIi("1"));
+            dset.setItem(familySet);
+            Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+            FamilyDTO family = new FamilyDTO();
+            family.setName(EnOnConverter.convertToEnOn("family name"));
+            familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
+            when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
+            FamilyOrganizationRelationshipDTO forDto = new FamilyOrganizationRelationshipDTO();
+            forDto.setFunctionalType(CdConverter.convertStringToCd(FamilyFunctionalType.ORGANIZATIONAL.name()));
+            when(fs.getFamilyOrganizationRelationship(any(Ii.class))).thenReturn(forDto);
+            FamilyP30DTO p30 = new FamilyP30DTO();
+            p30.setSerialNumber(EnOnConverter.convertToEnOn(p30SerialNumber));
+            when(fs.getP30Grant(anyLong())).thenReturn(p30);
+        }
     }
 
     @Test
@@ -197,6 +264,120 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
 
+    @Test
+    public void grantsRequiredChecksActiveTest() throws Exception {
+        StudyResourcingBeanLocal bean = (StudyResourcingBeanLocal) remoteEjb;
+        PAProperties prop = new PAProperties();
+        prop.setName("GrantsRequiredBatchRegEffectiveDate");
+        prop.setValue("01-JAN-1990");
+        TestSchema.addUpdObject(prop);
+        prop = new PAProperties();
+        prop.setName("GrantsRequiredRegServiceEffectiveDate");
+        prop.setValue("01-JAN-2099");
+        TestSchema.addUpdObject(prop);
+        assertTrue(bean.grantsRequiredChecksActive(Method.BATCH));
+        assertFalse(bean.grantsRequiredChecksActive(Method.SERVICE));
+        assertTrue(bean.grantsRequiredChecksActive(Method.UI));
+    }
+
+    @Test
+    public void validateP30NotRequiredNoDataTest() throws Exception {
+        remoteEjb.validate(Method.UI, false, 1L, new ArrayList<StudyResourcingDTO>());
+    }
+
+    @Test
+    public void validateP30RequiredNoDataTest() throws Exception {
+        setupFamilyHelper("123456");
+        thrown.expect(PAValidationException.class);  
+        thrown.expectMessage("A valid P30 grant record must be added.");  
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setFundingMechanismCode(CdConverter.convertStringToCd("P30"));
+        dto.setActiveIndicator(BlConverter.convertToBl(false));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+    }
+
+    @Test
+    public void validateP30NotRequiredTest() throws Exception {
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setFundingMechanismCode(CdConverter.convertStringToCd("P30"));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+    }
+
+    @Test
+    public void validateCANotReguiredNotSubmittedTest() throws Exception {
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
+        dto.setActiveIndicator(BlConverter.convertToBl(false));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+    }
+
+    @Test
+    public void validateCANotReguiredSubmittedTest() throws Exception {
+        thrown.expect(PAValidationException.class);  
+        thrown.expectMessage("This trial is not funded by NCI; however, an NCI grant record was entered.");  
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+    }
+
+    @Test
+    public void validateCAReguiredNotSubmittedTest() throws Exception {
+        thrown.expect(PAValidationException.class);  
+        thrown.expectMessage("This trial is funded by NCI; however, an NCI grant record was not entered.");  
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        remoteEjb.validate(Method.UI, true, 1L, dtos);
+    }
+
+    @Test
+    public void validateCAReguiredSubmittedTest() throws Exception {
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, true, 1L, dtos);
+    }
+
+    @Test
+    public void validateTotalPctTest() throws Exception {
+        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, 1L, new ArrayList<StudyResourcingDTO>());
+    }
+
+    @Test
+    public void validateTotalPctNotTestedTest() throws Exception {
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setFundingPercent(RealConverter.convertToReal(60d));
+        dtos.add(dto);
+        dto = createStudyResourcingISOObj();
+        dto.setFundingPercent(RealConverter.convertToReal(60d));
+        dtos.add(dto);
+        remoteEjb.validate(Method.UI, false, 1L, dtos);
+    }
+
+    @Test
+    public void validateTotalPctFailureTest() throws Exception {
+        thrown.expect(PAValidationException.class);  
+        thrown.expectMessage("Total percent of grant funding this trial for all grants cannot be greater than 100.");  
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = createStudyResourcingISOObj();
+        dto.setFundingPercent(RealConverter.convertToReal(60d));
+        dtos.add(dto);
+        dto = createStudyResourcingISOObj();
+        dto.setFundingPercent(RealConverter.convertToReal(60d));
+        dtos.add(dto);
+        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, 1L, dtos);
+     }
+
     private static StudyResourcing createStudyResourcingObj(StudyProtocol sp) {
         StudyResourcing sr = new StudyResourcing();
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
@@ -206,8 +387,12 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
         sr.setUserLastUpdated(TestSchema.getUser());
-
         return sr;
     }
 
+    private static StudyResourcingDTO createStudyResourcingISOObj() {
+        StudyResourcingDTO sr = new StudyResourcingDTO();
+        sr.setActiveIndicator(BlConverter.convertToBl(true));
+        return sr;
+    }
 }

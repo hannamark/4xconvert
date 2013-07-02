@@ -91,8 +91,10 @@ import java.util.List;
  * copyright holder, NCI.
  */
 public interface StudyResourcingService extends StudyPaService<StudyResourcingDTO> {
-    
-    
+
+    /** Method of submission. Validation rules may vary based on submission method. */
+    public enum Method { UI, BATCH, SERVICE, ABSTRACTION_VALIDATION }
+
     /**
      * @param studyProtocolIi Ii 
      * @return StudyProtocolDTO
@@ -144,12 +146,19 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      */
     Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException;
     /**
+     * @param method method being used to submit data
+     * @param nciFunded is the nci funded
+     * @param leadOrgPoId lead organization PO id
+     * @param dtos the grant dtos
+     * @throws PAException exception
+     */
+    void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos) throws PAException;
+    /**
      * 
      * @param studyResourcingDTO dto to validate
      * @throws PAException e
      */
     void validate(StudyResourcingDTO studyResourcingDTO) throws PAException;
-    
     /**
      * Checks the given grants against the existent grants of the given trial in the database.
      * If matches found, copies the fields of the existent grant onto the given grant.
@@ -159,5 +168,4 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      */
     void matchToExistentGrants(List<StudyResourcingDTO> studyResourcingDTOs,
             Ii identifier) throws PAException;
-
 }

@@ -84,18 +84,18 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.security.authorization.domainobjects.User;
+
+import java.util.Date;
 
 public class StudyResourcingConverterTest extends
         AbstractConverterTest<StudyResourcingConverter, StudyResourcingDTO, StudyResourcing> {
@@ -118,6 +118,7 @@ public class StudyResourcingConverterTest extends
         bo.setDateLastUpdated(NOW);
         bo.setInactiveCommentText("InActive Comment");
         bo.setUserLastUpdated(user);
+        bo.setFundingPercent(123.654d);
         return bo;
     }
 
@@ -133,6 +134,7 @@ public class StudyResourcingConverterTest extends
         dto.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
         dto.setInactiveCommentText(StConverter.convertToSt("Comment"));     
+        dto.setFundingPercent(RealConverter.convertToReal(123.654d));
         return dto;
     }
 
@@ -146,7 +148,7 @@ public class StudyResourcingConverterTest extends
         assertTrue(bo.getSummary4ReportedResourceIndicator());
         assertEquals(SummaryFourFundingCategoryCode.INDUSTRIAL, bo.getTypeCode());
         assertEquals(bo.getInactiveCommentText(), "Comment");
-        
+        assertEquals(bo.getFundingPercent(), (Double) 123.654d);
     }
 
     /**
@@ -162,6 +164,6 @@ public class StudyResourcingConverterTest extends
         assertEquals(StConverter.convertToString(dto.getInactiveCommentText()), "InActive Comment");
         assertEquals(dto.getUserLastUpdated(), "firstName secondName");
         assertEquals(dto.getLastUpdatedDate(), TsConverter.convertToTs(NOW));
+        assertEquals(dto.getFundingPercent(), RealConverter.convertToReal(123.654d));
     }
-
 }

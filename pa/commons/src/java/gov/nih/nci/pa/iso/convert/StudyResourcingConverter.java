@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -130,6 +131,7 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
         if (studyResourcing.getInactiveCommentText() != null) {
             srDTO.setInactiveCommentText(StConverter.convertToSt(studyResourcing.getInactiveCommentText()));
         }
+        srDTO.setFundingPercent(RealConverter.convertToReal(studyResourcing.getFundingPercent()));
         return srDTO;
     }
     
@@ -172,7 +174,7 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
         if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
             studyResourcing.setActiveIndicator(Boolean.TRUE);
         }
-        
+        studyResourcing.setFundingPercent(RealConverter.convertToDouble(studyResourcingDTO.getFundingPercent()));
     }
 
     private void convertInactiveTextToDomain(StudyResourcingDTO studyResourcingDTO,

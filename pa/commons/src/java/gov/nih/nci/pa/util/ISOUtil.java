@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.Real;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
@@ -203,6 +204,15 @@ public class ISOUtil {
             return true;
         }
         return isNull;
+    }
+
+    /**
+     * checks if Real is null.
+     * @param real Real
+     * @return boolean
+     */
+    public static boolean isRealNull(Real real) {
+        return real == null || real.getValue() == null;
     }
 
     /**

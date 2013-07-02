@@ -93,17 +93,24 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -129,6 +136,11 @@ public class StudyResourcingBeanLocal extends
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
     
     private static final Logger LOG = Logger.getLogger(StudyResourcingBeanLocal.class);
+
+    private static final double MAX_FUNDING_PCT = 100d;
+
+    @EJB 
+    private LookUpTableServiceRemote lookUpTableSvc;
 
     /**
      * @param paServiceUtils the paServiceUtils to set
@@ -250,6 +262,78 @@ public class StudyResourcingBeanLocal extends
             }
         }
         return duplicateExists;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos)
+            throws PAException {
+        int p30Grants = 0;
+        int caGrants = 0;
+        double fundingPctTotal = 0d;
+        for (StudyResourcingDTO dto : dtos) {
+            if (BlConverter.convertToBool(dto.getActiveIndicator())) {
+                validate(dto);
+                if ("P30".equals(CdConverter.convertCdToString(dto.getFundingMechanismCode()))) {
+                    p30Grants++;
+                }
+                if ("CA".equals(CdConverter.convertCdToString(dto.getNihInstitutionCode()))) {
+                    caGrants++;
+                }
+                if (!ISOUtil.isRealNull(dto.getFundingPercent())) {
+                    fundingPctTotal += RealConverter.convertToDouble(dto.getFundingPercent());
+                }
+            }
+        }
+        if (grantsRequiredChecksActive(method)) {
+            p30GrantsValidation(leadOrgPoId, p30Grants);
+            caGrantsValidation(nciFunded, caGrants);
+        }
+        if (method == Method.ABSTRACTION_VALIDATION && fundingPctTotal > MAX_FUNDING_PCT) {
+            throw new PAValidationException(
+                    "Total percent of grant funding this trial for all grants cannot be greater than 100.");
+        }
+    }
+
+    private void p30GrantsValidation(Long leadOrgPoId, int p30Grants) throws PAException {
+        boolean isCancerCenter = null != FamilyHelper.getP30GrantSerialNumber(leadOrgPoId);
+        if (isCancerCenter && p30Grants < 1) {
+            throw new PAValidationException("A valid P30 grant record must be added.");
+        }
+    }
+
+    private void caGrantsValidation(boolean nciFunded, int caGrants) throws PAException {
+        if (nciFunded) {
+            if (caGrants < 1) {
+                throw new PAValidationException(
+                        "This trial is funded by NCI; however, an NCI grant record was not entered.");
+            }
+        } else {
+            if (caGrants > 0) {
+                throw new PAValidationException(
+                        "This trial is not funded by NCI; however, an NCI grant record was entered.");
+            }
+        }
+    }
+
+    boolean grantsRequiredChecksActive(Method method) throws PAException {
+        String activeDtStr;
+        switch (method) {
+        case BATCH: activeDtStr = lookUpTableSvc.getPropertyValue("GrantsRequiredBatchRegEffectiveDate"); break;
+        case SERVICE: activeDtStr = lookUpTableSvc.getPropertyValue("GrantsRequiredRegServiceEffectiveDate"); break;
+        default: activeDtStr = "01-JAN-2013";
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("dd-MMM-yyyy");
+        Date activeDt;
+        try {
+            activeDt = sdf.parse(activeDtStr);
+        } catch (ParseException e) {
+            throw new PAException("Error parsing Grants effective date string: " + activeDtStr, e);
+        }
+        return (new Date()).after(activeDt);
     }
 
     /**
@@ -389,5 +473,12 @@ public class StudyResourcingBeanLocal extends
             }
         }
 
+    }
+
+    /**
+     * @param lookUpTableSvc the lookUpTableSvc to set
+     */
+    public void setLookUpTableSvc(LookUpTableServiceRemote lookUpTableSvc) {
+        this.lookUpTableSvc = lookUpTableSvc;
     }
 }

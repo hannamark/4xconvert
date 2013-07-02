@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.iso21090.Real;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -182,6 +183,20 @@ public class ISOUtilTest {
         in = new Int();
         in.setValue(null);
         assertTrue(ISOUtil.isIntNull(in));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.ISOUtil#isRealNull(gov.nih.nci.iso21090.Real)}.
+     */
+    @Test
+    public void testIsRealNull() {
+        Real real = null;
+        assertTrue(ISOUtil.isRealNull(real));
+        real = new Real();
+        real.setValue(null);
+        assertTrue(ISOUtil.isRealNull(real));
+        real.setValue(123.321d);
+        assertFalse(ISOUtil.isRealNull(real));
     }
 
     /**

@@ -39,7 +39,7 @@
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.clients.version}"    conf="compile->master" changing="true"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="${pa.clients.version}"    conf="compile->master" changing="true"/>
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.9.1-SNAPSHOT"    force="true"   conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.10.0-SNAPSHOT"    force="true"   conf="compile->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.10-SNAPSHOT"  conf="compile->master"/>
     <dependency org="asm"                    name="asm"                     rev="3.1"             conf="compile->master"/>

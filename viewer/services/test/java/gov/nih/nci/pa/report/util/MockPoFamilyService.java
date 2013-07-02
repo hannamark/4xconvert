@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyP30DTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 
 import java.util.ArrayList;
@@ -188,6 +189,12 @@ public class MockPoFamilyService implements FamilyServiceRemote {
 
     @Override
     public FamilyOrganizationRelationshipDTO getFamilyOrganizationRelationship(Ii arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public FamilyP30DTO getP30Grant(Long arg0) {
         // TODO Auto-generated method stub
         return null;
     }
