@@ -84,6 +84,7 @@ package gov.nih.nci.po.services.family;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -99,6 +100,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.FamilyP30;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.URL;
@@ -114,6 +116,7 @@ import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyP30DTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.family.FamilyServiceRemoteBean;
 
@@ -145,6 +148,7 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
     private Date oldDate;
     private List<FamilyOrganizationRelationship> famOrgRelList = new ArrayList<FamilyOrganizationRelationship>();
     private Long id = 1l;
+    private Family fam1;
 
     /**
      * setup the service.
@@ -154,7 +158,7 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
-        Family fam1 = createFamily("FamilyName1", oldDate);
+        fam1 = createFamily("FamilyName1", oldDate);
         Family fam2 = createFamily("FamilyName2", oldDate);
         Family fam3 = createFamily("FamilyName3", oldDate);
         Organization org1 = createOrg("OrgName1");
@@ -193,6 +197,15 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         family.setStartDate(date);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
+    }
+
+    private FamilyP30 createFamilyP30(Family family, String serialNumber) {
+        FamilyP30 p30 = new FamilyP30();
+        p30.setId(id++);
+        p30.setSerialNumber(serialNumber);
+        p30.setFamily(family);
+        family.setFamilyP30(p30);
+        return p30;
     }
 
     private Organization createOrg(String name) {
@@ -273,5 +286,14 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         forIi.setIdentifierName(IdConverter.FAMILY_ORG_REL_IDENTIFIER_NAME);
         forIi.setExtension("1");
         assertNotNull(remote.getFamilyOrganizationRelationship(forIi));
+    }
+
+    @Test
+    public void testGetFamilyP30Grant() {
+        FamilyP30DTO p30Dto = remote.getP30Grant(1L);
+        assertNull(p30Dto);
+        fam1.setFamilyP30(createFamilyP30(fam1, "1235"));
+        p30Dto = remote.getP30Grant(1L);
+        assertEquals("1235",(new EnConverter<EnOn>()).convertToString(p30Dto.getSerialNumber()));
     }
 }

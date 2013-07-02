@@ -231,4 +231,10 @@ public class FamilyServiceRemoteBean implements FamilyServiceRemote {
                 getById(IiConverter.convertToLong(ii));
         return (FamilyOrganizationRelationshipDTO) PoXsnapshotHelper.createSnapshot(famOrgRel);
     }
+
+    @Override
+    public FamilyP30DTO getP30Grant(Long id) {
+        Family family = getFamilyServiceBean().getById(id);
+        return (FamilyP30DTO) PoXsnapshotHelper.createSnapshot(family.getFamilyP30());
+    }
 }

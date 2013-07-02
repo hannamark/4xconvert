@@ -139,4 +139,11 @@ public interface FamilyServiceRemote {
        * @return family organization relationship dto.
        */
       FamilyOrganizationRelationshipDTO getFamilyOrganizationRelationship(Ii ii);
+
+      /**
+       * Get the P30 Grant for family.
+       * @param id family identifier
+       * @return P30 grant, null if not a Cancer Center
+       */
+      FamilyP30DTO getP30Grant(Long id);
 }

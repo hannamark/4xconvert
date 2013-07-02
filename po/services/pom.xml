@@ -7,7 +7,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>3.10.0.1</version>
+        <version>3.10.0</version>
     </parent>
 
     <artifactId>po-services</artifactId>
@@ -311,6 +311,7 @@
                     <clientIncludes>
                         <clientInclude>gov/nih/nci/services/**/**</clientInclude>
                         <clientInclude>gov/nih/nci/po/data/CurationException.class</clientInclude>
+                        <clientInclude>gov/nih/nci/po/data/bo/FamilyFunctionalType.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/EntityValidationException.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/OneCriterionRequiredException.class</clientInclude>
                         <clientInclude>gov/nih/nci/po/service/SearchCriteriaValidationException.class</clientInclude>
