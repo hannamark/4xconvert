@@ -271,16 +271,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                     body = lookUpTableService.getPropertyValue("noxml.tsr.body");
                 }
             }
-            body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
-            body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-            body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
-            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
-            body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-            body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier() + EXTENSION_RTF);
-            if (!spDTO.isProprietaryTrial()) {
-                body = body.replace("${fileName2}", spDTO.getNciIdentifier() + ".xml");
-            }
-
+            
+            body = commonMailBodyReplacements(spDTO, body);
+            body = body.replace("${xmlFileName}", spDTO.getNciIdentifier() + ".xml");
             body = body.replace(AMENDMENT_NUMBER, amendNumber);
             if (spDTO.getAmendmentDate() != null) {
                 body = body.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
@@ -434,9 +427,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
     }
 
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    void sendMailWithAttachment(String mailTo, String mailFrom, List<String> mailCc, String subject, String mailBody,
-            File[] attachments, boolean deleteAttachments) {
+    void sendMailWithAttachment(String mailTo, String mailFrom, // NOPMD
+            List<String> mailCc, String subject, String mailBody,
+            File[] attachments, boolean deleteAttachments) { 
         try {
             // Define Message
             MimeMessage message = prepareMessage(mailTo, mailFrom, mailCc, subject);
@@ -1163,10 +1156,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             boolean deleteAttachments) throws PAException {
         Set<String> emails = new HashSet<String>();
         String emailSubject = mailSubject;
-        emailSubject = emailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER,
-                spDTO.getLocalStudyProtocolIdentifier());
-        emailSubject = emailSubject.replace(NCI_TRIAL_IDENTIFIER,
-                spDTO.getNciIdentifier());
+        emailSubject = commonMailSubjectReplacements(spDTO, emailSubject);
 
         // We are making the assumption here that if the user created the trial
         // then they have a registry
@@ -1175,6 +1165,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         // Sending email to all study owners, and not just the submitter -
         // kanchink
         String emailAddress = null;
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
         try {
             Collection<RegistryUser> recipients = new HashSet<RegistryUser>(
                     getStudyOwners(spDTO));
@@ -1190,8 +1181,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 String regUserName = recipient.getFirstName() + " "
                         + recipient.getLastName();
                 String emailBodyText = body.replace(OWNER_NAME, regUserName);
-                sendMailWithAttachment(emailAddress, emailSubject,
-                        emailBodyText, attachments, deleteAttachments);
+                
+                sendMailWithHtmlBodyAndAttachment(emailAddress, mailFrom, null,
+                        emailSubject, emailBodyText, attachments,
+                        deleteAttachments);
+                
                 emails.add(emailAddress);
             }
         } catch (Exception e) {

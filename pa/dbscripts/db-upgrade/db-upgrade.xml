@@ -1316,5 +1316,9 @@
      <changeSet id="PO-5961_1" author="monishd">
         <comment>formatting issue with Trial Accepted email</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5961_1.sql"/>
-     </changeSet>           
+     </changeSet>
+     <changeSet id="PO-5961_2" author="monishd">
+        <comment>Formatting TSR report emails</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5961_2.sql"/>
+     </changeSet>                
 </databaseChangeLog>
