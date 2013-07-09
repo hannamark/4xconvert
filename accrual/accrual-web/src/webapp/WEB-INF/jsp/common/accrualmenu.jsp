@@ -20,7 +20,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == 'Interventional'}">
+                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == sessionScope.interTrial}">
                         <c:choose>
 	                        <c:when test="${!sessionScope.trialSummary.industrial.value}">
 		                        <c:choose>
@@ -46,14 +46,28 @@
 		                    </c:when>
 	                   </c:choose>                    
                     </c:when>
-                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
+                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial}">
                         <c:choose>
-                            <c:when test="${(requestScope.topic == 'accrualcount')}">
-                                <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
+                            <c:when test="${sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.patientLevel}">
+                                <c:choose>
+                                    <c:when test="${(requestScope.topic == 'subjectsintro') || (requestScope.topic == 'subjectsadding') || (requestScope.topic == 'subjectsupdate')}">
+                                        <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li><a href="patients.action" >Study Subject Search</a></li>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:when>
-                            <c:otherwise>
-                                <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
-                            </c:otherwise>
+                            <c:otherwise>                                
+		                        <c:choose>
+		                            <c:when test="${(requestScope.topic == 'accrualcount')}">
+		                                <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
+		                            </c:when>
+		                            <c:otherwise>
+		                                <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
+		                            </c:otherwise>
+		                        </c:choose>
+                            </c:otherwise>                        
                         </c:choose>
                     </c:when>                    
                 </c:choose>

@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
@@ -260,7 +261,7 @@ public class TestSchema {
         
 
         // StudyProtocol
-        StudyProtocol sp = new StudyProtocol();
+        StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("Phase II study for Melanoma");
         StudyProtocolDates dates = sp.getDates();
         dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));

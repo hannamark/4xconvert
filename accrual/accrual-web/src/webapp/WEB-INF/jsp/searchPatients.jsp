@@ -104,8 +104,9 @@ function setDeleteReason(reason){
   </s:form>
 
 
-<c:if test="${sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
-    <s:a cssClass="btn" href="industrialPatients.action"><span class="btn_img"><span class="save">Switch to Summary Level Accrual</span></span></s:a><br/><br/>
+<c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
+    <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{studyProtocolId}" /></s:url>
+    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Summary Level Accrual</span></span></s:a><br/><br/>
 </c:if>
 
    <div class="line"></div>

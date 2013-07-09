@@ -82,6 +82,7 @@ import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -120,7 +121,7 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
         r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
         r.setIndustrial(BlConverter.convertToBl(false));
-        r.setTrialType(StConverter.convertToSt("Interventional"));
+        r.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));
         dtos.add(r);
 
         r = new SearchTrialResultDto();
@@ -130,7 +131,8 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
-        r.setTrialType(StConverter.convertToSt("Non-interventional"));
+        r.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
+        r.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.BOTH));
         r.setIndustrial(BlConverter.convertToBl(false));
         dtos.add(r);
 
@@ -142,7 +144,31 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
         r.setIndustrial(BlConverter.convertToBl(true));
-        r.setTrialType(StConverter.convertToSt("Interventional"));
+        r.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));
+        dtos.add(r);
+
+        r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(4l));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2013-00002"));
+        r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 002"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        r.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
+        r.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUMMARY_LEVEL));
+        r.setIndustrial(BlConverter.convertToBl(false));
+        dtos.add(r);
+
+        r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(5l));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2013-00003"));
+        r.setLeadOrgName(StConverter.convertToSt("Wake Forest"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 003"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        r.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
+        r.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
+        r.setIndustrial(BlConverter.convertToBl(false));
         dtos.add(r);
     }
 

@@ -166,6 +166,9 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
 		action.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
         action.prepare();
         assertEquals("success", action.execute());
+        action.setStudyProtocolId(5L);
+        action.prepare();
+        assertEquals("invalid", action.execute());
 	}
 
     @Test
@@ -182,6 +185,12 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         action.setSitesToSave(sitesToSave);
         List<String> submittedCounts = new ArrayList<String>();
         submittedCounts.add("2");
+        action.setSubmittedCounts(submittedCounts);
+        assertEquals("saved", action.update());
+        action.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        action.setSubmittedSiteIds(submittedSiteIds);
+        action.setSitesToSave(sitesToSave);
         action.setSubmittedCounts(submittedCounts);
         assertEquals("saved", action.update());
     }

@@ -92,6 +92,7 @@ import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.MockSearchTrialBean;
 import gov.nih.nci.accrual.accweb.util.MockServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockStudySubjectBean;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -102,6 +103,7 @@ import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -175,12 +177,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     }
 
     @Test
-    public void executeNonInterventionalTrial() {
+    public void executeNonInterventionalTrial() throws PAException {
 		action = new PatientAction();
         action.setUnitedStatesId(1L);
         action.setStudyProtocolId(2L);
         action.prepare();
         assertEquals("success", action.execute());
+        action.setStudyProtocolId(4L);
+        action.prepare();
+        assertEquals("invalid", action.execute());
 	}
 
     @Override
@@ -251,10 +256,16 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setDateLastUpdated("12/10/2009");
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
+        action.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
+    	patient.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
+    	patient.setAssignedIdentifier("TestNonInt01");        
+        action.setPatient(patient);
+        action.prepare();
+        assertEquals(ActionSupport.SUCCESS, action.add());
     }
 
     @Test
-    public void addDuplicate() throws Exception {
+    public void addDuplicate() throws Exception {        
         patient.setStudyProtocolId(1L);
         action.setPatient(patient);
         assertEquals(AccrualConstants.AR_DETAIL, action.add());
@@ -530,7 +541,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertNull(patient.getUserCreated());
         assertTrue(action.hasActionErrors());
         assertEquals(8, action.getActionErrors().size());
-        System.out.println("Testing : " + Arrays.toString(action.getActionErrors().toArray()));
         assertTrue(StringUtils.contains(Arrays.toString(action.getActionErrors().toArray()), 
         		"Study Subject ID is required., Birth date is required., Gender is required., Race is required., Ethnicity is required., Disease is required., Participating Site is required., Registration Date is required."));
     }

@@ -98,7 +98,8 @@ public class SearchTrialResultDto extends AbstractStudyDto {
     private Cd studyStatusCode;
     private Bl industrial;
     private St trialType;
-
+    private St accrualSubmissionLevel;
+    
     /**
      * @return the assignedIdentifier
      */
@@ -194,5 +195,18 @@ public class SearchTrialResultDto extends AbstractStudyDto {
      */
     public void setTrialType(St trialType) {
         this.trialType = trialType;
+    }
+
+    /**
+     * @return the accrualSubmissionLevel
+     */
+    public St getAccrualSubmissionLevel() {
+        return accrualSubmissionLevel;
+    }
+    /**
+     * @param accrualSubmissionLevel the accrualSubmissionLevel to set
+     */
+    public void setAccrualSubmissionLevel(St accrualSubmissionLevel) {
+        this.accrualSubmissionLevel = accrualSubmissionLevel;
     }
 }

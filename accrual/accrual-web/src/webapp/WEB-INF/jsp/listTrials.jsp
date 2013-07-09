@@ -7,12 +7,18 @@
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
       sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
        <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" sortProperty="assignedIdentifier.value" headerClass="sortable" headerScope="col">
-           <s:if test="%{#attr.row.industrial.value}">
+           <s:if test="%{#attr.row.industrial.value && #attr.row.trialType.value == 'Interventional'}">
                 <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
            </s:if>
-           <s:else>
+           <s:elseif test="%{!(#attr.row.industrial.value) && #attr.row.trialType.value == 'Interventional'}">
                 <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
-           </s:else>
+           </s:elseif>
+           <s:elseif test="%{#attr.row.trialType.value == 'Non-interventional' && #attr.row.accrualSubmissionLevel.value == 'Patient Level'}">
+                <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
+           </s:elseif>
+           <s:elseif test="%{#attr.row.trialType.value == 'Non-interventional'}">
+                <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
+           </s:elseif>           
            <s:a href="%{url}"><s:property value="%{#attr.row.assignedIdentifier.value}" /></s:a>
        </display:column>
        <display:column escapeXml="true" titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" headerClass="sortable" headerScope="col"/>

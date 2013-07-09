@@ -108,11 +108,13 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      * @param sp studyprotocol
+     * @param accrualSubmissionLevel the accrualSubmissionLevel
      */
+    @SuppressWarnings({ "PMD.ExcessiveParameterList" })
     protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber,
-            StudyProtocolDTO sp) {
+            StudyProtocolDTO sp, String accrualSubmissionLevel) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
-            validateStudyType(errMsg, sp);
+            validateStudyType(errMsg, sp, accrualSubmissionLevel);
             String accrualStudySite = AccrualUtil.safeGet(values, ACCRUAL_STUDY_SITE_INDEX);
             if (StringUtils.isEmpty(accrualStudySite)) {
                 errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append("\n");
@@ -124,9 +126,11 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         }
     }
 
-    private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp) {
+    private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp, String accrualSubmissionLevel) {
         if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
-                && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
+                && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())
+            || accrualSubmissionLevel != null 
+                    && accrualSubmissionLevel.equals(AccrualUtil.PATIENT_LEVEL)) {
             errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
         }
     }
@@ -140,17 +144,21 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param sp study protocol
      * @param codeSystem diseasecode
      * @param checkDisease checkDisease
+     * @param accrualSubmissionLevel submissionLevel
      */
+    // CHECKSTYLE:OFF More than 7 Parameters
     @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
-            StudyProtocolDTO sp, String codeSystem, boolean checkDisease) {
+            StudyProtocolDTO sp, String codeSystem, boolean checkDisease, String accrualSubmissionLevel) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
-            boolean trialType = true;            
+            boolean validatePatients = true;            
             if (sp != null && sp.getProprietaryTrialIndicator().getValue()
-                    && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
-                trialType = false;
+                    && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())
+                    || accrualSubmissionLevel != null 
+                    		&& accrualSubmissionLevel.equals(AccrualUtil.SUMMARY_LEVEL)) {
+                validatePatients = false;
             }
-            if (trialType) {
+            if (validatePatients) {
                 List<String> patientsIdList = new ArrayList<String>();
                 isPatientIdUnique(getPatientId(values), errMsg, lineNumber, patientsIdList);
                 String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);

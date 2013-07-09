@@ -201,27 +201,28 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.isEmpty(collection.getResults()));
         assertEquals((Integer) 3, collection.getTotalImports());
         
+        when(cdusBatchUploadDataValidator.getSubjectAccrualService().getAccrualCounts(any(Boolean.class), any(Long.class))).thenReturn(3L);
         file = new File(this.getClass().getResource("/NonInterventional_accrualCounts.txt").toURI());
         batchFile = getBatchFile(file);
         results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
-        assertTrue(results.get(0).isPassedValidation());
-        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
-        assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 2);
+        assertFalse(results.get(0).isPassedValidation());
+        assertFalse(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(1, 1);
 
         r = getResultFromDb();
-        assertTrue(r.isPassedValidation());
-        assertTrue(r.isProcessed());
+        assertFalse(r.isPassedValidation());
+        assertFalse(r.isProcessed());
         assertTrue(r.getFileLocation().contains("NonInterventional_accrualCounts.txt"));
-        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertFalse(StringUtils.isEmpty(r.getResults()));
         assertEquals(1, r.getAccrualCollections().size());
         collection = r.getAccrualCollections().get(0);
-        assertTrue(collection.isPassedValidation());
-        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertFalse(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.NO, collection.getChangeCode());
         assertEquals("NCI-2013-00001", collection.getNciNumber());
-        assertTrue(StringUtils.isEmpty(collection.getResults()));
-        assertEquals((Integer) 2, collection.getTotalImports());
+        assertFalse(StringUtils.isEmpty(collection.getResults()));
+        assertEquals(null, collection.getTotalImports());
 	}
 	   
     @Test

@@ -93,6 +93,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -253,7 +254,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
             public SearchTrialResultDto answer(InvocationOnMock invocation) throws Throwable {
                 SearchTrialResultDto result = new SearchTrialResultDto();
                 result.setIndustrial(BlConverter.convertToBl(false));
-                result.setTrialType(StConverter.convertToSt("Interventional"));
+                result.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));
                 return result;
             }
             

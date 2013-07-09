@@ -89,6 +89,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -139,7 +140,8 @@ import org.apache.log4j.Logger;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
-                    "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar", "PMD.NPathComplexity" })
+                    "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar", "PMD.NPathComplexity",
+                    "PMD.ExcessiveClassLength" })
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
@@ -155,6 +157,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean checkDisease;
     private boolean patientCheck;
     private Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
+    private String accrualSubmissionLevel;
 
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
@@ -173,6 +176,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         checkDisease = false;
         patientCheck = false;
         patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
+        accrualSubmissionLevel = null;
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
         results.setFileName(file.getName());
@@ -211,6 +215,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
                         results.setNciIdentifier(ii.getExtension());
                         try {
+                            if (sp.getStudyProtocolType().getValue().equals(
+                                    NonInterventionalStudyProtocol.class.getSimpleName())) {
+                                Long patientAccruals = subjectAccrualService.getAccrualCounts(true, spId);
+                                Long summaryAccruals = subjectAccrualService.getAccrualCounts(false, spId);
+                                if (patientAccruals == 0 && summaryAccruals == 0) {
+                                    accrualSubmissionLevel = AccrualUtil.BOTH;
+                                } else if (patientAccruals > 0) {
+                                    accrualSubmissionLevel = AccrualUtil.PATIENT_LEVEL;
+                                } else if (summaryAccruals > 0) {
+                                    accrualSubmissionLevel = AccrualUtil.SUMMARY_LEVEL; 
+                                }
+                            }
                             List<Long> ids = new ArrayList<Long>();
                             List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
                                     .getTreatingSites(spId);
@@ -350,10 +366,11 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }                
             }
         }
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, sp, codeSystemFile, checkDisease);
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, 
+                    sp, codeSystemFile, checkDisease, accrualSubmissionLevel);
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
-        validateAccrualCount(key, values, errMsg, lineNumber, sp);
+        validateAccrualCount(key, values, errMsg, lineNumber, sp, accrualSubmissionLevel);
         return errMsg.toString();
     }
     
@@ -623,5 +640,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     public void setSubjectAccrualService(SubjectAccrualServiceLocal subjectAccrualService) {
         this.subjectAccrualService = subjectAccrualService;
+    }
+
+    /**
+     * @return the subjectAccrualService
+     */
+    public SubjectAccrualServiceLocal getSubjectAccrualService() {
+        return subjectAccrualService;
     }
 }

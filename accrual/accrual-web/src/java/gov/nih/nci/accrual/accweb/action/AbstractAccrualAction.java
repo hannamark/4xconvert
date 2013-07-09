@@ -77,6 +77,7 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
@@ -89,15 +90,18 @@ import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.HashSet;
 
@@ -164,6 +168,28 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     protected String getUserRole() {
         return (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE);
+    }
+
+    /**
+     * @throws PAException the error
+     */
+    protected void loadTrialSummaryIntoSession() throws PAException {
+        SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
+        ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+    }
+    
+    /**
+     * @throws PAException the error
+     */
+    protected void checkIfNonInterventionalTrialChanges() throws PAException {
+        SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
+                .getAttribute("trialSummary");
+        if (!StConverter.convertToString(trialSummary.getTrialType()).equals(AccrualUtil.INTERVENTIONAL)
+                && !ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
+                && (trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.BOTH)
+                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.PATIENT_LEVEL))) {
+            loadTrialSummaryIntoSession();
+        }
     }
     
     /**

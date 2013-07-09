@@ -422,11 +422,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             StringBuffer numberedErrors = new StringBuffer();
             StringTokenizer st1 = new StringTokenizer(errors, "\n");
             while (st1.hasMoreTokens()) {
-                numberedErrors.append(count).append(".\t").append(st1.nextToken()).append(" \n");
+                numberedErrors.append(count).append(".  ").append(st1.nextToken());
+                if (!numberedErrors.toString().endsWith("\n")) {
+                    numberedErrors.append(" \n");
+                }
                 count++;
             }
             body = body.replace("${fileName}", result.getFileName());
-            body = body.replace("${errors}", numberedErrors.toString());
+            body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
             if (result.getNciIdentifier() == null) {
                 result.setNciIdentifier("");
             }
@@ -453,9 +456,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             StringBuffer studySiteCounts = new StringBuffer();
             for (String partSiteIi : result.getIndustrialCounts().keySet()) {
                 studySiteCounts.append(partSiteIi).append(" : ")
-                .append(result.getIndustrialCounts().get(partSiteIi));
+                .append(result.getIndustrialCounts().get(partSiteIi)).append(" \n");
             }
-            body = body.replace("${studySiteCounts}", studySiteCounts);
+            body = body.replace("${studySiteCounts}", studySiteCounts.toString().replace("\n", "<br/>"));
         } else {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.body");

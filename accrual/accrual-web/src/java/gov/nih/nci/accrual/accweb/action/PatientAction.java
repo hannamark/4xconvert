@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
@@ -143,9 +144,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         try {
             if (getStudyProtocolId() != null) {
                 setSpIi(IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
-                SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
-                // put an entry in the session
-                ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+                loadTrialSummaryIntoSession();
             }
             List<String> dCode = getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi()));
             if (dCode.contains("ICD-O-3")) {
@@ -193,8 +192,16 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
     private boolean isSessionTrialIndustrial() {
         SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
                 .getAttribute("trialSummary");
-        return BlConverter.convertToBoolean(trialSummary.getIndustrial()) 
-                && StConverter.convertToString(trialSummary.getTrialType()).equals("Interventional");
+        boolean result = false;
+        if (StConverter.convertToString(trialSummary.getTrialType()).equals(AccrualUtil.INTERVENTIONAL)) {
+            result = BlConverter.convertToBoolean(trialSummary.getIndustrial());
+        } else {
+            if (!ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
+                    && trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUMMARY_LEVEL)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     /**
@@ -254,6 +261,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         try {
             getSubjectAccrualSvc().deleteSubjectAccrual(IiConverter.convertToIi(getSelectedRowIdentifier()), 
                     getDeleteReason());
+            checkIfNonInterventionalTrialChanges();
         } catch (PAException e) {
             LOG.error("Error in PatientAction.delete().", e);
         }
@@ -297,6 +305,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
                 psm.setStudySubjectIdentifier(ssub.getIdentifier());
                 setRegistrationDate(psm);
             }
+            checkIfNonInterventionalTrialChanges();
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return super.create();

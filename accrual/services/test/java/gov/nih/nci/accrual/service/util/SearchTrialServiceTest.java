@@ -90,7 +90,11 @@ import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceBean;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -99,10 +103,22 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -111,11 +127,16 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
@@ -207,6 +228,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     public void getTrialSummaryByStudyProtocolIi() throws Exception {
         SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
         assertNotNull(result);
+        assertEquals(result.getTrialType().getValue(), AccrualUtil.INTERVENTIONAL);
 
         try {
             bean.getTrialSummaryByStudyProtocolIi(BII);
@@ -215,6 +237,132 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             // expected behavior
         }
     }
+
+    @Test
+    public void testNonInterventional1() throws Exception {
+		StudyProtocol sp = new NonInterventionalStudyProtocol();
+        sp.setOfficialTitle("Test Non-interventional study");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2013-00004");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+        
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getSubjectAccrualService()).thenReturn(new SubjectAccrualServiceBean());
+        AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
+        
+        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(sp.getId()));
+        assertEquals(AccrualUtil.BOTH, result.getAccrualSubmissionLevel().getValue());
+        assertEquals(result.getTrialType().getValue(), AccrualUtil.NONINTERVENTIONAL);
+	}
+
+    @Test
+    public void testNonInterventional2() throws Exception {
+		StudyProtocol sp = new NonInterventionalStudyProtocol();
+        sp.setOfficialTitle("Test Non-interventional study");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2013-00005");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+            
+        StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(TestSchema.registryUsers.get(0));
+        ssaa.setStudySite(TestSchema.studySites.get(1));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
+        TestSchema.addUpdObject(ssaa);
+        
+        StudySubject subj = new StudySubject();
+        subj.setDisease(TestSchema.diseases.get(0));
+        subj.setPatient(TestSchema.patients.get(0));
+        subj.setAssignedIdentifier("001");
+        subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setStudyProtocol(sp);
+        subj.setStudySite(TestSchema.studySites.get(1));
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        subj.setDateLastCreated(PAUtil.dateStringToDateTime("7/9/2013"));
+        TestSchema.addUpdObject(subj);
+        
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getSubjectAccrualService()).thenReturn(new SubjectAccrualServiceBean());
+        AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
+        
+        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(sp.getId()));
+        assertEquals(AccrualUtil.PATIENT_LEVEL, result.getAccrualSubmissionLevel().getValue());
+        assertEquals(result.getTrialType().getValue(), AccrualUtil.NONINTERVENTIONAL);
+	}
+
+    @Test
+    public void testNonInterventional3() throws Exception {
+		SearchTrialResultDto result;
+		StudyProtocol sp = new NonInterventionalStudyProtocol();
+        sp.setOfficialTitle("Test Non-interventional study");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("7/9/2013"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2013-00006");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+                     
+        StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(TestSchema.registryUsers.get(0));
+        ssaa.setStudySite(TestSchema.studySites.get(0));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
+        TestSchema.addUpdObject(ssaa);
+        
+        StudySiteSubjectAccrualCount cnt = new StudySiteSubjectAccrualCount();
+        cnt.setStudySite(TestSchema.studySites.get(0));
+        cnt.setAccrualCount(10);
+        cnt.setStudyProtocol(sp);
+        cnt.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        TestSchema.addUpdObject(cnt);
+        
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getSubjectAccrualService()).thenReturn(new SubjectAccrualServiceBean());
+        AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
+        
+        result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(sp.getId()));
+        assertEquals(AccrualUtil.SUMMARY_LEVEL, result.getAccrualSubmissionLevel().getValue());
+        assertEquals(result.getTrialType().getValue(), AccrualUtil.NONINTERVENTIONAL);
+	}
 
     @Test
     public void getStudyOverallStatus() throws Exception {

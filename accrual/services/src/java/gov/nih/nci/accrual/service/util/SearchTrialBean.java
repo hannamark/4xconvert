@@ -82,6 +82,9 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -138,7 +141,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class SearchTrialBean implements SearchTrialService {
-
+    
     private static final int SP_IDENTIFIER_IDX = 0;
     private static final int ORG_NAME_IDX = 1;
     private static final int SS_IDENTIFIER = 2;
@@ -146,9 +149,8 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SP_ID_IDX = 4;
     private static final int SOS_STATUS_IDX = 5;
     private static final int PERSON_IDX = 6;
-    private static final int TYPE_CODE_IDX = 7;
 
-    private static final String UNCHECKED = "unchecked";
+    private static final String UNCHECKED = "unchecked";    
 
     /**
      * {@inheritDoc}
@@ -197,7 +199,8 @@ public class SearchTrialBean implements SearchTrialService {
     }
     
     @SuppressWarnings(UNCHECKED)
-    private List<SearchTrialResultDto> getTrialSummariesByStudyProtocolIdentifiers(Collection<Long> identifiers) {
+    private List<SearchTrialResultDto> getTrialSummariesByStudyProtocolIdentifiers(Collection<Long> identifiers) 
+                            throws PAException {
         List<SearchTrialResultDto> results = new ArrayList<SearchTrialResultDto>();
         if (CollectionUtils.isEmpty(identifiers)) {
             return results;
@@ -228,13 +231,15 @@ public class SearchTrialBean implements SearchTrialService {
         Query query = session.createQuery(hql);
         query.setParameterList("studyProtocolIdentifiers", identifiers);
         List<Object[]> queryList = query.list();
+        SubjectAccrualServiceLocal subjectAccrualSer = AccrualServiceLocator.getInstance().getSubjectAccrualService();
         for (Object[] trialInfo : queryList) {
-            results.add(convertToDto(trialInfo));
+            results.add(convertToDto(trialInfo, subjectAccrualSer));
         }
         return results;
     }
     
-    private SearchTrialResultDto convertToDto(Object[] obj) {
+    private SearchTrialResultDto convertToDto(Object[] obj, SubjectAccrualServiceLocal subjectAccrualSer) 
+            throws PAException {
         SearchTrialResultDto trial = new SearchTrialResultDto();
         trial.setAssignedIdentifier(StConverter.convertToSt((String) obj[SP_IDENTIFIER_IDX]));
         trial.setLeadOrgName(StConverter.convertToSt((String) obj[ORG_NAME_IDX]));
@@ -248,11 +253,22 @@ public class SearchTrialBean implements SearchTrialService {
         Person person = (Person) obj[PERSON_IDX];
         trial.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         if (sp instanceof NonInterventionalStudyProtocol) {
-            trial.setTrialType(StConverter.convertToSt("Non-interventional"));
+            trial.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
+            try {
+                Long patientAccruals = subjectAccrualSer.getAccrualCounts(true, sp.getId());
+                Long summaryAccruals = subjectAccrualSer.getAccrualCounts(false, sp.getId());
+                if (patientAccruals == 0 && summaryAccruals == 0) {
+                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.BOTH));
+                } else if (patientAccruals > 0) {
+                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
+                } else if (summaryAccruals > 0) {
+                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUMMARY_LEVEL)); 
+                }
+            } catch (PAException e) {
+                throw new PAException("Accrual submissions error in convertToDto()."  + e.getMessage());                
+            }
         } else if (sp instanceof InterventionalStudyProtocol) {
-            trial.setTrialType(StConverter.convertToSt("Interventional"));
-        } else {
-            trial.setTrialType(StConverter.convertToSt(sp.getClass().getName()));
+            trial.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));
         }
         return trial;
     }

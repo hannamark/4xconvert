@@ -11,8 +11,9 @@ function setCheckbox(index) {
 </script>
 <c:set var="topic" scope="request" value="accrualcount"/>
 
-<c:if test="${sessionScope.trialSummary.trialType.value == 'Non-interventional'}">
-    <s:a cssClass="btn" href="patients.action"><span class="btn_img"><span class="save">Switch to Patient Level Accrual</span></span></s:a><br/><br/>
+<c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
+    <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{studyProtocolId}" /></s:url>
+    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Patient Level Accrual</span></span></s:a><br/><br/>
 </c:if>
 
 <h1>
@@ -27,7 +28,6 @@ function setCheckbox(index) {
 
 <s:form name="countform" action="industrialPatientsupdate">
     <s:token/>
-    <s:hidden name="studyProtocolId" />
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
         <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">

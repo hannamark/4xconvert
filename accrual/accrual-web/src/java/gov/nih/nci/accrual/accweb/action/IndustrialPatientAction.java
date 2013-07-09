@@ -85,12 +85,14 @@ package gov.nih.nci.accrual.accweb.action;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,17 +123,12 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
         super.prepare();
         try {
             if (getStudyProtocolId() != null) {
+                setSpIi(IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
                 loadTrialSummaryIntoSession();
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
         }
-    }
-
-    private void loadTrialSummaryIntoSession() throws PAException {
-        setSpIi(IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
-        SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
-        ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
     }
 
     /**
@@ -158,8 +155,16 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     private boolean isSessionTrialNotIndustrial() {
         SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
                 .getAttribute("trialSummary");
-        return !BlConverter.convertToBoolean(trialSummary.getIndustrial())
-                && StConverter.convertToString(trialSummary.getTrialType()).equals("Interventional");
+        boolean result = false;
+        if (StConverter.convertToString(trialSummary.getTrialType()).equals(AccrualUtil.INTERVENTIONAL)) {
+            result = !BlConverter.convertToBoolean(trialSummary.getIndustrial());
+        } else {
+            if (!ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
+                    && trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.PATIENT_LEVEL)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     /**
@@ -175,6 +180,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
                 ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                         AccrualConstants.UPDATE_MESSAGE);
                 setSitesToSave(null);
+                checkIfNonInterventionalTrialChanges();
             }
         } catch (PAException e) {
             addActionError(e.getMessage());

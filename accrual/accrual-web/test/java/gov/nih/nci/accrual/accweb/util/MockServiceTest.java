@@ -123,13 +123,13 @@ public class MockServiceTest {
         assertEquals(1, r.size());
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("K"));
         r = service.search(crit, authUser);
-        assertEquals(2, r.size());
+        assertEquals(4, r.size());
 
         // get by title
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(""));
         crit.setOfficialTitle(StConverter.convertToSt("Phase IV"));
         r = service.search(crit, authUser);
-        assertEquals(2, r.size());
+        assertEquals(4, r.size());
         crit.setOfficialTitle(StConverter.convertToSt("Phase III"));
         r = service.search(crit, authUser);
         assertTrue(r.isEmpty());
