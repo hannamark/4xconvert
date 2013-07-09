@@ -80,6 +80,7 @@ package gov.nih.nci.accrual.accweb.decorator;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -124,7 +125,7 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
         dto.setStudyProtocolIdentifier(ii);
         dto.setIndustrial(BlConverter.convertToBl(true));
         ai = new St();
-        ai.setValue("Non-interventional");
+        ai.setValue(AccrualUtil.NONINTERVENTIONAL);
         dto.setTrialType(ai);
         return dto;
     }

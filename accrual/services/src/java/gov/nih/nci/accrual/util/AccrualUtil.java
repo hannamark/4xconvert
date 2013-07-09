@@ -122,6 +122,16 @@ public class AccrualUtil {
     private static final int YR_MO_FORMAT_IDX = 5;
     private static final int YR_MO_BATCH_FORMAT_IDX = 7;
     private static final CSVParser PARSER = new CSVParser();
+    /** Study type. */
+    public static final String INTERVENTIONAL = "Interventional";
+    /** Study type. */
+    public static final String NONINTERVENTIONAL = "Non-interventional";
+    /** Accrual Submission type. */
+    public static final String PATIENT_LEVEL = "Patient Level";
+    /** Accrual Submission type. */
+    public static final String SUMMARY_LEVEL = "Summary Level";
+    /** Accrual Submission type. */
+    public static final String BOTH = "Both";
 
     /**
      * Static ordered list of valid date format patterns.
