@@ -350,7 +350,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyOverallStatusService.create(overallStatusDTO);
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
-            saveAmenderInfo(studyProtocolDTO, amender);
+            saveAmenderInfo(studyProtocolDTO, amender, true);
             
             // PO-5806: date_last_created fields get reversed for amendment and original.
             // Need to fix this here.
@@ -377,27 +377,25 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
     }
 
-    private void saveAmenderInfo(StudyProtocolDTO studyProtocolDTO, St amender)
-            throws PAException {
+    private void saveAmenderInfo(StudyProtocolDTO studyProtocolDTO, St amender, boolean updateStudyMileStone)
+            throws PAException {        
         if (!ISOUtil.isStNull(amender)) {
-            Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO
-                    .getIdentifier());
-            User user = CSMUserService.getInstance().getCSMUser(
-                    amender.getValue());
+            Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+            User user = CSMUserService.getInstance().getCSMUser(amender.getValue());
             if (user == null) {
-                throw new PAException(
-                        "Unable to find the amending user's account record.");
+                throw new PAException("Unable to find the amending user's account record.");
             }
             String spUpdate = "UPDATE study_protocol SET user_last_created_id = "
-                    + user.getUserId() + " WHERE identifier=" + studyProtocolId;
-            getPAServiceUtils().executeSql(spUpdate);
-            
+                    + user.getUserId() + " WHERE identifier=" + studyProtocolId;            
+            getPAServiceUtils().executeSql(spUpdate);            
+            if (updateStudyMileStone) {
             //At this point there is only 1 record in study_milestone table. 
-            //Hence safe to fire an update. 
-            String smUpdate = "UPDATE study_milestone SET user_last_created_id = "
-                    + user.getUserId() + " , user_last_updated_id = " 
-                    + user.getUserId() + " WHERE study_protocol_identifier=" + studyProtocolId;
-            getPAServiceUtils().executeSql(smUpdate);            
+                //Hence safe to fire an update. 
+                String smUpdate = "UPDATE study_milestone SET user_last_created_id = "
+                        + user.getUserId() + " , user_last_updated_id = " 
+                        + user.getUserId() + " WHERE study_protocol_identifier=" + studyProtocolId;
+                getPAServiceUtils().executeSql(smUpdate);
+            }
         }
     }
 
@@ -1033,7 +1031,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         public int compare(StudyProtocolDTO o1, StudyProtocolDTO o2) {
                             return o1.getSubmissionNumber().getValue().compareTo(o2.getSubmissionNumber().getValue());
                         }
-
                     });
                     sourceSpIi = spList.get(spList.size() - 1).getIdentifier();
                 }
@@ -1047,8 +1044,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     throw new PAException("Study Relationship not found for the Amended Protocol");
 
                 }
-                StudyProtocolDTO sourceSpDto = studyProtocolService
-                    .getStudyProtocol(sourceSpIi);
+                StudyProtocolDTO sourceSpDto = studyProtocolService.getStudyProtocol(sourceSpIi);
+                //set the last user created of source study protocol as the last user created of target study protocol.
+                St lastUserCreated = sourceSpDto.getUserLastCreated();
+                StudyProtocolDTO targetSpDto = studyProtocolService.getStudyProtocol(targetSpIi);                
+                saveAmenderInfo(targetSpDto, lastUserCreated, false);                
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                 Session session = PaHibernateUtil.getCurrentSession();
@@ -1061,8 +1061,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                             .convertFromDTOToDomain((InterventionalStudyProtocolDTO) sourceSpDto);
                 }
                 Long id = IiConverter.convertToLong(targetSpIi);
-                StudyProtocol target = (StudyProtocol) session
-                    .load(StudyProtocol.class, id);
+                StudyProtocol target = (StudyProtocol) session.load(StudyProtocol.class, id);
                 source.setId(target.getId());
                 target = source;
                 session.merge(target);
@@ -1092,7 +1091,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 StudySiteDTO studySiteDto = new StudySiteDTO();
                 studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
                 studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-
                 List<StudySiteDTO> studySiteDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                 StudySiteDTO ssSourceDTO = null;
                 if (PAUtil.getFirstObj(studySiteDtos) != null) {
@@ -1120,7 +1118,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     studySiteDto = new StudySiteDTO();
                     studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
                     studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-
                     List<StudySiteDTO> studySiteSponsorDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                     StudySiteDTO ssSponsorSourceDTO = null;
                     if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
