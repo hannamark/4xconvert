@@ -86,11 +86,15 @@ import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -100,17 +104,22 @@ import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialConvertUtils;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 import org.joda.time.DateMidnight;
@@ -120,6 +129,7 @@ import org.joda.time.DateMidnight;
  *
  */
 public class TrialValidator {
+    private static final Logger LOG = Logger.getLogger(TrialValidator.class);
     private static final String STATUS_DATE = "trialDTO.statusDate";
     private static final String STATUS_CODE = "trialDTO.statusCode";
     private static final String START_DATE = "trialDTO.startDate";
@@ -130,12 +140,24 @@ public class TrialValidator {
     private static final String COMPLETION_DATE_TYPE = "trialDTO.completionDateType";
     private static final String ACTUAL_DATETYPE = "Actual";
     private static final String ANTICIPATED_DATETYPE = "Anticipated";
+    private static final String GRANTS = "trialDTO.nciGrant";
     private static final Set<String> TRIAL_STATUS_REQ_SET = new HashSet<String>();
     static {
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.WITHDRAWN.getCode());
+    }
+
+    private final StudyResourcingServiceLocal studyResourcingSvc;
+    private final TrialConvertUtils convertUtil;
+
+    /**
+     * Constructor.
+     */
+    public TrialValidator() {
+        studyResourcingSvc = PaRegistry.getStudyResourcingService();
+        convertUtil = new TrialConvertUtils();
     }
 
     /**
@@ -162,6 +184,7 @@ public class TrialValidator {
         validateStudyStatusReason(trialDto, addFieldError);
         validateXMLReqElement(trialDto, addFieldError);
         validateSummaryFourInfo(trialDto, addFieldError);
+        validateGrants(trialDto, addFieldError);
         return addFieldError;
     }
 
@@ -281,6 +304,30 @@ public class TrialValidator {
         }
         if (valid) {
             addFieldError.putAll(validateTrialDates(trialDto));
+        }
+    }
+
+    private void validateGrants(TrialDTO trialDto, Map<String, String> addFieldError) {
+        Long leadOrgPoId;
+        try {
+            leadOrgPoId = Long.valueOf(trialDto.getLeadOrganizationIdentifier());
+        } catch (Exception e) {
+            leadOrgPoId = null;
+        }
+        List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
+        if (CollectionUtils.isNotEmpty(trialDto.getFundingDtos())) {
+            dtos.addAll(convertUtil.convertISOGrantsList(trialDto.getFundingDtos()));
+        }
+        if (CollectionUtils.isNotEmpty(trialDto.getFundingAddDtos())) {
+            dtos.addAll(convertUtil.convertISOGrantsList(trialDto.getFundingAddDtos()));
+        }
+        try {
+            studyResourcingSvc.validate(Method.UI, trialDto.getNciGrant(), trialDto.getAssignedIdentifier(),
+                    leadOrgPoId, dtos);
+        } catch (PAValidationException e) {
+            addFieldError.put(GRANTS, e.getMessage());
+        } catch (Exception e) {
+            LOG.error(e);
         }
     }
 

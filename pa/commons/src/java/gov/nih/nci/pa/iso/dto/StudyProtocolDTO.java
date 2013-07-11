@@ -129,7 +129,8 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private St comments;
     private Int processingPriority;
     private Ii assignedUser;    
-    
+    private Bl nciGrant;
+
     /**
      *
      * @return acronym
@@ -525,4 +526,17 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
 
+    /**
+     * @return the nciGrant
+     */
+    public Bl getNciGrant() {
+        return nciGrant;
+    }
+
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Bl nciGrant) {
+        this.nciGrant = nciGrant;
+    }
 }

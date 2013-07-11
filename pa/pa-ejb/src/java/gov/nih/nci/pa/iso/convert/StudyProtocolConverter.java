@@ -201,6 +201,7 @@ public class StudyProtocolConverter {
             studyProtocolDTO.setAssignedUser(IiConverter
                     .convertToIi((Long) null));
         }
+        studyProtocolDTO.setNciGrant(BlConverter.convertToBl(studyProtocol.getNciGrant()));
         return studyProtocolDTO;
     }
 
@@ -284,6 +285,7 @@ public class StudyProtocolConverter {
         } else {
             studyProtocol.setAssignedUser(null);
         }
+       studyProtocol.setNciGrant(BlConverter.convertToBoolean(studyProtocolDTO.getNciGrant()));
        return studyProtocol;
    }
 

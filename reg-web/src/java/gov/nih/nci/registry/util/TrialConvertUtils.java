@@ -113,6 +113,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
@@ -214,6 +215,7 @@ public class TrialConvertUtils {
         if (StringUtils.isNotEmpty(trialDTO.getOfficialTitle())) {
             isoDto.setOfficialTitle(StConverter.convertToSt(trialDTO.getOfficialTitle()));
         }
+        isoDto.setNciGrant(BlConverter.convertToBl(trialDTO.getNciGrant()));
         isoDto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDTO.getPhaseCode())));
         isoDto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
                  trialDTO.getPhaseAdditionalQualifier())));
@@ -314,6 +316,7 @@ public class TrialConvertUtils {
         } else {
             isoDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
         }
+        isoDto.setNciGrant(BlConverter.convertToBl(trialDTO.getNciGrant()));
         if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
            List<Ii> iis = new ArrayList<Ii>();
            for (Ii sps : trialDTO.getSecondaryIdentifierList()) {
@@ -764,6 +767,7 @@ public class TrialConvertUtils {
                                NciDivisionProgramCode.getByCode(dto.getNciDivisionProgramCode())));
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
            isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
+           isoDTO.setFundingPercent(RealConverter.convertToReal(dto.getFundingPercent()));
            if (StringUtils.isNotEmpty(dto.getStudyProtocolId())) {
                isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
                        dto.getStudyProtocolId())));
@@ -799,6 +803,7 @@ public class TrialConvertUtils {
                                NciDivisionProgramCode.getByCode(dto.getNciDivisionProgramCode())));
            isoDTO.setNihInstitutionCode(CdConverter.convertStringToCd(dto.getNihInstitutionCode()));
            isoDTO.setSerialNumber(StConverter.convertToSt(dto.getSerialNumber()));
+           isoDTO.setFundingPercent(RealConverter.convertToReal(dto.getFundingPercent()));
            grantsDTOList.add(isoDTO);
        }
        return grantsDTOList;
@@ -931,6 +936,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        spStageDTO.setIdentifier(IiConverter.convertToIi(trialDto.getStudyProtocolId()));
        spStageDTO.setNctIdentifier(StConverter.convertToSt(trialDto.getNctIdentifier()));
        spStageDTO.setOfficialTitle(StConverter.convertToSt(trialDto.getOfficialTitle()));
+       spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
        spStageDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(trialDto.getPhaseCode())));
        spStageDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.getByCode(
               trialDto.getPhaseAdditionalQualifier())));
@@ -971,6 +977,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        spStageDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
         spStageDTO.setConsortiaTrialCategoryCode(CdConverter
                 .convertStringToCd(trialDto.getConsortiaTrialCategoryCode()));
+       spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
        return spStageDTO;
    }
 
@@ -1055,6 +1062,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
         spStageDTO.setCtgovXmlRequiredIndicator(trialDto.isXmlRequired() ? BlConverter.convertToBl(Boolean.TRUE)
                 : BlConverter.convertToBl(Boolean.FALSE));
+        spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
         spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
     }
     
@@ -1095,6 +1103,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        trialDto.setStudyProtocolId(IiConverter.convertToString(spStageDTO.getIdentifier()));
        trialDto.setNctIdentifier(StConverter.convertToString(spStageDTO.getNctIdentifier()));
        trialDto.setOfficialTitle(StConverter.convertToString(spStageDTO.getOfficialTitle()));
+       trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
        convertPhaseAndPurposeToTrialDTO(spStageDTO, trialDto);
        trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
        if (!ISOUtil.isStNull(spStageDTO.getSecondaryPurposes())) {
@@ -1192,6 +1201,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        trialDto.setTrialType(StConverter.convertToString(spStageDTO.getTrialType()));
        trialDto.setConsortiaTrialCategoryCode(CdConverter.convertCdToString(spStageDTO
                .getConsortiaTrialCategoryCode()));
+       trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
        return trialDto;
    }
 
@@ -1325,6 +1335,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         } else {
             trialDto.setXmlRequired(false);
         }
+        trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
         trialDto.setSecondaryIdentifierList(spStageDTO.getSecondaryIdentifierList());
         return trialDto;
     }
@@ -1338,6 +1349,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        tempFundingDTO.setNciDivisionProgramCode(CdConverter.convertStringToCd(grant.getNciDivisionProgramCode()));
        tempFundingDTO.setNihInstitutionCode(CdConverter.convertStringToCd(grant.getNihInstitutionCode()));
        tempFundingDTO.setSerialNumber(StConverter.convertToSt(grant.getSerialNumber()));
+       tempFundingDTO.setFundingPercent(RealConverter.convertToReal(grant.getFundingPercent()));
        return tempFundingDTO;
    }
    /**
@@ -1350,6 +1362,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        retDTO.setNciDivisionProgramCode(CdConverter.convertCdToString(isoDTO.getNciDivisionProgramCode()));
        retDTO.setNihInstitutionCode(CdConverter.convertCdToString(isoDTO.getNihInstitutionCode()));
        retDTO.setSerialNumber(StConverter.convertToString(isoDTO.getSerialNumber()));
+       retDTO.setFundingPercent(RealConverter.convertToString(isoDTO.getFundingPercent()));
        retDTO.setRowId(UUID.randomUUID().toString());
        return retDTO;
    }

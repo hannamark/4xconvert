@@ -163,6 +163,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLst("1");
         trialDTO.setSelectedRegAuth("1");
         trialDTO.setXmlRequired(true);
+        trialDTO.setNciGrant(Boolean.TRUE);
         return trialDTO;
     }
     protected List<TrialFundingWebDTO> getfundingDtos(){
@@ -171,6 +172,7 @@ public abstract class AbstractRegWebTest {
         grantDto.setNihInstitutionCode("AG");
         grantDto.setNciDivisionProgramCode("CCR");
         grantDto.setSerialNumber("123456");
+        grantDto.setFundingPercent("20.5");
         grantDto.setId("1");
         grantDto.setRowId("1");
         List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
@@ -312,7 +314,7 @@ public abstract class AbstractRegWebTest {
         paOrgDto.setDateClosedforAccrual(currentDate);
         paOrgList.add(paOrgDto);
         trialDTO.setParticipatingSitesList(paOrgList);        
-        
+        trialDTO.setNciGrant(false);
         return trialDTO;
     }
     /**
@@ -382,6 +384,7 @@ public abstract class AbstractRegWebTest {
         dto.setOversightAuthorityCountry("United States");
         dto.setOversightOrgName("Federal Government");
         dto.setCtGovXmlIndicator(true);
+        dto.setNciGrant(Boolean.TRUE);
         return dto;
     }
     /**
@@ -431,6 +434,7 @@ public abstract class AbstractRegWebTest {
         dto.setNihGrantInstituteCode("nihGrantInstituteCode");
         dto.setNihGrantNCIDivisionCode("nihGrantNCIDivisionCode");
         dto.setNihGrantSrNumber("12345");
+        dto.setNihGrantFundingPct("100");
     }
     /**
      * @param dto
@@ -440,6 +444,7 @@ public abstract class AbstractRegWebTest {
         dto.setNihGrantInstituteCode("nihGrantInstituteCode1;nihGrantInstituteCode2");
         dto.setNihGrantNCIDivisionCode("nihGrantNCIDivisionCode1;nihGrantNCIDivisionCode2");
         dto.setNihGrantSrNumber("SrNum1;SrNum2");
+        dto.setNihGrantFundingPct("50;50");
     }
     /**
     *
@@ -561,6 +566,7 @@ public abstract class AbstractRegWebTest {
        spDto.setDelayedpostingIndicator(BlConverter.convertToBl(true));
        spDto.setPublicTitle(StConverter.convertToSt("public title"));
        spDto.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(true));
+       spDto.setNciGrant(BlConverter.convertToBl(true));
 
 
        DSet<Ii> secondaryIdentifiers = new DSet<Ii>();

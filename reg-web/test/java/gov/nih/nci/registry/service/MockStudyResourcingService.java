@@ -7,6 +7,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
@@ -28,6 +29,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         studyRDto.setNihInstitutionCode(CdConverter.convertStringToCd("AG"));
         studyRDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("CCR"));
         studyRDto.setSerialNumber(StConverter.convertToSt("123456"));
+        studyRDto.setFundingPercent(RealConverter.convertToReal(50d));
         studyRDto.setIdentifier(IiConverter.convertToIi("1"));
         studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         list.add(studyRDto);
@@ -36,6 +38,7 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         studyRDto.setNihInstitutionCode(CdConverter.convertStringToCd("AG"));
         studyRDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("CCR"));
         studyRDto.setSerialNumber(StConverter.convertToSt("123456"));
+        studyRDto.setFundingPercent(RealConverter.convertToReal(50d));
         studyRDto.setIdentifier(IiConverter.convertToIi("2"));
         studyRDto.setStudyProtocolIdentifier(IiConverter.convertToIi("3"));
         list.add(studyRDto);
@@ -104,8 +107,8 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return null;
     }
 
-    public void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos)
-            throws PAException {
+    public void validate(Method method, Boolean nciFunded, String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) throws PAException {
     }
 
     @Override

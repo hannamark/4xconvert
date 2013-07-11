@@ -25,6 +25,7 @@
                                 <th><label for="nihInstitutionCode"><fmt:message key="update.trial.instituteCode"/></label></th>
                                 <th><label for="serialNumber"><fmt:message key="update.trial.serialNumber"/></label></th>
                                 <th><label for="nciDivisionProgramCode"><fmt:message key="update.trial.divProgram"/></label></th>
+                                <th><label for="fundingPercent"><fmt:message key="update.trial.fundingPercent"/></label></th>
                                 <th></th>
                             </tr>
                             <tr>
@@ -69,6 +70,14 @@
                                     <span class="formErrorMsg">
                                         <s:fielderror>
                                             <s:param>nciDivisionProgramCode</s:param>
+                                        </s:fielderror>
+                                    </span>
+                                </td>
+                                <td>
+                                    <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
+                                    <span class="formErrorMsg">
+                                        <s:fielderror>
+                                            <s:param>fundingPercent</s:param>
                                         </s:fielderror>
                                     </span>
                                 </td>

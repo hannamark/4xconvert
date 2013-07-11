@@ -46,7 +46,8 @@ public class BaseTrialDTO { // NOPMD
     private String timePerspectiveOtherText;
     private List<String> secondaryPurposes = new ArrayList<String>();
     private String consortiaTrialCategoryCode;
-    
+    private Boolean nciGrant = true;
+
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
     /**
@@ -457,6 +458,18 @@ public class BaseTrialDTO { // NOPMD
      */
     public void setConsortiaTrialCategoryCode(String consortiaTrialCategoryCode) {
         this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
+    }
+    /**
+     * @return the nciGrant
+     */
+    public Boolean getNciGrant() {
+        return nciGrant;
+    }
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Boolean nciGrant) {
+        this.nciGrant = nciGrant;
     }
 
 

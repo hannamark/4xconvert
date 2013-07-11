@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AddressUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -352,6 +353,8 @@ public class PopupAction extends ActionSupport implements Preparable {
             for (OrganizationDTO dto : orgList) {
                 PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());
                 paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
+                paDTO.setP30GrantSerialNumber(FamilyHelper.getP30GrantSerialNumber(
+                        IiConverter.convertToLong(dto.getIdentifier())));
                 paOrgs.add(paDTO);
             }
             

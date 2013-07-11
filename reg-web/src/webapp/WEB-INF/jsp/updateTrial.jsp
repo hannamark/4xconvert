@@ -56,6 +56,8 @@
                 var nihInstitutionCode = $('nihInstitutionCode').value;
                 var nciDivisionProgramCode = $('nciDivisionProgramCode').value;
                 var serialNumber = trim($('serialNumber').value);
+                serialNumber = trim(serialNumber);
+                var fundingPercent =  $('fundingPercent').value;
                 var isValidGrant;
                 var isSerialEmpty = false;
                 var alertMessage = "";
@@ -86,9 +88,14 @@
                                alertMessage += "\nSerial Number must be numeric";
                            }
                 }
-                if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)) {
-                    isValidGrant = false;
-                    alertMessage += "\nSerial Number must be 5 or 6 digits";
+                if (fundingPercent.length != 0 && fundingPercent != null) {
+                    if (isNaN(fundingPercent)){
+                        isValidGrant = false;
+                        alertMessage=alertMessage+ "\n % of Grant Funding must be numeric";
+                    } else if(Number(fundingPercent) > 100.0 || Number(fundingPercent) < 0.0){
+                        isValidGrant = false;
+                        alertMessage=alertMessage+ "\n % of Grant Funding must be positive and <= 100";
+                    }
                 }
                 if (isValidGrant == false) {
                     alert(alertMessage);
@@ -99,7 +106,8 @@
                     fundingMechanismCode: fundingMechanismCode,
                     nciDivisionProgramCode: nciDivisionProgramCode,
                     nihInstitutionCode: nihInstitutionCode,
-                    serialNumber: serialNumber
+                    serialNumber: serialNumber,
+                    fundingPercent: fundingPercent
                 };
                 var div = $('grantadddiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
@@ -120,8 +128,9 @@
                 $('nihInstitutionCode').value = '';
                 $('serialNumber').value = '';
                 $('nciDivisionProgramCode').value = '';
+                $('fundingPercent').value = '';
             }
-            
+
             function addOtherIdentifier() {
                 var orgValue = trim($("otherIdentifierOrg").value);
                 if (orgValue != null && orgValue != '') {
@@ -178,6 +187,7 @@
                 <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.xmlRequired" id="trialDTO.xmlRequired" />
+                <s:hidden name="trialDTO.nciGrant" id="trialDTO.nciGrant" />
                 <s:hidden name="page" />
                 <s:hidden name="uuidhidden"/>
                 <p>Use this form to update trial information. You can not change the information in certain fields, including the trial title.</p>

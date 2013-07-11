@@ -93,7 +93,7 @@ import java.util.List;
 public interface StudyResourcingService extends StudyPaService<StudyResourcingDTO> {
 
     /** Method of submission. Validation rules may vary based on submission method. */
-    public enum Method { UI, BATCH, SERVICE, ABSTRACTION_VALIDATION }
+    public static enum Method { UI, BATCH, SERVICE, ABSTRACTION_VALIDATION }
 
     /**
      * @param studyProtocolIi Ii 
@@ -146,13 +146,17 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      */
     Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException;
     /**
+     * Perform some grants collection checks conditionally based on submission method, if NCI funded,
+     * and if Lead Org is part of a Cancer center.
      * @param method method being used to submit data
      * @param nciFunded is the nci funded
+     * @param nciTrialNumber the id of the trial (e.g. NCI-2013-00002)
      * @param leadOrgPoId lead organization PO id
      * @param dtos the grant dtos
      * @throws PAException exception
      */
-    void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos) throws PAException;
+    void validate(Method method, Boolean nciFunded, String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) throws PAException;
     /**
      * 
      * @param studyResourcingDTO dto to validate

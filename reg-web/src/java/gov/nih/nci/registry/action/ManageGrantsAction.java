@@ -87,6 +87,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -103,6 +104,7 @@ public class ManageGrantsAction extends ActionSupport {
     private String nihInstitutionCode;
     private String serialNumber;
     private String nciDivisionProgramCode;
+    private String fundingPercent;
     private String uuid;
 
     /**
@@ -129,6 +131,7 @@ public class ManageGrantsAction extends ActionSupport {
         grantHolder.setFundingMechanismCode(fundingMechanismCode);
         grantHolder.setNihInstitutionCode(nihInstitutionCode);
         grantHolder.setSerialNumber(serialNumber);
+        grantHolder.setFundingPercent(fundingPercent);
         grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
         grantHolder.setRowId(UUID.randomUUID().toString());
         HttpSession session = ServletActionContext.getRequest().getSession();
@@ -151,6 +154,22 @@ public class ManageGrantsAction extends ActionSupport {
 
     /**
      * 
+     * @return result
+     */
+    @SuppressWarnings("unchecked")
+    public String deleteP30Grants() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) session.getAttribute(Constants.GRANT_LIST);
+        for (int i = sessionList.size() - 1; i >= 0; i--) {
+            TrialFundingWebDTO holder = sessionList.get(i);
+            if (StringUtils.equals("P30", holder.getFundingMechanismCode())) {
+                sessionList.remove(i);
+            }
+        }
+        return "display_grants";
+    }
+
+    /**
      * @return result
      */
     public String deleteGrantForUpdate() {
@@ -219,6 +238,20 @@ public class ManageGrantsAction extends ActionSupport {
      */
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    /**
+     * @return the fundingPercent
+     */
+    public String getFundingPercent() {
+        return fundingPercent;
+    }
+
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(String fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
 
     /**

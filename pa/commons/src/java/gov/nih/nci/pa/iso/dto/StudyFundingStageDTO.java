@@ -5,6 +5,7 @@ package gov.nih.nci.pa.iso.dto;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Real;
 import gov.nih.nci.iso21090.St;
 
 /**
@@ -22,6 +23,7 @@ public class StudyFundingStageDTO extends BaseDTO {
     private Cd nihInstitutionCode;
     private St serialNumber;
     private Ii studyProtocolStageIi;
+    private Real fundingPercent;
     /**
      * @return the fundingMechanismCode
      */
@@ -81,6 +83,18 @@ public class StudyFundingStageDTO extends BaseDTO {
      */
     public void setStudyProtocolStageIi(Ii studyProtocolStageIi) {
         this.studyProtocolStageIi = studyProtocolStageIi;
+    }
+    /**
+     * @return the fundingPercent
+     */
+    public Real getFundingPercent() {
+        return fundingPercent;
+    }
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(Real fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
 
 }

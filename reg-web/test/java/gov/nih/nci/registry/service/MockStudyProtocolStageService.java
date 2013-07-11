@@ -200,6 +200,7 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         studyFunding.setFundingMechanismCode("fundingMechanismCode");
         studyFunding.setNciDivisionProgramCode(NciDivisionProgramCode.CCR);
         studyFunding.setSerialNumber("serialNumber");
+        studyFunding.setFundingPercent(60d);
         studyFunding.setNihInstituteCode("nihInstituteCode");
         studyFunding.setStudyProtocolStage(sp);
         studyFundingList.add(studyFunding);

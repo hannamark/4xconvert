@@ -115,6 +115,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
@@ -1094,6 +1095,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         grant.setNciDivisionProgramCode(CdConverter.convertStringToCd("CTEP"));
         grant.setNihInstitutionCode(CdConverter.convertStringToCd("AI"));
         grant.setSerialNumber(StConverter.convertToSt("023099"));
+        grant.setFundingPercent(RealConverter.convertToReal(33d));
         studyResourcingDTOs.add(grant);
         return studyResourcingDTOs;
     }
@@ -1359,6 +1361,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         assertEquals(grant.getNciDivisionProgramCode().getCode(), ("CTEP"));
         assertEquals(grant.getNihInstitutionCode().getCode(), ("AI"));
         assertEquals(grant.getSerialNumber().getValue(), ("023099"));
+        assertEquals(grant.getFundingPercent().getValue(), Double.valueOf(33d));
     }
     
     @Test

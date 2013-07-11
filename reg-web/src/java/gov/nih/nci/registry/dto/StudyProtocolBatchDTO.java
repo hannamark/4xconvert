@@ -109,6 +109,7 @@ public class StudyProtocolBatchDTO {
     private String nihGrantInstituteCode;
     private String nihGrantSrNumber;
     private String nihGrantNCIDivisionCode;
+    private String nihGrantFundingPct;
     private String currentTrialStatus;
     private String reasonForStudyStopped;
     private String currentTrialStatusDate;
@@ -153,6 +154,7 @@ public class StudyProtocolBatchDTO {
     private String ctepIdentifier;
     private String dcpIdentifier;
     private boolean ctGovXmlIndicator = true;
+    private Boolean nciGrant;
     private List<Ii> otherTrialIdentifiers;
 
     /**
@@ -475,6 +477,21 @@ public class StudyProtocolBatchDTO {
      */
     public void setNihGrantSrNumber(String nihGrantSrNumber) {
         this.nihGrantSrNumber = nihGrantSrNumber;
+    }
+
+    /**
+     * @return the nihGrantFundingPct
+     */
+    @Pattern(message = "Grant funding percent must be numeric (exclude percent sign).\n", regex = "^([0-9;.]+)?$")
+    public String getNihGrantFundingPct() {
+        return nihGrantFundingPct;
+    }
+
+    /**
+     * @param nihGrantFundingPct the nihGrantFundingPct to set
+     */
+    public void setNihGrantFundingPct(String nihGrantFundingPct) {
+        this.nihGrantFundingPct = nihGrantFundingPct;
     }
 
     /**
@@ -1891,6 +1908,20 @@ public class StudyProtocolBatchDTO {
      */
      public void setCtGovXmlIndicator(boolean ctGovXmlIndicator) {
        this.ctGovXmlIndicator = ctGovXmlIndicator;
+     }
+
+     /**
+      * @return the nciGrant
+      */
+     public Boolean getNciGrant() {
+         return nciGrant;
+     }
+
+     /**
+      * @param nciGrant the nciGrant to set
+      */
+     public void setNciGrant(Boolean nciGrant) {
+         this.nciGrant = nciGrant;
      }
 
      /**

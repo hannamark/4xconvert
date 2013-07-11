@@ -8,6 +8,7 @@
                 <th>Institute Code</th>
                 <th>Serial Number</th>
                 <th>NCI Division/Program Code</th>
+                <th>% Grant Funding This Trial</th>
              </tr>
         <s:iterator id="fundingDtos" value="fundingDtos" status="fundstats">
             <tr>
@@ -27,6 +28,10 @@
                     <s:hidden name="fundingDtos[%{#fundstats.index}].nciDivisionProgramCode" value="%{nciDivisionProgramCode}"/>
                     <s:property value="%{nciDivisionProgramCode}"/>                                   
                     <s:hidden  name="fundingDtos[%{#fundstats.index}].id" value="%{id}"/>      
+                </td>
+                <td>
+                    <s:hidden name="fundingDtos[%{#fundstats.index}].fundingPercent" value="%{fundingPercent}"/>
+                    <s:property value="%{fundingPercent}"/>                                   
                 </td>
             </tr>
         </s:iterator>

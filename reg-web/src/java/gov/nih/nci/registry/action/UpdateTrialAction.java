@@ -16,6 +16,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -447,6 +448,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @throws IOException on document error
      */
     void enforceBusinessRules() throws PAException, IOException {
+        trialDTO.setFundingAddDtos(getFundingAddDtos());
+        trialDTO.setFundingDtos(getFundingDtos());
         addErrors(new TrialValidator().validateTrial(trialDTO));
         validateStatusAndDate();
         validateCollaborators();
@@ -590,6 +593,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         studyResoureDTO
                 .setNihInstitutionCode(CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
         studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+        studyResoureDTO.setFundingPercent(RealConverter.convertToReal(trialFundingWebDTO.getFundingPercent()));
         return studyResoureDTO;
     }
 

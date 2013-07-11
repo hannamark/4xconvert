@@ -216,6 +216,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         final TrialDTO trialDTO = getTrialDTO();
         try {
             clearErrorsAndMessages();
+            populateGrantList();
             enforceBusinessRules();
             String errorReturn = handleErrors();
             if (errorReturn != null) {
@@ -225,7 +226,6 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             trialDTO.setDocDtos(getTrialDocuments());
             // get the document and put in list add the IndIde,FundingList
             populateIndIdes();
-            populateGrantList();
             if (trialDTO.isXmlRequired()) {
                 trialUtil.setOversgtInfo(trialDTO);
             }

@@ -100,7 +100,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -155,6 +154,7 @@ public class StudyProtocolStageConverterTest extends
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         dates.setCompletionDate(now);
         dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        bo.setNciGrant(Boolean.TRUE);
         return bo;
     }
 
@@ -192,6 +192,7 @@ public class StudyProtocolStageConverterTest extends
         dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         dto.setCompletionDate(nowTs);
         dto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        dto.setNciGrant(BlConverter.convertToBl(true));
         return dto;
     }
 
@@ -222,6 +223,7 @@ public class StudyProtocolStageConverterTest extends
         assertEquals(ActualAnticipatedTypeCode.ANTICIPATED, dates.getStartDateTypeCode());
         assertEquals(now, dates.getPrimaryCompletionDate());
         assertEquals(ActualAnticipatedTypeCode.ACTUAL, dates.getPrimaryCompletionDateTypeCode());
+        assertTrue(bo.getNciGrant());
     }
 
     /**
@@ -250,6 +252,7 @@ public class StudyProtocolStageConverterTest extends
         assertFalse(dto.getProprietaryTrialIndicator().getValue());
         assertTrue(dto.getCtgovXmlRequiredIndicator().getValue());
         assertEquals("program code", dto.getProgramCodeText().getValue());
+        assertTrue(dto.getNciGrant().getValue());
     }
 
 }

@@ -100,6 +100,7 @@ public class PaOrganizationDTO implements Serializable {
     private String name;
     private String identifier;
     private String familyName;
+    private String p30GrantSerialNumber;
     private String nciNumber;
     private String recruitmentStatus;
     private String recruitmentStatusDate;
@@ -177,6 +178,20 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setFamilyName(String familyName) {
         this.familyName = familyName;
+    }
+
+    /**
+     * @return the p30GrantSerialNumber
+     */
+    public String getP30GrantSerialNumber() {
+        return p30GrantSerialNumber;
+    }
+
+    /**
+     * @param p30GrantSerialNumber the p30GrantSerialNumber to set
+     */
+    public void setP30GrantSerialNumber(String p30GrantSerialNumber) {
+        this.p30GrantSerialNumber = p30GrantSerialNumber;
     }
 
     /**

@@ -141,6 +141,7 @@ public class ExcelReaderTest {
         assertNull(list.get(0).getNihGrantFundingMechanism());
         assertNull(list.get(0).getNihGrantInstituteCode());
         assertNull(list.get(0).getNihGrantSrNumber());
+        assertNull(list.get(0).getNihGrantFundingPct());
         assertNull(list.get(0).getNihGrantNCIDivisionCode());
         assertNotNull(list.get(0).getCurrentTrialStatus());
         assertNull(list.get(0).getReasonForStudyStopped());

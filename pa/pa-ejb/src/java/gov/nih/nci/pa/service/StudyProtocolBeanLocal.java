@@ -184,12 +184,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.proxy.HibernateProxy;
 import org.jboss.annotation.IgnoreDependency;
 import org.joda.time.DateMidnight;
 
@@ -865,10 +867,13 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     * @param sp
+     * @param spIn
      * @return
      */
-    private StudyProtocolDTO convertStudyProtocol(final StudyProtocol sp) {
+    private StudyProtocolDTO convertStudyProtocol(final StudyProtocol spIn) {
+        Hibernate.initialize(spIn);
+        StudyProtocol sp = (spIn instanceof HibernateProxy)
+                ? (StudyProtocol) ((HibernateProxy) spIn).getHibernateLazyInitializer().getImplementation() : spIn;
         StudyProtocolDTO studyProtocolDTO;
         if (sp instanceof NonInterventionalStudyProtocol) {
             studyProtocolDTO = NonInterventionalStudyProtocolConverter

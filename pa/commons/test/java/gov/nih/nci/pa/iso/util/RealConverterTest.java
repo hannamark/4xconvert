@@ -10,7 +10,7 @@ import org.junit.Test;
 public class RealConverterTest {
     @Test
     public void testConvertToReal() {
-        Real r = RealConverter.convertToReal(null);
+        Real r = RealConverter.convertToReal((Double) null);
         assertEquals(NullFlavor.NI, r.getNullFlavor());
         assertNull(r.getValue());
 
@@ -19,6 +19,25 @@ public class RealConverterTest {
         assertEquals((Double) 0d, r.getValue());
 
         r = RealConverter.convertToReal(123.456d);
+        assertNull(r.getNullFlavor());
+        assertEquals((Double) 123.456d, r.getValue());
+    }
+
+    @Test
+    public void testConvertStringToReal() {
+        Real r = RealConverter.convertToReal((String) null);
+        assertEquals(NullFlavor.NI, r.getNullFlavor());
+        assertNull(r.getValue());
+
+        r = RealConverter.convertToReal("xyz");
+        assertEquals(NullFlavor.NI, r.getNullFlavor());
+        assertNull(r.getValue());
+
+        r = RealConverter.convertToReal("0");
+        assertNull(r.getNullFlavor());
+        assertEquals((Double) 0d, r.getValue());
+
+        r = RealConverter.convertToReal("123.456");
         assertNull(r.getNullFlavor());
         assertEquals((Double) 123.456d, r.getValue());
     }
@@ -36,5 +55,20 @@ public class RealConverterTest {
         assertNull(RealConverter.convertToDouble(r));
         r.setValue(null);
         assertNull(RealConverter.convertToDouble(r));
+    }
+
+    @Test
+    public void testConvertToString() {
+        assertNull(RealConverter.convertToString(null));
+        Real r = new Real();
+        assertNull(RealConverter.convertToString(r));
+        r.setValue(0d);
+        assertEquals("0.0", RealConverter.convertToString(r));
+        r.setValue(432.456d);
+        assertEquals("432.456", RealConverter.convertToString(r));
+        r.setNullFlavor(NullFlavor.TRC);
+        assertNull(RealConverter.convertToString(r));
+        r.setValue(null);
+        assertNull(RealConverter.convertToString(r));
     }
 }

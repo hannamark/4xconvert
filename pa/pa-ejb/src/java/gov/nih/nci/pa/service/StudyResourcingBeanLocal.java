@@ -84,8 +84,11 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.logging.api.util.StringUtils;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
@@ -100,6 +103,7 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -107,7 +111,11 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -141,12 +149,25 @@ public class StudyResourcingBeanLocal extends
 
     @EJB 
     private LookUpTableServiceRemote lookUpTableSvc;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQrySvc;
+
+    private static final String STAT_P30 = "P30stat";
+    private static final String STAT_CA = "CAstat";
+    private static final String STAT_FUNDING_PCT = "FUNDINGstat";
 
     /**
      * @param paServiceUtils the paServiceUtils to set
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @param lookUpTableSvc the lookUpTableSvc to set
+     */
+    public void setLookUpTableSvc(LookUpTableServiceRemote lookUpTableSvc) {
+        this.lookUpTableSvc = lookUpTableSvc;
     }
 
     /**
@@ -193,7 +214,7 @@ public class StudyResourcingBeanLocal extends
                 studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
-
+        studyResourcing.setFundingPercent(RealConverter.convertToDouble(studyResourcingDTO.getFundingPercent()));
         return super.update(convertFromDomainToDto(studyResourcing));
     }
 
@@ -268,50 +289,87 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    public void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos)
-            throws PAException {
-        int p30Grants = 0;
-        int caGrants = 0;
-        double fundingPctTotal = 0d;
-        for (StudyResourcingDTO dto : dtos) {
-            if (BlConverter.convertToBool(dto.getActiveIndicator())) {
+    public void validate(Method method, Boolean nciFunded, String nciTrialIdentifier, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) throws PAException {
+        Map<String, Object> stats = new HashMap<String, Object>();
+        stats.put(STAT_CA, Boolean.FALSE);
+        stats.put(STAT_P30, Boolean.FALSE);
+        stats.put(STAT_FUNDING_PCT, Double.valueOf(0d));
+        Set<Long> studyResourcingIds  = new HashSet<Long>();
+        if (dtos != null) {
+            for (StudyResourcingDTO dto : dtos) {
+                studyResourcingIds.add(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
                 validate(dto);
-                if ("P30".equals(CdConverter.convertCdToString(dto.getFundingMechanismCode()))) {
-                    p30Grants++;
-                }
-                if ("CA".equals(CdConverter.convertCdToString(dto.getNihInstitutionCode()))) {
-                    caGrants++;
-                }
-                if (!ISOUtil.isRealNull(dto.getFundingPercent())) {
-                    fundingPctTotal += RealConverter.convertToDouble(dto.getFundingPercent());
-                }
+                updateStats(stats, dto);
             }
         }
+        updateStatsWithExistingGrants(stats, nciTrialIdentifier, studyResourcingIds);
         if (grantsRequiredChecksActive(method)) {
-            p30GrantsValidation(leadOrgPoId, p30Grants);
-            caGrantsValidation(nciFunded, caGrants);
+            p30GrantsValidation(leadOrgPoId, stats);
+            caGrantsValidation(nciFunded, stats);
         }
-        if (method == Method.ABSTRACTION_VALIDATION && fundingPctTotal > MAX_FUNDING_PCT) {
+        if (method == Method.ABSTRACTION_VALIDATION && (Double) stats.get(STAT_FUNDING_PCT) > MAX_FUNDING_PCT) {
             throw new PAValidationException(
                     "Total percent of grant funding this trial for all grants cannot be greater than 100.");
         }
     }
 
-    private void p30GrantsValidation(Long leadOrgPoId, int p30Grants) throws PAException {
+    private boolean isActiveGrantRecord(StudyResourcingDTO dto) {
+        Boolean isActive = BlConverter.convertToBoolean(dto.getActiveIndicator());
+        boolean isSumm4 = BlConverter.convertToBool(dto.getSummary4ReportedResourceIndicator());
+        return (null == isActive || isActive) && !isSumm4;
+    }
+
+    private void updateStatsWithExistingGrants(Map<String, Object> stats, String nciTrialIdentifier, 
+            Set<Long> submittedGrants) throws PAException {
+        if (StringUtils.isBlank(nciTrialIdentifier)) {
+            return;
+        }
+        StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
+        viewCriteria.setNciIdentifier(nciTrialIdentifier);
+        List<StudyProtocolQueryDTO> listofDto = protocolQrySvc.getStudyProtocolByCriteria(viewCriteria);
+        if (!listofDto.isEmpty()) {
+            Ii spIi = IiConverter.convertToStudyProtocolIi(listofDto.get(0).getStudyProtocolId());
+            List<StudyResourcingDTO> existing = getByStudyProtocol(spIi);
+            for (StudyResourcingDTO dto : existing) {
+                if (!submittedGrants.contains(IiConverter.convertToLong(dto.getIdentifier()))) {
+                    updateStats(stats, dto);
+                }
+            }
+        }
+    }
+
+    private void updateStats(Map<String, Object> stats, StudyResourcingDTO dto) {
+        if (isActiveGrantRecord(dto)) {
+            if ("P30".equals(CdConverter.convertCdToString(dto.getFundingMechanismCode()))) {
+                stats.put(STAT_P30, Boolean.TRUE);
+            }
+            if ("CA".equals(CdConverter.convertCdToString(dto.getNihInstitutionCode()))) {
+                stats.put(STAT_CA, Boolean.TRUE);
+            }
+            if (!ISOUtil.isRealNull(dto.getFundingPercent())) {
+                stats.put(STAT_FUNDING_PCT, ((Double) stats.get(STAT_FUNDING_PCT))
+                        + RealConverter.convertToDouble(dto.getFundingPercent()));
+            }
+        }
+    }
+
+    private void p30GrantsValidation(Long leadOrgPoId, Map<String, Object> stats) throws PAException {
         boolean isCancerCenter = null != FamilyHelper.getP30GrantSerialNumber(leadOrgPoId);
-        if (isCancerCenter && p30Grants < 1) {
+        if (isCancerCenter && !((Boolean) stats.get(STAT_P30))) {
             throw new PAValidationException("A valid P30 grant record must be added.");
         }
     }
 
-    private void caGrantsValidation(boolean nciFunded, int caGrants) throws PAException {
-        if (nciFunded) {
-            if (caGrants < 1) {
+    private void caGrantsValidation(Boolean nciFunded, Map<String, Object> stats) throws PAException {
+        boolean caGrants = (Boolean) stats.get(STAT_CA);
+        if ((nciFunded == null) || nciFunded) {
+            if (!caGrants) {
                 throw new PAValidationException(
                         "This trial is funded by NCI; however, an NCI grant record was not entered.");
             }
         } else {
-            if (caGrants > 0) {
+            if (caGrants) {
                 throw new PAValidationException(
                         "This trial is not funded by NCI; however, an NCI grant record was entered.");
             }
@@ -413,15 +471,10 @@ public class StudyResourcingBeanLocal extends
 
 
     private void validateSerialNo(StudyResourcingDTO studyResourcingDTO, StringBuffer errorBuffer) {
-        final int serialNumMin = 5;
-        final int serialNumMax = 6;
         if (!ISOUtil.isStNull(studyResourcingDTO.getSerialNumber())) {
             String snValue = studyResourcingDTO.getSerialNumber().getValue();
-            if (snValue.length() < serialNumMin || snValue.length() > serialNumMax) {
-                errorBuffer.append("Serial number can be numeric with 5 or 6 digits\n");
-            }
             if (!NumberUtils.isDigits(snValue)) {
-                errorBuffer.append("Serial number should have numbers from [0-9]\n");
+                errorBuffer.append("Grant serial number should have numbers from [0-9]\n");
             }
         }
     }
@@ -473,12 +526,5 @@ public class StudyResourcingBeanLocal extends
             }
         }
 
-    }
-
-    /**
-     * @param lookUpTableSvc the lookUpTableSvc to set
-     */
-    public void setLookUpTableSvc(LookUpTableServiceRemote lookUpTableSvc) {
-        this.lookUpTableSvc = lookUpTableSvc;
     }
 }

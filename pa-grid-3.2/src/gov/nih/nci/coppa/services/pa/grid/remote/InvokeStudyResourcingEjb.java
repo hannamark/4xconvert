@@ -126,8 +126,6 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
         // TODO Auto-generated method stub
         return null;
     }
-    
-    
 
     public void matchToExistentGrants(
             List<StudyResourcingDTO> studyResourcingDTOs, Ii identifier)
@@ -137,11 +135,9 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     }
 
     @Override
-    public void validate(Method method, Boolean nciFunded, Long leadOrgPoId, List<StudyResourcingDTO> dtos)
-            throws PAException {
+    public void validate(Method method, Boolean nciFunded, String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) throws PAException {
         // TODO Auto-generated method stub
         
     }
-
-    
 }

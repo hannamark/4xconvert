@@ -187,6 +187,15 @@ public class BatchCreateProtocols {
             if (batchDto != null) {
                 result = new StringBuilder();
                 TrialBatchDataValidator validator = new TrialBatchDataValidator();
+                if (StringUtils.isBlank(batchDto.getLeadOrgPOId())) {
+                    OrganizationBatchDTO leadOrgDto = validator.buildLeadOrgDto(batchDto);
+                    try {
+                        Ii orgIdIi = lookUpOrgs(leadOrgDto);
+                        batchDto.setLeadOrgPOId(IiConverter.convertToString(orgIdIi));
+                    } catch (Exception e) {
+                        LOG.debug(e);
+                    }
+                }
                 result.append(validator.validateBatchDTO(batchDto));
                 if (result.length() < 1) {
                     result.append(buildProtocol(batchDto, folderPath, userName));
@@ -655,6 +664,7 @@ public class BatchCreateProtocols {
 
         trialDTO.setTrialType(batchDTO.getTrialType());
         trialDTO.setXmlRequired(batchDTO.isCtGovXmlIndicator());
+        trialDTO.setNciGrant(batchDTO.getNciGrant());
 
         // if the Phase's value is not in allowed LOV then save phase as Other
         // and comments as the value of current phase

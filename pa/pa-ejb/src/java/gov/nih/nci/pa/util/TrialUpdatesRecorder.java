@@ -7,6 +7,7 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -17,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
@@ -191,7 +193,10 @@ public final class TrialUpdatesRecorder {
                 || !(existing.getSerialNumber().getValue().equals(updated
                         .getSerialNumber().getValue()))
                 || !(existing.getNciDivisionProgramCode().getCode()
-                        .equals(updated.getNciDivisionProgramCode().getCode()));
+                        .equals(updated.getNciDivisionProgramCode().getCode())
+                || !(ObjectUtils.equals(RealConverter.convertToDouble(existing.getFundingPercent()) 
+                        , RealConverter.convertToDouble(updated.getFundingPercent())))
+                );
     }
 
     /**

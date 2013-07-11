@@ -73,7 +73,7 @@ public final class FamilyHelper {
                         FamilyOrganizationRelationshipDTO forDto = 
                                 PoRegistry.getFamilyService().getFamilyOrganizationRelationship(ii);
                         String famOrgRelType = CdConverter.convertCdToString(forDto.getFunctionalType());
-                        if (StringUtils.equals(relationship.name(), famOrgRelType)) {
+                        if (StringUtils.equalsIgnoreCase(relationship.name(), famOrgRelType)) {
                             famOrgRelIiList.add(ii);
                         }
                     }

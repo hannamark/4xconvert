@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
@@ -96,6 +97,7 @@ public class TrialFundingWebDTO {
     private String nciDivisionProgramCode;
     private String id;
     private String serialNumber;
+    private String fundingPercent;
     private String inactiveCommentText;
     private String lastUpdatedDate;
     private String userLastUpdated;
@@ -110,6 +112,7 @@ public class TrialFundingWebDTO {
         this.nciDivisionProgramCode = iso.getNciDivisionProgramCode().getCode();
         this.id = iso.getIdentifier().getExtension();
         this.serialNumber = iso.getSerialNumber().getValue().toString();
+        this.fundingPercent = RealConverter.convertToString(iso.getFundingPercent());
         this.inactiveCommentText = StConverter.convertToString(iso.getInactiveCommentText());
         this.lastUpdatedDate = TsConverter.convertToString(iso.getLastUpdatedDate());
         this.userLastUpdated = iso.getUserLastUpdated();
@@ -236,5 +239,19 @@ public class TrialFundingWebDTO {
      */
     public void setUserLastUpdated(String userLastUpdated) {
         this.userLastUpdated = userLastUpdated;
+    }
+
+    /**
+     * @return the fundingPercent
+     */
+    public String getFundingPercent() {
+        return fundingPercent;
+    }
+
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(String fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
 }

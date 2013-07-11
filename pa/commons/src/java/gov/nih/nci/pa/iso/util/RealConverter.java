@@ -25,6 +25,21 @@ public class RealConverter {
     }
 
     /**
+     * Convert a string to an Iso Real.
+     * @param str the string
+     * @return Iso object
+     */
+    public static Real convertToReal(String str) {
+        Double dbl;
+        try {
+            dbl = Double.valueOf(str);
+        } catch (Exception e) {
+            dbl = null;
+        }
+        return convertToReal(dbl);
+    }
+
+    /**
      * Convert an Iso Real to a double.
      * @param real the iso object
      * @return the double
@@ -34,5 +49,23 @@ public class RealConverter {
             return null;
         }
         return real.getValue();
+    }
+
+    /**
+     * Convert an Iso Real to a string.
+     * @param real the iso object
+     * @return the string
+     */
+    public static String convertToString(Real real) {
+        if (real == null || real.getValue() == null || real.getNullFlavor() != null) {
+            return null;
+        }
+        String str;
+        try {
+            str = String.valueOf(real.getValue());
+        } catch (Exception e) {
+            str = null;
+        }
+        return str;
     }
 }

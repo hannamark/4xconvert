@@ -29,6 +29,7 @@
         <script type="text/javascript" language="javascript">
             var orgid;
             var chosenname;
+            var p30GrantSerialNumber;
             var persid;
             var respartOrgid;
             var contactMail;
@@ -45,9 +46,10 @@
             }
            
             
-            function setorgid(orgIdentifier, oname) {
+            function setorgid(orgIdentifier, oname, p30grant) {
                 orgid = orgIdentifier;
                 chosenname = oname.replace(/&apos;/g,"'");
+                p30GrantSerialNumber = p30grant;
             }
             
             function setpersid(persIdentifier, sname, email, phone) {
@@ -90,6 +92,20 @@
             function loadLeadOrgDiv() {
                 $("trialDTO.leadOrganizationIdentifier").value = orgid;
                 $('trialDTO.leadOrganizationName').value = chosenname;
+                deleteP30Grants();
+                if( p30GrantSerialNumber){
+                    var  url = '/registry/protected/ajaxManageGrantsActionaddGrant.action';
+                    var params = {
+                        fundingMechanismCode: 'P30',
+                        nciDivisionProgramCode: 'OD',
+                        nihInstitutionCode: 'CA',
+                        serialNumber: p30GrantSerialNumber
+                    };
+                    var div = $('grantdiv');
+                    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+                    var aj = callAjaxPost(div, url, params);
+                    resetGrantRow();
+                } 
             }
             
             function loadLeadPersDiv() {
@@ -183,6 +199,7 @@
                 var nciDivisionProgramCode = $('nciDivisionProgramCode').value;
                 var serialNumber = $('serialNumber').value;
                 serialNumber = trim(serialNumber);
+                var fundingPercent =  $('fundingPercent').value;
                 var isValidGrant;
                 var isSerialEmpty = false;
                 var alertMessage = "";
@@ -213,9 +230,14 @@
                                alertMessage=alertMessage+ "\n Serial Number must be numeric";
                            }
                 }
-                if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)) {
-                    isValidGrant = false;
-                    alertMessage=alertMessage+ "\n Serial Number must be 5 or 6 digits";
+                if (fundingPercent.length != 0 && fundingPercent != null) {
+                    if (isNaN(fundingPercent)){
+                        isValidGrant = false;
+                        alertMessage=alertMessage+ "\n % of Grant Funding must be numeric";
+                    } else if(Number(fundingPercent) > 100.0 || Number(fundingPercent) < 0.0){
+                        isValidGrant = false;
+                        alertMessage=alertMessage+ "\n % of Grant Funding must be positive and <= 100";
+                    }
                 }
                 if (isValidGrant == false) {
                     alert(alertMessage);
@@ -226,14 +248,15 @@
                     fundingMechanismCode: fundingMechanismCode,
                     nciDivisionProgramCode: nciDivisionProgramCode,
                     nihInstitutionCode: nihInstitutionCode,
-                    serialNumber: serialNumber
+                    serialNumber: serialNumber,
+                    fundingPercent: fundingPercent
                 };
                 var div = $('grantdiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
                 var aj = callAjaxPost(div, url, params);
                 resetGrantRow();
             }
-            
+
             function deleteGrantRow(rowid) {
                 var  url = '/registry/protected/ajaxManageGrantsActiondeleteGrant.action';
                 var params = { uuid: rowid };
@@ -241,7 +264,14 @@
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
-            
+
+            function deleteP30Grants(rowid) {
+                var  url = '/registry/protected/ajaxManageGrantsActiondeleteP30Grants.action';
+                var div = $('grantdiv');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                var aj = callAjaxPost(div, url, null);
+            }
+
             function deleteOtherIdentifierRow(rowid) {
                 var  url = '/registry/protected/ajaxManageOtherIdentifiersActiondeleteOtherIdentifier.action';
                 var params = { uuid: rowid };
@@ -255,6 +285,7 @@
                 $('nihInstitutionCode').value = '';
                 $('serialNumber').value = '';
                 $('nciDivisionProgramCode').value = '';
+                $('fundingPercent').value = '';
             }
             
             function deleteIndIde(rowid) {
@@ -483,7 +514,12 @@
                                <fmt:message key="submit.trial.grantInstructionalText"/>
                             </td>
                         </tr>
-                        <reg-web:spaceRow/>
+                        <tr>
+                          <td>
+                            Is this trial funded by an NCI grant?<span class="required">*</span>
+                            <s:radio name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" />
+                          </td>
+                        </tr>
                         <tr>
                             <td colspan="3">
                                 <table class="form">
@@ -507,6 +543,11 @@
                                             <th>
                                                 <reg-web:displayTooltip tooltip="tooltip.nci_division_program_code">
                                                    <label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/></label>
+                                                </reg-web:displayTooltip>
+                                            </th>
+                                            <th>
+                                                <reg-web:displayTooltip tooltip="">
+                                                   <label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th></th>
@@ -539,10 +580,10 @@
                                             <td>
                                                 <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  cssStyle="width:150px" />
                                             </td>
+                                            <td>
+                                                <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
+                                            </td>
                                             <td><input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>
-                                            <td> &nbsp;</td>
-                                            <td> &nbsp;</td>
-                                            <td> &nbsp;</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -554,6 +595,11 @@
                             <div id="grantdiv">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                             </div>
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.nciGrant</s:param>
+                                </s:fielderror>
+                            </span>
                         </td>
                     </tr>
                     <reg-web:spaceRow/>

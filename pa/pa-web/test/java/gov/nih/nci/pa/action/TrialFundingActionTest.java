@@ -68,6 +68,7 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 	    dto.setNihInstitutionCode("AA");
 	    dto.setNciDivisionProgramCode("CCR");
 	    dto.setSerialNumber("00001");
+	    dto.setFundingPercent("33.3");
 
 	    trialFundingAction.setTrialFundingWebDTO(dto);
 	    assertEquals(trialFundingAction.create(), "query");
@@ -86,6 +87,7 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
         dto.setNihInstitutionCode("AA");
         dto.setNciDivisionProgramCode("CCR");
         dto.setSerialNumber("00001");
+        dto.setFundingPercent("33.3");
 
         trialFundingAction.setTrialFundingWebDTO(dto);
 	    trialFundingAction.setCbValue(1L);

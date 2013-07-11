@@ -85,7 +85,6 @@ package gov.nih.nci.registry.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-
 import gov.nih.nci.pa.enums.CodedEnum;
 
 /**
@@ -102,6 +101,8 @@ public enum BatchStringConstants implements CodedEnum<String> {
     NCI_TRIAL_IDENTIFIER("NCI TRIAL IDENTIFIER", "setNciTrialIdentifier"),
     /** */
     CTGOV_XML_INDICATOR("CLINICALTRIALS.GOV XML REQUIRED?", "setCtGovXmlIndicator"),
+    /** */
+    NCI_FUNDED_INDICATOR("NCI FUNDED?", "setNciGrant"),
     /** */
     AMENDMENT_NUMBER("AMENDMENT NUMBER", "setAmendmentNumber"),
     /** */
@@ -275,6 +276,8 @@ public enum BatchStringConstants implements CodedEnum<String> {
     NIH_GRANT_SR_NO("[NIH GRANT] SERIAL NUMBER", "setNihGrantSrNumber"),
     /** */
     NIH_GRANT_NCI_DIV_CODE("[NIH GRANT] NCI DIVISION/PROGRAM CODE", "setNihGrantNCIDivisionCode"),
+    /** */
+    NIH_GRANT_FUNDING_PCT("[NIH GRANT] FUNDING PERCENT", "setNihGrantFundingPct"),
     /** */
     CURRENT_TRIAL_STATUS("CURRENT TRIAL STATUS", "setCurrentTrialStatus"),
     /** */

@@ -210,13 +210,14 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
         srDTO1.setSerialNumber(StConverter.convertToSt("12345"));
         srDTO1.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+        srDTO1.setFundingPercent(RealConverter.convertToReal(33.3d));
 
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
 
         // assertEquals (srDTO1.getFundingMechanismCode().getCode() , srDTO2.getFundingMechanismCode().getCode());
         assertEquals(srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
-
+        assertEquals(srDTO1.getFundingPercent().getValue(), srDTO2.getFundingPercent().getValue());
     }
 
     @Test
@@ -233,10 +234,12 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         StudyResourcingDTO srDTO1 = new StudyResourcingDTO();
         srDTO1.setSerialNumber(StConverter.convertToSt("12345"));
         srDTO1.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+        srDTO1.setFundingPercent(RealConverter.convertToReal(33.3d));
 
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
         assertEquals(srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
+        assertEquals(srDTO1.getFundingPercent().getValue(), srDTO2.getFundingPercent().getValue());
 
         srDTO2.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         srDTO2.setSerialNumber(StConverter.convertToSt("123123"));
@@ -282,7 +285,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void validateP30NotRequiredNoDataTest() throws Exception {
-        remoteEjb.validate(Method.UI, false, 1L, new ArrayList<StudyResourcingDTO>());
+        remoteEjb.validate(Method.UI, false, null, 1L, new ArrayList<StudyResourcingDTO>());
     }
 
     @Test
@@ -295,18 +298,18 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         dto.setFundingMechanismCode(CdConverter.convertStringToCd("P30"));
         dto.setActiveIndicator(BlConverter.convertToBl(false));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
     }
 
     @Test
     public void validateP30NotRequiredTest() throws Exception {
         List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
 
         StudyResourcingDTO dto = createStudyResourcingISOObj();
         dto.setFundingMechanismCode(CdConverter.convertStringToCd("P30"));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
     }
 
     @Test
@@ -316,7 +319,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
         dto.setActiveIndicator(BlConverter.convertToBl(false));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
     }
 
     @Test
@@ -327,7 +330,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         StudyResourcingDTO dto = createStudyResourcingISOObj();
         dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
     }
 
     @Test
@@ -335,7 +338,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         thrown.expect(PAValidationException.class);  
         thrown.expectMessage("This trial is funded by NCI; however, an NCI grant record was not entered.");  
         List<StudyResourcingDTO> dtos = new ArrayList<StudyResourcingDTO>();
-        remoteEjb.validate(Method.UI, true, 1L, dtos);
+        remoteEjb.validate(Method.UI, true, null, 1L, dtos);
     }
 
     @Test
@@ -344,12 +347,12 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         StudyResourcingDTO dto = createStudyResourcingISOObj();
         dto.setNihInstitutionCode(CdConverter.convertStringToCd("CA"));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, true, 1L, dtos);
+        remoteEjb.validate(Method.UI, true, null, 1L, dtos);
     }
 
     @Test
     public void validateTotalPctTest() throws Exception {
-        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, 1L, new ArrayList<StudyResourcingDTO>());
+        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, null, 1L, new ArrayList<StudyResourcingDTO>());
     }
 
     @Test
@@ -361,7 +364,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         dto = createStudyResourcingISOObj();
         dto.setFundingPercent(RealConverter.convertToReal(60d));
         dtos.add(dto);
-        remoteEjb.validate(Method.UI, false, 1L, dtos);
+        remoteEjb.validate(Method.UI, false, null, 1L, dtos);
     }
 
     @Test
@@ -375,7 +378,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         dto = createStudyResourcingISOObj();
         dto.setFundingPercent(RealConverter.convertToReal(60d));
         dtos.add(dto);
-        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, 1L, dtos);
+        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, null, 1L, dtos);
      }
 
     private static StudyResourcing createStudyResourcingObj(StudyProtocol sp) {

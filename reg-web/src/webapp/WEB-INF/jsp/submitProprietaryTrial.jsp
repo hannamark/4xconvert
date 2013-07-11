@@ -32,7 +32,7 @@
             var contactMail;
             var contactPhone;
             
-            function setorgid(orgIdentifier, oname) {
+            function setorgid(orgIdentifier, oname, p30grant) {
                 orgid = orgIdentifier;
                 chosenname = oname.replace(/&apos;/g,"'");
             }
@@ -95,105 +95,7 @@
                 form.action = action;
                 form.submit();
             }
-            
-            function addGrant() {
-                var fundingMechanismCode = $('fundingMechanismCode').value;
-                var nihInstitutionCode = $('nihInstitutionCode').value;
-                var nciDivisionProgramCode = $('nciDivisionProgramCode').value;
-                var serialNumber = $('serialNumber').value;
-                serialNumber = trim(serialNumber);
-                var isValidGrant;
-                var isSerialEmpty = false;
-                var alertMessage = "";
-            
-                if (fundingMechanismCode.length == 0 || fundingMechanismCode == null) {
-                    isValidGrant = false;
-                    alertMessage="Please select a Funding Mechanism";
-                }
-                if (nihInstitutionCode.length == 0 || nihInstitutionCode == null) {
-                    isValidGrant = false;
-                    alertMessage=alertMessage+ "\n Please select an Institute Code";
-                }
-                if (serialNumber.length == 0 || serialNumber == null) {
-                    isValidGrant = false;
-                    isSerialEmpty = true;
-                    alertMessage=alertMessage+ "\n Please enter a Serial Number";
-                }
-                if (nciDivisionProgramCode.length == 0 || nciDivisionProgramCode == null) {
-                    isValidGrant = false;
-                    alertMessage=alertMessage+ "\n Please select a NCI Division/Program Code";
-                }
-                if (isSerialEmpty == false && isNaN(serialNumber)) {
-                    isValidGrant = false;
-                    alertMessage=alertMessage+ "\n Serial Number must be numeric";
-                } else if (isSerialEmpty == false && serialNumber != null) {
-                    var numericExpression = /^[0-9]+$/;
-                    if (!numericExpression.test(serialNumber)) {
-                        isValidGrant = false;
-                        alertMessage=alertMessage+ "\n Serial Number must be numeric";
-                    }
-                }
-                if (isSerialEmpty == false && (serialNumber.length < 5 || serialNumber.length > 6)) {
-                    isValidGrant = false;
-                    alertMessage=alertMessage+ "\n Serial Number must be 5 or 6 digits";
-                }
-                if (isValidGrant == false) {
-                    alert(alertMessage);
-                    return false;
-                }
-                var  url = '/registry/protected/ajaxManageGrantsActionaddGrant.action';
-                var params = {
-                    fundingMechanismCode: fundingMechanismCode,
-                    nciDivisionProgramCode: nciDivisionProgramCode,
-                    nihInstitutionCode: nihInstitutionCode,
-                    serialNumber: serialNumber
-                };
-                var div = $('grantdiv');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
-                var aj = callAjaxPost(div, url, params);
-                resetGrantRow();
-            }
-            
-            function deleteGrantRow(rowid) {
-                var  url = '/registry/protected/ajaxManageGrantsActiondeleteGrant.action';
-                var params = { uuid: rowid };
-                var div = $('grantdiv');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-                var aj = callAjaxPost(div, url, params);
-            }
-            
-            function resetGrantRow() {
-                $('fundingMechanismCode').value = '';
-                $('nihInstitutionCode').value = '';
-                $('serialNumber').value = '';
-                $('nciDivisionProgramCode').value = '';
-            }
-            
-            function deleteIndIde(rowid) {
-                var  url = '/registry/protected/ajaxManageIndIdeActiondeleteIndIde.action';
-                var params = { uuid: rowid };
-                var div = $('indidediv');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-                var aj = callAjaxPost(div, url, params);
-            }
-            
-            function addIndIde(indIde, number, grantor, holderType, programCode, expandedAccess, expandedAccessType) {
-                var  url = '/registry/protected/ajaxManageIndIdeActionaddIdeIndIndicator.action';
-                var params = {
-                    expandedAccess: expandedAccess,
-                    expandedAccessType: expandedAccessType,
-                    grantor: grantor,
-                    holderType: holderType,
-                    indIde: indIde,
-                    number: number,
-                    programCode: programCode
-                };
-                var div = $('indidediv');
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
-                var aj = callAjaxPost(div, url, params);
-                resetValues();
-            }
-            
+
             function partialSave() {
                 submitFirstForm(null, "submitProprietaryTrialpartialSave.action");
                 showPopWin('${partialSave}', 600, 200, '', 'Saving Draft');

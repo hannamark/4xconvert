@@ -1,8 +1,13 @@
-    function submitform(orgid, name) {       
+    function submitform(orgid, name) {
         top.window.setorgid(orgid, name);
         window.top.hidePopWin(true); 
     }
-   
+
+    function submitform(orgid, name, p30grant) {
+        top.window.setorgid(orgid, name, p30grant);
+        window.top.hidePopWin(true); 
+    }
+
     function setSearchFormVisible() {
         document.getElementById("searchOrgJsp").style.display="";
         document.getElementById("createOrgJsp").style.display="none";

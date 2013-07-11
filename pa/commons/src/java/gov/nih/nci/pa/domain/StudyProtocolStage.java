@@ -81,6 +81,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private Timestamp closedForAccrualDate;
     private Boolean piInitiatedIndicator;
     private Boolean siteNciDesignatedCancerCenterIndicator;
+    private Boolean nciGrant;
     
     private StudyModelCode studyModelCode;
     private String studyModelOtherText;
@@ -648,5 +649,17 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
     }
-   
+    /**
+     * @return the nciGrant
+     */
+    @Column(name = "nci_grant")
+    public Boolean getNciGrant() {
+        return nciGrant;
+    }
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Boolean nciGrant) {
+        this.nciGrant = nciGrant;
+    }
 }

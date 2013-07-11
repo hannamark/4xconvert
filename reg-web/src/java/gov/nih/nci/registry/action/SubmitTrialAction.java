@@ -303,6 +303,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         final TrialDTO trialDTO = getTrialDTO();
         try {
             clearErrorsAndMessages();
+            addFundingToTrialDto();
             validateForm();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", getText("error.fieldErrors"));
@@ -313,7 +314,6 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             trialDTO.setDocDtos(getTrialDocuments());
             addIndIdesToTrialDto();
-            addFundingToTrialDto();
             addSecondaryIdsToTrialDto();
 
             trialUtil.setOversgtInfo(trialDTO);

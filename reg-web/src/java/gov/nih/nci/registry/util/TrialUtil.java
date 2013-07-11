@@ -121,6 +121,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
         trialDTO.setXmlRequired(!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
                 && spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
+        trialDTO.setNciGrant(BlConverter.convertToBoolean(spDTO.getNciGrant()));
         if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
             List<Ii> listIi = new ArrayList<Ii>();
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
@@ -918,6 +919,7 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
         }   
         trialDTO.setSecondaryPurposeOtherText(spDTO.getSecondaryPurposeOtherText().getValue());
+        trialDTO.setNciGrant(BlConverter.convertToBoolean(spDTO.getNciGrant()));
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 

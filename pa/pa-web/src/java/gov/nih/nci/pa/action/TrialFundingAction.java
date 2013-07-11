@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -172,6 +173,7 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
             studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
                     trialFundingWebDTO.getNihInstitutionCode()));
             studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            studyResoureDTO.setFundingPercent(RealConverter.convertToReal(trialFundingWebDTO.getFundingPercent()));
             PaRegistry.getStudyResourcingService().createStudyResourcing(studyResoureDTO);
 
             query();
@@ -206,6 +208,7 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
             studyResoureDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
                     trialFundingWebDTO.getNihInstitutionCode()));
             studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
+            studyResoureDTO.setFundingPercent(RealConverter.convertToReal(trialFundingWebDTO.getFundingPercent()));
             PaRegistry.getStudyResourcingService().updateStudyResourcing(studyResoureDTO);
 
             query();

@@ -66,6 +66,7 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private Cd studySubtypeCode;
     private St secondaryPurposes;
     private St secondaryPurposeOtherText;
+    private Bl nciGrant;
 
     /**
      * @return the localProtocolIdentifier
@@ -552,6 +553,18 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setSecondaryPurposeOtherText(St secondaryPurposeOtherText) {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
+    }
+    /**
+     * @return the nciGrant
+     */
+    public Bl getNciGrant() {
+        return nciGrant;
+    }
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Bl nciGrant) {
+        this.nciGrant = nciGrant;
     }
 
 }

@@ -30,7 +30,8 @@
             var respartOrgid;
             var contactMail;
             var contactPhone;
-            function setorgid(orgIdentifier, oname) {
+
+            function setorgid(orgIdentifier, oname, p30grant) {
                 orgid = orgIdentifier;
                 chosenname = oname.replace(/&apos;/g,"'");
             }

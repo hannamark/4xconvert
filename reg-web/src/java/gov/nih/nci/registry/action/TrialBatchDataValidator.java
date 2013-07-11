@@ -13,8 +13,12 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
@@ -28,6 +32,7 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialConvertUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -57,6 +62,18 @@ public class TrialBatchDataValidator {
     private static final int AUS_STATE_CODE_LEN = 3;
     private static final String DELEMITOR = ";";
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+
+
+    private final StudyResourcingServiceLocal studyResourcingSvc;
+    private final TrialConvertUtils convertUtil;
+
+    /**
+     * Constructor.
+     */
+    public TrialBatchDataValidator() {
+        studyResourcingSvc = PaRegistry.getStudyResourcingService();
+        convertUtil = new TrialConvertUtils();
+    }
 
     /**
      *
@@ -272,21 +289,25 @@ public class TrialBatchDataValidator {
 
     private StringBuffer validateGrantInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-      //validate grant
-        List<TrialFundingWebDTO> dtoList = convertToGrantList(batchDto);
-        for (TrialFundingWebDTO webDto : dtoList) {
-            fieldErr.append(validate(webDto, ""));
-            if (!containsReqGrantInfo(webDto)) {
-                fieldErr.append("All Grant values are required.\n");
-            }
-            //validate List of values
-            if (null == NciDivisionProgramCode.getByCode(webDto.getNciDivisionProgramCode())) {
-                fieldErr.append("Please enter valid value for NCI Division Code.\n");
-            }
-
+        Long leadOrgPoId;
+        try {
+            leadOrgPoId = Long.valueOf(batchDto.getLeadOrgPOId());
+        } catch (Exception e) {
+            leadOrgPoId = null;
+        }
+        List<TrialFundingWebDTO> tfList = convertToGrantList(batchDto);
+        List<StudyResourcingDTO> srList = convertUtil.convertISOGrantsList(tfList);
+        try {
+            studyResourcingSvc.validate(Method.BATCH, batchDto.getNciGrant(), batchDto.getNciTrialIdentifier(),
+                    leadOrgPoId, srList);
+        } catch (PAValidationException e) {
+            fieldErr.append(e.getMessage());
+        } catch (Exception e) {
+            LOG.error(e);
         }
         return fieldErr;
     }
+
     /**
      * @param batchDto
      * @param fieldErr
@@ -774,10 +795,11 @@ public class TrialBatchDataValidator {
             } else {
                 if (!RegistryUtil.isDateValid(batchDto.getAmendmentDate())) {
                     fieldErr.append("Please enter valid value for Amendment Date. \n");
-                }
-                Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
-                if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(batchDto.getAmendmentDate()))) {
-                    fieldErr.append("Amendment Date cannot be in the future.\n");
+                } else {
+                    Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+                    if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(batchDto.getAmendmentDate()))) {
+                        fieldErr.append("Amendment Date cannot be in the future.\n");
+                    }
                 }
             }
             if (StringUtils.isEmpty(batchDto.getChangeRequestDocFileName())) {
@@ -974,6 +996,7 @@ public class TrialBatchDataValidator {
             Map <Integer, String> grantNCIDivisionCodeMap = convertToMap(dto.getNihGrantNCIDivisionCode());
             Map <Integer, String> grantInstituteCodeMap = convertToMap(dto.getNihGrantInstituteCode());
             Map <Integer, String> grantSrNumberMap = convertToMap(dto.getNihGrantSrNumber());
+            Map <Integer, String> grantFundingPctMap = convertToMap(dto.getNihGrantFundingPct());
             int maxSize = fundingMechanismCodeMap.size();
             if (maxSize < grantNCIDivisionCodeMap.size()) {
                 maxSize = grantNCIDivisionCodeMap.size();
@@ -1006,6 +1029,11 @@ public class TrialBatchDataValidator {
                 } else {
                     fundingDTO.setSerialNumber("");
                 }
+                if (StringUtils.isNotEmpty(grantFundingPctMap.get(i))) {
+                    fundingDTO.setFundingPercent(grantFundingPctMap.get(i).trim());
+                } else {
+                    fundingDTO.setFundingPercent("");
+                }
                 grantList.add(fundingDTO);
             }
         } else {
@@ -1015,6 +1043,7 @@ public class TrialBatchDataValidator {
                 fundingDTO.setNciDivisionProgramCode(dto.getNihGrantNCIDivisionCode());
                 fundingDTO.setNihInstitutionCode(dto.getNihGrantInstituteCode());
                 fundingDTO.setSerialNumber(dto.getNihGrantSrNumber());
+                fundingDTO.setFundingPercent(dto.getNihGrantFundingPct());
                 grantList.add(fundingDTO);
             }
         }

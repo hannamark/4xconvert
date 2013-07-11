@@ -964,6 +964,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             createStudyProtocolDTO.setProcessingPriority(IntConverter.convertToInt(2));
         }
         createStudyProtocolDTO.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
+        createStudyProtocolDTO.setNciGrant(studyProtocolDTO.getNciGrant());
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
         setPhaseAdditionalQualifier(studyProtocolDTO, createStudyProtocolDTO);
         setPrimaryPurposeCode(studyProtocolDTO, createStudyProtocolDTO);

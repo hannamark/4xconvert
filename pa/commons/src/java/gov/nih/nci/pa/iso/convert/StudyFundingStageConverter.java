@@ -9,6 +9,7 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
@@ -45,6 +46,7 @@ public class StudyFundingStageConverter {
       studyFundingStageDTO.setNihInstitutionCode(CdConverter.convertStringToCd(
               studyFundingStage.getNihInstituteCode()));
       studyFundingStageDTO.setSerialNumber(StConverter.convertToSt(studyFundingStage.getSerialNumber()));
+      studyFundingStageDTO.setFundingPercent(RealConverter.convertToReal(studyFundingStage.getFundingPercent()));
       studyFundingStageDTO.setStudyProtocolStageIi(IiConverter.convertToIi(
              studyFundingStage.getStudyProtocolStage().getId()));
       return studyFundingStageDTO;
@@ -61,6 +63,7 @@ public class StudyFundingStageConverter {
       studyFundingStage.setNihInstituteCode(CdConverter.convertCdToString(
               studyFundingStageDTO.getNihInstitutionCode()));
       studyFundingStage.setSerialNumber(StConverter.convertToString(studyFundingStageDTO.getSerialNumber()));
+      studyFundingStage.setFundingPercent(RealConverter.convertToDouble(studyFundingStageDTO.getFundingPercent()));
         StudyProtocolStage spBo = new StudyProtocolStage();
         spBo.setId(IiConverter.convertToLong(studyFundingStageDTO.getStudyProtocolStageIi()));
         studyFundingStage.setStudyProtocolStage(spBo);

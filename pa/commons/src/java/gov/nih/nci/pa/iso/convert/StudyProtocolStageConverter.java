@@ -176,6 +176,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                                 .getConsortiaTrialCategoryCode()));
         
         setSecondaryIdentifiers(studyProtocolStage, studyProtocolStageDTO);
+        studyProtocolStageDTO.setNciGrant(BlConverter.convertToBl(studyProtocolStage.getNciGrant()));
         return studyProtocolStageDTO;
     }
 
@@ -293,6 +294,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 .getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
                         .getConsortiaTrialCategoryCode())));          
         setOtherIdentifiers(studyProtocolStageDTO, studyProtocolStage);
+        studyProtocolStage.setNciGrant(BlConverter.convertToBoolean(studyProtocolStageDTO.getNciGrant()));
     }
 
     private static void setSiteFields(StudyProtocolStageDTO studyProtocolStageDTO,

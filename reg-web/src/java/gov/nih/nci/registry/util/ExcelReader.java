@@ -285,6 +285,9 @@ public class ExcelReader { // NOPMD
         case CTGOV_XML_INDICATOR:
             setDtoCtGovXmlIndicator(batchDto, cellValue);
             break;
+        case NCI_FUNDED_INDICATOR:
+            setNciFunded(batchDto, cellValue);
+            break;
         case OTHER_TRIAL_IDENTIFIER:
             String otherIdentifiersValues = cellValue;
             List<Ii> otherIdentifiers = null;
@@ -314,6 +317,14 @@ public class ExcelReader { // NOPMD
             batchDto.setCtGovXmlIndicator(false);
         } else {
             batchDto.setCtGovXmlIndicator(true);
+        }
+    }
+
+    private void setNciFunded(StudyProtocolBatchDTO batchDto, String cellValue) {
+        if (cellValue.equalsIgnoreCase("No")) {
+            batchDto.setNciGrant(false);
+        } else if (cellValue.equalsIgnoreCase("Yes")) {
+            batchDto.setNciGrant(true);
         }
     }
 

@@ -3,9 +3,8 @@ package gov.nih.nci.registry.dto;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-
-import org.hibernate.validator.Length;
-import org.hibernate.validator.Pattern;
+import gov.nih.nci.pa.iso.util.RealConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * Class for holding attributes for StudyResourcing DTO.
@@ -18,9 +17,8 @@ public class TrialFundingWebDTO {
     private String nihInstitutionCode;
     private String nciDivisionProgramCode;
     private String serialNumber;
+    private String fundingPercent;
     private String rowId;
-    private static final int SERIAL_NUM_MIN = 5;
-    private static final int SERIAL_NUM_MAX  = 6;
     private String studyProtocolId;
     /**
      * @param iso StudyResourcingDTO object
@@ -30,7 +28,9 @@ public class TrialFundingWebDTO {
         this.fundingMechanismCode = CdConverter.convertCdToString(iso.getFundingMechanismCode());
         this.nihInstitutionCode = CdConverter.convertCdToString(iso.getNihInstitutionCode());
         this.nciDivisionProgramCode = CdConverter.convertCdToString(iso.getNciDivisionProgramCode());
-        this.serialNumber = iso.getSerialNumber().getValue().toString();
+        this.serialNumber = StConverter.convertToString(iso.getSerialNumber());
+        Double fpDbl = RealConverter.convertToDouble(iso.getFundingPercent());
+        this.fundingPercent = fpDbl == null ? null : String.valueOf(fpDbl);
         this.id = IiConverter.convertToString(iso.getIdentifier());
     }
 
@@ -101,8 +101,6 @@ public class TrialFundingWebDTO {
     /**
      * @return serialNumber
      */
-    @Pattern(regex = "^[0-9]+$", message = "Serial Number must be numeric.\n")
-    @Length(message = "Serial number can be numeric with 5 or 6 digits.\n" , max = SERIAL_NUM_MAX, min = SERIAL_NUM_MIN)
     public String getSerialNumber() {
         return serialNumber;
     }
@@ -112,6 +110,20 @@ public class TrialFundingWebDTO {
      */
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    /**
+     * @return the fundingPercent
+     */
+    public String getFundingPercent() {
+        return fundingPercent;
+    }
+
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(String fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
 
     /**

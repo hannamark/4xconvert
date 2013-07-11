@@ -31,6 +31,7 @@ public class StudyFundingStage extends AbstractEntity {
     private String nihInstituteCode;
     private NciDivisionProgramCode nciDivisionProgramCode;
     private String serialNumber;
+    private Double fundingPercent;
     private StudyProtocolStage studyProtocolStage;
     /**
      * @return the fundingMechanismCode
@@ -85,6 +86,19 @@ public class StudyFundingStage extends AbstractEntity {
      */
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+    /**
+     * @return the fundingPercent
+     */
+    @Column(name = "FUNDING_PERCENT")
+    public Double getFundingPercent() {
+        return fundingPercent;
+    }
+    /**
+     * @param fundingPercent the fundingPercent to set
+     */
+    public void setFundingPercent(Double fundingPercent) {
+        this.fundingPercent = fundingPercent;
     }
     /**
      * @param studyProtocolStage the studyProtocolStage to set
