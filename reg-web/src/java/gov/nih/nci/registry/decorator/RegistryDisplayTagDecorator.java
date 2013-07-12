@@ -85,6 +85,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
+import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 
 import java.util.Date;
 
@@ -271,5 +272,13 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
             trialCat = "Complete";
         }
         return trialCat;
+    }
+
+    /**
+     * @return funding percent with % sign appended
+     */
+    public String getFundingPercent() {
+        String fp = ((TrialFundingWebDTO) this.getCurrentRowObject()).getFundingPercent();
+        return  fp == null ? "" : fp + "%";
     }
 }
