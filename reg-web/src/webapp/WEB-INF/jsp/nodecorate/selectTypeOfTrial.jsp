@@ -67,7 +67,7 @@
                                     <b>National</b>: National Cooperative Group Trials.<br>
                                     <b>Externally Peer-Reviewed</b>: R01s and P01s or other trial mechanisms funded by NIH or supported by other peer-reviewed funding organizations.<br>
                                     <b>Institutional</b>: In house trials authored or co-authored by cancer center investigators and undergoing scientific peer-review solely by the Protocol Review and Monitoring System of the Center. The center investigator should have primary responsibility for conceptualizing, designing and implementing the trial and reporting results. It is acceptable for industry and other entities to provide some support (e.g., drug, device, other funding) but the trial should clearly be the intellectual product of the center investigator.<br>
-                                    <b>Industrial/Other</b>: Design and implementation of the study is controlled by the pharmaceutical company.
+                                    <b>Industrial/Other</b>: Design and implementation of the study is controlled by the pharmaceutical company or by another organization.
                                 </p> 
                             </td>
                         </tr>
