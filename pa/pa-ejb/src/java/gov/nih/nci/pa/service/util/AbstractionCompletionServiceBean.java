@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -136,6 +137,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
@@ -212,6 +214,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private PlannedActivityServiceLocal plannedActivityService;
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
     @EJB
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
@@ -312,7 +316,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceStudySiteNullification(studyProtocolIi, messages);
             enforceStudySiteContactNullification(studyProtocolIi, messages);
             enforceArmGroup(studyProtocolIi, studyProtocolDTO, messages);
-            enforceTrialFunding(studyProtocolIi, messages);
+            enforceTrialFunding(studyProtocolDTO, messages);
             enforceDisease(studyProtocolDTO, messages);
             enforceArmOrGroupAssociationToIntervention(studyProtocolDTO, messages);
             enforceEligibility(studyProtocolDTO, messages);
@@ -381,7 +385,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceInterventions(studyProtocolDTO, messages);
         enforceStudySiteNullification(studyProtocolIi, messages);
         enforceStudySiteContactNullification(studyProtocolIi, messages);
-        enforceTrialFunding(studyProtocolIi, messages);
+        enforceTrialFunding(studyProtocolDTO, messages);
         enforceDisease(studyProtocolDTO, messages);
         enforceSummary4OrgNullification(studyProtocolIi, messages);
         enforcePlannedMarkerStatus(studyProtocolIi, messages);
@@ -639,9 +643,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceTrialFunding(Ii studyProtocolIi, AbstractionMessageCollection messages)
+    private void enforceTrialFunding(StudyProtocolDTO spDto, AbstractionMessageCollection messages)
             throws PAException {
-        List<StudyResourcingDTO> srList = studyResourcingService.getStudyResourcingByStudyProtocol(studyProtocolIi);
+        List<StudyResourcingDTO> srList = studyResourcingService.getStudyResourcingByStudyProtocol(spDto.getIdentifier());
 
         if (!(srList.isEmpty())) {
             for (int i = 0; i < srList.size(); i++) {
@@ -664,6 +668,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     }
                 }
             }
+        }
+        StudyProtocolQueryDTO spQryDto = 
+                protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spDto.getIdentifier()));
+        try {
+            studyResourcingService.validate(Method.ABSTRACTION_VALIDATION, BlConverter.convertToBoolean(spDto.getNciGrant()),
+                    IiConverter.convertToString(spDto.getIdentifier()), spQryDto.getLeadOrganizationPOId(), null);
+        } catch (PAException e) {
+            messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
         }
     }
 
@@ -1595,6 +1607,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 
     /**

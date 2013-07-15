@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -106,7 +107,10 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
     private static final long serialVersionUID = 4865176377748106852L;
     private static final String QUERY_RESULT = "query";
     private static final String DELETE_RESULT = "delete";
+    private static final String NCI_GRANT = "displayNciGrant";
+    private static final Double MAX_FUNDING_PCT = 100d;
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
+    private Boolean nciGrant;
     private List<TrialFundingWebDTO> trialFundingList;
     private List<TrialFundingWebDTO> trialFundingDeleteList;
     private Long cbValue;
@@ -126,6 +130,8 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
         try {
             Ii studyProtocolIi =
                 (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+            StudyProtocolDTO sp = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            setNciGrant(BlConverter.convertToBoolean(sp.getNciGrant()));
             List<StudyResourcingDTO> isoList =
                 PaRegistry.getStudyResourcingService().getStudyResourcingByStudyProtocol(studyProtocolIi);
             if (!isoList.isEmpty()) {
@@ -269,6 +275,23 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
         }
     }
 
+    /**
+     * @return result
+     */
+    public String updateNciGrant() {
+        Ii studyProtocolIi =
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        String newValue = (String) ServletActionContext.getRequest().getParameter("newValue");
+        try {
+            StudyProtocolDTO sp = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            sp.setNciGrant(BlConverter.convertToBl(Boolean.valueOf(newValue)));
+            PaRegistry.getStudyProtocolService().updateStudyProtocol(sp);
+        } catch (PAException e) {
+            LOG.error("Error in updateNciGrant()", e);
+        }
+        return NONE;
+    }
+
     private void enforceBusinessRules() {
         if (StringUtils.isEmpty(trialFundingWebDTO.getFundingMechanismCode())) {
             addFieldError("trialFundingWebDTO.fundingMechanismCode", getText("error.trialFunding.funding.mechanism"));
@@ -285,6 +308,16 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
         if (StringUtils.isNotEmpty(trialFundingWebDTO.getSerialNumber())
                 && !NumberUtils.isDigits(trialFundingWebDTO.getSerialNumber())) {
             addFieldError("trialFundingWebDTO.serialNumber", getText("error.numeric"));
+        }
+        enforceBusinessRulesFundingPercent();
+    }
+
+    private void enforceBusinessRulesFundingPercent() {
+        if (StringUtils.isNotEmpty(trialFundingWebDTO.getFundingPercent())) {
+            Double fp = NumberUtils.toDouble(trialFundingWebDTO.getFundingPercent());
+            if (fp <= 0 || fp > MAX_FUNDING_PCT) {
+                addFieldError("trialFundingWebDTO.fundingPercent", getText("error.trialFunding.fundingPercent"));
+            }
         }
     }
 
@@ -328,6 +361,20 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
      */
     public void setTrialFundingWebDTO(TrialFundingWebDTO trialFundingWebDTO) {
         this.trialFundingWebDTO = trialFundingWebDTO;
+    }
+
+    /**
+     * @return the nciGrant
+     */
+    public Boolean getNciGrant() {
+        return nciGrant;
+    }
+
+    /**
+     * @param nciGrant the nciGrant to set
+     */
+    public void setNciGrant(Boolean nciGrant) {
+        this.nciGrant = nciGrant;
     }
 
     /**

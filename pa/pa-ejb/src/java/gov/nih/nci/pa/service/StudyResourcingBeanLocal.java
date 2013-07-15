@@ -87,11 +87,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.logging.api.util.StringUtils;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -103,7 +102,6 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -150,7 +148,7 @@ public class StudyResourcingBeanLocal extends
     @EJB 
     private LookUpTableServiceRemote lookUpTableSvc;
     @EJB
-    private ProtocolQueryServiceLocal protocolQrySvc;
+    private StudyProtocolServiceLocal studyProtocolSvc;
 
     private static final String STAT_P30 = "P30stat";
     private static final String STAT_CA = "CAstat";
@@ -168,6 +166,13 @@ public class StudyResourcingBeanLocal extends
      */
     public void setLookUpTableSvc(LookUpTableServiceRemote lookUpTableSvc) {
         this.lookUpTableSvc = lookUpTableSvc;
+    }
+
+    /**
+     * @param studyProtocolSvc the studyProtocolSvc to set
+     */
+    public void setStudyProtocolSvc(StudyProtocolServiceLocal studyProtocolSvc) {
+        this.studyProtocolSvc = studyProtocolSvc;
     }
 
     /**
@@ -325,18 +330,16 @@ public class StudyResourcingBeanLocal extends
         if (StringUtils.isBlank(nciTrialIdentifier)) {
             return;
         }
-        StudyProtocolQueryCriteria viewCriteria = new StudyProtocolQueryCriteria();
-        viewCriteria.setNciIdentifier(nciTrialIdentifier);
-        List<StudyProtocolQueryDTO> listofDto = protocolQrySvc.getStudyProtocolByCriteria(viewCriteria);
-        if (!listofDto.isEmpty()) {
-            Ii spIi = IiConverter.convertToStudyProtocolIi(listofDto.get(0).getStudyProtocolId());
-            List<StudyResourcingDTO> existing = getByStudyProtocol(spIi);
-            for (StudyResourcingDTO dto : existing) {
-                if (!submittedGrants.contains(IiConverter.convertToLong(dto.getIdentifier()))) {
-                    updateStats(stats, dto);
-                }
+        Ii spIi = IiConverter.convertToStudyProtocolIi(0L);
+        spIi.setExtension(nciTrialIdentifier);
+        StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(spIi);
+        List<StudyResourcingDTO> existing = getByStudyProtocol(spDTO.getIdentifier());
+        for (StudyResourcingDTO dto : existing) {
+            if (!submittedGrants.contains(IiConverter.convertToLong(dto.getIdentifier()))) {
+                updateStats(stats, dto);
             }
         }
+
     }
 
     private void updateStats(Map<String, Object> stats, StudyResourcingDTO dto) {

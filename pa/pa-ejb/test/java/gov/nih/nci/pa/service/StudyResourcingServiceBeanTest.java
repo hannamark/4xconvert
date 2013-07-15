@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -141,6 +142,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         ((StudyResourcingBeanLocal) remoteEjb).setLookUpTableSvc(new LookUpTableServiceBean());
+        ((StudyResourcingBeanLocal) remoteEjb).setStudyProtocolSvc(new StudyProtocolBeanLocal());
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
@@ -380,6 +382,25 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         dtos.add(dto);
         remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, null, 1L, dtos);
      }
+
+    @Test
+    public void validateExistingGrantsTest() throws Exception {
+        thrown.expect(PAValidationException.class);  
+        thrown.expectMessage("Total percent of grant funding this trial for all grants cannot be greater than 100.");  
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(spId);
+        StudyResourcing grant = new StudyResourcing();
+        grant.setSummary4ReportedResourceIndicator(Boolean.FALSE);
+        grant.setStudyProtocol(sp);
+        grant.setFundingMechanismCode("U10");
+        grant.setNihInstituteCode("HL");
+        grant.setNciDivisionProgramCode(NciDivisionProgramCode.CCR);
+        grant.setSerialNumber("123456");
+        grant.setFundingPercent(100.1d);
+        TestSchema.addUpdObject(grant);
+        remoteEjb.validate(Method.ABSTRACTION_VALIDATION, false, String.valueOf(spId), 1L, new ArrayList<StudyResourcingDTO>());
+    }
 
     private static StudyResourcing createStudyResourcingObj(StudyProtocol sp) {
         StudyResourcing sr = new StudyResourcing();

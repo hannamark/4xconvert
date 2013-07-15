@@ -23,7 +23,15 @@ function handleAction(studyResourcingId){
     document.forms[0].submit();
 }
 
-
+function updateNciGrant() {
+    var newValue = document.forms[0].nciGranttrue.checked;
+    var  url = '/pa/protected/trialFundingupdateNciGrant.action';
+    var params = {newValue : newValue};
+    var aj = callAjaxPost(null, url, params);
+    var div = $('ncigrantmessagediv');
+    if(newValue)div.innerHTML = 'Value updated to <b>Yes</b>.';
+    else div.innerHTML = 'Value updated to <b>No</b>.';
+}
 
 </SCRIPT>
 
@@ -63,11 +71,23 @@ function handleAction(studyResourcingId){
     <s:hidden name="page" />
     <s:hidden name="cbValue" />
     <s:set name="trialFundingList" value="trialFundingList" scope="request"/>
-    <display:table name="trialFundingList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false">
+    <table>
+    <tr>
+      <td>
+        Is this trial funded by an NCI grant?<span class="required">*</span>
+        <s:radio name="nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" onchange="updateNciGrant()" />
+      </td>
+    </tr>
+    <tr><td align="right"><div id="ncigrantmessagediv" class="info"/></td></tr>
+    <tr><td style="padme10">&nbsp;</td></tr>
+    </table>
+    <display:table name="trialFundingList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false"
+            decorator="gov.nih.nci.pa.decorator.TrialFundingTableDecorator">
         <display:column escapeXml="true" titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="trialFunding.funding.percent" property="fundingPercent" sortable="true" headerClass="sortable" />
         <pa:adminAbstractorDisplayWhenCheckedOut>
             <display:column title="Edit" class="action">
                 <s:a href="javascript:void(0)" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" /></s:a>
@@ -95,11 +115,13 @@ function handleAction(studyResourcingId){
             </del>
         </div>
         <h2><fmt:message key="trialFunding.subtitle.delete" /></h2>
-        <display:table name="trialFundingDeleteList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false">
+        <display:table name="trialFundingDeleteList" id="row" class="data" sort="list" pagesize="200" requestURI="trialFundingquery.action" export="false"
+                decorator="gov.nih.nci.pa.decorator.TrialFundingTableDecorator">
         <display:column escapeXml="true" titleKey="trialFunding.funding.mechanism" property="fundingMechanismCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
+        <display:column escapeXml="true" titleKey="trialFunding.funding.percent" property="fundingPercent" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.inactiveText" property="inactiveCommentText" sortable="true" headerClass="sortable" /> 
         <display:column escapeXml="true" titleKey="studyProtocol.deletedDate" property="lastUpdatedDate" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.deletedBy" property="userLastUpdated" sortable="true" headerClass="sortable" /> 

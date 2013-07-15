@@ -4,15 +4,21 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.opensymphony.xwork2.Action;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -74,6 +80,31 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 	    assertEquals(trialFundingAction.create(), "query");
 	}
 
+	@Test
+	public void testFieldErrors() {
+        TrialFundingWebDTO dto = new TrialFundingWebDTO();
+        trialFundingAction.setTrialFundingWebDTO(dto);
+        assertEquals(trialFundingAction.create(), "error");
+        Map<String, List<String>> fes = trialFundingAction.getFieldErrors();
+        assertEquals("error.trialFunding.funding.mechanism", fes.get("trialFundingWebDTO.fundingMechanismCode").get(0));
+        assertEquals("error.trialFunding.institution.code", fes.get("trialFundingWebDTO.nihInstitutionCode").get(0));
+        assertEquals("error.studyProtocol.monitorCode", fes.get("trialFundingWebDTO.nciDivisionProgramCode").get(0));
+        assertEquals("error.trialFunding.serial.number", fes.get("trialFundingWebDTO.serialNumber").get(0));
+        assertNull(fes.get("trialFundingWebDTO.fundingPercent"));
+        trialFundingAction.clearErrorsAndMessages();
+        dto.setSerialNumber("abc");
+        dto.setFundingPercent("abc");
+        assertEquals(trialFundingAction.create(), "error");
+        fes = trialFundingAction.getFieldErrors();
+        assertEquals("error.numeric", fes.get("trialFundingWebDTO.serialNumber").get(0));
+        assertEquals("error.trialFunding.fundingPercent", fes.get("trialFundingWebDTO.fundingPercent").get(0));
+        trialFundingAction.clearErrorsAndMessages();
+        dto.setFundingPercent("101");
+        assertEquals(trialFundingAction.create(), "error");
+        fes = trialFundingAction.getFieldErrors();
+        assertEquals("error.trialFunding.fundingPercent", fes.get("trialFundingWebDTO.fundingPercent").get(0));
+	}
+
 	/**
 	 * Test update.
 	 */
@@ -111,6 +142,11 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
         trialFundingAction.setTrialFundingWebDTO(dto);
         trialFundingAction.setObjectsToDelete(new String[] {"1"});
         assertEquals(trialFundingAction.delete(), "query");
+	}
+
+	@Test
+	public void testUpdateGrant() throws Exception {
+	    assertEquals(Action.NONE, trialFundingAction.updateNciGrant());
 	}
 
 	/**

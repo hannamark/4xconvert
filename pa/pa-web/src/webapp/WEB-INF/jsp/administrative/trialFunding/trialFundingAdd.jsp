@@ -102,7 +102,7 @@ function tooltip() {
                      </label>
                      </td>
                      <td class="value">
-                        <s:textfield id="serialNumber" name="trialFundingWebDTO.serialNumber" maxlength="6" cssStyle="width:80px"/>
+                        <s:textfield id="serialNumber" name="trialFundingWebDTO.serialNumber" cssStyle="width:80px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.serialNumber</s:param>
@@ -129,6 +129,21 @@ function tooltip() {
                              </span>
                       </td>         
                 </tr>         
+                <tr>
+                     <td scope="row" class="label">
+                         <label for="fundingPercent">
+                            <fmt:message key="trialFunding.funding.percent"/>:
+                         </label>
+                     </td>
+                     <td class="value">
+                        <s:textfield id="fundingPercent" name="trialFundingWebDTO.fundingPercent" cssStyle="width:80px"/>%
+                        <span class="formErrorMsg"> 
+                                <s:fielderror>
+                                <s:param>trialFundingWebDTO.fundingPercent</s:param>
+                               </s:fielderror>
+                        </span>
+                     </td>
+                </tr>
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">

@@ -82,9 +82,11 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -92,6 +94,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -141,6 +144,7 @@ public class AbstractionCompletionServiceBeanTest {
     private final OrganizationCorrelationServiceRemote organizationCorrelationService = mock(OrganizationCorrelationServiceRemote.class);
     private final PlannedActivityServiceLocal plannedActivityService = mock(PlannedActivityServiceLocal.class);
     private final PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
+    private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private final RegulatoryInformationServiceRemote regulatoryInformationService = mock(RegulatoryInformationServiceRemote.class);
     private final StudyContactServiceLocal studyContactService = mock(StudyContactServiceLocal.class);
     private final StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);
@@ -216,6 +220,7 @@ public class AbstractionCompletionServiceBeanTest {
         service.setOrganizationCorrelationService(organizationCorrelationService);
         service.setPlannedActivityService(plannedActivityService);
         service.setPlannedMarkerService(plannedMarkerService);
+        service.setProtocolQueryService(protocolQueryService);
         service.setRegulatoryInformationService(regulatoryInformationService);
         service.setStudyContactService(studyContactService);
         service.setStudyDiseaseService(studyDiseaseService);
@@ -256,6 +261,7 @@ public class AbstractionCompletionServiceBeanTest {
          sIndDtoList.add(sIndDto);        
         when(studyIndldeService.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(ispDTO);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(anyLong())).thenReturn(new StudyProtocolQueryDTO());
     	try {
     		sut.validateAbstractionCompletion(spIi);
     		//fail("Study Protocol Identifier is null");
