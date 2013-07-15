@@ -1386,4 +1386,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
         }
     }
+    
+    @Override
+    public void updateRecordVerificationDate(Long studyProtocolId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+
+        session.createSQLQuery("update study_protocol set record_verification_date='"
+                + (new Timestamp(new Date().getTime()))
+                + "' where identifier="
+                + studyProtocolId).executeUpdate();
+        session.flush();
+        session.clear();
+    }
 }

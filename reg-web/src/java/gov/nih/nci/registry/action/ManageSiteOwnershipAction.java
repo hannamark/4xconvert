@@ -176,6 +176,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
     /**
      * @return String
      */
+    @Override
     public String assignSuccessMsg() {
         return getText("managesiteownership.assign.success");
     }
@@ -183,6 +184,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
     /**
      * @return String
      */
+    @Override
     public String unassignSuccessMsg() {
         return getText("managesiteownership.unassign.success");
     }

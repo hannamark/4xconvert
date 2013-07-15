@@ -133,6 +133,7 @@ public class StudyProtocolOptions {
     private Date submittedOnOrAfter;
     private Date submittedOnOrBefore;
     private String submitterAffiliateOrgId;
+    private List<String> submitterAffiliateOrgName = new ArrayList<String>();
     private Boolean nciSponsored;
     private Boolean holdRecordExists;
     private boolean excludeCtepDcpTrials;
@@ -575,6 +576,22 @@ public class StudyProtocolOptions {
      */
     public void setSubmitterAffiliateOrgId(String submitterAffiliateOrgId) {
         this.submitterAffiliateOrgId = submitterAffiliateOrgId;
+    }
+
+    /**
+     * 
+     * @return submitterAffiliateOrgName submitterAffiliateOrgName
+     */
+
+    public List<String> getSubmitterAffiliateOrgName() {
+        return submitterAffiliateOrgName;
+    }
+    /**
+     * 
+     * @param submitterAffiliateOrgName submitterAffiliateOrgName
+     */
+    public void setSubmitterAffiliateOrgName(List<String> submitterAffiliateOrgName) {
+        this.submitterAffiliateOrgName = submitterAffiliateOrgName;
     }
 
     /**

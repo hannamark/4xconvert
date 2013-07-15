@@ -85,6 +85,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -199,6 +200,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private HttpServletRequest httpServletRequest;
 
     private String currentUser;
+    private boolean showVerifyButton = false;
     
     /**
      * {@inheritDoc}
@@ -293,6 +295,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             });              
         }
         checkToShow();
+        checkVerifyData();
     }
     
     private void checkToShow() {
@@ -307,7 +310,16 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             checkUpdatable(queryDto, dwfs);
         }
     }
-    
+   
+//    private void checkVerifyData() {
+//        for (StudyProtocolQueryDTO queryDto : records) {
+//            DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
+//            if (ABSTRACTED_CODES.contains(dwfs) && queryDto.isSearcherTrialOwner() 
+//                    || queryDto.getLastCreated().getUserLastCreated().equals(currentUser)) {
+//                queryDto.setVerifyData(true);
+//            }  
+//        }
+//    }
     private void checkUpdatable(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs) {
         if (isUpdateableNonProperietaryTrial(queryDto, dwfs, queryDto.getStudyStatusCode())
                 || isUpdateableProprietaryTrial(queryDto, dwfs)) {
@@ -448,6 +460,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
             queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
+            checkVerifyData();
             return "view";
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
@@ -457,7 +470,35 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             return ERROR;
         }
     }
-
+    
+    private void checkVerifyData() throws PAException {
+        if (records != null) {
+            for (StudyProtocolQueryDTO queryDto : records) {
+                DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
+                if (ABSTRACTED_CODES.contains(dwfs) && queryDto.isSearcherTrialOwner() 
+                        || queryDto.getLastCreated().getUserLastCreated().equals(currentUser)) {
+                    queryDto.setVerifyData(true);
+                }  
+            }
+        } else {
+            StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+            studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
+            DocumentWorkflowStatusCode dwfs = studyProtocolQueryDTO.getDocumentWorkflowStatusCode();
+            Set<RegistryUser> trialOwners = registryUserService.getAllTrialOwners(studyProtocolId);
+            boolean trialOwner = false;
+            for (RegistryUser user : trialOwners) {
+                if (currentUser.equals(user.getCsmUser().getName())) {
+                    trialOwner = true;
+                    break;
+                }
+            }
+            if (ABSTRACTED_CODES.contains(dwfs) && trialOwner 
+                    || studyProtocolQueryDTO.getLastCreated().getUserLastCreated().equals(currentUser)) {
+                
+                setShowVerifyButton(true);
+            } 
+        }
+    }
     private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, StudyProtocolDTO protocolDTO, boolean maskFields)
             throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
@@ -690,7 +731,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }
         return query();
     }
-
+    
     private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
         boolean errorExist = false;
         for (AbstractionCompletionDTO absDto : errorList) {
@@ -764,7 +805,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         return PaRegistry.getCachingPAPersonService()
                 .getAllPrincipalInvestigators();
     }
-
+    
     /**
      * 
      * @return records
@@ -896,5 +937,20 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     public void setServletRequest(HttpServletRequest request) {
         this.httpServletRequest = request;
     }
+    /**
+     * 
+     * @return showVerifyButton showVerifyButton
+     */
+    public boolean isShowVerifyButton() {
+        return showVerifyButton;
+    }
+    /**
+     * 
+     * @param showVerifyButton showVerifyButton
+     */
+    public void setShowVerifyButton(boolean showVerifyButton) {
+        this.showVerifyButton = showVerifyButton;
+    }
+    
 
 }

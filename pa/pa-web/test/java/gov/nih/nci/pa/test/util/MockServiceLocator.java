@@ -154,6 +154,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -944,6 +945,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
         return Mockito.mock(PlannedMarkerSyncWithCaDSRServiceLocal.class);
+    }
+
+    @Override
+    public TrialDataVerificationServiceLocal getTrialDataVerificationService() {
+        return Mockito.mock(TrialDataVerificationServiceLocal.class);
     }
 
 }

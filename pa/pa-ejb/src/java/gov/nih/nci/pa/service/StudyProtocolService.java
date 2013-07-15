@@ -348,6 +348,10 @@ public interface StudyProtocolService {
      * @throws PAException PAException
      */
     void removeAnatomicSite(Ii studyProtocolIi, Cd site) throws PAException;
-    
-    
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     * @throws PAException PAException
+     */
+    void updateRecordVerificationDate(Long studyProtocolId) throws PAException;
 }

@@ -39,6 +39,7 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationByIndetifers(gov.nih.nci.pa.domain.Organization)
      */
+    @Override
     public Organization getOrganizationByIndetifers(Organization organization)
             throws PAException {
         for (Organization org: orgList) {
@@ -52,6 +53,7 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationsAssociatedWithStudyProtocol(java.lang.String)
      */
+    @Override
     public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(
             String organizationType) throws PAException {
         if ("Lead Organization".equals(organizationType)) {
@@ -69,6 +71,7 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
     }
 
     
+    @Override
     public List<Organization> getOrganizationsWithUserAffiliations()
             throws PAException {       
         return orgList;

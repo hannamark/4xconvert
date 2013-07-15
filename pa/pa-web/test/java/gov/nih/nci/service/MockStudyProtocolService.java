@@ -414,4 +414,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     public void removeAnatomicSite(Ii studyProtocolIi, Cd site)
             throws PAException {
     }
+
+    @Override
+    public void updateRecordVerificationDate(Long studyProtocolId)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

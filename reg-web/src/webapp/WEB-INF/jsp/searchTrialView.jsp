@@ -16,6 +16,19 @@
             function handleBackAction(){
             	window.history.back();        
             }
+            function viewAction(url){
+                    var pid = getUrlVars()["studyProtocolId"];
+                    document.forms[0].setAttribute("action", url+"?studyProtocolId="+pid);
+                    document.forms[0].submit();    
+               
+            }
+             function getUrlVars() {
+                var vars = {};
+                var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                    vars[key] = value;
+                });
+                return vars;
+            }
         </script>
     </head>
 
@@ -25,6 +38,19 @@
             <c:set var="topic" scope="request" value="viewresult"/>
             <div class="box">
                 <reg-web:sucessMessage/>
+                 <del class="btnwrapper">
+                  <ul class="btnrow" style="align:left">
+                       <li>   
+                          <c:if test="${showVerifyButton == 'true'}"> 
+                                        <s:url id="viewUrl" namespace="/protected" action="trialDataVerificationAction" method="view"/>
+                                        <s:a cssClass="btn" href="javascript:void(0)" onclick="javascript:viewAction('%{viewUrl}');">
+                                            <span class="btn_img">Verify Trial Data</span>
+                                        </s:a>
+                         </c:if>
+                       </li>
+                   </ul>
+                </del>
+            
                 <c:if test="${param.trialAction == 'submit'}">
                     <div class="confirm_msg">
                         <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.trialDTO.assignedIdentifier}</strong>

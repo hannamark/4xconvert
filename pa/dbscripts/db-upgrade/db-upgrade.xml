@@ -1332,5 +1332,10 @@
      <changeSet id="PO-6291" author="monishd">
         <comment>System-generated email messages: missing space after (trial) TITLE</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6291.sql"/>
+     </changeSet>   
+         
+     <changeSet id="PO-4877" author="Reshma">
+        <comment>creating new table for storing trial verification data</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-4877.sql"/>
      </changeSet>     
 </databaseChangeLog>

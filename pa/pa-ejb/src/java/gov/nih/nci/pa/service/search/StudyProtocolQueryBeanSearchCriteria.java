@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service.search;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -215,6 +216,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String SUBMITTED_ON_OR_AFTER_PARAM = "submittedOnOrAfter";
         private static final String SUBMITTED_ON_OR_BEFORE_PARAM = "submittedOnOrBefore";
         private static final String AFFILIATE_ORG_ID_PARAM = "affiliatedOrganizationId";
+        private static final String AFFILIATE_ORG_NAME_PARAM = "affiliatedOrganizationName";
         private static final String SPONSOR_FUNCTIONAL_CODE_PARAM = "sponsorFuncCode";
         private static final String CURRENT_OR_PREV_MILESTONE_PARAM = "currentOrPreviousMilestone";
         private static final String MILESTONE_TO_EXCLUDE_PARAM = "milestoneToExclude";
@@ -237,16 +239,18 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         @Override
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
-            
             if (CollectionUtils.isNotEmpty(sp.getStudyOverallStatuses())) {
                 String operator = determineOperator(whereClause);
-                StudyStatusCode sos = sp.getStudyOverallStatuses().iterator().next().getStatusCode();
-                whereClause.append(String.format(" %s sos.statusCode = :%s ", operator, SOS_PARAM));
+                Set<StudyStatusCode> sosCodes = new HashSet<StudyStatusCode>();
+                for (StudyOverallStatus status : sp.getStudyOverallStatuses()) {
+                    sosCodes.add(status.getStatusCode());
+                }
+                //StudyStatusCode sos = sp.getStudyOverallStatuses().iterator().next().getStatusCode();
+                whereClause.append(String.format(" %s sos.statusCode in (:%s) ", operator, SOS_PARAM));
                 whereClause.append(String.format(" and sos.id = (select max(id) from %s.studyOverallStatuses)",
                         SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(SOS_PARAM, sos);
+                params.put(SOS_PARAM, sosCodes);
             }
-
             if (CollectionUtils.isNotEmpty(sp.getDocumentWorkflowStatuses())) {
                 String operator = determineOperator(whereClause);
                 Set<DocumentWorkflowStatusCode> statusCodes = new HashSet<DocumentWorkflowStatusCode>();
@@ -258,9 +262,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         SearchableUtils.ROOT_OBJ_ALIAS));
                 params.put(DWS_PARAM, statusCodes);
             }
-
             handleMilestones(whereClause, params);            
-
             if (spo.isExcludeRejectedTrials()) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s dws.statusCode != :%s", operator, REJECTED_DWS_PARAM));
@@ -881,6 +883,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleOtherIdentifiers(whereClause);
             handleMyTrialsOnly(whereClause, params);
             handleSubmitterAffiliation(whereClause, params);
+            handleExcludeSubmitterAffiliation(whereClause, params);
         }
 
         /**
@@ -978,7 +981,31 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         spo.getSubmitterAffiliateOrgId());
             }
         }
-
+        
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleExcludeSubmitterAffiliation(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getSubmitterAffiliateOrgName())) {
+                String operator = determineOperator(whereClause);
+                Set<String> orgList = new HashSet<String>();
+                for (String org : spo.getSubmitterAffiliateOrgName()) {
+                    orgList.add(org);
+                }
+                whereClause
+                        .append(String
+                                .format(" %s (not exists (select id from RegistryUser where "
+                                        + "affiliatedOrganizationName in (:%s) "
+                                        + "and csmUser.userId=%s.userLastCreated.userId))",
+                                        operator, AFFILIATE_ORG_NAME_PARAM,
+                                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(AFFILIATE_ORG_NAME_PARAM,
+                        orgList);
+            }
+        }
+       
         /**
          * @param whereClause
          */

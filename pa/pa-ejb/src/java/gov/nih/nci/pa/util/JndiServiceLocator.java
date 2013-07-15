@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
@@ -640,5 +641,14 @@ public class JndiServiceLocator implements ServiceLocator {
     public PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
         return (PlannedMarkerSyncWithCaDSRServiceLocal) JNDIUtil
         .lookupPa("/pa/PlannedMarkerSyncWithCaDSRBeanLocal/local");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TrialDataVerificationServiceLocal getTrialDataVerificationService() {
+        return (TrialDataVerificationServiceLocal) JNDIUtil
+                .lookupPa("/pa/TrialDataVerificationBeanLocal/local");
     }
 }

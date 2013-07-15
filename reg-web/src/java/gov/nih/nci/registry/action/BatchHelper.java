@@ -159,6 +159,7 @@ public class BatchHelper implements Runnable {
     /**
      * starts the batch processing.
      */
+    @Override
     public void run() {
         try {
 

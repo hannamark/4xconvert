@@ -720,6 +720,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudyOverallStatuses().add(sos);
         }
     }
+    
+    private void populateExampleStudyOverallStatuses(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        for (String statusCode : crit.getStudyStatusCodeList()) {
+            StudyOverallStatus sos = new StudyOverallStatus();
+            sos.setStatusCode(StudyStatusCode.getByCode(statusCode));
+            sp.getStudyOverallStatuses().add(sos);
+        }
+    }
 
     private void populateExampleDocumentWork(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         for (String statusCode : crit.getDocumentWorkflowStatusCodes()) {
@@ -792,6 +800,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         populateExampleStudyProtocol(crit, sp);
         populateExampleSpOtherIdentifiers(crit, sp);
         populateExampleStudyOverallStatus(crit, sp);
+        populateExampleStudyOverallStatuses(crit, sp);
         populateExampleDocumentWork(crit, sp);
         populateExampleStudySites(crit, sp);
         populateExampleStudyMilestones(crit, sp);
@@ -818,6 +827,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
+                && CollectionUtils.isEmpty(criteria.getStudyStatusCodeList())
                 && CollectionUtils.isEmpty(criteria.getStudyMilestone())
                 && CollectionUtils.isEmpty(criteria.getMilestoneFilters())
                 && CollectionUtils.isEmpty(criteria.getProcessingPriority())

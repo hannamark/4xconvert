@@ -34,7 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Action;
 
 /**
  * @author Hugh Reinhart
@@ -63,7 +63,7 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
 
     @Test
     public void executeTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         assertNull(action.getModel().getUser());
         assertTrue(action.getModel().getUnassignedTrials().isEmpty());
         assertTrue(action.getModel().getAssignedTrials().isEmpty());
@@ -71,12 +71,12 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
 
     @Test
     public void assignAllTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         action.setUserId(4L);
         action.change();
         assertEquals(1, action.getModel().getUnassignedTrials().size());
         assertEquals(0, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignAll());
+        assertEquals(Action.SUCCESS, action.assignAll());
         verify(ssaas, times(1)).assignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
                 eq(AccrualAccessSourceCode.REG_ADMIN_PROVIDED), 
@@ -88,23 +88,23 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
 
     @Test
     public void assignSASubmitterUserNotSelectedTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         HttpServletRequest req = ServletActionContext.getRequest();
         String err = (String) req.getAttribute(ManageAccrualAccessAction.FAILURE_MSG);
         assertNull(err);
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignSASubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignSASubmitter());
         err = (String) req.getAttribute(ManageAccrualAccessAction.FAILURE_MSG);
         assertEquals("manage.accrual.access.user.not.found.error", err);
     }
 
     @Test
     public void assignSASubmitterTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         action.setUserId(4L);
         action.change();
         assertEquals(1, action.getModel().getUnassignedTrials().size());
         assertEquals(0, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignSASubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignSASubmitter());
         verify(ssaas, times(1)).assignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
                 eq(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE), 
@@ -117,12 +117,12 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
     public void usassignSASubmitterTest() throws Exception {
         MockRegistryUserService.userList.get(3).setSiteAccrualSubmitter(true);
         when(ssaas.getActiveTrialLevelAccrualAccess(any(RegistryUser.class))).thenReturn(Arrays.asList(3L));
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         action.setUserId(4L);
         action.change();
         assertEquals(0, action.getModel().getUnassignedTrials().size());
         assertEquals(1, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignSASubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignSASubmitter());
         verify(ssaas, times(1)).unassignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
                 eq(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE), 
@@ -134,22 +134,22 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
 
     @Test
     public void assignOFSubmitterUserNotSelectedTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         HttpServletRequest req = ServletActionContext.getRequest();
         String err = (String) req.getAttribute(ManageAccrualAccessAction.FAILURE_MSG);
         assertNull(err);
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignOFSubmitter());
         err = (String) req.getAttribute(ManageAccrualAccessAction.FAILURE_MSG);
         assertEquals("manage.accrual.access.user.not.found.error", err);
     }
 
     @Test
     public void assignOFSubmitterTest() throws Exception {
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         action.setOfUserId(4L);
         assertEquals(0, action.getModel().getUnassignedTrials().size());
         assertEquals(0, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignOFSubmitter());
         verify(ssaas, never()).assignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
                 any(AccrualAccessSourceCode.class), 
@@ -164,11 +164,11 @@ public class ManageAccrualAccessActionTest extends AbstractRegWebTest {
     public void unassignOFSubmitterTest() throws Exception {
         MockRegistryUserService.userList.get(3).setFamilyAccrualSubmitter(true);
         when(ssaas.getActiveTrialLevelAccrualAccess(any(RegistryUser.class))).thenReturn(Arrays.asList(3L));
-        assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertEquals(Action.SUCCESS, action.execute());
         action.setOfUserId(4L);
         assertEquals(0, action.getModel().getUnassignedTrials().size());
         assertEquals(0, action.getModel().getAssignedTrials().size());
-        assertEquals(ActionSupport.SUCCESS, action.assignUnAssignOFSubmitter());
+        assertEquals(Action.SUCCESS, action.assignUnAssignOFSubmitter());
         verify(ssaas, never()).unassignTrialLevelAccrualAccess(
                 any(RegistryUser.class), 
                 any(AccrualAccessSourceCode.class), 

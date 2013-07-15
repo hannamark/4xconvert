@@ -222,6 +222,17 @@ body {
 				                           onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update My Site</a>
 				                    </s:if>
 								</li>
+								
+								<li>
+                                    <s:if test="%{#attr.row.verifyData.booleanValue() == true}">
+                                        <s:url id="editUrl" namespace="/protected" action="trialDataVerification" method="view">
+                                            <s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}"/>
+                                        </s:url>
+                                        <s:a href="%{editUrl}">
+                                          Verify Data
+                                        </s:a>
+                                    </s:if>
+                                </li>
 							</ul>
 						</li>
 					</ul>  

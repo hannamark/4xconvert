@@ -128,7 +128,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String recentHoldDescription;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
-    
+    private boolean verifyData = false;
+    private Date verificationDueDate;
    
 
     /**
@@ -243,7 +244,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public void setShowSendXml(Boolean showSendXml) {
         this.showSendXml = showSendXml;
     }
-
+    
     /**
      * This field is set to true if and only if the person performing the search is considered a trial owner.
      * @return the isSearcherTrialOwner
@@ -257,6 +258,21 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setSearcherTrialOwner(boolean isSearcherTrialOwner) {
         this.searcherTrialOwner = isSearcherTrialOwner;
+    }
+    
+    /**
+     * 
+     * @return verifyData verifyData
+     */
+
+    public boolean isVerifyData() {
+        return verifyData;
+    }
+    /**
+     * @param verifyData the verifyData to set
+     */
+    public void setVerifyData(boolean verifyData) {
+        this.verifyData = verifyData;
     }
 
     /**
@@ -678,6 +694,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setRecentHoldDescription(String recentHoldDescription) {
         this.recentHoldDescription = recentHoldDescription;
+    }
+    /**
+     * 
+     * @return verificationDueDate verificationDueDate
+     */
+    public Date getVerificationDueDate() {
+        return verificationDueDate;
+    }
+    /**
+     * 
+     * @param verificationDueDate verificationDueDate
+     */
+    public void setVerificationDueDate(Date verificationDueDate) {
+        this.verificationDueDate = verificationDueDate;
     }
     
     

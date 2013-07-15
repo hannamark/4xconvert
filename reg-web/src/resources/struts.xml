@@ -250,6 +250,11 @@
             </result>
         </action>
         
+        <action name="trialDataVerification*" class="gov.nih.nci.registry.action.TrialDataVerificationAction" method="{1}">
+            <result>/WEB-INF/jsp/trialDataVerification.jsp</result>
+            <result name="success">/WEB-INF/jsp/trialDataVerification.jsp</result>
+        </action>
+        
         <action name="ajaxManageGrantsAction*" class="gov.nih.nci.registry.action.ManageGrantsAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
             <result name="display_grants">/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp</result>

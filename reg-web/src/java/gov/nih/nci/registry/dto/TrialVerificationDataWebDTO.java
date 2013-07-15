@@ -1,0 +1,101 @@
+/**
+ * caBIG Open Source Software License
+ */
+package gov.nih.nci.registry.dto;
+
+
+/**
+ * 
+ * @author Reshma.Koganti
+ *
+ */
+public class TrialVerificationDataWebDTO {
+
+    private String verificationMethod;
+    private String id;
+    private String studyProtocolId;
+    private String updatedDate;
+    private String userLastUpdated;
+    
+//    public TrialVerificationDataWebDTO(TrialVerificationDataDTO dto) {
+//        super();
+//        this.verificationMethod = StConverter.convertToString(dto.getVerificationMethod());
+//        this.id = IiConverter.convertToString(dto.getIdentifier());
+//        this.studyProtocolId = IiConverter.convertToString(dto.getStudyProtocolIdentifier());
+//        this.updatedDate = TsConverter.convertToString(dto.getDateLastUpdated());
+//        this.userLastUpdated = StConverter.convertToString(dto.getUserLastUpdated());
+//    }
+    /**
+     * 
+     * @return verificationMethod verificationMethod
+     */
+    public String getVerificationMethod() {
+        return verificationMethod;
+    }
+    /**
+     * 
+     * @param verificationMethod verificationMethod
+     */
+    public void setVerificationMethod(String verificationMethod) {
+        this.verificationMethod = verificationMethod;
+    }
+    /**
+     * 
+     * @return id id
+     */
+    public String getId() {
+        return id;
+    }
+    /**
+     * 
+     * @param id id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+    /**
+     * 
+     * @return studyProtocolId studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+    /**
+     * 
+     * @return updatedDate updatedDate
+     */
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
+    /**
+     * 
+     * @param updatedDate updatedDate
+     */
+    public void setUpdatedDate(String updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+    /**
+     * 
+     * @return userLastUpdated userLastUpdated
+     */
+    public String getUserLastUpdated() {
+        return userLastUpdated;
+    }
+    /**
+     * 
+     * @param userLastUpdated userLastUpdated
+     */
+    public void setUserLastUpdated(String userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
+    
+    
+
+}

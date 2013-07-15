@@ -114,6 +114,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
+ * 
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class StudyProtocolQueryCriteria implements Serializable {
@@ -138,6 +139,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String leadOrganizationTrialIdentifier;
     private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
+    private List<String> studyStatusCodeList = new ArrayList<String>();
     private String principalInvestigatorId;
     private String primaryPurposeCode;
     private String identifierType;
@@ -189,6 +191,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Date submittedOnOrAfter;
     private Date submittedOnOrBefore;  
     private String submitterAffiliateOrgId;
+    private List<String> submitterAffiliateOrgNameList = new ArrayList<String>();
     private Boolean holdRecordExists;
     private MilestoneCode currentOrPreviousMilestone;          
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();
@@ -944,6 +947,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", phaseAdditionalQualifierCode=")
                 .append(phaseAdditionalQualifierCode)
                 .append(", studyStatusCode=").append(studyStatusCode)
+                .append(", studyStatusCodeList=").append(studyStatusCodeList)
                 .append(", principalInvestigatorId=")
                 .append(principalInvestigatorId)
                 .append(", primaryPurposeCode=").append(primaryPurposeCode)
@@ -991,7 +995,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", submittedOnOrBefore=").append(submittedOnOrBefore)
                 .append(", milestoneFilters=").append(milestoneFilters)
                 .append(", submitterAffiliateOrgId=")
-                .append(submitterAffiliateOrgId).append(", holdRecordExists=")
+                .append(submitterAffiliateOrgId)
+                .append(", submitterAffiliateOrgNameList=")
+                .append(submitterAffiliateOrgNameList).append(", holdRecordExists=")
                 .append(holdRecordExists)
                 .append(", assignedUserId=")
                 .append(assignedUserId)
@@ -1141,6 +1147,22 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
+     * 
+     * @return submitterAffiliateOrgNameList submitterAffiliateOrgNameList
+     */
+    public List<String> getSubmitterAffiliateOrgNameList() {
+        return submitterAffiliateOrgNameList;
+    }
+    /**
+     * 
+     * @param submitterAffiliateOrgNameList submitterAffiliateOrgNameList
+     */
+    public void setSubmitterAffiliateOrgNameList(
+            List<String> submitterAffiliateOrgNameList) {
+        this.submitterAffiliateOrgNameList = submitterAffiliateOrgNameList;
+    }
+
+    /**
      * @return the trialSubmissionTypes
      */
     public List<SubmissionTypeCode> getTrialSubmissionTypes() {
@@ -1267,6 +1289,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setAssignedUserId(Long assignedUserId) {
         this.assignedUserId = assignedUserId;
+    }
+    /**
+     * 
+     * @return studyStatusCodeList studyStatusCodeList
+     */
+    public List<String> getStudyStatusCodeList() {
+        return studyStatusCodeList;
+    }
+    /**
+     * 
+     * @param studyStatusCodeList studyStatusCodeList
+     */
+    public void setStudyStatusCodeList(List<String> studyStatusCodeList) {
+        this.studyStatusCodeList = studyStatusCodeList;
     }
         
     
