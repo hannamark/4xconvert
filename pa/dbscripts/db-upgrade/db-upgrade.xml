@@ -1329,4 +1329,8 @@
         <comment>Modify grant serial number validation rule.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6284.sql"/>
      </changeSet>
+     <changeSet id="PO-6291" author="monishd">
+        <comment>System-generated email messages: missing space after (trial) TITLE</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6291.sql"/>
+     </changeSet>     
 </databaseChangeLog>
