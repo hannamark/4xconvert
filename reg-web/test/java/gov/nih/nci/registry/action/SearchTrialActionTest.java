@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -23,6 +24,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
@@ -31,12 +33,15 @@ import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.TrialUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,7 +65,7 @@ import com.opensymphony.xwork2.Action;
 public class SearchTrialActionTest extends AbstractHibernateTestCase {
     private static final int MAX_CACHE_SIZE = 10;
     private SearchTrialAction action;
-
+    private RegistryUserServiceLocal registryUserService;
     /**
      * Initialization.
      * @throws Exception in case of error
@@ -106,6 +111,8 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         ServletActionContext.setResponse(response);
 
         CSMUserService.setInstance(new MockCSMUserService());
+        registryUserService = mock(RegistryUserServiceLocal.class);
+        action.setRegistryUserService(registryUserService);
     }
 
     @Test
@@ -203,7 +210,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testExecute() {
+    public void testExecute() throws PAException {
         action.setTrialAction("");
         assertEquals("success", action.execute());
 
@@ -212,6 +219,18 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
 
         ServletActionContext.getRequest().getSession().setAttribute("protocolId", "1");
         action.setTrialAction("submit");
+        Set<RegistryUser> trialOwners = new HashSet<RegistryUser>();
+        RegistryUser user = new RegistryUser();
+        User csmUser = new User();
+        csmUser.setFirstName("firstName");
+        csmUser.setEmailId("emailId@gmail.com");
+        csmUser.setLastName("lastName");
+        csmUser.setLoginName("loginName");
+        user.setCsmUser(csmUser);
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        trialOwners.add(user);
+        when(registryUserService.getAllTrialOwners(1L)).thenReturn(trialOwners);
         assertEquals("view", action.execute());
 
         action.setTrialAction("amend");

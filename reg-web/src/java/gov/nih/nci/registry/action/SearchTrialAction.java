@@ -476,7 +476,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             for (StudyProtocolQueryDTO queryDto : records) {
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
                 if (ABSTRACTED_CODES.contains(dwfs) && queryDto.isSearcherTrialOwner() 
-                        || queryDto.getLastCreated().getUserLastCreated().equals(currentUser)) {
+                        || (queryDto.getLastCreated().getUserLastCreated() != null 
+                        && queryDto.getLastCreated().getUserLastCreated().equals(currentUser))) {
                     queryDto.setVerifyData(true);
                 }  
             }
