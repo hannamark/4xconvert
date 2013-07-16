@@ -306,5 +306,13 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     public void removeAnatomicSite(Ii studyProtocolIi, Cd site)
             throws PAException {
     }
-}
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updateRecordVerificationDate(Long studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+}
