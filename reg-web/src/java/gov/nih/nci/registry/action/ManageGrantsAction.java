@@ -160,10 +160,12 @@ public class ManageGrantsAction extends ActionSupport {
     public String deleteP30Grants() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) session.getAttribute(Constants.GRANT_LIST);
-        for (int i = sessionList.size() - 1; i >= 0; i--) {
-            TrialFundingWebDTO holder = sessionList.get(i);
-            if (StringUtils.equals("P30", holder.getFundingMechanismCode())) {
-                sessionList.remove(i);
+        if (sessionList != null) {
+            for (int i = sessionList.size() - 1; i >= 0; i--) {
+                TrialFundingWebDTO holder = sessionList.get(i);
+                if (StringUtils.equals("P30", holder.getFundingMechanismCode())) {
+                    sessionList.remove(i);
+                }
             }
         }
         return "display_grants";
