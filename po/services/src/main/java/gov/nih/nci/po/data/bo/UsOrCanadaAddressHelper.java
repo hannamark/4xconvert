@@ -94,6 +94,7 @@ public final class UsOrCanadaAddressHelper {
     private UsOrCanadaAddressHelper() {
         //const.
     }
+
     /**
      * Returns boolean if the address is US.
      * @param addr address to check.
@@ -105,7 +106,20 @@ public final class UsOrCanadaAddressHelper {
         && (addr.getCountry().getAlpha3().equals("USA")
         || addr.getCountry().getAlpha3().equals("CAN"));
     }
-    
+
+    /**
+     * Returns boolean if the address is US.
+     * @param addr address to check.
+     * @return bool
+     */
+    public static boolean isUsOrCanadaOrAustrailiaAddress(Address addr) {
+        return addr != null 
+        && addr.getCountry() != null
+        && (addr.getCountry().getAlpha3().equals("USA")
+        || addr.getCountry().getAlpha3().equals("CAN")
+        || addr.getCountry().getAlpha3().equals("AUS"));
+    }
+
     /**
      * 
      * @param addrs addresses to check

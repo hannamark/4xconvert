@@ -34,7 +34,7 @@ public class ValidZipValidator implements Validator<ValidZip>, Serializable {
             return false;
         }
         Address address = (Address) value;
-        if (UsOrCanadaAddressHelper.isUsOrCanadaAddress(address)) {
+        if (UsOrCanadaAddressHelper.isUsOrCanadaOrAustrailiaAddress(address)) {
             return !StringUtils.isEmpty(address.getPostalCode());
         }
         return true;
