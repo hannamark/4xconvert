@@ -475,8 +475,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         if (records != null) {
             for (StudyProtocolQueryDTO queryDto : records) {
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
-                if (ABSTRACTED_CODES.contains(dwfs) && queryDto.isSearcherTrialOwner() 
-                        || (queryDto.getLastCreated().getUserLastCreated() != null 
+                if ((ABSTRACTED_CODES.contains(dwfs)) && (queryDto.isSearcherTrialOwner() 
+                        || queryDto.getLastCreated().getUserLastCreated() != null 
                         && queryDto.getLastCreated().getUserLastCreated().equals(currentUser))) {
                     queryDto.setVerifyData(true);
                 }  
@@ -493,8 +493,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                     break;
                 }
             }
-            if (ABSTRACTED_CODES.contains(dwfs) && trialOwner 
-                    || studyProtocolQueryDTO.getLastCreated().getUserLastCreated().equals(currentUser)) {
+            if ((ABSTRACTED_CODES.contains(dwfs)) && (trialOwner 
+                    || studyProtocolQueryDTO.getLastCreated().getUserLastCreated().equals(currentUser))) {
                 
                 setShowVerifyButton(true);
             } 
