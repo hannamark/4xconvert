@@ -84,8 +84,6 @@ package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
@@ -95,15 +93,8 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.TELTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-
-import java.util.HashSet;
-
-import org.iso._21090.DSETTEL;
-import org.iso._21090.DSETTELEmail;
-import org.iso._21090.TELEmail;
 
 public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<StudyProtocolTransformer, StudyProtocol, StudyProtocolDTO> {
 
@@ -133,6 +124,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setSection801Indicator(new BLTransformerTest().makeDtoSimple());
         result.setProprietaryTrialIndicator(new BLTransformerTest().makeDtoSimple());
         result.setCtgovXmlRequiredIndicator(new BLTransformerTest().makeDtoSimple());
+        result.setNciGrant(new BLTransformerTest().makeDtoSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeDtoSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeDtoSimple());
@@ -189,6 +181,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setSection801Indicator(new BLTransformerTest().makeXmlSimple());
         result.setProprietaryTrialIndicator(new BLTransformerTest().makeXmlSimple());
         result.setCtgovXmlRequiredIndicator(new BLTransformerTest().makeXmlSimple());
+        result.setNciGrant(new BLTransformerTest().makeXmlSimple());
         //CD
         result.setAccrualReportingMethodCode(new CDTransformerTest().makeXmlSimple());
         result.setAmendmentReasonCode(new CDTransformerTest().makeXmlSimple());
@@ -214,7 +207,6 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
 
         // DSET<Tel>
         result.setRecordOwners(new DSETTelTransformerTest().makeXmlSimple());
-        
         return result;
     }
     
@@ -243,6 +235,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyDtoSimple(x.getSection801Indicator());
         new BLTransformerTest().verifyDtoSimple(x.getProprietaryTrialIndicator());
         new BLTransformerTest().verifyDtoSimple(x.getCtgovXmlRequiredIndicator());
+        new BLTransformerTest().verifyDtoSimple(x.getNciGrant());
         //CD
         new CDTransformerTest().verifyDtoSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyDtoSimple(x.getAmendmentReasonCode());
@@ -291,6 +284,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new BLTransformerTest().verifyXmlSimple(x.getSection801Indicator());
         new BLTransformerTest().verifyXmlSimple(x.getProprietaryTrialIndicator());
         new BLTransformerTest().verifyXmlSimple(x.getCtgovXmlRequiredIndicator());
+        new BLTransformerTest().verifyXmlSimple(x.getNciGrant());
         //CD
         new CDTransformerTest().verifyXmlSimple(x.getAccrualReportingMethodCode());
         new CDTransformerTest().verifyXmlSimple(x.getAmendmentReasonCode());

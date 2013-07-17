@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.REALTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
@@ -107,6 +108,7 @@ public class StudyResourcingTransformerTest extends
         result.setStudyProtocolIdentifier(new IITransformerTest().makeDtoSimple());
         result.setSummary4ReportedResourceIndicator(new BLTransformerTest().makeDtoSimple());
         result.setTypeCode(new CDTransformerTest().makeDtoSimple());
+        result.setFundingPercent(new REALTransformerTest().makeDtoSimple());
         return result;
     }
 
@@ -123,6 +125,7 @@ public class StudyResourcingTransformerTest extends
         result.setStudyProtocolIdentifier(new IITransformerTest().makeXmlSimple());
         result.setSummary4ReportedResourceIndicator(new BLTransformerTest().makeXmlSimple());
         result.setTypeCode(new CDTransformerTest().makeXmlSimple());
+        result.setFundingPercent(new REALTransformerTest().makeXmlSimple());
         return result;
     }
 
@@ -138,6 +141,7 @@ public class StudyResourcingTransformerTest extends
         new IITransformerTest().verifyDtoSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyDtoSimple(x.getSummary4ReportedResourceIndicator());
         new CDTransformerTest().verifyDtoSimple(x.getTypeCode());
+        new REALTransformerTest().verifyDtoSimple(x.getFundingPercent());
     }
 
     @Override
@@ -152,5 +156,6 @@ public class StudyResourcingTransformerTest extends
         new IITransformerTest().verifyXmlSimple(x.getStudyProtocolIdentifier());
         new BLTransformerTest().verifyXmlSimple(x.getSummary4ReportedResourceIndicator());
         new CDTransformerTest().verifyXmlSimple(x.getTypeCode());
+        new REALTransformerTest().verifyXmlSimple(x.getFundingPercent());
     }
 }

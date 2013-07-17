@@ -220,7 +220,6 @@ public class AbstractionCompletionServiceBeanTest {
         service.setOrganizationCorrelationService(organizationCorrelationService);
         service.setPlannedActivityService(plannedActivityService);
         service.setPlannedMarkerService(plannedMarkerService);
-        service.setProtocolQueryService(protocolQueryService);
         service.setRegulatoryInformationService(regulatoryInformationService);
         service.setStudyContactService(studyContactService);
         service.setStudyDiseaseService(studyDiseaseService);

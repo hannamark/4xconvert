@@ -160,6 +160,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setSection801Indicator(BLTransformer.INSTANCE.toDto(input.getSection801Indicator()));
         result.setProprietaryTrialIndicator(BLTransformer.INSTANCE.toDto(input.getProprietaryTrialIndicator()));
         result.setCtgovXmlRequiredIndicator(BLTransformer.INSTANCE.toDto(input.getCtgovXmlRequiredIndicator()));
+        result.setNciGrant(BLTransformer.INSTANCE.toDto(input.getNciGrant()));
         // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toDto(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toDto(input.getAmendmentReasonCode()));
@@ -196,6 +197,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         //DSETTEL
         result.setRecordOwners(DSETTELTransformer.INSTANCE.toDto(input.getRecordOwners()));
         result.setConsortiaTrialCategoryCode(CDTransformer.INSTANCE.toDto(input.getConsortiaTrialCategoryCode()));
+
         return result;
     }
 
@@ -237,6 +239,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setSection801Indicator(BLTransformer.INSTANCE.toXml(input.getSection801Indicator()));
         result.setProprietaryTrialIndicator(BLTransformer.INSTANCE.toXml(input.getProprietaryTrialIndicator()));
         result.setCtgovXmlRequiredIndicator(BLTransformer.INSTANCE.toXml(input.getCtgovXmlRequiredIndicator()));
+        result.setNciGrant(BLTransformer.INSTANCE.toXml(input.getNciGrant()));
         // CD
         result.setAccrualReportingMethodCode(CDTransformer.INSTANCE.toXml(input.getAccrualReportingMethodCode()));
         result.setAmendmentReasonCode(CDTransformer.INSTANCE.toXml(input.getAmendmentReasonCode()));

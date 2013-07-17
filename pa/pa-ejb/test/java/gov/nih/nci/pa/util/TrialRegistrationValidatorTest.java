@@ -133,6 +133,7 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -144,11 +145,14 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.ejb.SessionContext;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -157,12 +161,14 @@ import org.junit.rules.ExpectedException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule;
+
 
 /**
  * @author Michael Visee
  */
 public class TrialRegistrationValidatorTest {
-    private TrialRegistrationValidator validator = new TrialRegistrationValidator();
+    private TrialRegistrationValidator validator;
     private CSMUserUtil csmUserUtil = mock(CSMUserUtil.class);
     private LookUpTableServiceRemote lookUpTableServiceRemote = mock(LookUpTableServiceRemote.class);
     private PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
@@ -188,6 +194,12 @@ public class TrialRegistrationValidatorTest {
      */
     @Before
     public void init() {
+        CommonsGridLoginModule.setGridServicePrincipalSeparator("||");
+        Principal princ = mock(Principal.class);
+        when(princ.getName()).thenReturn("Grid||User");
+        SessionContext ctx = mock(SessionContext.class);
+        when(ctx.getCallerPrincipal()).thenReturn(princ);
+        validator = new TrialRegistrationValidator(ctx);
         validator.setCsmUserUtil(csmUserUtil);
         validator.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         validator.setPaServiceUtils(paServiceUtils);
@@ -223,7 +235,7 @@ public class TrialRegistrationValidatorTest {
                                  studySiteAccrualStatusDTOs);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Update"), eq(true), (StringBuilder) any());
         verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
-        verify(validator).validateNihGrants(eq(spIi), eq(studyResourcingDTOs), (StringBuilder) any());
+        verify(validator).validateNihGrants(eq(studyProtocolDTO), eq((OrganizationDTO) null), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_UPDATE),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_UPDATE),
                                        (StringBuilder) any());
@@ -451,8 +463,7 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateNihGrantsEmpty() {
-        Ii spIi = IiConverter.convertToIi(1L);
-        validator.validateNihGrants(spIi, null, errorMsg);
+        validator.validateNihGrants(studyProtocolDTO, null, null, errorMsg);
         checkErrorMsg("");
     }
 
@@ -462,13 +473,12 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateNihGrantsInvalid() throws PAException {
-        Ii spIi = IiConverter.convertToIi(1L);
         StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         studyResourcingDTOs.add(studyResourcingDTO);
-        doThrow(new PAException("PAException")).when(studyResourcingService).validate(studyResourcingDTO);
-        validator.validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
-        verify(studyResourcingService).validate(studyResourcingDTO);
+        doThrow(new PAException("PAException")).when(studyResourcingService).validate(Method.SERVICE, null, null, null, studyResourcingDTOs);
+        validator.validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
+        verify(studyResourcingService).validate(Method.SERVICE, null, null, null, studyResourcingDTOs);
         verify(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
         checkErrorMsg("PAException");
     }
@@ -479,13 +489,12 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateNihGrantsDuplicate() throws PAException {
-        Ii spIi = IiConverter.convertToIi(1L);
         StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         studyResourcingDTOs.add(studyResourcingDTO);
         doThrow(new PAException("Duplicate grants are not allowed.")).when(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
-        validator.validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
-        verify(studyResourcingService).validate(studyResourcingDTO);
+        validator.validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
+        verify(studyResourcingService).validate(Method.SERVICE, null, null, null, studyResourcingDTOs);
         verify(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
         checkErrorMsg("Duplicate grants are not allowed.");
     }
@@ -496,12 +505,11 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateNihGrantsValid() throws PAException {
-        Ii spIi = IiConverter.convertToIi(1L);
         StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         studyResourcingDTOs.add(studyResourcingDTO);
-        validator.validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
-        verify(studyResourcingService).validate(studyResourcingDTO);
+        validator.validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
+        verify(studyResourcingService).validate(Method.SERVICE, null, null, null, studyResourcingDTOs);
         verify(paServiceUtils).enforceNoDuplicateGrants(studyResourcingDTOs);
         checkErrorMsg("");
     }
@@ -717,7 +725,7 @@ public class TrialRegistrationValidatorTest {
                                     studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Amendment"), eq(true), (StringBuilder) any());
         verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
-        verify(validator).validateNihGrants(eq(spIi), eq(studyResourcingDTOs), (StringBuilder) any());
+        verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_AMEND),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_AMEND),
@@ -1250,7 +1258,7 @@ public class TrialRegistrationValidatorTest {
                                                   eq(documentDTOs), (StringBuilder) any());
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
         verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
-        verify(validator).validateNihGrants(eq(spIi), eq(studyResourcingDTOs), (StringBuilder) any());
+        verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateMandatoryDocuments(eq(documentDTOs), (StringBuilder) any());
         verify(validator).validatePOObjects(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(sponsorOrganizationDTO),

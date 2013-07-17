@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.util;
 
 import static org.junit.Assert.assertEquals;
-
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -109,7 +108,7 @@ public class TrialRegistrationValidatorSummary4CategoryTest {
     private static final String INDUSTRIAL = SummaryFourFundingCategoryCode.INDUSTRIAL.getCode();
     private static final String FAKE = "fake";
     
-    private TrialRegistrationValidator validator = new TrialRegistrationValidator();
+    private TrialRegistrationValidator validator = new TrialRegistrationValidator(null);
     private StringBuilder errorMsg = new StringBuilder();
     private String category;
     private boolean proprietary;

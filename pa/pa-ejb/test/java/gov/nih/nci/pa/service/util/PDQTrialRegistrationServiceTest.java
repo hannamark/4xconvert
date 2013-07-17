@@ -132,6 +132,7 @@ import gov.nih.nci.pa.service.StudyRecruitmentStatusBeanLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
 import gov.nih.nci.pa.service.StudyRelationshipServiceBean;
 import gov.nih.nci.pa.service.StudyResourcingBeanLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceBean;
 import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.TrialRegistrationBeanLocal;
@@ -280,6 +281,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc.setDocumentService(new DocumentServiceBean());
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
         trialRegistrationSvc.setRegulatoryInfoBean(new RegulatoryInformationBean());
+        trialRegistrationSvc.setStudyResourcingService(mock(StudyResourcingServiceLocal.class));
         
         // cannot use Mockito because multiple other methods in PAServiceUtils are used
         // in the process of registering a trial.

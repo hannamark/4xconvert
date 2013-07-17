@@ -119,9 +119,8 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
-import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -136,6 +135,8 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.ejb.SessionContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -202,7 +203,6 @@ public class TrialRegistrationValidator {
     private CSMUserUtil csmUserUtil;
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
     private LookUpTableServiceRemote lookUpTableServiceRemote;
-    private OrganizationCorrelationServiceRemote ocsr;
     private PAServiceUtils paServiceUtils;
     private RegistryUserServiceLocal registryUserServiceLocal;
     private RegulatoryInformationServiceRemote regulatoryInfoBean;
@@ -212,8 +212,17 @@ public class TrialRegistrationValidator {
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     private StudyResourcingServiceLocal studyResourcingService;
-    private StudySiteServiceLocal studySiteService;
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService;
+
+    private final boolean isGridSubmission;
+
+    /**
+     * Constructor.
+     * @param ctx the ejb session context
+     */
+    public TrialRegistrationValidator(SessionContext ctx) {
+        isGridSubmission = PAUtil.isGridCall(ctx);
+    }
 
     /**
      * Validates the input for a trial update.
@@ -231,7 +240,7 @@ public class TrialRegistrationValidator {
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, UPDATE, true, errorMsg);
         validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
-        validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
+        validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_UPDATE, ERROR_MESSAGE_DWFS_FOR_UPDATE, errorMsg);
         validateExistingStatus(spIi, errorMsg);
         validateDocuments(documentDTOs, errorMsg);
@@ -376,27 +385,32 @@ public class TrialRegistrationValidator {
     /**
      * Validates the nih grants.
      *
-     * This method checks that all the given grants are valid and that there is not duplicate.
-     *
-     * @param spIi The study protocol Ii
+     * @param studyProtocolDTO The study protocol
      * @param studyResourcingDTOs The list of nih grants
      * @param errorMsg The StringBuilder collecting error messages
      */
-    void validateNihGrants(Ii spIi, List<StudyResourcingDTO> studyResourcingDTOs, StringBuilder errorMsg) {
-        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
-            for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-                try {
-                    studyResourcingDTO.setStudyProtocolIdentifier(spIi);
-                    studyResourcingService.validate(studyResourcingDTO);
-                } catch (PAException e) {
-                    errorMsg.append(e.getMessage());
-                }
+    void validateNihGrants(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrgDTO, 
+            List<StudyResourcingDTO> studyResourcingDTOs, StringBuilder errorMsg) {
+        if (isGridSubmission) { // checks already made for UI and BATCH
+            String spId = ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())
+                    ? null : studyProtocolDTO.getIdentifier().getExtension();
+            Boolean nciFunded = BlConverter.convertToBoolean(studyProtocolDTO.getNciGrant());
+            Long leadOrgPoId;
+            try {
+                leadOrgPoId = IiConverter.convertToLong(leadOrgDTO.getIdentifier());
+            } catch (Exception e) {
+                leadOrgPoId = null;
             }
             try {
-                paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
+                studyResourcingService.validate(Method.SERVICE, nciFunded, spId, leadOrgPoId, studyResourcingDTOs);
             } catch (PAException e) {
                 errorMsg.append(e.getMessage());
             }
+        }
+        try {
+            paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
+        } catch (PAException e) {
+            errorMsg.append(e.getMessage());
         }
     }
 
@@ -565,7 +579,7 @@ public class TrialRegistrationValidator {
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, AMENDMENT, true, errorMsg);
         validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
-        validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
+        validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_AMEND, ERROR_MESSAGE_DWFS_FOR_AMEND, errorMsg);
         validateExistingStatus(spIi, errorMsg);
@@ -895,7 +909,7 @@ public class TrialRegistrationValidator {
         validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO, documentDTOs, errorMsg);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
         validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
-        validateNihGrants(studyProtocolDTO.getIdentifier(), studyResourcingDTOs, errorMsg);
+        validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateMandatoryDocuments(documentDTOs, errorMsg);
         validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO, summary4OrganizationDTO,
@@ -1166,13 +1180,6 @@ public class TrialRegistrationValidator {
     }
 
     /**
-     * @param ocsr the ocsr to set
-     */
-    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
-        this.ocsr = ocsr;
-    }
-
-    /**
      * @param paServiceUtils the paServiceUtils to set
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
@@ -1234,13 +1241,6 @@ public class TrialRegistrationValidator {
      */
     public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
         this.studyResourcingService = studyResourcingService;
-    }
-
-    /**
-     * @param studySiteService the studySiteService to set
-     */
-    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
-        this.studySiteService = studySiteService;
     }
     
     /**

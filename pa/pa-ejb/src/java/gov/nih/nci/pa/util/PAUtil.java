@@ -149,12 +149,15 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ejb.SessionContext;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
+import com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 import de.jollyday.Holiday;
@@ -1451,5 +1454,20 @@ public class PAUtil {
                                 + StringEscapeUtils.escapeSql(name) + "'")
                 .executeUpdate();
     }
-    
+
+    /**
+     * Check the context and determine if call to ejb came from grid service.
+     * @param ctx the ejb session context
+     * @return true if call came in from grid
+     */
+    public static boolean isGridCall(SessionContext ctx) {
+        boolean result = false;
+        String gridSeparator = CommonsGridLoginModule.getGridServicePrincipalSeparator();
+        if (ctx != null && ctx.getCallerPrincipal() != null && ctx.getCallerPrincipal().getName() != null
+                &&  gridSeparator != null) {
+            String name = ctx.getCallerPrincipal().getName();
+            result = name.contains(gridSeparator);
+        }
+        return result;
+    }
 }

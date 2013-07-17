@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.REALTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
@@ -129,7 +130,7 @@ public final class StudyResourcingTransformer
         result.setSummary4ReportedResourceIndicator(BLTransformer.INSTANCE.toDto(input
                 .getSummary4ReportedResourceIndicator()));
         result.setTypeCode(CDTransformer.INSTANCE.toDto(input.getTypeCode()));
-
+        result.setFundingPercent(REALTransformer.INSTANCE.toDto(input.getFundingPercent()));
         return result;
     }
 
@@ -152,6 +153,7 @@ public final class StudyResourcingTransformer
         result.setSummary4ReportedResourceIndicator(BLTransformer.INSTANCE.toXml(input
                 .getSummary4ReportedResourceIndicator()));
         result.setTypeCode(CDTransformer.INSTANCE.toXml(input.getTypeCode()));
+        result.setFundingPercent(REALTransformer.INSTANCE.toXml(input.getFundingPercent()));
         return result;
     }
 

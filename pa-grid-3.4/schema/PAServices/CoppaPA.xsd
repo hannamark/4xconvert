@@ -134,6 +134,7 @@
                     <xs:element name="ctgovXmlRequiredIndicator" type="ISO:BL" />
                     <xs:element name="summary4AnatomicSites" type="ISO:DSET_CD" />
                     <xs:element name="recordOwners" type="ISO:DSET_TEL" />
+                    <xs:element name="nciGrant" type="ISO:BL" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -531,6 +532,7 @@
                         <xs:element name="nciDivisionProgramCode" type="ISO:CD" />
                         <xs:element name="nihInstitutionCode" type="ISO:CD" />
                         <xs:element name="serialNumber" type="ISO:ST" />
+                        <xs:element name="fundingPercent" type="ISO:REAL" />
                         <xs:element name="inactiveCommentText" type="ISO:ST" />
                     </xs:sequence>
                 </xs:extension>

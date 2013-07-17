@@ -120,7 +120,6 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         bean.setStudyIndldeService(studyIndIdeSvc);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
         bean.setStudyOverallStatusService(studyOverallStatusSvc);
-        bean.setProtocolQueryService(protocolQueryServiceLocal);
         bean.setStudyProtocolService(spSvc);
         bean.setStudyRecruitmentStatusService(studyRecruitmentStatusSvc);
         bean.setStudyRegulatoryAuthorityService(studyRegAuthSvc);

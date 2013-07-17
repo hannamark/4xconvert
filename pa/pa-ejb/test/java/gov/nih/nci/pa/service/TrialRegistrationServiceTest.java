@@ -194,7 +194,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final StudyOverallStatusBeanLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
     private final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-    private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
+    private final StudyResourcingBeanLocal studyResourcingService = new StudyResourcingBeanLocal();
     private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
@@ -281,6 +281,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
         studyMilestoneSvc.setFamilyService(mock(FamilyServiceLocal.class));
 
+        studyResourcingService.setLookUpTableSvc(lookUpTableServiceRemote);
+        studyResourcingService.setStudyProtocolSvc(studyProtocolService);
+        studyResourcingService.setPaServiceUtils(paServiceUtils);
+
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
         when(paSvcLoc.getStudyIndldeService()).thenReturn(studyIndldeService);
         when(paSvcLoc.getDocumentService()).thenReturn(documentService);
@@ -304,7 +308,6 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.setStudyInboxServiceLocal(studyInboxSvc);
         bean.setTsrReportService(tsrReportSvc);
         bean.setStudyRelationshipService(studyRelationshipSvc);
-        bean.setAbstractionCompletionService(abstractionCompletionSvc);
         setupPoSvc();
     }
 

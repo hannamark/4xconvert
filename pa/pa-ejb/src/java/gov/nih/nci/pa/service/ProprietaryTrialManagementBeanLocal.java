@@ -114,7 +114,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -141,6 +143,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final Logger LOG = Logger.getLogger(ProprietaryTrialManagementBeanLocal.class);
 
+    @Resource private SessionContext ctx;
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
     @EJB
@@ -220,7 +223,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                     studySiteDTOs, studySiteAccrualDTOs);
             StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
             summary4StudyResourcingDTO.setTypeCode(summary4TypeCode);
-            TrialRegistrationValidator validator = new TrialRegistrationValidator();
+            TrialRegistrationValidator validator = new TrialRegistrationValidator(ctx);
             validator.validateSummary4SponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO,
                                                             summary4StudyResourcingDTO);
             // the validation are done, proceed to update

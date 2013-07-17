@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.logging.api.util.StringUtils;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyResourcingConverter;
@@ -102,6 +103,7 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -149,6 +151,8 @@ public class StudyResourcingBeanLocal extends
     private LookUpTableServiceRemote lookUpTableSvc;
     @EJB
     private StudyProtocolServiceLocal studyProtocolSvc;
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private static final String STAT_P30 = "P30stat";
     private static final String STAT_CA = "CAstat";
@@ -308,9 +312,22 @@ public class StudyResourcingBeanLocal extends
                 updateStats(stats, dto);
             }
         }
-        updateStatsWithExistingGrants(stats, nciTrialIdentifier, studyResourcingIds);
+        StudyProtocolDTO existingSp = new StudyProtocolDTO();
+        if (!StringUtils.isBlank(nciTrialIdentifier)) {
+            Ii spIi = IiConverter.convertToStudyProtocolIi(0L);
+            spIi.setExtension(nciTrialIdentifier);
+            existingSp = studyProtocolSvc.getStudyProtocol(spIi);
+            updateStatsWithExistingGrants(stats, existingSp, studyResourcingIds);
+        }
         if (grantsRequiredChecksActive(method)) {
-            p30GrantsValidation(leadOrgPoId, stats);
+            if (leadOrgPoId == null) {
+                // if lead org not passed in look up
+                StudyProtocolQueryDTO spQryDto = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                        IiConverter.convertToLong(existingSp.getIdentifier()));
+                p30GrantsValidation(spQryDto == null ? null : spQryDto.getLeadOrganizationPOId(), stats);
+            } else {
+                p30GrantsValidation(leadOrgPoId, stats);
+            }
             caGrantsValidation(nciFunded, stats);
         }
         if (method == Method.ABSTRACTION_VALIDATION && (Double) stats.get(STAT_FUNDING_PCT) > MAX_FUNDING_PCT) {
@@ -325,14 +342,11 @@ public class StudyResourcingBeanLocal extends
         return (null == isActive || isActive) && !isSumm4;
     }
 
-    private void updateStatsWithExistingGrants(Map<String, Object> stats, String nciTrialIdentifier, 
+    private void updateStatsWithExistingGrants(Map<String, Object> stats, StudyProtocolDTO spDTO, 
             Set<Long> submittedGrants) throws PAException {
-        if (StringUtils.isBlank(nciTrialIdentifier)) {
+        if (spDTO == null) {
             return;
         }
-        Ii spIi = IiConverter.convertToStudyProtocolIi(0L);
-        spIi.setExtension(nciTrialIdentifier);
-        StudyProtocolDTO spDTO = studyProtocolSvc.getStudyProtocol(spIi);
         List<StudyResourcingDTO> existing = getByStudyProtocol(spDTO.getIdentifier());
         for (StudyResourcingDTO dto : existing) {
             if (!submittedGrants.contains(IiConverter.convertToLong(dto.getIdentifier()))) {

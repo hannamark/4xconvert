@@ -151,7 +151,7 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @param method method being used to submit data
      * @param nciFunded is the nci funded
      * @param nciTrialNumber the id of the trial (either the NCI number or internal identifier)
-     * @param leadOrgPoId lead organization PO id
+     * @param leadOrgPoId lead organization PO id, can be null if validating existing trial
      * @param dtos the grant dtos
      * @throws PAException exception
      */

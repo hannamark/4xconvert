@@ -131,6 +131,20 @@ public class CommonsGridLoginModule implements LoginModule {
     private boolean loginSuccessful;
 
     /**
+     * @return the gridServicePrincipalSeparator
+     */
+    public static String getGridServicePrincipalSeparator() {
+        return gridServicePrincipalSeparator;
+    }
+
+    /**
+     * @param gridServicePrincipalSeparator the gridServicePrincipalSeparator to set
+     */
+    public static void setGridServicePrincipalSeparator(String gridServicePrincipalSeparator) {
+        CommonsGridLoginModule.gridServicePrincipalSeparator = gridServicePrincipalSeparator;
+    }
+
+    /**
      * Initialize this LoginModule.
      * 
      * @param subject represents the Subject currently being authenticated and is updated with relevant Credentials if

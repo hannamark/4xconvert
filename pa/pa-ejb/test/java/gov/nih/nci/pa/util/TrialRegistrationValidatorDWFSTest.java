@@ -86,7 +86,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -119,7 +118,7 @@ public class TrialRegistrationValidatorDWFSTest {
                                                                                DocumentWorkflowStatusCode.REJECTED);
     private static final String ERROR = "error";
 
-    private TrialRegistrationValidator validator = new TrialRegistrationValidator();
+    private TrialRegistrationValidator validator = new TrialRegistrationValidator(null);
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService = mock(DocumentWorkflowStatusServiceLocal.class);
     private StringBuilder errorMsg = new StringBuilder();
     private DocumentWorkflowStatusCode documentStatus;

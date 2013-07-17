@@ -25,7 +25,6 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -157,6 +156,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
         studyProtocol.setFdaRegulatedIndicator(ISOUtils.buildBL(false));
         studyProtocol.setCtgovXmlRequiredIndicator(ISOUtils.buildBL(true));
+        studyProtocol.setNciGrant(ISOUtils.buildBL(false));
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
@@ -396,6 +396,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD("Treatment"));
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setAmendmentDate(amendmentDate);
+        studyProtocol.setNciGrant(ISOUtils.buildBL(false));
 
         studyProtocol.setFdaRegulatedIndicator(ISOUtils.buildBL(false));
 

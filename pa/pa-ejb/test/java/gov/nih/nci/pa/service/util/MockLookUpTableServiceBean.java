@@ -94,6 +94,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return "doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb";
         } else if (name.equals("fromaddress")) {
             return "ncictro@mail.nih.gov";
+        } else if (name.equals("GrantsRequiredRegServiceEffectiveDate")) {
+            return "31-DEC-2100";
         } else {
             return value;
         }

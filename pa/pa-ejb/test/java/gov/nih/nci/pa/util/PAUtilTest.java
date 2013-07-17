@@ -8,7 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
@@ -32,6 +33,7 @@ import gov.nih.nci.pa.service.PAException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -44,8 +46,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.ejb.SessionContext;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule;
 
 /**
  * @author asharma
@@ -732,5 +738,26 @@ public class PAUtilTest {
         assertTrue(DateUtils.isSameDay(date, endOfDay));
         assertFalse(DateUtils.isSameDay(date,
                 DateUtils.addMilliseconds(endOfDay, 1)));
+    }
+
+    @Test
+    public void isGridCall() {
+        assertFalse(PAUtil.isGridCall(null));
+
+        SessionContext ctx = mock(SessionContext.class);
+        assertFalse(PAUtil.isGridCall(ctx));
+
+        Principal princ = mock(Principal.class);
+        when(ctx.getCallerPrincipal()).thenReturn(princ);
+        assertFalse(PAUtil.isGridCall(ctx));
+
+        when(princ.getName()).thenReturn("Grid||User");
+        assertFalse(PAUtil.isGridCall(ctx));
+
+        CommonsGridLoginModule.setGridServicePrincipalSeparator("||");
+        assertTrue(PAUtil.isGridCall(ctx));
+
+        when(princ.getName()).thenReturn("User");
+        assertFalse(PAUtil.isGridCall(ctx));
     }
 }

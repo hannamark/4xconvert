@@ -86,7 +86,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -118,7 +117,7 @@ public class TrialRegistrationValidatorExistingStatusTest {
     private static final String ERROR = "Update to a Trial with Current Trial Status as Disapproved or"
         + " Withdrawn or Complete or Administratively Complete is not allowed.\n";
 
-    private TrialRegistrationValidator validator = new TrialRegistrationValidator();
+    private TrialRegistrationValidator validator = new TrialRegistrationValidator(null);
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
     private StringBuilder errorMsg = new StringBuilder();
     private StudyStatusCode status;

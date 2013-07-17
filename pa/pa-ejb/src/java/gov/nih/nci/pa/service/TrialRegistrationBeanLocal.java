@@ -128,7 +128,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -161,7 +160,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -182,7 +183,7 @@ import org.hibernate.Session;
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean // NOPMD
     implements TrialRegistrationServiceLocal { // NOPMD
     private static final String EMPTY_STR = "";
-    @EJB private AbstractionCompletionServiceRemote abstractionCompletionService;
+    @Resource private SessionContext ctx;
     @EJB private DocumentServiceLocal documentService;
     @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
     @EJB private LookUpTableServiceRemote lookUpTableServiceRemote;
@@ -1458,11 +1459,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     }
 
     private TrialRegistrationValidator createValidator() {
-        TrialRegistrationValidator validator = new TrialRegistrationValidator();
+        TrialRegistrationValidator validator = new TrialRegistrationValidator(ctx);
         validator.setCsmUserUtil(CSMUserService.getInstance());
         validator.setDocumentWorkFlowStatusService(documentWorkFlowStatusService);
         validator.setLookUpTableServiceRemote(lookUpTableServiceRemote);
-        validator.setOcsr(ocsr);
         validator.setPaServiceUtils(getPAServiceUtils());
         validator.setRegistryUserServiceLocal(registryUserServiceLocal);
         validator.setRegulatoryInfoBean(regulatoryInfoBean);
@@ -1472,16 +1472,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         validator.setStudyProtocolService(studyProtocolService);
         validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
         validator.setStudyResourcingService(studyResourcingService);
-        validator.setStudySiteService(studySiteService);
         validator.setRegulatoryAuthorityService(regulatoryAuthorityService);
         return validator;
-    }
-
-    /**
-     * @param abstractionCompletionService the abstractionCompletionService to set
-     */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
-        this.abstractionCompletionService = abstractionCompletionService;
     }
 
     /**

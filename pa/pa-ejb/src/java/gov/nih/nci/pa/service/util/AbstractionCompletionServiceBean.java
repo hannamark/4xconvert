@@ -84,7 +84,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -214,8 +213,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private PlannedActivityServiceLocal plannedActivityService;
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
-    @EJB
-    private ProtocolQueryServiceLocal protocolQueryService;
     @EJB
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
@@ -669,11 +666,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 }
             }
         }
-        StudyProtocolQueryDTO spQryDto = 
-                protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spDto.getIdentifier()));
         try {
             studyResourcingService.validate(Method.ABSTRACTION_VALIDATION, BlConverter.convertToBoolean(spDto.getNciGrant()),
-                    IiConverter.convertToString(spDto.getIdentifier()), spQryDto.getLeadOrganizationPOId(), null);
+                    IiConverter.convertToString(spDto.getIdentifier()), null, null);
         } catch (PAException e) {
             messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
         }
@@ -1607,13 +1602,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
-    }
-
-    /**
-     * @param protocolQueryService the protocolQueryService to set
-     */
-    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
-        this.protocolQueryService = protocolQueryService;
     }
 
     /**
