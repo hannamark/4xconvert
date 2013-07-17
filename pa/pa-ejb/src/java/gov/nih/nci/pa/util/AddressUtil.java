@@ -45,9 +45,13 @@ public class AddressUtil {
             }
         }
 
-        if (australia(country) 
-                && (StringUtils.isBlank(state) || !AUS_STATE_CODE_LENS.contains(state.trim().length()))) {
-            result.add("2/3-letter State/Province Code required for Australia");
+        if (australia(country)) {
+            if (StringUtils.isBlank(state) || !AUS_STATE_CODE_LENS.contains(state.trim().length())) {
+                result.add("2/3-letter State/Province Code required for Australia");
+            }
+            if (StringUtils.isBlank(zip)) {
+                result.add("Zip is a required field for Australian addresses.");
+            }
         }
         return result;
     }

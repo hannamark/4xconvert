@@ -45,7 +45,7 @@ public class AddressUtilTest {
                 {"1 Main St.", "Springfield", "BCCC", "12345", "AUS", "2/3-letter State/Province Code required for Australia", 1},
                 {"1 Main St.", "Springfield", "OH", null, "USA", "Zip is a required field for US and Canadian addresses.", 1},
                 {"1 Main St.", "Springfield", "OH", null, "CAN", "Zip is a required field for US and Canadian addresses.", 1},
-                {"1 Main St.", "Springfield", "OH", null, "AUS", null, 0},
+                {"1 Main St.", "Springfield", "OH", null, "AUS", "Zip is a required field for Australian addresses.", 1},
                 {"1 Main St.", "Springfield", "OH", "12345", null, "Country is a required field", 1}
         };
         return Arrays.asList(data);
