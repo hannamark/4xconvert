@@ -1,4 +1,4 @@
-insert into accrual_disease (identifier, code_system, disease_code, preferred_name, display_name) values((20000+1),'ICD-O-3','C00','LIP','LIP');
+insert into accrual_disease (identifier, code_system, disease_code, preferred_name, display_name) values((select (max(identifier)+1) from accrual_disease),'ICD-O-3','C00','LIP','LIP');
 insert into accrual_disease (identifier, code_system, disease_code, preferred_name, display_name) values((select (max(identifier)+1) from accrual_disease where code_system = 'ICD-O-3'),'ICD-O-3','C00.0','External upper lip','External upper lip');
 insert into accrual_disease (identifier, code_system, disease_code, preferred_name, display_name) values((select (max(identifier)+1) from accrual_disease where code_system = 'ICD-O-3'),'ICD-O-3','C00.1','External lower lip','External lower lip');
 insert into accrual_disease (identifier, code_system, disease_code, preferred_name, display_name) values((select (max(identifier)+1) from accrual_disease where code_system = 'ICD-O-3'),'ICD-O-3','C00.2','External lip, NOS','External lip, NOS');
