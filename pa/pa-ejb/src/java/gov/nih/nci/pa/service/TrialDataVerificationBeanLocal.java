@@ -70,7 +70,7 @@ public class TrialDataVerificationBeanLocal
      */                                        
     public List<TrialVerificationDataDTO> getDataByStudyProtocolId(Long studyProtocolId) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        session.flush();
+//        session.flush();
         String hql = "from TrialDataVerification as tdv where tdv.studyProtocol.id= :studyProtocolId";
         Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", studyProtocolId.longValue());

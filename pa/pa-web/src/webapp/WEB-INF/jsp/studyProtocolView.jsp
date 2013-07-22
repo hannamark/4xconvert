@@ -153,8 +153,16 @@
                                 <fmt:message key="studyProtocol.proprietaryTrial"/>
                             
                         </td>
-                        <td>
+                        <td >
                             <pa:displayBoolean value="${sessionScope.trialSummary.proprietaryTrial}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td scope="row" class="labelDupe">
+                            <fmt:message key="studyProtocol.lastVerificationDate"/>       
+                        </td>
+                        <td>
+                            <c:out value="${sessionScope.trialSummary.recordVerificationDate}"/>
                         </td>
                     </tr>
                     <tr>

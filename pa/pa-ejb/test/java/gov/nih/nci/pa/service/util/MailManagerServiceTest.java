@@ -88,11 +88,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -121,6 +119,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -140,7 +139,6 @@ import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -154,8 +152,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.mail.Address;
@@ -199,7 +199,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private final RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
     private final StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
     private final PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
-    
+
     private MailManagerBeanLocal sut;
 
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
@@ -419,7 +419,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
 
-      
     }
 
     private User createUser(String loginName, String firstName, String lastName) {
@@ -842,13 +841,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         doCallRealMethod().when(sut).sendNotificationMail(spIi,
                 Arrays.asList("bademail"));
-        
+
         doCallRealMethod().when(sut).commonMailSubjectReplacements(
                 any(StudyProtocolQueryDTO.class), any(String.class));
-        
+
         doCallRealMethod().when(sut).commonMailBodyReplacements(
                 any(StudyProtocolQueryDTO.class), any(String.class));
-        
+
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
         when(lookUpTableService.getPropertyValue(NOTFICATION_SUBJECT_KEY))
                 .thenReturn(NOTFICATION_SUBJECT_VALUE);
@@ -882,7 +881,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 .forClass(String.class);
         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
                 .forClass(String.class);
-        
+
         verify(sut).sendMailWithHtmlBody(eq("emailAddress"),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture());
         assertEquals(
@@ -906,13 +905,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         doCallRealMethod().when(sut).sendNotificationMail(spIi, null);
-        
+
         doCallRealMethod().when(sut).commonMailSubjectReplacements(
                 any(StudyProtocolQueryDTO.class), any(String.class));
-        
+
         doCallRealMethod().when(sut).commonMailBodyReplacements(
                 any(StudyProtocolQueryDTO.class), any(String.class));
-        
+
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
         when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_SUBJECT_KEY))
                 .thenReturn(PROP_NOTFICATION_SUBJECT_VALUE);
@@ -962,8 +961,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         verify(sut).sendMailWithHtmlBody(eq("emailAddress"),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture());
-        
-        
 
         assertEquals("Wrong mail subject",
                 "proprietarytrial.register.subject - localStudyProtocolIdentifier, "
@@ -1105,7 +1102,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 "user.usernameSearch.subject");
         verify(sut).getGridIdentityUsernames(users);
         String expectedBody = "body firstName lastName username1, username2 end";
-        
+
         verify(sut).sendMailWithHtmlBody(emailAddress, subject, expectedBody);
     }
 
@@ -1130,29 +1127,32 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         doCallRealMethod().when(sut).sendUnidentifiableOwnerEmail(
                 any(Long.class), any(Collection.class));
         when(sut.findAffiliatedOrg(any(RegistryUser.class))).thenReturn("NCI");
-        
-        
+
         doCallRealMethod().when(sut).getFormatedCurrentDate();
-        
+
         doCallRealMethod().when(sut).commonMailBodyReplacements(
                 any(StudyProtocolQueryDTO.class), any(String.class));
-        
+
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.unidentifiableOwner.email.subject"))
-                .thenReturn("NCI CTRP: CTRP Trial Record Ownership Assignment: EMAIL ADDRESS ERROR");
+                .thenReturn(
+                        "NCI CTRP: CTRP Trial Record Ownership Assignment: EMAIL ADDRESS ERROR");
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.unidentifiableOwner.email.body"))
-                .thenReturn("BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail}");
+                .thenReturn(
+                        "BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail}");
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.mismatchedUser.email.subject"))
-                .thenReturn("NCI CTRP: CTRP ACCOUNT STATUS: TRIAL OWNERSHIP ERROR");
+                .thenReturn(
+                        "NCI CTRP: CTRP ACCOUNT STATUS: TRIAL OWNERSHIP ERROR");
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.mismatchedUser.email.body"))
-                .thenReturn("BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail}");
+                .thenReturn(
+                        "BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail}");
 
         when(lookUpTableService.getPropertyValue("abstraction.script.mailTo"))
                 .thenReturn("denis.krylov@semanticbits.com");
@@ -1187,11 +1187,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 .forClass(String.class);
         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
                 .forClass(String.class);
-        
+
         verify(sut).sendMailWithHtmlBody(eq("denis.krylov@semanticbits.com"),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture());
-        
-        assertEquals("Wrong mail subject", "NCI CTRP: CTRP Trial Record Ownership Assignment: EMAIL ADDRESS ERROR",
+
+        assertEquals(
+                "Wrong mail subject",
+                "NCI CTRP: CTRP Trial Record Ownership Assignment: EMAIL ADDRESS ERROR",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",
                 "BODY nciIdentifier NCI bademail@semanticbits.com",
@@ -1234,11 +1236,102 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     public void sendErrorToCTROMailTest() throws Exception {
         bean.sendErrorToCTROMail("to", "from", "Exception");
     }
-    
+
     private Date getCurrentDate() {
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         return date;
     }
+
+    @Test
+    public void sendCTROVerifyDataEmail() throws PAException {
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2009-0010");
+        dto.setLeadOrganizationName("organization");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("User");
+        lastCreated.setUserLastDisplayName("firstLastName");
+        lastCreated.setDateLastCreated(new Date());
+        dto.setLastCreated(lastCreated);
+        dto.setRecordVerificationDate(new Date());
+        list.add(dto);
+
+        PAProperties prop = new PAProperties();
+        prop.setName("verifyDataCTRO.email.subject");
+        prop.setValue("CTRP Trials Due for Data Verification on ${dueDate}");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyDataCTRO.email.bodyHeader");
+        prop.setValue("verifyDataCTRO.email.bodyHeader");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyDataCTRO.email.body");
+        prop.setValue("verifyDataCTRO.email.body");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyDataCTRO.email.bodyFooter");
+        prop.setValue("verifyDataCTRO.email.bodyFooter");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("TrialDataVerificationNotificationsEffectiveDate");
+        prop.setValue("31-DEC-2050");
+        TestSchema.addUpdObject(prop);
+
+        bean.sendCTROVerifyDataEmail(list);
+    }
     
+    @Test
+    public void sendVerifyDataEmail() throws PAException {
+        Map<RegistryUser, List<StudyProtocolQueryDTO>> map = new HashMap<RegistryUser, List<StudyProtocolQueryDTO>>();
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2009-0010");
+        dto.setLeadOrganizationName("organization");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("User");
+        lastCreated.setUserLastDisplayName("firstLastName");
+        lastCreated.setDateLastCreated(new Date());
+        dto.setLastCreated(lastCreated);
+        dto.setRecordVerificationDate(new Date());
+        list.add(dto);
+        RegistryUser user = new RegistryUser();
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmailAddress("email@gmail.com");
+        map.put(user, list);
+        PAProperties prop = new PAProperties();
+        prop.setName("verifyData.email.subject");
+        prop.setValue("CTRP Trials Due for Data Verification");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyData.email.bodyHeader");
+        prop.setValue("verifyData.email.bodyHeader");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyData.email.body");
+        prop.setValue("verifyData.email.body");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("verifyData.email.bodyFooter");
+        prop.setValue("verifyData.email.bodyFooter");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("TrialDataVerificationNotificationsEffectiveDate");
+        prop.setValue("31-DEC-2050");
+        TestSchema.addUpdObject(prop);
+
+        bean.sendVerifyDataEmail(map);
+    }
+
 }

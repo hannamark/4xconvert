@@ -138,6 +138,7 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
+import gov.nih.nci.pa.domain.TrialDataVerification;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -902,8 +903,10 @@ public class TestSchema {
         
         FundingMechanism mechanism = new FundingMechanism();
         mechanism.setFundingMechanismCode("D71");
-        addUpdObject(mechanism);        
-
+        addUpdObject(mechanism);    
+        
+        
+        
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
     }
@@ -935,7 +938,17 @@ public class TestSchema {
         session.saveOrUpdate(code8);
         session.flush();
     }
-
+    public static void addTrialVerificationData(Long spId) {
+        TrialDataVerification trialData = new TrialDataVerification();
+        StudyProtocol sp = createStudyProtocolObj();
+        trialData.setStudyProtocol(sp);
+        trialData.setVerificationMethod("manual");
+        trialData.setUserLastUpdated(getUser(true));
+        trialData.setUserLastCreated(getUser(true));
+        trialData.setDateLastCreated(new Date());
+        trialData.setDateLastUpdated(new Date());
+        addUpdObject(trialData);
+    }
     public static void addAbstractedWorkflowStatus(Long spId) {
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
         StudyProtocol sp = new StudyProtocol();

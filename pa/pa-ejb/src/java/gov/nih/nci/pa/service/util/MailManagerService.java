@@ -79,7 +79,9 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
 
@@ -87,6 +89,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bala Nair
@@ -366,6 +369,20 @@ public interface MailManagerService {
      */
     void sendMailWithHtmlBody(String mailFrom, String mailTo,
             List<String> mailCc, String mailSubject, String mailBody);
+    /**
+     * send verify data email
+     * @param map map 
+     * @throws PAException PAException
+     */
+    void sendVerifyDataEmail(Map<RegistryUser, List<StudyProtocolQueryDTO>> map) throws PAException;
+    
+    /**
+     * send CTRO verify data email
+     * @param list list 
+     * @throws PAException PAException
+     */
+    void sendCTROVerifyDataEmail(List<StudyProtocolQueryDTO> list) throws PAException;
+    
     
     /**
      * Sends an email to DCP 

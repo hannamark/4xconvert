@@ -17,14 +17,6 @@ public class TrialVerificationDataWebDTO {
     private String updatedDate;
     private String userLastUpdated;
     
-//    public TrialVerificationDataWebDTO(TrialVerificationDataDTO dto) {
-//        super();
-//        this.verificationMethod = StConverter.convertToString(dto.getVerificationMethod());
-//        this.id = IiConverter.convertToString(dto.getIdentifier());
-//        this.studyProtocolId = IiConverter.convertToString(dto.getStudyProtocolIdentifier());
-//        this.updatedDate = TsConverter.convertToString(dto.getDateLastUpdated());
-//        this.userLastUpdated = StConverter.convertToString(dto.getUserLastUpdated());
-//    }
     /**
      * 
      * @return verificationMethod verificationMethod

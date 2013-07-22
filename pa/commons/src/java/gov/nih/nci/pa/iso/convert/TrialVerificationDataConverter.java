@@ -50,8 +50,10 @@ public class TrialVerificationDataConverter
             }
             dto.setVerificationMethod(StConverter.convertToSt(bo.getVerificationMethod())); 
             dto.setDateLastUpdated(TsConverter.convertToTs(bo.getDateLastUpdated()));
-            dto.setUserLastUpdated(StConverter.convertToSt(bo
-                    .getUserLastUpdated().getFirstName() + bo.getUserLastUpdated().getLastName()));
+            if (bo.getUserLastUpdated() != null) {
+                dto.setUserLastUpdated(StConverter.convertToSt(bo
+                        .getUserLastUpdated().getFirstName() + bo.getUserLastUpdated().getLastName())); 
+            }
             
         }
         return dto;

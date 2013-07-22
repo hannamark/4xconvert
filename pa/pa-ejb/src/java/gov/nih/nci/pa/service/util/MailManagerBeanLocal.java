@@ -117,6 +117,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,9 +127,11 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -220,7 +223,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String DCP_TRIAL_IDENTIFIER = "${dcpTrialIdentifier}";
     private static final String NCT_IDENTIFIER = "${nctIdentifier}";
     private static final String EMAIL_ADDRESS = "${emailAddress}";
-    
+    private static final String TABLE_ROWS = "${tableRows}";
+    private static final String EFFECTIVE_DATE = "TrialDataVerificationNotificationsEffectiveDate";
+    private static final String DUE_DATE = "${dueDate}";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -1692,5 +1697,77 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
-         
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendVerifyDataEmail(Map<RegistryUser, List<StudyProtocolQueryDTO>> map) throws PAException {
+        String mailSubject = "";
+        String mailBody = "";
+        String mailto = "";
+        mailSubject = lookUpTableService.getPropertyValue("verifyData.email.subject");
+        mailBody = lookUpTableService.getPropertyValue("verifyData.email.bodyHeader");
+        mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.body"));
+        mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.bodyFooter"));
+        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        try {
+            for (Entry<RegistryUser, List<StudyProtocolQueryDTO>> entry : map.entrySet()) {
+                RegistryUser user = new RegistryUser(); 
+                user = entry.getKey();
+                List<StudyProtocolQueryDTO> list = entry.getValue();
+                StringBuffer innerTable = new StringBuffer();
+                for (StudyProtocolQueryDTO dto : list) { 
+                    String date = lookUpTableService.getPropertyValue(EFFECTIVE_DATE);
+                    Date effectiveDate = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).parse(date);
+                    if (effectiveDate.equals(getFormatedDate(dto.getVerificationDueDate()))) {
+                        innerTable.append("<tr><td style=\"width:80%\">" + dto.getNciIdentifier() + "</td>"
+                                + "<td>" + getFormatedDate(dto.getVerificationDueDate()) + "</td></tr>");
+                    }
+                }
+                if (innerTable.length() <= 0) {
+                    mailBody = mailBody.replace(TABLE_ROWS, innerTable.toString());
+                    mailto = user.getEmailAddress();
+                    mailBody = mailBody.replace(USER_NAME, getFullUserName(user)); 
+                    sendMailWithHtmlBody(mailto, mailSubject, mailBody);
+                }
+               
+            }
+        } catch (ParseException e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }     
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendCTROVerifyDataEmail(List<StudyProtocolQueryDTO> list) throws PAException {
+        String mailSubject = "";
+        String mailBody = "";
+        String mailto = "ncictro@mail.nih.gov";
+        mailSubject = lookUpTableService.getPropertyValue("verifyDataCTRO.email.subject");
+        mailBody = lookUpTableService.getPropertyValue("verifyDataCTRO.email.bodyHeader");
+        mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyDataCTRO.email.body"));
+        mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyDataCTRO.email.bodyFooter"));
+        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        StringBuffer innerTable = new StringBuffer();
+        try {
+            for (StudyProtocolQueryDTO dto : list) {
+                String date = lookUpTableService.getPropertyValue(EFFECTIVE_DATE);
+                Date effectiveDate = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).parse(date);
+                mailBody = mailBody.replace(DUE_DATE, getFormatedDate(dto.getVerificationDueDate()));
+                if (effectiveDate.equals(getFormatedDate(dto.getVerificationDueDate()))) {
+                    innerTable.append("<tr><td style=\"width:80%\">" + dto.getNciIdentifier() + "</td>"
+                            + "<td>" + dto.getLeadOrganizationName() + "</td></tr>");
+                }
+            }
+            if (innerTable.length() <= 0) {
+                mailBody = mailBody.replace(TABLE_ROWS, innerTable.toString()); 
+                sendMailWithHtmlBody(mailto, mailSubject, mailBody);
+            }
+        } catch (ParseException e) {
+            LOG.error(SEND_MAIL_ERROR, e);
+        }    
+    }
 }

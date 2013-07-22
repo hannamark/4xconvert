@@ -319,5 +319,27 @@
                   <cron-expression>0 0 23 ? * MON-FRI</cron-expression>
             </cron>
         </trigger>
+    </job>  
+    
+      <job>
+        <job-detail>
+            <name>verifyTrialDataJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.VerifyTrialDataJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+        </job-detail> 
+        <trigger>
+            <cron>
+                <name>verifyTrialDataJobTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>send automated mails to the users whose trials are nearing due date</description>
+                <misfire-instruction>MISFIRE_INSTRUCTION_FIRE_ONCE_NOW</misfire-instruction>
+                <job-name>verifyTrialDataJob</job-name>
+                <job-group>DEFAULT</job-group>                
+                  <cron-expression>0 0 22 ? * MON-FRI</cron-expression>
+            </cron>
+        </trigger>
     </job>   
 </quartz> 
