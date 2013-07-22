@@ -7,7 +7,7 @@
     <constant name="struts.action.extension" value="action" />
     <constant name="struts.devMode" value="${struts.devMode}" />
     <constant name="struts.ui.theme" value="css_xhtml" />
-    <package name="default" extends="struts-default">
+    <package name="default" extends="json-default">
         <interceptors>
 
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
