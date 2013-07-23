@@ -502,64 +502,83 @@ public class PAServiceUtils {
     /**
      *
      * @param studyProtocolIi study protocol identifier
-     * @param organizationDto organization Dto
+     * @param organizationDtoList organization Dto
      * @param summary4studyResourcingDTO summary four Resourcing Dto
      * @throws PAException on error
      */
-    public void manageSummaryFour(Ii studyProtocolIi, OrganizationDTO organizationDto,
+    public void manageSummaryFour(Ii studyProtocolIi, List<OrganizationDTO> organizationDtoList,
             StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
-        if (organizationDto != null && organizationDto.getIdentifier() != null) {
-            SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
-
-            if (summary4studyResourcingDTO != null && !ISOUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
-                summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
-                        summary4studyResourcingDTO.getTypeCode().getCode());
-            }
-            CorrelationUtils corrUtils = new CorrelationUtils();
-            String orgPoIdentifier = organizationDto.getIdentifier().getExtension();
-            if (orgPoIdentifier  == null) {
-                throw new PAException(" Organization PO Identifier is null");
-            }
-
-            // Step 1 : get the PO Organization
-            OrganizationDTO poOrg = null;
-            try {
-                poOrg = PoRegistry.getOrganizationEntityService()
-                    .getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-            } catch (NullifiedEntityException e) {
-                // Map m = e.getNullifiedEntities();
-                // LOG.error("This Organization is no longer available instead use
-                // ");
-                throw new PAException("This Organization is no longer available instead use ", e);
-            }
-            // Step 3 : check for pa org, if not create one
-            Organization paOrg = corrUtils.getPAOrganizationByIi(
-                    IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
-            if (paOrg == null) {
-                paOrg = corrUtils.createPAOrganization(poOrg);
-            }
-
-            StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
+        List<StudyResourcingDTO> summaryFourOrgList = PaRegistry.getStudyResourcingService()
                 .getSummary4ReportedResourcing(studyProtocolIi);
-            if (summary4ResoureDTO == null) {
-                // summary 4 record does not exist,so create a new one
-                summary4ResoureDTO = new StudyResourcingDTO();
-                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                if (summaryFourFundingCategoryCode != null) {
-                    summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+        List<Long> dbOrgIds = new ArrayList<Long>();
+        List<Long> summaryFourOrgIds = new ArrayList<Long>();
+        for (StudyResourcingDTO dto : summaryFourOrgList) {
+            dbOrgIds.add(IiConverter.convertToLong(dto.getOrganizationIdentifier()));
+        }
+        
+        for (OrganizationDTO organizationDto : organizationDtoList) {
+            if (organizationDto != null && organizationDto.getIdentifier() != null) {
+                SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
+
+                if (summary4studyResourcingDTO != null && !ISOUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
+                    summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
+                            summary4studyResourcingDTO.getTypeCode().getCode());
                 }
-                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
-                PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
-            } else {
-                // summary 4 record does exist,so so do an update
-                summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
-                if (summaryFourFundingCategoryCode != null) {
-                    summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+                CorrelationUtils corrUtils = new CorrelationUtils();
+                String orgPoIdentifier = organizationDto.getIdentifier().getExtension();
+                if (orgPoIdentifier  == null) {
+                    throw new PAException(" Organization PO Identifier is null");
                 }
-                summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
-                PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
+
+                // Step 1 : get the PO Organization
+                OrganizationDTO poOrg = null;
+                try {
+                    poOrg = PoRegistry.getOrganizationEntityService()
+                            .getOrganization(IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+                } catch (NullifiedEntityException e) {
+                    // Map m = e.getNullifiedEntities();
+                    // LOG.error("This Organization is no longer available instead use
+                    // ");
+                    throw new PAException("This Organization is no longer available instead use ", e);
+                }
+                // Step 3 : check for pa org, if not create one
+                Organization paOrg = corrUtils.getPAOrganizationByIi(
+                        IiConverter.convertToPoOrganizationIi(orgPoIdentifier));
+                if (paOrg == null) {
+                    paOrg = corrUtils.createPAOrganization(poOrg);
+                }
+
+                StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
+                        .getSummary4ReportedResourcingBySpAndOrgId(studyProtocolIi, paOrg.getId());
+                if (summary4ResoureDTO == null) {
+                    // summary 4 record does not exist,so create a new one
+                    summary4ResoureDTO = new StudyResourcingDTO();
+                    summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                    summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                    if (summaryFourFundingCategoryCode != null) {
+                        summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+                    }
+                    summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+                    PaRegistry.getStudyResourcingService().createStudyResourcing(summary4ResoureDTO);
+                } else {
+                    // summary 4 record does exist,so so do an update
+                    summary4ResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
+                    summary4ResoureDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                    if (summaryFourFundingCategoryCode != null) {
+                        summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(summaryFourFundingCategoryCode));
+                    }
+                    summary4ResoureDTO.setOrganizationIdentifier(IiConverter.convertToIi(paOrg.getId()));
+                    PaRegistry.getStudyResourcingService().updateStudyResourcing(summary4ResoureDTO);
+                }
+                summaryFourOrgIds.add(paOrg.getId());
+            }
+        }
+        for (Long orgId : dbOrgIds) {
+            if (CollectionUtils.isNotEmpty(summaryFourOrgIds) && !summaryFourOrgIds.contains(orgId)) {
+                //delete the row.
+                StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
+                        .getSummary4ReportedResourcingBySpAndOrgId(studyProtocolIi, orgId);
+                PaRegistry.getStudyResourcingService().delete(summary4ResoureDTO.getIdentifier());
             }
         }
     }

@@ -139,7 +139,7 @@ public interface TrialRegistrationServiceLocal {
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
@@ -176,7 +176,7 @@ public interface TrialRegistrationServiceLocal {
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException;
 
@@ -212,7 +212,7 @@ public interface TrialRegistrationServiceLocal {
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
@@ -249,7 +249,7 @@ public interface TrialRegistrationServiceLocal {
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException;
@@ -329,7 +329,7 @@ public interface TrialRegistrationServiceLocal {
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
@@ -358,7 +358,7 @@ public interface TrialRegistrationServiceLocal {
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException;
 
     // CHECKSTYLE:ON

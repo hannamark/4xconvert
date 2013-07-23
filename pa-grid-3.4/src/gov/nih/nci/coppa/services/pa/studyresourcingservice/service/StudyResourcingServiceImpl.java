@@ -50,11 +50,11 @@ public class StudyResourcingServiceImpl extends StudyResourcingServiceImplBase {
         }
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummary4ReportedResourcing(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getSummary4ReportedResourcing(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
           Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
-          StudyResourcingDTO studyResourcingDto = srService.getSummary4ReportedResourcing(iiDto);
-          return StudyResourcingTransformer.INSTANCE.toXml(studyResourcingDto);
+          List<StudyResourcingDTO> studyResourcingDto = srService.getSummary4ReportedResourcing(iiDto);
+          return StudyResourcingTransformer.INSTANCE.convert(studyResourcingDto);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

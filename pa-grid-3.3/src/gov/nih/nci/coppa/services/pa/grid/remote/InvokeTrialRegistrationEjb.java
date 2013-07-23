@@ -123,7 +123,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
@@ -149,7 +149,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
 
@@ -176,7 +176,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
@@ -257,7 +257,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
@@ -278,7 +278,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudySiteDTO leadOrganizationStudySiteDTO,
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
             DSet<Tel> owners) throws PAException {
         throw new PAException(
@@ -297,7 +297,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,

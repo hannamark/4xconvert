@@ -70,7 +70,7 @@
       <element name="GetSummaryForReportedResourceResponse">
         <complexType>
           <sequence>
-            <element ref="ns7:StudyResourcing" minOccurs="1" maxOccurs="1" />
+            <element ref="ns7:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>

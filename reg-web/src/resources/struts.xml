@@ -283,6 +283,7 @@
             <result name="persons">/WEB-INF/jsp/nodecorate/lookuppersons.jsp</result>
             <result name="create_org_response">/WEB-INF/jsp/nodecorate/displayOrgList.jsp</result>
             <result name="create_pers_response">/WEB-INF/jsp/nodecorate/displayPersonsList.jsp</result>
+            <result name="summaryFourOrg">/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp</result>
         </action>
         
         <action name="ajaxorganizationContact*" class="gov.nih.nci.registry.action.OrganizationContactAction" method="{1}">

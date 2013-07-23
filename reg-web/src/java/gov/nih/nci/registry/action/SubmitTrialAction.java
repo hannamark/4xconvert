@@ -229,8 +229,8 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
 
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
-            OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
+            List<OrganizationDTO> summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
+            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
             Ii responsiblePartyContactIi = null;
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {

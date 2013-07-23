@@ -121,13 +121,15 @@
                                     </reg-web:valueRow>                                
                                 </c:if>
                             </c:if>
-                            <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">
+                            <c:if test="${fn:length(trialDTO.summaryFourOrgIdentifiers) > 0}">
                                 <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                                 <reg-web:valueRow labelKey="view.trial.SubmissionCategory" noLabelTag="true">
                                     <c:out value="${trialDTO.summaryFourFundingCategoryCode}"/>
                                 </reg-web:valueRow>
                                 <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
-                                    <c:out value="${trialDTO.summaryFourOrgName}"/>
+                                    <c:forEach items="${trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
+                                        <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
+                                    </c:forEach>
                                 </reg-web:valueRow>
                                 <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
                                     <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'No':'Yes - '}"/>

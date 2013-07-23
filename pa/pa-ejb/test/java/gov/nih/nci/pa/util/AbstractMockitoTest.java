@@ -950,7 +950,7 @@ public class AbstractMockitoTest {
     private void setupStudyResSvc() throws PAException {
         studyResourcingSvc = mock(StudyResourcingServiceLocal.class);
         when(studyResourcingSvc.getStudyResourcingByStudyProtocol(any(Ii.class))).thenReturn(studyResourcingDtoList);
-        when(studyResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(studyResourcingDtoList.get(0));
+        when(studyResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(studyResourcingDtoList);
     }
 
     private void setupInterSvc() throws PAException {

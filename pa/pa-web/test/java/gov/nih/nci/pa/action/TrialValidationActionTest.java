@@ -117,7 +117,7 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
     public void testDisplaySum4() {
         getRequest().setupAddParameter("orgId", "1");
         assertEquals("display_summary4funding_sponsor", trialValidationAction.displaySummary4FundingSponsor());
-        assertEquals("1", trialValidationAction.getGtdDTO().getSummaryFourOrgIdentifier());
+        assertEquals("1", trialValidationAction.getGtdDTO().getSummaryFourOrgIdentifiers().get(0).getOrgId());
     }
 
     @Test

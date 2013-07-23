@@ -335,9 +335,9 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
 
             StudyContactDTO studyContactDTO = null;
             StudySiteContactDTO studySiteContactDTO = null;
-            OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
+            List<OrganizationDTO> summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util
-                    .convertToSummary4StudyResourcingDTO(trialDTO, null);
+                    .convertToSummary4StudyResourcingDTO(trialDTO);
             Ii responsiblePartyContactIi = null;
             // updated only if the ctGovXmlRequired is true
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {

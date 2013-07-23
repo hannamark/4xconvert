@@ -33,7 +33,7 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private St contactPhone;
     private St contactEmail;
 
-    private Ii summaryFourOrgIdentifier;
+    private List<Ii> summaryFourOrgIdentifiers = new ArrayList<Ii>();
     private Cd summaryFourFundingCategoryCode;
     private Cd trialStatusCode;
     private Ts trialStatusDate;
@@ -46,7 +46,6 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private Ii siteProtocolIdentifier;
     private Ii sitePiIdentifier;
     private Int siteTargetAccrual;
-    private Ii siteSummaryFourOrgIdentifier;
     private Cd siteSummaryFourFundingTypeCode;
     private St siteProgramCodeText;
     private Cd siteRecruitmentStatus;
@@ -189,16 +188,16 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
         this.contactEmail = contactEmail;
     }
     /**
-     * @return the summaryFourOrgIdentifier
+     * @return the summaryFourOrgIdentifiers
      */
-    public Ii getSummaryFourOrgIdentifier() {
-        return summaryFourOrgIdentifier;
+    public List<Ii> getSummaryFourOrgIdentifiers() {
+        return summaryFourOrgIdentifiers;
     }
     /**
-     * @param summaryFourOrgIdentifier the summaryFourOrgIdentifier to set
+     * @param summaryFourOrgIdentifiers the summaryFourOrgIdentifiers to set
      */
-    public void setSummaryFourOrgIdentifier(Ii summaryFourOrgIdentifier) {
-        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
+    public void setSummaryFourOrgIdentifiers(List<Ii> summaryFourOrgIdentifiers) {
+        this.summaryFourOrgIdentifiers = summaryFourOrgIdentifiers;
     }
     /**
      * @return the summaryFourFundingCategoryCode
@@ -333,18 +332,6 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setSiteTargetAccrual(Int siteTargetAccrual) {
         this.siteTargetAccrual = siteTargetAccrual;
-    }
-    /**
-     * @return the siteSummaryFourOrgIdentifier
-     */
-    public Ii getSiteSummaryFourOrgIdentifier() {
-        return siteSummaryFourOrgIdentifier;
-    }
-    /**
-     * @param siteSummaryFourOrgIdentifier the siteSummaryFourOrgIdentifier to set
-     */
-    public void setSiteSummaryFourOrgIdentifier(Ii siteSummaryFourOrgIdentifier) {
-        this.siteSummaryFourOrgIdentifier = siteSummaryFourOrgIdentifier;
     }
     /**
      * @return the siteSummaryFourFundingTypeCode

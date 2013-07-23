@@ -14,6 +14,7 @@ import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -57,7 +58,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -165,7 +168,10 @@ public class TrialHelper {
         if (ABSTRACTION.equalsIgnoreCase(operation)) {
             createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
         }
-        saveSummary4Information(studyProtocolIi, gtdDTO);
+        if (VALIDATION.equalsIgnoreCase(operation)) {
+            saveSummary4Information(studyProtocolIi, gtdDTO.getSummaryFourOrgIdentifiers(), 
+                    gtdDTO.getSummaryFourFundingCategoryCode());
+        }
         // nct
         saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getNctIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE);
         // copied from trial identification screen
@@ -215,21 +221,32 @@ public class TrialHelper {
         }
     }
 
-    private void saveSummary4Information(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
+    /**
+     * @param studyProtocolIi Ii
+     * @param summaryFourWebDto summaryFourOrgs
+     * @param summaryFourFundingCategoryCode categoryCode
+     * @throws PAException the error
+     */
+    public void saveSummary4Information(Ii studyProtocolIi, List<SummaryFourSponsorsWebDTO> summaryFourWebDto,
+            String summaryFourFundingCategoryCode) throws PAException {
         //summ4 info
-        if (StringUtils.isNotEmpty(gtdDTO.getSummaryFourOrgIdentifier())) {
-            OrganizationDTO sum4OrgDto = new OrganizationDTO();
-            sum4OrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSummaryFourOrgIdentifier()));
+        if (CollectionUtils.isNotEmpty(summaryFourWebDto)) {
+            List<OrganizationDTO> sum4OrgDtoList =  new ArrayList<OrganizationDTO>();
             StudyResourcingDTO summary4ResoureDTO = new StudyResourcingDTO();
-            if (StringUtils.isNotEmpty(gtdDTO.getSummaryFourFundingCategoryCode())) {
-              summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
-                        .getByCode(gtdDTO.getSummaryFourFundingCategoryCode())));
-            } else {
-                Cd cd = new Cd();
-                cd.setNullFlavor(NullFlavor.NI);
-                summary4ResoureDTO.setTypeCode(cd);
+            for (SummaryFourSponsorsWebDTO webDto : summaryFourWebDto) {
+                OrganizationDTO sum4OrgDto = new OrganizationDTO();
+                sum4OrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(webDto.getOrgId()));
+                if (StringUtils.isNotEmpty(summaryFourFundingCategoryCode)) {
+                    summary4ResoureDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
+                            .getByCode(summaryFourFundingCategoryCode)));
+                } else {
+                    Cd cd = new Cd();
+                    cd.setNullFlavor(NullFlavor.NI);
+                    summary4ResoureDTO.setTypeCode(cd);
+                }
+                sum4OrgDtoList.add(sum4OrgDto);
             }
-            getPaServiceUtils().manageSummaryFour(studyProtocolIi, sum4OrgDto, summary4ResoureDTO);
+            getPaServiceUtils().manageSummaryFour(studyProtocolIi, sum4OrgDtoList, summary4ResoureDTO);
         }
     }
 
@@ -571,17 +588,24 @@ public class TrialHelper {
         return scDTO;
     }
 
-    private void copySummaryFour(StudyResourcingDTO srDTO, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
-        if (srDTO == null) {
+    private void copySummaryFour(List<StudyResourcingDTO> srDTOList, GeneralTrialDesignWebDTO gtdDTO) 
+            throws PAException {
+        if (srDTOList == null || srDTOList.isEmpty()) {
             return;
         }
-        if (!ISOUtil.isCdNull(srDTO.getTypeCode())) {
-            gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+        if (!srDTOList.isEmpty() && !ISOUtil.isCdNull(srDTOList.get(0).getTypeCode())) {
+            gtdDTO.setSummaryFourFundingCategoryCode(srDTOList.get(0).getTypeCode().getCode());
         }
-        if (!ISOUtil.isIiNull(srDTO.getOrganizationIdentifier())) {
-            Organization o = getCorrelationUtils().getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
-            gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
-            gtdDTO.setSummaryFourOrgName(o.getName());
+        for (StudyResourcingDTO dto : srDTOList) {
+            if (dto.getOrganizationIdentifier() != null
+                    && StringUtils.isNotEmpty(dto.getOrganizationIdentifier().getExtension())) {
+                Organization o = getCorrelationUtils().getPAOrganizationByIi(dto.getOrganizationIdentifier());
+                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+                summarySp.setOrgId(o.getIdentifier());
+                summarySp.setOrgName(o.getName());
+                summarySp.setRowId(UUID.randomUUID().toString());
+                gtdDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+            }
         }
     }
     /**

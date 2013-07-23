@@ -16,6 +16,7 @@ import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -446,8 +448,11 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         TrialDTO tDto = getMockTrialDTO();
-        tDto.setSummaryFourOrgIdentifier("1");
-        tDto.setSummaryFourOrgName("summaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("summaryFourOrgName");
+        summarySp.setRowId(UUID.randomUUID().toString());
+        tDto.getSummaryFourOrgIdentifiers().add(summarySp);
         tDto.setIdentifier("3");
         tDto.setFundingDtos(getfundingDtos());
         tDto.setIndIdeDtos(getIndDtos());
@@ -625,15 +630,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         trial.setSummaryFourFundingCategoryCode(null);
         action.setTrialDTO(trial);
         assertFalse(action. validateSummaryFourInfo());
-    }
+    }  
     
-    @Test 
-    public void  validateSummaryFourInfoIncorrectSummaryFourOrgName() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setSummaryFourOrgName(null);
-        action.setTrialDTO(trial);
-        assertFalse(action. validateSummaryFourInfo());
-    }
     
     @Test
     public void validateTrialNotUpdatableFieldsFailed() throws PAException, IOException {

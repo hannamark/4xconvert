@@ -213,12 +213,13 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
 
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
-            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
+            List<OrganizationDTO> summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
+            
             StudySiteDTO leadOrganizationTrialIdentifierDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
 
             StudySiteDTO nctIdentifierDTO = util.convertToNCTStudySiteDTO(trialDTO, null);
             StudySiteDTO siteDTO = getSubmittingStudySiteDTO();
-            StudyResourcingDTO studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
+            StudyResourcingDTO studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
 
             PersonDTO siteInvestigatorDTO = new PersonDTO();
             siteInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi(trialDTO.getSitePiIdentifier()));

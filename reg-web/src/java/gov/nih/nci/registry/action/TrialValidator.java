@@ -352,11 +352,11 @@ public class TrialValidator {
 
     private void validateSummaryFourInfo(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (!StringUtils.isEmpty(trialDto.getSummaryFourFundingCategoryCode())
-                && StringUtils.isEmpty(trialDto.getSummaryFourOrgIdentifier())) {
+                && CollectionUtils.isEmpty(trialDto.getSummaryFourOrgIdentifiers())) {
             addFieldError.put("summary4FundingSponsor", "Select the Summary 4 Funding Sponsor");
         }
         if (StringUtils.isEmpty(trialDto.getSummaryFourFundingCategoryCode())
-                && !StringUtils.isEmpty(trialDto.getSummaryFourOrgIdentifier())) {
+                && CollectionUtils.isNotEmpty(trialDto.getSummaryFourOrgIdentifiers())) {
             addFieldError.put("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
         }
     }

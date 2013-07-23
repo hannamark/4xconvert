@@ -48,6 +48,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -299,18 +300,25 @@ public class TrialUtil extends TrialConvertUtils {
      * @param trialDTO tdto
      * @throws PAException ex
      */
-    private void copySummaryFour(StudyResourcingDTO srDTO, BaseTrialDTO trialDTO) throws PAException {
+    private void copySummaryFour(List<StudyResourcingDTO> srDTO, BaseTrialDTO trialDTO) throws PAException {
         if (srDTO == null) {
             return;
         }
-        if (srDTO.getTypeCode() != null) {
-            trialDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+        if (CollectionUtils.isNotEmpty(srDTO) && srDTO.get(0).getTypeCode() != null) {
+            trialDTO.setSummaryFourFundingCategoryCode(srDTO.get(0).getTypeCode().getCode());
         }
-        if (srDTO.getOrganizationIdentifier() != null
-                && StringUtils.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
-            Organization o = getCorrelationUtils().getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
-            trialDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
-            trialDTO.setSummaryFourOrgName(o.getName());
+        if (CollectionUtils.isNotEmpty(srDTO)) {
+            for (StudyResourcingDTO dto : srDTO) {
+                 if (dto.getOrganizationIdentifier() != null
+                         && StringUtils.isNotEmpty(dto.getOrganizationIdentifier().getExtension())) {
+                    Organization o = getCorrelationUtils().getPAOrganizationByIi(dto.getOrganizationIdentifier());
+                    SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+                    summarySp.setOrgId(o.getIdentifier());
+                    summarySp.setOrgName(o.getName());
+                    summarySp.setRowId(UUID.randomUUID().toString());
+                    trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                 }
+            }
         }
     }
 

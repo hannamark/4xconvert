@@ -34,6 +34,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -72,6 +73,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyContactDTO studyContactDTO = StudyContactTransformer.INSTANCE.toDto(studyContact);
             StudySiteContactDTO studySiteContactDTO = StudySiteContactTransformer.INSTANCE.toDto(studySiteContact);
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
+            List<OrganizationDTO> summaryFourOrgList = null;
+            if (summary4organizationDTO != null) {
+          	  summaryFourOrgList =  new ArrayList<OrganizationDTO>();
+          	  summaryFourOrgList.add(summary4organizationDTO);
+            }
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
@@ -85,7 +91,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii ii = service.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                            studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
+                            studyContactDTO, studySiteContactDTO, summaryFourOrgList, summary4studyResourcingDTO,
                             responsiblePartyContactIi, studyRegAuthDTO, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
@@ -112,6 +118,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudyContactDTO studyContactDTO = StudyContactTransformer.INSTANCE.toDto(studyContact);
             StudySiteContactDTO studySiteContactDTO = StudySiteContactTransformer.INSTANCE.toDto(studySiteContact);
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
+            List<OrganizationDTO> summaryFourOrgList = null;
+            if (summary4organizationDTO != null) {
+          	  summaryFourOrgList =  new ArrayList<OrganizationDTO>();
+          	  summaryFourOrgList.add(summary4organizationDTO);
+            }
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Ii responsiblePartyContactIi = IITransformer.INSTANCE.toDto(responsiblePartyContact);
@@ -125,7 +136,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Ii ii = service.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs, studyContactDTO,
-                            studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
+                            studySiteContactDTO, summaryFourOrgList, summary4studyResourcingDTO,
                             responsiblePartyContactIi, studyRegAuthDTO, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {
@@ -182,6 +193,11 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             StudySiteDTO studySiteDTO = StudySiteTransformer.INSTANCE.toDto(studySite);
             StudySiteDTO nctIdentifierDTO = StudySiteTransformer.INSTANCE.toDto(nctIdentifier);
             OrganizationDTO summary4organizationDTO = OrganizationTransformer.INSTANCE.toDto(summaryForOrganization);
+            List<OrganizationDTO> summaryFourOrgList = null;
+            if (summary4organizationDTO != null) {
+          	  summaryFourOrgList =  new ArrayList<OrganizationDTO>();
+          	  summaryFourOrgList.add(summary4organizationDTO);
+            }
             StudyResourcingDTO summary4studyResourcingDTO =
                     StudyResourcingTransformer.INSTANCE.toDto(summaryForStudyResourcing);
             Bl isBatch = new Bl();
@@ -190,7 +206,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
             Ii ii = service.createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
+                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summaryFourOrgList,
                             summary4studyResourcingDTO, isBatch);
             return IdTransformer.INSTANCE.toXml(ii);
         } catch (Exception e) {

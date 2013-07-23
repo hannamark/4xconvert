@@ -38,6 +38,14 @@
                 return false;
             }
             
+            function deleteSummary4SponsorRow(rowid) {
+                var  url = '/pa/protected/ajaxorgdeleteSummaryFourOrg.action';
+                var params = { uuid: rowid };
+                var div = $('loadOrgField');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
+            
             function tooltip() {
                 BubbleTips.activateTipOn("acronym");
                 BubbleTips.activateTipOn("dfn"); 

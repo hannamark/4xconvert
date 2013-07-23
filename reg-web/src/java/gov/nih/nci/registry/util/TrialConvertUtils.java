@@ -127,6 +127,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -157,6 +158,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author mshestopalov
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength",
+        "PMD.NPathComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class TrialConvertUtils {
 
     /**
@@ -364,13 +367,16 @@ public class TrialConvertUtils {
      * @param trialDTO do
      * @return iso
      */
-    public OrganizationDTO convertToSummary4OrgDTO(BaseTrialDTO trialDTO) {
-        OrganizationDTO isoDto = null;
-        if (StringUtils.isNotEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
-            isoDto = new OrganizationDTO();
-            isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(trialDTO.getSummaryFourOrgIdentifier()));
-        }
-        return isoDto;
+    public List<OrganizationDTO> convertToSummary4OrgDTO(BaseTrialDTO trialDTO) {
+       List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+       for (SummaryFourSponsorsWebDTO summary4Org : trialDTO.getSummaryFourOrgIdentifiers()) { 
+            if (StringUtils.isNotEmpty(summary4Org.getOrgId())) {
+                OrganizationDTO isoDto = new OrganizationDTO();
+                isoDto.setIdentifier(IiConverter.convertToPoOrganizationIi(summary4Org.getOrgId()));
+                summary4OrganizationList.add(isoDto);
+            }
+       }
+        return summary4OrganizationList;
     }
     /**
      * Convert to lead org dto.
@@ -419,23 +425,14 @@ public class TrialConvertUtils {
     /**
      * Convert to summary4 study resourcing dto.
      * @param trialDTO dto
-     * @param studyProtocolIi ii
      * @return iso
      * @throws PAException e
      */
-    public StudyResourcingDTO convertToSummary4StudyResourcingDTO(BaseTrialDTO trialDTO, Ii studyProtocolIi)
+    public StudyResourcingDTO convertToSummary4StudyResourcingDTO(BaseTrialDTO trialDTO)
         throws PAException {
         StudyResourcingDTO isoDto = null;
         if (StringUtils.isNotEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
             isoDto = new StudyResourcingDTO();
-            if (!ISOUtil.isIiNull(studyProtocolIi)) {
-                StudyResourcingDTO summary4studyResourcingDTO = PaRegistry.getStudyResourcingService()
-                    .getSummary4ReportedResourcing(studyProtocolIi);
-                if (summary4studyResourcingDTO != null) {
-                    isoDto = summary4studyResourcingDTO;
-                }
-                isoDto.setStudyProtocolIdentifier(studyProtocolIi);
-            }
             isoDto.setTypeCode(CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode()));
         }
         return isoDto;
@@ -952,7 +949,9 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         spStageDTO.setSecondaryPurposeOtherText(StConverter.convertToSt(trialDto.getSecondaryPurposeOtherText()));
        spStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(trialDto.getLeadOrgTrialIdentifier()));
        spStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToIi(trialDto.getLeadOrganizationIdentifier()));
-       spStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
+       for (SummaryFourSponsorsWebDTO sfOrg : trialDto.getSummaryFourOrgIdentifiers()) {
+            spStageDTO.getSummaryFourOrgIdentifiers().add(IiConverter.convertToIi(sfOrg.getOrgId()));
+       }
        spStageDTO.setSummaryFourFundingCategoryCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.getByCode(
                trialDto.getSummaryFourFundingCategoryCode())));
        spStageDTO.setTrialType(StConverter.convertToSt(trialDto.getTrialType()));
@@ -988,7 +987,6 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
                trialDto.getSiteOrganizationIdentifier()));
        spStageDTO.setSiteProtocolIdentifier(IiConverter.convertToIi(trialDto.getLocalSiteIdentifier()));
        spStageDTO.setSitePiIdentifier(IiConverter.convertToIi(trialDto.getSitePiIdentifier()));
-       spStageDTO.setSiteSummaryFourOrgIdentifier(IiConverter.convertToIi(trialDto.getSummaryFourOrgIdentifier()));
        spStageDTO.setSiteSummaryFourFundingTypeCode(CdConverter.convertStringToCd(
                trialDto.getSummaryFourFundingCategoryCode()));
        spStageDTO.setSiteProgramCodeText(StConverter.convertToSt(trialDto.getSiteProgramCodeText()));
@@ -1181,14 +1179,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
            }
        }
        trialDto.setSiteProgramCodeText(StConverter.convertToString(spStageDTO.getSiteProgramCodeText()));
-       trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(
-               spStageDTO.getSiteSummaryFourOrgIdentifier()));
-       if (!ISOUtil.isIiNull(spStageDTO.getSiteSummaryFourOrgIdentifier())) {
-           trialDto.setSummaryFourOrgName(getOrgName(spStageDTO.getSiteSummaryFourOrgIdentifier()));
-           if (trialDto.getSummaryFourOrgName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
-               trialDto.setSummaryFourOrgIdentifier(null);
-           }
-       }
+       checkSummaryFourOrgIds(spStageDTO, trialDto);
        trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(
                   spStageDTO.getSiteSummaryFourFundingTypeCode()));
        if (!ISOUtil.isCdNull(spStageDTO.getSiteRecruitmentStatus())) {
@@ -1276,12 +1267,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         } else {
             trialDto.setDataMonitoringCommitteeAppointedIndicator(CommonsConstant.NO);
         }
-        if (!ISOUtil.isIiNull(spStageDTO.getSummaryFourOrgIdentifier())) {
-            trialDto.setSummaryFourOrgName(getOrgName(spStageDTO.getSummaryFourOrgIdentifier()));
-            if (trialDto.getSummaryFourOrgName().equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
-                trialDto.setSummaryFourOrgIdentifier(null);
-            }
-        }
+        checkSummaryFourOrgIds(spStageDTO, trialDto);
         if (!ISOUtil.isIiNull(spStageDTO.getPiIdentifier())) {
             trialDto.setPiName(getPersonName(spStageDTO.getPiIdentifier()));
             if (trialDto.getPiName().equalsIgnoreCase(NULLIFIED_PERSON)) {
@@ -1325,7 +1311,6 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
             trialDto.setResponsibleGenericContactIdentifier(null);
         }        
         
-        trialDto.setSummaryFourOrgIdentifier(IiConverter.convertToString(spStageDTO.getSummaryFourOrgIdentifier()));
         trialDto.setSummaryFourFundingCategoryCode(CdConverter.convertCdToString(spStageDTO
             .getSummaryFourFundingCategoryCode()));
         trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
@@ -1338,6 +1323,23 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
         trialDto.setSecondaryIdentifierList(spStageDTO.getSecondaryIdentifierList());
         return trialDto;
+    }
+
+    private void checkSummaryFourOrgIds(StudyProtocolStageDTO spStageDTO, BaseTrialDTO trialDto) {
+        if (CollectionUtils.isNotEmpty(spStageDTO.getSummaryFourOrgIdentifiers())) {
+            for (Ii sfOrgId : spStageDTO.getSummaryFourOrgIdentifiers()) {
+                String orgName = getOrgName(sfOrgId);
+                String orgId = sfOrgId.getExtension();
+                if (orgName.equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
+                    orgId = null;
+                }
+                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+                summarySp.setOrgId(orgId);
+                summarySp.setOrgName(orgName);
+                summarySp.setRowId(UUID.randomUUID().toString());
+                trialDto.getSummaryFourOrgIdentifiers().add(summarySp);
+            }
+        }
     }
    /**
     * @param grant webDto

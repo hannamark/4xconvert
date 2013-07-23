@@ -149,7 +149,7 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         sp.setPiIdentifier("2");
         sp.setSponsorIdentifier("1");
         sp.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.NATIONAL);
-        sp.setSummaryFourOrgIdentifier("1");
+        sp.getSummaryFourOrgIdentifiers().add("1");
         sp.setOversightAuthorityCountryId("1");
         sp.setOversightAuthorityOrgId("1");
         list.add(sp);
@@ -169,7 +169,7 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         sp.setPiIdentifier("2");
         sp.setSponsorIdentifier("1");
         sp.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.NATIONAL);
-        sp.setSummaryFourOrgIdentifier("1");
+        sp.getSummaryFourOrgIdentifiers().add("1");
         sp.setFdaRegulatedIndicator(Boolean.TRUE);
         sp.setSection801Indicator(Boolean.TRUE);
         sp.setDelayedpostingIndicator(Boolean.TRUE);

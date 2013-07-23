@@ -2,8 +2,6 @@
 <tr style="display:none">
     <td>
         <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
-        <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
-        <s:hidden name="trialDTO.summaryFourOrgName" id="trialDTO.summaryFourOrgName" />
         <s:hidden name="trialDTO.programCodeText" id="trialDTO.programCodeText" />
     </td>
 </tr>
@@ -23,9 +21,13 @@
 <tr>
     <td scope="row" class="label-noinput">
         Summary 4 Funding Sponsor: <span class="required">*</span>
-    </td>
-    <td class="value">
-        <s:property value="trialDTO.summaryFourOrgName"/>
+    </td>    
+    <td class="value">    
+	    <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
+	        <s:property value="%{orgName}"/><br/>
+            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/>
+            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
+	    </s:iterator>
     </td>
 </tr>
 <tr>

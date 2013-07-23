@@ -84,9 +84,9 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
     /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
+    public List<StudyResourcingDTO> getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         try {
-            StudyResourcingDTO result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
+            List<StudyResourcingDTO> result = GridSecurityJNDIServiceLocator.newInstance().getStudyResourcingService()
                     .getSummary4ReportedResourcing(studyProtocolIi);
             return result;
         } catch (PAException pae) {
@@ -140,4 +140,11 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
         // TODO Auto-generated method stub
         
     }
+
+	public StudyResourcingDTO getSummary4ReportedResourcingBySpAndOrgId(
+			Ii studyProtocolIi, Long orgId)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

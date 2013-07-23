@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 
@@ -19,6 +20,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
@@ -392,8 +394,11 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     public void testAmendWithSummaryFour(){
         TrialDTO dto = getMockTrialDTO();
         dto.setSummaryFourFundingCategoryCode("National");
-        dto.setSummaryFourOrgIdentifier("2");
-        dto.setSummaryFourOrgName("summaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId("2");
+        summarySp.setOrgName("SummaryFourOrgName");
+        summarySp.setRowId(UUID.randomUUID().toString());
+        dto.getSummaryFourOrgIdentifiers().add(summarySp);
         setTrialDTOInSession(dto);
         assertEquals("redirect_to_search", trialAction.amend());
     }

@@ -440,7 +440,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      * @return
      * @throws PAException
      */
-    private OrganizationDTO getSummary4OrganizationDTO() throws PAException {
+    private List<OrganizationDTO> getSummary4OrganizationDTO() throws PAException {
         OrganizationDTO summ4OrgDTO = new OrganizationDTO();
         summ4OrgDTO.setName(EnOnConverter.convertToEnOn("unknown"));
         summ4OrgDTO.setTelecomAddress(DSetConverter.convertListToDSet(Arrays.asList("unknown@unknown.com"),
@@ -448,7 +448,9 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
         summ4OrgDTO.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
         "USA"));
         summ4OrgDTO = paServiceUtils.findOrCreateEntity(summ4OrgDTO);
-        return summ4OrgDTO;
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summ4OrgDTO);
+        return summary4OrganizationList;
     }
     /**
      * @param urlXML

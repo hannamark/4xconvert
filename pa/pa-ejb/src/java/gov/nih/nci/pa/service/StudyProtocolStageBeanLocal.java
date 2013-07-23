@@ -308,8 +308,10 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         }
         PAServiceUtils paServiceUtil  = new PAServiceUtils();
         createPAOrganizationByPoId(paServiceUtil, sp.getLeadOrganizationIdentifier());
-        createPAOrganizationByPoId(paServiceUtil, sp.getSiteSummaryFourOrgIdentifier());
-        createPAOrganizationByPoId(paServiceUtil, sp.getSummaryFourOrgIdentifier());
+        //createPAOrganizationByPoId(paServiceUtil, sp.getSiteSummaryFourOrgIdentifier());
+        for (String sfOrgId : sp.getSummaryFourOrgIdentifiers()) {
+            createPAOrganizationByPoId(paServiceUtil, sfOrgId);
+        }
         createPAOrganizationByPoId(paServiceUtil, sp.getSponsorIdentifier());
         createPAOrganizationByPoId(paServiceUtil, sp.getSubmitterOrganizationIdentifier());
         createPAPersonByPoId(paServiceUtil, sp.getPiIdentifier());

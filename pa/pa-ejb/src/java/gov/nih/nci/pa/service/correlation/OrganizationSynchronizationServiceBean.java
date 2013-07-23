@@ -281,12 +281,19 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 newPaOrg.getIdentifier());
         cUtils.updateItemIdForStudyProtocolStage("sponsorIdentifier",
                 oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("summaryFourOrgIdentifier",
+        updateItemIdForStudySummaryFourOrgIdentifierStage("summary_four_org_identifier",
                 oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("siteSummaryFourOrgIdentifier", oldPaOrg.getIdentifier(),
-                newPaOrg.getIdentifier());
         cUtils.updateItemIdForStudyProtocolStage("submitterOrganizationIdentifier", oldPaOrg.getIdentifier(),
                 newPaOrg.getIdentifier());
+    }
+    
+    private void updateItemIdForStudySummaryFourOrgIdentifierStage(String item, String oldPoId,
+            String newPoId) throws NullifiedEntityException, PAException {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery("update STUDY_SUMMARY_FOUR_ORG_IDENTIFIER_STAGE set " + item 
+                + " = :newPoId " + "where " + item + " = :oldPoId")
+            .setString("newPoId", newPoId).setString("oldPoId", oldPoId).executeUpdate();
     }
 
     private void updateResearchOrganization(final Ii roIdentifier, final ResearchOrganizationDTO roDto)

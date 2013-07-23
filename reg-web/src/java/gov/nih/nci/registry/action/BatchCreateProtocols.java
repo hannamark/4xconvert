@@ -121,6 +121,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -497,9 +498,8 @@ public class BatchCreateProtocols {
         OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
         PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
         StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
-        OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-        StudyResourcingDTO summary4studyResourcingDTO =
-                util.convertToSummary4StudyResourcingDTO(trialDTO, studyProtocolIi);
+        List<OrganizationDTO> summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
+        StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
 
         StudyContactDTO studyContactDTO = null;
         StudySiteContactDTO studySiteContactDTO = null;
@@ -598,8 +598,8 @@ public class BatchCreateProtocols {
                     PaRegistry.getTrialRegistrationService().amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
                             leadOrgSiteIdDTO, studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
-                            summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
-                            BlConverter.convertToBl(Boolean.TRUE));
+                            summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, 
+                            studyRegAuthDTO, BlConverter.convertToBl(Boolean.TRUE));
 
         }
         return studyProtocolIi;
@@ -725,7 +725,9 @@ public class BatchCreateProtocols {
             summary4Sponsor = lookUpOrgs(summ4Sponsor); // look up for org only when dto is not empty
         }
         if (summary4Sponsor != null) {
-            trialDTO.setSummaryFourOrgIdentifier(summary4Sponsor.getExtension());
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+            summarySp.setOrgId(summary4Sponsor.getExtension());
+            trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
         }
         // check ctgovxml indicator is true
         Ii responsiblePersonId = null;

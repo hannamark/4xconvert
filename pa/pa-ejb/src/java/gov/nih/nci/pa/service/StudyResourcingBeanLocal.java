@@ -183,7 +183,7 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
+    public List<StudyResourcingDTO> getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("studyProtocol Identifier should not be null");
         }
@@ -196,9 +196,28 @@ public class StudyResourcingBeanLocal extends
 
         List<StudyResourcing> results = search(new AnnotatedBeanSearchCriteria<StudyResourcing>(criteria));
 
-        if (results.size() > 1) {
-            throw new PAException("Summary 4 Reported Sourcing should not be more than 1 record");
+        return convertFromDomainToDTOs(results);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudyResourcingDTO getSummary4ReportedResourcingBySpAndOrgId(Ii studyProtocolIi, Long orgId) 
+            throws PAException {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException("studyProtocol Identifier should not be null");
         }
+
+        StudyResourcing criteria = new StudyResourcing();
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(studyProtocolIi));
+        criteria.setStudyProtocol(sp);
+        criteria.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        criteria.setOrganizationIdentifier(orgId.toString());
+
+        List<StudyResourcing> results = search(new AnnotatedBeanSearchCriteria<StudyResourcing>(criteria));
+
         return results.isEmpty() ? null : convertFromDomainToDto(results.get(0));
     }
 

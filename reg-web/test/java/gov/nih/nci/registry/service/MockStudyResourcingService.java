@@ -92,9 +92,9 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
+    public List<StudyResourcingDTO> getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi != null && studyProtocolIi.getExtension().equals("3")) {
-            return new StudyResourcingDTO();
+            return new ArrayList<StudyResourcingDTO>();
         }
         return null;
     }
@@ -183,4 +183,11 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public StudyResourcingDTO getSummary4ReportedResourcingBySpAndOrgId(
+			Ii studyProtocolIi, Long orgId) throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

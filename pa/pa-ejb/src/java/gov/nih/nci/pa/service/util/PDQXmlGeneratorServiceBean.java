@@ -264,29 +264,30 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
     @Override
     protected void addNciSpecificInfo(StudyProtocolDTO spDTO, Document doc, Element root)
         throws PAException {
-        StudyResourcingDTO srDTO = getStudyResourcingService()
+        List<StudyResourcingDTO> srDTOList = getStudyResourcingService()
         .getSummary4ReportedResourcing(spDTO.getIdentifier());
 
         Element nciSpecRoot = doc.createElement("nci_specific_information");
         XmlGenHelper.appendElement(nciSpecRoot, XmlGenHelper.createElementWithTextblock("reporting_data_set_method",
                 spDTO.getAccrualReportingMethodCode().getCode(), doc));
-        if (srDTO != null && srDTO.getTypeCode() != null) {
+        if (CollectionUtils.isNotEmpty(srDTOList) && srDTOList.get(0).getTypeCode() != null) {
             XmlGenHelper.appendElement(nciSpecRoot, XmlGenHelper.createElementWithTextblock(
-                    "summary_4_funding_category", srDTO.getTypeCode().getCode(), doc));
+                    "summary_4_funding_category", srDTOList.get(0).getTypeCode().getCode(), doc));
         }
-
-        if (srDTO != null && !ISOUtil.isIiNull(srDTO.getOrganizationIdentifier())) {
-            Element nciSpecFundSpons = doc.createElement("summary_4_funding_sponsor_source");
-            OrganizationDTO poOrgDTO =
-                PdqXmlGenHelper.getPoOrgDTOByPaOrgIi(srDTO.getOrganizationIdentifier(), this.getCorUtils());
-            XmlGenHelper.appendElement(nciSpecFundSpons,
-                    XmlGenHelper.createElementWithTextblock(NAME, StringUtils.substring(EnOnConverter
-                    .convertEnOnToString(poOrgDTO.getName()), 0,
-                    PAAttributeMaxLen.LEN_160), doc));
-            XmlGenHelper.loadPoOrganization(poOrgDTO, nciSpecFundSpons, doc, null);
-            XmlGenHelper.appendElement(nciSpecRoot, nciSpecFundSpons);
+        if (CollectionUtils.isNotEmpty(srDTOList)) {
+            for (StudyResourcingDTO srDTO : srDTOList) {
+                if (srDTO != null && !ISOUtil.isIiNull(srDTO.getOrganizationIdentifier())) {
+                    Element nciSpecFundSpons = doc.createElement("summary_4_funding_sponsor_source");
+                    OrganizationDTO poOrgDTO =
+                        PdqXmlGenHelper.getPoOrgDTOByPaOrgIi(srDTO.getOrganizationIdentifier(), this.getCorUtils());
+                    XmlGenHelper.appendElement(nciSpecFundSpons,
+                        XmlGenHelper.createElementWithTextblock(NAME, StringUtils.substring(EnOnConverter
+                                .convertEnOnToString(poOrgDTO.getName()), 0, PAAttributeMaxLen.LEN_160), doc));
+                    XmlGenHelper.loadPoOrganization(poOrgDTO, nciSpecFundSpons, doc, null);
+                    XmlGenHelper.appendElement(nciSpecRoot, nciSpecFundSpons);
+                }
+            }
         }
-
         XmlGenHelper.appendElement(nciSpecRoot, XmlGenHelper.createElement("program_code",
                 StConverter.convertToString(spDTO.getProgramCodeText()), doc));
         XmlGenHelper.appendElement(root, nciSpecRoot);

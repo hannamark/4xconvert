@@ -1485,15 +1485,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     private void enforceSummary4OrgNullification(Ii studyProtocolIi, AbstractionMessageCollection messages)
             throws PAException {
-        StudyResourcingDTO studyResourcingDTO = studyResourcingService.getSummary4ReportedResourcing(studyProtocolIi);
-        if (studyResourcingDTO != null && !ISOUtil.isIiNull(studyResourcingDTO.getOrganizationIdentifier())) {
-            Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
-            Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(paOrgId));
-            if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
-                messages.addWarning("Select NCI Specific Information from Administrative Data menu.",
-                                    " Summary 4 Funding Sponsor  status has been set to nullified, "
-                                            + "Please select another Summary 4 Funding Sponsor", 2);
-            }
+        List<StudyResourcingDTO> studyResourcingList = studyResourcingService.getSummary4ReportedResourcing(studyProtocolIi);
+        if (CollectionUtils.isNotEmpty(studyResourcingList)) {
+        	for (StudyResourcingDTO studyResourcingDTO : studyResourcingList) {
+        		if (!ISOUtil.isIiNull(studyResourcingDTO.getOrganizationIdentifier())) {
+        			Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
+        			Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(paOrgId));
+        			if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
+        				messages.addWarning("Select NCI Specific Information from Administrative Data menu.",
+        						" Summary 4 Funding Sponsor  status has been set to nullified, "
+        								+ "Please select another Summary 4 Funding Sponsor", 2);
+        			}
+        		}
+        	}
         }
     }
 

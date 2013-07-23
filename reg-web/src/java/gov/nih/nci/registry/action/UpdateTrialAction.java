@@ -702,7 +702,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
             return false;
         }
-        if (StringUtils.isEmpty(trialDTO.getSummaryFourOrgName())) {
+        if (CollectionUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifiers())) {
             return false;
         }
         return true;

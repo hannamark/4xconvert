@@ -569,7 +569,7 @@ public class TrialRegistrationValidator {
     public void validateAmendment(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
             StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
+            List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
             PersonDTO principalInvestigatorDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
@@ -705,10 +705,16 @@ public class TrialRegistrationValidator {
      * @param errorMsg The StringBuilder collecting error messages
      */
     void validatePOObjects(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
-            OrganizationDTO sponsorOrganizationDTO, OrganizationDTO summary4organizationDTO, PersonDTO piPersonDTO,
-            Ii responsiblePartyContactIi, StringBuilder errorMsg) {
+            OrganizationDTO sponsorOrganizationDTO, List<OrganizationDTO> summary4organizationDTO, 
+            PersonDTO piPersonDTO, Ii responsiblePartyContactIi, StringBuilder errorMsg) {
         errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", true));
-        errorMsg.append(validatePoObject(summary4organizationDTO, "Summary 4 Organization", false));
+        if (CollectionUtils.isNotEmpty(summary4organizationDTO)) {
+            for (OrganizationDTO dto : summary4organizationDTO) {
+                errorMsg.append(validatePoObject(dto, "Summary 4 Organization", false));
+            }        
+        } else {
+            errorMsg.append(validatePoObject(null, "Summary 4 Organization", false));
+        }
         errorMsg.append(validatePoObject(piPersonDTO, "Principal Investigator", true));
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             errorMsg.append(validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true));
@@ -898,7 +904,7 @@ public class TrialRegistrationValidator {
     public void validateCreation(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
             StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
+            List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
             PersonDTO principalInvestigatorDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
@@ -1053,7 +1059,7 @@ public class TrialRegistrationValidator {
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
         // CHECKSTYLE:ON
         if (studyProtocolDTO == null) {
@@ -1075,7 +1081,13 @@ public class TrialRegistrationValidator {
         errorMsg.append(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
         errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", false));
         errorMsg.append(validatePoObject(studySiteOrganizationDTO, "Study Site Organization", false));
-        errorMsg.append(validatePoObject(summary4OrganizationDTO, "Summary 4 Organization", false));
+        if (CollectionUtils.isNotEmpty(summary4OrganizationDTO)) {
+            for (OrganizationDTO dto : summary4OrganizationDTO) {
+                errorMsg.append(validatePoObject(dto, "Summary 4 Organization", false));
+            }        
+        } else {
+            errorMsg.append(validatePoObject(null, "Summary 4 Organization", false));
+        }
         errorMsg.append(validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false));
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         if (errorMsg.length() > 0) {

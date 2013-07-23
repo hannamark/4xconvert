@@ -219,13 +219,15 @@
                                     <reg-web:spaceRow/>
                                 </c:if>
                             </c:if>
-                            <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">
+                            <c:if test="${fn:length(trialDTO.summaryFourOrgIdentifiers) > 0}">
                                 <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                                 <reg-web:valueRow labelKey="view.trial.FundingCategory" noLabelTag="true">
                                     <c:out value="${trialDTO.summaryFourFundingCategoryCode}"/>
                                 </reg-web:valueRow>
                                 <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
-                                    <c:out value="${trialDTO.summaryFourOrgName}"/>
+                                    <c:forEach items="${trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
+                                        <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
+                                    </c:forEach>
                                 </reg-web:valueRow>
                                 <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">
 	                                <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
@@ -236,7 +238,7 @@
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'No'}">
                                 <c:if test="${trialDTO.programCodeText != ''}">
-                                    <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">
+                                    <c:if test="${empty trialDTO.summaryFourOrgIdentifiers}">
                                         <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                                     </c:if>
                                     <reg-web:valueRow labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
@@ -248,7 +250,7 @@
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">
                                 <c:if test="${fn:trim(trialDTO.siteProgramCodeText) != ''}">
-                                    <c:if test="${fn:trim(trialDTO.summaryFourOrgName) == ''}">
+                                    <c:if test="${empty trialDTO.summaryFourOrgIdentifiers}">
                                         <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                                     </c:if>
                                     <reg-web:valueRow labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">

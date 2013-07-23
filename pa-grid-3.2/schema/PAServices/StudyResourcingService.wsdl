@@ -68,7 +68,7 @@
       <element name="GetSummaryForReportedResourceResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="1" />
+            <element ref="ns0:StudyResourcing" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>

@@ -105,7 +105,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -204,7 +203,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             StudyProtocolQueryDTO originalDTO = protocolQueryServiceLocal
                     .getTrialSummaryByStudyProtocolId(IiConverter
                             .convertToLong(spDto.getIdentifier()));
-            StudyResourcingDTO originalSummary4 = studyResourcingServiceLocal
+            List<StudyResourcingDTO> originalSummary4 = studyResourcingServiceLocal
                     .getSummary4ReportedResourcing(studyProtocolDTO
                             .getIdentifier());
             StudySiteDTO srDTO = new StudySiteDTO();
@@ -221,11 +220,11 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             studyProtocolDTO.setProprietaryTrialIndicator(proprietaryTrialIndicator);
             validate(studyProtocolDTO, leadOrganizationDTO, leadOrganizationIdentifier, nctIdentifier, documentDTOs,
                     studySiteDTOs, studySiteAccrualDTOs);
-            StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
+            /*StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
             summary4StudyResourcingDTO.setTypeCode(summary4TypeCode);
             TrialRegistrationValidator validator = new TrialRegistrationValidator(ctx);
             validator.validateSummary4SponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO,
-                                                            summary4StudyResourcingDTO);
+                                                            summary4StudyResourcingDTO);*/
             // the validation are done, proceed to update
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
             spDto.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
@@ -242,14 +241,14 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO), leadOrganizationIdentifier,
                     studyProtocolIi);
             updateNctIdentifier(nctIdentifier, studyProtocolIi);
-            StudyResourcingDTO srDto = null;
+            /*StudyResourcingDTO srDto = null;
             if (!ISOUtil.isCdNull(summary4TypeCode)) {
                 srDto = new StudyResourcingDTO();
                 srDto.setTypeCode(summary4TypeCode);
             }
             paServiceUtils.manageSummaryFour(studyProtocolIi,
                     (summary4OrganizationDTO != null ? paServiceUtils.findOrCreateEntity(summary4OrganizationDTO)
-                            : null), srDto);
+                            : null), srDto);*/
             for (StudySiteDTO ssDto : studySiteDTOs) {
                 StudySiteDTO studySiteDto = studySiteService.get(ssDto.getIdentifier());
                 studySiteDto.setProgramCodeText(ssDto.getProgramCodeText());

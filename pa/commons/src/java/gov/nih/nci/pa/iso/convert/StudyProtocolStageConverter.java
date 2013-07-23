@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -135,8 +136,6 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStage.getResponsibleOcIdentifier()));        
         studyProtocolStageDTO.setContactEmail(StConverter.convertToSt(studyProtocolStage.getContactEmail()));
         studyProtocolStageDTO.setContactPhone(StConverter.convertToSt(studyProtocolStage.getContactPhone()));
-        studyProtocolStageDTO.setSummaryFourOrgIdentifier(IiConverter.convertToPoOrganizationIi(
-                studyProtocolStage.getSummaryFourOrgIdentifier()));
         studyProtocolStageDTO.setSummaryFourFundingCategoryCode(CdConverter.convertToCd(
                 studyProtocolStage.getSummaryFourFundingCategoryCode()));
         studyProtocolStageDTO.setTrialStatusCode(CdConverter.convertToCd(studyProtocolStage.getTrialStatusCode()));
@@ -177,6 +176,11 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         
         setSecondaryIdentifiers(studyProtocolStage, studyProtocolStageDTO);
         studyProtocolStageDTO.setNciGrant(BlConverter.convertToBl(studyProtocolStage.getNciGrant()));
+        if (CollectionUtils.isNotEmpty(studyProtocolStage.getSummaryFourOrgIdentifiers())) {
+            for (String sfOrgId : studyProtocolStage.getSummaryFourOrgIdentifiers()) {
+                studyProtocolStageDTO.getSummaryFourOrgIdentifiers().add(IiConverter.convertToIi(sfOrgId));
+            }
+        }
         return studyProtocolStageDTO;
     }
 
@@ -187,8 +191,6 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStageDTO.setSitePiIdentifier(IiConverter.convertToIi(studyProtocolStage.getSitePiIdentifier()));
         studyProtocolStageDTO
                 .setSiteTargetAccrual(IntConverter.convertToInt(studyProtocolStage.getSiteTargetAccrual()));
-        studyProtocolStageDTO.setSiteSummaryFourOrgIdentifier(IiConverter.convertToIi(studyProtocolStage
-                .getSiteSummaryFourOrgIdentifier()));
         studyProtocolStageDTO.setSiteSummaryFourFundingTypeCode(CdConverter.convertToCd(studyProtocolStage
                 .getSiteSummaryFourFundingTypeCode()));
         studyProtocolStageDTO.setSiteProgramCodeText(StConverter.convertToSt(studyProtocolStage
@@ -246,8 +248,6 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStageDTO.getResponsibleGenericContactIdentifier()));        
         studyProtocolStage.setContactEmail(StConverter.convertToString(studyProtocolStageDTO.getContactEmail()));
         studyProtocolStage.setContactPhone(StConverter.convertToString(studyProtocolStageDTO.getContactPhone()));
-        studyProtocolStage.setSummaryFourOrgIdentifier(IiConverter.convertToString(
-                studyProtocolStageDTO.getSummaryFourOrgIdentifier()));
         studyProtocolStage.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.getByCode(
                 CdConverter.convertCdToString(studyProtocolStageDTO.getSummaryFourFundingCategoryCode())));
         studyProtocolStage.setTrialStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
@@ -295,6 +295,11 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                         .getConsortiaTrialCategoryCode())));          
         setOtherIdentifiers(studyProtocolStageDTO, studyProtocolStage);
         studyProtocolStage.setNciGrant(BlConverter.convertToBoolean(studyProtocolStageDTO.getNciGrant()));
+        if (CollectionUtils.isNotEmpty(studyProtocolStageDTO.getSummaryFourOrgIdentifiers())) {
+            for (Ii sfOrgId : studyProtocolStageDTO.getSummaryFourOrgIdentifiers()) {
+                studyProtocolStage.getSummaryFourOrgIdentifiers().add(IiConverter.convertToString(sfOrgId));
+            }
+        }
     }
 
     private static void setSiteFields(StudyProtocolStageDTO studyProtocolStageDTO,
@@ -305,8 +310,6 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 .setSitePiIdentifier(IiConverter.convertToString(studyProtocolStageDTO.getSitePiIdentifier()));
         studyProtocolStage.setSiteTargetAccrual(IntConverter.convertToInteger(studyProtocolStageDTO
                 .getSiteTargetAccrual()));
-        studyProtocolStage.setSiteSummaryFourOrgIdentifier(IiConverter.convertToString(studyProtocolStageDTO
-                .getSiteSummaryFourOrgIdentifier()));
         studyProtocolStage.setSiteSummaryFourFundingTypeCode(SummaryFourFundingCategoryCode.getByCode(CdConverter
                 .convertCdToString(studyProtocolStageDTO.getSiteSummaryFourFundingTypeCode())));
         studyProtocolStage.setSiteProgramCodeText(StConverter.convertToString(studyProtocolStageDTO

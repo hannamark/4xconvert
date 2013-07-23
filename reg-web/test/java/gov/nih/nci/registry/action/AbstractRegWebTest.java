@@ -34,6 +34,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
@@ -52,6 +53,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
@@ -153,9 +155,12 @@ public abstract class AbstractRegWebTest {
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
         trialDTO.setReason("");
-        trialDTO.setSummaryFourOrgIdentifier("1");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("SummaryFourOrgName");
+        summarySp.setRowId(UUID.randomUUID().toString());
+        trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
         trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
-        trialDTO.setSummaryFourOrgName("SummaryFourOrgName");
         trialDTO.setNctIdentifier("nctIdentifier");
         trialDTO.setLeadOrganizationName("leadOrganizationName");
         trialDTO.setPiName("piName");
@@ -280,7 +285,11 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLeadOrgTrialIdentifier("leadOrgTrialIdentifier");
         trialDTO.setIdentifier("1");
         trialDTO.setStudyProtocolId("1");
-        trialDTO.setSummaryFourOrgIdentifier("1");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("SummaryFourOrgName");
+        summarySp.setRowId(UUID.randomUUID().toString());
+        trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
         trialDTO.setNctIdentifier("nctIdentifier");
 
         trialDTO.setSiteStatusCode("In Review");

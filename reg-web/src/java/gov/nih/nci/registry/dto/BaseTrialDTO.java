@@ -27,8 +27,7 @@ public class BaseTrialDTO { // NOPMD
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
 
-    private String summaryFourOrgIdentifier;
-    private String summaryFourOrgName;
+    private List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers = new ArrayList<SummaryFourSponsorsWebDTO>();
     private String summaryFourFundingCategoryCode;
     private String nctIdentifier;
     private String trialType;
@@ -175,29 +174,17 @@ public class BaseTrialDTO { // NOPMD
         this.leadOrganizationName = leadOrganizationName;
     }
     /**
-     * @return the summaryFourOrgIdentifier
+     * @return the summaryFourOrgIdentifiers
      */
     @NotEmpty (message = "error.submit.sumFourOrganization")
-    public String getSummaryFourOrgIdentifier() {
-        return summaryFourOrgIdentifier;
+    public List<SummaryFourSponsorsWebDTO> getSummaryFourOrgIdentifiers() {
+        return summaryFourOrgIdentifiers;
     }
     /**
-     * @param summaryFourOrgIdentifier the summaryFourOrgIdentifier to set
+     * @param summaryFourOrgIdentifiers the summaryFourOrgIdentifiers to set
      */
-    public void setSummaryFourOrgIdentifier(String summaryFourOrgIdentifier) {
-        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
-    }
-    /**
-     * @return the summaryFourOrgName
-     */
-    public String getSummaryFourOrgName() {
-        return summaryFourOrgName;
-    }
-    /**
-     * @param summaryFourOrgName the summaryFourOrgName to set
-     */
-    public void setSummaryFourOrgName(String summaryFourOrgName) {
-        this.summaryFourOrgName = summaryFourOrgName;
+    public void setSummaryFourOrgIdentifiers(List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers) {
+        this.summaryFourOrgIdentifiers = summaryFourOrgIdentifiers;
     }
     /**
      * @return the summaryFourFundingCategoryCode

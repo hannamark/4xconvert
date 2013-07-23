@@ -86,6 +86,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -119,6 +120,7 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -201,6 +203,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             session.setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
             session.setAttribute("nctIdentifier", gtdDTO.getNctIdentifier());
             session.setAttribute("nciIdentifier", gtdDTO.getAssignedIdentifier());
+            session.setAttribute("summary4Sponsors", gtdDTO.getSummaryFourOrgIdentifiers());
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -535,7 +538,11 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
      *
      * @return result
      */
+    @SuppressWarnings("unchecked")
     public String displaySummary4FundingSponsor() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<SummaryFourSponsorsWebDTO> summary4SponsorsList = (List<SummaryFourSponsorsWebDTO>) 
+                session.getAttribute("summary4Sponsors");
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         OrganizationDTO selectedSummary4Sponsor = null;
@@ -546,11 +553,37 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         LimitOffset limit = new LimitOffset(1, 0);
         try {
             selectedSummary4Sponsor = organizationEntityService.search(criteria, limit).get(0);
-            gtdDTO.setSummaryFourOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
-            gtdDTO.setSummaryFourOrgIdentifier(selectedSummary4Sponsor.getIdentifier().getExtension());
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+            summarySp.setOrgId(selectedSummary4Sponsor.getIdentifier().getExtension());
+            summarySp.setOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
+            summarySp.setRowId(UUID.randomUUID().toString());
+            if (summary4SponsorsList == null) {
+                summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
+            }
+            summary4SponsorsList.add(summarySp);
+            gtdDTO.getSummaryFourOrgIdentifiers().addAll(summary4SponsorsList);
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
+        return "display_summary4funding_sponsor";
+    }
+    
+    /**
+     * @return string
+     */
+    @SuppressWarnings("unchecked")
+    public String deleteSummaryFourOrg() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<SummaryFourSponsorsWebDTO> summary4SponsorsList = (List<SummaryFourSponsorsWebDTO>) 
+                session.getAttribute("summary4Sponsors");
+        String uuId = ServletActionContext.getRequest().getParameter("uuid");
+        for (int i = summary4SponsorsList.size() - 1; i >= 0; i--) {
+            SummaryFourSponsorsWebDTO webDto = summary4SponsorsList.get(i);
+            if (webDto.getRowId().equals(uuId)) {
+                summary4SponsorsList.remove(i);
+            }
+        }
+        gtdDTO.getSummaryFourOrgIdentifiers().addAll(summary4SponsorsList);
         return "display_summary4funding_sponsor";
     }
 

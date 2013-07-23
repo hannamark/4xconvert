@@ -280,13 +280,16 @@
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                                     && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'
-                                    && requestScope.summaryFourOrgName != null}">
+                                    && fn:length(requestScope.summaryFourOrgIdentifiers) > 0}">
                             <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                             <reg-web:valueRow labelKey="view.trial.SubmissionCategory" noLabelTag="true">
                                 <c:out value="${requestScope.summaryFourFundingCategoryCode}"/>
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
-                                <c:out value="${requestScope.summaryFourOrgName}"/>
+                            <c:forEach items="${requestScope.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
+                                <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
+                            </c:forEach>
+                                
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
                                     <c:out value="${empty requestScope.consortiaTrialCategoryCode?'No':'Yes - '}"/>
@@ -295,17 +298,19 @@
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                                     && requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'
-                                    && requestScope.trialDTO.summaryFourOrgName != null}">
+                                    && fn:length(requestScope.trialDTO.summaryFourOrgIdentifiers) > 0}">
                             <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                             <reg-web:valueRow labelKey="view.trial.FundingCategory" noLabelTag="true">
                                 <c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode}"/>
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
-                                <c:out value="${requestScope.trialDTO.summaryFourOrgName}"/>
+                            <c:forEach items="${requestScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
+                                <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
+                            </c:forEach>
                             </reg-web:valueRow>                            
                         </c:if>
                         <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
-                            <c:if test="${requestScope.trialDTO.summaryFourOrgName == null}">
+                            <c:if test="${empty requestScope.trialDTO.summaryFourOrgIdentifiers}">
                                 <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
                             </c:if>
                             <reg-web:valueRow labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">

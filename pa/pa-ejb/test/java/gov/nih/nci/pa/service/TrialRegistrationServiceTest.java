@@ -372,16 +372,17 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
-
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
         
@@ -406,16 +407,17 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
-
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
     }
@@ -440,14 +442,15 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summary4Org);
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationList, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -472,15 +475,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summary4Org);
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationList, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -505,14 +509,15 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summary4Org);
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationList, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -537,15 +542,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summary4Org);
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationList, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -570,15 +576,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationList = new ArrayList<OrganizationDTO>();
+        summary4OrganizationList.add(summary4Org);
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationList, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -600,16 +607,17 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = null;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
-
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -632,16 +640,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = null;
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -664,16 +672,15 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = null;
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, null, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -696,16 +703,17 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
+        
         StudyResourcingDTO summary4StudyResourcing = null;
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
-
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -728,15 +736,15 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = null;
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -759,16 +767,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                                                        studyResourcingDTOs, documents, leadOrganizationDTO,
                                                        principalInvestigatorDTO, sponsorOrganizationDTO,
                                                        leadOrganizationSiteIdentifierDTO, siteIdentifiers,
-                                                       studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                                                       studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                                                        null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -792,16 +800,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -825,16 +833,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -858,16 +866,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -891,16 +899,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -924,16 +932,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
@@ -985,18 +993,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
-        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                                                                studyResourcingDTOs, documents, leadOrganizationDTO,
                                                                principalInvestigatorDTO, sponsorOrganizationDTO,
                                                                leadOrganizationSiteIdentifierDTO, siteIdentifiers,
-                                                               studyContactDTO, null, summary4Org,
-                                                               summary4StudyResourcing, null, regAuthority, BlConverter
+                                                               studyContactDTO, null, summary4OrganizationDTO,
+                                                               summary4StudyResourcing.get(0), null, regAuthority, BlConverter
                                                                    .convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
 
@@ -1036,9 +1045,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
-
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+		List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
         DocumentDTO changeDoc = new DocumentDTO();
         changeDoc.setFileName(StConverter.convertToSt("Change Memo.doc"));
         changeDoc.setText(EdConverter.convertToEd("Change Memo".getBytes()));
@@ -1046,7 +1055,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
     }
@@ -1069,16 +1078,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
 
@@ -1123,8 +1132,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         DocumentDTO changeDoc = new DocumentDTO();
         changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
@@ -1133,7 +1143,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
     }
@@ -1157,16 +1167,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(ii));
 
@@ -1200,7 +1210,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
     @Test
@@ -1223,8 +1233,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1242,7 +1253,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1270,8 +1281,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1294,7 +1306,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1328,8 +1340,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1351,7 +1364,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
                 BlConverter.convertToBl(Boolean.TRUE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
@@ -1389,8 +1402,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1412,7 +1426,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE),
                 BlConverter.convertToBl(Boolean.TRUE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
@@ -1467,8 +1481,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1496,7 +1511,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1527,8 +1542,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception At least one is required: Change Memo Document or Protocol Highlighted Document.");
@@ -1536,7 +1552,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
-                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
     @Test
@@ -1563,8 +1579,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new OrganizationDTO();
-        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
 
         DocumentDTO psDoc = new DocumentDTO();
         psDoc.setFileName(StConverter.convertToSt("Participating Site Document.doc"));
@@ -1584,7 +1601,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                    Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO,
                    principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null,
-                   studyContactDTO, null, summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter
+                   studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter
                        .convertToBl(Boolean.FALSE));
     }
 

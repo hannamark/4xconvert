@@ -83,6 +83,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
+import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -99,9 +100,15 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -117,6 +124,7 @@ public class NCISpecificInformationAction extends ActionSupport {
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private String chosenOrg;
+    private TrialHelper trialHelper = new TrialHelper();
 
     /**
      * @return result
@@ -134,14 +142,11 @@ public class NCISpecificInformationAction extends ActionSupport {
             StudyProtocolDTO studyProtocolDTO = getStudyProtocol();
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            StudyResourcingDTO studyResourcingDTO = PaRegistry.getStudyResourcingService()
+            List<StudyResourcingDTO> studyResourcingDTO = PaRegistry.getStudyResourcingService()
                 .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
-            if (studyResourcingDTO != null && studyResourcingDTO.getOrganizationIdentifier() != null) {
-                    Organization org = getPAOrganizationById(studyResourcingDTO.getOrganizationIdentifier());
-                    nciSpecificInformationWebDTO.setOrganizationName(org.getName());
-                    nciSpecificInformationWebDTO.setOrganizationIi(org.getIdentifier());
-            }
+            ServletActionContext.getRequest().getSession().setAttribute("summary4Sponsors", 
+                    nciSpecificInformationWebDTO.getSummary4Sponsors());
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -221,9 +226,9 @@ public class NCISpecificInformationAction extends ActionSupport {
             srDTO.setStudyProtocolIdentifier(studyProtocolIi);
             // Step3: update studyprotocol
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
-            // Step 4: check if we have an organization for PO id
-            String poIdentifier = nciSpecificInformationWebDTO.getOrganizationIi();
-            updateSummary4DTO(studyProtocolIi, getOrganizationId(poIdentifier));
+            // Step 4: check if we have an organization for PO id            
+            trialHelper.saveSummary4Information(studyProtocolIi, nciSpecificInformationWebDTO.getSummary4Sponsors(), 
+                    nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode());
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -231,24 +236,6 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
-    }
-
-    private Long getOrganizationId(String poIdentifier) throws PAException, NullifiedEntityException {
-        Long orgId = null;
-        if (StringUtils.isNotEmpty(poIdentifier)) {
-            Organization o = new Organization();
-            o.setIdentifier(poIdentifier);
-            Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
-            if (org == null) {
-                OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                        IiConverter.convertToPoOrganizationIi(poIdentifier));
-                orgId = PaRegistry.getOrganizationCorrelationService().createPAOrganizationUsingPO(oDto).getId();
-            } else {
-                // get the org from the database
-                orgId = org.getId();
-            }
-        }
-        return orgId;
     }
 
     /**
@@ -259,8 +246,8 @@ public class NCISpecificInformationAction extends ActionSupport {
     private void updateSummary4DTO(Ii studyProtocolIi, Long orgId)
             throws PAException {
         // Step4 : find out if summary 4 records already exists
-        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(
-                studyProtocolIi);
+        StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
+                .getSummary4ReportedResourcingBySpAndOrgId(studyProtocolIi, orgId);
         if (summary4ResoureDTO == null) {
             // summary 4 record does not exist,so create a new one
             summary4ResoureDTO = new StudyResourcingDTO();
@@ -306,7 +293,8 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
     }
 
-    private NCISpecificInformationWebDTO setNCISpecificDTO(StudyProtocolDTO spDTO, StudyResourcingDTO srDTO) {
+    private NCISpecificInformationWebDTO setNCISpecificDTO(StudyProtocolDTO spDTO, List<StudyResourcingDTO> srDTO) 
+            throws PAException {
         NCISpecificInformationWebDTO nciSpDTO = new NCISpecificInformationWebDTO();
         if (spDTO != null) {
             convertStudyProtocolDto(spDTO, nciSpDTO);
@@ -317,12 +305,22 @@ public class NCISpecificInformationAction extends ActionSupport {
         return nciSpDTO;
     }
 
-    private void convertStudyResourcingDto(StudyResourcingDTO srDTO, NCISpecificInformationWebDTO nciSpDTO) {
-        if (srDTO.getTypeCode() != null) {
-            nciSpDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+    private void convertStudyResourcingDto(List<StudyResourcingDTO> srDTO, NCISpecificInformationWebDTO nciSpDTO) 
+            throws PAException {
+        if (CollectionUtils.isNotEmpty(srDTO) && srDTO.get(0).getTypeCode() != null) {
+            nciSpDTO.setSummaryFourFundingCategoryCode(srDTO.get(0).getTypeCode().getCode());
         }
-        if (srDTO.getOrganizationIdentifier() != null) {
-            nciSpDTO.setOrganizationIi(srDTO.getOrganizationIdentifier().getExtension());
+        if (CollectionUtils.isNotEmpty(srDTO)) {
+            for (StudyResourcingDTO dto : srDTO) {
+                if (dto.getOrganizationIdentifier() != null) {
+                    Organization org = getPAOrganizationById(dto.getOrganizationIdentifier());
+                    SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO();
+                    webDto.setOrgId(org.getIdentifier());
+                    webDto.setRowId(UUID.randomUUID().toString());
+                    webDto.setOrgName(org.getName());
+                    nciSpDTO.getSummary4Sponsors().add(webDto);
+                }
+            }
         }
     }
 
@@ -341,7 +339,11 @@ public class NCISpecificInformationAction extends ActionSupport {
      *
      * @return result
      */
+    @SuppressWarnings("unchecked")
     public String displayOrg() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<SummaryFourSponsorsWebDTO> summary4SponsorsList = (List<SummaryFourSponsorsWebDTO>) 
+                session.getAttribute("summary4Sponsors");
         String orgId = ServletActionContext.getRequest().getParameter("orgId");
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
@@ -353,8 +355,34 @@ public class NCISpecificInformationAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;
         }
-        nciSpecificInformationWebDTO.setOrganizationName(selectedOrgDTO.getName().getPart().get(0).getValue());
-        nciSpecificInformationWebDTO.setOrganizationIi(orgId);
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId(orgId);
+        summarySp.setOrgName(selectedOrgDTO.getName().getPart().get(0).getValue());
+        summarySp.setRowId(UUID.randomUUID().toString());
+        if (summary4SponsorsList == null) {
+            summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
+        }
+        summary4SponsorsList.add(summarySp);
+        nciSpecificInformationWebDTO.getSummary4Sponsors().addAll(summary4SponsorsList);
+        return DISPLAY_ORG_FLD;
+    }
+    
+    /**
+     * @return string
+     */
+    @SuppressWarnings("unchecked")
+    public String deleteSummaryFourOrg() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<SummaryFourSponsorsWebDTO> summary4SponsorsList = (List<SummaryFourSponsorsWebDTO>) 
+                session.getAttribute("summary4Sponsors");
+        String uuId = ServletActionContext.getRequest().getParameter("uuid");
+        for (int i = summary4SponsorsList.size() - 1; i >= 0; i--) {
+            SummaryFourSponsorsWebDTO webDto = summary4SponsorsList.get(i);
+            if (webDto.getRowId().equals(uuId)) {
+                summary4SponsorsList.remove(i);
+            }
+        }
+        nciSpecificInformationWebDTO.getSummary4Sponsors().addAll(summary4SponsorsList);
         return DISPLAY_ORG_FLD;
     }
 

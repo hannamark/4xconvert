@@ -15,6 +15,7 @@ import gov.nih.nci.pa.util.NotEmptyIiRoot;
 import gov.nih.nci.pa.util.ValidIi;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -58,7 +59,6 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String contactPhone;
     private String contactEmail;
 
-    private String summaryFourOrgIdentifier;
     private SummaryFourFundingCategoryCode summaryFourFundingCategoryCode;
 
     private StudyStatusCode  trialStatusCode;
@@ -72,7 +72,6 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String siteProtocolIdentifier;
     private String sitePiIdentifier;
     private Integer  siteTargetAccrual;
-    private String siteSummaryFourOrgIdentifier;
     private SummaryFourFundingCategoryCode siteSummaryFourFundingTypeCode;
     private String siteProgramCodeText;
     private RecruitmentStatusCode siteRecruitmentStatus;
@@ -90,6 +89,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private StudySubtypeCode studySubtypeCode;
     private String secondaryPurposes;
     private String secondaryPurposeOtherText;
+    private Set<String> summaryFourOrgIdentifiers = new HashSet<String>();
     
     
     /**
@@ -309,19 +309,6 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
         this.contactEmail = contactEmail;
     }
     /**
-     * @return the summaryFourOrgIdentifier
-     */
-    @Column (name = "SUMMARY_FOUR_ORG_IDENTIFIER")
-    public String getSummaryFourOrgIdentifier() {
-        return summaryFourOrgIdentifier;
-    }
-    /**
-     * @param summaryFourOrgIdentifier the summaryFourOrgIdentifier to set
-     */
-    public void setSummaryFourOrgIdentifier(String summaryFourOrgIdentifier) {
-        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
-    }
-    /**
      * @return the summaryFourFundingCategoryCode
      */
     @Column (name = "SUMMARY_FOUR_FUNDING_TYPE_CODE")
@@ -470,19 +457,6 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
      */
     public void setSiteTargetAccrual(Integer siteTargetAccrual) {
         this.siteTargetAccrual = siteTargetAccrual;
-    }
-    /**
-     * @return the siteSummaryFourOrgIdentifier
-     */
-    @Column (name = "SITE_SUMMARY_FOUR_ORG_IDENTIFIER")
-    public String getSiteSummaryFourOrgIdentifier() {
-        return siteSummaryFourOrgIdentifier;
-    }
-    /**
-     * @param siteSummaryFourOrgIdentifier the siteSummaryFourOrgIdentifier to set
-     */
-    public void setSiteSummaryFourOrgIdentifier(String siteSummaryFourOrgIdentifier) {
-        this.siteSummaryFourOrgIdentifier = siteSummaryFourOrgIdentifier;
     }
     /**
      * @return the siteSummaryFourFundingTypeCode
@@ -661,5 +635,28 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
      */
     public void setNciGrant(Boolean nciGrant) {
         this.nciGrant = nciGrant;
+    }
+
+    /**
+     * @return the summaryFourOrgIdentifiers
+     */
+    @CollectionOfElements(fetch = FetchType.EAGER)
+    @Fetch (FetchMode.SELECT)
+    @JoinTable(
+            name = "STUDY_SUMMARY_FOUR_ORG_IDENTIFIER_STAGE",
+            joinColumns = @JoinColumn(name = "STUDY_PROTOCOL_ID")
+    )
+    @ForeignKey(name = "STUDY_SFOI_STAGE_FK")
+    @Columns(columns = {
+            @Column(name = "summary_four_org_identifier")
+    })
+    public Set<String> getSummaryFourOrgIdentifiers() {
+        return summaryFourOrgIdentifiers;
+    }
+    /**
+     * @param summaryFourOrgIdentifiers the summaryFourOrgIdentifiers to set
+     */
+    public void setSummaryFourOrgIdentifiers(Set<String> summaryFourOrgIdentifiers) {
+        this.summaryFourOrgIdentifiers = summaryFourOrgIdentifiers;
     }
 }

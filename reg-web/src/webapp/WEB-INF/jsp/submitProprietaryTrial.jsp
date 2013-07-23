@@ -74,8 +74,20 @@
             }
             
             function loadSummary4SponsorDiv() {
-                $("trialDTO.summaryFourOrgName").value = chosenname;
-                $('trialDTO.summaryFourOrgIdentifier').value = orgid;
+                var url = '/registry/protected/popupaddSummaryFourOrg.action';
+                var params = { orgId: orgid, chosenName : chosenname };
+                var div = document.getElementById('loadSummary4FundingSponsorField');   
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                var aj = callAjaxPost(div, url, params);
+                return false;
+            }
+
+            function deleteSummary4SponsorRow(rowid) {
+                var  url = '/registry/protected/popupdeleteSummaryFourOrg.action';
+                var params = { uuid: rowid };
+                var div = $('loadSummary4FundingSponsorField');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                var aj = callAjaxPost(div, url, params);
             }
 
             function reviewProtocol () {

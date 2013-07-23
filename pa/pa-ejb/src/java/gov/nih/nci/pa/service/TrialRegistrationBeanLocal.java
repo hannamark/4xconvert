@@ -261,7 +261,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
         return amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
@@ -284,7 +284,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException {
@@ -546,7 +546,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
@@ -575,7 +575,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException {
             // CHECKSTYLE:ON
@@ -600,9 +600,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
             }
             listOfDTOToCreateInPO.add(principalInvestigatorDTO);
-            OrganizationDTO newSummary4OrganizationDTO = paServiceUtils.findOrCreateEntity(summary4OrganizationDTO);
-            listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
-            paServiceUtils.createPoObject(listOfDTOToCreateInPO);
+            List<OrganizationDTO> newSummary4OrganizationList = new ArrayList<OrganizationDTO>();
+            if (CollectionUtils.isNotEmpty(summary4OrganizationDTO)) {
+                for (OrganizationDTO summary4Org : summary4OrganizationDTO) {
+                    OrganizationDTO newSummary4OrganizationDTO = paServiceUtils.findOrCreateEntity(summary4Org);
+                    listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
+                    paServiceUtils.createPoObject(listOfDTOToCreateInPO);
+                    newSummary4OrganizationList.add(newSummary4OrganizationDTO);
+                }
+            }
             if (shouldDefaultFdaIndicator(studyProtocolDTO, studyIndldeDTOs, ctgovXmlRequired)) {
                 studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -616,7 +622,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
             paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
 
-            paServiceUtils.manageSummaryFour(spIi, newSummary4OrganizationDTO, summary4StudyResourcingDTO);
+            paServiceUtils.manageSummaryFour(spIi, newSummary4OrganizationList, summary4StudyResourcingDTO);
 
             updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
             StudyTypeCode studyTypeCode = (studyProtocolDTO instanceof InterventionalStudyProtocolDTO)
@@ -686,7 +692,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudySiteDTO leadOrganizationStudySiteDTO,
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode)
             throws PAException {
         return createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO,
@@ -710,7 +716,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException {
         // CHECKSTYLE:ON
         // validate method needs to be here
@@ -727,7 +733,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         listOfDTOToCreateInPO.add(leadOrganizationDTO);
         listOfDTOToCreateInPO.add(studySiteOrganizationDTO);
         listOfDTOToCreateInPO.add(studySiteInvestigatorDTO);
-        listOfDTOToCreateInPO.add(summary4OrganizationDTO);
+        if (CollectionUtils.isNotEmpty(summary4OrganizationDTO)) {
+            for (OrganizationDTO summary4Org : summary4OrganizationDTO) {
+                listOfDTOToCreateInPO.add(summary4Org);
+            }
+        }
         getPAServiceUtils().createPoObject(listOfDTOToCreateInPO);
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
 

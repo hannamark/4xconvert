@@ -6,6 +6,7 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -91,12 +92,12 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
      */
     protected void checkSummary4Funding() {
         if (!StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
-                && StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+                && CollectionUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifiers())) {
             addFieldError("summary4FundingSponsor",
                     "Select the Summary 4 Funding Sponsor");
         }
         if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
-                && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
+                && CollectionUtils.isNotEmpty(trialDTO.getSummaryFourOrgIdentifiers())) {
             addFieldError("trialDTO.summaryFourFundingCategoryCode",
                     "Select the Trial Submission Category");
         }

@@ -8,9 +8,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 
 import java.io.File;
 import java.net.URL;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
@@ -222,7 +224,11 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         assertEquals("review", action.create());
 
         tDto.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
-        tDto.setSummaryFourOrgIdentifier("2");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setOrgId("2");
+        summarySp.setOrgName("summaryFourOrgName");
+        summarySp.setRowId(UUID.randomUUID().toString());
+        tDto.getSummaryFourOrgIdentifiers().add(summarySp);
         tDto.setOfficialTitle("testthrowException");
         sess.setAttribute("trialDTO", tDto);
         request = new MockHttpServletRequest();

@@ -267,14 +267,14 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             St leadOrganizationIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
             St nctIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());
             Cd summary4TypeCode = CdConverter.convertStringToCd(trialDTO.getSummaryFourFundingCategoryCode());
-            OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
+            //OrganizationDTO summary4organizationDTO = util.convertToSummary4OrgDTO(trialDTO);
             List<StudySiteAccrualStatusDTO> siteAccrualStatusDTOList = getParticipatingSitesForUpdate(
                     trialDTO.getParticipatingSitesList());
             List<StudySiteDTO> siteDTOList = util.getStudySiteToUpdate(trialDTO.getParticipatingSitesList());
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
 
            PaRegistry.getProprietaryTrialService().update(studyProtocolDTO, leadOrganizationDTO,
-                   summary4organizationDTO, leadOrganizationIdentifier,
+                   null, leadOrganizationIdentifier,
                     nctIdentifier, summary4TypeCode, documentDTOs, siteDTOList, siteAccrualStatusDTOList);
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));

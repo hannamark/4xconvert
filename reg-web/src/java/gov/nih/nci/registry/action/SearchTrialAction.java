@@ -402,7 +402,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         request.setAttribute("leadOrgTrialIdentifier", trialDTO.getLeadOrgTrialIdentifier());
         request.setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
         request.setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
-        request.setAttribute("summaryFourOrgName", trialDTO.getSummaryFourOrgName());
+        request.setAttribute("summaryFourOrgIdentifiers", trialDTO.getSummaryFourOrgIdentifiers());
         request.setAttribute("summaryFourFundingCategoryCode",
                 trialDTO.getSummaryFourFundingCategoryCode());
         request.setAttribute("participatingSitesList", trialDTO.getParticipatingSitesList());

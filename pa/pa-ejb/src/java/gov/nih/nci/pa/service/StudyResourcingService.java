@@ -100,7 +100,15 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      * @return StudyProtocolDTO
      * @throws PAException PAException
      */
-    StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException;
+    List<StudyResourcingDTO> getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * @param studyProtocolIi Ii 
+     * @param orgId orgId
+     * @return StudyProtocolDTO
+     * @throws PAException PAException
+     */
+    StudyResourcingDTO getSummary4ReportedResourcingBySpAndOrgId(Ii studyProtocolIi, Long orgId) throws PAException;
     
     /**
      * 

@@ -111,7 +111,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.ArrayList;
 /**
  * Wrapper class for invoking the TrialRegistrationServiceRemote remote EJB.
  *
@@ -129,7 +129,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
@@ -155,7 +155,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
 
@@ -163,11 +163,15 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             //If no study researching is provided we're defaulting to Industrial
             StudyResourcingDTO resourcing =
                 getSummaryStudyResourcing(summary4StudyResourcingDTO, SummaryFourFundingCategoryCode.INDUSTRIAL);
-            OrganizationDTO org = getSummaryOrganization(summary4OrganizationDTO);
+            if (summary4OrganizationDTO == null) {
+                OrganizationDTO org = getSummaryOrganization(null);
+                summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+                summary4OrganizationDTO.add(org);
+            }
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
                     .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                             documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, org,
+                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
                             resourcing, isBatch);
         } catch (PAException pae) {
             throw pae;
@@ -186,7 +190,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
@@ -195,12 +199,16 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             //If no study researching is provided we're defaulting to National
             StudyResourcingDTO resourcing =
                 getSummaryStudyResourcing(summary4studyResourcingDTO, SummaryFourFundingCategoryCode.NATIONAL);
-            OrganizationDTO org = getSummaryOrganization(summary4organizationDTO);
+            if (summary4organizationDTO == null) {
+                OrganizationDTO org = getSummaryOrganization(null);
+                summary4organizationDTO = new ArrayList<OrganizationDTO>();
+                summary4organizationDTO.add(org);
+            }
             return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
                     .createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                             studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                             sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                            studyContactDTO, studySiteContactDTO, org, resourcing,
+                            studyContactDTO, studySiteContactDTO, summary4organizationDTO, resourcing,
                             responsiblePartyContactIi, studyRegAuthDTO, isBatch);
         } catch (PAException pae) {
             throw pae;
@@ -307,7 +315,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
@@ -328,7 +336,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudySiteDTO leadOrganizationStudySiteDTO,
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
             DSet<Tel> owners) throws PAException {
         throw new PAException(
@@ -348,7 +356,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,

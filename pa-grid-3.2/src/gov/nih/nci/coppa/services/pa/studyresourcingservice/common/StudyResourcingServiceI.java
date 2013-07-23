@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface StudyResourcingServiceI {
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummaryForReportedResource(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getSummaryForReportedResource(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 
   public gov.nih.nci.coppa.services.pa.StudyResourcing updateStudyResourcing(gov.nih.nci.coppa.services.pa.StudyResourcing studyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

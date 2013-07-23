@@ -140,8 +140,7 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
 
         StudyProtocolStage sps = new StudyProtocolStage();
         sps.setLeadOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
-        sps.setSiteSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
-        sps.setSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.getSummaryFourOrgIdentifiers().add(String.valueOf(paOrg.getIdentifier()));
         sps.setSponsorIdentifier(String.valueOf(paOrg.getIdentifier()));
         sps.setSubmitterOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
 
@@ -192,9 +191,10 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
 
         dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
         assertTrue("LeadOrganizationIdentifier was not updated", dbSps.getLeadOrganizationIdentifier().equals("22"));
-        assertTrue("SummaryFourOrgIdentifier was not updated", dbSps.getSummaryFourOrgIdentifier().equals("22"));
+        for (String summaryFOrg : dbSps.getSummaryFourOrgIdentifiers()) {
+        	assertTrue("SummaryFourOrgIdentifier was not updated", summaryFOrg.equals("22"));
+        }
         assertTrue("SponsorIdentifier was not updated", dbSps.getSponsorIdentifier().equals("22"));
-        assertTrue("SiteSummaryFourOrgIdentifier was not updated", dbSps.getSiteSummaryFourOrgIdentifier().equals("22"));
         assertTrue("SubmitterOrganizationIdentifier was not updated", dbSps.getSubmitterOrganizationIdentifier()
             .equals("22"));
 

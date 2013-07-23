@@ -171,7 +171,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     @Override
     public String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, //NOPMD
             StudyProtocolQueryDTO originalDTO,
-            StudyResourcingDTO originalSummary4,
+            List<StudyResourcingDTO> originalSummary4,
             List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException {
         StringBuilder comments = new StringBuilder();
         if (ISOUtil.isIiNull(studyProtocolIi)) {
@@ -186,7 +186,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         StudyProtocolQueryDTO updatedDTO = protocolQueryServiceLocal
                 .getTrialSummaryByStudyProtocolId(IiConverter
                         .convertToLong(studyProtocolIi));
-        StudyResourcingDTO updatedSummary4 = studyResourcingServiceLocal
+        List<StudyResourcingDTO> updatedSummary4 = studyResourcingServiceLocal
                 .getSummary4ReportedResourcing(studyProtocolIi);
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter
@@ -196,7 +196,19 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                 .getByStudyProtocol(studyProtocolIi, srDTO);
         
         comments.append(createComments(originalDTO, updatedDTO));
-        comments.append(createComments(originalSummary4, updatedSummary4));
+        for (StudyResourcingDTO dto : originalSummary4) {
+            for (StudyResourcingDTO updto : updatedSummary4) {
+                if (!ISOUtil.isIiNull(updto.getIdentifier()) && !ISOUtil.isIiNull(dto.getIdentifier())
+                        && updto.getIdentifier().getExtension().equals(dto.getIdentifier().getExtension())) {
+                    recordChange(
+                            dto.getOrganizationIdentifier().getExtension(),
+                            updto.getOrganizationIdentifier().getExtension(),
+                            "Summary 4 Funding Sponsor was changed." + SEPARATOR, comments);
+                    break;
+                }
+            }
+        }
+        
         comments.append(createComments(originalSites, updatedSites));
         comments.append(createDeletedDocsComments(existingDocs));
         comments.append(createComments(documentDTOs));        
@@ -322,20 +334,6 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         }
         return comments;
     }
-    
-    private StringBuilder createComments(StudyResourcingDTO originalDTO,
-            StudyResourcingDTO updatedDTO) {
-        StringBuilder comments = new StringBuilder();
-        if (originalDTO != null && updatedDTO != null
-                && originalDTO.getOrganizationIdentifier() != null
-                && updatedDTO.getOrganizationIdentifier() != null) {
-            recordChange(
-                    originalDTO.getOrganizationIdentifier().getExtension(),
-                    updatedDTO.getOrganizationIdentifier().getExtension(),
-                    "Summary 4 Funding Sponsor was changed." + SEPARATOR, comments);
-        }
-        return comments;
-    } 
 
     private void recordChange(Object v1, Object v2, String comment,
             StringBuilder comments) {

@@ -91,8 +91,15 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
         id.setExtension("27426");
-        StudyResourcing result = client.getSummary4ReportedResourcing(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        StudyResourcing[] results = client.getSummary4ReportedResourcing(id);        
+        if (results == null) {
+            System.out.println("Get Summary by StudyProtocol ID results were null!");
+        } else {
+            System.out.println("Get Summary by StudyProtocol ID Found: " + results.length);
+        }
+        for (StudyResourcing result : results) {
+            System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        }
     }
 
     private static void getByProtocolId(StudyResourcingServiceClient client) throws RemoteException, PAFault {
@@ -113,7 +120,7 @@ public class StudyResourcingServiceClient extends StudyResourcingServiceClientBa
 
     }
 
-  public gov.nih.nci.coppa.services.pa.StudyResourcing getSummary4ReportedResourcing(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.pa.StudyResourcing[] getSummary4ReportedResourcing(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"getSummary4ReportedResourcing");
     gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummary4ReportedResourcingRequest params = new gov.nih.nci.coppa.services.pa.studyresourcingservice.stubs.GetSummary4ReportedResourcingRequest();

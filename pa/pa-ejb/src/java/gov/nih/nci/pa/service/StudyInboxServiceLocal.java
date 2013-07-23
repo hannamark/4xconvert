@@ -110,7 +110,7 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
      */
     String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, // NOPMD
             StudyProtocolQueryDTO originalDTO,
-            StudyResourcingDTO originalSummary4,
+            List<StudyResourcingDTO> originalSummary4,
             List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException;
 
      /**

@@ -190,9 +190,9 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
-        StudyResourcingDTO srDTO = remoteEjb.getSummary4ReportedResourcing(IiConverter.convertToIi(sp.getId()));
+        List<StudyResourcingDTO> srDTO = remoteEjb.getSummary4ReportedResourcing(IiConverter.convertToIi(sp.getId()));
         assertNotNull(srDTO);
-        StudyResourcingDTO srDTO2 = remoteEjb.getStudyResourcingById(srDTO.getIdentifier());
+        StudyResourcingDTO srDTO2 = remoteEjb.getStudyResourcingById(srDTO.get(0).getIdentifier());
         assertNotNull(srDTO2);
         remoteEjb.deleteStudyResourcingById(srDTO2);
 

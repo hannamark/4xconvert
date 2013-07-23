@@ -45,7 +45,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             Bl isBatchMode) throws PAException {
@@ -68,7 +68,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             Bl isBatchMode) throws PAException {
@@ -92,7 +92,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             StudySiteDTO leadOrganizationStudySiteDTO,
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException {
         if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
             throw new PAException("test");
@@ -141,7 +141,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
@@ -166,7 +166,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             StudySiteDTO leadOrganizationStudySiteDTO,
             OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
-            OrganizationDTO summary4OrganizationDTO,
+            List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
             DSet<Tel> owners) throws PAException {
         return createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO,
@@ -190,7 +190,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             List<StudySiteDTO> studyIdentifierDTOs,
             StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO,
-            OrganizationDTO summary4organizationDTO,
+            List<OrganizationDTO> summary4organizationDTO,
             StudyResourcingDTO summary4studyResourcingDTO,
             Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,

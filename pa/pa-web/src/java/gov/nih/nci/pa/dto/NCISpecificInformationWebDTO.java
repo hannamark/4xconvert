@@ -77,6 +77,10 @@
 * 
 */
 package gov.nih.nci.pa.dto;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class for holding attributes for NCI SpecificInformation Dto.
  * @author Naveen Amiruddin
@@ -88,11 +92,10 @@ public class NCISpecificInformationWebDTO {
   
     private String accrualReportingMethodCode;
     private String summaryFourFundingCategoryCode;
-    private String organizationName;
-    private String organizationIi;
     private String programCodeText;
     private Boolean ctroOverride;
     private String consortiaTrialCategoryCode;
+    private List<SummaryFourSponsorsWebDTO> summary4Sponsors = new ArrayList<SummaryFourSponsorsWebDTO>();
 
     /**
      * 
@@ -125,34 +128,6 @@ public class NCISpecificInformationWebDTO {
      */
     public void setAccrualReportingMethodCode(String accrualReportingMethodCode) {
         this.accrualReportingMethodCode = accrualReportingMethodCode;
-    }
-    /**
-     * 
-     * @return organizationName 
-     */
-    public String getOrganizationName() {
-        return organizationName;
-    }
-    /**
-     * 
-     * @param organizationName organizationName
-     */
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-    /**
-     * 
-     * @return organizationIi
-     */
-    public String getOrganizationIi() {
-        return organizationIi;
-    }
-    /**
-     * 
-     * @param organizationIi organizationIi
-     */
-    public void setOrganizationIi(String organizationIi) {
-        this.organizationIi = organizationIi;
     }
 
     /**
@@ -195,6 +170,20 @@ public class NCISpecificInformationWebDTO {
      */
     public void setConsortiaTrialCategoryCode(String consortiaTrialCategoryCode) {
         this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
+    }
+
+    /**
+     * @return the summary4Sponsors
+     */
+    public List<SummaryFourSponsorsWebDTO> getSummary4Sponsors() {
+        return summary4Sponsors;
+    }
+
+    /**
+     * @param summary4Sponsors the summary4Sponsors to set
+     */
+    public void setSummary4Sponsors(List<SummaryFourSponsorsWebDTO> summary4Sponsors) {
+        this.summary4Sponsors = summary4Sponsors;
     }
 
 }

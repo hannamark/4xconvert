@@ -411,10 +411,13 @@ public class MockServiceLocator implements ServiceLocator {
         dto.setNciDivisionProgramCode(CdConverter.convertStringToCd(NciDivisionProgramCode.CCR.getCode()));
         dto.setNihInstitutionCode(CdConverter.convertStringToCd("NIH"));
         dto.setSerialNumber(StConverter.convertToSt("1"));
+        
+        List<StudyResourcingDTO> dtoList = new ArrayList<StudyResourcingDTO>();
+        dtoList.add(dto);
         try {
             when(svc.getStudyResourcingById(any(Ii.class))).thenReturn(dto);
             when(svc.getStudyResourcingByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyResourcingDTO>());
-            when(svc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(dto);
+            when(svc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(dtoList);
         } catch (PAException e) {
             //Unreachable
         }

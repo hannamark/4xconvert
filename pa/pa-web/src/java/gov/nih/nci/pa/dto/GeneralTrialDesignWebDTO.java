@@ -111,8 +111,7 @@ public class GeneralTrialDesignWebDTO {
     private String leadOrganizationName;
     private String piIdentifier;
     private String piName;
-    private String summaryFourOrgIdentifier;
-    private String summaryFourOrgName;
+    private List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers = new ArrayList<SummaryFourSponsorsWebDTO>();
     private String summaryFourFundingCategoryCode;
     private String sponsorName;
     private String sponsorIdentifier;
@@ -391,31 +390,17 @@ public class GeneralTrialDesignWebDTO {
     }
     /**
      *
-     * @return summaryFourOrgIdentifier
+     * @return summaryFourOrgIdentifiers
      */
-    public String getSummaryFourOrgIdentifier() {
-        return summaryFourOrgIdentifier;
+    public List<SummaryFourSponsorsWebDTO> getSummaryFourOrgIdentifiers() {
+        return summaryFourOrgIdentifiers;
     }
     /**
      *
-     * @param summaryFourOrgIdentifier summaryFourOrgIdentifier
+     * @param summaryFourOrgIdentifiers summaryFourOrgIdentifiers
      */
-    public void setSummaryFourOrgIdentifier(String summaryFourOrgIdentifier) {
-        this.summaryFourOrgIdentifier = summaryFourOrgIdentifier;
-    }
-    /**
-     *
-     * @return summaryFourOrgName
-     */
-    public String getSummaryFourOrgName() {
-        return summaryFourOrgName;
-    }
-    /**
-     *
-     * @param summaryFourOrgName summaryFourOrgName
-     */
-    public void setSummaryFourOrgName(String summaryFourOrgName) {
-        this.summaryFourOrgName = summaryFourOrgName;
+    public void setSummaryFourOrgIdentifiers(List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers) {
+        this.summaryFourOrgIdentifiers = summaryFourOrgIdentifiers;
     }
     /**
      *

@@ -78,6 +78,14 @@
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Summary 4 Sponsor...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
+            
+            function deleteSummary4SponsorRow(rowid) {
+                var  url = '/pa/protected/ajaxTrialValidationdeleteSummaryFourOrg.action';
+                var params = { uuid: rowid };
+                var div = $('loadSummary4FundingSponsorField');
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
         
             function loadDiv(orgid) {
             }

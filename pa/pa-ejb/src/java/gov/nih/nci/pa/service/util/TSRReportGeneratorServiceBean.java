@@ -793,23 +793,25 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
 
     private void setSummary4Information(StudyProtocolDTO studyProtocolDto) throws PAException {
         TSRReportSummary4Information sum4Info = new TSRReportSummary4Information();
-        StudyResourcingDTO studyResourcingDTO = studyResourcingService
+        List<StudyResourcingDTO> studyResourcingDTOList = studyResourcingService
                 .getSummary4ReportedResourcing(studyProtocolDto.getIdentifier());
-        if (studyResourcingDTO != null) {
-            sum4Info.setFundingCategory(getValue(studyResourcingDTO.getTypeCode(), INFORMATION_NOT_PROVIDED));
-            Organization org = null;
-            if (studyResourcingDTO.getOrganizationIdentifier() != null
-                    && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
-                Organization o = new Organization();
-                o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
-                org = paOrganizationService.getOrganizationByIndetifers(o);
-            }
-            if (org != null) {
-                sum4Info.setFundingSponsor(StringUtils.defaultString(org.getName(), INFORMATION_NOT_PROVIDED));
-            }
-            if (studyProtocolDto.getProgramCodeText().getValue() != null) {
-                sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
-            }
+        StringBuilder orgNames = new StringBuilder();
+        for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOList) {
+                sum4Info.setFundingCategory(getValue(studyResourcingDTO.getTypeCode(), INFORMATION_NOT_PROVIDED));
+                Organization org = null;
+                if (studyResourcingDTO.getOrganizationIdentifier() != null
+                        && studyResourcingDTO.getOrganizationIdentifier().getExtension() != null) {
+                    Organization o = new Organization();
+                    o.setId(Long.valueOf(studyResourcingDTO.getOrganizationIdentifier().getExtension()));
+                    org = paOrganizationService.getOrganizationByIndetifers(o);
+                }
+                if (org != null) {
+                    orgNames.append(org.getName()).append(System.getProperty("line.separator"));
+                }
+        }
+        sum4Info.setFundingSponsor(StringUtils.defaultString(orgNames.toString(), INFORMATION_NOT_PROVIDED));
+        if (studyProtocolDto.getProgramCodeText().getValue() != null) {
+            sum4Info.setProgramCode(getValue(studyProtocolDto.getProgramCodeText(), INFORMATION_NOT_PROVIDED));
         }
         setSummary4AnatomicSite(studyProtocolDto, sum4Info);
         tsrReportGenerator.setSummary4Information(sum4Info);

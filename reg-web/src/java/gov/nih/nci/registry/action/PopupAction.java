@@ -107,6 +107,9 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
+import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
@@ -126,6 +129,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -226,6 +230,52 @@ public class PopupAction extends ActionSupport implements Preparable {
             return ERROR;
         }
         return ORGS_RESULT;
+    }
+
+    /**
+     * 
+     * @return s
+     */
+    @SuppressWarnings("unchecked")
+    public String addSummaryFourOrg() {     
+        try {
+            BaseTrialDTO trialDTO =  (BaseTrialDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE); 
+            String orgId = ServletActionContext.getRequest().getParameter("orgId");
+            String chosenName = ServletActionContext.getRequest().getParameter("chosenName");
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+            summarySp.setOrgId(orgId);
+            summarySp.setOrgName(chosenName);
+            summarySp.setRowId(UUID.randomUUID().toString());
+            if (trialDTO == null) {
+                trialDTO = new BaseTrialDTO();
+                trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                ServletActionContext.getRequest().getSession()
+                .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+            } else {
+                trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+            }
+        } catch (Exception e) {
+            LOG.error("Exception occured while adding SummaryFourOrg " + e);
+            addFieldError("summary4FundingSponsor", e.getMessage());
+        }
+        return "summaryFourOrg";
+    }
+    
+    /**
+     * @return string
+     */
+    public String deleteSummaryFourOrg() {
+        BaseTrialDTO trialDTO =  (BaseTrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        String uuId = ServletActionContext.getRequest().getParameter("uuid");
+        for (int i = trialDTO.getSummaryFourOrgIdentifiers().size() - 1; i >= 0; i--) {
+            SummaryFourSponsorsWebDTO webDto = trialDTO.getSummaryFourOrgIdentifiers().get(i);
+            if (webDto.getRowId().equals(uuId)) {
+                trialDTO.getSummaryFourOrgIdentifiers().remove(i);
+            }
+        }
+        return "summaryFourOrg";
     }
 
     /**

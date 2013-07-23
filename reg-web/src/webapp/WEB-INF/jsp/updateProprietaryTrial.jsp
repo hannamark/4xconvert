@@ -45,18 +45,10 @@
                 showPopup('${lookupOrgUrl}', loadLeadOrgDiv, 'Select Lead Organization');
             }
             
-            function lookup4loadSummary4Sponsor() {
-                showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-            }
 
             function loadLeadOrgDiv() {
                 $("trialDTO.leadOrganizationIdentifier").value = orgid;
                 $('trialDTO.leadOrganizationName').value = chosenname;
-            }
-            
-            function loadSummary4SponsorDiv() {
-                $("trialDTO.summaryFourOrgName").value = chosenname;
-                $('trialDTO.summaryFourOrgIdentifier').value = orgid;
             }
 
             function reviewProtocol () {
@@ -114,7 +106,6 @@
                 </s:if>
                 <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.sitePiIdentifier" id="trialDTO.sitePiIdentifier"/>
-                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
                 <s:hidden name="trialDTO.siteOrganizationIdentifier" id="trialDTO.siteOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
@@ -221,7 +212,11 @@
                                <s:property value="trialDTO.summaryFourFundingCategoryCode" />                    
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
-                        <s:property value="trialDTO.summaryFourOrgName" />
+                        <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
+                            <s:property value="%{orgName}"/><br/>
+                            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/> 
+                            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
+                        </s:iterator>
                     </reg-web:valueRow>
                     <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
                                     <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'No':'Yes - '}"/>
