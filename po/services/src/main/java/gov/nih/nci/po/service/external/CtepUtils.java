@@ -299,9 +299,6 @@ public final class CtepUtils {
             if (StringUtils.isBlank(addr.getCityOrMunicipality())) {
                 throw new CtepImportException("city missing", "City missing in CTEP address.");
             }
-            if (StringUtils.isBlank(addr.getPostalCode())) {
-                throw new CtepImportException("zip missing", "Postal code missing in CTEP address.");
-            }
             if (null == addr.getCountry()) {
                 throw new CtepImportException("country missing", "Country missing in CTEP address.");
             }

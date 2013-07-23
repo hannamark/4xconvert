@@ -438,14 +438,6 @@ public class CtepUtilsTest {
             assertEquals("city missing", e.getShortMessage());
         }
         addr.setCityOrMunicipality("cityOrMunicipality");
-        addr.setPostalCode(null);
-        try {
-            CtepUtils.validateAddress(addr);
-            fail();
-        } catch (CtepImportException e) {
-            assertEquals("zip missing", e.getShortMessage());
-        }
-        addr.setPostalCode("postalCode");
         addr.setCountry(null);
         try {
             CtepUtils.validateAddress(addr);
