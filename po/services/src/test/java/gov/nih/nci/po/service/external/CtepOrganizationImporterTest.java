@@ -1008,7 +1008,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             helperOrgAndAllRolesAreSetToPendingOnCreate(service);
             fail();
         }catch (CtepImportException e) {
-            assertEquals("zip missing", e.getShortMessage());
+            assertEquals("city missing", e.getShortMessage());
         }
     }
 
@@ -1019,7 +1019,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             helperOrgAndAllRolesAreSetToPendingOnCreate(service);
             fail();
         }catch (CtepImportException e) {
-            assertEquals("zip missing", e.getShortMessage());
+            assertEquals("city missing", e.getShortMessage());
         }
     }
 
@@ -1030,7 +1030,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             helperOrgAndAllRolesAreSetToPendingOnCreate(service);
             fail();
         }catch (CtepImportException e) {
-            assertEquals("zip missing", e.getShortMessage());
+            assertEquals("city missing", e.getShortMessage());
         }
     }
 

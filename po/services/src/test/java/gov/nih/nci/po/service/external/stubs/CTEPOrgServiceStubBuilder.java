@@ -190,7 +190,7 @@ public class CTEPOrgServiceStubBuilder {
         Ad postal = common.getOrg().getPostalAddress();
         for(Iterator<Adxp> itr = postal.getPart().iterator(); itr.hasNext();) {
             Adxp element = itr.next();  
-            if (AddressPartType.ZIP.equals(element.getType())) {
+            if (AddressPartType.CTY.equals(element.getType())) {
                 itr.remove();  
             }  
         }  
@@ -204,7 +204,7 @@ public class CTEPOrgServiceStubBuilder {
         for (Ad ad : dset.getItem()) {
             for(Iterator<Adxp> itr = ad.getPart().iterator(); itr.hasNext();) {
                 Adxp element = itr.next();  
-                if (AddressPartType.ZIP.equals(element.getType())) {
+                if (AddressPartType.CTY.equals(element.getType())) {
                     itr.remove();  
                 }  
             }  
@@ -219,7 +219,7 @@ public class CTEPOrgServiceStubBuilder {
         for (Ad ad : dset.getItem()) {
             for(Iterator<Adxp> itr = ad.getPart().iterator(); itr.hasNext();) {
                 Adxp element = itr.next();  
-                if (AddressPartType.ZIP.equals(element.getType())) {
+                if (AddressPartType.CTY.equals(element.getType())) {
                     itr.remove();  
                 }  
             }  
