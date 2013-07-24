@@ -30,12 +30,16 @@
             function toggleEvalTypeOtherText() {
                var element = document.getElementsByName("plannedMarker.evaluationType");                
                 for (var i=0; i <= element.length; i++) {
-                    if (element[i].value == 'Other' && element[i].checked == true) {    
-                         $('evalTypeOtherTextRow').show();
-                         break; 
-                    } else {
-                        $('evalTypeOtherTextRow').hide(); 
-                    }     
+                	if (typeof(element[i]) == 'undefined') {
+                		break;	
+                	} else {
+                		if (element[i].value == 'Other' && element[i].checked == true) {    
+                            $('evalTypeOtherTextRow').show();
+                            break; 
+                       } else {
+                           $('evalTypeOtherTextRow').hide(); 
+                       } 	
+                	}       
                 }
                 return false;
             }
@@ -43,13 +47,17 @@
             function toggleAssayTypeOtherText() {
             var element = document.getElementsByName("plannedMarker.assayType");
                 for (var i=0; i <= element.length; i++) {
-                    if (element[i].value == 'Other' && element[i].checked == true) {    
-                         $('assayTypeOtherTextRow').show();
-                         break;
-                         
-                    } else {
-                        $('assayTypeOtherTextRow').hide(); 
-                    }     
+                	if (typeof(element[i]) == 'undefined') {
+                		break;	
+                	} else {
+                		if (element[i].value == 'Other' && element[i].checked == true) {    
+                            $('assayTypeOtherTextRow').show();
+                            break;
+                            
+                       } else {
+                           $('assayTypeOtherTextRow').hide(); 
+                       }	
+                	}       
                 } 
                 return false;  
             }
@@ -57,13 +65,17 @@
             function toggleAssayPurposeOtherText() {
             var element = document.getElementsByName("plannedMarker.assayPurpose");
                 for (var i=0; i <= element.length; i++) {
-                    if (element[i].value == 'Other' && element[i].checked == true) {    
-                         $('assayPurposeOtherTextRow').show();
-                         break;
-                         return false;
-                    } else {
-                        $('assayPurposeOtherTextRow').hide(); 
-                    }     
+                	if (typeof(element[i]) == 'undefined') {
+                		break;	
+                	} else {
+                		if (element[i].value == 'Other' && element[i].checked == true) {    
+                            $('assayPurposeOtherTextRow').show();
+                            break;
+                            return false;
+                       } else {
+                           $('assayPurposeOtherTextRow').hide(); 
+                       }   	
+                	} 
                 } 
             }
             
@@ -71,13 +83,17 @@
             var element = document.getElementsByName("plannedMarker.tissueSpecimenType");
             
                 for (var i=0; i <= element.length; i++) {
-                    if (element[i].value == 'Other' && element[i].checked == true) {  
-                         $('specimenTypeOtherTextRow').show();
-                         break;
-                         return false; 
-                    } else {
-                        $('specimenTypeOtherTextRow').hide(); 
-                    }     
+                	if (typeof(element[i]) == 'undefined') {
+                		break;	
+                	} else {
+                		if (element[i].value == 'Other' && element[i].checked == true) {  
+                            $('specimenTypeOtherTextRow').show();
+                            break;
+                            return false; 
+                       } else {
+                           $('specimenTypeOtherTextRow').hide(); 
+                       }   	
+                	}             
                 } 
                 return false;
             }
@@ -159,7 +175,12 @@
                 
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var aj = callAjaxPost(div, url, params);
+                var options = {
+                        onComplete: function(transport) {
+                        	callOnloadFunctions();
+                                    }
+                     };
+                var aj = callAjaxPost(div, url, params,options);
             }
             
             function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode) {
@@ -184,6 +205,7 @@
             	document.forms[0].setAttribute("action", url);
             	document.forms[0].submit();
             }
+            
 
         </script>
     </head>
