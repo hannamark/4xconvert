@@ -111,10 +111,10 @@
             <table class="form">
                 <tr>
                     <td scope="row" class="label">
-                        <h3 id="search_results" align="left"><fmt:message key="managetrialownership.users.header"/></h3>
+                        <h3 id="search_results" align="left"><fmt:message key="${memberHeaderKey}"/></h3>
                     </td>
                     <td scope="row" class="label">
-                        <h3 id="search_results"  align="left"><fmt:message key="managetrialownership.trials.header"/></h3>
+                        <h3 id="search_results"  align="left"><fmt:message key="${trialHeaderKey}"/></h3>
                     </td>
                 </tr>
                 <tr>
