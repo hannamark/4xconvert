@@ -554,15 +554,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         //don't validate primary completion date if it is non interventional trial 
         //and CTGovXmlRequired is false.
-        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
-                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+        if (PAUtil.isPrimaryCompletionDateRequired(studyProtocolDTO)) {
             if (dates.getPrimaryCompletionDate() == null && !unknownPrimaryCompletionDate) {
                 throw new PAException("Primary Completion date must be set.  ");
             }
             if (dates.getPrimaryCompletionDateTypeCode() == null) {
                 throw new PAException("Primary Completion date type must be set.  ");
-            }
-        }        
+            }        
+        }               
         if (dates.getStartDateTypeCode() == null) {
             throw new PAException("Start date type must be set.  ");
         }        

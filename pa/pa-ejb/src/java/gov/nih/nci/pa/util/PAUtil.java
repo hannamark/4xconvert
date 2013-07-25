@@ -103,6 +103,7 @@ import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -1165,6 +1166,22 @@ public class PAUtil {
         return retVal;
     }
 
+    /**
+     * For the case where study protocol is non-interventional and CTGovXMLRequired is false, 
+     * primary completion date is optional.
+     * @param studyProtocolDTO study protocol to examine.
+     * @return false if the study protocol is non-interventional and CTGovXMLRequired is false, 
+     * else returns true. 
+     */
+    public static boolean isPrimaryCompletionDateRequired(StudyProtocolDTO studyProtocolDTO) {
+        boolean isPrimaryCompletionDateRequired = true;
+        if (studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
+                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue()) {
+            isPrimaryCompletionDateRequired = false;
+        }
+        return isPrimaryCompletionDateRequired;
+    }
+    
     /**
      * primaryPurposeOtherCode is req or not.
      * @param primaryPurposeCode primaryPurposeCode

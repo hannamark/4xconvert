@@ -738,7 +738,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         //don't validate primary completion date if it is non interventional trial 
         //and CTGovXmlRequired is false.
-        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+        if (PAUtil.isPrimaryCompletionDateRequired(studyProtocolDTO)) {
             if (studyProtocolDTO.getPrimaryCompletionDate() == null
                     || studyProtocolDTO.getPrimaryCompletionDate().getValue() == null) {
                 messages.addError(SELECT_TRIAL_STATUS,
@@ -749,8 +749,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                             .getCode() == null) {
                 messages.addError(SELECT_TRIAL_STATUS,
                                   "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
-            }
-        }            
+            }        
+        }                    
         if (sos != null) {
             for (String error : studyOverallStatusService
                     .validateTrialStatusAndDates(studyProtocolDTO, sos)) {

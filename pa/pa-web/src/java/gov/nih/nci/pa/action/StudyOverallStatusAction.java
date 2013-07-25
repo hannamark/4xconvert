@@ -84,7 +84,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -96,6 +95,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.HashMap;
@@ -298,16 +298,14 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             //and CTGovXmlRequired is false.
             StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
             if (spDto != null) {
-                String stdyProtocolType = StConverter.convertToString(spDto.getStudyProtocolType());
-                Boolean ctgovXmlRequired = BlConverter.convertToBoolean(spDto.getCtgovXmlRequiredIndicator());
-                if (!(stdyProtocolType.equals("NonInterventionalStudyProtocol") && !ctgovXmlRequired)) {
+                if (PAUtil.isPrimaryCompletionDateRequired(spDto)) {
                     if (StringUtils.isBlank(primaryCompletionDate)) {
                         sb.append("Primary Completion Date is required. ");
                     }
                     if (StringUtils.isBlank(primaryCompletionDateType)) {
                         sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
-                    }
-                }
+                    }                
+                }                
             }
         }
         if (sb.length() > 0) {

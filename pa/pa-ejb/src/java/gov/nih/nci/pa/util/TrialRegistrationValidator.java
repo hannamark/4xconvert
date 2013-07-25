@@ -95,7 +95,6 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -324,8 +323,7 @@ public class TrialRegistrationValidator {
         }      
         //don't validate primary completion date if it is non interventional trial 
         //and CTGovXmlRequired is false.
-        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
-                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+        if (PAUtil.isPrimaryCompletionDateRequired(studyProtocolDTO)) {
             if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
                 errorMsg.append("Primary Completion Date Type cannot be null. ");
                 valid = false;
@@ -340,8 +338,8 @@ public class TrialRegistrationValidator {
             if (pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate.getNullFlavor() != NullFlavor.UNK)) {
                 errorMsg.append("Primary Completion Date cannot be null. ");
                 valid = false;
-            }
-        }        
+            }       
+        }                
         if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
             errorMsg.append("Trial Start Date cannot be null. ");
             valid = false;
