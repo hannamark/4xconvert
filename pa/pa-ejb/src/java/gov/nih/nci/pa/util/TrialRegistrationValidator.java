@@ -95,6 +95,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -321,25 +322,31 @@ public class TrialRegistrationValidator {
                     + "valid values are Actual, Anticipated (case-sensitive). ");
             valid = false;
         }      
-        if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
-            errorMsg.append("Primary Completion Date Type cannot be null. ");
-            valid = false;
-        } else
-        if (ActualAnticipatedTypeCode.getByCode(studyProtocolDTO
-                .getPrimaryCompletionDateTypeCode().getCode()) == null) {
-            errorMsg.append("Primary Completion Date Type is invalid: "
-                    + "valid values are Actual, Anticipated (case-sensitive). ");
-            valid = false;
-        }
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.
+        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
+                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+            if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
+                errorMsg.append("Primary Completion Date Type cannot be null. ");
+                valid = false;
+            } else
+            if (ActualAnticipatedTypeCode.getByCode(studyProtocolDTO
+                    .getPrimaryCompletionDateTypeCode().getCode()) == null) {
+                errorMsg.append("Primary Completion Date Type is invalid: "
+                        + "valid values are Actual, Anticipated (case-sensitive). ");
+                valid = false;
+            }
+            Ts pcDate = studyProtocolDTO.getPrimaryCompletionDate();
+            if (pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate.getNullFlavor() != NullFlavor.UNK)) {
+                errorMsg.append("Primary Completion Date cannot be null. ");
+                valid = false;
+            }
+        }        
         if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
             errorMsg.append("Trial Start Date cannot be null. ");
             valid = false;
         }
-        Ts pcDate = studyProtocolDTO.getPrimaryCompletionDate();
-        if (pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate.getNullFlavor() != NullFlavor.UNK)) {
-            errorMsg.append("Primary Completion Date cannot be null. ");
-            valid = false;
-        }
+        
         return valid;
     }
 

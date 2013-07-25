@@ -356,8 +356,8 @@ public class TrialRegistrationValidatorTest {
     public void testValidateStudyProtocolDatesNodata() {
         boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
         assertFalse("Validation should have failed", result);
-        checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Trial"
-                      +" Start Date cannot be null. Primary Completion Date cannot be null. ");
+        checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Primary Completion Date cannot be null. " 
+                + "Trial Start Date cannot be null. ");
     }
     
     /**
@@ -371,8 +371,8 @@ public class TrialRegistrationValidatorTest {
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd((Lov) null));
         boolean result = validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg);
         assertFalse("Validation should have failed", result);
-        checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Trial"
-                      +" Start Date cannot be null. Primary Completion Date cannot be null. ");
+        checkErrorMsg("Trial Start Date Type cannot be null. Primary Completion Date Type cannot be null. Primary Completion Date cannot be null. " 
+                + "Trial Start Date cannot be null. ");
     }
     
     /**

@@ -7,10 +7,10 @@
     <td>
         <input type="radio" name="trialDTO.trialType" value="Interventional" id="trialDTO.trialType.Interventional"
             ${trialDTO.trialType!='NonInterventional'?'checked=checked':''}        
-            onclick="setDisplayBasedOnTrialType();"> <label for = "trialDTO.trialType.Interventional">Interventional</label>
+            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();"> <label for = "trialDTO.trialType.Interventional">Interventional</label>
         <input type="radio" name="trialDTO.trialType" value="NonInterventional" id="trialDTO.trialType.Noninterventional"
             ${trialDTO.trialType=='NonInterventional'?'checked=checked':''}
-            onclick="setDisplayBasedOnTrialType();"><label for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
+            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();"><label for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>trialDTO.trialType</s:param>

@@ -445,9 +445,25 @@ public class TrialBatchDataValidator {
         if (null == PrimaryPurposeCode.getByCode(batchDto.getPrimaryPurpose())) {
             fieldErr.append("Please enter valid value for Primary Purpose.\n");
         }
-        if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getPrimaryCompletionDateType())) {
-            fieldErr.append("Please enter valid value for Primary Completion Date Type.\n");
-        }
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.       
+        if (!(batchDto.getTrialType().equals("NonInterventional") 
+                && !batchDto.isCtGovXmlIndicator())) {
+            if (StringUtils.isEmpty(batchDto.getPrimaryCompletionDateType())) {
+                fieldErr.append("Primary Completion Date Type is required.\n");
+            }
+            if (StringUtils.isEmpty(batchDto.getPrimaryCompletionDate())) {
+                fieldErr.append("Primary Completion Date is required.\n");
+            }
+            if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getPrimaryCompletionDateType())) {
+                fieldErr.append("Please enter valid value for Primary Completion Date Type.\n");
+            }
+            //primaryCompletion date
+            if (StringUtils.isNotEmpty(batchDto.getPrimaryCompletionDate())
+                    && !RegistryUtil.isDateValid(batchDto.getPrimaryCompletionDate())) {
+                fieldErr.append("Please enter valid value for Primary Completion Date.\n");
+            }
+        }                
         if (null == ActualAnticipatedTypeCode.getByCode(batchDto.getStudyStartDateType())) {
             fieldErr.append("Please enter valid value for Study Start Date Type.\n");
         }
@@ -461,13 +477,7 @@ public class TrialBatchDataValidator {
         if (StringUtils.isNotEmpty(batchDto.getStudyStartDate())
                 && !RegistryUtil.isDateValid(batchDto.getStudyStartDate())) {
             fieldErr.append("Please enter valid value for Study Start Date.\n");
-        }
-        //primaryCompletion date
-        if (StringUtils.isNotEmpty(batchDto.getPrimaryCompletionDate())
-                && !RegistryUtil.isDateValid(batchDto.getPrimaryCompletionDate())) {
-            fieldErr.append("Please enter valid value for Primary Completion Date.\n");
-        }
-
+        }        
         return fieldErr;
     }
     /**

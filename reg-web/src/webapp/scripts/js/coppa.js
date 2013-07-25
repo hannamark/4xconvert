@@ -132,6 +132,15 @@ function displayWaitPanel() {
 	$('progress_indicator_panel').show();
 }
 
+function hidePrimaryCompletionDate() {
+	//don't validate primary completion date if it is non interventional trial 
+    //and CTGovXmlRequired is false.
+	if ($('trialDTO.trialType.Noninterventional').checked && $('xmlRequiredfalse').checked) {		
+		document.getElementById('primaryCompletionDateId').style.display = 'none';
+	} else {
+		document.getElementById('primaryCompletionDateId').style.display = 'inline';
+	}	
+}
 
 function setDisplayBasedOnTrialType() {
 	if ($('trialDTO.trialType.Interventional').checked) {
@@ -155,7 +164,6 @@ function setDisplayBasedOnTrialType() {
 		$('secondaryPurposeOtherTextDiv').hide();
         document.getElementById('trialDTO.secondaryPurposeOtherText').disabled = true;   		
 	}
-	
 }
 
 function hideElements(cssRule) {

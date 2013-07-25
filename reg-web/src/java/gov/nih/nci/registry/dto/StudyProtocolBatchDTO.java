@@ -724,7 +724,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the primaryCompletionDate
      */
-    @NotEmpty(message = "Primary Completion Date is required.\n")
     public String getPrimaryCompletionDate() {
         return primaryCompletionDate;
     }
@@ -739,7 +738,6 @@ public class StudyProtocolBatchDTO {
     /**
      * @return the primaryCompletionDateType
      */
-    @NotEmpty(message = "Primary Completion Date Type is required.\n")
     public String getPrimaryCompletionDateType() {
         return primaryCompletionDateType;
     }

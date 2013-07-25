@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -104,6 +105,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -119,7 +121,8 @@ import com.opensymphony.xwork2.Preparable;
  * @since 08/20/2008
  */
 public class StudyOverallStatusAction extends ActionSupport implements Preparable, ServletRequestAware {
-   
+
+    private static final Logger LOG = Logger.getLogger(StudyOverallStatusAction.class);
     private static final long serialVersionUID = -3647758169522163514L;
 
     private Map<String, String> dateTypeList;
@@ -137,7 +140,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private String startDateType;
     private String primaryCompletionDateType;
     private String completionDateType;
-
+    
     private HttpServletRequest request;
 
     private StudyOverallStatusDTO sosDto;
@@ -224,7 +227,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     @SuppressWarnings("PMD.NPathComplexity")
     void loadForm() throws PAException {
         StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
-        if (spDto != null) {
+        if (spDto != null) {            
             setStartDate(TsConverter.convertToString(spDto.getStartDate()));
             setPrimaryCompletionDate(TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
             setCompletionDate(TsConverter.convertToString(spDto.getCompletionDate()));
@@ -290,12 +293,21 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             }
             if (StringUtils.isBlank(startDateType)) {
                 sb.append("Trial Start Date type (Anticipated or Actual) is required. ");
-            }            
-            if (StringUtils.isBlank(primaryCompletionDate)) {
-                sb.append("Primary Completion Date is required. ");
-            }
-            if (StringUtils.isBlank(primaryCompletionDateType)) {
-                sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
+            }   
+            //don't validate primary completion date if it is non interventional trial 
+            //and CTGovXmlRequired is false.
+            StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
+            if (spDto != null) {
+                String stdyProtocolType = StConverter.convertToString(spDto.getStudyProtocolType());
+                Boolean ctgovXmlRequired = BlConverter.convertToBoolean(spDto.getCtgovXmlRequiredIndicator());
+                if (!(stdyProtocolType.equals("NonInterventionalStudyProtocol") && !ctgovXmlRequired)) {
+                    if (StringUtils.isBlank(primaryCompletionDate)) {
+                        sb.append("Primary Completion Date is required. ");
+                    }
+                    if (StringUtils.isBlank(primaryCompletionDateType)) {
+                        sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
+                    }
+                }
             }
         }
         if (sb.length() > 0) {
@@ -322,7 +334,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         dto.setPrimaryCompletionDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(primaryCompletionDate)));
         dto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(primaryCompletionDateType));
         dto.setCompletionDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(completionDate)));
-        dto.setCompletionDateTypeCode(CdConverter.convertStringToCd(completionDateType));
+        dto.setCompletionDateTypeCode(CdConverter.convertStringToCd(completionDateType));        
     }
 
     /**
@@ -544,5 +556,4 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     public void setSosDto(StudyOverallStatusDTO sosDto) {
         this.sosDto = sosDto;
     }
-
 }

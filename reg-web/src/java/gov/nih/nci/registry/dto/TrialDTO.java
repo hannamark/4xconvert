@@ -285,7 +285,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the primaryCompletionDate
      */
-    @NotEmpty(message = "error.submit.primaryCompletionDate")
     public String getPrimaryCompletionDate() {
         return primaryCompletionDate;
     }
@@ -329,7 +328,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the primaryCompletionDateType
      */
-    @NotEmpty(message = "error.submit.dateType")
     public String getPrimaryCompletionDateType() {
         return primaryCompletionDateType;
     }

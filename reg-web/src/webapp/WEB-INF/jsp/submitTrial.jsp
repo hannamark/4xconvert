@@ -427,7 +427,7 @@
                             </reg-web:displayTooltip>
                         </td>
                         <td>
-                            <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
+                            <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
                         </td>
                     </tr>
                     <reg-web:spaceRow/>

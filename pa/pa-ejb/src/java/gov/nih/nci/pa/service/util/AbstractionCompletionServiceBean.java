@@ -736,17 +736,21 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             messages.addError(SELECT_TRIAL_STATUS,
                               "StartDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
         }
-        if (studyProtocolDTO.getPrimaryCompletionDate() == null
-                || studyProtocolDTO.getPrimaryCompletionDate().getValue() == null) {
-            messages.addError(SELECT_TRIAL_STATUS,
-                              "PrimaryCompletionDate must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
-        }
-        if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() == null
-                || studyProtocolDTO.getPrimaryCompletionDateTypeCode()
-                        .getCode() == null) {
-            messages.addError(SELECT_TRIAL_STATUS,
-                              "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
-        }    
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.
+        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+            if (studyProtocolDTO.getPrimaryCompletionDate() == null
+                    || studyProtocolDTO.getPrimaryCompletionDate().getValue() == null) {
+                messages.addError(SELECT_TRIAL_STATUS,
+                                  "PrimaryCompletionDate must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
+            }
+            if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() == null
+                    || studyProtocolDTO.getPrimaryCompletionDateTypeCode()
+                            .getCode() == null) {
+                messages.addError(SELECT_TRIAL_STATUS,
+                                  "PrimaryCompletionDateType must be Entered.", ErrorMessageTypeEnum.ADMIN, 6);
+            }
+        }            
         if (sos != null) {
             for (String error : studyOverallStatusService
                     .validateTrialStatusAndDates(studyProtocolDTO, sos)) {

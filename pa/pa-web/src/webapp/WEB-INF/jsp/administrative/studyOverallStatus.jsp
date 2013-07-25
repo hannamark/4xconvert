@@ -134,8 +134,13 @@
                                         <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                     </a> 
                                     <s:radio name="startDateType" id="startDateType" list="dateTypeList" />
-                                </pa:valueRow>
-                                <pa:valueRow labelFor="primaryCompletionDate" labelKey="trialStatus.primary.completion.date" required="true">
+                                </pa:valueRow> 
+                                <!-- Hide the asterix in primary completion date label if it is non interventional trial and CTGovXmlRequired is false -->                               
+                                <c:set var="isRequired" value="true"/>
+                                <c:if test="${sessionScope.trialSummary.studyProtocolType=='NonInterventionalStudyProtocol' && !sessionScope.trialSummary.ctgovXmlRequiredIndicator}">
+                                    <c:set var="isRequired" value="false"/>                                
+                                </c:if>
+                                <pa:valueRow labelFor="primaryCompletionDate" labelKey="trialStatus.primary.completion.date" required="${isRequired}">
                                     <s:textfield name="primaryCompletionDate" id="primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                     <a href="javascript:showCal('Cal3')">
                                         <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />

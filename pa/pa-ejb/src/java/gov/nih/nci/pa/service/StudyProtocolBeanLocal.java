@@ -524,7 +524,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 studyProtocolDTO.getPrimaryCompletionDate() != null
                         && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
         DateMidnight today = new DateMidnight();
-        checkRequiredDates(dates, unknownPrimaryCompletionDate);
+        checkRequiredDates(dates, unknownPrimaryCompletionDate, studyProtocolDTO);
         DateMidnight startDate = new DateMidnight(dates.getStartDate());
         checkDateAndType(today, startDate, dates.getStartDateTypeCode(), "start date");
         if (unknownPrimaryCompletionDate) {
@@ -546,20 +546,26 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
         }
     }
-
-    private void checkRequiredDates(StudyProtocolDates dates, boolean unknownPrimaryCompletionDate) throws PAException {
+    
+    private void checkRequiredDates(StudyProtocolDates dates, boolean unknownPrimaryCompletionDate, 
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (dates.getStartDate() == null) {
             throw new PAException("Start date must be set.  ");
         }
-        if (dates.getPrimaryCompletionDate() == null && !unknownPrimaryCompletionDate) {
-            throw new PAException("Primary Completion date must be set.  ");
-        }
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.
+        if (!(studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
+                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue())) {
+            if (dates.getPrimaryCompletionDate() == null && !unknownPrimaryCompletionDate) {
+                throw new PAException("Primary Completion date must be set.  ");
+            }
+            if (dates.getPrimaryCompletionDateTypeCode() == null) {
+                throw new PAException("Primary Completion date type must be set.  ");
+            }
+        }        
         if (dates.getStartDateTypeCode() == null) {
             throw new PAException("Start date type must be set.  ");
-        }
-        if (dates.getPrimaryCompletionDateTypeCode() == null) {
-            throw new PAException("Primary Completion date type must be set.  ");
-        }
+        }        
         if (dates.getCompletionDate() != null && dates.getCompletionDateTypeCode() == null) {
             throw new PAException("Completion date type must be set.  ");
         }

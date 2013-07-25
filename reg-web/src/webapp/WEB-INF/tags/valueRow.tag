@@ -10,6 +10,7 @@
 <%@ attribute name="strong" required="false" type="java.lang.Boolean" description="True for a strong row" %>
 <%@ attribute name="tooltip" required="false" type="java.lang.String" description="An optional tooltip" %>
 <%@ attribute name="noLabelTag" required="false" type="java.lang.Boolean" description="If set to true, dont use label tag" %>
+<%@ attribute name="requiredId" required="false" type="java.lang.String" description="The id of the asterix span" %>
 <c:if test="${not cellOnly}">
     <c:choose>
         <c:when test="${empty id}"><tr></c:when>
@@ -23,11 +24,11 @@
         <c:choose>
             <c:when test="${not empty tooltip}">
                 <reg-web:displayTooltip tooltip="${tooltip}">
-                    <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}"/>
+                    <reg-web:label requiredId="${requiredId}" labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}"/>
                 </reg-web:displayTooltip>
             </c:when>
             <c:otherwise>
-                <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}" />
+                <reg-web:label requiredId="${requiredId}" labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}" noLabelTag="${noLabelTag}" />
             </c:otherwise>
         </c:choose>
     </td>

@@ -289,14 +289,18 @@ public class TrialValidator {
         String statusError = getText("error.submit.invalidStatus");
         boolean valid = checkDate(trialDto.getStatusDate(), STATUS_DATE, dateError, addFieldError)
                         & checkDate(trialDto.getStartDate(), START_DATE, dateError, addFieldError)
-                        & checkDate(trialDto.getPrimaryCompletionDate(), PRIMARY_COMPLETION_DATE, dateError,
-                                    addFieldError)
-                        & checkEnum(StudyStatusCode.class, trialDto.getStatusCode(), STATUS_CODE, statusError,
-                                    addFieldError)
-                        & checkEnum(ActualAnticipatedTypeCode.class, trialDto.getStartDateType(), START_DATE_TYPE,
-                                    dateTypeError, addFieldError)
-                        & checkEnum(ActualAnticipatedTypeCode.class, trialDto.getPrimaryCompletionDateType(),
-                                    PRIMARY_COMPLETION_DATE_TYPE, dateTypeError, addFieldError);
+                        & checkEnum(StudyStatusCode.class, trialDto.getStatusCode(), STATUS_CODE, 
+                                statusError, addFieldError)
+                        & checkEnum(ActualAnticipatedTypeCode.class, trialDto.getStartDateType(), START_DATE_TYPE, 
+                                dateTypeError, addFieldError);
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.
+        if (!(trialDto.getTrialType().equals("NonInterventional") && !trialDto.isXmlRequired())) {
+            valid = valid & checkDate(trialDto.getPrimaryCompletionDate(), PRIMARY_COMPLETION_DATE, dateError, 
+                    addFieldError) 
+                    & checkEnum(ActualAnticipatedTypeCode.class, trialDto.getPrimaryCompletionDateType(), 
+                            PRIMARY_COMPLETION_DATE_TYPE, dateTypeError, addFieldError);
+        }
         if (StringUtils.isNotEmpty(trialDto.getCompletionDate())) {
             valid = valid & checkDate(trialDto.getCompletionDate(), COMPLETION_DATE, dateError, addFieldError)
                     & checkEnum(ActualAnticipatedTypeCode.class, trialDto.getCompletionDateType(), COMPLETION_DATE_TYPE,
@@ -514,8 +518,12 @@ public class TrialValidator {
         Map<String, String> addFieldError = new HashMap<String, String>();
         enforceRuleStatusDate(trialDto, addFieldError);
         checkDateAndType(trialDto.getStartDate(), trialDto.getStartDateType(), START_DATE, "StartDate", addFieldError);
-        checkDateAndType(trialDto.getPrimaryCompletionDate(), trialDto.getPrimaryCompletionDateType(),
-                         PRIMARY_COMPLETION_DATE, "PrimaryCompletionDate", addFieldError);
+        //don't validate primary completion date if it is non interventional trial 
+        //and CTGovXmlRequired is false.
+        if (!(trialDto.getTrialType().equals("NonInterventional") && !trialDto.isXmlRequired())) {
+            checkDateAndType(trialDto.getPrimaryCompletionDate(), trialDto.getPrimaryCompletionDateType(),
+                    PRIMARY_COMPLETION_DATE, "PrimaryCompletionDate", addFieldError);
+        }        
         if (StringUtils.isNotEmpty(trialDto.getCompletionDate())) {
             checkDateAndType(trialDto.getCompletionDate(), trialDto.getCompletionDateType(), COMPLETION_DATE,
                              "CompletionDate", addFieldError);

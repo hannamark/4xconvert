@@ -58,6 +58,18 @@ public class TrialBatchDataValidatorTest extends AbstractHibernateTestCase {
     }
 
     @Test
+    public void testValidateBatchDTOForOptionalPrimaryCompletionDate() {
+        dto = getBatchDto();
+        dto.setPrimaryCompletionDateType(null);
+        dto.setPrimaryCompletionDate(null);
+        assertNotNull(validator.validateBatchDTO(dto));
+        
+        dto.setTrialType("NonInterventional");
+        dto.setCtGovXmlIndicator(false);
+        assertEquals("" ,validator.validateBatchDTO(dto));
+    }
+    
+    @Test
     public void testValidateBatchDTOForOrginalSubmissionWithGrants() {
          //with grants
         dto = getBatchDto();

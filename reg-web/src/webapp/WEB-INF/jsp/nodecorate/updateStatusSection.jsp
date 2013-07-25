@@ -63,8 +63,12 @@
         </s:fielderror>
     </span>
 </reg-web:valueRow>
-
-<reg-web:valueRow labelFor="trialDTO_primaryCompletionDate" labelKey="update.trial.primaryCompletionDate" required="true" tooltip="tooltip.primary_completion_date">
+<!-- Hide the asterix in primary completion date label if it is non interventional trial and CTGovXmlRequired is false -->
+<c:set var="asterix" value="true"/>
+<c:if test="${trialDTO.trialType == 'NonInterventional' && trialDTO.xmlRequired == false}">
+    <c:set var="asterix" value="false"/>
+</c:if>
+<reg-web:valueRow requiredId="primaryCompletionDateId" labelFor="trialDTO_primaryCompletionDate" labelKey="update.trial.primaryCompletionDate" required="${asterix}" tooltip="tooltip.primary_completion_date">
     <s:textfield id="trialDTO_primaryCompletionDate" name="trialDTO.primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left" />
     <a href="javascript:showCal('Cal3')">
         <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" /> 
