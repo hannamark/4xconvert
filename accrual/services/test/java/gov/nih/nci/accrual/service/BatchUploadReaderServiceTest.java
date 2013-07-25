@@ -90,6 +90,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -159,7 +160,7 @@ import org.mockito.stubbing.Answer;
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
 	
 	@Test
-	public void testNoninterventionalTrialBatchupload() throws Exception {
+	public void testNoninterventionalTrialPatientLevelBatchupload() throws Exception {
 		StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
         when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
         	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
@@ -201,7 +202,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.isEmpty(collection.getResults()));
         assertEquals((Integer) 3, collection.getTotalImports());
         
-        when(cdusBatchUploadDataValidator.getSubjectAccrualService().getAccrualCounts(any(Boolean.class), any(Long.class))).thenReturn(3L);
+        when(cdusBatchUploadDataValidator.getSubjectAccrualService().getAccrualCounts(eq(true), any(Long.class))).thenReturn(3L);
         file = new File(this.getClass().getResource("/NonInterventional_accrualCounts.txt").toURI());
         batchFile = getBatchFile(file);
         results = readerService.validateBatchData(batchFile);
@@ -220,6 +221,73 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         collection = r.getAccrualCollections().get(0);
         assertFalse(collection.isPassedValidation());
         assertEquals(AccrualChangeCode.NO, collection.getChangeCode());
+        assertEquals("NCI-2013-00001", collection.getNciNumber());
+        assertFalse(StringUtils.isEmpty(collection.getResults()));
+        assertEquals(null, collection.getTotalImports());
+	}
+	
+	@Test
+	public void testNoninterventionalTrialSummaryLevelBatchupload() throws Exception {
+		StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
+        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+        	public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+        		StudyProtocolDTO dto = new StudyProtocolDTO();
+        		dto.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
+        		dto.setStudyProtocolType(StConverter.convertToSt(NonInterventionalStudyProtocol.class.getSimpleName()));
+                Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        		Ii spSecId = new Ii();
+        		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        		dto.setIdentifier(completeIi);
+        		dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        		spSecId.setExtension("NCI-2013-00001");
+        		secondaryIdentifiers.add(spSecId);
+        		dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+        		return dto;
+        	}
+            });
+        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
+        File file = new File(this.getClass().getResource("/NonInterventional_accrualCounts.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(0, 1);
+
+        BatchFile r = getResultFromDb();
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("NonInterventional_accrualCounts.txt"));
+        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        AccrualCollections collection = r.getAccrualCollections().get(0);
+        assertTrue(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertEquals("NCI-2013-00001", collection.getNciNumber());
+        assertTrue(StringUtils.isEmpty(collection.getResults()));
+        assertEquals((Integer) 2, collection.getTotalImports());
+        
+        when(cdusBatchUploadDataValidator.getSubjectAccrualService().getAccrualCounts(eq(false), any(Long.class))).thenReturn(2L);
+        file = new File(this.getClass().getResource("/NonInterventional_Complete.txt").toURI());
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertFalse(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(1, 1);
+
+        r = getResultFromDb();
+        assertFalse(r.isPassedValidation());
+        assertFalse(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("NonInterventional_Complete.txt"));
+        assertFalse(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        collection = r.getAccrualCollections().get(0);
+        assertFalse(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
         assertEquals("NCI-2013-00001", collection.getNciNumber());
         assertFalse(StringUtils.isEmpty(collection.getResults()));
         assertEquals(null, collection.getTotalImports());

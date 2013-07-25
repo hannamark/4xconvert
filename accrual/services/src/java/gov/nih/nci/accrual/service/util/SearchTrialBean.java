@@ -254,18 +254,14 @@ public class SearchTrialBean implements SearchTrialService {
         trial.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         if (sp instanceof NonInterventionalStudyProtocol) {
             trial.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
-            try {
-                Long patientAccruals = subjectAccrualSer.getAccrualCounts(true, sp.getId());
-                Long summaryAccruals = subjectAccrualSer.getAccrualCounts(false, sp.getId());
-                if (patientAccruals == 0 && summaryAccruals == 0) {
-                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.BOTH));
-                } else if (patientAccruals > 0) {
-                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
-                } else if (summaryAccruals > 0) {
-                    trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUMMARY_LEVEL)); 
-                }
-            } catch (PAException e) {
-                throw new PAException("Accrual submissions error in convertToDto()."  + e.getMessage());                
+            Long patientAccruals = subjectAccrualSer.getAccrualCounts(true, sp.getId());
+            Long summaryAccruals = subjectAccrualSer.getAccrualCounts(false, sp.getId());
+            if (patientAccruals == 0 && summaryAccruals == 0) {
+                trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.BOTH));
+            } else if (patientAccruals > 0) {
+                trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
+            } else if (summaryAccruals > 0) {
+                trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUMMARY_LEVEL)); 
             }
         } else if (sp instanceof InterventionalStudyProtocol) {
             trial.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));

@@ -128,10 +128,12 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
 
     private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp, String accrualSubmissionLevel) {
         if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
-                && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())
-            || accrualSubmissionLevel != null 
-                    && accrualSubmissionLevel.equals(AccrualUtil.PATIENT_LEVEL)) {
+                && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
             errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
+        } else if (accrualSubmissionLevel != null 
+                    && accrualSubmissionLevel.equals(AccrualUtil.PATIENT_LEVEL)) {
+            errMsg.append("Non-interventional study has patient level accruals. "
+                   + "Summary level accruals cannot be accepted now.\n");
         }
     }
     
@@ -181,6 +183,11 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                     errMsg.append("Please enter valid patient payment method for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
                 }
+            } else if (accrualSubmissionLevel != null 
+            		&& accrualSubmissionLevel.equals(AccrualUtil.SUMMARY_LEVEL)) {
+                errMsg.append("Non-interventional study has summary level accruals."
+                     + " Patient level accruals cannot be accepted now for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");            	
             } else {
                 errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")
                 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");

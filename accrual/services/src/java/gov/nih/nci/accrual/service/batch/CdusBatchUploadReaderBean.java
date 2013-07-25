@@ -450,7 +450,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (result.isSkipBecauseOfChangeCode()) {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.changeCode.body");
-        } else if (result.isIndustrialTrial())  {
+        } else if (result.isIndustrialTrial() && CollectionUtils.isNotEmpty(result.getIndustrialCounts().keySet()))  {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.industrialTrial.body");
             StringBuffer studySiteCounts = new StringBuffer();
@@ -467,13 +467,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${submissionDate}", getFormatedCurrentDate());
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
-        StringBuffer confirmation = new StringBuffer();
-        if (result.getTotalImports() > 0) {
-            confirmation.append(String.format("Sucessfully imported %s patients/accrual counts from %s.\n", 
-                    result.getTotalImports(), result.getFileName()));
-        }
+        
         body = body.replace("${fileName}", result.getFileName());
-        if (!result.isSkipBecauseOfChangeCode() && !result.isIndustrialTrial()) {
+        if (body.contains("${count}")) {
             body = body.replace("${count}", String.valueOf(result.getTotalImports()));
         }
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
