@@ -25,7 +25,7 @@
                                 <th><label for="nihInstitutionCode"><fmt:message key="update.trial.instituteCode"/></label></th>
                                 <th><label for="serialNumber"><fmt:message key="update.trial.serialNumber"/></label></th>
                                 <th><label for="nciDivisionProgramCode"><fmt:message key="update.trial.divProgram"/></label></th>
-                                <th><label for="fundingPercent"><fmt:message key="update.trial.fundingPercent"/></label></th>
+                                <th style="display:none"><label for="fundingPercent"><fmt:message key="update.trial.fundingPercent"/></label></th>
                                 <th></th>
                             </tr>
                             <tr>
@@ -73,7 +73,7 @@
                                         </s:fielderror>
                                     </span>
                                 </td>
-                                <td>
+                                <td style="display:none">
                                     <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
                                     <span class="formErrorMsg">
                                         <s:fielderror>

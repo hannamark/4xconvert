@@ -87,7 +87,6 @@ function updateNciGrant() {
         <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
-        <display:column escapeXml="true" titleKey="trialFunding.funding.percent" property="fundingPercent" sortable="true" headerClass="sortable" />
         <pa:adminAbstractorDisplayWhenCheckedOut>
             <display:column title="Edit" class="action">
                 <s:a href="javascript:void(0)" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" /></s:a>
@@ -121,7 +120,6 @@ function updateNciGrant() {
         <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
-        <display:column escapeXml="true" titleKey="trialFunding.funding.percent" property="fundingPercent" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.inactiveText" property="inactiveCommentText" sortable="true" headerClass="sortable" /> 
         <display:column escapeXml="true" titleKey="studyProtocol.deletedDate" property="lastUpdatedDate" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.deletedBy" property="userLastUpdated" sortable="true" headerClass="sortable" /> 

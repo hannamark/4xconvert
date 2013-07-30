@@ -8,7 +8,6 @@
      <display:column titleKey="search.trial.view.nihInstitutionCode" property="nihInstitutionCode"   sortable="true" headerClass="sortable"/>
      <display:column escapeXml="true" titleKey="search.trial.view.serialNumber" property="serialNumber"   sortable="true" headerClass="sortable"/>
      <display:column titleKey="search.trial.view.divProgram" property="nciDivisionProgramCode"   sortable="true" headerClass="sortable"/>
-     <display:column titleKey="search.trial.view.fundingPercent" property="fundingPercent"   sortable="true" headerClass="sortable"/>
      <display:column title="Action" class="action" sortable="false">
         <c:choose>
             <c:when test="${row.id != null}">
@@ -31,7 +30,6 @@ Is this trial funded by an NCI grant? <s:radio name="trialDTO.nciGrant" id="nciG
     <display:column titleKey="search.trial.view.nihInstitutionCode" property="nihInstitutionCode"   sortable="true" headerClass="sortable"/>
     <display:column escapeXml="true" titleKey="search.trial.view.serialNumber" property="serialNumber"   sortable="true" headerClass="sortable"/>
     <display:column titleKey="search.trial.view.divProgram" property="nciDivisionProgramCode"   sortable="true" headerClass="sortable"/>
-    <display:column titleKey="search.trial.view.fundingPercent" property="fundingPercent"   sortable="true" headerClass="sortable"/>
     </display:table>
 </div>
 </c:when>

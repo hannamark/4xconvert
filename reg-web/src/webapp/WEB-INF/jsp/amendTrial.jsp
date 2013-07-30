@@ -14,11 +14,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/showhide.js'/>"></script>
         <!-- /po integration -->
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
                 addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "amendTrial");
                 addCalendar("Cal2", "Select Date", "trialDTO.startDate", "amendTrial");
@@ -41,7 +37,23 @@
             var respartOrgid;
             var contactMail;
             var contactPhone;
-            
+
+            jQuery(function() {
+                jQuery("#serialNumber").autocomplete({delay: 250,
+                      source: function(req, responseFn) {
+                        var url = registryApp.contextPath + '/ctro/json/ajaxI2EGrantsloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
+                        jQuery.getJSON(url,null,function(data){
+                               responseFn(jQuery.map(data.serialNumbers, function (value, key) { 
+                                    return {
+                                        label: value,
+                                        value: key
+                                    };
+                               }));
+                        });
+                    }
+                });
+            });
+
             function setorgid(orgIdentifier, oname, p30grant) {
                 orgid = orgIdentifier;
                 chosenname = oname.replace(/&apos;/g,"'");
@@ -454,7 +466,7 @@
                                             <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/></<label></th>
                                             <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/></<label></th>
                                             <th><label for="nciDivisionProgramCode"><fmt:message key="submit.trial.divProgram"/></<label></th>
-                                            <th><label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label></th>
+                                            <th style="display:none"><label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label></th>
                                             <th></th>
                                         </tr>
                                         <tr>
@@ -485,7 +497,7 @@
                                             <td>
                                                 <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  cssStyle="width:150px" />
                                             </td>
-                                            <td>
+                                            <td style="display:none">
                                                 <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
                                             </td>
                                             <td> <input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>

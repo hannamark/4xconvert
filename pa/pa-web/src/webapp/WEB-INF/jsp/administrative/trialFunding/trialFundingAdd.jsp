@@ -6,11 +6,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="trialFunding.addedittitle"/></title>
-    <s:head />
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 </head>
-<SCRIPT LANGUAGE="JavaScript">
+
+<script type="text/javascript">
+
+jQuery(function() {
+    jQuery("#serialNumber").autocomplete({delay: 250,
+          source: function(req, responseFn) {
+            var url = paApp.contextPath + '/ctro/json/ajaxtrialFundingloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
+            jQuery.getJSON(url,null,function(data){
+                   responseFn(jQuery.map(data.serialNumbers, function (value, key) { 
+                        return {
+                            label: value,
+                            value: key
+                        };
+                   }));
+            });
+        }
+    });
+});
 
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
@@ -31,7 +45,7 @@ function tooltip() {
 		BubbleTips.activateTipOn("acronym");
 		BubbleTips.activateTipOn("dfn"); 
 	}
-</SCRIPT>
+</script>
 
 <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
@@ -129,7 +143,7 @@ function tooltip() {
                              </span>
                       </td>         
                 </tr>         
-                <tr>
+                <tr style="display:none">
                      <td scope="row" class="label">
                          <label for="fundingPercent">
                             <fmt:message key="trialFunding.funding.percent"/>:

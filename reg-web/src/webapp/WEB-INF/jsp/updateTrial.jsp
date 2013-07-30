@@ -13,11 +13,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/showhide.js'/>"></script>
         <!-- /po integration -->
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript">
             addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "updateTrial");
             addCalendar("Cal2", "Select Date", "trialDTO.startDate", "updateTrial");
@@ -32,7 +28,22 @@
         <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocolUrl"/>
         <c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
         <script type="text/javascript" language="javascript">
-            
+            jQuery(function() {
+                jQuery("#serialNumber").autocomplete({delay: 250,
+                      source: function(req, responseFn) {
+                        var url = registryApp.contextPath + '/ctro/json/ajaxI2EGrantsloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
+                        jQuery.getJSON(url,null,function(data){
+                               responseFn(jQuery.map(data.serialNumbers, function (value, key) { 
+                                    return {
+                                        label: value,
+                                        value: key
+                                    };
+                               }));
+                        });
+                    }
+                });
+            });
+
             function reviewProtocolUpdate() {
                 submitFirstForm("save", "updateTrialreviewUpdate.action");
                 showPopWin('${reviewProtocolUrl}', 600, 200, '', 'Review Register Trial');

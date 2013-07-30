@@ -7,7 +7,6 @@
 	<display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="Serial Number" property="serialNumber"  headerClass="sortable"/>
 	<display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable"/>
-    <display:column title="% Grant Funding This Trial" property="fundingPercent" headerClass="sortable"/>
 	<display:column title="Action" class="action" sortable="false">
 			<input type="button" value="Delete" onclick="deleteGrantRow('${row.rowId}')"/>
 	</display:column>
@@ -19,7 +18,6 @@
 	<display:column title="Institute Code" property="nihInstitutionCode"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="Serial Number" property="serialNumber"  headerClass="sortable"/>
 	<display:column title="NIH Division Program Code" property="nciDivisionProgramCode"  headerClass="sortable"/>
-    <display:column title="% Grant Funding This Trial" property="fundingPercent" headerClass="sortable"/>
 	<display:column title="Action" class="action" sortable="false">
 			<input type="button" value="Delete" onclick="deleteGrantRow('${row.rowId}')"/>
 	</display:column>

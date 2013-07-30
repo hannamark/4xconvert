@@ -123,6 +123,7 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
+import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -650,5 +651,10 @@ public class JndiServiceLocator implements ServiceLocator {
     public TrialDataVerificationServiceLocal getTrialDataVerificationService() {
         return (TrialDataVerificationServiceLocal) JNDIUtil
                 .lookupPa("/pa/TrialDataVerificationBeanLocal/local");
+    }
+
+    @Override
+    public I2EGrantsServiceLocal getI2EGrantsService() {
+        return (I2EGrantsServiceLocal) JNDIUtil.lookupPa("/pa/I2EGrantsServiceBean/local");
     }
 }

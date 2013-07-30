@@ -279,6 +279,11 @@
     <target name="ivy-container" depends="init:ivy">
         <ivy:resolve refresh="true" conf="container" />
         <ivy:retrieve pattern="${lib.dir}/pa-ear/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="container" />
+        <copy todir="${lib.dir}/pa-ear/container">
+            <fileset dir="./lib">
+                <include name="ojdbc*.jar"/>
+            </fileset>
+        </copy>
     </target>
     <target name="ivy-get" depends="init:ivy,ivy-runtime,ivy-container" description="Updates the local ivy repository">
     </target>

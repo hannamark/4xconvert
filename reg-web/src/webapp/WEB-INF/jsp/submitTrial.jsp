@@ -6,13 +6,13 @@
     <head>
         <title><fmt:message key="submit.trial.page.title"/></title>
         <s:head/>
+
         <!-- po integration -->
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <!-- /po integration -->
         <script type="text/javascript" language="javascript">
                 addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "submitTrial");
                 addCalendar("Cal2", "Select Date", "trialDTO.startDate", "submitTrial");
@@ -35,7 +35,23 @@
             var contactMail;
             var contactPhone;
             var countOfOtherIdentifiers = 0;
-            
+
+            jQuery(function() {
+                jQuery("#serialNumber").autocomplete({delay: 250,
+                      source: function(req, responseFn) {
+                        var url = registryApp.contextPath + '/ctro/json/ajaxI2EGrantsloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
+                        jQuery.getJSON(url,null,function(data){
+                               responseFn(jQuery.map(data.serialNumbers, function (value, key) { 
+                                    return {
+                                        label: value,
+                                        value: key
+                                    };
+                               }));
+                        });
+                    }
+                });
+            });
+
             function countLeft(field, count, max) {
                 // if the length of the string in the input field is greater than the max value, trim it 
                 if ($(field).value.length > max)
@@ -556,7 +572,7 @@
                                                    <label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/></label>
                                                 </reg-web:displayTooltip>
                                             </th>
-                                            <th>
+                                            <th style="display:none">
                                                 <reg-web:displayTooltip tooltip="">
                                                    <label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label>
                                                 </reg-web:displayTooltip>
@@ -591,7 +607,7 @@
                                             <td>
                                                 <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  cssStyle="width:150px" />
                                             </td>
-                                            <td>
+                                            <td style="display:none">
                                                 <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
                                             </td>
                                             <td><input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>

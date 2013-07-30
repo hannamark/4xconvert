@@ -519,11 +519,21 @@
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
         <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
+        <copy todir="${lib.dir}/pa-ejb/compile">
+            <fileset dir="../pa-ear/lib">
+                <include name="ojdbc*.jar"/>
+            </fileset>
+        </copy>
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
-            <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
+        <ivy:resolve refresh="true" conf="test" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
+        <copy todir="${lib.dir}/pa-ejb/test">
+            <fileset dir="../pa-ear/lib">
+                <include name="ojdbc*.jar"/>
+            </fileset>
+        </copy>
     </target>
     <target name="ivy-maven" depends="init:ivy">
         <ivy:resolve refresh="true" conf="maven" />

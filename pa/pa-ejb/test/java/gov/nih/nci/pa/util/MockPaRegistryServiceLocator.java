@@ -56,6 +56,7 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
+import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
@@ -653,6 +654,12 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
 
     @Override
     public TrialDataVerificationServiceLocal getTrialDataVerificationService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public I2EGrantsServiceLocal getI2EGrantsService() {
         // TODO Auto-generated method stub
         return null;
     }

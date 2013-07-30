@@ -390,6 +390,11 @@
             <result name="byTrial">/WEB-INF/jsp/viewAccrualAccessAssignmentByTrial.jsp</result>
             <result name="success">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
         </action>
-    
+    </package>
+
+    <package name="ctrojson" namespace="/ctro/json" extends="json-default">
+        <action name="ajaxI2EGrants*" class="gov.nih.nci.registry.action.I2EGrantsJSONAction" method="{1}">
+            <result type="json"/>
+        </action>
     </package>
 </struts>

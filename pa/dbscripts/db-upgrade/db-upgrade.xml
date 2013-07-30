@@ -1336,8 +1336,12 @@
      <changeSet id="PO-4877" author="Reshma">
         <comment>creating new table for storing trial verification data</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-4877.sql"/>
-     </changeSet>     
-      <changeSet id="PO-6264" author="Reshma">
+     </changeSet>
+     <changeSet id="PO-6254" author="Hugh">
+        <comment>I2E Grants url.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6254.sql"/>
+     </changeSet>
+     <changeSet id="PO-6264" author="Reshma">
         <comment>updating the Mail content, date and n values in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6264.sql"/>
      </changeSet>  

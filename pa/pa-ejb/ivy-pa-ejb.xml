@@ -25,6 +25,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="commons-io"             name="commons-io"              rev="1.4"             conf="compile->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="commons-beanutils"           name="commons-beanutils"            rev="1.6"             conf="compile->master"/>
+    <dependency org="commons-dbutils"        name="commons-dbutils"         rev="1.5"             conf="compile->master"/>
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
 
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>

@@ -107,7 +107,6 @@ public class TrialFundingAction extends AbstractMultiObjectDeleteAction {
     private static final long serialVersionUID = 4865176377748106852L;
     private static final String QUERY_RESULT = "query";
     private static final String DELETE_RESULT = "delete";
-    private static final String NCI_GRANT = "displayNciGrant";
     private static final Double MAX_FUNDING_PCT = 100d;
     private TrialFundingWebDTO trialFundingWebDTO = new TrialFundingWebDTO();
     private Boolean nciGrant;

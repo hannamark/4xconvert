@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
+import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
@@ -671,6 +672,10 @@ public final class PaRegistry {
     public static TrialDataVerificationServiceLocal getTrialDataVerificationService() {
         return getInstance().getServiceLocator().getTrialDataVerificationService();
     }
-   
-
+    /**
+     * @return the I2E Grants service
+     */
+    public static I2EGrantsServiceLocal getI2EGrantsService() {
+        return getInstance().getServiceLocator().getI2EGrantsService();
+    }
 }

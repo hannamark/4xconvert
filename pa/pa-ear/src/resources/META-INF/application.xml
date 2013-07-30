@@ -39,6 +39,9 @@
         <java>commons-lang-2.4.jar</java>
     </module>
     <module>
+        <java>commons-dbutils-1.5.jar</java>
+    </module>
+    <module>
         <java>joda-time-1.6.2.jar</java>
     </module>
     <module>

@@ -21,6 +21,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="commons-io"             name="commons-io"              rev="1.4"             conf="runtime->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="runtime->master"/>
     <dependency org="commons-beanutils"           name="commons-beanutils"            rev="1.6"             conf="runtime->master"/>
+    <dependency org="commons-dbutils"        name="commons-dbutils"         rev="1.5"             conf="runtime->master"/>
     <dependency org="com.lowagie"            name="itext"                   rev="2.1.7"           conf="runtime->master"/>
     <dependency org="com.lowagie"            name="itext-rtf"               rev="2.1.7"           conf="runtime->master"/>
     <dependency org="net.sf.ehcache"         name="ehcache"                 rev="1.2.4"           conf="runtime->master">
