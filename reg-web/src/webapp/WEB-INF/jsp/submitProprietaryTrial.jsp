@@ -264,10 +264,10 @@
                     </reg-web:valueRow>
                     
                     <reg-web:valueRow labelFor="trialDTO.consortiaTrialCategoryCode" labelKey="update.proprietary.trial.consortiaTrialCategoryCode">                                               
-                        <s:select headerKey="" headerValue="No"
+                        <s:select headerKey="" headerValue="Yes"
                                   id="trialDTO.consortiaTrialCategoryCode"
                                   name="trialDTO.consortiaTrialCategoryCode"
-                                  list="#{'National':'Yes - National', 'Externally Peer-Reviewed':'Yes - Externally Peer-Reviewed'}"
+                                  list="#{'National':'No - National', 'Externally Peer-Reviewed':'No - Externally Peer-Reviewed'}"
                                   cssStyle="width:206px" />
                          <span class="formErrorMsg">
                                <s:fielderror>

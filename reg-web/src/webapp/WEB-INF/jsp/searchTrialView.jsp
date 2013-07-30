@@ -292,7 +292,7 @@
                                 
                             </reg-web:valueRow>
                             <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
-                                    <c:out value="${empty requestScope.consortiaTrialCategoryCode?'No':'Yes - '}"/>
+                                    <c:out value="${empty requestScope.consortiaTrialCategoryCode?'Yes':'No - '}"/>
                                     <c:out value="${requestScope.consortiaTrialCategoryCode}"/>
                             </reg-web:valueRow>
                         </c:if>

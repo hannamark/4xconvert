@@ -129,10 +129,10 @@
                             <label for="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"><fmt:message key="studyProtocol.consortiaTrialCategoryCode"/></label>
                         </td>                        
                         <td class="value">
-                            <s:select headerKey="" headerValue="No"
+                            <s:select headerKey="" headerValue="Yes"
                                   id="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
                                   name="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
-                                  list="#{'National':'Yes - National', 'Externally Peer-Reviewed':'Yes - Externally Peer-Reviewed'}"
+                                  list="#{'National':'No - National', 'Externally Peer-Reviewed':'No - Externally Peer-Reviewed'}"
                                   cssStyle="width:206px" />                           
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
