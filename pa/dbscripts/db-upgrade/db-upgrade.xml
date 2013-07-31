@@ -1332,7 +1332,7 @@
      <changeSet id="PO-6291" author="monishd">
         <comment>System-generated email messages: missing space after (trial) TITLE</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6291.sql"/>
-     </changeSet>         
+     </changeSet>
      <changeSet id="PO-4877" author="Reshma">
         <comment>creating new table for storing trial verification data</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-4877.sql"/>
@@ -1344,7 +1344,7 @@
      <changeSet id="PO-6264" author="Reshma">
         <comment>updating the Mail content, date and n values in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6264.sql"/>
-     </changeSet>  
+     </changeSet>
       <changeSet id="PO-6265" author="Reshma">
         <comment>updating the mail content in pa_properties </comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6265.sql"/>
@@ -1352,9 +1352,13 @@
      <changeSet id="PO-5424" author="Kalpana">
         <comment>New summary 4 org table to store multiple summary 4 sponsors.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5424.sql"/>
-     </changeSet> 
+     </changeSet>
      <changeSet id="PO-5424_2" author="Kalpana">
         <comment>get the max id from study_resourcing for rv_study_resourcing view.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5424_2.sql"/>
-     </changeSet>    
+     </changeSet>
+     <changeSet id="PO-6253" author="Hugh">
+        <comment>Grants data clean up</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6253.sql"/>
+     </changeSet>
 </databaseChangeLog>
