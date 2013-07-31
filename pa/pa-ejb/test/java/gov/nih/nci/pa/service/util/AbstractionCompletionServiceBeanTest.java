@@ -94,9 +94,18 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.Converters;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -126,6 +135,9 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,6 +145,9 @@ import java.util.List;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author Michael Visee
@@ -261,6 +276,46 @@ public class AbstractionCompletionServiceBeanTest {
         when(studyIndldeService.getByStudyProtocol(any(Ii.class))).thenReturn(sIndDtoList);
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(ispDTO);
         when(protocolQueryService.getTrialSummaryByStudyProtocolId(anyLong())).thenReturn(new StudyProtocolQueryDTO());
+        
+        List<StudySiteDTO> ssDtos = new ArrayList<StudySiteDTO>();
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ss.setLocalStudyProtocolIdentifier("dde3ef4c-e607-4366-9265-4d4a8b2b285d");
+        final ResearchOrganization ro = PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTEP_ORG_NAME);
+        ro.setIdentifier("1");
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.getOrganization().setStatusCode(EntityStatusCode.ACTIVE);
+        ss.setResearchOrganization(ro);
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(1L);
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ssDtos.add(Converters.get(StudySiteConverter.class).convertFromDomainToDto(ss));
+        ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ss.setLocalStudyProtocolIdentifier("NCT_2013-07-26T12:36:24-4d4a8b2b285d");
+        final ResearchOrganization ro2 = PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTGOV_ORG_NAME);
+        ro2.setIdentifier("2");
+        ro2.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro2.getOrganization().setStatusCode(EntityStatusCode.ACTIVE);
+        ss.setResearchOrganization(ro2);
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ssDtos.add(Converters.get(StudySiteConverter.class).convertFromDomainToDto(ss));
+        when(studySiteService.getByStudyProtocol(any(Ii.class), Matchers.anyListOf(StudySiteDTO.class))).thenReturn(ssDtos);
+        CorrelationUtils corrUtils = mock(CorrelationUtils.class);
+        when(corrUtils.getStructuralRoleByIi(any(Ii.class))).thenAnswer(new Answer<StructuralRole>() {
+            @Override
+            public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
+                Object args[] = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                if (ii.getExtension().equals("1")) {
+                    return ro;
+                }
+                return ro2;
+            }
+          });
+        sut.setCorrelationUtils(corrUtils);
     	try {
     		sut.validateAbstractionCompletion(spIi);
     		//fail("Study Protocol Identifier is null");

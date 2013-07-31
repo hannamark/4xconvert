@@ -82,6 +82,8 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -165,6 +167,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * service bean for validating the Abstraction.
@@ -1474,8 +1477,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                       ErrorMessageTypeEnum.ADMIN, 1);
                 } else if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(dto.getFunctionalCode()
                                                                                             .getCode())) {
-                    messages.addError(SELECT_TRIAL_DETAILS,
-                                      "NCT Number cannot be more than 30 characters", ErrorMessageTypeEnum.ADMIN, 1);
+                	StructuralRole srRO = correlationUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi());
+                    if (srRO instanceof ResearchOrganization
+                            && StringUtils.equals(PAConstants.CTGOV_ORG_NAME,
+                                    ((ResearchOrganization) srRO).getOrganization()
+                                            .getName())) {
+                        messages.addError(SELECT_TRIAL_DETAILS,
+                                "NCT Number cannot be more than 30 characters", ErrorMessageTypeEnum.ADMIN, 1);                    	
+                    } else if (srRO instanceof ResearchOrganization
+                            && StringUtils.equals(PAConstants.CTEP_ORG_NAME,
+                                    ((ResearchOrganization) srRO).getOrganization()
+                                            .getName())) {
+                        messages.addError(SELECT_TRIAL_DETAILS,
+                                "CTEP Number cannot be more than 30 characters", ErrorMessageTypeEnum.ADMIN, 1);  
+                    } else if (srRO instanceof ResearchOrganization
+                            && StringUtils.equals(PAConstants.DCP_ORG_NAME,
+                                    ((ResearchOrganization) srRO).getOrganization()
+                                            .getName())) {
+                        messages.addError(SELECT_TRIAL_DETAILS,
+                                "DCP Number cannot be more than 30 characters", ErrorMessageTypeEnum.ADMIN, 1);  
+                    }
                 }
 
             }
