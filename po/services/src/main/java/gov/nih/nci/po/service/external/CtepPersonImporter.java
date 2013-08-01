@@ -189,6 +189,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             comparePersonIi(ctepPersonId, identifiedPerson.getAssignedIdentifier());
             return updateCtepPerson(ctepPerson, identifiedPerson);
         } catch (CTEPEntException e) {
+            LOG.info(e);
             // importing an object that is does not exist remotely, so inactivate it if we have it locally.
             IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
             if (identifiedPerson != null) {
@@ -455,6 +456,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             }
             return hcp;
         } catch (CTEPEntException e) {
+            LOG.info(e);
             return null;
         }
     }
@@ -490,6 +492,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
             }
             return crs;
         } catch (CTEPEntException e) {
+            LOG.info(e);
             return null;
         }
     }
