@@ -194,10 +194,19 @@
                         <s:textfield id="localProtocolIdentifier" name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" maxlength="50"/> 
                         <pa:fieldError fieldName="gtdDTO.LocalProtocolIdentifier"/>
                     </pa:valueRow>
-                    <pa:valueRow labelFor="nctIdentifier" labelKey="trialValidation.nctNumber">
-                        <s:textfield id="nctIdentifier" name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/>
-                        <pa:fieldError fieldName="gtdDTO.nctIdentifier"/>
-                    </pa:valueRow>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="nctIdentifier"><fmt:message key="studyProtocol.nctNumber"/></label> 
+                        </td>
+                        <td class="value">
+                            <s:textfield id="nctIdentifier" name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/>
+                            <span class="formErrorMsg">
+                                <s:fielderror cssStyle = "white-space:pre-line;">
+                                    <s:param>gtdDTO.nctIdentifier</s:param>
+                                </s:fielderror>
+                            </span> 
+                        </td>
+                    </tr>
                     <pa:valueRow labelKey="studyProtocol.proprietaryTrial">
                         <s:property value="gtdDTO.proprietarytrialindicator"/>
                     </pa:valueRow>
