@@ -32,7 +32,7 @@
 </head>
     <body>
         <h1><fmt:message key="trial.data.verification.title" /></h1> 
-        <c:set var="topic" scope="request" value="searchresults"/>
+        <c:set var="topic" scope="request" value="dataverification"/>
         <div class="box">
                 <reg-web:sucessMessage/>
                 <table class="form">
