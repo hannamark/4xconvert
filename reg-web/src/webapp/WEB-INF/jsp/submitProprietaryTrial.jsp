@@ -181,7 +181,7 @@
                         <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                         <span class="info">(Mandatory if Exists)</span>
                         <span class="formErrorMsg">
-                            <s:fielderror>
+                            <s:fielderror cssStyle = "white-space:pre-line;">
                                 <s:param>trialDTO.nctIdentifier</s:param>
                             </s:fielderror>
                         </span>
