@@ -223,7 +223,7 @@
                         <td>
                             <s:textfield name="gtdDTO.nctIdentifier" id="gtdDTO.nctIdentifier"/>
                             <span class="formErrorMsg">
-                                <s:fielderror>
+                                <s:fielderror cssStyle = "white-space:pre-line;">
                                     <s:param>gtdDTO.nctIdentifier</s:param>
                                 </s:fielderror>
                             </span> 

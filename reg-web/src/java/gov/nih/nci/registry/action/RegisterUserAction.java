@@ -131,6 +131,8 @@ import com.opensymphony.xwork2.Preparable;
  * Register User Action.
  *
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveClassLength", 
+                    "PMD.TooManyMethods", "PMD.TooManyFields", "PMD.ExcessiveMethodLength" })
 public class RegisterUserAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 1359534429821398453L;
@@ -373,6 +375,9 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
              if (registryUserWebDTO.getAffiliatedOrganizationId() != null) {
                  loadAdminUsers(registryUserWebDTO.getAffiliatedOrganizationId());
              }
+             String loginName =  ServletActionContext.getRequest().getRemoteUser();
+             ServletActionContext.getRequest().setAttribute("userName", 
+                    CsmUserUtil.getGridIdentityUsername(loginName));
             return Constants.MY_ACCOUNT_ERROR;
         }
         try {

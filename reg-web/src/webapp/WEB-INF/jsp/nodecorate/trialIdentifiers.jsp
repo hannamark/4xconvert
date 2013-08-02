@@ -11,4 +11,9 @@
 </reg-web:valueRow>   
 <reg-web:valueRow labelFor="trialDTO.nctIdentifier" labelKey="submit.trial.nctNumber" tooltip="tooltip.nct_number">
     <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
+    <span class="formErrorMsg">
+       <s:fielderror cssStyle = "white-space:pre-line;">
+            <s:param>trialDTO.nctIdentifier</s:param>
+       </s:fielderror>
+    </span> 
 </reg-web:valueRow>          

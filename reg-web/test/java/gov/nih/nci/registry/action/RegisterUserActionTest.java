@@ -256,7 +256,10 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
     @Test
     public void testUpdateAccountFieldError() {
         regDto.setCountry("France");
+        MockHttpServletRequest req = (MockHttpServletRequest) ServletActionContext.getRequest();
+        req.setRemoteUser("RegUser");
         assertEquals(Constants.MY_ACCOUNT_ERROR, action.updateAccount());
+        assertEquals(req.getAttribute("userName"), "RegUser");
     }
 
     @Test

@@ -86,9 +86,14 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -101,6 +106,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -185,6 +191,51 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         spDto.setStudyProtocolIdentifier(studyIi);
         spDto.setTargetAccrualNumber(IntConverter.convertToInt(63));
         return spDto;
+    }
+    
+    
+    @Test
+    public void createNCTIdentifier() throws Exception {    	
+    	TestSchema.addAbstractedWorkflowStatus(studyId);
+    	Organization ctgov = new Organization();
+        ctgov.setName(PAConstants.CTGOV_ORG_NAME);
+        ctgov.setUserLastUpdated(TestSchema.getUser());
+        ctgov.setDateLastUpdated(TestSchema.TODAY);
+        ctgov.setIdentifier("2");
+        ctgov.setStatusCode(EntityStatusCode.PENDING);
+        TestSchema.addUpdObject(ctgov);
+        
+        ResearchOrganization resOrg = new ResearchOrganization();
+        resOrg.setOrganization(ctgov);
+        resOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        resOrg.setIdentifier("1");
+        TestSchema.addUpdObject(resOrg);
+        
+        StudySite sPart3 = new StudySite();
+        sPart3.setLocalStudyProtocolIdentifier("Local NCTID");
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(studyId);
+        sPart3.setStudyProtocol(sp);
+        sPart3.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        sPart3.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        sPart3.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("8/1/2013"));
+        sPart3.setResearchOrganization(resOrg);
+        TestSchema.addUpdObject(sPart3);
+    	
+        StudySiteDTO spDto = new StudySiteDTO();
+        spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local NCTID"));
+        spDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(1)));
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        Ii resOrgIi = new Ii();
+        resOrgIi.setExtension(researchOrgId.toString());
+        resOrgIi.setIdentifierName(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+        spDto.setResearchOrganizationIi(resOrgIi);
+        try {
+            remoteEjb.create(spDto);
+            fail("The NCT Trial Identifier provided is tied to another trial in CTRP system. Please check the ID provided and try again. If you believe that the ID provided is correct then please contact CTRO staff.");
+        } catch (PAException e) {
+            // expected behavior
+        }
     }
 
     @Test

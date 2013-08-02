@@ -156,7 +156,7 @@
                                 </pa:valueRow>
 								<td>&nbsp;</td>
 								<td>
-								    <span class="info">Please refer to the <a href='<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getStateTransitionDiagramUrl()" />' target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
+								    <span class="info">Please refer to <a href="https://wiki.nci.nih.gov/x/l4CNC" target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
 								    </td>
 								
                             </table>

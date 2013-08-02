@@ -33,6 +33,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteSortCriterion;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AssignedIdentifierEnum;
 import gov.nih.nci.pa.util.CorrelationUtils;
@@ -360,13 +361,17 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 if ((dto.getIdentifier() == null && dto.getStudyProtocolIdentifier() == null)
                     || (!ISOUtil.isIiNull(dto.getIdentifier()) 
                             && !String.valueOf(ss.getId()).equals(dto.getIdentifier().getExtension()))
-                    || (StringUtils.isNotEmpty(nciId) && !nciId.equals(ssNciId))) {
-                    throw new PAValidationException(
-                            "The " + getIdentifierName(ss)
-                                    + " provided is tied to another trial in CTRP system. "
-                                    + getTrialInfo(ss)                                    
-                                    + ". Please check the ID provided and try again. If you believe that"
-                                    + " the ID provided is correct then please contact CTRO staff.");
+                            || (StringUtils.isNotEmpty(nciId) && !nciId.equals(ssNciId))) {
+                    StringBuffer sbuf = new StringBuffer();
+                    sbuf.append("The ").append(getIdentifierName(ss))
+                    .append(" provided is tied to another trial in CTRP system.\n")
+                    .append(getTrialInfo(ss))
+                    .append("Please check the ID provided and try again.");
+
+                    if (!CSMUserService.getInstance().isCurrentUserAbstractor()) {
+                        sbuf.append(" If you believe that the ID provided is correct then please contact CTRO staff.");
+                    }
+                    throw new PAValidationException(sbuf.toString());
                 }
             }
         }
@@ -380,8 +385,10 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                     IiConverter.convertToIi(sp.getId()));
             StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                     sp.getId());
-            sbuf.append(PAUtil.getAssignedIdentifierExtension(spDTO)).append(";")
-            .append(spDTO.getOfficialTitle().getValue()).append(";").append(spqDTO.getLocalStudyProtocolIdentifier());
+            sbuf.append("NCI ID: ").append(PAUtil.getAssignedIdentifierExtension(spDTO))
+            .append("\nLead Org ID: ").append(spqDTO.getLocalStudyProtocolIdentifier())
+            .append("\nTitle: ")
+            .append(spDTO.getOfficialTitle().getValue()).append(".\n");
                         
         } catch (Exception e) {
             LOG.error(e, e);

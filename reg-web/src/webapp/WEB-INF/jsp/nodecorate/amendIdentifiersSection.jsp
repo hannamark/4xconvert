@@ -32,6 +32,11 @@
     </td>
     <td>
         <s:textfield id="nctIdentifierField" name="trialDTO.nctIdentifier" maxlength="200" size="100" cssStyle="width:200px"/>
+        <span class="formErrorMsg">
+           <s:fielderror cssStyle = "white-space:pre-line;">
+                <s:param>trialDTO.nctIdentifier</s:param>
+           </s:fielderror>
+        </span> 
     </td>
 </tr>
 <tr>

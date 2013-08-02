@@ -95,6 +95,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -203,6 +204,15 @@ public class TrialValidator {
                             .getSection801Indicator())) {
                 addFieldError.put("trialDTO.section801Indicator",
                         getText("error.submit.801.nonInterventional"));
+            }
+        }
+        if (StringUtils.isNotEmpty(trialDto.getNctIdentifier())) {
+            PAServiceUtils util = new PAServiceUtils();
+            String nctValidationResultString = util.validateNCTIdentifier(trialDto.getNctIdentifier(), 
+                    StringUtils.isNotEmpty(trialDto.getIdentifier()) 
+                    ? IiConverter.convertToIi(trialDto.getIdentifier()) : null);
+            if (StringUtils.isNotEmpty(nctValidationResultString)) {
+                addFieldError.put("trialDTO.nctIdentifier", nctValidationResultString);
             }
         }
     }
