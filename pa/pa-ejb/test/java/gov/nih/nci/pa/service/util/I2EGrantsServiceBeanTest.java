@@ -42,7 +42,7 @@ public class I2EGrantsServiceBeanTest extends AbstractHibernateTestCase {
     public void getBySerialNumberFound1() throws Exception {
         List<I2EGrant> result = svc.getBySerialNumber("1234");
         assertEquals(1, result.size());
-        assertEquals("1234 orgName2 title2 piFirst2 piLast2", result.get(0).toString());
+        assertEquals("1234 - orgName2; title2; piFirst2 piLast2", result.get(0).toString());
     }
 
     @Test

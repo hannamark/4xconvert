@@ -90,11 +90,11 @@ public interface I2EGrantsServiceLocal {
         @Override
         public String toString() {
             StringBuffer result = new StringBuffer(serialNumber);
-            result.append(' ');
+            result.append(" - ");
             result.append(organizationName);
-            result.append(' ');
+            result.append("; ");
             result.append(projectName);
-            result.append(' ');
+            result.append("; ");
             result.append(piFirstName);
             result.append(' ');
             result.append(piLastName);
