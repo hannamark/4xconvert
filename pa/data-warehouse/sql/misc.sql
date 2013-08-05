@@ -24,5 +24,15 @@ from
 UPDATE DW_USER USR 
   SET AFFILIATED_ORGANIZATION = (SELECT DISTINCT NAME 
                                  FROM DW_ORGANIZATION ORG 
-                                 WHERE ORG.INTERNAL_ID = USR.AFFILIATED_ORGANIZATION_ID)
+                                 WHERE ORG.INTERNAL_ID = USR.AFFILIATED_ORGANIZATION_ID);
 
+--Put here instead of disease.groovy because of java heap issue
+INSERT INTO dw_study_disease
+    SELECT sd.ct_gov_xml_indicator, 'TREE', sd.date_last_created, sd.date_last_updated, dp.disease_code,
+           dp.preferred_name, dp.menu_display_name, sd.internal_system_id, dp.parent_disease_identifier,
+           NULL, sd.nci_id, dp.nt_term_identifier, sd.user_last_created, sd.user_last_updated
+      FROM dw_study_disease sd
+      JOIN stg_dw_disease_parents dp ON (sd.internal_system_id2 = dp.disease_identifier);
+DELETE FROM dw_study_disease WHERE INCLUSION_INDICATOR = 'TREE'
+  AND (nci_id, internal_system_id2) IN (SELECT nci_id, internal_system_id2 FROM dw_study_disease WHERE INCLUSION_INDICATOR = 'TRIAL');
+DROP TABLE stg_dw_disease_parents;

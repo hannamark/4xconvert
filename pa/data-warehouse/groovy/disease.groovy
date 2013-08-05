@@ -1,13 +1,14 @@
 import groovy.sql.Sql
+
 def sql = """SELECT
                 CASE WHEN sd.ctgovxml_indicator THEN 'YES'
                      ELSE 'NO'
                 END as ct_indicator,
+                'TRIAL' as inclusion_indicator,
                 sd.date_last_created, sd.date_last_updated, disease.disease_code, disease.preferred_name, disease.menu_display_name,
                 sd.identifier,
-                CASE WHEN sd.lead_disease_indicator THEN 'YES'
-                     ELSE 'NO'
-                END as lead_indicator,
+                disease.identifier AS internal_system_id2,
+                NULL as lead_indicator,
                 nci_id.extension, disease.nt_term_identifier,
                 CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
                     WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
@@ -27,14 +28,47 @@ def sql = """SELECT
                 left outer join csm_user as updater on sd.user_last_created_id = updater.user_id
                 left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
                 where sp.status_code = 'ACTIVE'"""
+
+def sql_parents = """SELECT dp.disease_identifier, dp.parent_disease_identifier, d.disease_code, d.nt_term_identifier, d.preferred_name, d.menu_display_name 
+                       FROM pdq_disease_parent dp
+                       JOIN pdq_disease d ON (dp.parent_disease_identifier = d.identifier)"""
+
+def sql_load_parents = """INSERT INTO stg_dw_study_disease
+                                       SELECT sd.ct_gov_xml_indicator, 'TREE', sd.date_last_created, sd.date_last_updated, dp.disease_code,
+                                       dp.preferred_name, dp.menu_display_name, sd.internal_system_id, dp.parent_disease_identifier,
+                                       'NO', sd.nci_id, dp.nt_term_identifier, sd.user_last_created, sd.user_last_updated
+                                       FROM stg_dw_study_disease sd
+                                       JOIN stg_dw_disease_parents dp ON (sd.internal_system_id2 = dp.disease_identifier)"""
+
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
+def parents = destinationConnection.dataSet("STG_DW_DISEASE_PARENTS"); 
 def diseases = destinationConnection.dataSet("STG_DW_STUDY_DISEASE");
+sourceConnection.eachRow(sql_parents) { row ->
+    parents.add(disease_identifier: row.disease_identifier, parent_disease_identifier: row.parent_disease_identifier,
+        disease_code: row.disease_code, nt_term_identifier: row.nt_term_identifier, preferred_name: row.preferred_name, menu_display_name: row.menu_display_name)
+}
+
+System.out.println("Creating disease parents table...");
+def rowsAffected = -1;
+while (rowsAffected != 0) {
+    def inserted = destinationConnection.executeInsert("""INSERT INTO stg_dw_disease_parents (
+                                   SELECT DISTINCT dp1.disease_identifier, dp2.parent_disease_identifier, dp2.disease_code, dp2.nt_term_identifier, dp2.preferred_name, dp2.menu_display_name
+                                   FROM stg_dw_disease_parents dp1
+                                   JOIN stg_dw_disease_parents dp2 ON (dp1.parent_disease_identifier = dp2.disease_identifier)
+                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN (
+                                          SELECT disease_identifier, parent_disease_identifier FROM stg_dw_disease_parents) 
+                              )""");
+    rowsAffected = inserted.size;
+}
+
+System.out.println("Populating data warehouse report table with study diseases..."); 
 sourceConnection.eachRow(sql) { row ->
     diseases.add(ct_gov_xml_indicator: row.ct_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
             disease_code: row.disease_code, disease_preferred_name: row.preferred_name, disease_menu_display_name: row.menu_display_name,
             internal_system_id: row.identifier, lead_disease_indicator: row.lead_indicator, nci_id: row.extension, 
-            nci_thesaurus_concept_id: row.nt_term_identifier, user_last_created: row.creator, user_last_updated: row.updater)
+            nci_thesaurus_concept_id: row.nt_term_identifier, user_last_created: row.creator, user_last_updated: row.updater,
+            internal_system_id2: row.internal_system_id2, inclusion_indicator: row.inclusion_indicator)
 }
