@@ -13,6 +13,10 @@
 jQuery(function() {
     jQuery("#serialNumber").autocomplete({delay: 250,
           source: function(req, responseFn) {
+            var instCode = jQuery("#institutionCode").val();
+            if ('CA' != instCode) {
+                return;
+            }
             var url = paApp.contextPath + '/ctro/json/ajaxtrialFundingloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
             jQuery.getJSON(url,null,function(data){
                    responseFn(jQuery.map(data.serialNumbers, function (value, key) { 

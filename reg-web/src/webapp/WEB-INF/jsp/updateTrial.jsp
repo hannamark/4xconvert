@@ -31,6 +31,10 @@
             jQuery(function() {
                 jQuery("#serialNumber").autocomplete({delay: 250,
                       source: function(req, responseFn) {
+                        var instCode = jQuery("#nihInstitutionCode").val();
+                        if ('CA' != instCode) {
+                            return;
+                        }
                         var url = registryApp.contextPath + '/ctro/json/ajaxI2EGrantsloadSerialNumbers.action?serialNumberMatchTerm=' + req.term;
                         jQuery.getJSON(url,null,function(data){
                                responseFn(jQuery.map(data.serialNumbers, function (value, key) { 
