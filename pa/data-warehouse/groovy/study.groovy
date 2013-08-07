@@ -64,8 +64,8 @@ def sql =
             sp.bio_specimen_description, sp.bio_specimen_retention_code, sp.sampling_method_code, sp.study_model_code, sp.study_model_other_text,
             sp.study_population_description, sp.time_perspective_code, sp.time_perspective_other_text, sp.study_protocol_type, sp.study_subtype_code
             from STUDY_PROTOCOL sp
-                left outer join study_checkout as admin on admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE'
-                left outer join study_checkout as scientific on scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC'
+                left outer join study_checkout as admin on (admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE' and admin.checkin_date is null)
+                left outer join study_checkout as scientific on (scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC' and scientific.checkin_date is null)
                 left outer join csm_user as creator on creator.user_id = sp.user_last_created_id
                 left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
                 left outer join study_milestone as milestone on milestone.study_protocol_identifier = sp.identifier
