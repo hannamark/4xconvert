@@ -61,7 +61,9 @@ sourceConnection.eachRow(sql) { row ->
     	country: row.country_name,
     	ctep_id: row.ctep_id,
     	curator_comment: row.comments,
-    	name: row.firstname + " " + row.middlename + " " + row.lastname,
+    	name: ((row.firstname == null ? "" : row.firstname + " ") 
+              + (row.middlename == null ? "" : row.middlename + " ") 
+              + (row.lastname == null ? "" : row.lastname)),
  		po_id: row.id,
  		prefix: row.prefix,
  		status: row.status,
