@@ -6,7 +6,7 @@ CREATE TABLE STG_DW_STUDY_GRANT (
     NCI_DIVISION_OR_PROGRAM character varying(200),
     NCI_ID character varying(255),
     NIH_INSTITUTION_CODE character varying(200),
-    SERIAL_NUMBER character varying(6),
+    SERIAL_NUMBER character varying(200),
     PRIMARY KEY(INTERNAL_SYSTEM_ID)
 );
 

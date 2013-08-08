@@ -202,12 +202,12 @@
         <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
         <stopwatch name="timer1" action="total"/>
-
+<!--
         <stopwatch name="timer1"/>
         <echo message = "Running biomarker"/>
         <groovy src="groovy/biomarker.groovy"/>
         <stopwatch name="timer1" action="total"/>
-
+-->
         <stopwatch name="timer1"/>
         <echo message = "Running disease"/>
         <groovy src="groovy/disease.groovy"/>
