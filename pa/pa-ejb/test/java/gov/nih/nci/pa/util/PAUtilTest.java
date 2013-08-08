@@ -751,6 +751,7 @@ public class PAUtilTest {
         when(ctx.getCallerPrincipal()).thenReturn(princ);
         assertFalse(PAUtil.isGridCall(ctx));
 
+        CommonsGridLoginModule.setGridServicePrincipalSeparator(null);
         when(princ.getName()).thenReturn("Grid||User");
         assertFalse(PAUtil.isGridCall(ctx));
 

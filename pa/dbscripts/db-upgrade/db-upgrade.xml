@@ -1035,10 +1035,10 @@
         <comment>After recent email-related changes, trial registration email text is messed up.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5243.sql"/>
      </changeSet>
-	<changeSet id="PO-5248" author="monishd">
-	    <comment>rv_checkout_admin used for rv_checkout_scientific.Hence changed it to query proper view</comment>
-	    <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5248.sql"/>
-	</changeSet>
+    <changeSet id="PO-5248" author="monishd">
+        <comment>rv_checkout_admin used for rv_checkout_scientific.Hence changed it to query proper view</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5248.sql"/>
+    </changeSet>
     <changeSet id="PO-5118-2" author="Hugh">
         <comment>Add column to store accrual submission method.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8.1/PO-5118-2.sql"/>
@@ -1220,27 +1220,27 @@
      <changeSet id="PO-5958" author="Kalpana">
         <comment>Updated FK constraint to delete.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5958.sql"/>
-     </changeSet>
+     </changeSet>      
      <changeSet id="PO-5761" author="Reshma">
         <comment>Create a new table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5761.sql"/>
-     </changeSet>
+     </changeSet>   
      <changeSet id="PO-5761_1" author="Reshma">
         <comment>Insert values</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5761_1.sql"/>
-     </changeSet>
+     </changeSet>   
       <changeSet id="PO-5761_2" author="Reshma">
         <comment>add column to plannedmarker table </comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5761_2.sql"/>
-     </changeSet>
+     </changeSet> 
      <changeSet id="PO-5761_3" author="Reshma">
         <comment>plsql statement</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5761_3.sql" splitStatements="false"/>
-     </changeSet>
+     </changeSet>   
     <changeSet id="PO-5761_4" author="Reshma">
         <comment>Drop name and long name columns</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5761_4.sql"/>
-     </changeSet>
+     </changeSet> 
      <changeSet id="PO-5874" author="Reshma">
         <comment>insert values in to pa_properties table</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9.1/PO-5874.sql"/>
@@ -1312,7 +1312,7 @@
      <changeSet id="PO-6244" author="Monish">
         <comment>NCT ID value changes email template</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6244.sql"/>
-     </changeSet>
+     </changeSet> 
      <changeSet id="PO-5961_1" author="monishd">
         <comment>formatting issue with Trial Accepted email</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5961_1.sql"/>
@@ -1361,4 +1361,12 @@
         <comment>Grants data clean up</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6253.sql"/>
      </changeSet>
+     <changeSet id="PO-5935" author="krylovd">
+        <comment>Added properties for CT.Gov API access</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5935.sql"/>
+     </changeSet>
+     <changeSet id="PO-5935_1" author="monishd">
+        <comment>ClinicalTrials.gov Import Logs</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5935_1.sql"/>
+     </changeSet>          
 </databaseChangeLog>

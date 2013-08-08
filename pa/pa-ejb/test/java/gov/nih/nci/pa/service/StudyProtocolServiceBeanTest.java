@@ -1225,5 +1225,17 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 IiConverter.convertToLong(spaDTO.getStudyProtocolB()));
 
     }
+    
+    @Test
+    public void testGetStudyProtocolsByNctId() throws Exception {
+        List<StudyProtocolDTO> list = remoteEjb
+                .getStudyProtocolsByNctId("NCT1234567890");
+        assertEquals(list.size(), 0);
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT1234567890",
+                false);
+        list = remoteEjb
+                .getStudyProtocolsByNctId("NCT1234567890");
+        assertEquals(list.size(), 1);
+    }
 
 }

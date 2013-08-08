@@ -300,4 +300,12 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         // TODO Auto-generated method stub
         
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getStudyProtocolsByNctId(String nctID)
+            throws PAException {       
+        return null;
+    }
 }

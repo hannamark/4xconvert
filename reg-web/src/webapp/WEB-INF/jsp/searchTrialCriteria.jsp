@@ -110,6 +110,12 @@
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     </s:if>
     <div class="box" id="filters">
+			<s:if test="hasActionErrors()">
+				<div class="error_msg">
+					<s:actionerror />
+				</div>
+			</s:if>
+    <reg-web:sucessMessage />
     <reg-web:failureMessage/>
     <s:form name="searchTrial">
     <s:hidden name="criteria.myTrialsOnly" id="criteria.myTrialsOnly"/>

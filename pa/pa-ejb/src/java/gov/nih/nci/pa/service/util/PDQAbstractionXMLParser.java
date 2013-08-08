@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.util.PAUtil.getDset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
@@ -358,6 +359,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
             eligibilityList.add(pEligibiltyCriterionDTO);
         }
+        // TODO: Handle Age criteria!
         String minimumValue = getText(parent, "minimum_age");
         String maximumValue = getText(parent, "maximum_age");
         if (minimumValue != null || maximumValue != null) {

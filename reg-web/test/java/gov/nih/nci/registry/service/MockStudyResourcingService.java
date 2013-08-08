@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,4 +191,10 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public PAException validateNoException(Method method, Boolean nciFunded,
+            String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) {       
+        return null;
+    }
 }

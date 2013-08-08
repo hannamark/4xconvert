@@ -208,6 +208,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
+    private static final String UNCHECKED = "unchecked";
     private static final int MAX_SINGLE_EMAIL_OWNERS = 3;
     private static final Logger LOG  = Logger.getLogger(StudyProtocolBeanLocal.class);
     private static final String CREATE = "Create";
@@ -315,7 +316,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes < 2) {
-                throw new PAException("At least two masking roles must to be specified for \"Double Blind\" masking.");
+                throw new PAException("At least two masking roles must be specified for \"Double Blind\" masking.");
             }
         }
     }
@@ -851,8 +852,24 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return spList.get(0);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private StudyProtocolDTO getStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
+        List<StudyProtocol> results = searchProtocolsByIdentifier(studyProtocolIi);
+        checkResults(results, studyProtocolIi);
+        
+        final StudyProtocol sp = results.get(0);
+        StudyProtocolDTO studyProtocolDTO = convertStudyProtocol(sp);        
+        return studyProtocolDTO; // NOPMD
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws HibernateException HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private List<StudyProtocol> searchProtocolsByIdentifier(
+            Ii studyProtocolIi)  {
         StudySite ss = generateIdentifierAssigner(studyProtocolIi);
 
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudyProtocol.class);
@@ -864,11 +881,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.add(Restrictions.ne("statusCode", ActStatusCode.INACTIVE));
 
         List<StudyProtocol> results = criteria.list();
-        checkResults(results, studyProtocolIi);
-        
-        final StudyProtocol sp = results.get(0);
-        StudyProtocolDTO studyProtocolDTO = convertStudyProtocol(sp);        
-        return studyProtocolDTO; // NOPMD
+        return results; // NOPMD
     }
 
     /**
@@ -955,7 +968,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public Map<Long, String> getTrialNciId(List<Long> listOfTrialIDs) {
         Session session = PaHibernateUtil.getCurrentSession();
         Map<Long, String> resultSet = new HashMap<Long, String>();
@@ -990,7 +1003,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public Map<Long, String> getTrialProcessingStatus(List<Long> listOfTrialIDs) {
         Session session = PaHibernateUtil.getCurrentSession();
         Map<Long, String> resultSet = new HashMap<Long, String>();
@@ -1021,7 +1034,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public List<Long> getProtocolIdsWithNCIId(String nciId) {
         Session session = PaHibernateUtil.getCurrentSession();
         List<Long> resultSet = new ArrayList<Long>();
@@ -1095,7 +1108,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         this.mailManagerService = mailManagerService;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<StudyProtocolAssociationDTO> getTrialAssociations(Long studyId)
             throws PAException {
@@ -1292,7 +1305,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     private void updatePendingTrialAssociationsToActive(long studyId,
             String identifier, IdentifierType idType) throws PAException {
 
@@ -1403,5 +1416,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 + studyProtocolId).executeUpdate();
         session.flush();
         session.clear();
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyProtocolDTO> getStudyProtocolsByNctId(String nctID)
+            throws PAException {
+        Ii ii = new Ii();
+        ii.setExtension(nctID);
+        ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        return convertFromDomainToDTO(searchProtocolsByIdentifier(ii));
     }
 }

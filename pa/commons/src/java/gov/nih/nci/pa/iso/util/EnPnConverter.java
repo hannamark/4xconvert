@@ -143,4 +143,53 @@ public class EnPnConverter {
         }
         return sb.toString();
     }
+    
+    
+    /**
+     * Gets a part of the name of the given type.
+     * 
+     * @param type
+     *            EntityNamePartType
+     * @param name
+     *            EnPn
+     * @return NamePart
+     */
+    public static String getNamePart(EnPn name, EntityNamePartType type) {
+        String part = null;
+        if (name != null && !CollectionUtils.isEmpty(name.getPart())) {
+            for (Enxp enxp : name.getPart()) {
+                if (type.equals(enxp.getType())) {
+                    part = enxp.getValue();
+                }
+
+            }
+        }
+        return part;
+    }
+    
+    /**
+     * Gets a part of the name of the given type and index within parts collection.
+     * Index is counted from the first occurrence of the part with the given type within collection.
+     * 
+     * @param type
+     *            EntityNamePartType
+     * @param name
+     *            EnPn
+     * @param index index
+     * @return NamePart
+     */
+    public static String getNamePart(EnPn name, EntityNamePartType type,
+            int index) {
+        String part = null;
+        int counter = 0;
+        if (name != null && !CollectionUtils.isEmpty(name.getPart())) {
+            for (Enxp enxp : name.getPart()) {
+                if (type.equals(enxp.getType()) && (counter++) == index) {
+                    part = enxp.getValue();
+                }
+
+            }
+        }
+        return part;
+    }
 }

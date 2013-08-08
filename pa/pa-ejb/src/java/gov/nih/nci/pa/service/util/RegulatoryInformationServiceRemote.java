@@ -158,9 +158,9 @@ public interface RegulatoryInformationServiceRemote  {
      /**
       * 
       * @param authorityName n
-      * @param countryIdentifier id
+      * @param countryName countryName
       * @return id
       * @throws PAException e
       */
-     Long getRegulatoryAuthorityId(String authorityName, String countryIdentifier) throws PAException;
+     Long getRegulatoryAuthorityId(String authorityName, String countryName) throws PAException;
 }

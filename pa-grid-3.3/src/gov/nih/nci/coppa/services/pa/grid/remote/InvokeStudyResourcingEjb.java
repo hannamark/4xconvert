@@ -5,6 +5,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingService.Method;
 
 import java.util.List;
 
@@ -148,4 +149,10 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public PAException validateNoException(Method method, Boolean nciFunded,
+            String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) {       
+        return null;
+    }
 }

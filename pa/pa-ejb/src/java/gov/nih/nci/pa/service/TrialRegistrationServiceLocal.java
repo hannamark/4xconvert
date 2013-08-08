@@ -83,9 +83,12 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -372,5 +375,61 @@ public interface TrialRegistrationServiceLocal {
      * @throws PAException on error
      */
     void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException;
+    
+    // CHECKSTYLE:OFF More than 7 parameters
+    
+    /**
+     * @param studyProtocolDTO
+     * @param nctID
+     * @param leadOrgDTO
+     * @param leadOrgID
+     * @param sponsorDTO
+     * @param investigatorDTO
+     * @param centralContactDTO
+     * @param overallStatusDTO
+     * @param regAuthDTO
+     * @param arms
+     * @param eligibility
+     * @param outcomes
+     * @param collaborators
+     * @param documentDTOs
+     * @return
+     * @throws PAException
+     */
+    Ii createAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+            StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
+            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
+            List<PlannedEligibilityCriterionDTO> eligibility,
+            List<StudyOutcomeMeasureDTO> outcomes,
+            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException;
+    
+    /**
+     * @param studyProtocolDTO
+     * @param nctID     
+     * @param sponsorDTO
+     * @param investigatorDTO
+     * @param centralContactDTO
+     * @param overallStatusDTO
+     * @param regAuthDTO
+     * @param arms
+     * @param eligibility
+     * @param outcomes
+     * @param collaborators
+     * @param documentDTOs
+     * @return
+     * @throws PAException
+     */
+    Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudySiteDTO nctID, OrganizationDTO sponsorDTO,
+            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
+            List<PlannedEligibilityCriterionDTO> eligibility,
+            List<StudyOutcomeMeasureDTO> outcomes,
+            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException;
+    // CHECKSTYLE:ON
 
 }

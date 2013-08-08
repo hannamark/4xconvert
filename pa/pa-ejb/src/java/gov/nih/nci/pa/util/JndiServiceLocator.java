@@ -119,6 +119,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -643,7 +644,7 @@ public class JndiServiceLocator implements ServiceLocator {
         return (PlannedMarkerSyncWithCaDSRServiceLocal) JNDIUtil
         .lookupPa("/pa/PlannedMarkerSyncWithCaDSRBeanLocal/local");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -656,5 +657,9 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public I2EGrantsServiceLocal getI2EGrantsService() {
         return (I2EGrantsServiceLocal) JNDIUtil.lookupPa("/pa/I2EGrantsServiceBean/local");
+    }
+    @Override
+    public CTGovSyncServiceLocal getCTGovSyncService() {
+        return (CTGovSyncServiceLocal) JNDIUtil.lookupPa("/pa/CTGovSyncServiceBean/local");
     }
 }

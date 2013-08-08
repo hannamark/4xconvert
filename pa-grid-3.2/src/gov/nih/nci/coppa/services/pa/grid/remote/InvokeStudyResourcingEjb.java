@@ -147,4 +147,11 @@ public class InvokeStudyResourcingEjb extends InvokeStudyPaServiceEjb<StudyResou
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+   
+    public PAException validateNoException(Method method, Boolean nciFunded,
+            String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) {       
+        return null;
+    }
 }

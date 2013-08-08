@@ -19,7 +19,6 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -216,8 +215,7 @@ public class TrialHelper {
                     .convertToPoOrganizationIi(gtdDTO
                             .getLeadOrganizationIdentifier()));
             getPaServiceUtils().managePrincipalInvestigator(studyProtocolIi,
-                    leadOrgDto, principalInvestigatorDto,
-                    StudyTypeCode.INTERVENTIONAL);
+                    leadOrgDto, principalInvestigatorDto);
         }
     }
 

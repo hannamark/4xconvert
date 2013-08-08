@@ -354,4 +354,11 @@ public interface StudyProtocolService {
      * @throws PAException PAException
      */
     void updateRecordVerificationDate(Long studyProtocolId) throws PAException;
+    
+    /**
+     * @param nctID nctID
+     * @return List<StudyProtocolDTO>
+     * @throws PAException PAException
+     */
+    List<StudyProtocolDTO> getStudyProtocolsByNctId(String nctID) throws PAException;
 }

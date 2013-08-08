@@ -165,6 +165,21 @@ public interface StudyResourcingService extends StudyPaService<StudyResourcingDT
      */
     void validate(Method method, Boolean nciFunded, String nciTrialNumber, Long leadOrgPoId,
             List<StudyResourcingDTO> dtos) throws PAException;
+    
+    /**
+     * Same as {@link #validate(Method, Boolean, String, Long, List)}, but
+     * returns validation errors as a {@link PAException}; no exceptions thrown.
+     * 
+     * @param method method being used to submit data
+     * @param nciFunded is the nci funded
+     * @param nciTrialNumber the id of the trial (either the NCI number or internal identifier)
+     * @param leadOrgPoId lead organization PO id, can be null if validating existing trial
+     * @param dtos the grant dtos
+     * @return PAException
+     */
+    PAException validateNoException(Method method, Boolean nciFunded, String nciTrialNumber, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos);
+    
     /**
      * 
      * @param studyResourcingDTO dto to validate

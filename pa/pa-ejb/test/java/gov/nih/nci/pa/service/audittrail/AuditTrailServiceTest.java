@@ -96,6 +96,7 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Calendar;
@@ -125,6 +126,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
         TestSchema.primeData();
         startDate = DateUtils.truncate(new Date(), Calendar.DATE);
         endDate = new Date(startDate.getTime());
+        PaHibernateUtil.enableAudit();
     }
 
     @Test

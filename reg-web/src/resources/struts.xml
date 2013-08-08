@@ -185,6 +185,7 @@
             <result name="view">/WEB-INF/jsp/searchTrialView.jsp</result>
             <result name="error">/WEB-INF/jsp/searchTrialCriteria.jsp</result>
             <result name="partialView">/WEB-INF/jsp/reviewTrial.jsp</result>
+            <result name="ctgovimport">/WEB-INF/jsp/importCtGov.jsp</result>
         </action>
         
         <action name="organizationsSearch*" class="gov.nih.nci.registry.action.OrganizationSearchAction" method="{1}">                        

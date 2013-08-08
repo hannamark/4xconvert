@@ -74,6 +74,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.registry.service.MockCTGovSyncService;
 import gov.nih.nci.registry.service.MockLookUpTableService;
 import gov.nih.nci.registry.service.MockOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
@@ -380,12 +382,15 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
                     StudyProtocolDTO dto = null;
                     Object[] args = invocation.getArguments();
                     Ii ii = (Ii) args[0];
-                    if (sp.getId().equals(IiConverter.convertToLong(ii))) {
+                    if (ii.getExtension().equals("NCI-2013-001")) {
+                        dto = StudyProtocolConverter.convertFromDomainToDTO(isp);
+                        dto.setIdentifier(IiConverter.convertToStudyProtocolIi(3L));
+                    } else if (sp.getId().equals(IiConverter.convertToLong(ii))) {
                         dto = StudyProtocolConverter.convertFromDomainToDTO(sp);
                     } else if (IiConverter.convertToLong(ii).equals(3L)) {
                         dto = StudyProtocolConverter.convertFromDomainToDTO(isp);
                         dto.setIdentifier(IiConverter.convertToStudyProtocolIi(3L));
-                    }
+                    } 
                     return dto;
                 }
             });
@@ -834,5 +839,10 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     @Override
     public I2EGrantsServiceLocal getI2EGrantsService() {
         return mock(I2EGrantsServiceLocal.class);
+    }
+
+    @Override
+    public CTGovSyncServiceLocal getCTGovSyncService() {
+        return new MockCTGovSyncService();
     }
 }

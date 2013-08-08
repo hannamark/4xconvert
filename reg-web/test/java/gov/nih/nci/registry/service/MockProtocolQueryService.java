@@ -69,6 +69,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
         spQueryDTO.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INSTITUTIONAL.getName());
+        spQueryDTO.getLastCreated().setUserLastCreated("firstName");
         list.add(spQueryDTO);
         
         // bump up the list to go over a single page of results.

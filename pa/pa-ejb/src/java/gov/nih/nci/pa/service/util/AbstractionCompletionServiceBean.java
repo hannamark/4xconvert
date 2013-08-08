@@ -77,6 +77,9 @@
  */
 package gov.nih.nci.pa.service.util;
 
+
+import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
@@ -145,8 +148,6 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -671,19 +672,30 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 }
             }
         }
-        try {
-            studyResourcingService.validate(Method.ABSTRACTION_VALIDATION, BlConverter.convertToBoolean(spDto.getNciGrant()),
-                    IiConverter.convertToString(spDto.getIdentifier()), null, null);
-        } catch (PAValidationException e) {
+
+        
+        PAException ex = studyResourcingService.validateNoException(
+                Method.ABSTRACTION_VALIDATION,
+                BlConverter.convertToBoolean(spDto.getNciGrant()),
+                IiConverter.convertToString(spDto.getIdentifier()), null, null);
+        if (ex instanceof PAValidationException) {
+            PAValidationException e = (PAValidationException) ex;
             if (e.getLevel() == Level.WARN) {
-                messages.addWarning("Select Trial Funding from Administrative Data menu.", e.getMessage(), 7);
+                messages.addWarning(
+                        "Select Trial Funding from Administrative Data menu.",
+                        e.getMessage(), 7);
             } else {
-                messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), 
-                        ErrorMessageTypeEnum.ADMIN, 7);
+                messages.addError(
+                        "Select Trial Funding from Administrative Data menu.",
+                        e.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
             }
-        } catch (PAException e) {
-            messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
+        } else if (ex instanceof PAException) {
+            messages.addError(
+                    "Select Trial Funding from Administrative Data menu.",
+                    ex.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
         }
+         
+       
     }
 
     private void enforceArmGroup(Ii studyProtocolIi, StudyProtocolDTO studyProtocolDTO,

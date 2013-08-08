@@ -14,10 +14,9 @@ import gov.nih.nci.pa.util.TestSchema;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author asharma
- *
+ * 
  */
 public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 
@@ -96,6 +95,9 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return "ncictro@mail.nih.gov";
         } else if (name.equals("GrantsRequiredRegServiceEffectiveDate")) {
             return "31-DEC-2100";
+        } else if (name.equals("ctgov.api.getByNct")) {
+            return "http://localhost:"
+                    + CTGovSyncServiceBeanTest.CTGOV_API_MOCK_PORT + "/ctgov?${nctid}";
         } else {
             return value;
         }
@@ -106,7 +108,7 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     public List<Country> searchCountry(Country country) throws PAException {
         List<Country> retList = new ArrayList<Country>();
-        for (Country c: getCountries()) {
+        for (Country c : getCountries()) {
             if (country.getAlpha3().equalsIgnoreCase(c.getAlpha3())) {
                 retList.add(c);
             }
@@ -128,7 +130,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
+    public <T extends AbstractLookUpEntity> T getLookupEntityByCode(
+            Class<T> clazz, String code) throws PAException {
         if (AnatomicSite.class.getName().equals(clazz.getName())) {
             return (T) TestSchema.createAnatomicSiteObj(code);
         }

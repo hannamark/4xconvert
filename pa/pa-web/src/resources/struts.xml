@@ -244,7 +244,23 @@
             <result name="error">/WEB-INF/jsp/personSearchCriteria.jsp</result>
             <result name="success">/WEB-INF/jsp/personSearchCriteria.jsp</result>     
             <result name="details">/WEB-INF/jsp/nodecorate/displayPersonInfo.jsp</result>                   
-        </action>        
+        </action>
+        
+        <action name="importCtGov*" class="gov.nih.nci.pa.action.ImportCtGovAction" method="{1}">   
+            <interceptor-ref name="paDefaultInterceptor" />     
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">importTrial</param>
+            </interceptor-ref>                  
+            <result name="error">/WEB-INF/jsp/importCtGov.jsp</result>
+            <result name="success">/WEB-INF/jsp/importCtGov.jsp</result>
+        </action>
+        
+		<action name="ctGovImportLog*" class="gov.nih.nci.pa.action.CTGovImportLogAction" method="{1}">   
+            <interceptor-ref name="paDefaultInterceptor" />                       
+            <result name="error">/WEB-INF/jsp/ctGovImportLogs.jsp</result>
+            <result name="success">/WEB-INF/jsp/ctGovImportLogs.jsp</result>
+        </action>
+                
     
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

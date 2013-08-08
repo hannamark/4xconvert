@@ -1487,4 +1487,24 @@ public class PAUtil {
         }
         return result;
     }
+    /**
+     * @param email email
+     * @param phone phone
+     * @return dset
+     */
+    public static DSet<Tel> getDset(String email, String phone) {
+        DSet<Tel> telecomAddress = null;
+        if (StringUtils.isNotEmpty(phone)) {
+            List<String> phoneList = new ArrayList<String>();
+            phoneList.add(phone);
+            telecomAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomAddress);
+        }
+        if (StringUtils.isNotEmpty(email)) {
+            List<String> emailList = new ArrayList<String>();
+            emailList.add(email);
+            telecomAddress = DSetConverter.convertListToDSet(emailList, "EMAIL", telecomAddress);
+        }
+        return telecomAddress;
+    }
+    
 }

@@ -119,6 +119,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -478,5 +479,10 @@ public interface ServiceLocator {
      * @return the I2E Grants service
      */
     I2EGrantsServiceLocal getI2EGrantsService();
+
+    /**
+     * @return CTGovSyncServiceLocal
+     */
+    CTGovSyncServiceLocal getCTGovSyncService();
 }
 

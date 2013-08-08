@@ -19,7 +19,9 @@
             <pa:menuLink href="${pageContext.request.contextPath}/protected/registeredUserDetailsexecute.action" id="registeredUserDetailsMenuOption" labelKey="pamenu.abstraction.reguserdetails" selected="${requestScope.topic == 'userdetails'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'siteadmins'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>            
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'importctgov'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctgovimportlogs'}"/>            
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
             </c:if>

@@ -12,6 +12,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -234,7 +235,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      */
     @Override
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
-        return null;
+        return new HashSet<RegistryUser>();
     }
 
     /**
@@ -314,4 +315,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     public void changeUserOrgType(Long userID, UserOrgType userOrgType, String rejectReason)
             throws PAException {
     }
+
+	public void assignOwnership(Long userId, String nciID) throws PAException {
+	}
 }

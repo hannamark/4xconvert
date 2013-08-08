@@ -159,6 +159,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -959,6 +960,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public I2EGrantsServiceLocal getI2EGrantsService() {
         return Mockito.mock(I2EGrantsServiceLocal.class);
+    }
+
+    @Override
+    public CTGovSyncServiceLocal getCTGovSyncService() {       
+        return Mockito.mock(CTGovSyncServiceLocal.class);
     }
 
 }

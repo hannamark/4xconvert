@@ -52,6 +52,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -660,6 +661,12 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
 
     @Override
     public I2EGrantsServiceLocal getI2EGrantsService() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public CTGovSyncServiceLocal getCTGovSyncService() {
         // TODO Auto-generated method stub
         return null;
     }

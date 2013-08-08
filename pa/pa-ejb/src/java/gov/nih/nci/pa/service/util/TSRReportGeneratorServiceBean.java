@@ -221,6 +221,7 @@ import org.apache.log4j.Logger;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
 
+    private static final String N_A = "N/A";
     @EJB
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB
@@ -607,14 +608,23 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 }
             }
         }
-        String email = PAUtil.getEmail(dset);
-        String phone = PAUtil.getPhone(dset);
+        String email = StringUtils.defaultString(PAUtil.getEmail(dset), N_A);
+        String phone = StringUtils.defaultString(PAUtil.getPhone(dset), N_A);
         String extn = PAUtil.getPhoneExtension(dset);
 
         StringBuilder builder = new StringBuilder();
-        builder.append("Name/Official Title: ").append(resPartyContactName).append(", Organization: ").append(
-                sponsorResponsible.getName()).append(",").append(EMAIL).append(email).append(",").append(PHONE)
-                .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+        builder.append("Name/Official Title: ")
+                .append(StringUtils.defaultString(resPartyContactName, N_A))
+                .append(", Organization: ")
+                .append(sponsorResponsible != null ? sponsorResponsible
+                        .getName() : N_A)
+                .append(",")
+                .append(EMAIL)
+                .append(email)
+                .append(",")
+                .append(PHONE)
+                .append(phone)
+                .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
         retVal = builder.toString();
 
         return retVal;
@@ -986,11 +996,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     BigDecimal low = PqConverter.convertToPqToDecimal(pq.getLow());
                     BigDecimal high = PqConverter.convertToPqToDecimal(pq.getHigh());
                     if (low != null) {
-                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? "N/A"
+                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? N_A
                                         : PAUtil.getAge(low) + SPACE + pq.getLow().getUnit());
                     }
                     if (high != null) {
-                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? "N/A"
+                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? N_A
                                         : PAUtil.getAge(high) + SPACE + pq.getHigh().getUnit());
                     }
                 } else {

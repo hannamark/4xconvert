@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Criteria  class for Registry Protocol search.
  * @author Bala Nair
@@ -203,6 +205,12 @@ public class SearchProtocolCriteria {
      */
     public void setHoldStatus(String holdStatus) {
         this.holdStatus = holdStatus;
+    }
+    /**
+     * @return isNctIdentifierProvided
+     */
+    public boolean isNctIdentifierProvided() {        
+        return StringUtils.startsWithIgnoreCase(getIdentifier(), "NCT");
     }    
 
 }

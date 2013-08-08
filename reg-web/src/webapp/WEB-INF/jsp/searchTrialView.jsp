@@ -38,6 +38,7 @@
             <c:set var="topic" scope="request" value="viewresult"/>
             <div class="box">
                 <reg-web:sucessMessage/>
+                <reg-web:failureMessage/>
                  <del class="btnwrapper">
                   <ul class="btnrow" style="align:left">
                        <li>   

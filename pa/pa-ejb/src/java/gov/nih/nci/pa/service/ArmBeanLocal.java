@@ -274,8 +274,10 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
         } else if (CollectionUtils.isNotEmpty(newIntervention) && CollectionUtils.isNotEmpty(armInterventions)) {
             sameInterventions =  CollectionUtils.isEmpty(CollectionUtils.subtract(newIntervention,
                     armInterventions));
-        }
-        return ((sameType && sameDesc && sameInterventions) || sameLabel);
+        }        
+        boolean noInterventions = CollectionUtils.isEmpty(newIntervention);
+        return ((sameType && sameDesc && sameInterventions) || sameLabel)
+                && !(!sameLabel && sameType && sameDesc && noInterventions);
     }
 
     /**

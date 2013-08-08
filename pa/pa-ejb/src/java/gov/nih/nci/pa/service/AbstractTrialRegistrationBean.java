@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -204,6 +205,41 @@ public abstract class AbstractTrialRegistrationBean {
             toDTO.setTimePerspectiveCode(fromDTO.getTimePerspectiveCode());
             toDTO.setTimePerspectiveOtherText(fromDTO
                     .getTimePerspectiveOtherText());
+            if (!ISOUtil.isIntNull(fromDTO.getNumberOfGroups())) {
+                toDTO.setNumberOfGroups(fromDTO
+                        .getNumberOfGroups());
+            }
+        }
+    }
+    
+    /**
+     * @param from
+     *            StudyProtocolDTO
+     * @param to
+     *            StudyProtocolDTO
+     */
+    protected void setInterventionalTrialFields(StudyProtocolDTO from,
+            StudyProtocolDTO to) {
+        if (from instanceof InterventionalStudyProtocolDTO
+                && to instanceof InterventionalStudyProtocolDTO) {
+            InterventionalStudyProtocolDTO fromDTO = (InterventionalStudyProtocolDTO) from;
+            InterventionalStudyProtocolDTO toDTO = (InterventionalStudyProtocolDTO) to;
+            if (!ISOUtil.isIntNull(fromDTO.getNumberOfInterventionGroups())) {
+                toDTO.setNumberOfInterventionGroups(fromDTO
+                        .getNumberOfInterventionGroups());
+            }
+            if (!ISOUtil.isCdNull(fromDTO.getAllocationCode())) {
+                toDTO.setAllocationCode(fromDTO.getAllocationCode());
+            }
+            if (!ISOUtil.isCdNull(fromDTO.getStudyClassificationCode())) {
+                toDTO.setStudyClassificationCode(fromDTO.getStudyClassificationCode());
+            }
+            if (!ISOUtil.isCdNull(fromDTO.getDesignConfigurationCode())) {
+                toDTO.setDesignConfigurationCode(fromDTO.getDesignConfigurationCode());
+            }
+            if (!ISOUtil.isCdNull(fromDTO.getBlindingSchemaCode())) {
+                toDTO.setBlindingSchemaCode(fromDTO.getBlindingSchemaCode());
+            }
         }
     }
 

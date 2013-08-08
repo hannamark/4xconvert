@@ -378,6 +378,22 @@ public class StudyResourcingBeanLocal extends
             }
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PAException validateNoException(Method method, Boolean nciFunded,
+            String nciTrialIdentifier, Long leadOrgPoId,
+            List<StudyResourcingDTO> dtos) {
+        try {
+            this.validate(method, nciFunded, nciTrialIdentifier, leadOrgPoId,
+                    dtos);
+            return null;
+        } catch (PAException e) {
+            return e;
+        }
+    }
 
     private boolean isActiveGrantRecord(StudyResourcingDTO dto) {
         Boolean isActive = BlConverter.convertToBoolean(dto.getActiveIndicator());

@@ -107,6 +107,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -163,6 +165,10 @@ import com.opensymphony.xwork2.Preparable;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class SearchTrialAction extends ActionSupport implements Preparable, ServletRequestAware {
    
+    private static final String FAILURE_MESSAGE = "failureMessage";
+
+    private static final String CTGOVIMPORT = "ctgovimport";
+
     private static final Logger LOG = Logger
             .getLogger(SearchTrialAction.class);    
     
@@ -190,6 +196,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyProtocolStageServiceLocal studyProtocolStageService;
+    private CTGovSyncServiceLocal ctGovSyncService;
     
     private List<StudyProtocolQueryDTO> records;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
@@ -198,6 +205,9 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private Long identifier;
     private TrialUtil trialUtils = new TrialUtil();
     private HttpServletRequest httpServletRequest;
+    private CTGovStudyAdapter study;
+    private String nctIdToImport;
+    private boolean searchPerformed;
 
     private String currentUser;
     private boolean showVerifyButton = false;
@@ -216,6 +226,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
+        ctGovSyncService = PaRegistry.getCTGovSyncService();
     }
     
     /**
@@ -253,14 +264,102 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             }
             final StudyProtocolQueryCriteria spQueryCriteria = convertToStudyProtocolQueryCriteria();
             prepareSearchResults(spQueryCriteria);
+            
+            // If user is trying to search by NCT ID and getting no matches in
+            // CTRP, we need to try and find
+            // the trial in Ct.Gov.
+            if (CollectionUtils.isEmpty(records)
+                    && criteria.isNctIdentifierProvided()) {
+                try {
+                    study = ctGovSyncService
+                            .getAdaptedCtGovStudyByNctId(criteria
+                                    .getIdentifier());
+                    if (study != null) {
+                        // Before we inform the user about the match we found in
+                        // ct.gov, we need to make sure this trial
+                        // does not exist in CTRP.
+                        if (studyProtocolService.getStudyProtocolsByNctId(// NOPMD
+                                criteria.getIdentifier()).isEmpty()) {
+                            searchPerformed = true;
+                            return CTGOVIMPORT;
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.error(ExceptionUtils.getFullStackTrace(e));
+                }
+            }
             return SUCCESS;
-        } catch (Exception e) {
-            e.printStackTrace(); // NOPMD
+        } catch (Exception e) {            
             LOG.error(ExceptionUtils.getFullStackTrace(e));
-            addActionError(e.getLocalizedMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            addActionError(e.getLocalizedMessage());            
             return ERROR;
         }
+    }
+    
+    
+    /**
+     * @return string
+     */
+    public String importTrial() {
+        if (hasActionErrors()) {
+            return ERROR;
+        }
+        final String nctID = getNctIdToImport();
+        try {
+            
+            // Fail the import as per requirements if there is an exact match by
+            // title and category
+            study = ctGovSyncService.getAdaptedCtGovStudyByNctId(nctID);
+            final List<StudyProtocolQueryDTO> potentialMatches = findExistentStudies(study);
+            if (!potentialMatches.isEmpty()) {
+                studyProtocolId = potentialMatches.get(0).getStudyProtocolId();
+                ServletActionContext.getRequest().setAttribute(
+                        FAILURE_MESSAGE,
+                        getText("importctgov.import.new.failure.dupe"));
+                return view();
+            }
+            
+            // Proceed with import otherwise.
+            String nciID = ctGovSyncService.importTrial(nctID);
+            RegistryUser user = registryUserService.getUser(currentUser);
+            final Long newTrialId = IiConverter
+                    .convertToLong(studyProtocolService.getStudyProtocol(
+                            IiConverter.convertToAssignedIdentifierIi(nciID))
+                            .getIdentifier());
+            registryUserService.assignOwnership(user.getId(), newTrialId);
+            studyProtocolId = newTrialId;
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE,
+                    getText("importctgov.import.new.success", new String[] {
+                            nctID, nciID }));
+            return view();
+        } catch (PAException e) {
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE,
+                    e.getLocalizedMessage());
+            LOG.error(e, e);
+        }
+        criteria.setIdentifierType("NCT");
+        criteria.setIdentifier(nctID);
+        return ERROR;
+    }
+    
+    private List<StudyProtocolQueryDTO> findExistentStudies(
+            CTGovStudyAdapter ctgovStudy) throws PAException {
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        if (ctgovStudy != null && StringUtils.isNotBlank(ctgovStudy.getTitle())) {
+            StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+            queryCriteria.setOfficialTitle(ctgovStudy.getTitle());
+            queryCriteria.setTrialCategory("p");
+            queryCriteria.setExcludeRejectProtocol(true);
+            for (StudyProtocolQueryDTO dto : protocolQueryService
+                    .getStudyProtocolByCriteria(queryCriteria)) {
+                if (ctgovStudy.getTitle().equalsIgnoreCase(
+                        dto.getOfficialTitle())) {
+                    list.add(dto);
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -725,7 +824,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                 mailManagerService.sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
             } else {
                 ServletActionContext.getRequest()
-                    .setAttribute("failureMessage", "As Abstraction is not valid, sending letter is disabled .");
+                    .setAttribute(FAILURE_MESSAGE, "As Abstraction is not valid, sending letter is disabled .");
             }
         } catch (PAException e) {
             addActionError("Exception while sending XML email:" + e.getMessage());
@@ -931,8 +1030,12 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         this.studyProtocolStageService = studyProtocolStageService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.struts2.interceptor.ServletRequestAware#setServletRequest(javax.servlet.http.HttpServletRequest)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.apache.struts2.interceptor.ServletRequestAware#setServletRequest(
+     * javax.servlet.http.HttpServletRequest)
      */
     @Override
     public void setServletRequest(HttpServletRequest request) {
@@ -954,4 +1057,57 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     }
     
 
+    /**
+     * 
+     * @return study
+     */
+    public CTGovStudyAdapter getStudy() {
+        return study;
+    }
+
+    /**
+     * @param study
+     *            the CTGovStudyAdapter to set
+     */
+    public void setStudy(CTGovStudyAdapter study) {
+        this.study = study;
+    }
+
+    /**
+     * 
+     * @return nctIdToImport
+     */
+    public String getNctIdToImport() {
+        return nctIdToImport;
+    }
+
+    /**
+     * @param nctIdToImport
+     *            the nctIdToImport to set
+     */
+    public void setNctIdToImport(String nctIdToImport) {
+        this.nctIdToImport = nctIdToImport;
+    }
+
+    /**
+     * @param searchPerformed
+     *            the searchPerformed to set
+     */
+    public void setSearchPerformed(boolean searchPerformed) {
+        this.searchPerformed = searchPerformed;
+    }
+
+    /**
+     * @return the searchPerformed
+     */
+    public boolean isSearchPerformed() {
+        return searchPerformed;
+    }
+
+    /**
+     * @param ctGovSyncService the ctGovSyncService to set
+     */
+    public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
+        this.ctGovSyncService = ctGovSyncService;
+    }
 }

@@ -126,7 +126,7 @@ public abstract class AbstractPDQTrialServiceHelper {
      * @return orgDTO.
      *
      */
-    protected OrganizationDTO getUnknownOrganizationDTO() {
+    public static OrganizationDTO getUnknownOrganizationDTO() {
         OrganizationDTO orgDTO = new OrganizationDTO();
         orgDTO.setName(EnOnConverter.convertToEnOn("Unknown"));
         orgDTO.setTelecomAddress(getUnknownTelecomeAddress());
@@ -137,7 +137,7 @@ public abstract class AbstractPDQTrialServiceHelper {
      * @return orgDTO.
      *
      */
-    protected PersonDTO getUnknownPersonDTO() {
+    public static PersonDTO getUnknownPersonDTO() {
         PersonDTO perDTO = new PersonDTO();
         perDTO.setTelecomAddress(getUnknownTelecomeAddress());
         perDTO.setPostalAddress(getUnknownPostalAddress());
@@ -147,14 +147,15 @@ public abstract class AbstractPDQTrialServiceHelper {
      * @return postal Address.
      *
      */
-    protected Ad getUnknownPostalAddress() {
+    public static Ad getUnknownPostalAddress() {
         return AddressConverterUtil.create("UNKNOWN", "", "UNKNOWN", "UM", "96960", "USA");
     }
     /**
      * @return telcomeAddress
      */
-    protected DSet<Tel> getUnknownTelecomeAddress() {
-        return DSetConverter.convertListToDSet(Arrays.asList("unknown@pdqload.org"), DSetConverter.TYPE_EMAIL, null);
+    public static DSet<Tel> getUnknownTelecomeAddress() {
+        return DSetConverter.convertListToDSet(Arrays.asList("replacewithrealemail@nih.gov"), 
+                DSetConverter.TYPE_EMAIL, null);
     }
     /**
     * Finds the org in PO if not found then create the org with default values.

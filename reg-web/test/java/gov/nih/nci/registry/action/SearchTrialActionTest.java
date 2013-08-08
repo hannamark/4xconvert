@@ -53,6 +53,8 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import com.fiveamsolutions.nci.commons.web.filter.UsernameFilter;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
@@ -138,6 +140,29 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         assertEquals("error", action.query());
     }
 
+    @Test
+    public void testQueryInCtGov(){
+        SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+        criteria.setIdentifier("NCT01861054");
+        criteria.setIdentifierType("NCT");        
+        action.setCriteria(criteria);
+        assertEquals("ctgovimport", action.query());
+        assertNotNull(action.getStudy());
+        assertEquals("NCT01861054", action.getStudy().getNctId());
+    }
+    
+    @Test
+    public void testImportCtGovTrial(){
+        UsernameHolder.setUserCaseSensitive("firstName");
+        
+        action.prepare();
+        action.setNctIdToImport("NCT01861054");
+        
+        assertEquals("view", action.importTrial());
+        assertNotNull(action.getStudy());
+        assertEquals("NCT01861054", action.getStudy().getNctId());
+    }
+    
     @Test
     public void testQuery(){
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();

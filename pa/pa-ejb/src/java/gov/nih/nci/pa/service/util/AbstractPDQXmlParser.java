@@ -82,13 +82,10 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -100,8 +97,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -155,26 +150,6 @@ public abstract class AbstractPDQXmlParser {
             throw new IllegalArgumentException("The URL to parse does not point to a valid file", e);
         }
 
-    }
-
-    /**
-     * @param email email
-     * @param phone phone
-     * @return dset
-     */
-    protected DSet<Tel> getDset(String email, String phone) {
-        DSet<Tel> telecomAddress = null;
-        if (StringUtils.isNotEmpty(phone)) {
-            List<String> phoneList = new ArrayList<String>();
-            phoneList.add(phone);
-            telecomAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomAddress);
-        }
-        if (StringUtils.isNotEmpty(email)) {
-            List<String> emailList = new ArrayList<String>();
-            emailList.add(email);
-            telecomAddress = DSetConverter.convertListToDSet(emailList, "EMAIL", telecomAddress);
-        }
-        return telecomAddress;
     }
 
     /**

@@ -93,11 +93,14 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
@@ -131,6 +134,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -833,18 +837,7 @@ public class TrialRegistrationValidator {
             check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
                   "Delayed posting Indicator is required if Section 801 is true.\n", errorMsg);
 
-            if (studyRegAuthDTO != null
-                    && !ISOUtil.isIiNull(studyRegAuthDTO
-                            .getRegulatoryAuthorityIdentifier())) {
-                RegulatoryAuthorityDTO raDTO = regulatoryAuthorityService
-                        .get(studyRegAuthDTO.getRegulatoryAuthorityIdentifier());
-                check(raDTO == null,
-                        "Regulatory Authority with the given identifier "
-                                + studyRegAuthDTO
-                                        .getRegulatoryAuthorityIdentifier()
-                                        .getExtension() + " is not found.\n",
-                        errorMsg);
-            }
+            validateRegAuthorityExistence(studyRegAuthDTO, errorMsg);
             
             if (containsNonExemptInds(studyIndldeDTOs)) {
                 check(!fdaRegulated
@@ -864,6 +857,28 @@ public class TrialRegistrationValidator {
 
                 }
             }
+        }
+    }
+
+    /**
+     * @param studyRegAuthDTO
+     * @param errorMsg
+     * @throws PAException
+     */
+    void validateRegAuthorityExistence(
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, StringBuilder errorMsg)
+            throws PAException {
+        if (studyRegAuthDTO != null
+                && !ISOUtil.isIiNull(studyRegAuthDTO
+                        .getRegulatoryAuthorityIdentifier())) {
+            RegulatoryAuthorityDTO raDTO = regulatoryAuthorityService
+                    .get(studyRegAuthDTO.getRegulatoryAuthorityIdentifier());
+            check(raDTO == null,
+                    "Regulatory Authority with the given identifier "
+                            + studyRegAuthDTO
+                                    .getRegulatoryAuthorityIdentifier()
+                                    .getExtension() + " is not found.\n",
+                    errorMsg);
         }
     }
 
@@ -1116,18 +1131,27 @@ public class TrialRegistrationValidator {
         // CHECKSTYLE:ON
         check(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()), "Official Title cannot be null , ", errorMsg);
         check(studySiteAccrualStatusDTO == null, "Study Site Accrual Status cannot be null , ", errorMsg);
+        validateLeadOrgForProprietary(leadOrganizationStudySiteDTO, errorMsg);
+        if (studySiteDTO == null) {
+            errorMsg.append("Study Site DTO cannot be null , ");
+        } else {
+            check(ISOUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier()),
+                  "Submitting Organization Local Trial Identifier cannot be null, ", errorMsg);
+        }
+    }
+
+    /**
+     * @param leadOrganizationStudySiteDTO
+     * @param errorMsg
+     */
+    void validateLeadOrgForProprietary(
+            StudySiteDTO leadOrganizationStudySiteDTO, StringBuilder errorMsg) {
         if (leadOrganizationStudySiteDTO == null) {
             errorMsg.append("Lead Organization Study Site cannot be null , ");
         } else {
             check(ISOUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier()),
                   "Lead Organization Trial Identifier cannot be null, ", errorMsg);
 
-        }
-        if (studySiteDTO == null) {
-            errorMsg.append("Study Site DTO cannot be null , ");
-        } else {
-            check(ISOUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier()),
-                  "Submitting Organization Local Trial Identifier cannot be null, ", errorMsg);
         }
     }
 
@@ -1266,5 +1290,132 @@ public class TrialRegistrationValidator {
     public void setRegulatoryAuthorityService(
             RegulatoryAuthorityServiceLocal regulatoryAuthorityService) {
         this.regulatoryAuthorityService = regulatoryAuthorityService;
+    }
+
+    // CHECKSTYLE:OFF
+    /**
+     * @param studyProtocolDTO
+     *            studyProtocolDTO
+     * @param nctID
+     *            nctID
+     * @param leadOrgDTO
+     *            leadOrgDTO
+     * @param leadOrgID
+     *            leadOrgID
+     * @param sponsorDTO
+     *            sponsorDTO
+     * @param investigatorDTO
+     *            investigatorDTO
+     * @param centralContactDTO
+     *            centralContactDTO
+     * @param overallStatusDTO
+     *            overallStatusDTO
+     * @param regAuthDTO
+     *            regAuthDTO
+     * @param arms
+     *            arms
+     * @param eligibility
+     *            eligibility
+     * @param outcomes
+     *            outcomes
+     * @param collaborators
+     *            collaborators
+     * @throws PAException
+     */
+    public void validateProprietaryCreation(StudyProtocolDTO studyProtocolDTO,
+            StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+            StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
+            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
+            List<PlannedEligibilityCriterionDTO> eligibility,
+            List<StudyOutcomeMeasureDTO> outcomes,
+            List<OrganizationDTO> collaborators) throws PAException {
+
+        StringBuilder errorMsg = new StringBuilder();
+        validateProprietaryCreateOrUpdate(studyProtocolDTO, nctID, leadOrgDTO,
+                leadOrgID, regAuthDTO, errorMsg);
+        String nctValidationResultString = paServiceUtils
+                .validateNCTIdentifier(nctID.getLocalStudyProtocolIdentifier()
+                        .getValue(), null);
+        if (StringUtils.isNotEmpty(nctValidationResultString)) {
+            errorMsg.append(nctValidationResultString);
+        }
+
+        if (errorMsg.length() > 0) {
+            throw new PAException(errorMsg.toString());
+        }
+
+    }
+    
+    /**
+     * @param studyProtocolDTO
+     *            studyProtocolDTO
+     * @param nctID
+     *            nctID
+     * @param leadOrgDTO
+     *            leadOrgDTO
+     * @param leadOrgID
+     *            leadOrgID
+     * @param sponsorDTO
+     *            sponsorDTO
+     * @param investigatorDTO
+     *            investigatorDTO
+     * @param centralContactDTO
+     *            centralContactDTO
+     * @param overallStatusDTO
+     *            overallStatusDTO
+     * @param regAuthDTO
+     *            regAuthDTO
+     * @param arms
+     *            arms
+     * @param eligibility
+     *            eligibility
+     * @param outcomes
+     *            outcomes
+     * @param collaborators
+     *            collaborators
+     * @throws PAException
+     */
+    public void validateProprietaryUpdate(StudyProtocolDTO studyProtocolDTO,
+            StudySiteDTO nctID, OrganizationDTO sponsorDTO,
+            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
+            List<PlannedEligibilityCriterionDTO> eligibility,
+            List<StudyOutcomeMeasureDTO> outcomes,
+            List<OrganizationDTO> collaborators) throws PAException {
+
+        StringBuilder errorMsg = new StringBuilder();
+        validatePhasePurposeAndTemplateDocument(studyProtocolDTO,
+                new ArrayList<DocumentDTO>(), nctID, errorMsg);
+        validateRegAuthorityExistence(regAuthDTO, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(errorMsg.toString());
+        }
+
+    }
+
+    /**
+     * @param studyProtocolDTO
+     * @param nctID
+     * @param leadOrgDTO
+     * @param leadOrgID
+     * @param regAuthDTO
+     * @param errorMsg
+     * @throws PAException
+     */
+    private void validateProprietaryCreateOrUpdate(
+            StudyProtocolDTO studyProtocolDTO, StudySiteDTO nctID,
+            OrganizationDTO leadOrgDTO, StudySiteDTO leadOrgID,
+            StudyRegulatoryAuthorityDTO regAuthDTO, StringBuilder errorMsg)
+            throws PAException {
+        if (leadOrgDTO == null) {
+            errorMsg.append("Lead organization is required");
+        }
+        validatePhasePurposeAndTemplateDocument(studyProtocolDTO,
+                new ArrayList<DocumentDTO>(), nctID, errorMsg);
+        validateLeadOrgForProprietary(leadOrgID, errorMsg);
+        validateRegAuthorityExistence(regAuthDTO, errorMsg);
     }
 }

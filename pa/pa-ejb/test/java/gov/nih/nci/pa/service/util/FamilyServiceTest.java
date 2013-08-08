@@ -57,7 +57,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     private FamilyServiceBeanLocal ejb;
     private OrganizationEntityServiceRemote oes;
     private FamilyServiceRemote fs;
-    RegistryUserBeanLocal registryUserEjb;
+    RegistryUserServiceLocal registryUserEjb;
     StudySiteAccrualAccessServiceBean siteAccessEjb;
     ParticipatingOrgServiceBean partOrgEjb;
     DocumentWorkflowStatusServiceLocal dwsEjb;

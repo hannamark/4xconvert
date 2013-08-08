@@ -109,6 +109,7 @@ import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.AuditTrailCode;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -423,9 +424,10 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      * @throws PAException
      */
     private String getSubmitterName(final St userLoginName) throws PAException {
-        RegistryUser usr = registryUserServiceLocal.getUser(StConverter
-                .convertToString(userLoginName));
-        return usr != null ? usr.getFullName() : "";
+        final String str = StConverter
+                .convertToString(userLoginName);
+        RegistryUser usr = registryUserServiceLocal.getUser(str);
+        return usr != null ? usr.getFullName() : CsmUserUtil.getGridIdentityUsername(str);
     }
     
     

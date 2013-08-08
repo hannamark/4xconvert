@@ -80,81 +80,51 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.service.util.FamilyServiceLocal;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
-import gov.nih.nci.pa.service.util.MockPAServiceUtils;
-import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.PoServiceLocator;
-import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
-import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
-import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -162,199 +132,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 /**
  * Test class for the TrialRegistrationBean.
  *
  * @author Michael Visee
  */
-public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
-    private final ArmServiceLocal armService = new ArmBeanLocal();
-    private final DocumentServiceLocal documentService = new DocumentBeanLocal();
-    private final DocumentWorkflowStatusServiceLocal documentWrkService = new DocumentWorkflowStatusBeanLocal();
-    private final LookUpTableServiceRemote lookUpTableServiceRemote = new MockLookUpTableServiceBean();
-    private OrganizationEntityServiceRemote poOrgSvc;
-    private PersonEntityServiceRemote poPersonSvc;
-    private PoServiceLocator poSvcLoc;
-    private final RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
-    private ServiceLocator paSvcLoc;
-    private final StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
-    private final StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-    private final StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-    private final StudyOverallStatusBeanLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    private final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
-    private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-    private final StudyResourcingBeanLocal studyResourcingService = new StudyResourcingBeanLocal();
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-
-    private Ii spIi;
-
-    private final PAServiceUtils paServiceUtils = new MockPAServiceUtils();
-
-    /**
-     * Initialization method.
-     * @throws Exception If an error occurs
-     */
-    @Before
-    public void init() throws Exception {
-        TestSchema.primeData();
-        PAProperties prop = new PAProperties();
-        prop.setName("fromaddress");
-        prop.setValue("ncictro@mail.nih.gov");
-        TestSchema.addUpdObject(prop);
-
-        studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
-        
-        studyOverallStatusService.setDocumentWorkFlowStatusService(documentWrkService);
-        studyOverallStatusService.setStudyProtocolService(studyProtocolService);
-
-        bean.setLookUpTableServiceRemote(lookUpTableServiceRemote);
-        bean.setStudyProtocolService(studyProtocolService);
-        bean.setStudyOverallStatusService(studyOverallStatusService);
-        bean.setStudyIndldeService(studyIndldeService);
-        bean.setStudyResourcingService(studyResourcingService);
-        bean.setDocumentService(documentService);
-        bean.setStudySiteService(studySiteService);
-        bean.setStudySiteContactService(studySiteContactService);
-        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
-        bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
-        bean.setRegulatoryInfoBean(regulatoryInfoSvc);
-        bean.setDocumentWorkFlowStatusService(documentWrkService);
-        bean.setRegistryUserServiceLocal(new MockRegistryUserServiceBean());
-        bean.setPaServiceUtils(new MockPAServiceUtils());
-
-        CSMUserService.setInstance(new MockCSMUserService());
-
-        spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-        paSvcLoc = mock (ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-
-        when (paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(documentWrkService);
-        when (paSvcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemote);
-
-        StudySiteServiceLocal studySiteSrv = mock(StudySiteServiceLocal.class);
-        when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSrv);
-        StudySiteDTO studySiteDTO = new StudySiteDTO();
-        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("abc"));
-        when(studySiteSrv.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(
-                Arrays.asList(studySiteDTO));
-
-        OrganizationCorrelationServiceRemote ocsr = mock(OrganizationCorrelationServiceRemote.class);
-        when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
-            @Override
-            public Ii answer(InvocationOnMock invocation) throws Throwable {
-                Ii ii = (Ii) invocation.getArguments()[0];
-                return IiConverter.convertToPoResearchOrganizationIi(ii.getExtension());
-            }
-        });
-        when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
-
-        MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
-        StudyInboxServiceLocal studyInboxSvc = new StudyInboxServiceBean();
-        StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
-        AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
-        StudyOnholdServiceLocal studyOnholdSvc = new StudyOnholdBeanLocal();
-        StudyRelationshipBeanLocal studyRelationshipSvc = new StudyRelationshipBeanLocal();
-        TSRReportGeneratorServiceRemote tsrReportSvc = mock(TSRReportGeneratorServiceRemote.class);
-        ByteArrayOutputStream rtfResults = new ByteArrayOutputStream();
-        rtfResults.write("RTF Report".getBytes());
-        when(tsrReportSvc.generateHtmlTsrReport(any(Ii.class))).thenReturn(rtfResults);
-        when(tsrReportSvc.generatePdfTsrReport(any(Ii.class))).thenReturn(rtfResults);
-        when(tsrReportSvc.generateRtfTsrReport(any(Ii.class))).thenReturn(rtfResults);
-
-        studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
-        studyMilestoneSvc.setDocumentWorkflowStatusService(documentWrkService);
-        studyMilestoneSvc.setStudyInboxService(studyInboxSvc);
-        studyMilestoneSvc.setStudyOnholdService(studyOnholdSvc);
-        studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
-        studyMilestoneSvc.setFamilyService(mock(FamilyServiceLocal.class));
-
-        studyResourcingService.setLookUpTableSvc(lookUpTableServiceRemote);
-        studyResourcingService.setStudyProtocolSvc(studyProtocolService);
-        studyResourcingService.setPaServiceUtils(paServiceUtils);
-
-        when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
-        when(paSvcLoc.getStudyIndldeService()).thenReturn(studyIndldeService);
-        when(paSvcLoc.getDocumentService()).thenReturn(documentService);
-        when(paSvcLoc.getStudyContactService()).thenReturn(studyContactSvc);
-        when(paSvcLoc.getStudyRegulatoryAuthorityService()).thenReturn(studyRegulatoryAuthorityService);
-        when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolService);
-        when(paSvcLoc.getStudyDiseaseService()).thenReturn(new StudyDiseaseServiceBean());
-        when(paSvcLoc.getStudyObjectiveService()).thenReturn(new StudyObjectiveBeanLocal());
-        when(paSvcLoc.getStratumGroupService()).thenReturn(new StratumGroupBeanLocal());
-        when(paSvcLoc.getStudyResoucringService()).thenReturn(studyResourcingService);
-        when(paSvcLoc.getStudyOnholdService()).thenReturn(studyOnholdSvc);
-        when(paSvcLoc.getStudyOverallStatusService()).thenReturn(studyOverallStatusService);
-        when(paSvcLoc.getStudyRecruitmentStatusService()).thenReturn(new StudyRecruitmentStatusBeanLocal());
-        when(paSvcLoc.getArmService()).thenReturn(armService);
-        when(paSvcLoc.getOutcomeMeasureService()).thenReturn(studyOutcomeMeasureService);
-        when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
-        when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
-        bean.setOcsr(ocsr);
-        bean.setMailManagerSerivceLocal(mailSvc);
-        bean.setStudyMilestoneService(studyMilestoneSvc);
-        bean.setStudyInboxServiceLocal(studyInboxSvc);
-        bean.setTsrReportService(tsrReportSvc);
-        bean.setStudyRelationshipService(studyRelationshipSvc);
-        setupPoSvc();
-    }
-
-    private void setupPoSvc() throws NullifiedEntityException, NullifiedRoleException, PAException, TooManyResultsException {
-        poSvcLoc = mock(PoServiceLocator.class);
-        PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
-        poOrgSvc = mock(OrganizationEntityServiceRemote.class);
-        poPersonSvc = mock(PersonEntityServiceRemote.class);
-
-        ResearchOrganizationCorrelationServiceRemote roCorrelationSvc =
-            mock(ResearchOrganizationCorrelationServiceRemote.class);
-        ClinicalResearchStaffCorrelationServiceRemote crsSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
-        HealthCareProviderCorrelationServiceRemote hcpSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
-
-        ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
-        roDTO.setPlayerIdentifier(IiConverter.convertToIi(1L));
-        roDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
-
-        ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
-        crsDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
-
-        OrganizationDTO org = new OrganizationDTO();
-        org.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-        org.setName(EnOnConverter.convertToEnOn("Org Name"));
-        org.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
-        org.setPostalAddress(AddressConverterUtil.create("2115 Executive Blvd.", "", "Rockville", "MD", "27852", "USA"));
-
-        HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
-        hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthcareProviderIi("1")));
-        hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-
-        PersonDTO person = new PersonDTO();
-        person.setIdentifier(IiConverter.convertToPoPersonIi("1"));
-
-        when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(org);
-        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(person);
-        when(roCorrelationSvc.getCorrelation(any(Ii.class))).thenReturn(roDTO);
-        when(crsSvc.getCorrelation(any(Ii.class))).thenReturn(crsDTO);
-        when(hcpSvc.getCorrelation(any(Ii.class))).thenReturn(hcpDTO);
-
-        when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
-        when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
-        when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(roCorrelationSvc);
-        when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(crsSvc);
-        when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(hcpSvc);
-    }
-
+public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestBase {
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
@@ -390,6 +175,91 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
 
     }
+    
+    @Test
+    public void createAbbreviatedStudyProtocolTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial();        
+        assertEquals(2, studyProtocolDTO.getProcessingPriority().getValue().intValue());
+
+        
+    }
+
+    /**
+     * @return
+     * @throws PAException
+     */
+    private InterventionalStudyProtocolDTO registerAbbreviatedTrial()
+            throws PAException {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        
+        StudySiteDTO nctID = new StudySiteDTO();
+        nctID.setLocalStudyProtocolIdentifier(StConverter.convertToSt("NCT12345"));
+        
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LID12345"));
+        
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        
+        PersonDTO principalInvestigatorDTO  = getPI();
+        
+        PersonDTO centralContactDTO = principalInvestigatorDTO;
+        
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+        
+        List<ArmDTO> arms = new ArrayList<ArmDTO>();
+        ArmDTO armDTO = new ArmDTO();
+        armDTO.setName(StConverter.convertToSt("ARm01"));
+        armDTO.setTypeCode(CdConverter
+                .convertToCd(ArmTypeCode.ACTIVE_COMPARATOR));
+        armDTO.setDescriptionText(StConverter.convertToSt("ARm01"));
+        arms.add(armDTO);
+        
+        List<PlannedEligibilityCriterionDTO> eligibility = new ArrayList<PlannedEligibilityCriterionDTO>();
+        PlannedEligibilityCriterionDTO pEligibiltyCriterionDTO = new PlannedEligibilityCriterionDTO();
+        pEligibiltyCriterionDTO.setCriterionName(StConverter
+                .convertToSt("GENDER"));
+        pEligibiltyCriterionDTO
+                .setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode.BOTH));
+        pEligibiltyCriterionDTO
+                .setCategoryCode(CdConverter
+                        .convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+        pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter
+                .convertToBl(Boolean.TRUE));
+        eligibility.add(pEligibiltyCriterionDTO);  
+        
+        List<StudyOutcomeMeasureDTO> outcomes = new ArrayList<StudyOutcomeMeasureDTO>();
+        StudyOutcomeMeasureDTO outcome = new StudyOutcomeMeasureDTO();
+        outcome.setName(StConverter.convertToSt("Outcome01"));
+        outcome.setSafetyIndicator(BlConverter.convertToBl(true));
+        outcome.setPrimaryIndicator(BlConverter
+                .convertToBl(true));
+        outcome.setTimeFrame(StConverter.convertToSt("Outcome01"));
+        outcome.setDescription(StConverter.convertToSt("Outcome01"));
+        outcome.setTypeCode(CdConverter.convertToCd(OutcomeMeasureTypeCode.PRIMARY));
+        outcomes.add(outcome);     
+        
+        List<OrganizationDTO> collaborators = new ArrayList<OrganizationDTO>();
+        collaborators.add(sponsorOrganizationDTO);
+        
+        List<DocumentDTO> documents = getStudyDocuments();        
+        
+        Ii ii = bean.createAbbreviatedStudyProtocol(studyProtocolDTO, nctID,
+                leadOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                sponsorOrganizationDTO, principalInvestigatorDTO,
+                centralContactDTO, overallStatusDTO, regAuthority, arms,
+                eligibility, outcomes, collaborators, documents);
+        assertFalse(ISOUtil.isIiNull(ii));
+        
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        return studyProtocolDTO;
+    }
+
 
     @Test
     public void nullSiteIdentifiers() throws Exception {
@@ -1061,7 +931,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     }
 
 
-    private Ii registerTrial() throws PAException {
+    protected Ii registerTrial() throws PAException {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
@@ -1100,7 +970,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     /**
      * @return
      */
-    private List<StudyResourcingDTO> getListOfGrants() {
+    protected List<StudyResourcingDTO> getListOfGrants() {
         List<StudyResourcingDTO> studyResourcingDTOs  = new ArrayList<StudyResourcingDTO>();
         final StudyResourcingDTO grant = new StudyResourcingDTO();
         grant.setFundingMechanismCode(CdConverter.convertStringToCd("D71"));
@@ -1439,7 +1309,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
 
     
-    private List<StudyIndldeDTO> getListOfINDs() {
+    protected List<StudyIndldeDTO> getListOfINDs() {
         List<StudyIndldeDTO> list = new ArrayList<StudyIndldeDTO>();
         StudyIndldeDTO si = new StudyIndldeDTO();
         si.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
@@ -1504,9 +1374,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                         + studyProtocolDTO.getIdentifier().getExtension());
         
         // Change next 3 fields and then ensure that the changes have been ignored.        
-        studyProtocolDTO.setPublicTitle(StConverter.convertToSt("Public title changed"));
-        studyProtocolDTO.setPublicDescription(StConverter.convertToSt("Public descr changed"));
-        studyProtocolDTO.setScientificDescription(StConverter.convertToSt("Scientific descr changed"));
+        studyProtocolDTO.setPublicTitle(StConverter.convertToSt(""));
+        studyProtocolDTO.setPublicDescription(StConverter.convertToSt(""));
+        studyProtocolDTO.setScientificDescription(StConverter.convertToSt(""));
         
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
@@ -1605,7 +1475,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                        .convertToBl(Boolean.FALSE));
     }
 
-    private void createMilestones(Ii ii) throws PAException {
+    protected void createMilestones(Ii ii) throws PAException {
         paServiceUtils
             .createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"), null);
         paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null, null);
@@ -1643,37 +1513,37 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
     }
 
-    private InterventionalStudyProtocolDTO getInterventionalStudyProtocol() throws PAException {
+    protected InterventionalStudyProtocolDTO getInterventionalStudyProtocol() throws PAException {
         InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
         studyProtocolDTO.setIdentifier(null);
         return studyProtocolDTO;
     }
 
-    private OrganizationDTO getLeadOrg() {
+    protected OrganizationDTO getLeadOrg() {
         OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
         leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         return leadOrganizationDTO;
     }
 
-    private OrganizationDTO getSponsorOrg() {
+    protected OrganizationDTO getSponsorOrg() {
         OrganizationDTO sponsorOrganizationDTO = new OrganizationDTO();
         sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
         return sponsorOrganizationDTO;
     }
 
-    private PersonDTO getPI() {
+    protected PersonDTO getPI() {
         PersonDTO principalInvestigatorDTO  = new PersonDTO();
         principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
         return principalInvestigatorDTO;
     }
 
-    private StudySiteDTO getStudySite() {
+    protected StudySiteDTO getStudySite() {
         StudySiteDTO spDto = new StudySiteDTO();
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         return spDto;
     }
 
-    private List<DocumentDTO> getStudyDocuments() {
+    protected List<DocumentDTO> getStudyDocuments() {
         DocumentDTO icDoc = new DocumentDTO();
         icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
         icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
@@ -1689,5 +1559,75 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
         irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
         return Arrays.asList(icDoc, protocolDoc, irbDoc);
+    }
+    
+    
+    @Test
+    public void updateAbbreviatedStudyProtocolTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = registerAbbreviatedTrial();   
+        
+        StudySiteDTO nctID = new StudySiteDTO();
+        nctID.setLocalStudyProtocolIdentifier(StConverter.convertToSt("NCT123456"));
+        
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LID123456"));
+        
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        
+        PersonDTO principalInvestigatorDTO  = getPI();
+        
+        PersonDTO centralContactDTO = principalInvestigatorDTO;
+        
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+        
+        List<ArmDTO> arms = new ArrayList<ArmDTO>();
+        ArmDTO armDTO = new ArmDTO();
+        armDTO.setName(StConverter.convertToSt("ARm02"));
+        armDTO.setTypeCode(CdConverter
+                .convertToCd(ArmTypeCode.EXPERIMENTAL));
+        armDTO.setDescriptionText(StConverter.convertToSt("ARm02"));
+        arms.add(armDTO);
+        
+        List<PlannedEligibilityCriterionDTO> eligibility = new ArrayList<PlannedEligibilityCriterionDTO>();
+        PlannedEligibilityCriterionDTO pEligibiltyCriterionDTO = new PlannedEligibilityCriterionDTO();
+        pEligibiltyCriterionDTO.setCriterionName(StConverter
+                .convertToSt("GENDER"));
+        pEligibiltyCriterionDTO
+                .setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode.FEMALE));
+        pEligibiltyCriterionDTO
+                .setCategoryCode(CdConverter
+                        .convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+        pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter
+                .convertToBl(Boolean.TRUE));
+        eligibility.add(pEligibiltyCriterionDTO);  
+        
+        List<StudyOutcomeMeasureDTO> outcomes = new ArrayList<StudyOutcomeMeasureDTO>();
+        StudyOutcomeMeasureDTO outcome = new StudyOutcomeMeasureDTO();
+        outcome.setName(StConverter.convertToSt("Outcome02"));
+        outcome.setSafetyIndicator(BlConverter.convertToBl(true));
+        outcome.setPrimaryIndicator(BlConverter
+                .convertToBl(true));
+        outcome.setTimeFrame(StConverter.convertToSt("Outcome02"));
+        outcome.setDescription(StConverter.convertToSt("Outcome02"));
+        outcome.setTypeCode(CdConverter.convertToCd(OutcomeMeasureTypeCode.PRIMARY));
+        outcomes.add(outcome);     
+        
+        List<OrganizationDTO> collaborators = new ArrayList<OrganizationDTO>();
+        collaborators.add(sponsorOrganizationDTO);
+        
+        List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
+        
+        Ii ii = bean.updateAbbreviatedStudyProtocol(studyProtocolDTO, nctID,                
+                sponsorOrganizationDTO, principalInvestigatorDTO,
+                centralContactDTO, overallStatusDTO, regAuthority, arms,
+                eligibility, outcomes, collaborators, documents);
+        assertFalse(ISOUtil.isIiNull(ii));
+        
     }
 }

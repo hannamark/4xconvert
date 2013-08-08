@@ -421,4 +421,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         // TODO Auto-generated method stub
         
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<StudyProtocolDTO> getStudyProtocolsByNctId(String nctID)
+            throws PAException {       
+        return null;
+    }
 }
