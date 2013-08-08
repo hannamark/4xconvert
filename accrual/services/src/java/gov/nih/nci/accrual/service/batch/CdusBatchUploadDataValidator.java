@@ -158,6 +158,10 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean patientCheck;
     private Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
     private String accrualSubmissionLevel;
+    /**
+     * UTF byte order marker.
+     */
+    public static final String UTF8_BOM = "\uFEFF";
 
     @EJB
     private SubjectAccrualServiceLocal subjectAccrualService;
@@ -185,11 +189,15 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             //not properly handle lines with trailing whitespace characters. A defect has been filed and can be viewed
             //at http://sourceforge.net/tracker/?func=detail&atid=773541&aid=3217444&group_id=148905
             List<String[]> lines = new ArrayList<String[]>();
-            LineIterator lineIterator = FileUtils.lineIterator(file);
+            LineIterator lineIterator = FileUtils.lineIterator(file, "UTF-8");
             long lineNumber = 0;
             String protocolId = null;
             while (lineIterator.hasNext()) {
-                String[] line = AccrualUtil.csvParseAndTrim(lineIterator.nextLine());
+                String str = lineIterator.nextLine();
+                if (str.startsWith(UTF8_BOM)) {
+                    str = str.substring(1);
+                }
+                String[] line = AccrualUtil.csvParseAndTrim(str);
                 lines.add(line);
                 ++lineNumber;
                 if (line != null 
@@ -262,6 +270,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     errMsg.append(e.getLocalizedMessage());
                 }
             }
+            LineIterator.closeQuietly(lineIterator);
             if (StringUtils.isEmpty(protocolId)) {
                 errMsg.append("No Study Protocol Identifier could be found in the given file.");
             }
