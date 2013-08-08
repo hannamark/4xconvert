@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
-    private static final Logger LOG = Logger.getLogger(I2EGrantsServiceBean.class);
 
     private static final int COL_SN = 1;
     private static final int COL_INST = 2;
@@ -39,6 +38,11 @@ public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
             "SELECT serial_number, institution_name, project_title, pi_first_name, pi_last_name "
             + "FROM ctrp_grants_r_vw "
             + "WHERE serial_number LIKE ? AND rownum <= 10 ";
+
+    private static final String SQL_VALIDATE =
+            "SELECT COUNT(*) "
+            + "FROM ctrp_grants_r_vw "
+            + "WHERE serial_number = ?";
 
     @EJB 
     private LookUpTableServiceRemote lookUpTableSvc;
@@ -77,6 +81,32 @@ public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
             result = run.query(connection, SQL_SEARCH, handler, data + "%");
         } catch (SQLException e) {
             throw new PAException("Error querying I2E Oracle database.", e);
+        }
+        return result;
+    }
+
+    @Override
+    public Boolean isValidCaGrant(String serialNumber) throws PAException {
+        String data = fixSerialNumber(serialNumber);
+        if (data == null) {
+            return false;
+        }
+        Boolean result = false;
+        Connection connection = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = connection.prepareStatement(SQL_VALIDATE);
+            stmt.setString(1, data);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            throw new PAException("Error querying I2E Oracle database.", e);
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(stmt);
         }
         return result;
     }

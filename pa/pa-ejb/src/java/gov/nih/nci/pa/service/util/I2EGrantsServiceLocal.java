@@ -109,4 +109,12 @@ public interface I2EGrantsServiceLocal {
      * @throws PAException exception
      */
     List<I2EGrant> getBySerialNumber(String serialNumber) throws PAException;
+
+    /**
+     * Return true if exact match for serial number found in grant view.
+     * @param serialNumber full serial number
+     * @return true if found
+     * @throws PAException exception
+     */
+    Boolean isValidCaGrant(String serialNumber) throws PAException;
 }

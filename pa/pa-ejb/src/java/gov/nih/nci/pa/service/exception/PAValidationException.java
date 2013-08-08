@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.pa.service.exception;
 
-import javax.ejb.ApplicationException;
-
 import gov.nih.nci.pa.service.PAException;
+
+import javax.ejb.ApplicationException;
 
 
 /**
@@ -94,8 +94,13 @@ import gov.nih.nci.pa.service.PAException;
  */
 @ApplicationException(rollback = true)
 public class PAValidationException extends PAException {
+    
+    /** Enum to indicate level of exception. */
+    public enum Level { WARN, ERROR };
 
     private static final long serialVersionUID = -7988557360388434243L;
+
+    private Level level;
 
     /**
      * String constructor.
@@ -103,6 +108,17 @@ public class PAValidationException extends PAException {
      */
     public PAValidationException(String message) {
         super(message);
+        level = Level.ERROR;
+    }
+
+    /**
+     * String constructor.
+     * @param message message
+     * @param level the level of error
+     */
+    public PAValidationException(String message, Level level) {
+        super(message);
+        this.level = level;
     }
     /**
     *
@@ -111,4 +127,11 @@ public class PAValidationException extends PAException {
    public PAValidationException(Throwable t) {
        super(t);
    }
+
+    /**
+     * @return the level
+     */
+    public Level getLevel() {
+        return level;
+    }
 }

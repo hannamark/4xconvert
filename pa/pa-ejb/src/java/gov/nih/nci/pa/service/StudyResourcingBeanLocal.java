@@ -99,8 +99,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -110,6 +112,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -153,6 +156,8 @@ public class StudyResourcingBeanLocal extends
     private StudyProtocolServiceLocal studyProtocolSvc;
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
+    @EJB
+    private I2EGrantsServiceLocal i2eSvc;
 
     private static final String STAT_P30 = "P30stat";
     private static final String STAT_CA = "CAstat";
@@ -177,6 +182,13 @@ public class StudyResourcingBeanLocal extends
      */
     public void setStudyProtocolSvc(StudyProtocolServiceLocal studyProtocolSvc) {
         this.studyProtocolSvc = studyProtocolSvc;
+    }
+
+    /**
+     * @param i2eSvc the i2eSvc to set
+     */
+    public void setI2eSvc(I2EGrantsServiceLocal i2eSvc) {
+        this.i2eSvc = i2eSvc;
     }
 
     /**
@@ -349,9 +361,21 @@ public class StudyResourcingBeanLocal extends
             }
             caGrantsValidation(nciFunded, stats);
         }
-        if (method == Method.ABSTRACTION_VALIDATION && (Double) stats.get(STAT_FUNDING_PCT) > MAX_FUNDING_PCT) {
-            throw new PAValidationException(
-                    "Total percent of grant funding this trial for all grants cannot be greater than 100.");
+        if (method == Method.ABSTRACTION_VALIDATION) {
+            if ((Double) stats.get(STAT_FUNDING_PCT) > MAX_FUNDING_PCT) {
+                throw new PAValidationException(
+                        "Total percent of grant funding this trial for all grants cannot be greater than 100.");
+            }
+            List<StudyResourcingDTO> existing = ISOUtil.isIiNull(existingSp.getIdentifier()) 
+                    ? new ArrayList<StudyResourcingDTO>() : getByStudyProtocol(existingSp.getIdentifier());
+            for (StudyResourcingDTO dto : existing) {
+                String instCode = CdConverter.convertCdToString(dto.getNihInstitutionCode());
+                String sn = StConverter.convertToString(dto.getSerialNumber());
+                if ("CA".equals(instCode) && !i2eSvc.isValidCaGrant(sn)) {
+                    throw new PAValidationException("Serial nubmer " + sn 
+                            + " was not found in the I2E Grants database for CA grants.", Level.WARN);
+                }
+            }
         }
     }
 

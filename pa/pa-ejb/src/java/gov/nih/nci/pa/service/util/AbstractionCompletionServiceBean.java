@@ -145,6 +145,8 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -672,6 +674,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         try {
             studyResourcingService.validate(Method.ABSTRACTION_VALIDATION, BlConverter.convertToBoolean(spDto.getNciGrant()),
                     IiConverter.convertToString(spDto.getIdentifier()), null, null);
+        } catch (PAValidationException e) {
+            if (e.getLevel() == Level.WARN) {
+                messages.addWarning("Select Trial Funding from Administrative Data menu.", e.getMessage(), 7);
+            } else {
+                messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), 
+                        ErrorMessageTypeEnum.ADMIN, 7);
+            }
         } catch (PAException e) {
             messages.addError("Select Trial Funding from Administrative Data menu.", e.getMessage(), ErrorMessageTypeEnum.ADMIN, 7);
         }

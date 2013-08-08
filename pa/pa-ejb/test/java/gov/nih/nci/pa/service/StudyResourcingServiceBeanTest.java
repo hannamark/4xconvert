@@ -104,6 +104,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -135,6 +136,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
     private final StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
     Ii pid;
+    private I2EGrantsServiceLocal i2eSvc = mock(I2EGrantsServiceLocal.class);
  
     @Rule  
     public ExpectedException thrown = ExpectedException.none();  
@@ -143,6 +145,7 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         ((StudyResourcingBeanLocal) remoteEjb).setLookUpTableSvc(new LookUpTableServiceBean());
         ((StudyResourcingBeanLocal) remoteEjb).setStudyProtocolSvc(new StudyProtocolBeanLocal());
+        ((StudyResourcingBeanLocal) remoteEjb).setI2eSvc(i2eSvc);
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));

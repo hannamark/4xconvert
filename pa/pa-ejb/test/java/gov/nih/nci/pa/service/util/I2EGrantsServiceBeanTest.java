@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal.I2EGrant;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -53,5 +54,25 @@ public class I2EGrantsServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void getBySerialNumberNotFound() throws Exception {
         assertTrue(svc.getBySerialNumber("23").isEmpty());
+    }
+
+    @Test
+    public void isValidCaGrantNull() throws Exception {
+        assertFalse(svc.isValidCaGrant(null));
+    }
+
+    @Test
+    public void isValidCaGrantBadData() throws Exception {
+        assertFalse(svc.isValidCaGrant("abd"));
+    }
+
+    @Test
+    public void isValidCaGrantNotFound() throws Exception {
+        assertFalse(svc.isValidCaGrant("23"));
+    }
+
+    @Test
+    public void isValidCaGrantFound() throws Exception {
+        assertTrue(svc.isValidCaGrant(" 123 "));
     }
 }
