@@ -247,6 +247,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         User csmUser = csmUserService.getCSMUser(userWebDTO.getUsername());
         if (csmUser == null) {
             csmUser = csmUserService.createCSMUser(registryUser, userWebDTO.getUsername(), null);
+        } else {
+            CSMUserService.getInstance().updateCSMUser(registryUser, userWebDTO.getUsername(), null);
         }
         csmUserService.assignUserToGroup(csmUser.getLoginName(), PaEarPropertyReader.getCSMSubmitterGroup());
         registryUser.setCsmUser(csmUser);
