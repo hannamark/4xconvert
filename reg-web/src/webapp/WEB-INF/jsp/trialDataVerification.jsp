@@ -9,7 +9,7 @@
     <s:head/>
      <script type="text/javascript">
         function addAction(url){
-                if (confirm('<fmt:message key="trial.data.verification.Confirm" />')) {
+                if (confirm("<fmt:message key='trial.data.verification.Confirm' />")) {
                     var pid = getUrlVars()["studyProtocolId"];
                     document.forms[0].setAttribute("action", url+"?studyProtocolId="+pid);
                     document.forms[0].submit();    
