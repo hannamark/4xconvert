@@ -24,8 +24,7 @@
     <property name="java.encoding" value="utf-8"/>
 
     <property name="pa-ejb.build.finalName" value="pa-ejb"/>
-    <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
-	<property name="pa-ejb.lib.dir" value="${pa.dir}/pa-ejb/lib"/>
+    <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>	
     <property name="pa-ejb.build.outputDir" value="${pa-ejb.build.dir}/classes"/>
 	<property name="pa-ejb.build.srcgenDir" value="${pa-ejb.build.dir}/generated-src"/>
     <property name="pa-ejb.build.srcDir.0" value="${pa.dir}/pa-ejb/src/java"/>
@@ -121,13 +120,6 @@
         </fileset>
     </path>
 	
-    <path id="xjc.classpath">
-        <fileset dir="${pa-ejb.lib.dir}">
-            <include name="${xjc.file}" />
-        	<include name="${jaxb.file}" />
-        </fileset>
-    </path>
-
 
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
@@ -135,7 +127,7 @@
     <mkdir dir="${lib.dir}"/>
     <mkdir dir="${pa.report.dir}/pa-ejb"/>
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>	
-	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="xjc.classpath"/>
+	
 	
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -225,6 +217,7 @@
     <!-- ====================================================================== -->
 
 	<target name="run-xjc" depends="configure-main" description="Generates JAXB classes">
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="compile.classpath"/>
 		<mkdir dir="${pa-ejb.build.srcgenDir}"/>
 		<xjc destdir="${pa-ejb.build.srcgenDir}">
 		  <schema  dir="${pa-ejb.build.resourceDir.0}" includes="ctgov_public.xsd"/>
