@@ -814,10 +814,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         if (phone != null) {
             parsedPhone = phone
                     .replaceAll("(?i) \\(U.S. Only\\)", EMPTY)
-                    .replaceAll("^(\\d+) (\\d+) (\\d+)$", "$1-$2-$3")
-                    // NOPMD
-                    .replaceAll("^(\\d+)-(\\d+) (\\d+)$", "$1-$2-$3")
-                    // NOPMD
+                    .replaceAll("^(\\d{3})\\s*(\\d{3})\\s*(\\d{4})$", "$1-$2-$3") // NOPMD                    
+                    .replaceAll("^(\\d+)-(\\d+) (\\d+)$", "$1-$2-$3") // NOPMD                    
                     .replaceAll("^(\\d+)\\s+(\\d+)-(\\d+)$", "$1-$2-$3")
                     .replaceAll("^\\+1\\((\\d+)\\)\\s*(\\d+)-(\\d+)$",
                             "$1-$2-$3")

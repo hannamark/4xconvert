@@ -553,8 +553,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                         .getOrganizationalContactIi().getExtension())));
                 centralContactName = paCDto.getTitle();
             }
-            String email = PAUtil.getEmail(cc.getTelecomAddresses());
-            String phone = PAUtil.getPhone(cc.getTelecomAddresses());
+            String email = StringUtils.defaultString(PAUtil.getEmail(cc.getTelecomAddresses()), N_A);
+            String phone = StringUtils.defaultString(PAUtil.getPhone(cc.getTelecomAddresses()), N_A);
             String extn = PAUtil.getPhoneExtension(cc.getTelecomAddresses());
 
             StringBuilder builder = new StringBuilder();
@@ -638,10 +638,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             statusDate.setCurrentTrialStatus(getValue(statusDateDto.getStatusCode()) + AS_OF
                     + PAUtil.convertTsToFormattedDate(statusDateDto.getStatusDate()));
             statusDate.setReasonText(getValue(statusDateDto.getReasonText(), null));
-            statusDate.setTrialStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                    studyProtocolDto.getStartDate()).toString())
-                    + "-" + getValue(studyProtocolDto.getStartDateTypeCode()));
-            if (studyProtocolDto.getPrimaryCompletionDate().getNullFlavor() == null) {
+            if (ISOUtil.isTsNull(studyProtocolDto.getStartDate())) {
+                statusDate.setTrialStartDate(INFORMATION_NOT_PROVIDED);
+            } else {
+                statusDate.setTrialStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                        studyProtocolDto.getStartDate()).toString())
+                        + "-" + getValue(studyProtocolDto.getStartDateTypeCode()));
+            }
+            if (!ISOUtil.isTsNull(studyProtocolDto.getPrimaryCompletionDate())) {
                 statusDate.setPrimaryCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                         studyProtocolDto.getPrimaryCompletionDate()).toString())
                         + "-" + getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));

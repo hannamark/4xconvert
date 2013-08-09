@@ -106,6 +106,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -1176,7 +1177,7 @@ public class PAUtil {
     public static boolean isPrimaryCompletionDateRequired(StudyProtocolDTO studyProtocolDTO) {
         boolean isPrimaryCompletionDateRequired = true;
         if (studyProtocolDTO instanceof NonInterventionalStudyProtocolDTO 
-                && !studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue()) {
+                && !BlConverter.convertToBool(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
             isPrimaryCompletionDateRequired = false;
         }
         return isPrimaryCompletionDateRequired;

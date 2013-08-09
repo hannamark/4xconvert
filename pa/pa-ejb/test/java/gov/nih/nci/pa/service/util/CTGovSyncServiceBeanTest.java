@@ -418,6 +418,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 serviceBean.convertCtGovPhone("1-888-669-6682"));
         assertEquals("800-340-6843",
                 serviceBean.convertCtGovPhone("+1(800)340-6843"));
+        assertEquals("301-728-7094",
+                serviceBean.convertCtGovPhone("3017287094"));
     }
 
     @Test
