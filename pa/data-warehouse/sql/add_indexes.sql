@@ -38,6 +38,7 @@ CREATE INDEX DW_STUDY_GRANT_NCI_ID_IDX on dw_study_grant(NCI_ID);
 CREATE INDEX DW_STUDY_GRANT_NIH_INSTITUTION_CODE_IDX on dw_study_grant(nih_institution_code);
 CREATE INDEX DW_STUDY_GRANT_SERIAL_NUMBER_IDX on dw_study_grant(serial_number);
 
+CREATE INDEX DW_GRANTS_I2E_SERIAL_NUM_IDX on dw_grants_i2e(serial_number);
 
 CREATE INDEX DW_STUDY_IND_IDE_DATE_LAST_CREATED_IDX on dw_study_ind_ide(date_last_created);
 CREATE INDEX DW_STUDY_IND_IDE_DATE_LAST_UPDATED_IDX on dw_study_ind_ide(date_last_updated);
