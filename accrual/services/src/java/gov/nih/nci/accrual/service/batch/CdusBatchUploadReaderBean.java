@@ -137,6 +137,7 @@ import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -166,6 +167,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private static final String DATE_PATTERN = "MM/dd/yyyy";
     private static final String DEFAULTBIRTHDATE = "100101";
     private static final String NCI_TRIAL_IDENTIFIER = "${nciTrialIdentifier}";
+    private static final String FILE_NAME = "${fileName}";
 
     // Cache for disease Ii's
     private static CacheManager cacheManager;
@@ -191,15 +193,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     public List<BatchValidationResults> validateBatchData(BatchFile batchFile)  {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
         ZipFile zip = null;
+        File file = new File(batchFile.getFileLocation());        
         try {
-            File file = new File(batchFile.getFileLocation());
-            boolean archive = StringUtils.equals(StringUtils.substringAfter(file.getName(), "."), "zip");
+            boolean archive = StringUtils.equals(FilenameUtils.getExtension(file.getName()), "zip");
             if (archive) {
                  zip = new ZipFile(file, ZipFile.OPEN_READ);
                 Enumeration<? extends ZipEntry> files = zip.entries();
                 while (files.hasMoreElements()) {
                     ZipEntry entry = files.nextElement();
-                    File f = File.createTempFile(StringUtils.substringBefore(entry.getName(), "."), ".txt");
+                    File f = File.createTempFile(FilenameUtils.getBaseName(entry.getName()), ".txt");
                     IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(f));
                     batchFileProcessing(results, batchFile, entry.getName(), f);
                 }
@@ -212,6 +214,32 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
         } catch (Exception e) {
             LOG.error("Error validating batch files.", e);
+            
+            //send an email to user the format is not correct.
+            batchFile.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
+            AccrualCollections collection = new AccrualCollections();
+            collection.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
+            collection.setPassedValidation(batchFile.isPassedValidation());
+            
+            try {
+                String subj = PaServiceLocator.getInstance().getLookUpTableService()
+                        .getPropertyValue("accrual.exception.subject");
+                String body = PaServiceLocator.getInstance().getLookUpTableService()
+                        .getPropertyValue("accrual.exception.body");
+                String regUserName = batchFile.getSubmitter().getFirstName() 
+                        + " " + batchFile.getSubmitter().getLastName();
+
+                body = body.replace("${submissionDate}", getFormatedCurrentDate());
+                body = body.replace("${SubmitterName}", regUserName);
+                body = body.replace("${CurrentDate}", getFormatedCurrentDate());
+                body = body.replace(FILE_NAME, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()));
+                subj = subj.replace(FILE_NAME, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()));
+                sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
+
+                batchFileSvc.update(batchFile, collection);
+            } catch (PAException e1) {
+                LOG.error("Error while sending an email/updating the BatchFile table with the error.", e1);
+            }
         } 
         return results;
     }
@@ -428,7 +456,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 }
                 count++;
             }
-            body = body.replace("${fileName}", result.getFileName());
+            body = body.replace(FILE_NAME, result.getFileName());
             body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
             if (result.getNciIdentifier() == null) {
                 result.setNciIdentifier("");
@@ -468,7 +496,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         
-        body = body.replace("${fileName}", result.getFileName());
+        body = body.replace(FILE_NAME, result.getFileName());
         if (body.contains("${count}")) {
             body = body.replace("${count}", String.valueOf(result.getTotalImports()));
         }

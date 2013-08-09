@@ -82,14 +82,12 @@
  */
 package gov.nih.nci.accrual.service;
 
-import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -109,8 +107,6 @@ import org.apache.log4j.Logger;
 @Local(BatchUploadProcessingTaskServiceLocal.class)
 public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {
     private static final Logger LOG = Logger.getLogger(BatchUploadProcessingTaskServiceBean.class);
-    @EJB
-    private BatchFileService batchFileSvc;
     
     /**
      * {@inheritDoc}
@@ -124,22 +120,6 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
                 batchUploadService.validateBatchData(batchFile);
             } catch (Exception e) {
                 LOG.error("Error processing " + batchFile.getFileLocation(), e);
-                batchFile.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
-                batchFileSvc.update(batchFile);
             }
-    }
-
-    /**
-     * @return the batchFileSvc
-     */
-    public BatchFileService getBatchFileSvc() {
-        return batchFileSvc;
-    }
-
-    /**
-     * @param batchFileSvc the batchFileSvc to set
-     */
-    public void setBatchFileSvc(BatchFileService batchFileSvc) {
-        this.batchFileSvc = batchFileSvc;
     }
 }

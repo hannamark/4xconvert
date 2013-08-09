@@ -18,8 +18,10 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -29,6 +31,8 @@ import org.apache.struts2.ServletActionContext;
 public class PriorSubmissionsAction extends AbstractListAccrualAction<HistoricalSubmissionDto> {
 
     private static final long serialVersionUID = 7146346266420362794L;
+    /** CSM Group used to define suabstractor role. **/
+    public static final String SUABSTRACTOR = "SuAbstractor";
     
     private Long batchFileId;
     private String dateFrom;
@@ -58,6 +62,7 @@ public class PriorSubmissionsAction extends AbstractListAccrualAction<Historical
         for (HistoricalSubmissionDto item : getDisplayTagList()) {
             if (getBatchFileId() != null && ObjectUtils.equals(item.getBatchFileIdentifier(), getBatchFileId())) {
                 batchFile = getBatchFileSvc().getById(item.getBatchFileIdentifier());
+                break;
             }
         }
 
@@ -66,6 +71,16 @@ public class PriorSubmissionsAction extends AbstractListAccrualAction<Historical
                 throw new PAException("File not found in authorized list.");
             }
             File file = new File(batchFile.getFileLocation());
+            if (StringUtils.equals(FilenameUtils.getExtension(file.getName()), "zip")) {
+                boolean superAbs = ServletActionContext.getRequest().isUserInRole(SUABSTRACTOR);
+                String loginName = ServletActionContext.getRequest().getRemoteUser();
+                if (!StringUtils.equals(loginName, batchFile.getUserLastCreated().getLoginName()) && !superAbs) {
+                    addActionError("You do not have permission to download this file from this page. Only the user"
+                    + " who uploaded this zip file can download it. Please contact the NCI CTRO"
+                    + " if you have any questions about this file.");
+                    return SUCCESS;
+                }
+            }
             InputStream in = new FileInputStream(file);
             byte[] byteArray = IOUtils.toByteArray(in);
             ByteArrayInputStream bis = new ByteArrayInputStream(byteArray);

@@ -470,6 +470,18 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "No Study Protocol Identifier could be found in the given file."));
+        
+        file = new File(this.getClass().getResource("/accrual_format_issue_file.zip").toURI());
+        batchFile = getBatchFile(file);
+        readerService.validateBatchData(batchFile);
+        verifyEmailsSent(3, 1);
+        BatchFile r = getResultFromDb(); 
+        assertFalse(r.isPassedValidation());
+        assertFalse(r.isProcessed());
+        System.out.println(r.getResults() + "   " + r.getFileLocation());
+        assertTrue(r.getFileLocation().contains("accrual_format_issue_file.zip"));
+        assertFalse(StringUtils.isEmpty(r.getResults()));
+        assertTrue(StringUtils.contains(r.getResults(), "Failed proceesing a batch file: "));
 	}
 
 	@Test

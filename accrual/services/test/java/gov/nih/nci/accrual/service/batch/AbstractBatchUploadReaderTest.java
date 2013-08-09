@@ -198,6 +198,10 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     private static final String CHANGECODE_BODY_VALUE = "accrual.changeCode.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}.";
     private static final String IT_BODY_KEY = "accrual.industrialTrial.body";
     private static final String IT_BODY_VALUE = "accrual.industrialTrial.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName} ${studySiteCounts}.";
+    private static final String EXCEPTION_SUBJECT_KEY = "accrual.exception.subject";
+    private static final String EXCEPTION_SUBJECT_VALUE = "accrual.exception.subject- ${fileName}";
+    private static final String EXCEPTION_BODY_KEY = "accrual.exception.body";
+    private static final String EXCEPTION_BODY_VALUE = "accrual.exception.body - ${SubmitterName}, ${CurrentDate}, ${fileName}.";
     
     @Before
     public void setUpReader() throws Exception {
@@ -436,6 +440,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_BODY_KEY)).thenReturn(CONFIRMATION_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CHANGECODE_BODY_KEY)).thenReturn(CHANGECODE_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(IT_BODY_KEY)).thenReturn(IT_BODY_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(EXCEPTION_SUBJECT_KEY)).thenReturn(EXCEPTION_SUBJECT_VALUE);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(EXCEPTION_BODY_KEY)).thenReturn(EXCEPTION_BODY_VALUE);
         
         PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
         when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
