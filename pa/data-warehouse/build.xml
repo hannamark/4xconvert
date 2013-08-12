@@ -12,19 +12,44 @@
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/>
 
     <target name="populate" depends="gen" description="Rename from staging to final tables, add indexes">
+        <stopwatch name="timer1"/>
+        <echo message = "Renaming stage tables"/>
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
-	        <transaction src="${basedir}/sql/rename_all.sql"/>
-	        <transaction src="${basedir}/sql/add_indexes.sql"/>
-	        <transaction src="${basedir}/sql/misc.sql"/>
-	        <classpath>
-	            <path refid="bda-utils.classpath"/>
-	        </classpath>
+            <transaction src="${basedir}/sql/rename_all.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
         </sql>
+        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1"/>
+        <echo message = "Adding indexes"/>
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+            expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/add_indexes.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1"/>
+        <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+            expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/misc.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+        <stopwatch name="timer1" action="total"/>
     </target>
 
     <target name="init-db" description="Initializes the data warehousing tables">
+        <stopwatch name="timer1"/>
+        <echo message = "Creating data warehouse stage tables"/>
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
@@ -77,6 +102,7 @@
                 <path refid="bda-utils.classpath"/>
             </classpath>
         </sql>
+        <stopwatch name="timer1" action="total"/>
     </target>
 
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
