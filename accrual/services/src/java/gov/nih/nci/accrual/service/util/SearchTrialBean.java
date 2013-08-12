@@ -417,7 +417,8 @@ public class SearchTrialBean implements SearchTrialService {
 
     private void setCounts(Long studyProtocolId, Long affOrgId,
         Session session, SearchTrialResultDto dto, AccrualCountsDto ac) {
-        if (dto.getIndustrial().getValue()) {
+        if (dto.getIndustrial().getValue() || !ISOUtil.isStNull(dto.getAccrualSubmissionLevel())
+                && dto.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUMMARY_LEVEL)) {
             Query sqlCount = session.createSQLQuery("select accrual_count from study_site_subject_accrual_count"
             + " where study_protocol_identifier = " + studyProtocolId + " and study_site_identifier in ( "
             + "select identifier from study_site where study_protocol_identifier = " + studyProtocolId
