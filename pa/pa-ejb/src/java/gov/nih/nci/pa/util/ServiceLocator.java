@@ -119,6 +119,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
@@ -484,5 +485,10 @@ public interface ServiceLocator {
      * @return CTGovSyncServiceLocal
      */
     CTGovSyncServiceLocal getCTGovSyncService();
+    
+    /**
+     * @return CTGovSyncNightlyServiceLocal
+     */
+    CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService();
 }
 
