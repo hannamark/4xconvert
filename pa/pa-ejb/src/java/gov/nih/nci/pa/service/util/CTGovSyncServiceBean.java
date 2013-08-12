@@ -39,6 +39,7 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
@@ -1363,6 +1364,18 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                         TimePerspectiveCode.class)));
         dto.setStudySubtypeCode(CdConverter
                 .convertToCd(StudySubtypeCode.OBSERVATIONAL));
+        
+        final EligibilityStruct elig = study.getEligibility();
+        if (elig != null && StringUtils.isNotBlank(elig.getSamplingMethod())) {
+            dto.setSamplingMethodCode(CdConverter
+                    .convertStringToCd(checkCodeExistence(
+                            elig.getSamplingMethod(), SamplingMethodCode.class)));
+        }
+        if (elig != null && elig.getStudyPop() != null
+                && StringUtils.isNotBlank(elig.getStudyPop().getTextblock())) {
+            dto.setStudyPopulationDescription(StConverter.convertToSt(left(elig
+                    .getStudyPop().getTextblock(), L_800)));
+        }
 
     }
 
