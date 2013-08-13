@@ -474,8 +474,9 @@ public class StudyOverallStatusBeanLocal extends
         DateMidnight newStartDate = TsConverter.convertToDateMidnight(studyProtocolDTO.getStartDate());
         String actualString = "Actual";
         String anticipatedString = "Anticipated";
-        String newStartDateType = studyProtocolDTO.getStartDateTypeCode().getCode();
-        String newCompletionDateType = studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode();
+        String newStartDateType = CdConverter.convertCdToString(studyProtocolDTO.getStartDateTypeCode());
+        String newCompletionDateType = 
+                CdConverter.convertCdToString(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
 
         if (newCode == null) {
             errMsg.append("Invalid new study status: '" + statusDto.getStatusCode().getCode() + "'. ");
@@ -491,24 +492,24 @@ public class StudyOverallStatusBeanLocal extends
                     errMsg.append("When transitioning from 'Approved' to 'Active' the trial start "
                             + "date must be the same as the status date.");
                 }
-                if (!newStartDateType.equals(actualString)) {
+                if (!StringUtils.equals(newStartDateType, actualString)) {
                     errMsg.append("When transitioning from 'Approved' to 'Active' "
                             + "the trial start date must be 'Actual'.");
                 }
             }
             if (!StudyStatusCode.APPROVED.equals(newCode) && !StudyStatusCode.WITHDRAWN.equals(newCode)
-                    && newStartDateType.equals(anticipatedString)) {
+                    && StringUtils.equals(newStartDateType, anticipatedString)) {
                 errMsg.append("Trial start date can be 'Anticipated' only if the status is "
                         + "'Approved' or 'Withdrawn'.");
             }
             if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.WITHDRAWN.equals(newCode)
-                    && newStartDateType.equals(actualString)) {
+                    && StringUtils.equals(newStartDateType, actualString)) {
                 errMsg.append("Trial Start date type should be 'Anticipated' and Trial Start date "
                         + "should be future date if Trial Status is changed from 'Approved' to 'Withdrawn'.  ");
             }
             if (StudyStatusCode.COMPLETE.equals(newCode) || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(newCode)) {
                 StudyOverallStatusDTO oldStatusDto = getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-                if (newCompletionDateType.equals(anticipatedString)) {
+                if (StringUtils.equals(newCompletionDateType, anticipatedString)) {
                     errMsg.append("Primary Completion Date cannot be 'Anticipated' when "
                             + "Current Trial Status is '");
                     errMsg.append(newCode.getCode());
@@ -522,7 +523,7 @@ public class StudyOverallStatusBeanLocal extends
                     errMsg.append("'.");
                 }
             } else {
-                if (!newCompletionDateType.equals(anticipatedString)) {
+                if (!StringUtils.equals(newCompletionDateType, anticipatedString)) {
                     errMsg.append("Trial completion date must be 'Anticipated' when the status is "
                             + "not 'Complete' or 'Administratively Complete'.");
                 }
