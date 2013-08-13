@@ -313,10 +313,10 @@ WHERE sp.status_code = 'ACTIVE'
 DROP TABLE organization_p30_grant;
 
 UPDATE study_protocol sp
-SET nci_grant = ( (SELECT MAX(funding_mechanism_code) 
+SET nci_grant = ( (SELECT MAX(nih_institute_code) 
                    FROM study_resourcing sr 
                    WHERE sp.identifier = sr.study_protocol_identifier 
-                     AND funding_mechanism_code = 'P30')
+                     AND nih_institute_code = 'CA')
                  IS NOT NULL )
 WHERE status_code = 'ACTIVE'
   AND nci_grant IS NULL;
