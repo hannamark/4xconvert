@@ -98,6 +98,7 @@
             <transaction src="${basedir}/sql/evaluation_type.sql"/>
             <transaction src="${basedir}/sql/specimen_collection.sql"/>
             <transaction src="${basedir}/sql/specimen_type.sql"/>
+			<transaction src="${basedir}/sql/study_secondary_purpose.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -328,6 +329,11 @@
         <stopwatch name="timer1"/>
         <echo message = "Running Specimen Type"/>
         <groovy src="groovy/specimen_type.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running Secondary Purpose"/>
+        <groovy src="groovy/secondary_purpose.groovy"/>
         <stopwatch name="timer1" action="total"/>
     </target>
 
