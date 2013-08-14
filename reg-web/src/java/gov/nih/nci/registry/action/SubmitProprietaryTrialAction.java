@@ -355,9 +355,11 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         setTrialDTO(new ProprietaryTrialDTO());
         try {
             setTrialDTO((ProprietaryTrialDTO) util.getTrialDTOForPartiallySumbissionById(pId));
+            final ProprietaryTrialDTO trialDTO = getTrialDTO();
             HttpSession session = ServletActionContext.getRequest().getSession();
             session.setAttribute(Constants.INDIDE_LIST, getTrialDTO().getIndIdeDtos());
             session.setAttribute(Constants.GRANT_LIST, getTrialDTO().getFundingDtos());
+            session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("proprietaryTrial");
             setDocumentsInSession(getTrialDTO());
         } catch (PAException e) {

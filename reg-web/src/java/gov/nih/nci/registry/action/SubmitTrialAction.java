@@ -458,6 +458,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
                     trialDTO.getFundingDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
                     trialDTO.getSecondaryIdentifierList());
+            ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("submitTrial");
             setDocumentsInSession(trialDTO);
         } catch (PAException e) {
