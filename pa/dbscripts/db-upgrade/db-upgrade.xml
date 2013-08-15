@@ -1377,4 +1377,8 @@
         <comment>Adding ctgov.sync.enabled property to pa-properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5935_2.sql"/>
      </changeSet>
+     <changeSet id="PO-5935_3" author="ADas">
+        <comment>Adding status summary e-mail properties to pa-properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5935_3.sql"/>
+     </changeSet>
 </databaseChangeLog>

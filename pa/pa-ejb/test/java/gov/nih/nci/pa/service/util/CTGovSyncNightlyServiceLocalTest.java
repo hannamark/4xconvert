@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
+import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
@@ -21,7 +23,10 @@ import gov.nih.nci.pa.service.ctgov.DateStruct;
 import gov.nih.nci.pa.service.ctgov.IdInfoStruct;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -38,6 +43,7 @@ public class CTGovSyncNightlyServiceLocalTest extends AbstractHibernateTestCase 
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
     private CTGovSyncServiceLocal ctGovSyncServiceLocal;
     private LookUpTableServiceRemote lookUpTableService;
+    private MailManagerServiceLocal mailManagerSvc;
     private CTGovSyncNightlyServiceBeanLocal ctGovSyncNightlyServiceBeanLocal = new CTGovSyncNightlyServiceBeanLocal();
     private List<StudyProtocolQueryDTO> queryDTOList = new ArrayList<StudyProtocolQueryDTO>();    
     
@@ -51,9 +57,20 @@ public class CTGovSyncNightlyServiceLocalTest extends AbstractHibernateTestCase 
         setupLookupTableServiceMock();        
         setupProtocolQueryServiceMock();
         setupCtGovSyncServiceMock();
+        setupMailManagerServiceMock();
+        ctGovSyncNightlyServiceBeanLocal.setMailManagerService(mailManagerSvc);
         ctGovSyncNightlyServiceBeanLocal.setQueryServiceLocal(protocolQueryServiceLocal);
         ctGovSyncNightlyServiceBeanLocal.setLookUpTableService(lookUpTableService);
         ctGovSyncNightlyServiceBeanLocal.setCtGovSyncServiceLocal(ctGovSyncServiceLocal);
+    }
+    
+    /**
+     * Mocks MailManagerService
+     * @throws PAException PAException
+     */
+    private void setupMailManagerServiceMock() throws PAException {
+        mailManagerSvc = mock(MailManagerServiceLocal.class);
+        doNothing().when(mailManagerSvc).sendCTGovSyncStatusSummaryMail(any(List.class));
     }
     
     /**
@@ -146,7 +163,10 @@ public class CTGovSyncNightlyServiceLocalTest extends AbstractHibernateTestCase 
         
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0001")).thenReturn("NCI-2012-0001");
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0002")).thenReturn("NCI-2012-0002");
-        when(ctGovSyncServiceLocal.importTrial("NCT-2012-0003")).thenReturn("NCI-2012-0003");        
+        when(ctGovSyncServiceLocal.importTrial("NCT-2012-0003")).thenReturn("NCI-2012-0003");      
+        
+        when(ctGovSyncServiceLocal.getLogEntries(any(Date.class), any(Date.class))).thenReturn(
+                new ArrayList<CTGovImportLog>());
     }
 
     /**

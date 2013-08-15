@@ -148,9 +148,15 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
-    private static final String FAILURE = "Failure: ";
+    /**
+     * Identifies CTGOV Import status as failure
+     */
+    public static final String FAILURE = "Failure: ";
 
-    private static final String SUCCESS = "Success";
+    /**
+     * Identifies CTGOV Import status as success
+     */
+    public static final String SUCCESS = "Success";
 
     private static final int INDEX_3 = 3;
 

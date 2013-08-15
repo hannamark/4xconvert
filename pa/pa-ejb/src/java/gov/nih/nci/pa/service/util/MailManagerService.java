@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -392,4 +393,11 @@ public interface MailManagerService {
      */
     void sendNCTIDChangeNotificationMail(Ii studyProtocolIi, String newNCT, String oldNCT);
     
+    /**
+     * Sends a status e-mail with a summary of trials in CTRP updated from CTGov to authorized users 
+     * during last synchronization event.
+     * @param logEntries CTGovImport log entries associated with the updated trials.
+     * @throws PAException PAException.
+     */
+    void sendCTGovSyncStatusSummaryMail(List<CTGovImportLog> logEntries) throws PAException;   
 }

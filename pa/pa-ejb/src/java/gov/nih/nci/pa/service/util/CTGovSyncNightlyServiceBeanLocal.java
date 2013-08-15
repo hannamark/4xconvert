@@ -50,18 +50,22 @@ public class CTGovSyncNightlyServiceBeanLocal implements
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
     
+    @EJB 
+    private MailManagerServiceLocal mailManagerService;
+    
     @Override
     public void updateIndustrialAndConsortiaTrials() throws PAException {     
         if (isSyncEnabled()) {
+            //Record the start time of the nighlty job
+            Date startDate = new Date();
             //Query all industrial and consortia trials with NCT identifiers in CTRP.
             StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
             criteria.setIdentifierType(IdentifierType.NCT.getCode());
             criteria.setNctNumber("NCT");
             criteria.setTrialCategory("p");
-            criteria.setExcludeRejectProtocol(true);            
-            
+            criteria.setExcludeRejectProtocol(true);                        
             List<StudyProtocolQueryDTO> trials = queryServiceLocal.getStudyProtocolByCriteria(criteria);            
-            LOG.info("Number of Industrial and Consortia records : " + trials.size());        
+            LOG.info("Number of Industrial and Consortia records : " + trials.size());            
             if (trials != null && !trials.isEmpty()) {            
                 //Loop over all the trials
                 for (StudyProtocolQueryDTO trial : trials) {
@@ -118,6 +122,15 @@ public class CTGovSyncNightlyServiceBeanLocal implements
                     } catch (PAException pae) {
                         LOG.error("Update for : " + nctIdentifier + " failed. " + pae.getMessage());
                     }
+                }             
+                //Record the finish time of nightly job
+                Date endDate = new Date();
+                //Get the log entries which got created between start date and end date
+                List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(startDate, endDate);
+                if (logEntries != null && !logEntries.isEmpty()) {
+                    //Send a status e-mail with a summary of trials in CTRP updated from CTGov to 
+                    //authorized users
+                    mailManagerService.sendCTGovSyncStatusSummaryMail(logEntries);                    
                 }
             }
         }
@@ -159,6 +172,13 @@ public class CTGovSyncNightlyServiceBeanLocal implements
      */
     public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
         this.lookUpTableService = lookUpTableService;
+    }
+    
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
     }
     
     /**

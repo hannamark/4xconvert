@@ -84,6 +84,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -107,6 +108,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -134,6 +136,8 @@ import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -226,6 +230,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String TABLE_ROWS = "${tableRows}";
     private static final String EFFECTIVE_DATE = "TrialDataVerificationNotificationsEffectiveDate";
     private static final String DUE_DATE = "${dueDate}";
+    private static final String TOTAL_SUBMITTED = "${totalSubmitted}";
+    private static final String SUCCESSFUL_UPDATES = "${successfulUpdates}";
+    private static final String FAILURES = "${failures}";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -463,6 +470,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             // Send Message
             invokeTransportAsync(message, deleteAttachments ? postDeletes.toArray(new File[0]) : null); // NOPMD
         } catch (Exception e) {
+            LOG.error(e.getMessage());
             LOG.error(SEND_MAIL_ERROR, e);
         }
     }
@@ -1770,4 +1778,117 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             LOG.error(SEND_MAIL_ERROR, e);
         }    
     }
+    
+    @Override
+    public void sendCTGovSyncStatusSummaryMail(List<CTGovImportLog> logEntries) throws PAException {
+        String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
+        String mailSubject = lookUpTableService.getPropertyValue("ctgovsync.email.subject");
+        String mailBody = lookUpTableService.getPropertyValue("ctgovsync.email.body");
+        String mailingList = lookUpTableService.getPropertyValue("ctgovsync.email.to");
+        List<String> ccList = new ArrayList<String>();
+        String mailTo = null;
+        //Split the mailing addresses based on ;
+        String[] mailingAddresses = StringUtils.split(mailingList, ";");
+        boolean firstAddress = true;
+        for (String mailingAddress : mailingAddresses) {
+            //Use first address as the to address
+            if (firstAddress) {
+                mailTo = mailingAddress;
+                firstAddress = false;
+            } else {
+                //add other following addresses to CC list.
+                ccList.add(mailingAddress);
+            }
+        }
+        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        mailSubject = mailSubject.replace(CURRENT_DATE, getFormatedCurrentDate());
+        int successfulUpdates = 0;
+        int failures = 0;
+        int totalSubmitted = 0;
+        //to track all submissions
+        StringBuffer allSubmissions = new StringBuffer();
+        //to track failed submissions
+        StringBuffer failedSubmissions = new StringBuffer();
+        //Loop over the log entries associated with updated trials
+        for (CTGovImportLog logEntry : logEntries) {
+            StringBuffer logEntryBuffer = new StringBuffer();
+            logEntryBuffer.append("<tr>");
+            logEntryBuffer.append("<td>").append(logEntry.getNciID()).append("</td>");
+            logEntryBuffer.append("<td>").append(logEntry.getNctID()).append("</td>");
+            logEntryBuffer.append("<td>").append(logEntry.getTitle()).append("</td>");
+            logEntryBuffer.append("<td>").append("Industrial").append("</td>");
+            logEntryBuffer.append("<td>").append("Nightly Job").append("</td>");
+            logEntryBuffer.append("<td>").append(logEntry.getDateCreated().toString()).append("</td>");
+            logEntryBuffer.append("<td>").append(logEntry.getImportStatus()).append("</td>");
+            logEntryBuffer.append("</tr>");
+            if (logEntry.getImportStatus().equals(CTGovSyncServiceBean.SUCCESS)) {
+                successfulUpdates++;
+            } else {
+                failedSubmissions.append(logEntryBuffer.toString());
+                failures++;
+            }
+            allSubmissions.append(logEntryBuffer.toString());
+        }
+        totalSubmitted = logEntries.size();
+        mailBody = mailBody.replace(TOTAL_SUBMITTED, Integer.toString(totalSubmitted));
+        mailBody = mailBody.replace(SUCCESSFUL_UPDATES, Integer.toString(successfulUpdates));
+        mailBody = mailBody.replace(FAILURES, Integer.toString(failures));        
+        //populate failed submissions information
+        StringBuffer submissions = new StringBuffer();
+        submissions.append("<!DOCTYPE html>");
+        submissions.append("<html><body>");
+        submissions.append("<p><b>Failed Submissions:</b></p>");
+        submissions.append("<table border=\"1\"><tr>");
+        submissions.append("<td>NCI ID:</td><td>NCT ID:</td><td>Title:</td><td>Trial Type:</td>");
+        submissions.append("<td>Mechanism:</td><td>Date/Time:</td><td>Import Status:</td>");
+        submissions.append(failedSubmissions.toString());
+        submissions.append("</tr>");
+        submissions.append("</table>");
+        //populate all submissions information
+        submissions.append("<p><b>All Submissions:</b></p>");
+        submissions.append("<table border=\"1\"><tr>");
+        submissions.append("<td>NCI ID:</td><td>NCT ID:</td><td>Title:</td><td>Trial Type:</td>");
+        submissions.append("<td>Mechanism:</td><td>Date/Time:</td><td>Import Status:</td>");
+        submissions.append("</tr>");
+        submissions.append(allSubmissions.toString());
+        submissions.append("</table>");
+        submissions.append("</body></html>");
+        File[] attachments = new File[1];        
+        //Creating a zip file which includes failed and all submissions information
+        //as a html file. The zip file would be included as an attachment in status 
+        //summary e-mail.
+        ZipOutputStream zipOutput = null;
+        try {
+            String tempDir = System.getProperty("java.io.tmpdir");
+            Calendar calendar = new GregorianCalendar();
+            Date date = calendar.getTime();
+            DateFormat format = new SimpleDateFormat("MMddyyyy", Locale.getDefault());
+            String currentDate = format.format(date);
+            String fileName = "ctgovDailyImport" + currentDate;
+            //create html file
+            File ctgovDailyImportHtmlFile = new File(tempDir, fileName + ".html");  
+            //copy the submissions information to the html file.
+            FileUtils.writeStringToFile(ctgovDailyImportHtmlFile, submissions.toString());
+            //create zip file
+            File ctgovDailyImportZipFile = new File(tempDir, fileName + ".zip"); 
+            zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(
+                    ctgovDailyImportZipFile)));            
+            //create new zip entry and write html file date to archive
+            ZipEntry entry = new ZipEntry(fileName + ".html");
+            zipOutput.putNextEntry(entry);
+            IOUtils.write(FileUtils.readFileToByteArray(ctgovDailyImportHtmlFile), zipOutput);
+            //After html file has been written to zip archive, delete it.
+            FileUtils.deleteQuietly(ctgovDailyImportHtmlFile);
+            zipOutput.closeEntry();  
+            //add zip file as an attachment
+            attachments[0] = ctgovDailyImportZipFile;
+        } catch (IOException e) {
+            LOG.error("IOException : " + e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(zipOutput);            
+        }
+        //send email with zip file as an attachment
+        
+        sendMailWithHtmlBodyAndAttachment(mailTo, mailFrom, ccList, mailSubject, mailBody, attachments, true);
+    }        
 }
