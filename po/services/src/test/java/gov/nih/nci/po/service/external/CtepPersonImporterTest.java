@@ -230,7 +230,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
         List<HealthCareProvider> hcpList = hcpSvc.getByPlayerIds(new Long[] {ip.getPlayer().getId()});
         assertEquals(1, hcpList.size());
-        assertEquals(RoleStatus.PENDING, hcpList.get(0).getStatus());
+        assertEquals(RoleStatus.ACTIVE, hcpList.get(0).getStatus());
     }
 
     @Test

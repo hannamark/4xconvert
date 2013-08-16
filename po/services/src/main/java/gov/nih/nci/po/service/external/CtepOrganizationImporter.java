@@ -218,7 +218,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             assignedId.setReliability(IdentifierReliability.VRF);
             Organization ctepOrg = convertToLocalOrg(ctepOrgDto);
             CtepUtils.validateAddress(ctepOrg.getPostalAddress());
-            ctepOrg.setStatusCode(EntityStatus.PENDING);
+            ctepOrg.setStatusCode(EntityStatus.ACTIVE);
 
             // search for org based on the ctep provided ii
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(assignedId);
@@ -227,11 +227,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             ResearchOrganization ro = getCtepResearchOrganization(assignedId);
             CtepUtils.validateAddresses(ro);
             if (isNewCtepOrg(identifiedOrg, hcf, ro)) {
-                return createCtepOrg(ctepOrg, assignedId, RoleStatus.PENDING);
+                return createCtepOrg(ctepOrg, assignedId, RoleStatus.ACTIVE);
             }
             // if identified org is null we can generate one
             if (identifiedOrg == null) {
-                identifiedOrg = genIdentifiedOrg(hcf, ro, assignedId, ctepOrg, RoleStatus.PENDING);
+                identifiedOrg = genIdentifiedOrg(hcf, ro, assignedId, ctepOrg, RoleStatus.ACTIVE);
             }
             return updateCtepOrg(ctepOrg, identifiedOrg, assignedId, hcf, ro);
 

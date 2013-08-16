@@ -195,7 +195,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         Organization persistedOrg = io.getPlayer();
         assertNotNull(persistedOrg);
-        assertEquals(EntityStatus.PENDING, persistedOrg.getStatusCode());
+        assertEquals(EntityStatus.ACTIVE, persistedOrg.getStatusCode());
 
         if (service.getHcf() != null) {
             List<HealthCareFacility> hcfs = hcfSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
