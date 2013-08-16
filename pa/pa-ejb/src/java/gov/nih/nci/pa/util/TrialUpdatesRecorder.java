@@ -249,6 +249,17 @@ public final class TrialUpdatesRecorder {
             add(msg);
         }
     }
+    
+    /**
+     * @param existingNCT existingNCT
+     * @param newNCT newNCT
+     */
+    public static void isNctUpdated(String existingNCT, String newNCT) {
+        if (!StringUtils.equals(StringUtils.trim(existingNCT + ""), // NOPMD
+                StringUtils.trim(newNCT + ""))) { // NOPMD
+            add(StringUtils.isEmpty(existingNCT) ? "NCT Number was added." : "NCT Number was changed.");
+        }
+    }
 
     /**
      * All updates together as a single contatenated {@link String}.

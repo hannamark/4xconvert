@@ -1616,6 +1616,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
@@ -1635,9 +1636,36 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 throw new PAException(TrialRegistrationValidator.VALIDATION_EXCEPTION + nctValidationResultString);
             }       
         }
-        update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, studySiteAccrualStatusDTOs,
-               studySiteDTOs, isBatchMode);
-        updateStudyIdentifiers(studyProtocolDTO.getIdentifier(), studyIdentifierDTOs);
+        try {
+            TrialUpdatesRecorder.reset();
+            
+            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
+                        studySiteAccrualStatusDTOs, studySiteDTOs);         
+            String existingNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            String newNCT = StConverter.convertToString(nctIdentifierDTO.getLocalStudyProtocolIdentifier());            
+            TrialUpdatesRecorder.isNctUpdated(existingNCT, newNCT);
+            
+            //update nct number
+            updateStudyIdentifiers(studyProtocolDTO.getIdentifier(), studyIdentifierDTOs);
+            
+            List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
+                        
+            // do not send the mail when its batch mode
+            final String updatesList = createInboxProcessingComments(spIi, savedDocs);
+            studyProtocolService
+                .updatePendingTrialAssociationsToActive(IiConverter.convertToLong(spIi));
+            sendMail(UPDATE, isBatchMode, spIi, new ArrayList<String>(), updatesList);
+
+            StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
+            List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);
+            sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
+        } catch (Exception e) {
+            LOG.error(e, e);
+            throw new PAException(e.getMessage(), e);
+        } finally {
+            TrialUpdatesRecorder.reset();
+        }
 
     }
 
@@ -1744,6 +1772,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, Bl batchMode)
@@ -1751,71 +1780,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             TrialUpdatesRecorder.reset();
             
-            StudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
-            Ii spIi = studyProtocolDTO.getIdentifier();
-            
-            // Other Identifiers
-            Set<Ii> originalSecondaryIDs = new HashSet<Ii>();
-            if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
-                originalSecondaryIDs.addAll(spDTO.getSecondaryIdentifiers().getItem());
-            }            
-            final DSet<Ii> updatedStudyOtherIdentifiers = getUpdatedStudyOtherIdentifiers(
-                    spDTO, studyProtocolDTO.getSecondaryIdentifiers());
-            spDTO.setSecondaryIdentifiers(
-                    updatedStudyOtherIdentifiers);
-            TrialUpdatesRecorder.recordUpdate(originalSecondaryIDs,
-                    updatedStudyOtherIdentifiers.getItem(),
-                    TrialUpdatesRecorder.IDENTIFIERS_ADDED);
-            
-            TrialUpdatesRecorder.recordUpdate(spDTO.getStartDate(),
-                    studyProtocolDTO.getStartDate(),
-                    TrialUpdatesRecorder.START_DATE_CHANGED);
-            spDTO.setStartDate(studyProtocolDTO.getStartDate());            
-            spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
-            
-            TrialUpdatesRecorder.recordUpdate(spDTO.getPrimaryCompletionDate(),
-                    studyProtocolDTO.getPrimaryCompletionDate(),
-                    TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_CHANGED);            
-            spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
-            spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
-            
-            TrialUpdatesRecorder.recordUpdate(spDTO.getCompletionDate(),
-                    studyProtocolDTO.getCompletionDate(),
-                    TrialUpdatesRecorder.COMPLETION_DATE_CHANGED);
-            spDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());
-            spDTO.setCompletionDateTypeCode(studyProtocolDTO.getCompletionDateTypeCode());
-
-            // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
-            // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person
-            // submitting the update.
-            // Also, to determine the owner of the trial. Remove this line when the ejbContext.callerPrincipal will give
-            // the userLogged in value.
-            spDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
-            TrialRegistrationValidator validator = createValidator();
-            validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
-                                     studySiteAccrualStatusDTOs);
-            spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-            
-            updateStudyProtocol(spDTO);
-            
-            // Grants
-            TrialUpdatesRecorder.recordUpdate(studyResourcingDTOs,
-                    TrialUpdatesRecorder.GRANT_INFORMATION_UPDATED);
-            PAServiceUtils paServiceUtils = getPAServiceUtils();
-            paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
-
-            // Participating site's status and/or date.
-            updateParticipatingSites(studySiteAccrualStatusDTOs);
-            
-            // Participating sites: program code only.
-            TrialUpdatesRecorder.recordParticipatingSiteUpdate(studySiteDTOs,
-                    TrialUpdatesRecorder.PARTICIPATING_SITES_UPDATED);            
-            paServiceUtils.createOrUpdate(studySiteDTOs, IiConverter.convertToStudySiteIi(null), spIi);
-
-            // Study overall status & status date.
-            TrialUpdatesRecorder.recordUpdate(overallStatusDTO,
-                    TrialUpdatesRecorder.STATUS_DATES_UPDATED);
-            studyOverallStatusService.create(overallStatusDTO);            
+            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
+                        studySiteAccrualStatusDTOs, studySiteDTOs);            
             
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
@@ -1836,6 +1802,72 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         } finally {
             TrialUpdatesRecorder.reset();
         }
+    }
+
+    @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
+    private Ii updateStudy(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs) throws PAException {
+        StudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
+        Ii spIi = studyProtocolDTO.getIdentifier();
+        
+        // Other Identifiers
+        Set<Ii> originalSecondaryIDs = new HashSet<Ii>();
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
+            originalSecondaryIDs.addAll(spDTO.getSecondaryIdentifiers().getItem());
+        }            
+        final DSet<Ii> updatedStudyOtherIdentifiers = getUpdatedStudyOtherIdentifiers(
+                spDTO, studyProtocolDTO.getSecondaryIdentifiers());
+        spDTO.setSecondaryIdentifiers(updatedStudyOtherIdentifiers);
+        TrialUpdatesRecorder.recordUpdate(originalSecondaryIDs,
+                updatedStudyOtherIdentifiers.getItem(), TrialUpdatesRecorder.IDENTIFIERS_ADDED);
+        
+        TrialUpdatesRecorder.recordUpdate(spDTO.getStartDate(),
+                studyProtocolDTO.getStartDate(), TrialUpdatesRecorder.START_DATE_CHANGED);
+        spDTO.setStartDate(studyProtocolDTO.getStartDate());            
+        spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
+        
+        TrialUpdatesRecorder.recordUpdate(spDTO.getPrimaryCompletionDate(),
+                studyProtocolDTO.getPrimaryCompletionDate(), TrialUpdatesRecorder.PRIMARY_COMPLETION_DATE_CHANGED);
+        spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
+        spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+        
+        TrialUpdatesRecorder.recordUpdate(spDTO.getCompletionDate(),
+                studyProtocolDTO.getCompletionDate(), TrialUpdatesRecorder.COMPLETION_DATE_CHANGED);
+        spDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());
+        spDTO.setCompletionDateTypeCode(studyProtocolDTO.getCompletionDateTypeCode());
+
+        // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
+        // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person
+        // submitting the update.
+        // Also, to determine the owner of the trial. Remove this line when the ejbContext.callerPrincipal will give
+        // the userLogged in value.
+        spDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
+        TrialRegistrationValidator validator = createValidator();
+        validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, 
+                studySiteAccrualStatusDTOs);
+        spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+        
+        updateStudyProtocol(spDTO);
+        
+        // Grants
+        TrialUpdatesRecorder.recordUpdate(studyResourcingDTOs, TrialUpdatesRecorder.GRANT_INFORMATION_UPDATED);
+        PAServiceUtils paServiceUtils = getPAServiceUtils();
+        paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
+
+        // Participating site's status and/or date.
+        updateParticipatingSites(studySiteAccrualStatusDTOs);
+        
+        // Participating sites: program code only.
+        TrialUpdatesRecorder.recordParticipatingSiteUpdate(studySiteDTOs,
+                TrialUpdatesRecorder.PARTICIPATING_SITES_UPDATED);            
+        paServiceUtils.createOrUpdate(studySiteDTOs, IiConverter.convertToStudySiteIi(null), spIi);
+
+        // Study overall status & status date.
+        TrialUpdatesRecorder.recordUpdate(overallStatusDTO, TrialUpdatesRecorder.STATUS_DATES_UPDATED);
+        studyOverallStatusService.create(overallStatusDTO);
+        return spIi;
     }
 
     /**

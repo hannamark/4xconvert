@@ -85,6 +85,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -96,6 +98,7 @@ import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -120,6 +123,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -891,8 +895,14 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         studyResourcingDTOs = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
 
-        bean.update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, null, null, BlConverter
-            .convertToBl(Boolean.FALSE));
+        StudySiteDTO isoDto = new StudySiteDTO();
+        isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("test_NCT_update"));
+        isoDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("abc"));
+        siteIdentifiers.add(isoDto);
+        
+        bean.update(studyProtocolDTO, overallStatusDTO, siteIdentifiers, null, studyResourcingDTOs, 
+        		documentDTOs, null, null, null, null, null, null, null, 
+        		null, null, BlConverter.convertToBl(Boolean.FALSE));
     }
 
     @Test
