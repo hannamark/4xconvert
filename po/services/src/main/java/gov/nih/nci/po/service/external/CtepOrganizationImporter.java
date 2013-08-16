@@ -390,18 +390,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
         update(src, org);
 
-        // Update the status of identified entity if needed
-        if (!RoleStatus.ACTIVE.equals(identifiedOrg.getStatus())) {
-            identifiedOrg
-                    .setStatus(identifiedOrg.getPlayer().getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE
-                            : RoleStatus.PENDING);
-            identifiedOrg.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
-            identifiedOrg.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
-            identifiedOrg.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
-            identifiedOrg.getAssignedIdentifier().setReliability(assignedId.getReliability());
-            identifiedOrg.getAssignedIdentifier().setScope(assignedId.getScope());
-            this.identifiedOrgService.curate(identifiedOrg);
-        }
+        identifiedOrg.setStatus(identifiedOrg.getPlayer().getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE
+                : RoleStatus.PENDING);
+        identifiedOrg.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
+        identifiedOrg.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
+        identifiedOrg.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
+        identifiedOrg.getAssignedIdentifier().setReliability(assignedId.getReliability());
+        identifiedOrg.getAssignedIdentifier().setScope(assignedId.getScope());
+        this.identifiedOrgService.curate(identifiedOrg);
 
         // update health care facility role
         if (hcf != null) {
