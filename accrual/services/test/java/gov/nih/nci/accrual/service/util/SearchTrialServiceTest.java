@@ -314,7 +314,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
         
         SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(sp.getId()));
-        assertEquals(AccrualUtil.PATIENT_LEVEL, result.getAccrualSubmissionLevel().getValue());
+        assertEquals(AccrualUtil.SUBJECT_LEVEL, result.getAccrualSubmissionLevel().getValue());
         assertEquals(result.getTrialType().getValue(), AccrualUtil.NONINTERVENTIONAL);
 	}
 

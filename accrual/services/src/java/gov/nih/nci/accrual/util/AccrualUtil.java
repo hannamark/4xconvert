@@ -127,7 +127,7 @@ public class AccrualUtil {
     /** Study type. */
     public static final String NONINTERVENTIONAL = "Non-interventional";
     /** Accrual Submission type. */
-    public static final String PATIENT_LEVEL = "Patient Level";
+    public static final String SUBJECT_LEVEL = "Subject Level";
     /** Accrual Submission type. */
     public static final String SUMMARY_LEVEL = "Summary Level";
     /** Accrual Submission type. */

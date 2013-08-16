@@ -13,7 +13,7 @@ function setCheckbox(index) {
 
 <c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
     <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{studyProtocolId}" /></s:url>
-    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Patient Level Accrual</span></span></s:a><br/><br/>
+    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Subject Level Accrual</span></span></s:a><br/><br/>
 </c:if>
 
 <h1>

@@ -187,7 +187,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (!StConverter.convertToString(trialSummary.getTrialType()).equals(AccrualUtil.INTERVENTIONAL)
                 && !ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
                 && (trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.BOTH)
-                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.PATIENT_LEVEL))) {
+                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUBJECT_LEVEL))) {
             loadTrialSummaryIntoSession();
         }
     }

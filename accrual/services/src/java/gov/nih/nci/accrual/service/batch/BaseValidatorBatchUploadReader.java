@@ -131,8 +131,8 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
             errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
         } else if (accrualSubmissionLevel != null 
-                    && accrualSubmissionLevel.equals(AccrualUtil.PATIENT_LEVEL)) {
-            errMsg.append("Non-interventional study has patient level accruals. "
+                    && accrualSubmissionLevel.equals(AccrualUtil.SUBJECT_LEVEL)) {
+            errMsg.append("Non-interventional study has subject level accruals. "
                    + "Summary level accruals cannot be accepted now.\n");
         }
     }
@@ -186,7 +186,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             } else if (accrualSubmissionLevel != null 
             		&& accrualSubmissionLevel.equals(AccrualUtil.SUMMARY_LEVEL)) {
                 errMsg.append("Non-interventional study has summary level accruals."
-                     + " Patient level accruals cannot be accepted now for patient ID ")
+                     + " Subject level accruals cannot be accepted now for patient ID ")
                 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");            	
             } else {
                 errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")

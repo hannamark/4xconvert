@@ -12,4 +12,4 @@
 <c:set var="interTrial" scope="session" value="<%=AccrualUtil.INTERVENTIONAL%>"/>
 <c:set var="nonInterTrial" scope="session" value="<%=AccrualUtil.NONINTERVENTIONAL%>"/>
 <c:set var="both" scope="session" value="<%=AccrualUtil.BOTH%>"/>
-<c:set var="patientLevel" scope="session" value="<%=AccrualUtil.PATIENT_LEVEL%>"/>
+<c:set var="patientLevel" scope="session" value="<%=AccrualUtil.SUBJECT_LEVEL%>"/>

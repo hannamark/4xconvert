@@ -230,7 +230,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                                 if (patientAccruals == 0 && summaryAccruals == 0) {
                                     accrualSubmissionLevel = AccrualUtil.BOTH;
                                 } else if (patientAccruals > 0) {
-                                    accrualSubmissionLevel = AccrualUtil.PATIENT_LEVEL;
+                                    accrualSubmissionLevel = AccrualUtil.SUBJECT_LEVEL;
                                 } else if (summaryAccruals > 0) {
                                     accrualSubmissionLevel = AccrualUtil.SUMMARY_LEVEL; 
                                 }

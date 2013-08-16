@@ -167,7 +167,7 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
         r.setTrialType(StConverter.convertToSt(AccrualUtil.NONINTERVENTIONAL));
-        r.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
+        r.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUBJECT_LEVEL));
         r.setIndustrial(BlConverter.convertToBl(false));
         dtos.add(r);
     }

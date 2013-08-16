@@ -160,7 +160,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
             result = !BlConverter.convertToBoolean(trialSummary.getIndustrial());
         } else {
             if (!ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
-                    && trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.PATIENT_LEVEL)) {
+                    && trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUBJECT_LEVEL)) {
                 result = true;
             }
         }

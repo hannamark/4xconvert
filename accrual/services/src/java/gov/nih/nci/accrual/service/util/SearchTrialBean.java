@@ -259,7 +259,7 @@ public class SearchTrialBean implements SearchTrialService {
             if (patientAccruals == 0 && summaryAccruals == 0) {
                 trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.BOTH));
             } else if (patientAccruals > 0) {
-                trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.PATIENT_LEVEL));
+                trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUBJECT_LEVEL));
             } else if (summaryAccruals > 0) {
                 trial.setAccrualSubmissionLevel(StConverter.convertToSt(AccrualUtil.SUMMARY_LEVEL)); 
             }
@@ -417,7 +417,8 @@ public class SearchTrialBean implements SearchTrialService {
 
     private void setCounts(Long studyProtocolId, Long affOrgId,
         Session session, SearchTrialResultDto dto, AccrualCountsDto ac) {
-        if (dto.getIndustrial().getValue() || !ISOUtil.isStNull(dto.getAccrualSubmissionLevel())
+        if (dto.getIndustrial().getValue() && dto.getTrialType().getValue().equals(AccrualUtil.INTERVENTIONAL) 
+                || !ISOUtil.isStNull(dto.getAccrualSubmissionLevel())
                 && dto.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUMMARY_LEVEL)) {
             Query sqlCount = session.createSQLQuery("select accrual_count from study_site_subject_accrual_count"
             + " where study_protocol_identifier = " + studyProtocolId + " and study_site_identifier in ( "
