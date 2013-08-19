@@ -372,7 +372,7 @@ public class StudyResourcingBeanLocal extends
                 String instCode = CdConverter.convertCdToString(dto.getNihInstitutionCode());
                 String sn = StConverter.convertToString(dto.getSerialNumber());
                 if ("CA".equals(instCode) && !i2eSvc.isValidCaGrant(sn)) {
-                    throw new PAValidationException("Serial nubmer " + sn 
+                    throw new PAValidationException("Serial number " + sn 
                             + " was not found in the I2E Grants database for CA grants.", Level.WARN);
                 }
             }

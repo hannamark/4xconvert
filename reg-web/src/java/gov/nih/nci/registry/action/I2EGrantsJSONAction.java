@@ -5,9 +5,9 @@ import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -20,7 +20,7 @@ import com.opensymphony.xwork2.ActionSupport;
 public class I2EGrantsJSONAction extends ActionSupport {
 
     private static final long serialVersionUID = 6234369429519304146L;
-    private Map<String, String> serialNumbers;
+    private Map<Integer, String> serialNumbers;
 
     /**
      * @return result
@@ -34,9 +34,9 @@ public class I2EGrantsJSONAction extends ActionSupport {
             LOG.error("Error calling I2E Grant service", e);
             grants = new ArrayList<I2EGrantsServiceLocal.I2EGrant>();
         }
-        setSerialNumbers(new HashMap<String, String>());
+        setSerialNumbers(new TreeMap<Integer, String>());
         for (I2EGrantsServiceLocal.I2EGrant grant : grants) {
-            getSerialNumbers().put(grant.getSerialNumber(), grant.toString());
+            getSerialNumbers().put(Integer.valueOf(grant.getSerialNumber()), grant.toString());
         }
         return SUCCESS;
     }
@@ -44,14 +44,14 @@ public class I2EGrantsJSONAction extends ActionSupport {
     /**
      * @return the serialNumbers
      */
-    public Map<String, String> getSerialNumbers() {
+    public Map<Integer, String> getSerialNumbers() {
         return serialNumbers;
     }
 
     /**
      * @param serialNumbers the serialNumbers to set
      */
-    public void setSerialNumbers(Map<String, String> serialNumbers) {
+    public void setSerialNumbers(Map<Integer, String> serialNumbers) {
         this.serialNumbers = serialNumbers;
     }
 }
