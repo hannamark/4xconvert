@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
@@ -27,6 +28,7 @@ import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
@@ -61,6 +63,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
     private ParticipatingSiteServiceLocal participatingSiteServiceLocal;
     private StudySiteContactServiceLocal studySiteContactServiceLocal;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
+    private ProtocolQueryServiceLocal protocolQueryServiceLocal;
 
     private SubmittedOrganizationDTO existentSiteDTO;
     private ClinicalResearchStaffDTO researchStaffDTO;
@@ -74,6 +77,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         participatingSiteServiceLocal = mock(ParticipatingSiteServiceLocal.class);
         studySiteContactServiceLocal = mock(StudySiteContactServiceLocal.class);
         studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
+        protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
 
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
@@ -121,6 +125,9 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         when(
                 studyProtocolServiceLocal.getStudyProtocol(eq(IiConverter
                         .convertToStudyProtocolIi(1L)))).thenReturn(studyDTO);
+        StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
+        when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(1L)).thenReturn(
+                queryDTO);
 
     }
 
@@ -168,6 +175,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         action.setParticipatingSiteService(participatingSiteServiceLocal);
         action.setStudySiteContactService(studySiteContactServiceLocal);
         action.setStudyProtocolService(studyProtocolServiceLocal);
+        action.setProtocolQueryService(protocolQueryServiceLocal);
         action.setStudyProtocolId("1");
     }
 

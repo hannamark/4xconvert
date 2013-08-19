@@ -85,6 +85,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -103,6 +104,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -135,6 +137,9 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
 
     static final String SUCCESS_MESSAGE_KEY = "successMessage";
     private static final String WAIT = "wait";
+    private static final String SESSION_TRIAL_NCI_ID_ATTRIBUTE = "NCI_ID";
+    private static final String SESSION_TRIAL_TITLE_ATTRIBUTE = "TITLE";
+    private static final String SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE = "LEAD_ORG_ID";
     private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger
             .getLogger(AddUpdateSiteAction.class);
@@ -148,9 +153,10 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private ParticipatingSiteServiceLocal participatingSiteService;
     private StudyProtocolServiceLocal studyProtocolService;
     private StudySiteContactServiceLocal studySiteContactService;
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private boolean redirectToSummary;
-    private String studyProtocolId;
+    private String studyProtocolId;    
 
     /**
      * Prepare and display the site add/update pop-up.
@@ -160,6 +166,15 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     public String view() {
         try {
             populateSiteDTO();
+            StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+            studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                    Long.parseLong(studyProtocolId));
+            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_NCI_ID_ATTRIBUTE, 
+                    studyProtocolQueryDTO.getNciIdentifier());
+            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_TITLE_ATTRIBUTE, 
+                    studyProtocolQueryDTO.getOfficialTitle());
+            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE, 
+                    studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
             ServletActionContext
                     .getRequest()
                     .getSession()
@@ -537,6 +552,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     @Override
     public void prepare() {
+        protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         registryUserService = PaRegistry.getRegistryUserService();
         participatingSiteService = PaRegistry.getParticipatingSiteService();
@@ -604,4 +620,10 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         this.studyProtocolService = studyProtocolService;
     }
     
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
 }

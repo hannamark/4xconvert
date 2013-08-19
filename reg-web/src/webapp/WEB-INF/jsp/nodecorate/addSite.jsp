@@ -58,8 +58,8 @@
 	<reg-web:actionErrorsAndMessages />
 	<s:form name="addSiteForm" id="addSiteForm" action="addSitepopupsave">
 		<s:token />
-		<s:hidden name="studyProtocolId" />
-		<s:hidden name="siteDTO.id" />
+		<s:hidden name="studyProtocolId" />		
+		<s:hidden name="siteDTO.id" />		
 		<table class="form">
 		    <c:choose>
 		      <c:when test="${not empty ssID}">
@@ -70,6 +70,15 @@
 		      </c:otherwise>
 		    </c:choose>			
 			<reg-web:spaceRow />
+            <reg-web:valueRow labelKey="add.site.trial.nciIdentifier" noLabelTag="true">
+                 <c:out value="${sessionScope.NCI_ID}"/>
+            </reg-web:valueRow>
+			<reg-web:valueRow labelKey="add.site.trial.localStudyProtocolIdentifier" noLabelTag="true">
+			     <c:out value="${sessionScope.LEAD_ORG_ID}"/>
+			</reg-web:valueRow>
+			<reg-web:valueRow labelKey="add.site.trial.officialTitle" noLabelTag="true">
+                 <c:out value="${sessionScope.TITLE}"/>
+            </reg-web:valueRow>			
 			<reg-web:valueRow labelFor="organizationName"
 				labelKey="add.site.orgName" required="true">
 				<s:textfield id="organizationName" name="siteDTO.name" cssClass="readonly"
