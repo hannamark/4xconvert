@@ -577,9 +577,7 @@
                                                 </reg-web:displayTooltip>
                                             </th>
                                             <th style="display:none">
-                                                <reg-web:displayTooltip tooltip="">
                                                    <label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label>
-                                                </reg-web:displayTooltip>
                                             </th>
                                             <th></th>
                                         </tr>
