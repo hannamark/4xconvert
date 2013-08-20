@@ -205,7 +205,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final int L_32000 = 32000;
 
     private static final int L_5000 = 5000;
-
+    
+    private static final int L_10000 = 10000;
+    
     private static final int L_800 = 800;
 
     private static final int L_200 = 200;
@@ -1472,7 +1474,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 + "between :start and :end order by l.dateCreated desc ";
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hqlQuery);
-        query.setMaxResults(L_5000);
+        query.setMaxResults(L_10000);
         query.setParameter("start", onOrAfter);
         query.setParameter("end", onOrBefore);
         return query.list();

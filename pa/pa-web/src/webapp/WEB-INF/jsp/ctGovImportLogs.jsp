@@ -94,7 +94,7 @@
 				<tr>
 					<td colspan="5" class="info"><b>Note:</b> Leave both fields
 						empty to display the entire log. In any case, the number of
-						displayed records will be limited to 5,000 most recent ones of the
+						displayed records will be limited to 10,000 most recent ones of the
 						time interval requested.</td>
 				</tr>
 
