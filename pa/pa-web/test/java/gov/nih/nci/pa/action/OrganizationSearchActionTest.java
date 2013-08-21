@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.*;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
@@ -77,16 +78,17 @@ public class OrganizationSearchActionTest extends AbstractPaActionTest {
      * @throws PAException 
      * @throws NullifiedRoleException 
      * @throws NullifiedEntityException 
+     * @throws TooManyResultsException 
      */
     @Test
-    public final void testShowDetailspopup() throws NullifiedEntityException, NullifiedRoleException, PAException {
+    public final void testShowDetailspopup() throws NullifiedEntityException, NullifiedRoleException, PAException, TooManyResultsException {
         OrganizationSearchAction action = new OrganizationSearchAction();
-        action.setOrgID("1");
+        action.setOrgID("4648");
         String fwd = action.showDetailspopup();
         assertEquals("details", fwd);
         assertNotNull(action.getOrganization());
         assertEquals("OrgName", action.getOrganization().getName());
-        assertEquals("1", action.getOrganization().getId());
+        assertEquals("4648", action.getOrganization().getId());
     }
 
     /**

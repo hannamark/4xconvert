@@ -88,10 +88,7 @@ public class PersonSearchAction extends ActionSupport {
      */
     public String showDetailspopup() throws NullifiedEntityException,
             PAException, NullifiedRoleException, TooManyResultsException {
-        PersonSearchCriteriaDTO criteriaDTO = new PersonSearchCriteriaDTO();
-        criteriaDTO.setId((personID));
-        person = PADomainUtils.searchPoPersons(criteriaDTO).get(0);
-        PADomainUtils.retrieveAddressAndContactInfoFromRole(person);
+        setPerson(PADomainUtils.getPersonDetailsPopup(personID));
         return DETAILS;
     }
 

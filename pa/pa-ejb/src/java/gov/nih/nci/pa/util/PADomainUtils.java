@@ -139,8 +139,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -1199,7 +1201,67 @@ public class PADomainUtils {
         }
 
     }
+    
+    /**
+     * @param orgID the orgid
+     * @return organizationDto
+     * @throws NullifiedEntityException NullifiedEntityException
+     * @throws PAException PAException
+     * @throws NullifiedRoleException NullifiedRoleException
+     * @throws TooManyResultsException TooManyResultsException
+     */
+    public static PaOrganizationDTO getOrgDetailsPopup(String orgID) throws NullifiedEntityException, PAException, 
+    NullifiedRoleException, TooManyResultsException {
+        PaOrganizationDTO paOrgDTO = null;
+        OrganizationSearchCriteriaDTO searchCriteria = new OrganizationSearchCriteriaDTO();
+        searchCriteria.setIdentifier(orgID);
+        final List<OrganizationDTO> orgs = searchPoOrganizations(searchCriteria);
+        if (!orgs.isEmpty()) {
+            OrganizationDTO orgDTO = orgs.get(0);
+            final List<Country> countries = PaRegistry.getLookUpTableService().getCountries();
+            paOrgDTO = convertPoOrganizationDTO(orgDTO, countries);
 
+            // Add families
+            Set<Ii> famOrgRelIiList = new HashSet<Ii>();
+            if (CollectionUtils.isNotEmpty(orgDTO.getFamilyOrganizationRelationships().getItem())) {
+                famOrgRelIiList.addAll(orgDTO.getFamilyOrganizationRelationships().getItem());
+            }
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
+                    .getFamilies(famOrgRelIiList);
+            paOrgDTO.setFamilies(getFamilies(orgDTO.getFamilyOrganizationRelationships(), familyMap));
+
+            // Now add CTEP
+            addOrganizationCtepIDs(Arrays.asList(paOrgDTO));
+            
+            // One of the organization's roles may override the address or contact info.
+            retrieveAddressAndContactInfoFromRole(paOrgDTO, countries);
+            
+            // Finally, determine organization type
+            determineOrganizationType(Arrays.asList(paOrgDTO));              
+        }
+        return paOrgDTO;
+    }
+    
+    /**
+     * @param personID the personid
+     * @return the persondto
+     * @throws NullifiedEntityException NullifiedEntityException
+     * @throws PAException PAException
+     * @throws NullifiedRoleException NullifiedRoleException
+     * @throws TooManyResultsException TooManyResultsException
+     */
+    public static PaPersonDTO getPersonDetailsPopup(String personID) throws NullifiedEntityException,
+    PAException, NullifiedRoleException, TooManyResultsException {
+        PaPersonDTO person = null;
+        PersonSearchCriteriaDTO criteriaDTO = new PersonSearchCriteriaDTO();
+        criteriaDTO.setId((personID));
+        final List<PaPersonDTO> persons = searchPoPersons(criteriaDTO);
+        if (!persons.isEmpty()) {
+            person = persons.get(0);
+            retrieveAddressAndContactInfoFromRole(person);
+        }
+        return person;
+    }
     /**
      * @param person
      * @param dto

@@ -3,10 +3,10 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -18,7 +18,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Denis G. Krylov
  * 
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
 public class OrganizationSearchAction extends ActionSupport {
 
     private static final String DETAILS = "details";
@@ -72,36 +70,11 @@ public class OrganizationSearchAction extends ActionSupport {
      * @throws NullifiedEntityException NullifiedEntityException
      * @throws PAException PAException
      * @throws NullifiedRoleException NullifiedRoleException
+     * @throws TooManyResultsException TooManyResultsException
      */
-    @SuppressWarnings("unchecked")
-    public String showDetailspopup() throws NullifiedEntityException, PAException, NullifiedRoleException {
-        OrganizationDTO orgDTO = PoRegistry.getOrganizationEntityService()
-                .getOrganization(IiConverter.convertToPoOrganizationIi(orgID));
-        final List<Country> countries = PaRegistry.getLookUpTableService().getCountries();
-        PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(
-                orgDTO, countries);
-
-        // Add families
-        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
-        if (CollectionUtils.isNotEmpty(orgDTO
-                .getFamilyOrganizationRelationships().getItem())) {
-            famOrgRelIiList.addAll(orgDTO.getFamilyOrganizationRelationships()
-                    .getItem());
-        }
-        Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
-                .getFamilies(famOrgRelIiList);
-        paOrgDTO.setFamilies(PADomainUtils.getFamilies(
-                orgDTO.getFamilyOrganizationRelationships(), familyMap));
-
-        // Now add CTEP
-        PADomainUtils.addOrganizationCtepIDs(Arrays.asList(paOrgDTO));
-        
-        // One of the organization's roles may override the address or contact info.
-        PADomainUtils.retrieveAddressAndContactInfoFromRole(paOrgDTO, countries);
-        
-        // Finally, determine organization type
-        PADomainUtils.determineOrganizationType(Arrays.asList(paOrgDTO));        
-        setOrganization(paOrgDTO);
+    public String showDetailspopup() throws NullifiedEntityException, PAException,  
+    NullifiedRoleException, TooManyResultsException {     
+        setOrganization(PADomainUtils.getOrgDetailsPopup(orgID));
         return DETAILS;
     }
 
