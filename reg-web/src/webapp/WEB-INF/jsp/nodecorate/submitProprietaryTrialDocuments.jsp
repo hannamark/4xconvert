@@ -16,31 +16,6 @@
       <a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a>
     </td>
   </tr>
-  <tr>
-    <td scope="row" class="label">
-    <reg-web:displayTooltip tooltip="tooltip.abbreviated_trial_template">
-      <label for="protocolDoc">
-        <fmt:message key="submit.proprietary.trial.protocolDocument"/>
-      </label>
-    </reg-web:displayTooltip>
-    </td>
-    <td class="value">
-      <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">
-        <s:property value="%{#session.protocolDoc.fileName}"/>
-        <c:if test="${!(disableDocumentDeletion==true)}">
-            <input id="protocolDoc" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
-        </c:if>
-      </s:if>
-      <s:else>
-        <s:file id="protocolDoc" name="protocolDoc" value="true" cssStyle="width:270px"/>
-        <span class="formErrorMsg">
-          <s:fielderror>
-            <s:param>trialDTO.protocolDocFileName</s:param>
-          </s:fielderror>
-        </span>
-      </s:else>
-    </td>
-  </tr>
   
   <tr>
     <td scope="row" class="label">
@@ -60,29 +35,6 @@
         <span class="formErrorMsg">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
-          </s:fielderror>
-        </span>
-      </s:else>
-    </td>
-  </tr>
-  <tr>
-    <td scope="row" class="label">
-      <reg-web:displayTooltip tooltip="tooltip.list_of_participating_sites">
-        <label for="participatingSites"><fmt:message key="submit.trial.participatingSites"/></label>
-      </reg-web:displayTooltip>
-    </td>
-    <td class="value">
-      <s:if test="%{#session.participatingSitesDoc.typeCode.equals('Participating sites')}">
-        <s:property value="%{#session.participatingSitesDoc.fileName}"/>
-        <c:if test="${!(disableDocumentDeletion==true)}">
-            <input id="participatingSites" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"/>
-        </c:if>
-      </s:if>
-      <s:else>
-        <s:file id="participatingSites" name="participatingSites" cssStyle="width:270px"/>
-        <span class="formErrorMsg">
-          <s:fielderror>
-            <s:param>trialDTO.participatingSitesFileName</s:param>
           </s:fielderror>
         </span>
       </s:else>
