@@ -152,7 +152,7 @@ import org.apache.log4j.Logger;
 @Local(CdusBatchUploadReaderServiceLocal.class)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class); 
     
@@ -203,7 +203,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     ZipEntry entry = files.nextElement();
                     File f = File.createTempFile(FilenameUtils.getBaseName(entry.getName()), ".txt");
                     IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(f));
-                    batchFileProcessing(results, batchFile, entry.getName(), f);
+                    try {
+                        batchFileProcessing(results, batchFile, entry.getName(), f);
+                    } catch (Exception e) {
+                        LOG.error("Error validating batch files.", e);            
+                        sendFormatIssueEmail(batchFile, entry.getName(), e);
+                    } 
                 }
             } else {
                 batchFileProcessing(results, batchFile, 
@@ -213,35 +218,38 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 zip.close();
             }
         } catch (Exception e) {
-            LOG.error("Error validating batch files.", e);
-            
-            //send an email to user the format is not correct.
-            batchFile.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
-            AccrualCollections collection = new AccrualCollections();
-            collection.setResults("Failed proceesing a batch file: " + e.getLocalizedMessage());
-            collection.setPassedValidation(batchFile.isPassedValidation());
-            
-            try {
-                String subj = PaServiceLocator.getInstance().getLookUpTableService()
-                        .getPropertyValue("accrual.exception.subject");
-                String body = PaServiceLocator.getInstance().getLookUpTableService()
-                        .getPropertyValue("accrual.exception.body");
-                String regUserName = batchFile.getSubmitter().getFirstName() 
-                        + " " + batchFile.getSubmitter().getLastName();
-
-                body = body.replace("${submissionDate}", getFormatedCurrentDate());
-                body = body.replace("${SubmitterName}", regUserName);
-                body = body.replace("${CurrentDate}", getFormatedCurrentDate());
-                body = body.replace(FILE_NAME, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()));
-                subj = subj.replace(FILE_NAME, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()));
-                sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
-
-                batchFileSvc.update(batchFile, collection);
-            } catch (PAException e1) {
-                LOG.error("Error while sending an email/updating the BatchFile table with the error.", e1);
-            }
+            LOG.error("Error validating batch files.", e);            
+            sendFormatIssueEmail(batchFile, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()), e);
         } 
         return results;
+    }
+
+    private void sendFormatIssueEmail(BatchFile batchFile, String fileName, Exception e) {
+        //send an email to user that the format is not correct.
+        batchFile.setResults("Failed proceesing a batch file: " + fileName + " due to " + e.getLocalizedMessage());
+        AccrualCollections collection = new AccrualCollections();
+        collection.setResults("Failed proceesing a batch file: " + fileName + " due to " + e.getLocalizedMessage());
+        collection.setPassedValidation(batchFile.isPassedValidation());
+        
+        try {
+            String subj = PaServiceLocator.getInstance().getLookUpTableService()
+                    .getPropertyValue("accrual.exception.subject");
+            String body = PaServiceLocator.getInstance().getLookUpTableService()
+                    .getPropertyValue("accrual.exception.body");
+            String regUserName = batchFile.getSubmitter().getFirstName() 
+                    + " " + batchFile.getSubmitter().getLastName();
+
+            body = body.replace("${submissionDate}", getFormatedCurrentDate());
+            body = body.replace("${SubmitterName}", regUserName);
+            body = body.replace("${CurrentDate}", getFormatedCurrentDate());
+            body = body.replace(FILE_NAME, fileName);
+            subj = subj.replace(FILE_NAME, fileName);
+            sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
+
+            batchFileSvc.update(batchFile, collection);
+        } catch (PAException e1) {
+            LOG.error("Error while sending an email/updating the BatchFile table with the error.", e1);
+        }
     }
     
     private void batchFileProcessing(List<BatchValidationResults> results, BatchFile batchFile, 

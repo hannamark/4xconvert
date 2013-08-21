@@ -187,7 +187,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -210,7 +210,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).isPassedValidation());
         assertFalse(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 1);
+        verifyEmailsSent(1, 1, 0);
 
         r = getResultFromDb();
         assertFalse(r.isPassedValidation());
@@ -254,7 +254,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -277,7 +277,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).isPassedValidation());
         assertFalse(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 1);
+        verifyEmailsSent(1, 1, 0);
 
         r = getResultFromDb();
         assertFalse(r.isPassedValidation());
@@ -474,11 +474,10 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         file = new File(this.getClass().getResource("/accrual_format_issue_file.zip").toURI());
         batchFile = getBatchFile(file);
         readerService.validateBatchData(batchFile);
-        verifyEmailsSent(3, 1);
+        verifyEmailsSent(3, 1, 1);
         BatchFile r = getResultFromDb(); 
         assertFalse(r.isPassedValidation());
         assertFalse(r.isProcessed());
-        System.out.println(r.getResults() + "   " + r.getFileLocation());
         assertTrue(r.getFileLocation().contains("accrual_format_issue_file.zip"));
         assertFalse(StringUtils.isEmpty(r.getResults()));
         assertTrue(StringUtils.contains(r.getResults(), "Failed proceesing a batch file: "));
@@ -552,7 +551,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 0);
+        verifyEmailsSent(1, 0, 0);
 
         BatchFile r = getResultFromDb();
         assertFalse(r.isPassedValidation());
@@ -574,7 +573,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 1);
+        verifyEmailsSent(1, 1, 0);
 
         r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -599,7 +598,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -624,7 +623,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -653,7 +652,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(StringUtils.contains(errorMsg, "Accrual study site is missing at line 3"));
         assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: notvalidcode"));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 0);
+        verifyEmailsSent(1, 0, 0);
 
         BatchFile r = getResultFromDb();
         assertFalse(r.isPassedValidation());
@@ -677,7 +676,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 1);
+        verifyEmailsSent(1, 1, 0);
 
         r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -702,7 +701,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
     }
     
     @Test
@@ -714,7 +713,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
     }
     
     @Test
@@ -734,13 +733,26 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
             assertTrue(StringUtils.isEmpty(result.getErrors().toString()));
             assertFalse(result.getValidatedLines().isEmpty());
         }
-        verifyEmailsSent(0, 3);
+        verifyEmailsSent(0, 3, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
         assertTrue(r.isProcessed());
         assertTrue(r.getFileLocation().contains("CDUS.zip"));
         assertEquals(3, r.getAccrualCollections().size());
+             
+        file = new File(this.getClass().getResource("/accrual_format_issue_file2.zip").toURI());
+        batchFile = getBatchFile(file);
+        validationResults = readerService.validateBatchData(batchFile);
+        assertEquals(1, validationResults.size());
+        verifyEmailsSent(0, 4, 1);
+        
+        r = getResultFromDb(); 
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("accrual_format_issue_file2.zip"));
+        assertFalse(StringUtils.isEmpty(r.getResults()));
+        assertTrue(StringUtils.contains(r.getResults(), "Failed proceesing a batch file: batchfile1.txt due to null"));
     }
 
     @Test
@@ -769,7 +781,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(24, importResults.getTotalImports());
         assertEquals("CDUS_Complete.txt", importResults.getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
         mailService = mock(MailManagerServiceRemote.class);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
 
@@ -791,7 +803,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(72, importResults.getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
     }
 
 
@@ -806,7 +818,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(72, importResults.getTotalImports());
         assertEquals("cdus-abbreviated-prevention-study.txt", importResults.getFileName());
         assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
     }
 
     @Test
@@ -834,7 +846,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("CDUS_Complete.txt", validationResults.get(2).getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
 
-        verifyEmailsSent(0, 3);
+        verifyEmailsSent(0, 3, 0);
 
         // resubmit to confirm that existing rows are only updated
         batchFile = getBatchFile(file);
@@ -885,7 +897,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(72, importResults.getTotalImports());
         assertEquals("cdus-abbreviated-with-crf-values.txt", importResults.getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        verifyEmailsSent(0, 1);
+        verifyEmailsSent(0, 1, 0);
     }
     
     @Test
@@ -899,7 +911,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
         assertEquals("accrual-count-batch-file.txt", importResults.getFileName());
         assertEquals(2, importResults.getTotalImports());
-        verifyEmailsSent(0, 1);        
+        verifyEmailsSent(0, 1, 0);        
     }
     
     @Test
@@ -962,7 +974,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
          assertTrue(results.get(0).isPassedValidation());
          assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
          assertFalse(results.get(0).getValidatedLines().isEmpty());
-         verifyEmailsSent(0, 1);
+         verifyEmailsSent(0, 1, 0);
 
          BatchFile r = getResultFromDb();
          assertTrue(r.isPassedValidation());
@@ -1011,9 +1023,10 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         return bf;
     }
 
-    private void verifyEmailsSent(int errorCount, int confirmationCount) {
+    private void verifyEmailsSent(int errorCount, int confirmationCount, int exceptionCount) {
         verify(mailService, times(errorCount)).sendMailWithHtmlBody(anyString(), contains("accrual.error.subject"), anyString());
         verify(mailService, times(confirmationCount)).sendMailWithHtmlBody(anyString(), contains("accrual.confirmation.subject"), anyString());
+        verify(mailService, times(exceptionCount)).sendMailWithHtmlBody(anyString(), contains("accrual.exception.subject"), anyString());
     }
 
     private BatchFile getResultFromDb() {
