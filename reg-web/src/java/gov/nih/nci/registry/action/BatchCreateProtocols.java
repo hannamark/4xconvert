@@ -604,9 +604,13 @@ public class BatchCreateProtocols {
             final ResponsiblePartyType type = ResponsiblePartyType
                     .getByCode(batchDTO.getResponsibleParty());
             partyDTO.setType(type);
-            partyDTO.setTitle(batchDTO.getPartyInvestigatorTitle());
-
+            
+            final String title = StringUtils.defaultIfEmpty(
+                    batchDTO.getPartyInvestigatorTitle(),
+                    "Principal Investigator");
+            
             if (ResponsiblePartyType.PRINCIPAL_INVESTIGATOR.equals(type)) {
+                partyDTO.setTitle(title);
                 partyDTO.setInvestigator(principalInvestigatorDTO);
 
                 OrganizationBatchDTO affiliationBatch = dataValidator
@@ -622,6 +626,7 @@ public class BatchCreateProtocols {
 
             }
             if (ResponsiblePartyType.SPONSOR_INVESTIGATOR.equals(type)) {
+                partyDTO.setTitle(title);
                 partyDTO.setAffiliation(sponsorOrgDTO);
                 PersonBatchDTO investigatorDto = dataValidator
                         .buildInvestigatorDto(batchDTO);

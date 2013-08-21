@@ -412,6 +412,10 @@ public class TrialValidator {
             fieldErrorMap.put("responsiblePersonAffiliationOrgName",
                     ("Please select an affiliation"));
         }
+        if (StringUtils.isBlank(trialDto.getResponsiblePersonTitle())) {
+            fieldErrorMap.put("responsiblePersonTitle",
+                    "Please specify a title");
+        }
     }
 
 

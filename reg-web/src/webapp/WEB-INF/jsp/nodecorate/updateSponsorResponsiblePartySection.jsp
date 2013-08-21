@@ -26,7 +26,7 @@
           </reg-web:valueRow>
       </c:if>  
       <c:if test="${fn:trim(trialDTO.responsiblePersonTitle) != ''}">
-          <reg-web:valueRow labelKey="view.trial.respParty.investigatorTitle" noLabelTag="true">
+          <reg-web:valueRow labelKey="view.trial.respParty.investigatorTitle" noLabelTag="true"  required="true">
               <c:out value="${trialDTO.responsiblePersonTitle}"/>
           </reg-web:valueRow>
       </c:if>

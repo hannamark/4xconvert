@@ -177,6 +177,10 @@ public class TrialBatchDataValidator {
     private Object validateInvestigator(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         PersonBatchDTO piBatchDto = buildInvestigatorDto(batchDto);
+        if (!isEmpty(piBatchDto)
+                && StringUtils.isBlank(batchDto.getPartyInvestigatorTitle())) {
+            fieldErr.append(" Title is required for Responsible Party Investigator. \n");
+        }
         if (StringUtils.isNotEmpty(piBatchDto.getPoIdentifier()) || isEmpty(piBatchDto)) {
             return fieldErr;
         }
