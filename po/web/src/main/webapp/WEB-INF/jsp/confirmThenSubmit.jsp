@@ -8,7 +8,7 @@
            var msgText = $(statusMsgMap)[$(fieldId).value];
            if ($(fieldId).value == 'NULLIFIED'
         		   && ($('curateEntityForm.duplicateOf.id')==null || $('curateEntityForm.duplicateOf.id').value=='')){
-        	   alert("Please select a duplicate organization since you are Nullifying the existing organization.");
+        	   alert("Please select a duplicate since you are Nullifying the existing one.");
         	   return false;
            }
            var r = confirm(msgText);
