@@ -1,11 +1,9 @@
 package gov.nih.nci.registry.util;
 
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -24,7 +22,6 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -206,58 +203,34 @@ public class TrialUtil extends TrialConvertUtils {
      */
     private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException,
             NullifiedRoleException {
-        StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        DSet<Tel> dset = null;
-        if (CollectionUtils.isNotEmpty(scDtos)) {
-            trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
-            scDto = scDtos.get(0);
-            dset = scDto.getTelecomAddresses();
-        } else {
-            StudySiteContactDTO spart = new StudySiteContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService().getByStudyProtocol(
-                    studyProtocolIi, spart);
-            trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
-            if (CollectionUtils.isNotEmpty(spDtos)) {
-                spart = spDtos.get(0);
-                dset = spart.getTelecomAddresses();
-                PAContactDTO paDto = getCorrelationUtils().getContactByPAOrganizationalContactId(
-                        (Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-                if (paDto.getFullName() != null) {
-                    trialDTO.setResponsiblePersonName(paDto.getFullName());
-                    trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getPersonIdentifier()));
-                }
-                if (paDto.getTitle() != null) {
-                    trialDTO.setResponsibleGenericContactName(paDto.getTitle());
-                    trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getSrIdentifier()));
-                    trialDTO.setResponsibleGenericContactIdentifier(PAUtil.getIiExtension(paDto.getSrIdentifier()));
-                }
+        
+        StudyContactDTO scDto = PaRegistry.getStudyContactService().getResponsiblePartyContact(studyProtocolIi);
+        if (scDto != null) {
+            String type = StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR
+                    .equals(CdConverter.convertCdToEnum(
+                            StudyContactRoleCode.class, scDto.getRoleCode())) ? TrialDTO.RESPONSIBLE_PARTY_TYPE_PI
+                    : TrialDTO.RESPONSIBLE_PARTY_TYPE_SI;
+            trialDTO.setResponsiblePartyType(type);
+            trialDTO.setResponsiblePersonTitle(StConverter.convertToString(scDto
+                    .getTitle()));
+
+            Ii crsId = scDto.getClinicalResearchStaffIi();
+            if (!ISOUtil.isIiNull(crsId)) {
+                final ClinicalResearchStaff crs = (ClinicalResearchStaff) new gov.nih.nci.pa.util.CorrelationUtils()
+                        .getStructuralRole(crsId, ClinicalResearchStaff.class);
+                Organization o = crs.getOrganization();
+                Person p = crs.getPerson();
+                trialDTO.setResponsiblePersonAffiliationOrgName(o.getName());
+                trialDTO.setResponsiblePersonAffiliationOrgId(o.getIdentifier());
+                trialDTO.setResponsiblePersonName(p.getFullName());
+                trialDTO.setResponsiblePersonIdentifier(p.getIdentifier());
+            }
+        } else {                   
+            if (getPaServiceUtil().isResponsiblePartySponsor(studyProtocolIi)) {
+                trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);                
             }
         }
-        copy(dset, trialDTO);
-    }
-
-    /**
-     * Copy.
-     *
-     * @param dset set
-     * @param trialDTO dto
-     */
-    private void copy(DSet<Tel> dset, TrialDTO trialDTO) {
-        if (dset == null) {
-            return;
-        }
-        List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
-        List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-        if (phones != null && !phones.isEmpty()) {
-            trialDTO.setContactPhone(PAUtil.getPhone(phones.get(0)));
-            trialDTO.setContactPhoneExtn(PAUtil.getPhoneExtn(phones.get(0)));
-        }
-        if (emails != null && !emails.isEmpty()) {
-            trialDTO.setContactEmail(emails.get(0));
-        }
+       
     }
 
     /**
@@ -725,6 +698,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws NullifiedRoleException on err
      * @throws PAException on err
      */
+    @SuppressWarnings("deprecation")
     public BaseTrialDTO getTrialDTOForPartiallySumbissionById(String tempStudyProtocolId)
             throws NullifiedRoleException, PAException {
         BaseTrialDTO trialDTO = convertToTrialDTO(PaRegistry
@@ -984,7 +958,9 @@ public class TrialUtil extends TrialConvertUtils {
      */
     public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
         this.correlationUtils = correlationUtils;
-    }   
+    }
+
+      
     
     
 }

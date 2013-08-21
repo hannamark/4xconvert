@@ -81,15 +81,14 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -496,6 +495,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         String leadOrganization = getGtdSponsorOrLeadOrganization(studyProtocolDto,
                 StudySiteFunctionalCode.LEAD_ORGANIZATION, INFORMATION_NOT_PROVIDED);
         gtd.setLeadOrganization(leadOrganization);
+        
         // PI
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
@@ -509,15 +509,16 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             overallOffBuilder.append(leadPi.getFullName()).append(AFFILIATED_WITH).append(leadOrganization).append(
                     IN_THE_ROLE_OF).append(ROLE_PI);
             gtd.setOverallOfficial(overallOffBuilder.toString());
-            // Central Contact
-            gtd.setCentralContact(getCentralContactDetails(studyProtocolDto));
-            if (isProprietaryTrial
-                    || ctGov) {
-                // Responsible Party
-                gtd.setResponsibleParty(getResponsiblePartyDetails(studyProtocolDto));
-            }
+            
+            
         }
-       
+        
+        // Central Contact
+        gtd.setCentralContact(getCentralContactDetails(studyProtocolDto));
+        // Responsible Party
+        if (isProprietaryTrial || ctGov) {
+            gtd.setResponsibleParty(getResponsiblePartyDetails(studyProtocolDto));
+        }
 
         tsrReportGenerator.setGeneralTrialDetails(gtd);
     }
@@ -565,68 +566,37 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return retVal;
     }
 
-    private String getResponsiblePartyDetails(StudyProtocolDTO studyProtocolDto) throws PAException,
-    NullifiedRoleException {
-        String retVal = null;
-        StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = studyContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), scDto);
-        Person rp = null;
-        String resPartyContactName = null;
-        DSet<Tel> dset = null;
-        Organization sponsorResponsible = null;
-        if (CollectionUtils.isNotEmpty(scDtos)) {
-            scDto = scDtos.get(0);
-            rp = correlationUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
-            dset = scDto.getTelecomAddresses();
-            resPartyContactName = rp.getFullName();
-            StudySiteDTO spartDTO = new StudySiteDTO();
-            spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            List<StudySiteDTO> sParts = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spartDTO);
-            for (StudySiteDTO spart : sParts) {
-                sponsorResponsible = correlationUtils.getPAOrganizationByIi(spart.getResearchOrganizationIi());
-            }
+    private String getResponsiblePartyDetails(StudyProtocolDTO studyProtocolDto)
+            throws PAException, NullifiedRoleException {
+        String retVal = INFORMATION_NOT_PROVIDED;
+        
+        StudyContactDTO scDto = studyContactService
+                .getResponsiblePartyContact(studyProtocolDto.getIdentifier());       
+        if (scDto != null) {
+            String title = StConverter.convertToString(scDto.getTitle());
+            final ClinicalResearchStaff crs = (ClinicalResearchStaff) new gov.nih.nci.pa.util.CorrelationUtils()
+                    .getStructuralRole(scDto.getClinicalResearchStaffIi(),
+                            ClinicalResearchStaff.class);
+            Organization o = crs.getOrganization();
+            Person p = crs.getPerson();
+            StudyContactRoleCode role = CdConverter.convertCdToEnum(StudyContactRoleCode.class, scDto.getRoleCode());
+            
+            StringBuilder builder = new StringBuilder();
+            builder.append(
+                    StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR
+                            .equals(role) ? "Principal Investigator; "
+                            : "Sponsor-Investigator; ").append("Name: ")
+                    .append(StringUtils.defaultString(p.getFullName(), N_A))
+                    .append(", ").append("Title: ")
+                    .append(StringUtils.defaultString(title, N_A)).append(", ")
+                    .append("Affiliation: ")
+                    .append(StringUtils.defaultString(o.getName(), N_A));
+            retVal = builder.toString();
         } else {
-            StudySiteContactDTO spart = new StudySiteContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos =
-                studySiteContactService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spart);
-            if (CollectionUtils.isNotEmpty(spDtos)) {
-                PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long.valueOf(spDtos
-                        .get(0).getOrganizationalContactIi().getExtension())));
-                resPartyContactName = paCDto.getResponsiblePartyContactName();
-                dset = spDtos.get(0).getTelecomAddresses();
-
-                StudySiteDTO spDto = new StudySiteDTO();
-                spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-                List<StudySiteDTO> spartDtos =
-                    studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), spDto);
-                if (CollectionUtils.isNotEmpty(spartDtos)) {
-                    spDto = spartDtos.get(0);
-                    sponsorResponsible = new CorrelationUtils()
-                            .getPAOrganizationByIi(spDto.getResearchOrganizationIi());
-                }
+            if (paServiceUtils.isResponsiblePartySponsor(studyProtocolDto.getIdentifier())) {
+                retVal = "Sponsor";
             }
         }
-        String email = StringUtils.defaultString(PAUtil.getEmail(dset), N_A);
-        String phone = StringUtils.defaultString(PAUtil.getPhone(dset), N_A);
-        String extn = PAUtil.getPhoneExtension(dset);
-
-        StringBuilder builder = new StringBuilder();
-        builder.append("Name/Official Title: ")
-                .append(StringUtils.defaultString(resPartyContactName, N_A))
-                .append(", Organization: ")
-                .append(sponsorResponsible != null ? sponsorResponsible
-                        .getName() : N_A)
-                .append(",")
-                .append(EMAIL)
-                .append(email)
-                .append(",")
-                .append(PHONE)
-                .append(phone)
-                .append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
-        retVal = builder.toString();
-
         return retVal;
     }
 

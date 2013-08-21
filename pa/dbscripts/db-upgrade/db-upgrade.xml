@@ -1381,4 +1381,8 @@
         <comment>Adding status summary e-mail properties to pa-properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5935_3.sql"/>
      </changeSet>
+     <changeSet id="PO-5844" author="krylovd">
+        <comment>Added title column to study_contact</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5844.sql"/>
+     </changeSet>
 </databaseChangeLog>

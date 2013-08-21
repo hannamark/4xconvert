@@ -2,7 +2,7 @@
 <table>
     <tr>
         <td>
-            <s:textfield label="First Name" name="gtdDTO.sponsorName" size="30"  cssStyle="width:200px" readonly="true" cssClass="readonly"/>
+            <s:textfield label="First Name" id="gtdDTO.sponsorName" name="gtdDTO.sponsorName" size="30"  cssStyle="width:200px;" readonly="true" cssClass="readonly"/>
             <s:if test="gtdDTO.sponsorIdentifier != null && gtdDTO.sponsorIdentifier != ''">
                 <a href="javascript:void(0)" onclick="displayOrgDetails($('sponsorIdentifier').value);">
                     <img src="<%=request.getContextPath()%>/images/details.gif"/>
@@ -22,7 +22,7 @@
         </td>
     </tr>
 </table>
-<span class="formErrorMsg"> 
+<span class="formErrorMsg" id="sponsorErr"> 
     <s:fielderror>
         <s:param>gtdDTO.sponsorName</s:param>
     </s:fielderror>                            

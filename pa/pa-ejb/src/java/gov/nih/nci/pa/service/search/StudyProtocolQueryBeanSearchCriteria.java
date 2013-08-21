@@ -219,7 +219,6 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String AFFILIATE_ORG_NAME_PARAM = "affiliatedOrganizationName";
         private static final String SPONSOR_FUNCTIONAL_CODE_PARAM = "sponsorFuncCode";
         private static final String CURRENT_OR_PREV_MILESTONE_PARAM = "currentOrPreviousMilestone";
-        private static final String MILESTONE_TO_EXCLUDE_PARAM = "milestoneToExclude";
         private static final String ONHOLD_REASONS_PARAM = "onholdReasons";
         private static final String ACTIVE_MILESTONES_PARAM = "activeMilestones";
         private static final String INACTIVE_MILESTONES_PARAM = "inactiveMilestones";

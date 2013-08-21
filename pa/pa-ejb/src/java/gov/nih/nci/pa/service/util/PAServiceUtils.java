@@ -100,6 +100,8 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -124,7 +126,6 @@ import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -411,24 +412,42 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void removeResponsibleParty(Ii studyProtocolIi) throws PAException {
-        StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        if (CollectionUtils.isNotEmpty(scDtos)) {
-            scDto = scDtos.get(0);
-            PaRegistry.getStudyContactService().delete(scDtos.get(0).getIdentifier());
-        } else {
-            // delete from Study Site and it will delete study_site contact
-            StudySiteDTO spart = new StudySiteDTO();
-            spart.setFunctionalCode(CdConverter.convertToCd(
-                  StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
-              List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
-                  .getByStudyProtocol(studyProtocolIi, spart);
-            if (CollectionUtils.isNotEmpty(spDtos)) {
-                PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
-            }
+        PaRegistry.getStudyContactService().removeResponsiblePartyContact(studyProtocolIi);
+        
+        // delete from Study Site and it will delete study_site contact
+        List<StudySiteDTO> spDtos = getRespPartySponsorSites(studyProtocolIi);
+        if (CollectionUtils.isNotEmpty(spDtos)) {
+            PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
         }
+        
     }
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws PAException
+     */
+    private List<StudySiteDTO> getRespPartySponsorSites(Ii studyProtocolIi)
+            throws PAException {
+        StudySiteDTO spart = new StudySiteDTO();
+        spart.setFunctionalCode(CdConverter.convertToCd(
+              StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR));
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
+              .getByStudyProtocol(studyProtocolIi, spart);
+        return spDtos;
+    }
+    
+    
+  
+    /**
+     * @param studyProtocolIi
+     *            studyProtocolIi
+     * @return boolean
+     * @throws PAException PAException  
+     */
+    public boolean isResponsiblePartySponsor(Ii studyProtocolIi) throws PAException {
+        return CollectionUtils.isNotEmpty(getRespPartySponsorSites(studyProtocolIi));
+    }
+    
     /**
      * removes the sponsor contact.
      * @param studyProtocolIi studyPorotocol Ii
@@ -455,53 +474,75 @@ public class PAServiceUtils {
             PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
         }
     }
+
     /**
-     *
-     * @param studyProtocolIi study protocol ii
-     * @param leadOrganizationDTO Lead Organization
-     * @param principalInvestigatorDTO Principal Investigator
-     * @param sponsorOrganizationDTO Sponsor Organization
-     * @param responsiblePartyContactIi Responsible Party
-     * @param studyContactDTO Study Contact
-     * @param studySiteContactDTO Study Site Contact
-     * @throws PAException on error
+     * @param studyProtocolIi studyProtocolIi
+     * @param partyDTO partyDTO
+     * @param sponsorOrganizationDTO sponsorOrganizationDTO
+     * @throws PAException PAException
      */
-    public void createResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDTO,
-            PersonDTO principalInvestigatorDTO, OrganizationDTO sponsorOrganizationDTO, Ii responsiblePartyContactIi,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
-        if (studyContactDTO != null) {
-            createPIAsResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO, studyContactDTO);
+    public void createResponsibleParty(Ii studyProtocolIi,
+            ResponsiblePartyDTO partyDTO, OrganizationDTO sponsorOrganizationDTO)
+            throws PAException {
+        if (ResponsiblePartyType.PRINCIPAL_INVESTIGATOR.equals(partyDTO
+                .getType())) {
+            createPIAsResponsibleParty(studyProtocolIi,
+                    partyDTO.getAffiliation(), partyDTO.getInvestigator(),
+                    partyDTO.getTitle());
+        } else if (ResponsiblePartyType.SPONSOR_INVESTIGATOR.equals(partyDTO
+                .getType())) {
+            createSIAsResponsibleParty(studyProtocolIi,
+                    partyDTO.getAffiliation(), partyDTO.getInvestigator(),
+                    partyDTO.getTitle());
         } else {
-            createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactIi,
-                                          studySiteContactDTO);
+            createSponsorAsPrimaryContact(studyProtocolIi,
+                    sponsorOrganizationDTO);
         }
     }
-    private void createPIAsResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
-            PersonDTO principalInvestigatorDto, StudyContactDTO studyContactDTO) throws PAException {
-        DSet<Tel> dset = studyContactDTO.getTelecomAddresses();
+    
+
+    /**
+     * @param studyProtocolIi studyProtocolIi
+     * @param affiliationOrg affiliationOrg
+     * @param investigator investigator
+     * @param title title
+     * @throws PAException PAException
+     */
+    public void createPIAsResponsibleParty(Ii studyProtocolIi,
+            OrganizationDTO affiliationOrg, PersonDTO investigator, String title)
+            throws PAException {
         new PARelationServiceBean().createPIAsResponsiblePartyRelations(
-                leadOrganizationDto.getIdentifier().getExtension(),
-                principalInvestigatorDto.getIdentifier().getExtension(), IiConverter.convertToLong(studyProtocolIi),
-                DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0),
-                DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
+                affiliationOrg.getIdentifier().getExtension(), investigator
+                        .getIdentifier().getExtension(), IiConverter
+                        .convertToLong(studyProtocolIi), title);
+    }
+    
+    /**
+     * @param studyProtocolIi studyProtocolIi
+     * @param affiliationOrg affiliationOrg
+     * @param investigator investigator
+     * @param title title
+     * @throws PAException PAException
+     */
+    public void createSIAsResponsibleParty(Ii studyProtocolIi,
+            OrganizationDTO affiliationOrg, PersonDTO investigator, String title)
+            throws PAException {
+        new PARelationServiceBean().createSIAsResponsiblePartyRelations(
+                affiliationOrg.getIdentifier().getExtension(), investigator
+                        .getIdentifier().getExtension(), IiConverter
+                        .convertToLong(studyProtocolIi), title);
     }
 
-    private void createSponsorAsPrimaryContact(Ii studyProtocolIi, OrganizationDTO sponsorOrganizationDTO,
-            Ii responsiblePartyContactIi, StudySiteContactDTO studySiteContactDTO) throws PAException {
-        DSet<Tel> dset = studySiteContactDTO.getTelecomAddresses();
+    private void createSponsorAsPrimaryContact(Ii studyProtocolIi,
+            OrganizationDTO sponsorOrganizationDTO) throws PAException {
         PAContactDTO contactDto = new PAContactDTO();
-        contactDto.setOrganizationIdentifier(
-                IiConverter.convertToPoOrganizationIi(sponsorOrganizationDTO.getIdentifier().getExtension()));
+        contactDto.setOrganizationIdentifier(IiConverter
+                .convertToPoOrganizationIi(sponsorOrganizationDTO
+                        .getIdentifier().getExtension()));
         contactDto.setStudyProtocolIdentifier(studyProtocolIi);
-        contactDto.setEmail(DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0));
-        contactDto.setPhone(DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
-        if (responsiblePartyContactIi.getRoot().equalsIgnoreCase(IiConverter.PERSON_ROOT)) {
-            contactDto.setPersonIdentifier(responsiblePartyContactIi);
-        }
-        if (responsiblePartyContactIi.getRoot().equalsIgnoreCase(IiConverter.ORGANIZATIONAL_CONTACT_ROOT)) {
-            contactDto.setSrIdentifier(responsiblePartyContactIi);
-        }
-        new PARelationServiceBean().createSponsorAsPrimaryContactRelations(contactDto);
+
+        new PARelationServiceBean()
+                .createSponsorAsPrimaryContactRelations(contactDto);
     }
     /**
      *

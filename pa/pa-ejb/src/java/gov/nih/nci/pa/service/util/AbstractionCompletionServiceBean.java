@@ -499,6 +499,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                 "Responsible Party Study Principal Investigator status has been set to nullified, "
                                         + "Please select another Responsible Party Study Principal Investigator", 1);
                     }
+                    if (StudyContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR.getCode().equalsIgnoreCase(
+                            studyContactDTO.getRoleCode().getCode())) {
+
+                       messages.addWarning(SELECT_TRIAL_DETAILS,
+                                "Responsible Party Sponsor-Investigator status has been set to nullified, "
+                                        + "Please select another Responsible Party Sponsor-Investigator", 1);
+                    }
                 }
             }
         }

@@ -9,6 +9,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -208,7 +209,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
     public Ii createAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
             StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
-            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            PersonDTO investigatorDTO, ResponsiblePartyDTO partyDTO, PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
             List<PlannedEligibilityCriterionDTO> eligibility,
@@ -221,7 +222,7 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
    
     public Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteDTO nctID, OrganizationDTO sponsorDTO,
-            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO, PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
             List<PlannedEligibilityCriterionDTO> eligibility,
@@ -230,6 +231,96 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
+            throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("3");
+    }
+
+    @Override
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("3");
+    }
+
+    @Override
+    public Ii amend(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
+            throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("2");
+    }
+
+    @Override
+    public Ii amend(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            Bl handleDuplicateGrantAndINDsGracefully) throws PAException {
+        if (studyProtocolDTO.getOfficialTitle().getValue().equals("testthrowException")){
+            throw new PAException("test");
+        }
+        return IiConverter.convertToIi("2");
     }
 
 }

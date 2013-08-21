@@ -114,25 +114,6 @@ public class TrialHelperTest extends AbstractPaActionTest {
         gtdDTO.setCentralContactPhone("123456789");
         assertNotNull(trialHelper.createStudyContactObj(IiConverter.convertToIi("1"), new StudyContactDTO(), gtdDTO));
     }
-
-    @Test(expected = Exception.class)
-    public void testCreateSponorContact() throws PAException {
-        GeneralTrialDesignWebDTO  gtdDTO = new GeneralTrialDesignWebDTO();
-        gtdDTO.setOfficialTitle("Test");
-        gtdDTO.setAcronym("test");
-        gtdDTO.setKeywordText("key");
-        gtdDTO.setLeadOrganizationIdentifier("1");
-        gtdDTO.setLocalProtocolIdentifier("1");
-        gtdDTO.setNctIdentifier("test");
-        gtdDTO.setCentralContactIdentifier("2");
-        gtdDTO.setCentralContactPhone("123456789");
-        gtdDTO.setResponsiblePartyType("sponsor");
-        gtdDTO.setSponsorIdentifier("1");
-        gtdDTO.setCentralContactEmail("a@a.com");
-        gtdDTO.setContactPhone("123456789");
-        gtdDTO.setResponsiblePersonName("test");
-        gtdDTO.setResponsiblePersonIdentifier("1");
-        trialHelper.createSponorContact(IiConverter.convertToIi("1"),gtdDTO);
-    }
+    
 
 }

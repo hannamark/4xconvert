@@ -26,6 +26,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
@@ -83,6 +85,7 @@ import gov.nih.nci.pa.service.ctgov.EnrollmentStruct;
 import gov.nih.nci.pa.service.ctgov.IdInfoStruct;
 import gov.nih.nci.pa.service.ctgov.InvestigatorStruct;
 import gov.nih.nci.pa.service.ctgov.ProtocolOutcomeStruct;
+import gov.nih.nci.pa.service.ctgov.ResponsiblePartyStruct;
 import gov.nih.nci.pa.service.ctgov.SponsorStruct;
 import gov.nih.nci.pa.service.ctgov.TextblockStruct;
 import gov.nih.nci.pa.util.CsmUserUtil;
@@ -551,6 +554,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED));
 
         OrganizationDTO sponsorDTO = extractSponsor(study);
+        ResponsiblePartyDTO partyDTO = extractResponsibleParty(study);
         List<OrganizationDTO> collaborators = extractCollaborators(study);
 
         DocumentDTO document = new DocumentDTO();
@@ -562,16 +566,68 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         if (isUpdate) {
             return trialRegistrationService.updateAbbreviatedStudyProtocol(
                     studyProtocolDTO, nctID, sponsorDTO,
-                    investigatorDTO, centralContactDTO, overallStatusDTO,
+                    investigatorDTO, partyDTO, centralContactDTO, overallStatusDTO,
                     regAuthDTO, arms, eligibility, outcomes, collaborators,
                     Arrays.asList(document)).getExtension();
         } else {
             return trialRegistrationService.createAbbreviatedStudyProtocol(
                     studyProtocolDTO, nctID, leadOrgDTO, leadOrgID, sponsorDTO,
-                    investigatorDTO, centralContactDTO, overallStatusDTO,
+                    investigatorDTO, partyDTO, centralContactDTO, overallStatusDTO,
                     regAuthDTO, arms, eligibility, outcomes, collaborators,
                     Arrays.asList(document)).getExtension();
         }
+    }
+
+    private ResponsiblePartyDTO extractResponsibleParty(ClinicalStudy study)
+            throws PAException {
+        ResponsiblePartyDTO partyDTO = null;
+        final ResponsiblePartyStruct party = study.getResponsibleParty();
+        if (party != null && party.getResponsiblePartyType() != null) {
+            final String type = party.getResponsiblePartyType();
+            partyDTO = new ResponsiblePartyDTO();
+            if ("Sponsor".equalsIgnoreCase(type)) {
+                partyDTO.setType(ResponsiblePartyType.SPONSOR);
+            } else if ("Principal Investigator".equalsIgnoreCase(type)) {
+                partyDTO.setType(ResponsiblePartyType.PRINCIPAL_INVESTIGATOR);
+                extractRespPartyInvestigatorInfo(partyDTO, party);
+            } else if ("Sponsor-Investigator".equalsIgnoreCase(type)) {
+                partyDTO.setType(ResponsiblePartyType.SPONSOR_INVESTIGATOR);
+                extractRespPartyInvestigatorInfo(partyDTO, party);
+            } else {
+                throw new PAException("Unsupported responsible party type: "
+                        + type);
+            }
+        }
+        return partyDTO;
+    }
+
+    /**
+     * @param partyDTO
+     * @param party
+     * @throws PAException
+     */
+    private void extractRespPartyInvestigatorInfo(ResponsiblePartyDTO partyDTO,
+            final ResponsiblePartyStruct party) throws PAException {
+        final String agency = left(party.getInvestigatorAffiliation(), L_160);
+        if (isBlank(agency)) {
+            throw new PAException(
+                    "Responsbile party's investigator affiliation is missing");
+        }
+        OrganizationDTO org = getNewOrganizationDTO();
+        org.setName(EnOnConverter.convertToEnOn(agency));
+
+        if (isBlank(party.getInvestigatorFullName())) {
+            throw new PAException(
+                    "Responsbile party's investigator name information is missing");
+        }
+        PersonDTO person = getNewPersonDTO();
+        person.setName(breakDownCtGovPersonName(EnPnConverter.convertToEnPn(
+                null, null, left(party.getInvestigatorFullName(), L_50), null,
+                null)));
+
+        partyDTO.setTitle(left(party.getInvestigatorTitle(), L_200));
+        partyDTO.setAffiliation(org);
+        partyDTO.setInvestigator(person);
     }
 
     /**

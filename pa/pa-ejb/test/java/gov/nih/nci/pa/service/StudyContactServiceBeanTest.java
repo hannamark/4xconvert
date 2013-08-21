@@ -78,7 +78,10 @@
 */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.enums.StudyContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR;
+import static gov.nih.nci.pa.enums.StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -96,6 +99,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -134,7 +138,7 @@ public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void create() throws Exception {
-        StudyContactDTO dto = createStudyContactDTO(null);
+        StudyContactDTO dto = createStudyContactDTO(null, STUDY_PRINCIPAL_INVESTIGATOR);
         remoteEjb.create(dto);
         assertEquals(dto.getStudyProtocolIdentifier(), pid);
         searchStudyContact();
@@ -168,7 +172,7 @@ public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
      * Tests that the creation method with a valid phone number
      */
     private void createWithValidPhoneNumber(String input, String formatted) throws Exception {
-        StudyContactDTO dto = createStudyContactDTO(input);
+        StudyContactDTO dto = createStudyContactDTO(input, STUDY_PRINCIPAL_INVESTIGATOR);
         remoteEjb.create(dto);
         assertEquals(dto.getStudyProtocolIdentifier(), pid);
         StudyContactDTO result = searchStudyContact();
@@ -183,7 +187,7 @@ public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void createWithInvalidPhoneNumber() throws Exception {
         try {
-            StudyContactDTO dto = createStudyContactDTO("1234");
+            StudyContactDTO dto = createStudyContactDTO("1234", STUDY_PRINCIPAL_INVESTIGATOR);
             remoteEjb.create(dto);
             fail("Create method should have failed because of the invalid phone number");
         } catch (PAException e) {
@@ -191,12 +195,47 @@ public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
                          "Invalid phone number: 1234 format for USA or CANADA is xxx-xxx-xxxxextxxxx", e.getMessage());
         }
     }
+    
+    @Test
+    public void getResponsiblePartyContact() throws Exception {
+        StudyContactDTO dto = createStudyContactDTO(null, RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR);
+        remoteEjb.create(dto);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
+        StudyContactDTO rp = remoteEjb.getResponsiblePartyContact(pid);
+        assertEquals(
+                RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR,
+                CdConverter.convertCdToEnum(StudyContactRoleCode.class,
+                        rp.getRoleCode()));
+    }
+    
+    @Test
+    public void removeResponsiblePartyContact() throws Exception {
+        StudyContactDTO dto = createStudyContactDTO(null, RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR);
+        remoteEjb.create(dto);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
+        
+        StudyContactDTO rp = remoteEjb.getResponsiblePartyContact(pid);
+        assertEquals(
+                RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR,
+                CdConverter.convertCdToEnum(StudyContactRoleCode.class,
+                        rp.getRoleCode()));
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
+        remoteEjb.removeResponsiblePartyContact(pid);
+        assertNull(remoteEjb.getResponsiblePartyContact(pid));
+    }
 
-    private StudyContactDTO createStudyContactDTO(String phone) {
+    private StudyContactDTO createStudyContactDTO(String phone, StudyContactRoleCode role) {
         StudyContactDTO dto = new StudyContactDTO();
         dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
         dto.setStudyProtocolIdentifier(pid);
-        dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+        dto.setRoleCode(CdConverter.convertToCd(role));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
         dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
         if (phone != null) {

@@ -30,7 +30,6 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
-import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialConvertUtils;
 
@@ -44,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.ClassValidator;
@@ -153,16 +153,93 @@ public class TrialBatchDataValidator {
         StringBuffer fieldErr = new StringBuffer();
         //Sponsor validation
         fieldErr.append(validateSponsorInfo(batchDto));
+        
         if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
              && !TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())
+             && !TrialDTO.RESPONSIBLE_PARTY_TYPE_SI.equalsIgnoreCase(batchDto.getResponsibleParty())
              && !TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(batchDto.getResponsibleParty())) {
              fieldErr.append("Please enter valid value for Responsible Party.");
         }
         if (StringUtils.isEmpty(batchDto.getResponsibleParty())) {
             fieldErr.append("Responsible Party Not Provided.\n");
         }
+        
+        if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SI.equalsIgnoreCase(batchDto
+                .getResponsibleParty())
+                || TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(batchDto
+                        .getResponsibleParty())) {
+            fieldErr.append(validateInvestigatorAffiliation(batchDto));
+            fieldErr.append(validateInvestigator(batchDto));
+        }
         return fieldErr;
     }
+    
+    private Object validateInvestigator(StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        PersonBatchDTO piBatchDto = buildInvestigatorDto(batchDto);
+        if (StringUtils.isNotEmpty(piBatchDto.getPoIdentifier()) || isEmpty(piBatchDto)) {
+            return fieldErr;
+        }
+        fieldErr.append(validate(piBatchDto, "Responsible Party Investigator's "));
+        fieldErr.append(validateCountryAndStateInfo(piBatchDto.getCountry(), piBatchDto.getState(),
+                "Responsible Party Investigator's"));
+        return fieldErr;
+    }
+    
+    private Object validateInvestigatorAffiliation(
+            StudyProtocolBatchDTO batchDto) {
+        StringBuffer fieldErr = new StringBuffer();
+        OrganizationBatchDTO dto = buildAffiliationOrgDto(batchDto);
+        if (StringUtils.isEmpty(dto.getPoIdentifier()) && !isEmpty(dto)) {
+            fieldErr.append(validate(dto,
+                    "Investigator Affiliation Organization's "));
+            fieldErr.append(validateCountryAndStateInfo(dto.getCountry(),
+                    dto.getState(), "Investigator Affiliation Organization's"));
+        }
+        return fieldErr;
+    }
+
+    /**
+     * @param dto AddressDTO
+     * @return true or false
+     */
+    @SuppressWarnings("rawtypes")
+    public boolean isEmpty(Object dto) {
+        try {
+            Map map = BeanUtils.describe(dto);
+            for (Object key : map.keySet()) {
+                if (map.get(key) instanceof String && !"class".equals(key)) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+        return true;
+    }
+
+    /**
+     * @param dto dto
+     * @return OrganizationBatchDTO
+     */
+    public OrganizationBatchDTO buildAffiliationOrgDto(
+            StudyProtocolBatchDTO dto) {
+        OrganizationBatchDTO orgDto = new OrganizationBatchDTO();
+        orgDto.setPoIdentifier(dto.getPartyAffiliationPOId());
+        orgDto.setName(dto.getPartyAffiliationName());
+        orgDto.setStreetAddress(dto.getPartyAffiliationStreetAddress());
+        orgDto.setCity(dto.getPartyAffiliationCity());
+        orgDto.setState(dto.getPartyAffiliationState());
+        orgDto.setZip(dto.getPartyAffiliationZip());
+        orgDto.setCountry(dto.getPartyAffiliationCountry());
+        orgDto.setEmail(dto.getPartyAffiliationEmail());
+        orgDto.setPhone(dto.getPartyAffiliationPhone());
+        orgDto.setTty(dto.getPartyAffiliationTTY());
+        orgDto.setFax(dto.getPartyAffiliationFax());
+        orgDto.setUrl(dto.getPartyAffiliationUrl());      
+        return orgDto;
+    }
+
     private Object validatePI(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         PersonBatchDTO piBatchDto = buildLeadPIDto(batchDto);
@@ -191,10 +268,7 @@ public class TrialBatchDataValidator {
         if (isUpdate(batchDto)) {
             if (StringUtils.isEmpty(batchDto.getNciTrialIdentifier())) {
                 fieldErr.append("NCI Trial Identifier is required. \n");
-            }
-            if (batchDto.isCtGovXmlIndicator()) {
-                fieldErr.append(validateSponsorContactInfo(batchDto));
-            }
+            }            
             if (StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus()) == null
                     && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
@@ -510,77 +584,11 @@ public class TrialBatchDataValidator {
             fieldErr.append(validate(dto, "Sponsor Organization's "));
             fieldErr.append(validateCountryAndStateInfo(dto.getCountry(), dto.getState(), "Sponsor Organization's"));
         }
-        fieldErr.append(validateSponsorContactInfo(batchDto));
-        if (StringUtils.isEmpty(batchDto.getResponsibleParty())) {
-                fieldErr.append("Sponsor Contact Type is required.\n");
-        }
         return fieldErr;
     }
 
-    private StringBuffer validateSponsorContactInfo(StudyProtocolBatchDTO batchDto) {
-        StringBuffer fieldErr = new StringBuffer();
-        if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
-                && TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())
-                && StringUtils.isNotEmpty(batchDto.getSponsorContactType())) {
-            if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
-                PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);
-                if (StringUtils.isEmpty(sponsorContact.getPoIdentifier())) {
-                    fieldErr.append(validate(sponsorContact, "Sponsor Contact's "));
-                    fieldErr.append(validateCountryAndStateInfo(sponsorContact.getCountry(), sponsorContact.getState(),
-                                                                "Sponsor Contact's "));
-                }
-            }
-            if (batchDto.getSponsorContactType().equalsIgnoreCase("Generic")) {
-                if (StringUtils.isEmpty(batchDto.getResponsibleGenericContactName())) {
-                    fieldErr.append("Title is required when Sponsor Contact Type is Generic .\n");
-                }
-                if (StringUtils.isEmpty(batchDto.getSponsorContactEmail())) {
-                    fieldErr.append("Sponsor Contact Email is required.\n");
-                } else if (!PAUtil.isValidEmail(batchDto.getSponsorContactEmail())) {
-                    fieldErr.append("Sponsor Contact Email is not well formatted.\n");
-                }
-                if (StringUtils.isEmpty(batchDto.getSponsorContactPhone())) {
-                    fieldErr.append("Sponsor Contact Phone is required.\n");
-                }
-            }
-        }
-        return fieldErr;
-    }
+    
 
-    /**
-     *
-     * @param fundmc
-     * @param srNumber
-     * @param icdCode
-     * @return
-     */
-    private boolean containsReqGrantInfo(TrialFundingWebDTO grandDto) {
-            String fundmc = grandDto.getFundingMechanismCode();
-            String srNumber = grandDto.getSerialNumber();
-            String icdCode = grandDto.getNihInstitutionCode();
-            String divCode = grandDto.getNciDivisionProgramCode();
-        int nullCount = 0;
-        if (null == fundmc || fundmc.trim().length() < 1) {
-            nullCount += 1;
-        }
-        if (null == srNumber || srNumber.trim().length() <  1) {
-            nullCount += 1;
-        }
-        if (null == icdCode || icdCode.trim().length() < 1) {
-            nullCount += 1;
-        }
-        if (null == divCode || divCode.trim().length() < 1) {
-            nullCount += 1;
-        }
-        if (nullCount == BatchConstants.GRANT_FIELDS) {
-            return true;
-        }
-        if (nullCount == 0) {
-            return true;
-        }
-        return false;
-
-    }
     /**
      *
      * @param dto dto
@@ -608,7 +616,7 @@ public class TrialBatchDataValidator {
      * @param dto dto
      * @return dto
      */
-        public PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
+    public PersonBatchDTO buildLeadPIDto(StudyProtocolBatchDTO dto) {
         PersonBatchDTO personDto = new PersonBatchDTO();
         personDto.setPoIdentifier(dto.getPiPOId());
         personDto.setFirstName(dto.getPiFirstName());
@@ -626,6 +634,31 @@ public class TrialBatchDataValidator {
         personDto.setUrl(dto.getPiUrl());
         return personDto;
     }
+    
+    /**
+    *
+    * @param dto dto
+    * @return dto
+    */
+   public PersonBatchDTO buildInvestigatorDto(StudyProtocolBatchDTO dto) {
+       PersonBatchDTO personDto = new PersonBatchDTO();
+       personDto.setPoIdentifier(dto.getPartyInvestigatorPOId());
+       personDto.setFirstName(dto.getPartyInvestigatorFirstName());
+       personDto.setMiddleName(dto.getPartyInvestigatorMiddleName());
+       personDto.setLastName(dto.getPartyInvestigatorLastName());
+       personDto.setStreetAddress(dto.getPartyInvestigatorStreetAddress());
+       personDto.setCity(dto.getPartyInvestigatorCity());
+       personDto.setState(dto.getPartyInvestigatorState());
+       personDto.setZip(dto.getPartyInvestigatorZip());
+       personDto.setCountry(dto.getPartyInvestigatorCountry());
+       personDto.setEmail(dto.getPartyInvestigatorEmail());
+       personDto.setPhone(dto.getPartyInvestigatorPhone());
+       personDto.setTty(dto.getPartyInvestigatorTTY());
+       personDto.setFax(dto.getPartyInvestigatorFax());
+       personDto.setUrl(dto.getPartyInvestigatorUrl());
+       return personDto;
+   }
+    
     /**
      *
      * @param dto dto
@@ -647,29 +680,7 @@ public class TrialBatchDataValidator {
         sponsorDto.setUrl(dto.getSponsorURL());
         return sponsorDto;
     }
-    /**
-     *
-     * @param dto dto
-     * @return dto
-     */
-    public PersonBatchDTO buildSponsorContact(StudyProtocolBatchDTO dto) {
-        PersonBatchDTO  sponsorContact = new PersonBatchDTO();
-        sponsorContact.setPoIdentifier(dto.getSponsorContactPOId());
-        sponsorContact.setFirstName(dto.getSponsorContactFName());
-        sponsorContact.setMiddleName(dto.getSponsorContactMName());
-        sponsorContact.setLastName(dto.getSponsorContactLName());
-        sponsorContact.setStreetAddress(dto.getSponsorContactStreetAddress());
-        sponsorContact.setCity(dto.getSponsorContactCity());
-        sponsorContact.setState(dto.getSponsorContactState());
-        sponsorContact.setZip(dto.getSponsorContactZip());
-        sponsorContact.setCountry(dto.getSponsorContactCountry());
-        sponsorContact.setEmail(dto.getSponsorContactEmail());
-        sponsorContact.setPhone(dto.getSponsorContactPhone());
-        sponsorContact.setTty(dto.getSponsorContactTTY());
-        sponsorContact.setFax(dto.getSponsorContactFax());
-        sponsorContact.setUrl(dto.getSponsorContactUrl());
-        return sponsorContact;
-    }
+    
 
     /**
      *

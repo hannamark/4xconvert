@@ -16,7 +16,7 @@
         </td>
     </tr>
 </table>
-<span class="formErrorMsg"> 
+<span class="formErrorMsg" id="sponsorErr"> 
      <s:fielderror>
         <s:param>trialDTO.sponsorIdentifier</s:param>
     </s:fielderror>                            

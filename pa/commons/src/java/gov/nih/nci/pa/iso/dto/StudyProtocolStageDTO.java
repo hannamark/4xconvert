@@ -28,7 +28,9 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private Ii sponsorIdentifier;
 
     private St responsiblePartyType;
+    private St responsibleTitle;
     private Ii responsibleIdentifier;
+    private Ii responsibleAffilId;
     private Ii responsibleGenericContactIdentifier;
     private St contactPhone;
     private St contactEmail;
@@ -552,6 +554,30 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setNciGrant(Bl nciGrant) {
         this.nciGrant = nciGrant;
+    }
+    /**
+     * @return the responsibleTitle
+     */
+    public St getResponsibleTitle() {
+        return responsibleTitle;
+    }
+    /**
+     * @param responsibleTitle the responsibleTitle to set
+     */
+    public void setResponsibleTitle(St responsibleTitle) {
+        this.responsibleTitle = responsibleTitle;
+    }
+    /**
+     * @return the responsibleAffilId
+     */
+    public Ii getResponsibleAffilId() {
+        return responsibleAffilId;
+    }
+    /**
+     * @param responsibleAffilId the responsibleAffilId to set
+     */
+    public void setResponsibleAffilId(Ii responsibleAffilId) {
+        this.responsibleAffilId = responsibleAffilId;
     }
 
 }

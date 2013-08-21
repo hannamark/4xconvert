@@ -47,59 +47,34 @@
         var div = $('loadPersField');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
         var aj = callAjaxPost(div, url, params);
+        
+        var partyType = $F('gtdDTO.responsiblePartyType');
+        if (partyType=='pi') {                
+        	$('gtdDTO.responsiblePersonIdentifier').value=persid;
+            $('gtdDTO.responsiblePersonName').value=selectedName;
+        }
     }
     
     function loadSponsorDiv() {
         var url = 'ajaxTrialValidationdisplaySelectedSponsor.action';
-        var params = { orgId: orgid };
-        $('gtdDTO.responsiblePersonIdentifier').value = '';
-        $('gtdDTO.responsibleGenericContactName').value = '';
-        $('gtdDTO.responsiblePersonName').value = '';
+        var params = { orgId: orgid };               
         var div = $('loadSponsorField');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';
         var aj = callAjaxPost(div, url, params);
+        
+        var partyType = $F('gtdDTO.responsiblePartyType');
+        if (partyType=='si') {                
+        	 $('gtdDTO.responsiblePersonAffiliationOrgId').value=orgid;
+             $('gtdDTO.responsiblePersonAffiliationOrgName').value=orgname;
+        }
     }
     
-    function createOrgContactDiv() {
-        var url = 'ajaxTrialValidationcreateOrganizationContacts.action';
-        var params = {
-            orgId: orgid,
-            persId: persid
-        };
-        $('gtdDTO.responsibleGenericContactName').value = '';
-        $('gtdDTO.responsiblePersonIdentifier').value = persid;
-        var div = $('loadResponsibleContactField');
-        div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding responsible contact...</div>';
-        var aj = callAjaxPost(div, url, params);
-    }
-    
-    function createOrgGenericContactDiv() {
-        $('gtdDTO.responsiblePersonIdentifier').value = persid;
-        $('gtdDTO.responsibleGenericContactName').value = selectedName;
-        $("gtdDTO.contactEmail").value = contactMail;
-        $("gtdDTO.contactPhone").value = extractPhoneNumberNoExt(contactPhone);
-        $("gtdDTO.contactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
-        $('gtdDTO.responsiblePersonName').value = '';
-    }
     
     function lookup4loadresponsiblepartygenericcontact() {
         var orgid = $('sponsorIdentifier').value;
         showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid+'&type=Responsible Party', createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
     }
     
-    function manageRespPartyLookUp() {
-        if ($('gtdDTO.responsiblePartyTypepi').checked == true) {
-            $('rpcid').style.display='none';
-            $('rpgcid').style.display='none';
-            $('gtdDTO.responsiblePersonName').value = '';
-            $('gtdDTO.responsibleGenericContactName').value = '';
-            $('gtdDTO.responsiblePersonIdentifier').value  = '';
-        }
-        if ($('gtdDTO.responsiblePartyTypesponsor').checked == true) {             
-            $('rpcid').style.display='';
-            $('rpgcid').style.display='';
-        }
-    }
     
     function toggledisplayDivs(val) {
         var vis = val.value;
@@ -116,7 +91,6 @@
 <tr>
     <th colspan="2"> Lead Organization/Principal Investigator</th>
 </tr>
-<s:hidden name="gtdDTO.responsiblePersonIdentifier" id="gtdDTO.responsiblePersonIdentifier"/>
 <s:hidden name="gtdDTO.proprietarytrialindicator" id="gtdDTO.proprietarytrialindicator"/>
 <tr>
     <td scope="row" class="label">

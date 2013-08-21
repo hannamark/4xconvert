@@ -10,6 +10,7 @@ import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
@@ -23,12 +24,17 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * PI responsible party type.
      */
-    public static final String RESPONSIBLE_PARTY_TYPE_PI = "PI";
+    public static final String RESPONSIBLE_PARTY_TYPE_PI = "pi";
 
     /**
      * Sponsor responsible party type.
      */
     public static final String RESPONSIBLE_PARTY_TYPE_SPONSOR = "sponsor";
+    
+    /**
+     * Si responsible party type.
+     */
+    public static final String RESPONSIBLE_PARTY_TYPE_SI = "si";
 
     private String accrualReportingMethodCode;
     private String piIdentifier;
@@ -38,6 +44,9 @@ public class TrialDTO extends BaseTrialDTO {
     private String responsiblePartyType;
     private String responsiblePersonName;
     private String responsiblePersonIdentifier;
+    private String responsiblePersonTitle;   
+    private String responsiblePersonAffiliationOrgName;
+    private String responsiblePersonAffiliationOrgId;
     private String responsibleGenericContactIdentifier;
     private String contactPhone;
     private String contactEmail;
@@ -158,6 +167,14 @@ public class TrialDTO extends BaseTrialDTO {
      */
     public String getResponsiblePartyType() {
         return responsiblePartyType;
+    }
+    
+    /**
+     * @return the responsiblePartyType
+     */
+    public String getResponsiblePartyTypeReadable() {
+        return ResourceBundle.getBundle("ApplicationResources").getString(
+                "view.trial.respPartyType." + getResponsiblePartyType());
     }
 
     /**
@@ -789,6 +806,50 @@ public class TrialDTO extends BaseTrialDTO {
         return StringUtils.isBlank(getContactPhoneExtn()) ? StringUtils
                 .defaultString(getContactPhone())
                 : (StringUtils.defaultString(getContactPhone()) + "ext" + getContactPhoneExtn());
+    }
+
+    /**
+     * @return the responsiblePersonTitle
+     */
+    public String getResponsiblePersonTitle() {
+        return responsiblePersonTitle;
+    }
+
+    /**
+     * @param responsiblePersonTitle the responsiblePersonTitle to set
+     */
+    public void setResponsiblePersonTitle(String responsiblePersonTitle) {
+        this.responsiblePersonTitle = responsiblePersonTitle;
+    }
+
+    /**
+     * @return the responsiblePersonAffiliationOrgName
+     */
+    public String getResponsiblePersonAffiliationOrgName() {
+        return responsiblePersonAffiliationOrgName;
+    }
+
+    /**
+     * @param responsiblePersonAffiliationOrgName the responsiblePersonAffiliationOrgName to set
+     */
+    public void setResponsiblePersonAffiliationOrgName(
+            String responsiblePersonAffiliationOrgName) {
+        this.responsiblePersonAffiliationOrgName = responsiblePersonAffiliationOrgName;
+    }
+
+    /**
+     * @return the responsiblePersonAffiliationOrgId
+     */
+    public String getResponsiblePersonAffiliationOrgId() {
+        return responsiblePersonAffiliationOrgId;
+    }
+
+    /**
+     * @param responsiblePersonAffiliationOrgId the responsiblePersonAffiliationOrgId to set
+     */
+    public void setResponsiblePersonAffiliationOrgId(
+            String responsiblePersonAffiliationOrgId) {
+        this.responsiblePersonAffiliationOrgId = responsiblePersonAffiliationOrgId;
     }
     
 }

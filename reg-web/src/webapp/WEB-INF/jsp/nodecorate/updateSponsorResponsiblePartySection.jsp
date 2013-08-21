@@ -6,70 +6,34 @@
         <s:hidden name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" />
         <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
         <s:hidden name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName"/>
-        <s:hidden name="trialDTO.responsibleGenericContactName" id="trialDTO.responsibleGenericContactName"/>
-        <s:hidden name="trialDTO.contactEmail" id="trialDTO.contactEmail"/>
-        <s:hidden name="trialDTO.contactPhone" id="trialDTO.contactPhone"/>
+        <s:hidden name="trialDTO.responsiblePersonTitle" id="trialDTO.responsiblePersonTitle"/>
+        <s:hidden name="trialDTO.responsiblePersonAffiliationOrgName" id="trialDTO.responsiblePersonAffiliationOrgName"/>
+        <s:hidden name="trialDTO.responsiblePersonAffiliationOrgId" id="trialDTO.responsiblePersonAffiliationOrgId"/>        
     </td>
 </tr>
 
-<c:if test="${trialDTO.xmlRequired && trialDTO.sponsorIdentifier != null}">    
-	<tr>
-	    <th colspan="2"><fmt:message key="update.trial.sponsorResParty"/></th>
-	</tr>          
-	<tr>
-	    <td colspan="2" class="space">&nbsp;</td>
-	</tr>
-	<tr>
-	    <td scope="row" class="label-noinput">
-	        Sponsor:<span class="required">*</span>
-	    </td>
-	    <td>
-	        <s:property value="trialDTO.sponsorName"/>
-	    </td>
-	</tr>   
-	<tr>
-	    <td scope="row" class="label-noinput">
-            <fmt:message key="update.trial.responsibleParty"/><span class="required">*</span>
-	    </td>
-	    <td>
-	        <s:property value="trialDTO.responsiblePartyType"/>
-	    </td>
-	</tr>
-	<s:if test="trialDTO.responsiblePartyType == 'sponsor'">
-	    <tr>
-	        <td scope="row" class="label-noinput">
-                <fmt:message key="update.trial.responsiblePartyContact"/>
-	        </td>                                        
-	        <td class="value">
-	            <s:property value="trialDTO.responsiblePersonName"/>
-	        </td>
-	    </tr>
-	    <tr>
-	        <td scope="row" class="label-noinput">
-                <fmt:message key="update.trial.responsiblePartyGenericContact"/>
-	        </td>
-	        <td class="value">
-	            <s:property value="trialDTO.responsibleGenericContactName"/>
-	        </td>
-	    </tr>   
-	</s:if>
-	<tr>
-	    <td scope="row" class="label-noinput">
-            <fmt:message key="update.trial.responsiblePartyEmail"/><span class="required">*</span>
-	    </td>
-	    <td class="value">
-	        <s:property value="trialDTO.contactEmail"/>
-	    </td>
-	</tr>
-	<tr>
-	    <td scope="row" class="label-noinput">
-            <fmt:message key="update.trial.responsiblePartyPhone"/><span class="required">*</span>
-	    </td>
-	    <td class="value">
-	        <s:property value="trialDTO.contactPhone"/>
-	    </td>           
-	</tr>             
-	<tr>
-	    <td colspan="2" class="space">&nbsp;</td>
-	</tr>
+<c:if test="${trialDTO.xmlRequired == true}">
+      <reg-web:titleRow titleKey="view.trial.sponsorResParty"/>
+      <reg-web:valueRow labelKey="view.trial.sponsor" noLabelTag="true" required="true">
+          <c:out value="${trialDTO.sponsorName}"/>
+      </reg-web:valueRow>
+      <reg-web:valueRow labelKey="view.trial.respParty" noLabelTag="true" required="true">
+          <c:out value="${func:capitalize(trialDTO.responsiblePartyTypeReadable)}"/>
+      </reg-web:valueRow>
+      <c:if test="${fn:trim(trialDTO.responsiblePersonName) != ''}">
+          <reg-web:valueRow labelKey="view.trial.respParty.investigator" noLabelTag="true" required="true">
+              <c:out value="${trialDTO.responsiblePersonName}"/>
+          </reg-web:valueRow>
+      </c:if>  
+      <c:if test="${fn:trim(trialDTO.responsiblePersonTitle) != ''}">
+          <reg-web:valueRow labelKey="view.trial.respParty.investigatorTitle" noLabelTag="true">
+              <c:out value="${trialDTO.responsiblePersonTitle}"/>
+          </reg-web:valueRow>
+      </c:if>
+      <c:if test="${fn:trim(trialDTO.responsiblePersonAffiliationOrgName) != ''}">
+          <reg-web:valueRow labelKey="view.trial.respParty.investigatorAff" noLabelTag="true" required="true">
+              <c:out value="${trialDTO.responsiblePersonAffiliationOrgName}"/>
+          </reg-web:valueRow>
+      </c:if>                                  
+      <reg-web:spaceRow/>
 </c:if>

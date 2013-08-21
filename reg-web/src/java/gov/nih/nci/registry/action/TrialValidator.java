@@ -384,28 +384,36 @@ public class TrialValidator {
         }
     }
 
-    private void validateRespPartyInfo(TrialDTO trialDto, Map<String, String> fieldErrorMap) {
-        addErrors(trialDto.getResponsiblePartyType(), "trialDTO.responsiblePartyType", "error.submit.ResponsibleParty",
-                  fieldErrorMap);
-        addErrors(trialDto.getSponsorIdentifier(), "trialDTO.sponsorIdentifier", "error.submit.sponsor", fieldErrorMap);
-        if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDto.getResponsiblePartyType())) {
-            addErrors(
-                    StringUtils.defaultString(trialDto
-                            .getResponsiblePersonIdentifier())
-                            + StringUtils.defaultString(trialDto
-                                    .getResponsibleGenericContactIdentifier()),
-                    "sponsorContactMissing",
-                    "error.submit.sponsorResponsibleParty", fieldErrorMap);
+    private void validateRespPartyInfo(TrialDTO trialDto,
+            Map<String, String> fieldErrorMap) {
+        addErrors(trialDto.getResponsiblePartyType(),
+                "trialDTO.responsiblePartyType",
+                "error.submit.ResponsibleParty", fieldErrorMap);
+        addErrors(trialDto.getSponsorIdentifier(),
+                "trialDTO.sponsorIdentifier", "error.submit.sponsor",
+                fieldErrorMap);
+
+        String type = trialDto.getResponsiblePartyType();
+        if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equals(type)
+                || TrialDTO.RESPONSIBLE_PARTY_TYPE_SI.equals(type)) {
+            validateRespPartyInvestigator(trialDto, fieldErrorMap);
         }
-        addErrors(trialDto.getContactPhone(), "trialDTO.contactPhone", "error.submit.contactPhone", fieldErrorMap);
-        if (StringUtils.isNotEmpty(trialDto.getContactPhone()) && !PAUtil.isValidPhone(trialDto.getContactPhone())) {
-            fieldErrorMap.put("trialDTO.contactPhone", getText("error.register.invalidPhoneNumber"));
+
+    }
+    
+    private void validateRespPartyInvestigator(TrialDTO trialDto,
+            Map<String, String> fieldErrorMap) {
+        if (StringUtils.isBlank(trialDto.getResponsiblePersonIdentifier())) {
+            fieldErrorMap.put("responsiblePersonName",
+                    "Please select an Investigator");
         }
-        addErrors(trialDto.getContactEmail(), "trialDTO.contactEmail", "error.submit.contactEmail", fieldErrorMap);
-        if (StringUtils.isNotEmpty(trialDto.getContactEmail()) && !PAUtil.isValidEmail(trialDto.getContactEmail())) {
-            fieldErrorMap.put("trialDTO.contactEmail", getText("error.register.invalidContactEmailAddress"));
+        if (StringUtils
+                .isBlank(trialDto.getResponsiblePersonAffiliationOrgId())) {
+            fieldErrorMap.put("responsiblePersonAffiliationOrgName",
+                    ("Please select an affiliation"));
         }
     }
+
 
     private void addErrors(String fieldValue, String fieldName, String errMsg, Map<String, String> fieldErrorMap) {
         if (StringUtils.isEmpty(fieldValue)) {

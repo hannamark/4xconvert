@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.MilestoneDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -360,18 +362,22 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
 
     /**
      * Set Person.
-     * @param studyProtocolDto trial dto
-     * @param studyProtocol trial domain object
+     * 
+     * @param studyProtocolDto
+     *            trial dto
+     * @param studyProtocol
+     *            trial domain object
      */
-    private void setPerson(StudyProtocolQueryDTO studyProtocolDto, StudyProtocol studyProtocol) {
-        // get the person
-        StudyContact sc = studyProtocol.getStudyContacts().isEmpty() ? null
-                : studyProtocol.getStudyContacts().iterator().next();
-        Person person = (sc != null) ? sc.getClinicalResearchStaff().getPerson() : null;
-
-        if (person != null) {
-            studyProtocolDto.setPiFullName(person.getFullName());
-            studyProtocolDto.setPiId(person.getId());
+    private void setPerson(StudyProtocolQueryDTO studyProtocolDto,
+            StudyProtocol studyProtocol) {
+        for (StudyContact sc : studyProtocol.getStudyContacts()) {
+            final ClinicalResearchStaff crs = sc.getClinicalResearchStaff();
+            if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.equals(sc
+                    .getRoleCode()) && crs != null && crs.getPerson() != null) {
+                Person person = crs.getPerson();
+                studyProtocolDto.setPiFullName(person.getFullName());
+                studyProtocolDto.setPiId(person.getId());
+            }
         }
     }
 

@@ -25,6 +25,7 @@
             var contactMail;
             var contactPhone;
             var selectedName;
+            var orgname;
 
             // this function is called from body onload in main.jsp (decorator)
             function callOnloadFunctions() {
@@ -47,8 +48,9 @@
                showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible contact');
             }
         
-            function setorgid(orgIdentifier) {
+            function setorgid(orgIdentifier, name) {
                 orgid = orgIdentifier;
+                orgname = name;
             }
 
             function setpersid(persIdentifier,name,email,phone) {

@@ -198,25 +198,31 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     @Override
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
-        StudyProtocol studyProtocol =
-            (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
-
-        // first check that the user isn't already a trial owner
-        if (studyProtocol.getStudyOwners().contains(user)) {
-            return true;
-        }
-
-        // check that the user is an admin of something in at all
-        if (!UserOrgType.ADMIN.equals(user.getAffiliatedOrgUserType())) {
-            return false;
-        }
-
-        // second check that the user isn't the lead org admin. The first study site will be the lead org if it exists.
-        StudySite leadOrg = studyProtocol.getStudySites().isEmpty() ? null
-                : studyProtocol.getStudySites().iterator().next();
-        if (leadOrg != null && StringUtils.equals(leadOrg.getResearchOrganization().getOrganization().getIdentifier(),
-                user.getAffiliatedOrganizationId().toString())) {
-            return true;
+        if (user != null) {
+            StudyProtocol studyProtocol =
+                (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+    
+            // first check that the user isn't already a trial owner
+            if (studyProtocol.getStudyOwners().contains(user)) {
+                return true;
+            }
+    
+            // check that the user is an admin of something in at all
+            if (!UserOrgType.ADMIN.equals(user.getAffiliatedOrgUserType())) {
+                return false;
+            }
+    
+            // second check that the user isn't the lead org admin. The first
+            // study site will be the lead org if
+            // it exists.
+            StudySite leadOrg = studyProtocol.getStudySites().isEmpty() ? null
+                    : studyProtocol.getStudySites().iterator().next();
+            if (leadOrg != null
+                    && StringUtils.equals(leadOrg.getResearchOrganization()
+                            .getOrganization().getIdentifier(), user
+                            .getAffiliatedOrganizationId().toString())) {
+                return true;
+            }
         }
         return false;
     }

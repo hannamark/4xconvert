@@ -80,7 +80,6 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -89,7 +88,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -107,26 +105,19 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * action for edit general trial design.
  * @author NAmiruddin
  *
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class GeneralTrialDesignAction extends ActionSupport {
+public class GeneralTrialDesignAction extends AbstractGeneralTrialDesignAction {
 
     private static final long serialVersionUID = -541776965053776382L;
-
-    private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
 
-    private static final String SPONSOR = "sponsor";
     private static final String RESULT = "edit";
-
-    private static final String FALSE = "FALSE";
     
     private static final Logger LOG = Logger.getLogger(GeneralTrialDesignAction.class);
 
@@ -154,15 +145,9 @@ public class GeneralTrialDesignAction extends ActionSupport {
     public String update() {
         enforceBusinessRules();
         final HttpServletRequest req = ServletActionContext.getRequest();
-        if (StringUtils.isNotEmpty(gtdDTO.getNctIdentifier())) {
-            PAServiceUtils util = new PAServiceUtils();
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.STUDY_PROTOCOL_II);
-            String nctValidationResultString = util.validateNCTIdentifier(gtdDTO.getNctIdentifier(), studyProtocolIi);
-            if (StringUtils.isNotEmpty(nctValidationResultString)) {
-                addFieldError("gtdDTO.nctIdentifier", nctValidationResultString);
-            }
-        }
+        
+        validateNctIdentifier();
+        
         if (hasFieldErrors()) {
             req.setAttribute(
                     Constants.FAILURE_MESSAGE,
@@ -173,10 +158,14 @@ public class GeneralTrialDesignAction extends ActionSupport {
             save();
         } catch (Exception e) {
             LOG.error(e, e);
-            req.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            final String msg = StringUtils.isBlank(e.getLocalizedMessage()) ? "An internal error has occurred"
+                    : e.getLocalizedMessage();
+            req.setAttribute(Constants.FAILURE_MESSAGE, msg);
         }
         return RESULT;
     }
+
+    
 
     private void save() throws PAException, NullifiedEntityException, NullifiedRoleException, CurationException {
         HttpServletRequest request = ServletActionContext.getRequest();
@@ -250,13 +239,10 @@ public class GeneralTrialDesignAction extends ActionSupport {
                         .getSponsorIdentifier()))) {
             validateCtGovXmlRequiredFields();
         }
+        
+        validateResponsibleParty();
     }
-   
-
-    private boolean isNotProprietary() {
-        return gtdDTO.getProprietarytrialindicator() == null
-                || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE);
-    }
+      
 
     private boolean isCentralContactSet() {
         return StringUtils.isNotEmpty(gtdDTO.getCentralContactIdentifier())
@@ -279,30 +265,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         }
     }
 
-    private void validateCtGovXmlRequiredFields() {
-        if (StringUtils.isEmpty(gtdDTO.getSponsorIdentifier())) {
-            addFieldError("gtdDTO.sponsorName", getText("Sponsor must be entered"));
-        }
-        if (isInvalidResponsibleParty()) {
-            addFieldError("gtdDTO.responsibleGenericContactName",
-                          getText("Please choose Either Personal Contact or Generic Contact "));
-        }
-        String contactEmail = gtdDTO.getContactEmail();
-        if (StringUtils.isEmpty(contactEmail)) {
-            addFieldError("gtdDTO.contactEmail", getText("Email must be Entered"));
-        } else if (!PAUtil.isValidEmail(contactEmail)) {
-            addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-        }
-        if (StringUtils.isEmpty(gtdDTO.getContactPhone())) {
-            addFieldError("gtdDTO.contactPhone", getText("Phone must be Entered"));
-        }
-    }
-
-    private boolean isInvalidResponsibleParty() {
-        return SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier());
-    }
-
+    
     private void populateOtherIdentifiers() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute(Constants.OTHER_IDENTIFIERS_LIST, gtdDTO.getOtherIdentifiers());
@@ -310,21 +273,7 @@ public class GeneralTrialDesignAction extends ActionSupport {
         session.setAttribute("nciIdentifier", gtdDTO.getAssignedIdentifier());
     }
 
-    /**
-     *
-     * @return gtdDTO
-     */
-    public GeneralTrialDesignWebDTO getGtdDTO() {
-        return gtdDTO;
-    }
-
-    /**
-     *
-     * @param gtdDTO gtdDTO
-     */
-    public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
-        this.gtdDTO = gtdDTO;
-    }
+    
     
     /**
      * @param correlationUtils the correlationUtils to set

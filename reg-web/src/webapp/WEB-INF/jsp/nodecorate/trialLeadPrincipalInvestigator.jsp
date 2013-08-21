@@ -15,7 +15,7 @@
         </td>
     </tr>
 </table>
-<span class="formErrorMsg"> 
+<span class="formErrorMsg" id="piIdentifierErr"> 
     <s:fielderror>
         <s:param>trialDTO.piIdentifier</s:param>
     </s:fielderror>                            

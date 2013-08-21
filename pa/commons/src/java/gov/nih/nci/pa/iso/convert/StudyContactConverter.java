@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
@@ -138,6 +139,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             dto.setOrganizationalContactIi(IiConverter.convertToPoOrganizationalContactIi(
                     bo.getOrganizationalContact().getIdentifier()));
         }
+        dto.setTitle(StConverter.convertToSt(bo.getTitle()));
         dto.setRoleCode(CdConverter.convertToCd(bo.getRoleCode()));
         dto.setIdentifier(IiConverter.convertToStudyContactIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
@@ -185,6 +187,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
         }
         bo.setRoleCode(StudyContactRoleCode.getByCode(CdConverter.convertCdToString(dto.getRoleCode())));
+        bo.setTitle(StConverter.convertToString(dto.getTitle()));
 
         List<String> retList = null;
         if (dto.getTelecomAddresses() != null) {

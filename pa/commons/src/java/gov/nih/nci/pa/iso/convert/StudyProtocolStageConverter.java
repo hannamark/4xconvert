@@ -110,6 +110,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public StudyProtocolStageDTO convertFromDomainToDto(StudyProtocolStage studyProtocolStage) {
         StudyProtocolStageDTO studyProtocolStageDTO = new StudyProtocolStageDTO();
@@ -132,6 +133,10 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStage.getResponsiblePartyType()));
         studyProtocolStageDTO.setResponsibleIdentifier(IiConverter.convertToIi(
                 studyProtocolStage.getResponsibleIdentifier()));
+        studyProtocolStageDTO.setResponsibleTitle(StConverter.convertToSt(
+                studyProtocolStage.getResponsibleTitle()));
+        studyProtocolStageDTO.setResponsibleAffilId(IiConverter.convertToIi(
+                studyProtocolStage.getResponsibleAffilId()));
         studyProtocolStageDTO.setResponsibleGenericContactIdentifier(IiConverter.convertToPoOrganizationalContactIi(
                 studyProtocolStage.getResponsibleOcIdentifier()));        
         studyProtocolStageDTO.setContactEmail(StConverter.convertToSt(studyProtocolStage.getContactEmail()));
@@ -244,6 +249,10 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
                 studyProtocolStageDTO.getResponsiblePartyType()));
         studyProtocolStage.setResponsibleIdentifier(IiConverter.convertToString(
                 studyProtocolStageDTO.getResponsibleIdentifier()));
+        studyProtocolStage.setResponsibleTitle(StConverter.convertToString(
+                studyProtocolStageDTO.getResponsibleTitle()));
+        studyProtocolStage.setResponsibleAffilId(IiConverter.convertToString(
+                studyProtocolStageDTO.getResponsibleAffilId()));
         studyProtocolStage.setResponsibleOcIdentifier(IiConverter.convertToString(
                 studyProtocolStageDTO.getResponsibleGenericContactIdentifier()));        
         studyProtocolStage.setContactEmail(StConverter.convertToString(studyProtocolStageDTO.getContactEmail()));

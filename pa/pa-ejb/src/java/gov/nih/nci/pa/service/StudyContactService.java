@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 
 import java.util.List;
@@ -103,5 +104,27 @@ public interface StudyContactService extends RolePaService<StudyContactDTO> {
      */
     List<StudyContactDTO> search(StudyContactDTO dto, LimitOffset pagingParams) throws PAException,
     TooManyResultsException;
+    
+    /**
+     * Returns {@link StudyContactDTO} representing either PI or
+     * Sponsor-Investigator Responsible Party. Will return null if R.P is
+     * Sponsor or if there is no R.P at all.
+     * 
+     * @param spId Ii
+     * @return StudyContactDTO
+     * @throws PAException
+     *             PAException
+     */
+    StudyContactDTO getResponsiblePartyContact(Ii spId) throws PAException;
+    
+    /**
+     * Deletes responsible party contacts from a trial.
+     * 
+     * @param studyProtocolIi Ii     
+     * @throws PAException
+     *             PAException
+     */
+    void removeResponsiblePartyContact(Ii studyProtocolIi) throws PAException;
+
     
 }

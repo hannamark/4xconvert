@@ -21,6 +21,6 @@
         </td>
     </tr>
 </table>
-<span class="formErrorMsg"> <s:fielderror>
+<span class="formErrorMsg" id="piIdentifierErr"> <s:fielderror>
     <s:param>LeadPINotSelected</s:param>
 </s:fielderror> </span>

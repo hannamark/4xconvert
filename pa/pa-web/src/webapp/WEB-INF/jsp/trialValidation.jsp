@@ -18,6 +18,7 @@
             var contactMail;
             var contactPhone;
             var selectedName;    
+            var orgname;
             
             jQuery(function() {
                 setFocusToFirstControl();
@@ -55,8 +56,9 @@
                 });
             });
         
-            function setorgid(orgIdentifier) {
+            function setorgid(orgIdentifier, name) {
                 orgid = orgIdentifier;
+                orgname = name;
             }
             
             function setpersid(persIdentifier,name,email,phone) {

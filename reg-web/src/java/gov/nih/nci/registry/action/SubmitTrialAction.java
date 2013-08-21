@@ -80,14 +80,13 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -105,7 +104,6 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
-import gov.nih.nci.registry.util.TrialConvertUtils;
 import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -183,7 +181,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         }
         setTrialDTO(new TrialDTO());
         final TrialDTO trialDTO = getTrialDTO();
-        trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
+        trialDTO.setResponsiblePartyType("");
         trialDTO.setTrialType("Interventional");
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialSessionUtil.removeSessionAttributes();
@@ -226,31 +224,28 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));
-
-            StudyContactDTO studyContactDTO = null;
-            StudySiteContactDTO studySiteContactDTO = null;
+           
             List<OrganizationDTO> summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO);
-            Ii responsiblePartyContactIi = null;
+            
+            ResponsiblePartyDTO partyDTO = new ResponsiblePartyDTO();
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-                    studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-                } else {
-                   studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                   responsiblePartyContactIi = TrialConvertUtils.getResponsiblePartyContactIi(trialDTO);
-               }
+                partyDTO = util.convertToResponsiblePartyDTO(trialDTO);
             }
+            
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
 
-            Ii studyProtocolIi =  trialRegistrationService.
-                createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                    studyResourcingDTOs, documentDTOs,
-                    leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
-                    studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
-                    summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
-                    BlConverter.convertToBl(Boolean.FALSE));
+            Ii studyProtocolIi = trialRegistrationService
+                    .createCompleteInterventionalStudyProtocol(
+                            studyProtocolDTO, overallStatusDTO,
+                            studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                            leadOrgDTO, principalInvestigatorDTO,
+                            sponsorOrgDTO, partyDTO, leadOrgSiteIdDTO,
+                            studyIdentifierDTOs, summary4orgDTO,
+                            summary4studyResourcingDTO, studyRegAuthDTO,
+                            BlConverter.convertToBl(Boolean.FALSE));
              TrialSessionUtil.removeSessionAttributes();
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
@@ -269,6 +264,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         return REDIRECT_TO_SEARCH;
     }
 
+    @SuppressWarnings("deprecation")
     private void deleteSavedDraft() throws PAException {
         if (StringUtils.isNotEmpty(getTrialDTO().getStudyProtocolId())) {
             studyProtocolStageService.delete(IiConverter.convertToIi(getTrialDTO().getStudyProtocolId()));
@@ -473,6 +469,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
      * 
      * @return string
      */
+    @SuppressWarnings("deprecation")
     public String deletePartialSubmission() {
         String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         if (StringUtils.isEmpty(pId)) {

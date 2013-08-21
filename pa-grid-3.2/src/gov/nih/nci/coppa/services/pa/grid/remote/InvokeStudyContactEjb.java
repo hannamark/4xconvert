@@ -84,4 +84,20 @@ public class InvokeStudyContactEjb extends InvokeStudyPaServiceEjb<StudyContactD
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyContactDTO getResponsiblePartyContact(Ii spId)
+            throws PAException {       
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeResponsiblePartyContact(Ii studyProtocolIi)
+            throws PAException {
+        
+    }
 }

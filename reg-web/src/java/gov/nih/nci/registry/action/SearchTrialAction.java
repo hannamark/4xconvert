@@ -126,6 +126,7 @@ import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.ByteArrayInputStream;
@@ -519,8 +520,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             trialDTO.setTrialType("NonInterventional");
         }
         final HttpServletRequest request = ServletActionContext.getRequest();
-        request.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
-        getReponsibleParty(trialDTO, maskFields);
+        request.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);       
         if (!maskFields) {
             if (!trialDTO.getFundingDtos().isEmpty()) {
                 request.setAttribute(Constants.TRIAL_FUNDING_LIST, trialDTO.getFundingDtos());
@@ -549,13 +549,16 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     /**
      * @return res
      */
+    @SuppressWarnings("deprecation")
     public String view() {
         try {
             // remove the session variables stored during a previous view if any
-            ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
+            final HttpServletRequest req = ServletActionContext.getRequest();
+            req.getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             boolean maskFields = !registryUserService.hasTrialAccess(currentUser,
                     studyProtocolId);
+            req.setAttribute("maskFields", maskFields);
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
             queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
@@ -587,7 +590,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             Set<RegistryUser> trialOwners = registryUserService.getAllTrialOwners(studyProtocolId);
             boolean trialOwner = false;
             for (RegistryUser user : trialOwners) {
-                if (currentUser.equals(user.getCsmUser().getName())) {
+                final User csmUser = user.getCsmUser();
+                if (csmUser != null && currentUser.equals(csmUser.getName())) {
                     trialOwner = true;
                     break;
                 }
@@ -677,26 +681,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }
     }
 
-    private void getReponsibleParty(TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
-        if (!maskFields) {
-            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, trialDTO.getResponsiblePartyType());
-            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-                ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, "Sponsor");
-                if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
-                    ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
-                            trialDTO.getResponsiblePersonName());
-                }
-                if (StringUtils.isNotEmpty(trialDTO.getResponsibleGenericContactName())) {
-                    ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
-                            trialDTO.getResponsibleGenericContactName());
-                }
-            }
-            ServletActionContext.getRequest().setAttribute(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR,
-                    trialDTO.getSponsorName());
-            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone());
-            ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail());
-        }
-    }
+    
 
     /**
      * 

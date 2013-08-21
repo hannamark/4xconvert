@@ -5,10 +5,12 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -133,5 +135,41 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
                        sr.getStatusCode().getCode()), ActStatusCode.ACTIVE));
          }
 
+    }
+
+    @Override
+    public StudyContactDTO getResponsiblePartyContact(Ii studyProtocolIi)
+            throws PAException {
+        List<StudyContactDTO> scDtos = getResponsiblePartyContacts(studyProtocolIi);
+        return scDtos.isEmpty() ? null : scDtos.get(0);
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws PAException
+     */
+    private List<StudyContactDTO> getResponsiblePartyContacts(Ii studyProtocolIi)
+            throws PAException {
+        StudyContactDTO scDto = new StudyContactDTO();
+        scDto.setRoleCode(CdConverter
+                .convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
+        List<StudyContactDTO> scDtos = getByStudyProtocol(studyProtocolIi,
+                scDto);
+        if (scDtos.isEmpty()) {
+            scDto = new StudyContactDTO();
+            scDto.setRoleCode(CdConverter
+                    .convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR));
+            scDtos.addAll(getByStudyProtocol(studyProtocolIi, scDto));
+        }
+        return scDtos;
+    }
+
+    @Override
+    public void removeResponsiblePartyContact(Ii studyProtocolIi)
+            throws PAException {
+        for (StudyContactDTO dto : getResponsiblePartyContacts(studyProtocolIi)) {
+            delete(dto.getIdentifier());
+        }
     }
 }

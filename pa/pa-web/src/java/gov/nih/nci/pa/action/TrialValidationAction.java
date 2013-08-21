@@ -130,18 +130,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
 * @author Naveen AMiruddin
 *
 */
-public class TrialValidationAction extends ActionSupport implements Preparable {
+public class TrialValidationAction extends AbstractGeneralTrialDesignAction implements Preparable {
     private static final long serialVersionUID = -6587531774808791496L;
 
     private static final String EDIT = "edit";
-    private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
     private static final String REJECT_OPERATION = "Reject";
     private static final int MAXIMUM_CHAR = 200;
@@ -154,8 +152,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     private ProtocolQueryServiceLocal protocolQueryService;
     private TrialRegistrationServiceLocal trialRegistrationService;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
-
-    private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+   
     private OrganizationDTO selectedLeadOrg;
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private List<Country> countryList = new ArrayList<Country>();
@@ -216,15 +213,19 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
      * @return String
      */
     public String update() {
+        final HttpServletRequest req = ServletActionContext.getRequest();
         enforceBusinessRules("");
         if (hasFieldErrors()) {
+            req.setAttribute(
+                    Constants.FAILURE_MESSAGE,
+                    "Update failed; please see errors below");
             return EDIT;
         }
         try {
             save(null);
         } catch (Exception e) {
             LOG.error(e, e);
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            req.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
         populateOtherIdentifiers();
         return EDIT;
@@ -234,13 +235,18 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
      *
      * @return String
      */
+    @SuppressWarnings("deprecation")
     public String accept() {
+        final HttpServletRequest req = ServletActionContext.getRequest();
         enforceBusinessRules("");
         // check if submission number is greater than 1 then it is amend
         if (gtdDTO.getSubmissionNumber() > 1 && StringUtils.isEmpty(gtdDTO.getAmendmentReasonCode())) {
             addFieldError("gtdDTO.amendmentReasonCode", "Amendment Reason Code is Required.");
         }
         if (hasFieldErrors()) {
+            req.setAttribute(
+                    Constants.FAILURE_MESSAGE,
+                    "Update failed; please see errors below");
             return EDIT;
         }
         try {
@@ -253,7 +259,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                 mailManagerService.sendAcceptEmail(IiConverter.convertToIi(gtdDTO.getStudyProtocolId()));
             }
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            req.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
         populateOtherIdentifiers();
         return EDIT;
@@ -264,16 +270,20 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
      * @return String
      */
     public String reject() {
+        final HttpServletRequest req = ServletActionContext.getRequest();
         enforceBusinessRules(REJECT_OPERATION);
         if (hasFieldErrors()) {
+            req.setAttribute(
+                    Constants.FAILURE_MESSAGE,
+                    "Reject failed; please see errors below");
             return EDIT;
         }
         try {
             save(null);
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            req.setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
-        ServletActionContext.getRequest().getSession().setAttribute("submissionNumber", gtdDTO.getSubmissionNumber());
+        req.getSession().setAttribute("submissionNumber", gtdDTO.getSubmissionNumber());
         return "rejectReason";
     }
 
@@ -414,38 +424,17 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             validatePhasePurpose();
         }
         
-        validateCtGovReqElement();
-        if (StringUtils.isNotEmpty(gtdDTO.getNctIdentifier())) {
-            PAServiceUtils util = new PAServiceUtils();
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.STUDY_PROTOCOL_II);
-            String nctValidationResultString = util.validateNCTIdentifier(gtdDTO.getNctIdentifier(), studyProtocolIi);
-            if (StringUtils.isNotEmpty(nctValidationResultString)) {
-                addFieldError("gtdDTO.nctIdentifier", nctValidationResultString);
-            }
+        if ((isNotProprietary() && gtdDTO.isCtGovXmlRequired())
+                || (!isNotProprietary() && StringUtils.isNotEmpty(gtdDTO
+                        .getSponsorIdentifier()))) {
+            validateCtGovXmlRequiredFields();
         }
         
+        validateResponsibleParty();        
+        validateNctIdentifier();
+        
     }
-
-    private void validateCtGovReqElement() {
-        final boolean isAbbr = BooleanUtils.toBoolean(gtdDTO
-                .getProprietarytrialindicator());
-        if ((!isAbbr && BooleanUtils.isTrue(gtdDTO.isCtGovXmlRequired()))
-                || (isAbbr && StringUtils.isNotBlank(gtdDTO
-                        .getSponsorIdentifier()))) {
-            addErrors(gtdDTO.getSponsorIdentifier(), "gtdDTO.sponsorName", "Sponsor must be entered");
-            if (SPONSOR.equalsIgnoreCase(gtdDTO.getResponsiblePartyType())
-                    && StringUtils.isEmpty(gtdDTO.getResponsiblePersonIdentifier())) {
-                addFieldError("gtdDTO.responsibleGenericContactName",
-                              getText("Please choose Either Personal Contact or Generic Contact "));
-            }
-            addErrors(gtdDTO.getContactEmail(), "gtdDTO.contactEmail", "Email must be Entered");
-            if (!StringUtils.isEmpty(gtdDTO.getContactEmail()) && !PAUtil.isValidEmail(gtdDTO.getContactEmail())) {
-                addFieldError("gtdDTO.contactEmail", getText("Email entered is not a valid format"));
-            }
-            addErrors(gtdDTO.getContactPhone(), "gtdDTO.contactPhone", "Phone must be Entered");
-        }
-    }
+    
 
     private void validatePhasePurpose() {
         addErrors(gtdDTO.getPrimaryPurposeCode(), "gtdDTO.primaryPurposeCode", "error.primary");

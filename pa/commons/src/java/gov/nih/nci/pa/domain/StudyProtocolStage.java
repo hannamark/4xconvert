@@ -55,6 +55,8 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String sponsorIdentifier;
     private String responsiblePartyType;
     private String responsibleIdentifier;
+    private String responsibleTitle;
+    private String responsibleAffilId;
     private String responsibleOcIdentifier;
     private String contactPhone;
     private String contactEmail;
@@ -658,5 +660,34 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
      */
     public void setSummaryFourOrgIdentifiers(Set<String> summaryFourOrgIdentifiers) {
         this.summaryFourOrgIdentifiers = summaryFourOrgIdentifiers;
+    }
+    
+    /**
+     * @return the responsibleTitle
+     */
+    @Column (name = "responsible_title")
+    public String getResponsibleTitle() {
+        return responsibleTitle;
+    }
+    /**
+     * @param responsibleTitle the responsibleTitle to set
+     */
+    public void setResponsibleTitle(String responsibleTitle) {
+        this.responsibleTitle = responsibleTitle;
+    }
+    
+    
+    /**
+     * @return the responsibleAffilId
+     */
+    @Column (name = "responsible_affil_id")
+    public String getResponsibleAffilId() {
+        return responsibleAffilId;
+    }
+    /**
+     * @param responsibleAffilId the responsibleAffilId to set
+     */
+    public void setResponsibleAffilId(String responsibleAffilId) {
+        this.responsibleAffilId = responsibleAffilId;
     }
 }

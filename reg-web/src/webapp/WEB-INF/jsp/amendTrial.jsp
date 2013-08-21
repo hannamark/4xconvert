@@ -82,16 +82,7 @@
             function lookup4sponsor() {
                 showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
             }
-            
-            function lookup4loadresponsibleparty() {
-                showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid,  createOrgContactDiv, 'Select Responsible Party Contact');
-            }
-            
-            function lookup4loadresponsiblepartygenericcontact() {
-                var orgid = $('trialDTO.sponsorIdentifier').value;
-                showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
-            }
-            
+                        
             function lookup4loadSummary4Sponsor() {
                 showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
             }
@@ -104,36 +95,24 @@
             function loadLeadPersDiv() {
                 $("trialDTO.piIdentifier").value = persid;
                 $('trialDTO.piName').value = chosenname;
+                
+                var partyType = $F('trialDTO.responsiblePartyType');
+                if (partyType=='pi') {                
+                    $('trialDTO.responsiblePersonIdentifier').value=persid;
+                    $('trialDTO.responsiblePersonName').value=chosenname;
+                }
             }
 
             function loadSponsorDiv() {
                 $("trialDTO.sponsorIdentifier").value = orgid;
-                $('trialDTO.sponsorName').value = chosenname;
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsiblePersonIdentifier').value = '';
-                $('trialDTO.responsibleGenericContactName').value = '';
-                $("trialDTO.contactEmail").value = '';
-                $("trialDTO.contactPhone").value = ''; 
-                $("trialDTO.contactPhoneExtn").value = ''; 
-                $('trialDTO.responsiblePersonName').value = '';
+                $('trialDTO.sponsorName').value = chosenname;                             
                 respartOrgid = orgid;
-            }
-            
-            function createOrgContactDiv() {
-                $("trialDTO.responsiblePersonIdentifier").value = persid;
-                $('trialDTO.responsiblePersonName').value = chosenname;
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsibleGenericContactName').value = '';
-            }
-            
-            function createOrgGenericContactDiv() {
-                $('trialDTO.responsiblePersonIdentifier').value = persid;
-                $('trialDTO.responsibleGenericContactName').value = chosenname;
-                $("trialDTO.contactEmail").value = contactMail;
-                $("trialDTO.contactPhone").value = extractPhoneNumberNoExt(contactPhone);
-                $("trialDTO.contactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsiblePersonName').value = ''; 
+                
+                var partyType = $F('trialDTO.responsiblePartyType');
+                if (partyType=='si') {                
+                     $('trialDTO.responsiblePersonAffiliationOrgId').value=orgid;
+                     $('trialDTO.responsiblePersonAffiliationOrgName').value=chosenname;
+                }
             }
             
             function loadSummary4SponsorDiv() {
@@ -169,20 +148,6 @@
                 }
                 form.action = action;
                 form.submit();
-            }
-            
-            function manageRespPartyLookUp(){
-                if ($('trialDTO.responsiblePartyTypePI').checked == true) {
-                    $('rpcid').style.display='none';
-                    $('rpgcid').style.display='none';
-                    $('trialDTO.responsiblePersonName').value = '';
-                    $('trialDTO.responsibleGenericContactName').value = '';
-                    $('trialDTO.responsiblePersonIdentifier').value  = '';
-                }
-                if ($('trialDTO.responsiblePartyTypesponsor').checked == true) {
-                    $('rpcid').style.display='';
-                    $('rpgcid').style.display='';
-                }
             }
             
             function addGrant(){
@@ -387,8 +352,7 @@
                 <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/>
                 <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
-                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
-                <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
+                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>                
                 <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                 <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
                 <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">
@@ -437,12 +401,12 @@
                         <td colspan="2" class="space">
                             <s:if test="%{trialDTO.xmlRequired == true}">
                                 <div id="sponsorDiv" style="display:''">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/amendTrialResponsibleParty.jsp" %>
+                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
                                 </div>
                             </s:if>
                             <s:else>
                                 <div id="sponsorDiv" style="display:none">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/amendTrialResponsibleParty.jsp" %>
+                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
                                 </div>
                             </s:else>
                         </td>

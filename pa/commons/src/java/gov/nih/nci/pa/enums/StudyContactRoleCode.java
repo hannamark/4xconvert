@@ -111,7 +111,9 @@ public enum StudyContactRoleCode implements CodedEnum<String> {
     /** Submitter. */
     SUBMITTER("Submitter"),
     /** Responsible Party - Study Principal Investigator. */
-    RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR("Responsible Party - Study Principal Investigator");
+    RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR("Responsible Party - Study Principal Investigator"),
+    /** Responsible Party - Sponsor Investigator */
+    RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR("Responsible Party - Sponsor Investigator");
     private String code;
 
     /**

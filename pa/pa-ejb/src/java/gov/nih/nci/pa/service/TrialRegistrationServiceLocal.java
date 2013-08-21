@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -124,12 +125,9 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs list of study Identifier
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param studyIdentifierDTOs list of study Identifier    
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
      * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if batch is caller
      * @return ii of Study Protocol
@@ -140,10 +138,11 @@ public interface TrialRegistrationServiceLocal {
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            OrganizationDTO sponsorOrganizationDTO, ResponsiblePartyDTO partyDTO, 
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, 
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
@@ -160,12 +159,9 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs list of study Identifier
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param studyIdentifierDTOs list of study Identifier    
      * @param summary4organizationDTO summary 4 organization code
-     * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param summary4studyResourcingDTO summary 4 category code     
      * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if batch is caller
      * @param owners trial record owners identified by email addresses
@@ -177,10 +173,11 @@ public interface TrialRegistrationServiceLocal {
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            OrganizationDTO sponsorOrganizationDTO, ResponsiblePartyDTO partyDTO, 
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, 
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException;
 
     // CHECKSTYLE:ON
@@ -198,12 +195,9 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs list of Study Identifier
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param studyIdentifierDTOs list of Study Identifier    
      * @param summary4organizationDTO summary 4 organization code
-     * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param summary4studyResourcingDTO summary 4 category code    
      * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if batch is caller
      * @return ii of Study Protocol
@@ -213,10 +207,12 @@ public interface TrialRegistrationServiceLocal {
     Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, 
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
@@ -233,12 +229,9 @@ public interface TrialRegistrationServiceLocal {
      * @param principalInvestigatorDTO Principal Investigator
      * @param sponsorOrganizationDTO Sponsort Organization
      * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs list of Study Identifier
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param studyIdentifierDTOs list of Study Identifier     
      * @param summary4organizationDTO summary 4 organization code
      * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi id of the person when sponsor is responsible
      * @param studyRegAuthDTO studyRegAuthDTO
      * @param isBatchMode to identify if batch is caller
      * @param handleDuplicateGrantAndINDsGracefully PO-6172: ensure that the registration service does not fail 
@@ -250,10 +243,12 @@ public interface TrialRegistrationServiceLocal {
     Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, 
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException;
 
@@ -399,12 +394,14 @@ public interface TrialRegistrationServiceLocal {
     Ii createAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
             StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
-            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO,
+            PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
             List<PlannedEligibilityCriterionDTO> eligibility,
             List<StudyOutcomeMeasureDTO> outcomes,
-            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException;
+            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs)
+            throws PAException;
     
     /**
      * @param studyProtocolDTO
@@ -424,12 +421,168 @@ public interface TrialRegistrationServiceLocal {
      */
     Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteDTO nctID, OrganizationDTO sponsorDTO,
-            PersonDTO investigatorDTO, PersonDTO centralContactDTO,
+            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO, PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
             List<PlannedEligibilityCriterionDTO> eligibility,
             List<StudyOutcomeMeasureDTO> outcomes,
             List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException;
+    // CHECKSTYLE:ON
+    
+    
+    /**
+     * Creates a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of study Identifier
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     * @deprecated
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    @Deprecated
+    Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
+
+    // CHECKSTYLE:ON
+    
+    /**
+     * Creates a study protocol and assigns ownership.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of study Identifier
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @param owners trial record owners identified by email addresses
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     * @deprecated
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    @Deprecated
+    Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException;
+
+    // CHECKSTYLE:ON
+    
+    
+    /**
+     * Amends a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of Study Identifier
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     * @deprecated
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    @Deprecated
+    Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
+
+    // CHECKSTYLE:ON
+    
+    /**
+     * Amends a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of Study Identifier
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @param handleDuplicateGrantAndINDsGracefully PO-6172: ensure that the registration service does not fail 
+     * an amendment with grant or IND/IDE data already in CTRP 
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     * @deprecated
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    @Deprecated
+    Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
+                    throws PAException;
+
     // CHECKSTYLE:ON
 
 }

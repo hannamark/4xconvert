@@ -17,6 +17,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.Ii;
@@ -64,6 +66,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -186,6 +189,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                         dto.setStatusCode(CdConverter
                                 .convertToCd(EntityStatusCode.PENDING));
                         dto.setIdentifier(ii);
+                        final Ad ad = new Ad();
+                        ad.setPart(new ArrayList<Adxp>());
+                        dto.setPostalAddress(ad);
                         return dto;
                     }
                 });
@@ -206,6 +212,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                         dto.setStatusCode(CdConverter
                                 .convertToCd(EntityStatusCode.PENDING));
                         dto.setIdentifier(ii);
+                        final Ad ad = new Ad();
+                        ad.setPart(new ArrayList<Adxp>());
+                        dto.setPostalAddress(ad);
                         return dto;
                     }
                 });
@@ -611,6 +620,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         assertEquals("Goldstein, Lori J", pi.getClinicalResearchStaff()
                 .getPerson().getLastName());
+        
+        StudyContact rp = getStudyContact(sp,
+                StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR);
+        assertEquals("Goldstein, Lori J", rp.getClinicalResearchStaff()
+                .getPerson().getLastName());
+        assertEquals("Associate professor of pediatrics", rp.getTitle());
+        assertEquals("Children's Hospital Boston", rp.getClinicalResearchStaff()
+                .getOrganization().getName());
 
         StudyContact cc = getStudyContact(sp,
                 StudyContactRoleCode.CENTRAL_CONTACT);

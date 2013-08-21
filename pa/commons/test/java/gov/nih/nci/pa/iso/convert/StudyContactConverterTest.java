@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 public class StudyContactConverterTest extends
         AbstractConverterTest<StudyContactConverter, StudyContactDTO, StudyContact> {
@@ -107,6 +108,7 @@ public class StudyContactConverterTest extends
         bo.setStudyProtocol(getStudyProtocol());
         bo.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         bo.setStatusCode(FunctionalRoleStatusCode.PENDING);
+        bo.setTitle("title");
         return bo;
     }
 
@@ -118,6 +120,7 @@ public class StudyContactConverterTest extends
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
         dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
         dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        dto.setTitle(StConverter.convertToSt("title"));
         return dto;
     }
 
@@ -130,6 +133,7 @@ public class StudyContactConverterTest extends
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
         assertEquals(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, bo.getRoleCode());
         assertEquals(FunctionalRoleStatusCode.ACTIVE, bo.getStatusCode());
+        assertEquals("title", bo.getTitle());
     }
 
     @Override
@@ -152,6 +156,7 @@ public class StudyContactConverterTest extends
         assertEquals(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode(), dto.getRoleCode().getCode());
         assertEquals(FunctionalRoleStatusCode.PENDING.getCode(), dto.getStatusCode().getCode());
         assertEquals("2.16.840.1.113883.3.26.4.5.1", dto.getIdentifier().getRoot());
+        assertEquals("title", dto.getTitle().getValue());
     }
 
 }

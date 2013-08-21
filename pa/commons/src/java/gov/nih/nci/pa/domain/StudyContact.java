@@ -120,6 +120,7 @@ public class StudyContact extends PersonFunctionalRole {
     private Boolean primaryIndicator;
     private String phone;
     private String email;
+    private String title;
     private OrganizationalContact organizationalContact;
 
     /**
@@ -300,5 +301,18 @@ public class StudyContact extends PersonFunctionalRole {
      */
     public void setOrganizationalContact(OrganizationalContact organizationalContact) {
         this.organizationalContact = organizationalContact;
+    }
+    /**
+     * @return the title
+     */
+    @Column(name = "title")    
+    public String getTitle() {
+        return title;
+    }
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

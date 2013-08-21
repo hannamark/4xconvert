@@ -15,7 +15,7 @@ import org.hibernate.validator.Pattern;
  * @author Vrushali
  *
  */
-public class StudyProtocolBatchDTO {
+public class StudyProtocolBatchDTO { // NOPMD
     private String uniqueTrialId;
     private String localProtocolIdentifier;
     private String nctNumber;
@@ -89,6 +89,38 @@ public class StudyProtocolBatchDTO {
     private String piTTY;
     private String piFax;
     private String piUrl;
+    
+    // Party Investigator
+    private String partyInvestigatorPOId;
+    private String partyInvestigatorFirstName;
+    private String partyInvestigatorMiddleName;
+    private String partyInvestigatorLastName;
+    private String partyInvestigatorStreetAddress;
+    private String partyInvestigatorCity;
+    private String partyInvestigatorState;
+    private String partyInvestigatorZip;
+    private String partyInvestigatorCountry;
+    private String partyInvestigatorEmail;
+    private String partyInvestigatorPhone;
+    private String partyInvestigatorTTY;
+    private String partyInvestigatorFax;
+    private String partyInvestigatorUrl;
+    
+    private String partyInvestigatorTitle;
+    
+    //  responsible party affiliation
+    private String partyAffiliationPOId;
+    private String partyAffiliationName;
+    private String partyAffiliationStreetAddress;
+    private String partyAffiliationCity;
+    private String partyAffiliationState;
+    private String partyAffiliationZip;
+    private String partyAffiliationCountry;
+    private String partyAffiliationEmail;
+    private String partyAffiliationPhone;
+    private String partyAffiliationTTY;
+    private String partyAffiliationFax;
+    private String partyAffiliationUrl;
 
     private String summ4FundingCat;
     private String summ4OrgPOId;
@@ -1948,4 +1980,384 @@ public class StudyProtocolBatchDTO {
      public String getPrimaryPurposeOtherText() {
          return primaryPurposeOtherText;
      }
+
+    /**
+     * @return the partyInvestigatorPOId
+     */
+    public String getPartyInvestigatorPOId() {
+        return partyInvestigatorPOId;
+    }
+
+    /**
+     * @param partyInvestigatorPOId the partyInvestigatorPOId to set
+     */
+    public void setPartyInvestigatorPOId(String partyInvestigatorPOId) {
+        this.partyInvestigatorPOId = partyInvestigatorPOId;
+    }
+
+    /**
+     * @return the partyInvestigatorFirstName
+     */
+    public String getPartyInvestigatorFirstName() {
+        return partyInvestigatorFirstName;
+    }
+
+    /**
+     * @param partyInvestigatorFirstName the partyInvestigatorFirstName to set
+     */
+    public void setPartyInvestigatorFirstName(String partyInvestigatorFirstName) {
+        this.partyInvestigatorFirstName = partyInvestigatorFirstName;
+    }
+
+    /**
+     * @return the partyInvestigatorMiddleName
+     */
+    public String getPartyInvestigatorMiddleName() {
+        return partyInvestigatorMiddleName;
+    }
+
+    /**
+     * @param partyInvestigatorMiddleName the partyInvestigatorMiddleName to set
+     */
+    public void setPartyInvestigatorMiddleName(String partyInvestigatorMiddleName) {
+        this.partyInvestigatorMiddleName = partyInvestigatorMiddleName;
+    }
+
+    /**
+     * @return the partyInvestigatorLastName
+     */
+    public String getPartyInvestigatorLastName() {
+        return partyInvestigatorLastName;
+    }
+
+    /**
+     * @param partyInvestigatorLastName the partyInvestigatorLastName to set
+     */
+    public void setPartyInvestigatorLastName(String partyInvestigatorLastName) {
+        this.partyInvestigatorLastName = partyInvestigatorLastName;
+    }
+
+    /**
+     * @return the partyInvestigatorStreetAddress
+     */
+    public String getPartyInvestigatorStreetAddress() {
+        return partyInvestigatorStreetAddress;
+    }
+
+    /**
+     * @param partyInvestigatorStreetAddress the partyInvestigatorStreetAddress to set
+     */
+    public void setPartyInvestigatorStreetAddress(
+            String partyInvestigatorStreetAddress) {
+        this.partyInvestigatorStreetAddress = partyInvestigatorStreetAddress;
+    }
+
+    /**
+     * @return the partyInvestigatorCity
+     */
+    public String getPartyInvestigatorCity() {
+        return partyInvestigatorCity;
+    }
+
+    /**
+     * @param partyInvestigatorCity the partyInvestigatorCity to set
+     */
+    public void setPartyInvestigatorCity(String partyInvestigatorCity) {
+        this.partyInvestigatorCity = partyInvestigatorCity;
+    }
+
+    /**
+     * @return the partyInvestigatorState
+     */
+    public String getPartyInvestigatorState() {
+        return partyInvestigatorState;
+    }
+
+    /**
+     * @param partyInvestigatorState the partyInvestigatorState to set
+     */
+    public void setPartyInvestigatorState(String partyInvestigatorState) {
+        this.partyInvestigatorState = partyInvestigatorState;
+    }
+
+    /**
+     * @return the partyInvestigatorZip
+     */
+    public String getPartyInvestigatorZip() {
+        return partyInvestigatorZip;
+    }
+
+    /**
+     * @param partyInvestigatorZip the partyInvestigatorZip to set
+     */
+    public void setPartyInvestigatorZip(String partyInvestigatorZip) {
+        this.partyInvestigatorZip = partyInvestigatorZip;
+    }
+
+    /**
+     * @return the partyInvestigatorCountry
+     */
+    public String getPartyInvestigatorCountry() {
+        return partyInvestigatorCountry;
+    }
+
+    /**
+     * @param partyInvestigatorCountry the partyInvestigatorCountry to set
+     */
+    public void setPartyInvestigatorCountry(String partyInvestigatorCountry) {
+        this.partyInvestigatorCountry = partyInvestigatorCountry;
+    }
+
+    /**
+     * @return the partyInvestigatorEmail
+     */
+    public String getPartyInvestigatorEmail() {
+        return partyInvestigatorEmail;
+    }
+
+    /**
+     * @param partyInvestigatorEmail the partyInvestigatorEmail to set
+     */
+    public void setPartyInvestigatorEmail(String partyInvestigatorEmail) {
+        this.partyInvestigatorEmail = partyInvestigatorEmail;
+    }
+
+    /**
+     * @return the partyInvestigatorPhone
+     */
+    public String getPartyInvestigatorPhone() {
+        return partyInvestigatorPhone;
+    }
+
+    /**
+     * @param partyInvestigatorPhone the partyInvestigatorPhone to set
+     */
+    public void setPartyInvestigatorPhone(String partyInvestigatorPhone) {
+        this.partyInvestigatorPhone = partyInvestigatorPhone;
+    }
+
+    /**
+     * @return the partyInvestigatorTTY
+     */
+    public String getPartyInvestigatorTTY() {
+        return partyInvestigatorTTY;
+    }
+
+    /**
+     * @param partyInvestigatorTTY the partyInvestigatorTTY to set
+     */
+    public void setPartyInvestigatorTTY(String partyInvestigatorTTY) {
+        this.partyInvestigatorTTY = partyInvestigatorTTY;
+    }
+
+    /**
+     * @return the partyInvestigatorFax
+     */
+    public String getPartyInvestigatorFax() {
+        return partyInvestigatorFax;
+    }
+
+    /**
+     * @param partyInvestigatorFax the partyInvestigatorFax to set
+     */
+    public void setPartyInvestigatorFax(String partyInvestigatorFax) {
+        this.partyInvestigatorFax = partyInvestigatorFax;
+    }
+
+    /**
+     * @return the partyInvestigatorUrl
+     */
+    public String getPartyInvestigatorUrl() {
+        return partyInvestigatorUrl;
+    }
+
+    /**
+     * @param partyInvestigatorUrl the partyInvestigatorUrl to set
+     */
+    public void setPartyInvestigatorUrl(String partyInvestigatorUrl) {
+        this.partyInvestigatorUrl = partyInvestigatorUrl;
+    }
+
+    /**
+     * @return the partyInvestigatorTitle
+     */
+    public String getPartyInvestigatorTitle() {
+        return partyInvestigatorTitle;
+    }
+
+    /**
+     * @param partyInvestigatorTitle the partyInvestigatorTitle to set
+     */
+    public void setPartyInvestigatorTitle(String partyInvestigatorTitle) {
+        this.partyInvestigatorTitle = partyInvestigatorTitle;
+    }
+
+    /**
+     * @return the partyAffiliationPOId
+     */
+    public String getPartyAffiliationPOId() {
+        return partyAffiliationPOId;
+    }
+
+    /**
+     * @param partyAffiliationPOId the partyAffiliationPOId to set
+     */
+    public void setPartyAffiliationPOId(String partyAffiliationPOId) {
+        this.partyAffiliationPOId = partyAffiliationPOId;
+    }
+
+    /**
+     * @return the partyAffiliationName
+     */
+    public String getPartyAffiliationName() {
+        return partyAffiliationName;
+    }
+
+    /**
+     * @param partyAffiliationName the partyAffiliationName to set
+     */
+    public void setPartyAffiliationName(String partyAffiliationName) {
+        this.partyAffiliationName = partyAffiliationName;
+    }
+
+    /**
+     * @return the partyAffiliationStreetAddress
+     */
+    public String getPartyAffiliationStreetAddress() {
+        return partyAffiliationStreetAddress;
+    }
+
+    /**
+     * @param partyAffiliationStreetAddress the partyAffiliationStreetAddress to set
+     */
+    public void setPartyAffiliationStreetAddress(
+            String partyAffiliationStreetAddress) {
+        this.partyAffiliationStreetAddress = partyAffiliationStreetAddress;
+    }
+
+    /**
+     * @return the partyAffiliationCity
+     */
+    public String getPartyAffiliationCity() {
+        return partyAffiliationCity;
+    }
+
+    /**
+     * @param partyAffiliationCity the partyAffiliationCity to set
+     */
+    public void setPartyAffiliationCity(String partyAffiliationCity) {
+        this.partyAffiliationCity = partyAffiliationCity;
+    }
+
+    /**
+     * @return the partyAffiliationState
+     */
+    public String getPartyAffiliationState() {
+        return partyAffiliationState;
+    }
+
+    /**
+     * @param partyAffiliationState the partyAffiliationState to set
+     */
+    public void setPartyAffiliationState(String partyAffiliationState) {
+        this.partyAffiliationState = partyAffiliationState;
+    }
+
+    /**
+     * @return the partyAffiliationZip
+     */
+    public String getPartyAffiliationZip() {
+        return partyAffiliationZip;
+    }
+
+    /**
+     * @param partyAffiliationZip the partyAffiliationZip to set
+     */
+    public void setPartyAffiliationZip(String partyAffiliationZip) {
+        this.partyAffiliationZip = partyAffiliationZip;
+    }
+
+    /**
+     * @return the partyAffiliationCountry
+     */
+    public String getPartyAffiliationCountry() {
+        return partyAffiliationCountry;
+    }
+
+    /**
+     * @param partyAffiliationCountry the partyAffiliationCountry to set
+     */
+    public void setPartyAffiliationCountry(String partyAffiliationCountry) {
+        this.partyAffiliationCountry = partyAffiliationCountry;
+    }
+
+    /**
+     * @return the partyAffiliationEmail
+     */
+    public String getPartyAffiliationEmail() {
+        return partyAffiliationEmail;
+    }
+
+    /**
+     * @param partyAffiliationEmail the partyAffiliationEmail to set
+     */
+    public void setPartyAffiliationEmail(String partyAffiliationEmail) {
+        this.partyAffiliationEmail = partyAffiliationEmail;
+    }
+
+    /**
+     * @return the partyAffiliationPhone
+     */
+    public String getPartyAffiliationPhone() {
+        return partyAffiliationPhone;
+    }
+
+    /**
+     * @param partyAffiliationPhone the partyAffiliationPhone to set
+     */
+    public void setPartyAffiliationPhone(String partyAffiliationPhone) {
+        this.partyAffiliationPhone = partyAffiliationPhone;
+    }
+
+    /**
+     * @return the partyAffiliationTTY
+     */
+    public String getPartyAffiliationTTY() {
+        return partyAffiliationTTY;
+    }
+
+    /**
+     * @param partyAffiliationTTY the partyAffiliationTTY to set
+     */
+    public void setPartyAffiliationTTY(String partyAffiliationTTY) {
+        this.partyAffiliationTTY = partyAffiliationTTY;
+    }
+
+    /**
+     * @return the partyAffiliationFax
+     */
+    public String getPartyAffiliationFax() {
+        return partyAffiliationFax;
+    }
+
+    /**
+     * @param partyAffiliationFax the partyAffiliationFax to set
+     */
+    public void setPartyAffiliationFax(String partyAffiliationFax) {
+        this.partyAffiliationFax = partyAffiliationFax;
+    }
+
+    /**
+     * @return the partyAffiliationUrl
+     */
+    public String getPartyAffiliationUrl() {
+        return partyAffiliationUrl;
+    }
+
+    /**
+     * @param partyAffiliationUrl the partyAffiliationUrl to set
+     */
+    public void setPartyAffiliationUrl(String partyAffiliationUrl) {
+        this.partyAffiliationUrl = partyAffiliationUrl;
+    }
 }

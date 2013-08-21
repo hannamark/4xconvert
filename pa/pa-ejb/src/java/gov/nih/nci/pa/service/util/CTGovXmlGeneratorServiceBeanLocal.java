@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -205,6 +206,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
     
     private static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator";
+    private static final String SPONSOR_INVESTIGATOR = "Sponsor-Investigator";
     private static final String SPONSOR = "Sponsor";
     private static final String NCT_ID_PATTERN = "^NCT\\d+$";
 
@@ -1504,57 +1506,47 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      * @throws PAException when error
      * @throws NullifiedRoleException when error
      */
-    protected Element createResponsibleParty(Ii studyProtocolIi, Document doc)
+    protected Element createResponsibleParty(Ii studyProtocolIi, Document doc) // NOPMD
     throws PAException, NullifiedRoleException {
+        
         Element responsibleParty = doc.createElement("resp_party");
-        StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        Person person = null;
-        String resPartyContactName = null;
+        StudyContactDTO scDto = getStudyContactService().getResponsiblePartyContact(studyProtocolIi);
         String resPartyType = null;
-        Organization sponsor = null;
-        if (CollectionUtils.isNotEmpty(scDtos)) {
-            scDto = scDtos.get(0);
-            person = getCorUtils().getPAPersonByIi(scDto.getClinicalResearchStaffIi());
-            resPartyContactName = person.getFullName();
-            resPartyType = PRINCIPAL_INVESTIGATOR;
-            StudySiteDTO spartDTO = new StudySiteDTO();
-            spartDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            List<StudySiteDTO> sParts = getStudySiteService().getByStudyProtocol(studyProtocolIi, spartDTO);
-            for (StudySiteDTO spart : sParts) {
-                sponsor = getCorUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
-            }
+        String title = null;
+        Organization affiliation = null;
+        String username = null;
+        if (scDto != null) {
+            title = StConverter.convertToString(scDto.getTitle());
+            StudyContactRoleCode role = CdConverter.convertCdToEnum(
+                    StudyContactRoleCode.class, scDto.getRoleCode());
+            resPartyType = StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR
+                    .equals(role) ? PRINCIPAL_INVESTIGATOR
+                    : SPONSOR_INVESTIGATOR;
+            final ClinicalResearchStaff crs = (ClinicalResearchStaff) new gov.nih.nci.pa.util.CorrelationUtils()
+                    .getStructuralRole(scDto.getClinicalResearchStaffIi(),
+                            ClinicalResearchStaff.class);
+            affiliation = crs.getOrganization();
+            username = crs.getPerson().getFirstMiddleLastName();
         } else {
-            StudySiteContactDTO spart = new StudySiteContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spcDtos = getStudySiteContactService().getByStudyProtocol(studyProtocolIi, spart);
-            if (CollectionUtils.isNotEmpty(spcDtos)) {
-                spart = spcDtos.get(0);
-                PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId((Long.valueOf(spart
-                        .getOrganizationalContactIi().getExtension())));
-                resPartyContactName = paCDto.getResponsiblePartyContactName();
+            if (getPaServiceUtil().isResponsiblePartySponsor(studyProtocolIi)) {
                 resPartyType = SPONSOR;
+                affiliation = getSponsorOrg(studyProtocolIi);
             }
-            StudySiteDTO spDto = new StudySiteDTO();
-            spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-            List<StudySiteDTO> ssDtos = getStudySiteService().getByStudyProtocol(studyProtocolIi, spDto);
-            if (CollectionUtils.isNotEmpty(ssDtos)) {
-                spDto = ssDtos.get(0);
-                sponsor = getCorUtils().getPAOrganizationByIi(spDto.getResearchOrganizationIi());
-            }
-
         }
         if (resPartyType != null) {
             XmlGenHelper.appendElement(responsibleParty,
                    XmlGenHelper.createElement("resp_party_type", resPartyType, doc));
         }
-        if (resPartyType != null && PRINCIPAL_INVESTIGATOR.equals(resPartyType)) {
-                XmlGenHelper.appendElement(responsibleParty,
-                        XmlGenHelper.createElement("investigator_title", resPartyType, doc));
+        if (username != null) {
+            XmlGenHelper.appendElement(responsibleParty,
+                    XmlGenHelper.createElement("investigator_username", username, doc));  
         }
-        if (sponsor != null) {
-                String data = replaceXMLCharacters(sponsor.getName());
+        if (title != null) {
+                XmlGenHelper.appendElement(responsibleParty,
+                        XmlGenHelper.createElement("investigator_title", title, doc));
+        }
+        if (affiliation != null) {
+                String data = replaceXMLCharacters(affiliation.getName());
                 XmlGenHelper.appendElement(responsibleParty,
                         XmlGenHelper.createElement("investigator_affiliation", data, doc));  
         }
@@ -1584,12 +1576,22 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      * @throws PAException
      */
     private String getTrialSponsorName(Ii studyProtocolIi) throws PAException {
+        Organization sponsor = getSponsorOrg(studyProtocolIi);
+        return sponsor != null ? sponsor.getName() : StringUtils.EMPTY;
+    }
+
+    /**
+     * @param studyProtocolIi
+     * @return
+     * @throws PAException
+     */
+    private Organization getSponsorOrg(Ii studyProtocolIi) throws PAException {
         Organization sponsor = getOrgCorrelationService()
                 .getOrganizationByFunctionRole(
                         studyProtocolIi,
                         CdConverter
                                 .convertToCd(StudySiteFunctionalCode.SPONSOR));
-        return sponsor != null ? sponsor.getName() : StringUtils.EMPTY;
+        return sponsor;
     }
 
     private boolean isNCISponsored(Ii studyProtocolIi) throws PAException {

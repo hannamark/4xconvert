@@ -79,14 +79,13 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -332,29 +331,15 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
                 sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
             }
             StudySiteDTO leadOrgSiteIdDTO = util.convertToleadOrgSiteIdDTO(trialDTO);
-
-            StudyContactDTO studyContactDTO = null;
-            StudySiteContactDTO studySiteContactDTO = null;
+            
             List<OrganizationDTO> summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
             StudyResourcingDTO summary4studyResourcingDTO = util
                     .convertToSummary4StudyResourcingDTO(trialDTO);
-            Ii responsiblePartyContactIi = null;
+            
             // updated only if the ctGovXmlRequired is true
+            ResponsiblePartyDTO partyDTO = new ResponsiblePartyDTO();
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-                    studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-                } else {
-                    studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                    if (StringUtils.isNotBlank(trialDTO.getResponsiblePersonName())) {
-                        responsiblePartyContactIi =
-                                IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-                    }
-                    if (StringUtils.isNotBlank(trialDTO.getResponsibleGenericContactName())) {
-                        responsiblePartyContactIi =
-                                IiConverter.convertToPoOrganizationalContactIi(trialDTO
-                                        .getResponsiblePersonIdentifier());
-                    }
-                }
+                partyDTO = util.convertToResponsiblePartyDTO(trialDTO);
             }
             List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
@@ -371,10 +356,10 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             amendId =
                     trialRegistrationService.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                                                    studyResourcingDTOs, documentDTOs, leadOrgDTO,
-                                                   principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
-                                                   studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                                                   principalInvestigatorDTO, sponsorOrgDTO, partyDTO, leadOrgSiteIdDTO,
+                                                   studyIdentifierDTOs, 
                                                    summary4orgDTO, summary4studyResourcingDTO,
-                                                   responsiblePartyContactIi, studyRegAuthDTO,
+                                                   studyRegAuthDTO,
                                                    BlConverter.convertToBl(Boolean.FALSE));
             TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());

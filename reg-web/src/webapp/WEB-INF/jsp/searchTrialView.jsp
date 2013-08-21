@@ -258,26 +258,30 @@
                             </reg-web:valueRow>        
                         </c:if>
                         <reg-web:spaceRow/>
-                        <c:if test="${requestScope.sponsor != null}">
-                            <reg-web:titleRow titleKey="view.trial.sponsorResParty"/>
-                            <reg-web:valueRow labelKey="view.trial.sponsor" noLabelTag="true">
-                                <c:out value="${requestScope.sponsor}"/>
-                            </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="view.trial.respParty" noLabelTag="true">
-                                <c:out value="${requestScope.respParty}"/>
-                            </reg-web:valueRow>
-                            <c:if test="${requestScope.respPartyContact != null}">
-                                <reg-web:valueRow labelKey="view.trial.respPartyContact" noLabelTag="true">
-                                    <c:out value="${requestScope.respPartyContact}"/>
-                                </reg-web:valueRow>
-                            </c:if>
-                            <reg-web:valueRow labelKey="view.trial.respPartyEmailAddr" noLabelTag="true">
-                                <c:out value="${requestScope.respPartyEmailAddr}"/>
-                            </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="view.trial.respPartyPhone" noLabelTag="true">
-                                <c:out value="${requestScope.respPartyPhone}"/>
-                            </reg-web:valueRow>
-                            <reg-web:spaceRow/>
+                        <c:if test="${requestScope.trialDTO.xmlRequired == true && maskFields != true}">
+                              <reg-web:titleRow titleKey="view.trial.sponsorResParty"/>
+                              <reg-web:valueRow labelKey="view.trial.sponsor" noLabelTag="true">
+                                  <c:out value="${requestScope.trialDTO.sponsorName}"/>
+                              </reg-web:valueRow>
+                              <reg-web:valueRow labelKey="view.trial.respParty" noLabelTag="true">
+                                  <c:out value="${func:capitalize(requestScope.trialDTO.responsiblePartyTypeReadable)}"/>
+                              </reg-web:valueRow>
+                              <c:if test="${fn:trim(requestScope.trialDTO.responsiblePersonName) != ''}">
+                                  <reg-web:valueRow labelKey="view.trial.respParty.investigator" noLabelTag="true">
+                                      <c:out value="${requestScope.trialDTO.responsiblePersonName}"/>
+                                  </reg-web:valueRow>
+                              </c:if>  
+                              <c:if test="${fn:trim(requestScope.trialDTO.responsiblePersonTitle) != ''}">
+                                  <reg-web:valueRow labelKey="view.trial.respParty.investigatorTitle" noLabelTag="true">
+                                      <c:out value="${requestScope.trialDTO.responsiblePersonTitle}"/>
+                                  </reg-web:valueRow>
+                              </c:if>
+                              <c:if test="${fn:trim(requestScope.trialDTO.responsiblePersonAffiliationOrgName) != ''}">
+                                  <reg-web:valueRow labelKey="view.trial.respParty.investigatorAff" noLabelTag="true">
+                                      <c:out value="${requestScope.trialDTO.responsiblePersonAffiliationOrgName}"/>
+                                  </reg-web:valueRow>
+                              </c:if>                                  
+                              <reg-web:spaceRow/>
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator != null
                                     && requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'

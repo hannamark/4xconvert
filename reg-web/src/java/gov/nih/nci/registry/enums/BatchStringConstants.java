@@ -240,6 +240,71 @@ public enum BatchStringConstants implements CodedEnum<String> {
     PI_FAX("[PRINCIPAL INVESTIGATOR] FAX", "setPiFax"),
     /** */
     PI_URL("[PRINCIPAL INVESTIGATOR] URL", "setPiUrl"),
+    
+    /** */
+    PARTY_INVESTIGATOR_FIRST_NAME("[RESPONSIBLE PARTY INVESTIGATOR] FIRST NAME", "setPartyInvestigatorFirstName"),
+    /** */
+    PARTY_INVESTIGATOR_MIDDLE_NAME("[RESPONSIBLE PARTY INVESTIGATOR] MIDDLE NAME", "setPartyInvestigatorMiddleName"),
+    /** */
+    PARTY_INVESTIGATOR_LAST_NAME("[RESPONSIBLE PARTY INVESTIGATOR] LAST NAME", "setPartyInvestigatorLastName"),
+    /** */
+    PARTY_INVESTIGATOR_PERSON_PERSON_PO_ID("[RESPONSIBLE PARTY INVESTIGATOR] PERSON PO-ID", "setPartyInvestigatorPOId"),
+    /** */
+    PARTY_INVESTIGATOR_STREET_ADDRESS("[RESPONSIBLE PARTY INVESTIGATOR] STREET ADDRESS", 
+            "setPartyInvestigatorStreetAddress"),
+    /** */
+    PARTY_INVESTIGATOR_CITY("[RESPONSIBLE PARTY INVESTIGATOR] CITY", "setPartyInvestigatorCity"),
+    /** */
+    PARTY_INVESTIGATOR_STATE("[RESPONSIBLE PARTY INVESTIGATOR] STATE/PROVINCE", "setPartyInvestigatorState"),
+    /** */
+    PARTY_INVESTIGATOR_ZIP("[RESPONSIBLE PARTY INVESTIGATOR] ZIP/POSTAL CODE", "setPartyInvestigatorZip"),
+    /** */
+    PARTY_INVESTIGATOR_COUNTRY("[RESPONSIBLE PARTY INVESTIGATOR] COUNTRY", "setPartyInvestigatorCountry"),
+    /** */
+    PARTY_INVESTIGATOR_EMAIL("[RESPONSIBLE PARTY INVESTIGATOR] EMAIL ADDRESS", "setPartyInvestigatorEmail"),
+    /** */
+    PARTY_INVESTIGATOR_PHONE("[RESPONSIBLE PARTY INVESTIGATOR] PHONE", "setPartyInvestigatorPhone"),
+    /** */
+    PARTY_INVESTIGATOR_TTY("[RESPONSIBLE PARTY INVESTIGATOR] TTY", "setPartyInvestigatorTTY"),
+    /** */
+    PARTY_INVESTIGATOR_FAX("[RESPONSIBLE PARTY INVESTIGATOR] FAX", "setPartyInvestigatorFax"),
+    /** */
+    PARTY_INVESTIGATOR_URL("[RESPONSIBLE PARTY INVESTIGATOR] URL", "setPartyInvestigatorUrl"),
+
+    /**
+     * 
+     */
+    PARTY_INVESTIGATOR_TITLE("[RESPONSIBLE PARTY INVESTIGATOR] TITLE", "setPartyInvestigatorTitle"),
+    
+    
+    /** */
+    PARTY_AFFILIATION_NAME("[RESPONSIBLE PARTY AFFILIATION] NAME", "setPartyAffiliationName"),
+    /** */
+    PARTY_AFFILIATION_PO_ID("[RESPONSIBLE PARTY AFFILIATION] ORGANIZATION PO-ID", "setPartyAffiliationPOId"),
+    /** */
+    PARTY_AFFILIATION_STREET_ADDRESS("[RESPONSIBLE PARTY AFFILIATION] STREET ADDRESS", 
+            "setPartyAffiliationStreetAddress"),
+    /** */
+    PARTY_AFFILIATION_CITY("[RESPONSIBLE PARTY AFFILIATION] CITY", "setPartyAffiliationCity"),
+    /** */
+    PARTY_AFFILIATION_STATE("[RESPONSIBLE PARTY AFFILIATION] STATE/PROVINCE", "setPartyAffiliationState"),
+    /** */
+    PARTY_AFFILIATION_ZIP("[RESPONSIBLE PARTY AFFILIATION] ZIP/POSTAL CODE", "setPartyAffiliationZip"),
+    /** */
+    PARTY_AFFILIATION_COUNTRY("[RESPONSIBLE PARTY AFFILIATION] COUNTRY", "setPartyAffiliationCountry"),
+    /** */
+    PARTY_AFFILIATION_EMAIL("[RESPONSIBLE PARTY AFFILIATION] EMAIL ADDRESS", "setPartyAffiliationEmail"),
+    /** */
+    PARTY_AFFILIATION_PHONE("[RESPONSIBLE PARTY AFFILIATION] PHONE", "setPartyAffiliationPhone"),
+    /** */
+    PARTY_AFFILIATION_TTY("[RESPONSIBLE PARTY AFFILIATION] TTY", "setPartyAffiliationTTY"),
+    /** */
+    PARTY_AFFILIATION_FAX("[RESPONSIBLE PARTY AFFILIATION] FAX", "setPartyAffiliationFax"),
+    /** */
+    PARTY_AFFILIATION_URL("[RESPONSIBLE PARTY AFFILIATION] URL", "setPartyAffiliationUrl"),
+
+    
+    
     /** */
     S4_FUND_CAT("SUMMARY 4 FUNDING CATEGORY", "setSumm4FundingCat"),
     /** */

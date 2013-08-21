@@ -7,6 +7,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
@@ -17,14 +18,12 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -71,6 +70,8 @@ import org.apache.struts2.ServletActionContext;
  *
  */
 public class TrialHelper {
+    private static final String SI = "si";
+    private static final String PI = "pi";
     private static final int PG_CODE_LEN = 100;
     private static final String SPONSOR = "sponsor";
     private static final int OFFICIAL_TITLE = 4000;
@@ -316,62 +317,34 @@ public class TrialHelper {
     }
 
     private void copyResponsibleParty(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException,
-            NullifiedRoleException {
-        StudyContactDTO scDto = new StudyContactDTO();
-        scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
-        List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
-        DSet<Tel> dset = null;
-        if (scDtos != null && !scDtos.isEmpty()) {
-            gtdDTO.setResponsiblePartyType("pi");
-            scDto = scDtos.get(0);
-            dset = scDto.getTelecomAddresses();
-        } else {
-            StudySiteContactDTO spart = new StudySiteContactDTO();
-            spart.setRoleCode(CdConverter.convertToCd(
-                    StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService()
-                .getByStudyProtocol(studyProtocolIi, spart);            
-            if (spDtos != null && !spDtos.isEmpty()) {
-                gtdDTO.setResponsiblePartyType(SPONSOR);
-                dset = copyResponsiblePartySponsor(gtdDTO, spDtos);
+            NullifiedRoleException {        
+        StudyContactDTO scDto = PaRegistry.getStudyContactService().getResponsiblePartyContact(studyProtocolIi);
+        if (scDto != null) {
+            String type = StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR
+                    .equals(CdConverter.convertCdToEnum(
+                            StudyContactRoleCode.class, scDto.getRoleCode())) ? PI
+                    : SI;
+            gtdDTO.setResponsiblePartyType(type);
+            gtdDTO.setResponsiblePersonTitle(StConverter.convertToString(scDto
+                    .getTitle()));
+
+            Ii crsId = scDto.getClinicalResearchStaffIi();
+            if (!ISOUtil.isIiNull(crsId)) {
+                final ClinicalResearchStaff crs = (ClinicalResearchStaff) new gov.nih.nci.pa.util.CorrelationUtils()
+                        .getStructuralRole(crsId, ClinicalResearchStaff.class);
+                Organization o = crs.getOrganization();
+                Person p = crs.getPerson();
+                gtdDTO.setResponsiblePersonAffiliationOrgName(o.getName());
+                gtdDTO.setResponsiblePersonAffiliationOrgId(o.getIdentifier());
+                gtdDTO.setResponsiblePersonName(p.getFullName());
+                gtdDTO.setResponsiblePersonIdentifier(p.getIdentifier());
+            }
+        } else {                   
+            if (paServiceUtils.isResponsiblePartySponsor(studyProtocolIi)) {
+                gtdDTO.setResponsiblePartyType(SPONSOR);                
             }
         }
-        copy(dset, gtdDTO);
-    }
-
-    private DSet<Tel> copyResponsiblePartySponsor(GeneralTrialDesignWebDTO gtdDTO, List<StudySiteContactDTO> spDtos)
-            throws PAException, NullifiedRoleException {
-        DSet<Tel> dset;
-        StudySiteContactDTO spart;
-        gtdDTO.setResponsiblePartyType(SPONSOR);
-        spart = spDtos.get(0);
-        dset = spart.getTelecomAddresses();
-        PAContactDTO contactDto = getCorrelationUtils().getContactByPAOrganizationalContactId((
-                Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
-        if (contactDto.getFullName() != null) {
-         gtdDTO.setResponsiblePersonName(contactDto.getFullName());
-         gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(contactDto.getPersonIdentifier()));
-        }
-        if (contactDto.getTitle() != null) {
-            gtdDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(contactDto.getSrIdentifier()));
-            gtdDTO.setResponsibleGenericContactName(contactDto.getTitle());
-        }
-        return dset;
-    }
-
-    private void copy(DSet<Tel> dset, GeneralTrialDesignWebDTO gtdDTO) {
-        if (dset == null) {
-            return;
-        }
-        List<String> phones = DSetConverter.convertDSetToList(dset, "PHONE");
-        List<String> emails = DSetConverter.convertDSetToList(dset, "EMAIL");
-        if (phones != null && !phones.isEmpty()) {
-           gtdDTO.setContactPhone(PAUtil.getPhone(phones.get(0)));
-           gtdDTO.setContactPhoneExtn(PAUtil.getPhoneExtn(phones.get(0)));
-        }
-        if (emails != null && !emails.isEmpty()) {
-            gtdDTO.setContactEmail(emails.get(0));
-        }
+       
     }
 
     private void copySponsor(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
@@ -614,35 +587,29 @@ public class TrialHelper {
      */
     public void createSponorContact(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         PARelationServiceBean parb = new PARelationServiceBean();
-        String phone = gtdDTO.getContactPhone().trim();
-        if (StringUtils.isNotEmpty(gtdDTO.getContactPhoneExtn())) {
-            StringBuffer phoneWithExtn = new StringBuffer();
-            phoneWithExtn.append(phone).append("extn").append(gtdDTO.getContactPhoneExtn());
-            phone = phoneWithExtn.toString();
-        }
-        if (gtdDTO.getResponsiblePartyType() == null || gtdDTO.getResponsiblePartyType().equals("pi")) {
+        final String type = StringUtils.defaultString(gtdDTO.getResponsiblePartyType());
+        if (type.equals(PI)) { 
             parb.createPIAsResponsiblePartyRelations(
-                    gtdDTO.getLeadOrganizationIdentifier(), gtdDTO.getPiIdentifier(),
-                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getContactEmail(), phone);
-        } else if (gtdDTO.getResponsiblePartyType().equals(SPONSOR)) {
-            saveResponsibleSponsorContact(studyProtocolIi, gtdDTO, parb, phone);
+                    gtdDTO.getResponsiblePersonAffiliationOrgId(), gtdDTO.getPiIdentifier(),
+                    Long.valueOf(studyProtocolIi.getExtension()),  gtdDTO.getResponsiblePersonTitle());
+        } else if (type.equals(SI)) {
+            parb.createSIAsResponsiblePartyRelations(
+                    gtdDTO.getResponsiblePersonAffiliationOrgId(),
+                    gtdDTO.getResponsiblePersonIdentifier(),
+                    Long.valueOf(studyProtocolIi.getExtension()),
+                    gtdDTO.getResponsiblePersonTitle());
+        } else if (type.equals(SPONSOR)) {
+            saveResponsibleSponsorContact(studyProtocolIi, gtdDTO, parb);
         }
     }
 
     private void saveResponsibleSponsorContact(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO,
-            PARelationServiceBean parb, String phone) throws PAException {
+            PARelationServiceBean parb) throws PAException {
         PAContactDTO contactDto = new PAContactDTO();
         contactDto.setOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO.getSponsorIdentifier()));
         contactDto.setStudyProtocolIdentifier(studyProtocolIi);
-        contactDto.setEmail(gtdDTO.getContactEmail());
-        contactDto.setPhone(phone);
-        if (StringUtils.isNotEmpty(gtdDTO.getResponsiblePersonName())) {
-            contactDto.setPersonIdentifier(IiConverter.convertToPoPersonIi(gtdDTO.getResponsiblePersonIdentifier()));
-        }
-        if (StringUtils.isNotEmpty(gtdDTO.getResponsibleGenericContactName())) {
-            contactDto.setSrIdentifier(IiConverter.convertToPoOrganizationalContactIi(
-                    gtdDTO.getResponsiblePersonIdentifier()));
-        }
+        contactDto.setEmail(StringUtils.EMPTY);
+        contactDto.setPhone(StringUtils.EMPTY);
         try {
             parb.createSponsorAsPrimaryContactRelations(contactDto);
         } catch (PAException pae) {

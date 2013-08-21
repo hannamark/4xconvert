@@ -140,6 +140,8 @@ public abstract class AbstractRegWebTest {
         trialDTO.setPiIdentifier("2");
         trialDTO.setSponsorIdentifier("3");
         trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
+        trialDTO.setResponsiblePersonIdentifier("1");
+        trialDTO.setResponsiblePersonAffiliationOrgId("1");
         trialDTO.setIdentifier("1");
         trialDTO.setContactEmail("contactEmail@mail.com");
         trialDTO.setContactPhone("contact Phone ");

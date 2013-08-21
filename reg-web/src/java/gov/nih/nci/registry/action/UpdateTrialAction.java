@@ -679,17 +679,9 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private boolean validateXmlRequiredTrial() {
         if (trialDTO.isXmlRequired()) {
-            if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
+            if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) { // NOPMD
                 return false;
-            }
-
-            if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
-                return false;
-            }
-
-            if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
-                return false;
-            }
+            }            
         }
         return true;
     }

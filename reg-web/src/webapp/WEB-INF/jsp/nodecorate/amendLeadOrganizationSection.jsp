@@ -55,14 +55,14 @@
                     <td class="value">
                         <ul style="margin-top:-5px;">              
                             <li style="padding-left:0">
-                             <a href="javascript:void(0)" class="btn" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator"/>
+                             <a href="javascript:void(0)" class="btn" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator">
                              <span class="btn_img"><span class="person">Look Up Person</span></span></a>
                             </li>
                         </ul>
                     </td>
                 </tr>
             </table>
-            <span class="formErrorMsg"> 
+            <span class="formErrorMsg" id="piIdentifierErr"> 
                 <s:fielderror>
                     <s:param>trialDTO.piIdentifier</s:param>
                 </s:fielderror>                            

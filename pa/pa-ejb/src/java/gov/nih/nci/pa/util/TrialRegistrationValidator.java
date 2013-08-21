@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -98,7 +98,6 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -107,11 +106,9 @@ import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
@@ -155,6 +152,7 @@ import org.apache.commons.lang.StringUtils;
         "PMD.CyclomaticComplexity" })
 public class TrialRegistrationValidator {
 
+    private static final String SUMMARY_4_ORGANIZATION = "Summary 4 Organization";
     /**
      * FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.
      */
@@ -560,13 +558,10 @@ public class TrialRegistrationValidator {
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
      * @param leadOrganizationDTO The lead organization
-     * @param sponsorOrganizationDTO The sponsor organization
-     * @param studyContactDTO The study contact
-     * @param studySiteContactDTO  The study site contact
+     * @param sponsorOrganizationDTO The sponsor organization    
      * @param summary4OrganizationDTO The summary4 organization
      * @param summary4StudyResourcingDTO The summary 4 category code
      * @param principalInvestigatorDTO The principal investigator
-     * @param responsiblePartyContactIi The responsible party contact
      * @param studyRegAuthDTO The regulatory authority
      * @param studyResourcingDTOs The list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
@@ -576,10 +571,9 @@ public class TrialRegistrationValidator {
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     public void validateAmendment(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,            
             List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
-            PersonDTO principalInvestigatorDTO, Ii responsiblePartyContactIi,
+            PersonDTO principalInvestigatorDTO, ResponsiblePartyDTO partyDTO,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
             StudySiteDTO nctIdentifierDTO) throws PAException {
@@ -595,10 +589,12 @@ public class TrialRegistrationValidator {
         validateOtherIdentifiers(studyProtocolDTO, errorMsg);
         validateMandatoryDocuments(documentDTOs, errorMsg);
         validateAmendmentDocuments(documentDTOs, errorMsg);
-        validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO, summary4OrganizationDTO,
-                          principalInvestigatorDTO, responsiblePartyContactIi, errorMsg);
+        validatePOObjects(studyProtocolDTO, leadOrganizationDTO,
+                sponsorOrganizationDTO, summary4OrganizationDTO,
+                principalInvestigatorDTO, partyDTO.getInvestigator(),
+                partyDTO.getAffiliation(), errorMsg);
         validateAmendmentInfo(studyProtocolDTO, errorMsg);
-        validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
+        validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
@@ -713,27 +709,34 @@ public class TrialRegistrationValidator {
      * @param responsiblePartyContactIi The responsible party contact
      * @param errorMsg The StringBuilder collecting error messages
      */
+    //CHECKSTYLE:OFF
     void validatePOObjects(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
             OrganizationDTO sponsorOrganizationDTO, List<OrganizationDTO> summary4organizationDTO, 
-            PersonDTO piPersonDTO, Ii responsiblePartyContactIi, StringBuilder errorMsg) {
+            PersonDTO piPersonDTO, PersonDTO responsiblePartyInvestigator, OrganizationDTO respPartyAffiliation, 
+            StringBuilder errorMsg) {
         errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", true));
         if (CollectionUtils.isNotEmpty(summary4organizationDTO)) {
             for (OrganizationDTO dto : summary4organizationDTO) {
-                errorMsg.append(validatePoObject(dto, "Summary 4 Organization", false));
+                errorMsg.append(validatePoObject(dto, SUMMARY_4_ORGANIZATION, false));
             }        
         } else {
-            errorMsg.append(validatePoObject(null, "Summary 4 Organization", false));
+            errorMsg.append(validatePoObject(null, SUMMARY_4_ORGANIZATION, false));
         }
         errorMsg.append(validatePoObject(piPersonDTO, "Principal Investigator", true));
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            errorMsg.append(validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true));
-            if (!ISOUtil.isIiNull(responsiblePartyContactIi)
-                    && !paServiceUtils.isIiExistInPO(responsiblePartyContactIi)) {
-                String msg = "Error getting Responsible Party Contact from PO for id = {0}.\n";
-                errorMsg.append(MessageFormat.format(msg, responsiblePartyContactIi.getExtension()));
+            errorMsg.append(validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true));            
+            if (responsiblePartyInvestigator != null) {
+                errorMsg.append(validatePoObject(responsiblePartyInvestigator,
+                        "Responsible Party Investigator", true));
+            }
+            if (respPartyAffiliation != null) {
+                errorMsg.append(validatePoObject(respPartyAffiliation,
+                        "Responsible Party Investigator Affiliation", true));
             }
         }
     }
+    
+    //CHECKSTYLE:ON
 
     /**
      * Validate objects in po.
@@ -774,44 +777,7 @@ public class TrialRegistrationValidator {
         }
     }
 
-    /**
-     * Validates the study contact info.
-     * @param studyProtocolDTO The study protocol
-     * @param studyContactDTO The study contact
-     * @param studySiteContactDTO The study site contact
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validateStudyContact(StudyProtocolDTO studyProtocolDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, StringBuilder errorMsg) {
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            check(studyContactDTO != null && studySiteContactDTO != null,
-                  "Only one of StudyContact or StudySiteContact can be used, ", errorMsg);
-            check(studyContactDTO == null && studySiteContactDTO == null,
-                  "One of StudyContact or StudySiteContact has to be used, ", errorMsg);
-            if (studyContactDTO != null) {
-                validateTelecomAddress(studyContactDTO.getTelecomAddresses(), "StudyContact", errorMsg);
-            }
-            if (studySiteContactDTO != null) {
-                validateTelecomAddress(studySiteContactDTO.getTelecomAddresses(), "StudySiteContact", errorMsg);
-            }
-        }
-    }
-
-    /**
-     * validates email and phone in a telecom address.
-     * @param telecomAddress set of telecom info.
-     * @param contactType contact type.
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validateTelecomAddress(DSet<Tel> telecomAddress, String contactType, StringBuilder errorMsg) {
-        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null) {
-            errorMsg.append(contactType).append(" Email cannot be null, ");
-        }
-        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null) {
-            errorMsg.append(contactType).append(" Phone cannot be null, ");
-        }
-    }
-
+        
     /**
      * Validates regulatory info.
      *
@@ -905,14 +871,11 @@ public class TrialRegistrationValidator {
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
      * @param leadOrganizationDTO The lead organization
-     * @param sponsorOrganizationDTO The sponsor organization
-     * @param studyContactDTO The study contact
-     * @param studySiteContactDTO The study site contact
+     * @param sponsorOrganizationDTO The sponsor organization    
      * @param summary4OrganizationDTO The summary4 organization
      * @param summary4StudyResourcingDTO The summary 4 category code
      * @param principalInvestigatorDTO The principal investigator
-     * @param leadOrganizationSiteIdentifierDTO The lead organization site
-     * @param responsiblePartyContactIi The responsible party contact
+     * @param leadOrganizationSiteIdentifierDTO The lead organization site    
      * @param studyRegAuthDTO The regulatory authority
      * @param studyResourcingDTOs The list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
@@ -923,10 +886,10 @@ public class TrialRegistrationValidator {
     // CHECKSTYLE:OFF More than 7 Parameters
     public void validateCreation(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
+            ResponsiblePartyDTO partyDTO, 
             List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
             PersonDTO principalInvestigatorDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             List<StudyIndldeDTO> studyIndldeDTOs, StudySiteDTO nctIdentifierDTO) throws PAException {
         // CHECKSTYLE:ON
@@ -938,11 +901,11 @@ public class TrialRegistrationValidator {
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateMandatoryDocuments(documentDTOs, errorMsg);
-        validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO, summary4OrganizationDTO,
-                          principalInvestigatorDTO, responsiblePartyContactIi, errorMsg);
-        validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
-        validatePiAndResponsibleParty(studyProtocolDTO, studyContactDTO, studySiteContactDTO,
-                                      responsiblePartyContactIi, errorMsg);
+        validatePOObjects(studyProtocolDTO, leadOrganizationDTO,
+                sponsorOrganizationDTO, summary4OrganizationDTO,
+                principalInvestigatorDTO, partyDTO.getInvestigator(),
+                partyDTO.getAffiliation(), errorMsg);        
+        validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
@@ -954,6 +917,26 @@ public class TrialRegistrationValidator {
         }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+
+    private void validateResponsibleParty(StudyProtocolDTO studyProtocolDTO,
+            ResponsiblePartyDTO partyDTO, StringBuilder errorMsg) {
+        if (BlConverter.convertToBool(studyProtocolDTO
+                .getCtgovXmlRequiredIndicator())) {
+            if (partyDTO == null || partyDTO.getType() == null) {
+                errorMsg.append("Responsible Party must be specified. ");
+                return;
+            }
+            if (ResponsiblePartyType.SPONSOR.equals(partyDTO.getType())) {
+                return;
+            }
+            if (partyDTO.getInvestigator() == null) {
+                errorMsg.append("Responsible Party Investigator must be specified. ");
+            }
+            if (partyDTO.getAffiliation() == null) {
+                errorMsg.append("Responsible Party Investigator Affiliation must be specified. ");
+            }
         }
     }
 
@@ -1002,48 +985,7 @@ public class TrialRegistrationValidator {
         }
 
     }
-
-    /**
-     * Validates the principal investigator and responsible party addresses.
-     * @param studyProtocolDTO The study protocol
-     * @param studyContactDTO The study contact
-     * @param studySiteContactDTO The study site contact
-     * @param responsiblePartyContactIi The responsible party Ii
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validatePiAndResponsibleParty(StudyProtocolDTO studyProtocolDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, Ii responsiblePartyContactIi, StringBuilder errorMsg) {
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            boolean respPartyExists = !ISOUtil.isIiNull(responsiblePartyContactIi);
-            validatePiStudyContact(studyContactDTO, !respPartyExists, errorMsg);
-            validateResponsiblePartySiteContact(studySiteContactDTO, respPartyExists, errorMsg);
-        }
-    }
-
-    /**
-     * Validate the addresses of the Principal Investigator StudyContact.
-     * @param studyContactDTO The study contact
-     * @param exists true if it must be checked
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validatePiStudyContact(StudyContactDTO studyContactDTO, boolean exists, StringBuilder errorMsg) {
-        if (exists && (studyContactDTO == null || ISOUtil.isDSetEmpty(studyContactDTO.getTelecomAddresses()))) {
-            errorMsg.append("Telecom information must be provided for Principal Investigator StudyContact,");
-        }
-    }
-
-    /**
-     * Validate the addresses of the responsible party study site contact.
-     * @param studySiteContactDTO The study site contact
-     * @param exists true if it must be checked
-     * @param errorMsg The StringBuilder collecting error messages
-     */
-    void validateResponsiblePartySiteContact(StudySiteContactDTO studySiteContactDTO, boolean exists,
-            StringBuilder errorMsg) {
-        if (exists && (studySiteContactDTO == null || ISOUtil.isDSetEmpty(studySiteContactDTO.getTelecomAddresses()))) {
-            errorMsg.append("Telecom information must be provided for Responsible Party StudySiteContact,");
-        }
-    }
+    
 
     /**
      * Validates the input for a trial amendment.
@@ -1103,10 +1045,10 @@ public class TrialRegistrationValidator {
         errorMsg.append(validatePoObject(studySiteOrganizationDTO, "Study Site Organization", false));
         if (CollectionUtils.isNotEmpty(summary4OrganizationDTO)) {
             for (OrganizationDTO dto : summary4OrganizationDTO) {
-                errorMsg.append(validatePoObject(dto, "Summary 4 Organization", false));
+                errorMsg.append(validatePoObject(dto, SUMMARY_4_ORGANIZATION, false));
             }        
         } else {
-            errorMsg.append(validatePoObject(null, "Summary 4 Organization", false));
+            errorMsg.append(validatePoObject(null, SUMMARY_4_ORGANIZATION, false));
         }
         errorMsg.append(validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false));
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);

@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 
 
@@ -101,6 +102,7 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
     private Ad postalAddress;
     private DSet<Tel> telecomAddresses;
     private Ii organizationalContactIi;
+    private St title;
     /**
      * @return the postalAddress
      */
@@ -160,6 +162,18 @@ public class StudyContactDTO extends PersonFunctionalRoleDTO {
      */
     public void setOrganizationalContactIi(Ii organizationalContactIi) {
         this.organizationalContactIi = organizationalContactIi;
+    }
+    /**
+     * @return the title
+     */
+    public St getTitle() {
+        return title;
+    }
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(St title) {
+        this.title = title;
     }
 
 

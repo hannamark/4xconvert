@@ -563,22 +563,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setTrialDTO(trial);
         assertFalse(action.validateRespPartyInfo());
     }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectContactPhone() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setContactPhone(null);
-        action.setTrialDTO(trial);
-        assertFalse(action.validateRespPartyInfo());
-    }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectContactEmail() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setContactEmail(null);
-        action.setTrialDTO(trial);
-        assertFalse(action.validateRespPartyInfo());
-    }
+  
     
     @Test 
     public void validateRespPartyInfoIncorrectSponsorIdentifierNoXMLRequired() {

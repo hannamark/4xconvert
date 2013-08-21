@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -255,7 +256,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         
         Ii ii = bean.createAbbreviatedStudyProtocol(studyProtocolDTO, nctID,
                 leadOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                sponsorOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, principalInvestigatorDTO, null,
                 centralContactDTO, overallStatusDTO, regAuthority, arms,
                 eligibility, outcomes, collaborators, documents);
         assertFalse(ISOUtil.isIiNull(ii));
@@ -496,9 +497,9 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     }
 
     @Test
-    public void nullStudyContacts() throws Exception {
+    public void nullResponsibleParty() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("One of StudyContact or StudySiteContact has to be used");
+        thrown.expectMessage("Validation Exception Responsible Party must be specified. ");
 
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
@@ -522,9 +523,9 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documents, leadOrganizationDTO,
-                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                siteIdentifiers, studyContactDTO, null, summary4OrganizationDTO, summary4StudyResourcing.get(0),
-                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+                principalInvestigatorDTO, sponsorOrganizationDTO, new ResponsiblePartyDTO(), leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, summary4OrganizationDTO, summary4StudyResourcing.get(0),
+                regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
     @Test
@@ -1634,7 +1635,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
         
         Ii ii = bean.updateAbbreviatedStudyProtocol(studyProtocolDTO, nctID,                
-                sponsorOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, principalInvestigatorDTO, null,
                 centralContactDTO, overallStatusDTO, regAuthority, arms,
                 eligibility, outcomes, collaborators, documents);
         assertFalse(ISOUtil.isIiNull(ii));

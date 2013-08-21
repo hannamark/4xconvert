@@ -90,6 +90,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -271,13 +272,13 @@ public class Person extends AbstractEntity implements Auditable {
             fullName = firstName + " ";
         }
         if (middleName != null) {
-            fullName =  firstName + " " + middleName + " ";
+            fullName =  StringUtils.defaultString(firstName) + " " + middleName + " ";
         }
-
         if (lastName != null) {
-            fullName =  firstName + " " + middleName + " " + lastName + " ";
+            fullName = StringUtils.defaultString(firstName) + " "
+                    + StringUtils.defaultString(middleName) + " " + lastName
+                    + " ";
         }
-
-        return fullName;
+        return StringUtils.defaultString(fullName).trim();
     }
 }

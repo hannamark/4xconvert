@@ -91,20 +91,6 @@
                 showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
             }
             
-            function lookup4loadresponsibleparty() {
-                var orgid = $('trialDTO.sponsorIdentifier').value;
-                showPopup('${lookupOrgContactsUrl}?orgContactIdentifier='+orgid, createOrgContactDiv, 'Select Responsible Party Contact');
-            }
-            
-            function lookup4loadresponsiblepartygenericcontact() {
-                var orgid = $('trialDTO.sponsorIdentifier').value;
-                if (orgid) {
-                    showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid, createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
-                } else {
-                    alert('Must select the Sponsor organization before selecting a Generic Contact.');
-                }
-            }
-            
             function lookup4loadSummary4Sponsor() {
                 showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
             }
@@ -131,41 +117,26 @@
             function loadLeadPersDiv() {
                 $("trialDTO.piIdentifier").value = persid;
                 $('trialDTO.piName').value = chosenname;
+                
+                var partyType = $F('trialDTO.responsiblePartyType');
+                if (partyType=='pi') {                
+                    $('trialDTO.responsiblePersonIdentifier').value=persid;
+                    $('trialDTO.responsiblePersonName').value=chosenname;
+                }
             }
             
             function loadSponsorDiv() {
                 $("trialDTO.sponsorIdentifier").value = orgid;
-                $('trialDTO.sponsorName').value = chosenname;
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsiblePersonIdentifier').value = '';
-                $('trialDTO.responsibleGenericContactIdentifier').value = '';
-                $('trialDTO.responsibleGenericContactName').value = '';
-                $("trialDTO.contactEmail").value = '';
-                $("trialDTO.contactPhone").value = ''; 
-                $("trialDTO.contactPhoneExtn").value = ''; 
-                $('trialDTO.responsiblePersonName').value = ''; 
+                $('trialDTO.sponsorName').value = chosenname;                             
                 respartOrgid = orgid;
+                
+                var partyType = $F('trialDTO.responsiblePartyType');
+                if (partyType=='si') {                
+                     $('trialDTO.responsiblePersonAffiliationOrgId').value=orgid;
+                     $('trialDTO.responsiblePersonAffiliationOrgName').value=chosenname;
+                }
             }
-            
-            function createOrgContactDiv() {
-                $("trialDTO.responsiblePersonIdentifier").value = persid;
-                $('trialDTO.responsiblePersonName').value = chosenname;
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsibleGenericContactName').value = ''; 
-                $('trialDTO.responsibleGenericContactIdentifier').value = '';
-            }
-            
-            function createOrgGenericContactDiv() {
-            	$('trialDTO.responsibleGenericContactIdentifier').value = persid;
-                $('trialDTO.responsiblePersonIdentifier').value = '';
-                $('trialDTO.responsibleGenericContactName').value = chosenname;
-                $("trialDTO.contactEmail").value = contactMail;
-                $("trialDTO.contactPhone").value = extractPhoneNumberNoExt(contactPhone);
-                $("trialDTO.contactPhoneExtn").value = extractPhoneNumberExt(contactPhone);
-                $('lookupbtn4RP').disabled = "";
-                $('trialDTO.responsiblePersonName').value = '';
-            }
-            
+           
             function loadSummary4SponsorDiv() {
                 var url = '/registry/protected/popupaddSummaryFourOrg.action';
                 var params = { orgId: orgid, chosenName : chosenname };
@@ -207,21 +178,6 @@
                 }
                 form.action = action;
                 form.submit();
-            }
-                
-            function manageRespPartyLookUp() {
-                if ($('trialDTO.responsiblePartyTypePI').checked == true) {
-                    $('rpcid').style.display='none';
-                    $('rpgcid').style.display='none';
-                    $('trialDTO.responsiblePersonName').value = '';
-                    $('trialDTO.responsibleGenericContactName').value = '';
-                    $('trialDTO.responsiblePersonIdentifier').value  = '';
-                    $('trialDTO.responsibleGenericContactIdentifier').value  = '';
-                }
-                if ($('trialDTO.responsiblePartyTypesponsor').checked == true) {
-                    $('rpcid').style.display='';
-                    $('rpgcid').style.display='';
-                }
             }
             
             function addGrant() {
@@ -432,9 +388,7 @@
                 <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/>
                 <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
-                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
-                <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
-                <s:hidden name="trialDTO.responsibleGenericContactIdentifier" id="trialDTO.responsibleGenericContactIdentifier"/>
+                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>                                
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
                 <s:hidden name="page" />

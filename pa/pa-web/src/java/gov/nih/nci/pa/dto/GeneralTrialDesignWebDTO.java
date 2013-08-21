@@ -90,7 +90,7 @@ import java.util.List;
  * @author Naveen Amiruddin
  * @since 10/20/2008
  */
-public class GeneralTrialDesignWebDTO {
+public class GeneralTrialDesignWebDTO { // NOPMD
 
     private String acronym;
     private String allocationCode;
@@ -118,6 +118,9 @@ public class GeneralTrialDesignWebDTO {
     private String responsiblePartyType;
     private String responsiblePersonName;
     private String responsiblePersonIdentifier;
+    private String responsiblePersonTitle;   
+    private String responsiblePersonAffiliationOrgName;
+    private String responsiblePersonAffiliationOrgId;
     private String contactPhone;
     private String contactEmail;
     private String centralContactPhone;
@@ -819,6 +822,45 @@ public class GeneralTrialDesignWebDTO {
      */
     public void setRejectionReasonCode(String rejectionReasonCode) {
         this.rejectionReasonCode = rejectionReasonCode;
-    }  
+    }
+    /**
+     * @return the responsiblePersonTitle
+     */
+    public String getResponsiblePersonTitle() {
+        return responsiblePersonTitle;
+    }
+    /**
+     * @param responsiblePersonTitle the responsiblePersonTitle to set
+     */
+    public void setResponsiblePersonTitle(String responsiblePersonTitle) {
+        this.responsiblePersonTitle = responsiblePersonTitle;
+    }
+    /**
+     * @return the responsiblePersonAffiliationOrgName
+     */
+    public String getResponsiblePersonAffiliationOrgName() {
+        return responsiblePersonAffiliationOrgName;
+    }
+    /**
+     * @param responsiblePersonAffiliationOrgName the responsiblePersonAffiliationOrgName to set
+     */
+    public void setResponsiblePersonAffiliationOrgName(
+            String responsiblePersonAffiliationOrgName) {
+        this.responsiblePersonAffiliationOrgName = responsiblePersonAffiliationOrgName;
+    }
+    /**
+     * @return the responsiblePersonAffiliationOrgId
+     */
+    public String getResponsiblePersonAffiliationOrgId() {
+        return responsiblePersonAffiliationOrgId;
+    }
+    /**
+     * @param responsiblePersonAffiliationOrgId the responsiblePersonAffiliationOrgId to set
+     */
+    public void setResponsiblePersonAffiliationOrgId(
+            String responsiblePersonAffiliationOrgId) {
+        this.responsiblePersonAffiliationOrgId = responsiblePersonAffiliationOrgId;
+    }
+    
 
 }
