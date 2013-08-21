@@ -1385,4 +1385,8 @@
         <comment>Added title column to study_contact</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5844.sql"/>
      </changeSet>
+     <changeSet id="PO-5844-2" author="krylovd">
+        <comment>Set default for investigator official title</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5844-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -81,7 +81,7 @@
         
     <tr style="display:none" class="resppartysection">
         <td scope="row" class="label">
-           <label for="gtdDTO.responsiblePersonTitle">Investigator Title:</label> 
+           <label for="gtdDTO.responsiblePersonTitle">Investigator Title:<span class="required">*</span></label> 
         </td>
         <td class="value">
             <s:textfield name="gtdDTO.responsiblePersonTitle"  id="gtdDTO.responsiblePersonTitle" maxlength="200" cssStyle="width:200px; top: -5px; position:relative;" />

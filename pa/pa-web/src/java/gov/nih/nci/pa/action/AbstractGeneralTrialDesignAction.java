@@ -59,6 +59,10 @@ class AbstractGeneralTrialDesignAction extends ActionSupport {
             addFieldError("responsiblePersonAffiliationOrgName",
                     ("Please select an affiliation"));
         }
+        if (StringUtils.isBlank(gtdDTO.getResponsiblePersonTitle())) {
+            addFieldError("responsiblePersonTitle",
+                    ("Please specify a title"));
+        }
     }
 
     protected void checkForMandatoryResponsibleParty() {
