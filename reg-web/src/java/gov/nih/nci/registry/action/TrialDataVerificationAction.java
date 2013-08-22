@@ -93,10 +93,11 @@ public class TrialDataVerificationAction extends ActionSupport implements
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi);   
             ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO); 
-            List<StudyProtocolQueryDTO> list = protocolQueryService.getActiveInactiveStudyProtocolsById(studyProtocolId);
+            List<StudyProtocolQueryDTO> list = 
+                  protocolQueryService.getActiveInactiveStudyProtocolsById(studyProtocolId);
             for (StudyProtocolQueryDTO dto : list) {
-            	DocumentWorkflowStatusCode dwf = dto.getDocumentWorkflowStatusCode();
-            	if (ABSTRACTED_CODES.contains(dwf)) {
+                DocumentWorkflowStatusCode dwf = dto.getDocumentWorkflowStatusCode();
+                if (ABSTRACTED_CODES.contains(dwf)) {
                     TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
                     trialWebDTO.setStudyProtocolId(dto.getStudyProtocolId().toString());
                     trialWebDTO.setVerificationMethod(dwf.getCode());
