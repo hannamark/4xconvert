@@ -127,4 +127,11 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(
+         Long studyProtocolId) throws PAException {
+         // TODO Auto-generated method stub
+         return null;
+    }
 }

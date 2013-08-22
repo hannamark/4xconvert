@@ -121,4 +121,9 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
     public List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException {
         return serviceLocal.getStudyProtocolByAgentNsc(agentNsc);
     }
+    
+    @Override
+    public List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(Long studyProtocolId) throws PAException {
+       return serviceLocal.getActiveInactiveStudyProtocolsById(studyProtocolId);
+    }
 }

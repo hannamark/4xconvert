@@ -1304,6 +1304,5 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setStudyStatusCodeList(List<String> studyStatusCodeList) {
         this.studyStatusCodeList = studyStatusCodeList;
     }
-        
     
 }

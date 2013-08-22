@@ -32,9 +32,12 @@ import gov.nih.nci.registry.dto.TrialVerificationDataWebDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
+
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -88,24 +91,23 @@ public class TrialDataVerificationAction extends ActionSupport implements
     public String view() throws PAException {
         try {
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi);
-            
-            ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
-            StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
-            studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            DocumentWorkflowStatusCode dwfs = studyProtocolQueryDTO.getDocumentWorkflowStatusCode();
-            
-            if (ABSTRACTED_CODES.contains(dwfs)) {
-                TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
-                trialWebDTO.setStudyProtocolId(IiConverter.convertToString(studyProtocolIi));
-                trialWebDTO.setVerificationMethod(dwfs.getCode());
-                trialWebDTO.setUserLastUpdated("CTRO Staff");
-                if (studyProtocolQueryDTO.getDocumentWorkflowStatusDate() != null) {
-                    trialWebDTO.setUpdatedDate(studyProtocolQueryDTO.getDocumentWorkflowStatusDate().toString());
-                }                
-                webDTOList.add(trialWebDTO);
+            StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi);   
+            ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO); 
+            List<StudyProtocolQueryDTO> list = protocolQueryService.getActiveInactiveStudyProtocolsById(studyProtocolId);
+            for (StudyProtocolQueryDTO dto : list) {
+            	DocumentWorkflowStatusCode dwf = dto.getDocumentWorkflowStatusCode();
+            	if (ABSTRACTED_CODES.contains(dwf)) {
+                    TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
+                    trialWebDTO.setStudyProtocolId(dto.getStudyProtocolId().toString());
+                    trialWebDTO.setVerificationMethod(dwf.getCode());
+                    trialWebDTO.setUserLastUpdated("CTRO Staff");
+                    if (dto.getDocumentWorkflowStatusDate() != null) {
+                        trialWebDTO.setUpdatedDate(dto.getDocumentWorkflowStatusDate().toString());
+                    }                
+                    webDTOList.add(trialWebDTO);
+                }
             }
-            
+
             addUpdateSubmittedTrials(studyProtocolIi);
             List<TrialVerificationDataDTO> trialList = trialDataVerificationService
             .getDataByStudyProtocolId(studyProtocolId);
@@ -117,6 +119,7 @@ public class TrialDataVerificationAction extends ActionSupport implements
                 trialWebDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getDateLastUpdated()).toString());
                 webDTOList.add(trialWebDTO);      
             }
+            // have to write the code to sort the list with the dates in descending order. 
             return SUCCESS_MSG;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());

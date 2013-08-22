@@ -153,6 +153,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -663,8 +664,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (StringUtils.isNotBlank(crit.getSubmitter())) {
             sp.setUserLastCreated(CSMUserService.getInstance().getCSMUser(crit.getSubmitter()));
         }
-
-        sp.setStatusCode(ActStatusCode.ACTIVE);
+            sp.setStatusCode(ActStatusCode.ACTIVE);
+            
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
         sp.setCtroOverride(crit.getCtroOverride());
         
@@ -676,7 +677,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         
         populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
     }
-
+   
+    
     private void populateExampleStudyProtocolSumm4FundSrc(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (crit.getSumm4FundingSourceId() != null
                 || StringUtils.isNotBlank(crit.getSumm4FundingSourceTypeCode())) {
@@ -1032,5 +1034,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         query.setParameter("type", InterventionTypeCode.DRUG);
         query.setParameter("statusCode", ActStatusCode.ACTIVE);
         return protocolQueryResultsService.getResultsLean(query.list());
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(Long studyProtocolId) throws PAException {
+         Session session = PaHibernateUtil.getCurrentSession();
+         SQLQuery query = session.createSQLQuery("select soi.study_protocol_id from "
+                + "study_otheridentifiers soi where soi.extension IN "
+                + "(select soi.extension from study_otheridentifiers soi where "
+                + " soi.study_protocol_id = :studyProtocolId"
+                + " and soi.root = '2.16.840.1.113883.3.26.4.3')");
+         query.setParameter("studyProtocolId", studyProtocolId);
+         return protocolQueryResultsService.getResultsLean(query.list());
     }
 }

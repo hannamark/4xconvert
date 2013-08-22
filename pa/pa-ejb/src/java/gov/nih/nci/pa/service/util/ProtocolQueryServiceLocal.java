@@ -168,4 +168,11 @@ public interface ProtocolQueryServiceLocal {
      * @throws PAException exception
      */
     List<StudyProtocolQueryDTO> getStudyProtocolByAgentNsc(String agentNsc) throws PAException;
+    /**
+     * Find the list of StudyProtocolQueryDTO based on ID.
+     * @param studyProtocolId studyProtocolId
+     * @return List of StudyProtocolQueryDTO
+     * @throws PAException exception
+     */
+    List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(Long studyProtocolId) throws PAException;
 }
