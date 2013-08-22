@@ -504,6 +504,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             title = study.getOfficialTitle();
 
             StudyProtocolDTO studyProtocolDTO = existentStudy;
+            if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
+                throw new PAException("Complete trials cannot be updated from ClinicalTrials.gov");
+            }
 
             verifyPopulateAndPersist(studyProtocolDTO, study, nctIdStr, xml,
                     true);
@@ -512,9 +515,10 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                     SUCCESS, currentUser);
             return trialNciId;
         } catch (Exception e) {
+            LOG.error(e, e);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
                     FAILURE + e.getMessage(), currentUser);
-            throw new PAException(e);
+            throw new PAException(e.getMessage()); // NOPMD
         }
 
     }

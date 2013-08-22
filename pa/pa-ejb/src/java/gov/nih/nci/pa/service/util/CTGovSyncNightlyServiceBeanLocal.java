@@ -189,7 +189,7 @@ public class CTGovSyncNightlyServiceBeanLocal implements
     private void updateTrial(String nctIdentifier) throws PAException {
         try {
             //update the trial in CTRP                                        
-            String nciIdentifier = ctGovSyncServiceLocal.importTrial(nctIdentifier);            
+            ctGovSyncServiceLocal.importTrial(nctIdentifier);            
         } catch (PAException pae) {
             LOG.error("Update for : " + nctIdentifier + " failed. " + pae.getMessage());
         }

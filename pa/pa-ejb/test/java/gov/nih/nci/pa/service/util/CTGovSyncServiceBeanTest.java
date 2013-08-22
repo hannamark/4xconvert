@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
@@ -43,12 +43,14 @@ import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.AbstractTrialRegistrationTestBase;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -67,6 +69,7 @@ import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +83,7 @@ import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -646,6 +650,29 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Success", log.getImportStatus());
     }
 
+    @Test
+    public final void testAttemptUpdateCompleteTrial() throws PAException,
+            ParseException {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Complete trials cannot be updated from ClinicalTrials.gov");
+
+        final StudyProtocolServiceLocal mock = mock(StudyProtocolServiceLocal.class);
+        final StudyProtocolDTO dto = new StudyProtocolDTO();
+        dto.setIdentifier(TestSchema.nonPropTrialData());
+
+        final String nctID = "NCT01861054";
+        when(mock.getStudyProtocolsByNctId(nctID)).thenReturn(
+                Arrays.asList(dto));
+
+        try {
+            serviceBean.setStudyProtocolService(mock);
+            serviceBean.importTrial(nctID);
+        } finally {
+            serviceBean.setStudyProtocolService(studyProtocolService);
+        }
+    }
+    
     private StudyContact getStudyContact(InterventionalStudyProtocol sp,
             StudyContactRoleCode code) {
         for (StudyContact ss : sp.getStudyContacts()) {
