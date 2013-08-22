@@ -305,15 +305,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException {
-        ResponsiblePartyDTO party = new ResponsiblePartyDTO();
-        if (studyContactDTO != null) {
-            party.setType(ResponsiblePartyType.PRINCIPAL_INVESTIGATOR);
-            party.setInvestigator(principalInvestigatorDTO);
-            party.setAffiliation(leadOrganizationDTO);
-            party.setTitle(StringUtils.EMPTY);
-        } else {
-            party.setType(ResponsiblePartyType.SPONSOR);
-        }
+        ResponsiblePartyDTO party = getResponsiblePartyDTO(leadOrganizationDTO,
+                principalInvestigatorDTO, studyContactDTO);
         return amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, party,
@@ -321,6 +314,30 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 summary4OrganizationDTO, summary4StudyResourcingDTO,
                 studyRegAuthDTO, isBatchMode,
                 handleDuplicateGrantAndINDsGracefully);
+    }
+
+    /**
+     * @param leadOrganizationDTO
+     * @param principalInvestigatorDTO
+     * @param studyContactDTO
+     * @return
+     */
+    private ResponsiblePartyDTO getResponsiblePartyDTO(
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO, StudyContactDTO studyContactDTO) {
+        ResponsiblePartyDTO party = new ResponsiblePartyDTO();
+        if (studyContactDTO != null) {
+            party.setType(ResponsiblePartyType.PRINCIPAL_INVESTIGATOR);
+            party.setInvestigator(principalInvestigatorDTO);
+            party.setAffiliation(leadOrganizationDTO);
+            String title = StConverter.convertToString(studyContactDTO
+                    .getTitle());
+            party.setTitle(StringUtils.isBlank(title) ? "Principal Investigator"
+                    : StringUtils.EMPTY);
+        } else {
+            party.setType(ResponsiblePartyType.SPONSOR);
+        }
+        return party;
     }
     
     /**
@@ -656,15 +673,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudySiteContactDTO studySiteContactDTO, List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException {
-        ResponsiblePartyDTO party = new ResponsiblePartyDTO();
-        if (studyContactDTO != null) {
-            party.setType(ResponsiblePartyType.PRINCIPAL_INVESTIGATOR);
-            party.setInvestigator(principalInvestigatorDTO);
-            party.setAffiliation(leadOrganizationDTO);
-            party.setTitle(StringUtils.EMPTY);
-        } else {
-            party.setType(ResponsiblePartyType.SPONSOR);
-        }
+        ResponsiblePartyDTO party = getResponsiblePartyDTO(leadOrganizationDTO,
+                principalInvestigatorDTO, studyContactDTO);
         return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
                 overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
