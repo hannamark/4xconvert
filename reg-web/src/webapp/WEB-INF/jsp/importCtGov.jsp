@@ -55,7 +55,7 @@
 					<s:if test="study!=null">
 						<s:hidden id="nctIdToImport" name="nctIdToImport"
 							value="%{study.nctId}" />
-						<h2>Studies on CT.Gov</h2>
+						<h2>Studies on ClinicalTrials.gov</h2>
 						<s:set name="studies" value="study" scope="request" />
 						<display:table class="data" sort="list" pagesize="10" uid="row"
 							name="studies" export="false"
