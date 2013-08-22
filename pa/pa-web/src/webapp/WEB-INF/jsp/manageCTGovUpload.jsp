@@ -33,7 +33,7 @@
                 <table class="form">
                         <tr>
                             <td  scope="row" class="label" align="left">
-                                <label for="enabled">CT.Gov Upload Enabled?</label>                               
+                                <label for="enabled">ClinicalTrials.gov Upload Enabled?</label>                               
                             </td>
                             <td class="value">                                
                                 <s:select id="enabled" name="enabled" list="#{'false':'No', 'true':'Yes'}"/>                                          
@@ -47,7 +47,7 @@
                                 <s:a href="javascript:void(0)" cssClass="btn" onclick="save()"><span class="btn_img"><span class="save">Save Settings</span></span></s:a>
                             </li>
                             <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="triggerCTGovUpload()"><span class="btn_img"><span class="save">Start CT.Gov Upload Now</span></span></s:a>
+                                <s:a href="javascript:void(0)" cssClass="btn" onclick="triggerCTGovUpload()"><span class="btn_img"><span class="save">Start ClinicalTrials.gov Upload Now</span></span></s:a>
                             </li>                            
                         </ul>
                     </del>

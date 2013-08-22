@@ -950,7 +950,9 @@ public class TrialRegistrationValidator {
             throw new PAException(VALIDATION_EXCEPTION + "Study Protocol cannot be null.");
         }
         if (ISOUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
-            throw new PAException(VALIDATION_EXCEPTION + "Study Protocol Ct.gov XML indicator cannot be null.");
+            throw new PAException(
+                    VALIDATION_EXCEPTION
+                            + "Study Protocol ClinicalTrials.gov XML indicator cannot be null.");
         }
     }
 

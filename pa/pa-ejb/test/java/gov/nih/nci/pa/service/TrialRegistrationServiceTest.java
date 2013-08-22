@@ -790,7 +790,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     @Test
     public void nullStudyProtocolCtGovXmlIndicator() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Study Protocol Ct.gov XML indicator cannot be null.");
+        thrown.expectMessage("Study Protocol ClinicalTrials.gov XML indicator cannot be null.");
 
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setCtgovXmlRequiredIndicator(null);

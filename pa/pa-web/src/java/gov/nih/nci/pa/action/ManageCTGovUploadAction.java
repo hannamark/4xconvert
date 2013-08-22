@@ -66,7 +66,7 @@ public class ManageCTGovUploadAction extends ActionSupport implements
                     Constants.UPDATE_MESSAGE);
         } else {
             request.setAttribute(Constants.FAILURE_MESSAGE,
-                    "Only Super Abstractors can change CT.Gov Upload settings");
+                    "Only Super Abstractors can change ClinicalTrials.gov Upload settings");
         }
         return execute();
     }
@@ -84,7 +84,7 @@ public class ManageCTGovUploadAction extends ActionSupport implements
             request.setAttribute(Constants.SUCCESS_MESSAGE, "Upload performed");
         } else {
             request.setAttribute(Constants.FAILURE_MESSAGE,
-                    "Only Super Abstractors can trigger CT.Gov Upload");
+                    "Only Super Abstractors can trigger ClinicalTrials.gov Upload");
         }
         return SUCCESS;
     }

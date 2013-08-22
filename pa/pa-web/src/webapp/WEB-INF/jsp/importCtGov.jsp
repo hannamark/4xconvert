@@ -74,7 +74,7 @@
 							value="%{study.nctId}" />
 						<s:hidden id="studyExists" name="studyExists"
                             value="%{studyExists}" />	
-						<h2>Studies on CT.Gov</h2>
+						<h2>Studies on ClinicalTrials.gov</h2>
 						<s:set name="studies" value="study" scope="request" />
 						<display:table class="data" sort="list" pagesize="10" uid="row"
 							name="studies" export="false"
@@ -101,7 +101,7 @@
                             in CTRP, we found an exact match by title and category. The matching trial's NCI ID is
                             <c:out value="${potentialMatch.nciIdentifier}"></c:out>. 
                              Please click Cancel to abort the import, or
-                            click Import Trial to go ahead and import this trial from CT.Gov as new anyway.
+                            click Import Trial to go ahead and import this trial from ClinicalTrials.gov as new anyway.
                           </div>
 						</c:if>
 						

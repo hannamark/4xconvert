@@ -430,7 +430,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } catch (Exception e) {
             LOG.error(e, e);
             createImportLogEntry(EMPTY, nctID, EMPTY, EMPTY,
-                    "Failure: unable to retrieve from CT.Gov", currentUser);
+                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser);
             throw new PAException(e.getMessage()); // NOPMD
         }
         if (xml == null) {

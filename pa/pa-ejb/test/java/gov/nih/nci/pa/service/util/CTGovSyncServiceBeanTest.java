@@ -409,7 +409,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         CTGovImportLog log = (CTGovImportLog) session.createQuery(
                 " from CTGovImportLog log where log.nctID='NCT500'")
                 .uniqueResult();
-        assertEquals("Failure: unable to retrieve from CT.Gov",
+        assertEquals("Failure: unable to retrieve from ClinicalTrials.gov",
                 log.getImportStatus());
     }
 

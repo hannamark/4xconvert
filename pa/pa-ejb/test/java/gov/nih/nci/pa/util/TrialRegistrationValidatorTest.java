@@ -1206,7 +1206,7 @@ public class TrialRegistrationValidatorTest {
     @Test
     public void testValidateStudyProtocolNoCTGOV() throws PAException {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Validation Exception Study Protocol Ct.gov XML indicator cannot be null.");
+        thrown.expectMessage("Validation Exception Study Protocol ClinicalTrials.gov XML indicator cannot be null.");
         validator.validateStudyProtocol(studyProtocolDTO);
     }
     
