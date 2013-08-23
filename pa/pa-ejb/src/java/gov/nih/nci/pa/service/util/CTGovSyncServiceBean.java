@@ -133,8 +133,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.ConnectionReleaseMode;
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.SessionFactoryImplementor;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -1527,19 +1529,48 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
     }
 
-    @Override
-    public List<CTGovImportLog> getLogEntries(Date onOrAfter, Date onOrBefore)
+    @Override        
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    // CHECKSTYLE:OFF More than 7 Parameters
+    public List<CTGovImportLog> getLogEntries(String nciIdentifier, String nctIdentifier, String officialTitle, 
+            String action, String importStatus, String userCreated, Date onOrAfter, Date onOrBefore)
             throws PAException {
-        String hqlQuery = "from CTGovImportLog l where l.dateCreated "
-                + "between :start and :end order by l.dateCreated desc ";
+        // CHECKSTYLE:ON
         Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery(hqlQuery);
-        query.setMaxResults(L_10000);
-        query.setParameter("start", onOrAfter);
-        query.setParameter("end", onOrBefore);
-        return query.list();
+        Criteria criteria = session.createCriteria(CTGovImportLog.class);
+        criteria.setMaxResults(L_10000);
+        if (StringUtils.isNotEmpty(nciIdentifier)) {
+            criteria.add(Restrictions.like("nciID", "%" + nciIdentifier + "%"));
+        }
+        if (StringUtils.isNotEmpty(nctIdentifier)) {
+            criteria.add(Restrictions.like("nctID", "%" + nctIdentifier + "%"));
+        }
+        if (StringUtils.isNotEmpty(officialTitle)) {
+            criteria.add(Restrictions.like("title", "%" + officialTitle + "%"));
+        }
+        if (StringUtils.isNotEmpty(action)) {
+            criteria.add(Restrictions.eq("action", action));
+        }
+        if (StringUtils.isNotEmpty(userCreated)) {
+            criteria.add(Restrictions.eq("userCreated", userCreated));
+        }
+        if (StringUtils.isNotEmpty(importStatus)) {
+            criteria.add(Restrictions.like("importStatus", importStatus + "%"));
+        }
+        //start date is specified but end date is not specified
+        if (onOrAfter != null && onOrBefore == null) {
+            criteria.add(Restrictions.ge("dateCreated", onOrAfter));
+        } else if (onOrBefore != null && onOrAfter == null) {                
+            //end date is specified but start date is not specified
+            criteria.add(Restrictions.le("dateCreated", onOrBefore));
+        } else if (onOrBefore != null && onOrAfter != null) {
+            //both start and end dates are specified
+            criteria.add(Restrictions.between("dateCreated", onOrAfter, onOrBefore));
+        }
+        criteria.addOrder(Order.desc("dateCreated"));
+        return criteria.list();
     }
-
+    
     /**
      * @param regulatoryAuthorityService
      *            the regulatoryAuthorityService to set

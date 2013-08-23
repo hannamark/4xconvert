@@ -709,9 +709,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         CTGovImportLog log1 = new CTGovImportLog();
         log1.setNciID("NCI1");
         log1.setNctID("NCT1");
-        log1.setTitle("Title1");
+        log1.setTitle("Title : Trial 1");
         log1.setAction("New Trial");
-        log1.setImportStatus("Failure");
+        log1.setImportStatus("Success");
         log1.setUserCreated("User1");
         log1.setDateCreated(DateUtils.parseDate("08/01/2013",
                 new String[] { "MM/dd/yyyy" }));
@@ -720,28 +720,101 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         CTGovImportLog log2 = new CTGovImportLog();
         log2.setNciID("NCI2");
         log2.setNctID("NCT2");
-        log2.setTitle("Title2");
-        log2.setAction("New Trial");
-        log2.setImportStatus("Failure");
-        log2.setUserCreated("User2");
-        log2.setDateCreated(DateUtils.parseDate("07/01/2013",
+        log2.setTitle("Title : Trial 2");
+        log2.setAction("Update");
+        log2.setImportStatus("Failure : Exception");
+        log2.setUserCreated("User1");
+        log2.setDateCreated(DateUtils.parseDate("07/15/2013",
                 new String[] { "MM/dd/yyyy" }));
         session.save(log2);
         session.flush();
+        
+        CTGovImportLog log3 = new CTGovImportLog();
+        log3.setNciID("NCI3");
+        log3.setNctID("NCT3");
+        log3.setTitle("Title : Trial 3");
+        log3.setAction("Update");
+        log3.setImportStatus("Success");
+        log3.setUserCreated("User2");
+        log3.setDateCreated(DateUtils.parseDate("07/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        session.save(log3);
+        session.flush();
 
-        List<CTGovImportLog> all = serviceBean.getLogEntries(new Date(0),
+        //exercise start and end dates are specified
+        List<CTGovImportLog> entries = serviceBean.getLogEntries(null, null, null, null, null, null, new Date(0), 
                 new Date(System.currentTimeMillis()));
-        assertEquals(2, all.size());
-        assertEquals("NCI1", all.get(0).getNciID());
-        assertEquals("NCI2", all.get(1).getNciID());
-
-        List<CTGovImportLog> nci1 = serviceBean
-                .getLogEntries(DateUtils.parseDate("07/30/2013",
+        assertEquals(3, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        assertEquals("NCI2", entries.get(1).getNciID());
+        assertEquals("NCI3", entries.get(2).getNciID());
+        
+        //exercise start and end dates are specified
+        entries = serviceBean.getLogEntries(null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
                         new String[] { "MM/dd/yyyy" }), DateUtils.parseDate(
-                        "08/01/2013", new String[] { "MM/dd/yyyy" }));
-        assertEquals(1, nci1.size());
-        assertEquals("NCI1", nci1.get(0).getNciID());
+                                "08/01/2013", new String[] { "MM/dd/yyyy" }));
+        assertEquals(1, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        
+        //exercise start date is specified
+        entries = serviceBean.getLogEntries(null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
+                new String[] { "MM/dd/yyyy" }), null);
+        assertEquals(1, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        
+        //exercise end date is specified
+        entries = serviceBean.getLogEntries(null, null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
+                new String[] { "MM/dd/yyyy" }));
+        assertEquals(2, entries.size());
+        assertEquals("NCI2", entries.get(0).getNciID());
+        assertEquals("NCI3", entries.get(1).getNciID());
 
+        //exercise NCI identifier is specified
+        entries = serviceBean.getLogEntries("NCI3", null, null, null, null, null, null, null);
+        assertEquals(1, entries.size());
+        assertEquals("NCI3", entries.get(0).getNciID());
+        
+        //exercise NCT identifier is specified
+        entries = serviceBean.getLogEntries(null, "NCT2", null, null, null, null, null, null);
+        assertEquals(1, entries.size());
+        assertEquals("NCT2", entries.get(0).getNctID());
+        
+        //exercise title is specified
+        entries = serviceBean.getLogEntries(null, null, "Title :", null, null, null, null, null);
+        assertEquals(3, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        assertEquals("NCI2", entries.get(1).getNciID());
+        assertEquals("NCI3", entries.get(2).getNciID());
+        
+        //exercise action is specified
+        entries = serviceBean.getLogEntries(null, null, null, "New Trial", null, null, null, null);
+        assertEquals(1, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        
+        entries = serviceBean.getLogEntries(null, null, null, "Update", null, null, null, null);
+        assertEquals(2, entries.size());
+        assertEquals("NCI2", entries.get(0).getNciID());
+        assertEquals("NCI3", entries.get(1).getNciID());
+        
+        //exercise import status is specified
+        entries = serviceBean.getLogEntries(null, null, null, null, "Success", null, null, null);
+        assertEquals(2, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        assertEquals("NCI3", entries.get(1).getNciID());
+        
+        entries = serviceBean.getLogEntries(null, null, null, null, "Failure", null, null, null);
+        assertEquals(1, entries.size());
+        assertEquals("NCI2", entries.get(0).getNciID());
+        
+        //exercise user is specified
+        entries = serviceBean.getLogEntries(null, null, null, null, null, "User1", null, null);
+        assertEquals(2, entries.size());
+        assertEquals("NCI1", entries.get(0).getNciID());
+        assertEquals("NCI2", entries.get(1).getNciID());
+        
+        entries = serviceBean.getLogEntries(null, null, null, null, null, "User2", null, null);
+        assertEquals(1, entries.size());
+        assertEquals("NCI3", entries.get(0).getNciID());
     }
 
 }

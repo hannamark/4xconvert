@@ -35,6 +35,12 @@ Preparable {
     private boolean searchPerformed;
     
     private List<CTGovImportLog> ctGovImportLogs = new ArrayList<CTGovImportLog>();
+    private String nciIdentifier;
+    private String nctIdentifier;
+    private String officialTitle;
+    private String action;
+    private String importStatus;
+    private String userCreated;
     private String logsOnOrAfter;
     private String logsOnOrBefore;
     
@@ -70,8 +76,8 @@ Preparable {
                     .endOfDay(PAUtil.dateStringToDateTime(logsOnOrBefore))
                     : PAUtil.endOfDay(new Date());
             validateTimeLine(onOrAfter, onOrBefore);
-            ctGovImportLogs = ctGovSyncService.getLogEntries(
-                    onOrAfter, onOrBefore);
+            ctGovImportLogs = ctGovSyncService.getLogEntries(nciIdentifier, nctIdentifier, officialTitle, action, 
+                    importStatus, userCreated, onOrAfter, onOrBefore);
             searchPerformed = true;
             return SUCCESS;
         } catch (PAException e) {
@@ -82,6 +88,12 @@ Preparable {
         return ERROR;
     }
     
+    /**
+     * Validates start and end date
+     * @param onOrAfter start date
+     * @param onOrBefore end date
+     * @throws PAException PAException
+     */
     private void validateTimeLine(Date onOrAfter, Date onOrBefore) throws PAException {
         if (onOrAfter != null && onOrBefore != null
                 && onOrAfter.after(onOrBefore)) {
@@ -152,5 +164,89 @@ Preparable {
      */
     public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
         this.ctGovSyncService = ctGovSyncService;
+    }
+
+    /**
+     * @return NCI identifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+
+    /**
+     * @param nciIdentifier NCI identifier to set
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
+
+    /**
+     * @return NCT identifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+
+    /**
+     * @param nctIdentifier NCT identifier to set
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
+    }
+
+    /**
+     * @return trial official title
+     */
+    public String getOfficialTitle() {
+        return officialTitle;
+    }
+
+    /**
+     * @param officialTitle trial official title to set
+     */
+    public void setOfficialTitle(String officialTitle) {
+        this.officialTitle = officialTitle;
+    }
+
+    /**
+     * @return action performed
+     */
+    public String getAction() {
+        return action;
+    }
+
+    /**
+     * @param action action performed to set
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    /**
+     * @return import status
+     */
+    public String getImportStatus() {
+        return importStatus;
+    }
+
+    /**
+     * @param importStatus import status to set
+     */
+    public void setImportStatus(String importStatus) {
+        this.importStatus = importStatus;
+    }
+
+    /**
+     * @return user created
+     */
+    public String getUserCreated() {
+        return userCreated;
+    }
+
+    /**
+     * @param userCreated user created to set
+     */
+    public void setUserCreated(String userCreated) {
+        this.userCreated = userCreated;
     }
 }

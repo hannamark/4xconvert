@@ -30,8 +30,15 @@
 	}
 
 	function resetValues() {
+		$('ctGovImportLogsForm').reset();
 		$("logsOnOrAfter").value = "";
 		$("logsOnOrBefore").value = "";
+		$("nciIdentifier").value = "";
+		$("nctIdentifier").value = "";
+		$("officialTitle").value = "";
+		$("action").value = "";
+		$("importStatus").value = "";
+		$("userCreated").value = "";
 		$("ctGovImportLogsDiv").hide();
 	}
 
@@ -72,17 +79,68 @@
 			<pa:sucessMessage />
 
 			<table class="form" style="width: 0%;">
+			    <tr>
+			        <td scope="row" class="label">
+			            <label for="officialTitle"> <fmt:message key="logs.officialTitle"/></label>
+			        </td>
+			        <td>
+			            <s:textfield id="officialTitle" name="officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
+			        </td>
+			        <td scope="row" class="label">
+			            <label for="nciIdentifier"><fmt:message key="logs.nciIdentifier"/></label>
+			            <br><span class="info">(e.g: NCI-2008-00015)</span>
+			        </td>
+			        <td>
+			            <s:textfield id="nciIdentifier" name="nciIdentifier" maxlength="200" size="100"  cssStyle="width:200px" />
+			            <span class="formErrorMsg">			                
+			            </span>
+			        </td>                    
+			    </tr>
+			    <tr>
+			        <td scope="row" class="label">
+			            <label for="nctIdentifier"> <fmt:message key="logs.nctIdentifier"/></label>
+			            <br><span class="info">(e.g: NCT00810576)</span>
+                    </td>
+                    <td>
+                        <s:textfield id="nctIdentifier" name="nctIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
+                        <span class="formErrorMsg">                            
+                        </span>
+                    </td>
+                    <td scope="row" class="label">
+                        <label for="userCreated"><fmt:message key="logs.userCreated"/></label>
+                    </td>
+                    <td>
+                        <s:textfield id="userCreated" name="userCreated" maxlength="200" size="100"  cssStyle="width:200px" />
+                        <span class="formErrorMsg">                            
+                        </span>
+                    </td>                    
+                </tr>
+                <tr>
+                    <td scope="row" class="label">
+                        <label for="action"> <fmt:message key="logs.action"/></label>
+                    </td>
+                    <td>
+                        <s:select headerKey="" headerValue="All" id="action" name="action" 
+                        list="#{'New Trial':'New Trial','Update':'Update'}"  value="action" cssStyle="width:206px" />
+                    </td>
+                    <td scope="row" class="label">
+                        <label for="importStatus"> <fmt:message key="logs.importStatus"/></label>
+                    </td>
+                    <td>
+                        <s:select headerKey="" headerValue="All" id="importStatus" name="importStatus" 
+                        list="#{'Success':'Success','Failure':'Failure'}"  value="importStatus" cssStyle="width:206px" />
+                    </td>
+                </tr>
 				<tr>
 					<td scope="row" class="label"><label for="logsOnOrAfter"><fmt:message
-								key="logs.startDate" />:</label></td>
+								key="logs.startDate" /></label></td>
 					<td nowrap="nowrap"><s:textfield id="logsOnOrAfter"
 							name="logsOnOrAfter" maxlength="10" size="10" /> <a
 						href="javascript:showCal('Cal1')"> <img
 							src="${pageContext.request.contextPath}/images/ico_calendar.gif"
 							alt="Select Date" class="calendaricon" /></a>
-					<td>&nbsp;&nbsp;</td>
 					<td scope="row" class="label"><label for="logsOnOrBefore"><fmt:message
-								key="logs.endDate" />:</label></td>
+								key="logs.endDate" /></label></td>
 
 					<td nowrap="nowrap"><s:textfield id="logsOnOrBefore"
 							name="logsOnOrBefore" maxlength="10" size="10" /> <a
@@ -92,7 +150,7 @@
 					</a></td>
 				</tr>
 				<tr>
-					<td colspan="5" class="info"><b>Note:</b> Leave both fields
+					<td colspan="5" class="info"><b>Note:</b> Leave all the fields
 						empty to display the entire log. In any case, the number of
 						displayed records will be limited to 10,000 most recent ones of the
 						time interval requested.</td>
@@ -107,7 +165,7 @@
 								<span class="btn_img"><span class="search">Display
 										Log </span></span>
 							</s:a> <s:a href="javascript:void(0)" cssClass="btn"
-								onclick="resetValues()">
+								onclick="resetValues();">
 								<span class="btn_img"><span class="cancel">Reset </span></span>
 							</s:a></li>
 					</ul>

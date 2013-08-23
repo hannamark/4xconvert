@@ -165,8 +165,9 @@ public class CTGovSyncNightlyServiceLocalTest extends AbstractHibernateTestCase 
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0002")).thenReturn("NCI-2012-0002");
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0003")).thenReturn("NCI-2012-0003");      
         
-        when(ctGovSyncServiceLocal.getLogEntries(any(Date.class), any(Date.class))).thenReturn(
-                new ArrayList<CTGovImportLog>());
+        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
+                any(String.class), any(String.class), any(String.class), any(Date.class), 
+                any(Date.class))).thenReturn(new ArrayList<CTGovImportLog>());
     }
 
     /**

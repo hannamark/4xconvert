@@ -143,7 +143,8 @@ public class CTGovSyncNightlyServiceBeanLocal implements
             //Record the finish time of nightly job
             Date endDate = new Date();
             //Get the log entries which got created between start date and end date
-            List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(startDate, endDate);
+            List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(null, null, null, null, null, null, 
+                    startDate, endDate);
             if (logEntries != null && !logEntries.isEmpty()) {
                 //Send a status e-mail with a summary of trials in CTRP updated from CTGov to 
                 //authorized users
