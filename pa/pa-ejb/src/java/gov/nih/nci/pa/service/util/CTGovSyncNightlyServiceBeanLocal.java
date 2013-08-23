@@ -27,6 +27,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author ADas
  */
@@ -53,85 +55,99 @@ public class CTGovSyncNightlyServiceBeanLocal implements
     @EJB 
     private MailManagerServiceLocal mailManagerService;
     
+    private static final String CTGOVIMPORT_USERNAME = "ctgovimport";
+    
     @Override
     public void updateIndustrialAndConsortiaTrials() throws PAException {     
         if (isSyncEnabled()) {
-            //Record the start time of the nighlty job
-            Date startDate = new Date();
-            //Query all industrial and consortia trials with NCT identifiers in CTRP.
-            StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-            criteria.setIdentifierType(IdentifierType.NCT.getCode());
-            criteria.setNctNumber("NCT");
-            criteria.setTrialCategory("p");
-            criteria.setExcludeRejectProtocol(true);                        
-            List<StudyProtocolQueryDTO> trials = queryServiceLocal.getStudyProtocolByCriteria(criteria);            
-            LOG.info("Number of Industrial and Consortia records : " + trials.size());            
-            if (trials != null && !trials.isEmpty()) {            
-                //Loop over all the trials
-                for (StudyProtocolQueryDTO trial : trials) {
-                    String nctIdentifier = trial.getNctIdentifier();
-                    LOG.info("NCT Number : " + nctIdentifier);
-                    try {
-                        if (!StringUtils.isEmpty(nctIdentifier)) {                    
-                            //Retrieve the trial xml from CT.Gov and populate the clinical study object.
-                            ClinicalStudy study = ctGovSyncServiceLocal.getCtGovStudyByNctId(nctIdentifier);
-                            if (study != null) {
-                                //Check if there is a corresponding CT.Gov import log entry for the NCT identifier.
-                                List<CTGovImportLog> associatedImportLogs = getLogEntries(nctIdentifier);
-                                if (associatedImportLogs != null && !associatedImportLogs.isEmpty()) {
-                                    if (study.getLastchangedDate() != null) {
-                                        try {
-                                            DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
-                                            //last updated date in CTGov
-                                            Date lastUpdatedDateInCTGov = dateFormat.parse(
-                                                    study.getLastchangedDate().getContent());
-                                            CTGovImportLog latestImportLog = associatedImportLogs.get(0);
-                                            //last updated date in CTRP
-                                            Date lastUpdatedDateInCTRP = latestImportLog.getDateCreated();
-                                            //if last update date in CTGov is more recent than last update in 
-                                            //CTRP then import the trial from CT.Gov and update the same in CTRP. 
-                                            //Else update should be skipped.
-                                            LOG.info("Comparing " + study.getLastchangedDate().getContent() 
-                                                    + " and " + lastUpdatedDateInCTRP.toString());
-                                            if (lastUpdatedDateInCTGov.compareTo(lastUpdatedDateInCTRP) > 0) {
-                                                LOG.info("Last update date in CT.Gov is recent than the last update " 
-                                            + "date in CTRP. Performing the update for : " + trial.getNctIdentifier());
-                                                updateTrial(nctIdentifier);                                    
-                                            } else {
-                                                LOG.info("Last update date in CTRP is recent than the last update " 
-                                            + "date in CT.Gov. Skipping the update for : " + trial.getNctIdentifier());
-                                            }
-                                        } catch (ParseException pae) {
-                                            LOG.error("Skipping the update for : " + trial.getNctIdentifier() 
-                                                    + " as " + pae.getMessage());
+            UsernameHolder.setUser(CTGOVIMPORT_USERNAME);
+            try {
+                findAndUpdateTrials();
+            } finally {
+                UsernameHolder.setUser(null);
+            }
+        }
+    }
+
+    /**
+     * @throws PAException
+     */
+    private void findAndUpdateTrials() throws PAException {
+        //Record the start time of the nighlty job
+        Date startDate = new Date();
+        //Query all industrial and consortia trials with NCT identifiers in CTRP.
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType(IdentifierType.NCT.getCode());
+        criteria.setNctNumber("NCT");
+        criteria.setTrialCategory("p");
+        criteria.setExcludeRejectProtocol(true);                        
+        List<StudyProtocolQueryDTO> trials = queryServiceLocal.getStudyProtocolByCriteria(criteria);            
+        LOG.info("Number of Industrial and Consortia records : " + trials.size());            
+        if (trials != null && !trials.isEmpty()) {            
+            //Loop over all the trials
+            for (StudyProtocolQueryDTO trial : trials) {
+                String nctIdentifier = trial.getNctIdentifier();
+                LOG.info("NCT Number : " + nctIdentifier);
+                try {
+                    if (!StringUtils.isEmpty(nctIdentifier)) {                    
+                        //Retrieve the trial xml from CT.Gov and populate the clinical study object.
+                        ClinicalStudy study = ctGovSyncServiceLocal.getCtGovStudyByNctId(nctIdentifier);
+                        if (study != null) {
+                            //Check if there is a corresponding CT.Gov import log entry for the NCT identifier.
+                            List<CTGovImportLog> associatedImportLogs = getLogEntries(nctIdentifier);
+                            if (associatedImportLogs != null && !associatedImportLogs.isEmpty()) {
+                                if (study.getLastchangedDate() != null) {
+                                    try {
+                                        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+                                        //last updated date in CTGov
+                                        Date lastUpdatedDateInCTGov = dateFormat.parse(
+                                                study.getLastchangedDate().getContent());
+                                        CTGovImportLog latestImportLog = associatedImportLogs.get(0);
+                                        //last updated date in CTRP
+                                        Date lastUpdatedDateInCTRP = latestImportLog.getDateCreated();
+                                        //if last update date in CTGov is more recent than last update in 
+                                        //CTRP then import the trial from CT.Gov and update the same in CTRP. 
+                                        //Else update should be skipped.
+                                        LOG.info("Comparing " + study.getLastchangedDate().getContent() 
+                                                + " and " + lastUpdatedDateInCTRP.toString());
+                                        if (lastUpdatedDateInCTGov.compareTo(lastUpdatedDateInCTRP) > 0) {
+                                            LOG.info("Last update date in CT.Gov is recent than the last update " 
+                                        + "date in CTRP. Performing the update for : " + trial.getNctIdentifier());
+                                            updateTrial(nctIdentifier);                                    
+                                        } else {
+                                            LOG.info("Last update date in CTRP is recent than the last update " 
+                                        + "date in CT.Gov. Skipping the update for : " + trial.getNctIdentifier());
                                         }
-                                    } else {
-                                        //update the trial as the last changed date is not populated in CT.Gov trial.
-                                        LOG.info("Performing the update for : " + trial.getNctIdentifier());
-                                        //import the trial from CT.Gov and update the same in CTRP.
-                                        updateTrial(nctIdentifier);
-                                    }                                    
+                                    } catch (ParseException pae) {
+                                        LOG.error("Skipping the update for : " + trial.getNctIdentifier() 
+                                                + " as " + pae.getMessage());
+                                    }
                                 } else {
-                                    LOG.info("No Import Log Entries Found. Performing the update for : " 
-                                + trial.getNctIdentifier());
+                                    //update the trial as the last changed date is not populated in CT.Gov trial.
+                                    LOG.info("Performing the update for : " + trial.getNctIdentifier());
                                     //import the trial from CT.Gov and update the same in CTRP.
                                     updateTrial(nctIdentifier);
-                                }
+                                }                                    
+                            } else {
+                                LOG.info("No Import Log Entries Found. Performing the update for : " 
+                            + trial.getNctIdentifier());
+                                //import the trial from CT.Gov and update the same in CTRP.
+                                updateTrial(nctIdentifier);
                             }
                         }
-                    } catch (PAException pae) {
-                        LOG.error("Update for : " + nctIdentifier + " failed. " + pae.getMessage());
                     }
-                }             
-                //Record the finish time of nightly job
-                Date endDate = new Date();
-                //Get the log entries which got created between start date and end date
-                List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(startDate, endDate);
-                if (logEntries != null && !logEntries.isEmpty()) {
-                    //Send a status e-mail with a summary of trials in CTRP updated from CTGov to 
-                    //authorized users
-                    mailManagerService.sendCTGovSyncStatusSummaryMail(logEntries);                    
+                } catch (PAException pae) {
+                    LOG.error("Update for : " + nctIdentifier + " failed. " + pae.getMessage());
                 }
+            }             
+            //Record the finish time of nightly job
+            Date endDate = new Date();
+            //Get the log entries which got created between start date and end date
+            List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(startDate, endDate);
+            if (logEntries != null && !logEntries.isEmpty()) {
+                //Send a status e-mail with a summary of trials in CTRP updated from CTGov to 
+                //authorized users
+                mailManagerService.sendCTGovSyncStatusSummaryMail(logEntries);                    
             }
         }
     }

@@ -76,10 +76,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import static gov.nih.nci.pa.enums.FunctionalRoleStatusCode.CANCELLED;
-import static gov.nih.nci.pa.enums.FunctionalRoleStatusCode.NULLIFIED;
-import static gov.nih.nci.pa.enums.FunctionalRoleStatusCode.SUSPENDED;
-import static gov.nih.nci.pa.enums.FunctionalRoleStatusCode.TERMINATED;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
@@ -154,6 +150,7 @@ import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -924,18 +921,25 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session
                 .createQuery("select ss.researchOrganization.organization from StudySite ss "
-                        + "where ss.studyProtocol.id=:spId and ss.functionalCode=:fc and ss.statusCode not in (:stat)");
+                        + "where ss.studyProtocol.id=:spId and ss.functionalCode=:fc");
+        query.setMaxResults(1);
         query.setParameter("spId", IiConverter.convertToLong(spIi));
-        query.setParameter("fc", StudySiteFunctionalCode.LEAD_ORGANIZATION);
-        query.setParameterList("stat",
-                Arrays.asList(CANCELLED, NULLIFIED, SUSPENDED, TERMINATED));
+        query.setParameter("fc", StudySiteFunctionalCode.LEAD_ORGANIZATION);        
         Organization org = (Organization) query.uniqueResult();
         if (org == null) {
             throw new PAException(
-                    "The trial has no lead organization specified.");
+                    "The trial has no lead organization specified in the CTRP database; unable to perform an update");
         }
-        return getPAServiceUtils().getPOOrganizationEntity(
-                IiConverter.convertToPoOrganizationIi(org.getIdentifier()));
+       
+        try {
+            return PoRegistry.getOrganizationEntityService().getOrganization(
+                    IiConverter.convertToPoOrganizationIi(org.getIdentifier()));
+        } catch (NullifiedEntityException e) {
+            throw new PAException(
+                    "Trial's lead organization has been nullified; unable to perform an update",
+                    e);
+        }
+      
     }
 
     /**
