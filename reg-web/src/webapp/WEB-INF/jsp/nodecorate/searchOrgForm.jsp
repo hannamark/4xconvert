@@ -14,10 +14,9 @@ function formReset(){
 </SCRIPT>
 </head>
     <p align="center" class="info">
-        Type a string of characters in any of the text fields in the upper frame OR
-        enter PO ID or CTEP Identifier in the lower frame.
+        Type a string of characters in any of the text fields in the upper frame, or, 
+        enter the exact PO ID, or CTEP ID in the lower frame.
     </p> 
-Please do not use wildcard characters.<br>
 </p>
 <table class="form">
     <tr>
@@ -66,7 +65,7 @@ Please do not use wildcard characters.<br>
     <tr>
         <td><label for="orgPOIdSearch">PO ID (Exact Match)</label></td>
         <td><s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssStyle="width:200px" /></td>
-        <td><label for="orgCtepIdSearch">CTEP Identifier</label></td>
+        <td><label for="orgCtepIdSearch">CTEP ID</label></td>
         <td><s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100"
             cssStyle="width:200px" /></td>
     </tr>
