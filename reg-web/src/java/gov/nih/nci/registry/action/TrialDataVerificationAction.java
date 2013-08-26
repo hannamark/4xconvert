@@ -2,6 +2,8 @@ package gov.nih.nci.registry.action;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -35,6 +37,8 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -120,7 +124,14 @@ public class TrialDataVerificationAction extends ActionSupport implements
                 trialWebDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getDateLastUpdated()).toString());
                 webDTOList.add(trialWebDTO);      
             }
-            // have to write the code to sort the list with the dates in descending order. 
+            if (CollectionUtils.isNotEmpty(webDTOList)) {
+                Collections.sort(webDTOList, new Comparator<TrialVerificationDataWebDTO>() {
+                    public int compare(TrialVerificationDataWebDTO o1, TrialVerificationDataWebDTO o2) {
+                        return StringUtils.defaultString(o2.getUpdatedDate()).compareTo(
+                                StringUtils.defaultString(o1.getUpdatedDate()));
+                    }
+                });              
+            }
             return SUCCESS_MSG;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
