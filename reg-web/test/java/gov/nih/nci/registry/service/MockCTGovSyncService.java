@@ -83,11 +83,12 @@ public class MockCTGovSyncService implements CTGovSyncServiceLocal {
      * (non-Javadoc)
      * 
      * @see
-     * gov.nih.nci.pa.service.util.CTGovSyncServiceLocal#getLogEntries(java.
-     * util.Date, java.util.Date)
+     * gov.nih.nci.pa.service.util.CTGovSyncServiceLocal#getLogEntries(java.lang.String, java.lang.String, 
+     * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
      */
     @Override
-    public List<CTGovImportLog> getLogEntries(Date onOrAfter, Date onOrBefore)
+    public List<CTGovImportLog> getLogEntries(String nciIdentifier, String nctIdentifier, String officialTitle, String action, 
+            String importStatus, String userCreated, Date onOrAfter, Date onOrBefore)
             throws PAException {        
         return new ArrayList<CTGovImportLog>();
     }
