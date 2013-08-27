@@ -14,6 +14,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -23,7 +24,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "PLANNED_MARKER_SYNC_CADSR")
-public class PlannedMarkerSyncWithCaDSR extends AbstractEntity {
+public class PlannedMarkerSyncWithCaDSR extends AbstractEntity  implements Auditable {
     private static final long serialVersionUID = 1L;
     private static final String PLANNED_MARKER_MAPPING = "permissibleValue";
     /** Maximum length of textDescription attribute. */
