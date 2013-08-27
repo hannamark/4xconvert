@@ -104,6 +104,7 @@ import java.util.Set;
  *
  * @author gax
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class ContactListConverter {
 
     /**
@@ -129,29 +130,39 @@ public class ContactListConverter {
         Set<Tel> set = new LinkedHashSet();
         dset.setItem(set);
         for (Email c : email) {
-            TelEmail t = new TelEmail();
-            t.setValue(createURI(TelEmail.SCHEME_MAILTO, c.getValue()));
-            set.add(t);
+            if (c != null) {
+                TelEmail t = new TelEmail();
+                t.setValue(createURI(TelEmail.SCHEME_MAILTO, c.getValue()));
+                set.add(t);
+            }
         }
         for (PhoneNumber c : fax) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c.getValue()));
-            set.add(t);
+            if (c != null) {
+                TelPhone t = new TelPhone();
+                t.setValue(createURI(TelPhone.SCHEME_X_TEXT_FAX, c.getValue()));
+                set.add(t);
+            }
         }
         for (PhoneNumber c : phone) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_TEL, c.getValue()));
-            set.add(t);
+            if (c != null) {
+                TelPhone t = new TelPhone();
+                t.setValue(createURI(TelPhone.SCHEME_TEL, c.getValue()));
+                set.add(t);
+            }
         }
         for (URL c : url) {
-            TelUrl t = new TelUrl();
-            t.setValue(URI.create(c.getValue()));
-            set.add(t);
+            if (c != null) {
+                TelUrl t = new TelUrl();
+                t.setValue(URI.create(c.getValue()));
+                set.add(t);
+            }
         }
         for (PhoneNumber c : text) {
-            TelPhone t = new TelPhone();
-            t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c.getValue()));
-            set.add(t);
+            if (c != null) {
+                TelPhone t = new TelPhone();
+                t.setValue(createURI(TelPhone.SCHEME_X_TEXT_TEL, c.getValue()));
+                set.add(t);
+            }
         }
 
         return dset;
