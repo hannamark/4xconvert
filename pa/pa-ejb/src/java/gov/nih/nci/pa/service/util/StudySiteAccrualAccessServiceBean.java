@@ -882,34 +882,36 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     public List<AccrualAccessAssignmentByTrialDTO> getAccrualAccessAssignmentByTrial(Collection<Long> trialIds)
             throws PAException {
         List<AccrualAccessAssignmentByTrialDTO> list = new ArrayList<AccrualAccessAssignmentByTrialDTO>();
-        Session session = PaHibernateUtil.getCurrentSession();
-        
-        String hql = "select saa from StudyAccrualAccess saa where "
-                + "saa.statusCode = :statusCode and saa.actionCode = :actionCode "
-                + "and saa.studyProtocol.id in (:trialIds)";
-        Query query = session.createQuery(hql);        
-        query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
-        query.setParameter(ACTION_CODE, AssignmentActionCode.ASSIGNED);
-        query.setParameterList("trialIds", trialIds);
-        List<StudyAccrualAccess> accessList = query.list();
-        for (StudyAccrualAccess saa : accessList) {
-            final StudyProtocol protocol = saa.getStudyProtocol();
-            String trialNciId = new PAServiceUtils().getTrialNciId(protocol.getId());
-            String title = protocol.getOfficialTitle();
-            String submitter = saa.getRegistryUser().getFullName();
-            SummaryFourFundingCategoryCode code = Boolean.TRUE.equals(protocol
-                    .getProprietaryTrialIndicator()) ? SummaryFourFundingCategoryCode.INDUSTRIAL
-                    : getFundingCode(protocol);
-            AccrualAccessAssignmentByTrialDTO dto = findDTOInListByTrialID(
-                    list, trialNciId);
-            if (dto == null) {
-                dto = new AccrualAccessAssignmentByTrialDTO();
-                dto.setCategoryCode(code);
-                dto.setTrialNciId(trialNciId);
-                dto.setTrialTitle(title);                
-                list.add(dto);
-            }
-            dto.getAccrualSubmitters().add(submitter);
+        if (CollectionUtils.isNotEmpty(trialIds)) {
+        	Session session = PaHibernateUtil.getCurrentSession();
+
+        	String hql = "select saa from StudyAccrualAccess saa where "
+        			+ "saa.statusCode = :statusCode and saa.actionCode = :actionCode "
+        			+ "and saa.studyProtocol.id in (:trialIds)";
+        	Query query = session.createQuery(hql);        
+        	query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
+        	query.setParameter(ACTION_CODE, AssignmentActionCode.ASSIGNED);
+        	query.setParameterList("trialIds", trialIds);
+        	List<StudyAccrualAccess> accessList = query.list();
+        	for (StudyAccrualAccess saa : accessList) {
+        		final StudyProtocol protocol = saa.getStudyProtocol();
+        		String trialNciId = new PAServiceUtils().getTrialNciId(protocol.getId());
+        		String title = protocol.getOfficialTitle();
+        		String submitter = saa.getRegistryUser().getFullName();
+        		SummaryFourFundingCategoryCode code = Boolean.TRUE.equals(protocol
+        				.getProprietaryTrialIndicator()) ? SummaryFourFundingCategoryCode.INDUSTRIAL
+        						: getFundingCode(protocol);
+        		AccrualAccessAssignmentByTrialDTO dto = findDTOInListByTrialID(
+        				list, trialNciId);
+        		if (dto == null) {
+        			dto = new AccrualAccessAssignmentByTrialDTO();
+        			dto.setCategoryCode(code);
+        			dto.setTrialNciId(trialNciId);
+        			dto.setTrialTitle(title);                
+        			list.add(dto);
+        		}
+        		dto.getAccrualSubmitters().add(submitter);
+        	}
         }
         return list;
     }
