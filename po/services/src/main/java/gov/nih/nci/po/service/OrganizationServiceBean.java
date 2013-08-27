@@ -570,7 +570,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                     " AND lower(a.postalcode) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getPostalCode().toLowerCase()) + "%"));
+                                    .getPostalCode().trim().toLowerCase()) + "%"));
         }
     }
     
@@ -585,7 +585,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                     " AND lower(a.stateorprovince) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getStateOrProvince().toLowerCase())
+                                    .getStateOrProvince().trim().toLowerCase())
                             + "%"));
         }
     }
@@ -601,7 +601,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                     " AND lower(a.cityormunicipality) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getCityOrMunicipality().toLowerCase())
+                                    .getCityOrMunicipality().trim().toLowerCase())
                             + "%"));
         }
     }
@@ -616,7 +616,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             sql.append(String.format(
                     " AND lower(a.deliveryaddressline) like '%s' ",
                     "%"
-                            + StringEscapeUtils.escapeSql(criteria.getDeliveryAddressLine()
+                            + StringEscapeUtils.escapeSql(criteria.getDeliveryAddressLine().trim()
                                     .toLowerCase()) + "%"));
         }
     }
@@ -631,7 +631,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             sql.append(String.format(
                     " AND lower(a.streetaddressline) like '%s' ",
                     "%"
-                            + StringEscapeUtils.escapeSql(criteria.getStreetAddressLine()
+                            + StringEscapeUtils.escapeSql(criteria.getStreetAddressLine().trim()
                                     .toLowerCase()) + "%"));
         }
     }
@@ -663,7 +663,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                             + "fam.statuscode='ACTIVE' and lower(fam.name) like '%s') ",
                             "%"
                                     + StringEscapeUtils.escapeSql(criteria
-                                            .getFamilyName().toLowerCase())
+                                            .getFamilyName().trim().toLowerCase())
                                     + "%"));
         }
     }
@@ -678,7 +678,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             sql.append(String.format(
                     " AND lower(o.name) like '%s' ",
                     "%"
-                            + StringEscapeUtils.escapeSql(criteria.getName()
+                            + StringEscapeUtils.escapeSql(criteria.getName().trim()
                                     .toLowerCase()) + "%"));
         }
     }
@@ -722,9 +722,9 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                             + "hcf on hcf_oi.hcf_id=hcf.id and hcf.player_id=o.id and hcf.status <> 'NULLIFIED' and"
                             + " hcf_oi.root='%s' and lower(hcf_oi.extension) like '%s')) ",
                             CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
-                                    + StringEscapeUtils.escapeSql(criteria.getCtepID()).toLowerCase() + "%",
+                                    + StringEscapeUtils.escapeSql(criteria.getCtepID().trim()).toLowerCase() + "%",
                             CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
-                                    + StringEscapeUtils.escapeSql(criteria.getCtepID()).toLowerCase() + "%"));
+                                    + StringEscapeUtils.escapeSql(criteria.getCtepID().trim()).toLowerCase() + "%"));
         }
     }
 

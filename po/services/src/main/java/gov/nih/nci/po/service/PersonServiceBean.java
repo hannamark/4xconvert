@@ -435,7 +435,7 @@ public class PersonServiceBean extends
                     " AND lower(a.postalcode) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getPostalCode().toLowerCase()) + "%"));
+                                    .getPostalCode().trim().toLowerCase()) + "%"));
         }
     }
 
@@ -450,7 +450,7 @@ public class PersonServiceBean extends
                     " AND lower(a.stateorprovince) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getStateOrProvince().toLowerCase()) + "%"));
+                                    .getStateOrProvince().trim().toLowerCase()) + "%"));
         }
     }
 
@@ -465,7 +465,7 @@ public class PersonServiceBean extends
                     " AND lower(a.cityormunicipality) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getCityOrMunicipality().toLowerCase())
+                                    .getCityOrMunicipality().trim().toLowerCase())
                             + "%"));
         }
     }
@@ -481,7 +481,7 @@ public class PersonServiceBean extends
                     " AND lower(a.deliveryaddressline) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getDeliveryAddressLine().toLowerCase())
+                                    .getDeliveryAddressLine().trim().toLowerCase())
                             + "%"));
         }
     }
@@ -497,7 +497,7 @@ public class PersonServiceBean extends
                     " AND lower(a.streetaddressline) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getStreetAddressLine().toLowerCase())
+                                    .getStreetAddressLine().trim().toLowerCase())
                             + "%"));
         }
     }
@@ -519,7 +519,7 @@ public class PersonServiceBean extends
             PersonSearchCriteria criteria) {
         if (StringUtils.isNotBlank(criteria.getOrg())) {
             String org = "%"
-                    + StringEscapeUtils.escapeSql(criteria.getOrg()
+                    + StringEscapeUtils.escapeSql(criteria.getOrg().trim()
                             .toLowerCase()) + "%";
             sql.append(String
                     .format(" AND ((select count(ro.id) from clinicalresearchstaff ro inner join organization o on "
@@ -565,7 +565,7 @@ public class PersonServiceBean extends
                             + "and ip.status <> 'NULLIFIED' and lower(ip.assigned_identifier_extension) LIKE '%s' ) ",
                             "%"
                                     + StringEscapeUtils.escapeSql(
-                                            criteria.getCtepID()).toLowerCase()
+                                            criteria.getCtepID().trim()).toLowerCase()
                                     + "%"));
         }
     }
@@ -574,7 +574,7 @@ public class PersonServiceBean extends
             PersonSearchCriteria criteria) {
         if (StringUtils.isNotBlank(criteria.getEmail())) {
             String email = "%"
-                    + StringEscapeUtils.escapeSql(criteria.getEmail()
+                    + StringEscapeUtils.escapeSql(criteria.getEmail().trim()
                             .toLowerCase()) + "%";
             sql.append(String
                     .format(" AND (exists (select e.value from email e inner join crs_email ass on e.id=ass.email_id"
@@ -600,7 +600,7 @@ public class PersonServiceBean extends
                     " AND lower(p.lastname) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getLastName().toLowerCase()) + "%"));
+                                    .getLastName().trim().toLowerCase()) + "%"));
         }
 
     }
@@ -612,7 +612,7 @@ public class PersonServiceBean extends
                     " AND lower(p.firstname) like '%s' ",
                     "%"
                             + StringEscapeUtils.escapeSql(criteria
-                                    .getFirstName().toLowerCase()) + "%"));
+                                    .getFirstName().trim().toLowerCase()) + "%"));
         }
 
     }
