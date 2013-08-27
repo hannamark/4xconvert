@@ -348,6 +348,9 @@ public class StudyResourcingBeanLocal extends
             Ii spIi = IiConverter.convertToStudyProtocolIi(0L);
             spIi.setExtension(nciTrialIdentifier);
             existingSp = studyProtocolSvc.getStudyProtocol(spIi);
+            if (BlConverter.convertToBool(existingSp.getProprietaryTrialIndicator())) {
+                return;  // grants information not used for industrial trials
+            }
             updateStatsWithExistingGrants(stats, existingSp, studyResourcingIds);
         }
         if (grantsRequiredChecksActive(method)) {
