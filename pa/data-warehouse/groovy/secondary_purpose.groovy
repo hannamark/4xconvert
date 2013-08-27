@@ -1,10 +1,11 @@
 import groovy.sql.Sql
 
-def sql = """select sec.name,
+def sql = """select sec.name,sp.secondary_purpose_other_text,
              nci_id.extension 
              from study_protocol_sec_purpose spsp
              inner join secondary_purpose sec on sec.identifier = spsp.secondary_purpose_id
              inner join study_otheridentifiers nci_id on nci_id.study_protocol_id = spsp.study_protocol_id
+             inner join study_protocol sp on sp.identifier = spsp.study_protocol_id
              and nci_id.root = '2.16.840.1.113883.3.26.4.3'"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'], 
@@ -16,5 +17,6 @@ def secondarypurpose = destinationConnection.dataSet("STG_DW_STUDY_SECONDARY_PUR
 sourceConnection.eachRow(sql) { row ->
     secondarypurpose.add(
         secondary_purpose_name: row.name,
+        secondary_purpose_other_text:row.secondary_purpose_other_text,
         nci_id: row.extension)
 }
