@@ -7,8 +7,12 @@
     function submitform() {
         var deleteReason = document.getElementById("deleteReason");
         var deleteReasonValue = deleteReason.options[deleteReason.selectedIndex].value;
-        top.window.setDeleteReason(deleteReasonValue);
-        window.top.hidePopWin(true); 
+        if(!deleteReasonValue) {
+        	alert("Please select a delete reason from the list.");
+        		return false;
+        	}
+        	top.window.setDeleteReason(deleteReasonValue);
+            window.top.hidePopWin(true);
     }
 </SCRIPT> 
 </head> 
