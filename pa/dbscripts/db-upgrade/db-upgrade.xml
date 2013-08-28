@@ -1389,4 +1389,8 @@
         <comment>Set default for investigator official title</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5844-2.sql"/>
      </changeSet>
+     <changeSet id="PO-6368" author="krylovd">
+        <comment>Create tables for ctgov org and person mapping</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6368.sql"/>
+     </changeSet>
 </databaseChangeLog>

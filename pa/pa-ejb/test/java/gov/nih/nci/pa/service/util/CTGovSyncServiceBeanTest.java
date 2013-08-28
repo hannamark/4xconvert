@@ -16,9 +16,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.Adxp;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.Ii;
@@ -46,7 +45,6 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.AbstractTrialRegistrationTestBase;
 import gov.nih.nci.pa.service.PAException;
@@ -60,15 +58,12 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,10 +75,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -103,11 +98,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     private HttpServer server;
     public static final int CTGOV_API_MOCK_PORT = 51235;
 
-    private static int poIdCounter = 100;
-
-    private static final Map<String, String> poIdToNameMap = new HashMap<String, String>();
-
     private static final Map<String, ClinicalResearchStaffDTO> crsMap = new HashMap<String, ClinicalResearchStaffDTO>();
+    
+    private static final MockOrganizationEntityService ORGANIZATION_ENTITY_SERVICE = new MockOrganizationEntityService();
+    private static final MockPersonEntityService PERSON_ENTITY_SERVICE = new MockPersonEntityService();
 
     /**
      * @throws java.lang.Exception
@@ -136,20 +130,31 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                     @Override
                     public Long answer(InvocationOnMock invocation)
                             throws Throwable {
+                        final Session session = PaHibernateUtil.getCurrentSession();
+                        
                         String poOrgId = (String) invocation.getArguments()[0];
-                        Organization org = new Organization();
-                        org.setIdentifier(poOrgId);
-                        org.setStatusCode(EntityStatusCode.PENDING);
-                        org.setName(poIdToNameMap.get(poOrgId));
-                        PaHibernateUtil.getCurrentSession().save(org);
-                        PaHibernateUtil.getCurrentSession().flush();
+                        Organization org = (Organization) session
+                                .createCriteria(Organization.class)
+                                .add(Restrictions.eq("identifier", poOrgId))
+                                .uniqueResult();
+                        if (org == null) {
+                            org = new Organization();
+                            org.setIdentifier(poOrgId);
+                            org.setStatusCode(EntityStatusCode.PENDING);
+                            org.setName(EnOnConverter
+                                    .convertEnOnToString(MockOrganizationEntityService.STORE
+                                            .get(poOrgId).getName()));
+
+                            session.save(org);
+                            session.flush();
+                        }
 
                         ResearchOrganization ro = new ResearchOrganization();
                         ro.setOrganization(org);
                         ro.setStatusCode(StructuralRoleStatusCode.PENDING);
                         ro.setIdentifier(poOrgId);
-                        PaHibernateUtil.getCurrentSession().save(ro);
-                        PaHibernateUtil.getCurrentSession().flush();
+                        session.save(ro);
+                        session.flush();
 
                         return ro.getId();
                     }
@@ -164,80 +169,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private void setUpPoMocks() throws EntityValidationException,
             CurationException, NullifiedEntityException, NullifiedRoleException {
-        when(poOrgSvc.createOrganization(any(OrganizationDTO.class)))
-                .thenAnswer(new Answer<Ii>() {
-                    @Override
-                    public Ii answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        OrganizationDTO orgDTO = (OrganizationDTO) invocation
-                                .getArguments()[0];
-                        final String poOrgId = (poIdCounter++) + "";
-                        poIdToNameMap.put(poOrgId, EnOnConverter
-                                .convertEnOnToString(orgDTO.getName()));
-                        return IiConverter.convertToPoOrganizationIi(poOrgId);
-                    }
-                });
-        when(poOrgSvc.getOrganization(any(Ii.class))).thenAnswer(
-                new Answer<OrganizationDTO>() {
-                    @Override
-                    public OrganizationDTO answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        Ii ii = (Ii) invocation.getArguments()[0];
-                        String poOrgId = ii.getExtension();
-                        String name = poIdToNameMap.get(poOrgId);
-                        if (name == null) {
-                            return null;
-                        }
-                        OrganizationDTO dto = new OrganizationDTO();
-                        dto.setName(EnOnConverter.convertToEnOn(name));
-                        dto.setStatusCode(CdConverter
-                                .convertToCd(EntityStatusCode.PENDING));
-                        dto.setIdentifier(ii);
-                        final Ad ad = new Ad();
-                        ad.setPart(new ArrayList<Adxp>());
-                        dto.setPostalAddress(ad);
-                        return dto;
-                    }
-                });
-        when(poPersonSvc.getPerson(any(Ii.class))).thenAnswer(
-                new Answer<PersonDTO>() {
-                    @Override
-                    public PersonDTO answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        Ii ii = (Ii) invocation.getArguments()[0];
-                        String poOrgId = ii.getExtension();
-                        String name = poIdToNameMap.get(poOrgId);
-                        if (name == null) {
-                            return null;
-                        }
-                        PersonDTO dto = new PersonDTO();
-                        dto.setName(EnPnConverter.convertToEnPn("", "", name,
-                                null, null));
-                        dto.setStatusCode(CdConverter
-                                .convertToCd(EntityStatusCode.PENDING));
-                        dto.setIdentifier(ii);
-                        final Ad ad = new Ad();
-                        ad.setPart(new ArrayList<Adxp>());
-                        dto.setPostalAddress(ad);
-                        return dto;
-                    }
-                });
-        when(poPersonSvc.createPerson(any(PersonDTO.class))).thenAnswer(
-                new Answer<Ii>() {
-                    @Override
-                    public Ii answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        PersonDTO personDTO = (PersonDTO) invocation
-                                .getArguments()[0];
-                        final String poPersonId = (poIdCounter++) + "";
-                        String name = EnPnConverter
-                                .convertToLastCommaFirstName(personDTO
-                                        .getName());
-                        poIdToNameMap.put(poPersonId, name);
-                        return IiConverter.convertToPoPersonIi(poPersonId);
-                    }
-                });
-
+        when(poSvcLoc.getOrganizationEntityService()).thenReturn(ORGANIZATION_ENTITY_SERVICE);
+        when(poSvcLoc.getPersonEntityService()).thenReturn(PERSON_ENTITY_SERVICE);
+        
         when(crsSvc.createCorrelation(any(ClinicalResearchStaffDTO.class)))
                 .thenAnswer(new Answer<Ii>() {
                     @Override
@@ -245,7 +179,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                             throws Throwable {
                         ClinicalResearchStaffDTO crs = (ClinicalResearchStaffDTO) invocation
                                 .getArguments()[0];
-                        final String poId = (poIdCounter++) + "";
+                        final String poId = (MockOrganizationEntityService.PO_ID_SEQ++) + "";
                         crsMap.put(poId, crs);
                         Ii ii = IiConverter
                                 .convertToPoClinicalResearchStaffIi(poId);
@@ -464,7 +398,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Laughlin", getNamePart(converted, FAM));
         assertEquals("J", getNamePart(converted, GIV, 1));
         assertEquals("MD", getNamePart(converted, SFX));
-        assertEquals("Prof", getNamePart(converted, PFX));
+        assertEquals("Prof.", getNamePart(converted, PFX));
 
         name = getEnPn("Corey Cutler, MD, MPH, FRCP(C)");
         converted = serviceBean.breakDownCtGovPersonName(name);
@@ -489,6 +423,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Barry", getNamePart(converted, GIV, 0));
         assertEquals("Skikne", getNamePart(converted, FAM));
         assertEquals("M.D., FACP", getNamePart(converted, SFX));
+        
+        name = getEnPn("Drhubo J Ghaal, MD");
+        converted = serviceBean.breakDownCtGovPersonName(name);
+        assertEquals("Drhubo", getNamePart(converted, GIV, 0));
+        assertEquals("Ghaal", getNamePart(converted, FAM));
+        assertEquals("J", getNamePart(converted, GIV, 1));
+        assertEquals("MD", getNamePart(converted, SFX));
+        assertEquals(null, getNamePart(converted, PFX));
 
     }
 
@@ -622,21 +564,29 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
         StudyContact pi = getStudyContact(sp,
                 StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
-        assertEquals("Goldstein, Lori J", pi.getClinicalResearchStaff()
+        assertEquals("Goldstein", pi.getClinicalResearchStaff()
                 .getPerson().getLastName());
+        assertEquals("Lori", pi.getClinicalResearchStaff()
+                .getPerson().getFirstName());
+        assertEquals("J", pi.getClinicalResearchStaff()
+                .getPerson().getMiddleName());
         
         StudyContact rp = getStudyContact(sp,
                 StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR);
-        assertEquals("Goldstein, Lori J", rp.getClinicalResearchStaff()
+        assertEquals("Goldstein", rp.getClinicalResearchStaff()
                 .getPerson().getLastName());
+        assertEquals("Lori", rp.getClinicalResearchStaff()
+                .getPerson().getFirstName());
         assertEquals("Associate professor of pediatrics", rp.getTitle());
         assertEquals("Children's Hospital Boston", rp.getClinicalResearchStaff()
                 .getOrganization().getName());
 
         StudyContact cc = getStudyContact(sp,
                 StudyContactRoleCode.CENTRAL_CONTACT);
-        assertEquals("Ruffini, Pieradelchi", cc.getClinicalResearchStaff()
+        assertEquals("Ruffini", cc.getClinicalResearchStaff()
                 .getPerson().getLastName());
+        assertEquals("Pieradelchi", cc.getClinicalResearchStaff()
+                .getPerson().getFirstName());
         assertEquals(
                 "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
                 sp.getKeywordText());

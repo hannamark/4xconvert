@@ -83,7 +83,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.EntityNamePartType;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
@@ -99,7 +98,6 @@ import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -131,7 +129,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -176,9 +173,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -2259,83 +2254,5 @@ public class PAServiceUtils {
             }
         }
         return nctIdentifierDTO;
-    }
-    
-    /**
-     * For every PO object in the list, will attempt to find an exact match by
-     * name in Curation. If found, the existing PO object's ID will be applied
-     * onto this DTO. If not, a new PO object will be created in Curation.
-     * 
-     * @see https://tracker.nci.nih.gov/browse/PO-5935
-     * @see CTRPSR-3-13 Requirement.
-     * @param listOfObject
-     *            List<PoDto>
-     * @throws PAException PAException
-     */
-    public void matchOrCreatePoObjects(List<? extends PoDto> listOfObject)
-            throws PAException {
-        for (PoDto poDto : listOfObject) {
-            try {
-                if (poDto instanceof OrganizationDTO
-                        && ISOUtil.isIiNull(((OrganizationDTO) poDto)
-                                .getIdentifier())) {
-                    matchOrCreateInPO((OrganizationDTO) poDto);
-                }
-                if (poDto instanceof PersonDTO
-                        && ISOUtil
-                                .isIiNull(((PersonDTO) poDto).getIdentifier())) {
-                    matchOrCreateInPO((PersonDTO) poDto);
-                }
-            } catch (Exception e) {
-                throw new PAException(e);
-            }
-        }
-    }
-    
-    private void matchOrCreateInPO(PersonDTO person)
-            throws NullifiedRoleException, PAException,
-            TooManyResultsException, EntityValidationException,
-            CurationException {
-        PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
-        final String firstName = EnPnConverter.getNamePart(person.getName(),
-                EntityNamePartType.GIV);
-        criteria.setFirstName(firstName);
-        final String lastName = EnPnConverter.getNamePart(person.getName(),
-                EntityNamePartType.FAM);
-        criteria.setLastName(lastName);
-        List<PaPersonDTO> persons = PADomainUtils.searchPoPersons(criteria);
-        for (PaPersonDTO paPerson : persons) {
-            if (StringUtils.equals(paPerson.getFirstName(), firstName)
-                    && StringUtils.equals(paPerson.getLastName(), lastName)) {
-                person.setIdentifier(IiConverter.convertToPoPersonIi(paPerson
-                        .getId().toString()));
-                return;
-            }
-        }
-        person.setIdentifier(PoRegistry.getPersonEntityService().createPerson(
-                person));
-    }
-
-    private void matchOrCreateInPO(OrganizationDTO org)
-            throws NullifiedRoleException, NullifiedEntityException,
-            TooManyResultsException, PAException, EntityValidationException,
-            CurationException {
-        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
-        final String orgName = EnOnConverter.convertEnOnToString(org.getName());
-        criteria.setName(orgName);
-        List<OrganizationDTO> orgList = PADomainUtils
-                .searchPoOrganizations(criteria);
-
-        for (OrganizationDTO searchResult : orgList) {
-            String foundName = EnOnConverter.convertEnOnToString(searchResult
-                    .getName());
-            if (StringUtils.isNotBlank(foundName) && foundName.equals(orgName)) {
-                org.setIdentifier(searchResult.getIdentifier());
-                return;
-            }
-        }
-
-        org.setIdentifier(PoRegistry.getOrganizationEntityService()
-                .createOrganization(org));
     }
 }

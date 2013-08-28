@@ -137,6 +137,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.POServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -1096,7 +1097,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             listOfDTOToCreateInPO.add(respPartyDTO.getInvestigator());
         }
 
-        getPAServiceUtils().matchOrCreatePoObjects(listOfDTOToCreateInPO);
+        new POServiceUtils().matchOrCreatePoObjects(listOfDTOToCreateInPO);
     }
 
     

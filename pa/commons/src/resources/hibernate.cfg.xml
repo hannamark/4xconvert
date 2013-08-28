@@ -99,6 +99,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.StudyDocumentStage"/>
         <mapping class="gov.nih.nci.pa.domain.TrialDataVerification" />
         <mapping class="gov.nih.nci.pa.domain.CTGovImportLog" />
+        <mapping class="gov.nih.nci.pa.domain.CTGovPersonMapping" />
+        <mapping class="gov.nih.nci.pa.domain.CTGovOrgMapping" />
 
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />

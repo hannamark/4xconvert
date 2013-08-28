@@ -138,7 +138,7 @@ public abstract class AbstractPDQTrialServiceHelper {
      *
      */
     public static PersonDTO getUnknownPersonDTO() {
-        PersonDTO perDTO = new PersonDTO();
+        PersonDTO perDTO = new PersonWithFullNameDTO();
         perDTO.setTelecomAddress(getUnknownTelecomeAddress());
         perDTO.setPostalAddress(getUnknownPostalAddress());
         return perDTO;
@@ -283,6 +283,41 @@ public abstract class AbstractPDQTrialServiceHelper {
    public PAServiceUtils getPaServiceUtils() {
        return paServiceUtils;
    }
+   
+    /**
+     * For the purposes of ctgov-to-pdq mapping, we need an enhanced version of
+     * PersonDTO that can carry a person's full name, which can later be used to
+     * establish a mapping via ctgov_person_map table.
+     * 
+     * @see 
+     *      gov.nih.nci.pa.service.util.POServiceUtils.findPersonInPoByMappingTables
+     *      ( PersonDTO)
+     * @author Denis G. Krylov
+     * 
+     */
+    public static final class PersonWithFullNameDTO extends PersonDTO {
 
+        /**
+    * 
+    */
+        private static final long serialVersionUID = 1L;
+
+        private String fullName;
+
+        /**
+         * @return the fullName
+         */
+        public String getFullName() {
+            return fullName;
+        }
+
+        /**
+         * @param fullName
+         *            the fullName to set
+         */
+        public void setFullName(String fullName) {
+            this.fullName = fullName;
+        }
+    }
 
 }

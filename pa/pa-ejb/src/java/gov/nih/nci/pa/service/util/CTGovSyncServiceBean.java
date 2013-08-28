@@ -88,6 +88,7 @@ import gov.nih.nci.pa.service.ctgov.ProtocolOutcomeStruct;
 import gov.nih.nci.pa.service.ctgov.ResponsiblePartyStruct;
 import gov.nih.nci.pa.service.ctgov.SponsorStruct;
 import gov.nih.nci.pa.service.ctgov.TextblockStruct;
+import gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper.PersonWithFullNameDTO;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -630,6 +631,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         person.setName(breakDownCtGovPersonName(EnPnConverter.convertToEnPn(
                 null, null, left(party.getInvestigatorFullName(), L_50), null,
                 null)));
+        setFullNameCtGovStyle(person, null,
+                null, party.getInvestigatorFullName(),
+                null);
 
         partyDTO.setTitle(left(party.getInvestigatorTitle(), L_200));
         partyDTO.setAffiliation(org);
@@ -826,6 +830,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                             left(investigator.getMiddleName(), L_50),
                             left(investigator.getLastName(), L_50), null,
                             left(investigator.getDegrees(), L_10))));
+            setFullNameCtGovStyle(person, investigator.getFirstName(),
+                    investigator.getMiddleName(), investigator.getLastName(),
+                    investigator.getDegrees());
             return person;
         } else {
             return null;
@@ -855,11 +862,15 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             throw new PAException("Overall contact is missing a last name");
         }
         PersonDTO contactDTO = getNewPersonDTO();
-        contactDTO.setName(breakDownCtGovPersonName(EnPnConverter
+        final EnPn ctgovPersonName = EnPnConverter
                 .convertToEnPn(left(contact.getFirstName(), L_50),
                         left(contact.getMiddleName(), L_50),
                         left(contact.getLastName(), L_50), null,
-                        left(contact.getDegrees(), L_10))));
+                        left(contact.getDegrees(), L_10));
+        contactDTO.setName(breakDownCtGovPersonName(ctgovPersonName));
+        setFullNameCtGovStyle(contactDTO, contact.getFirstName(),
+                contact.getMiddleName(), contact.getLastName(),
+                contact.getDegrees());
 
         final String phone = convertCtGovPhone(isNotBlank(contact.getPhone()) ? (contact
                 .getPhone() + (isNotBlank(contact.getPhoneExt()) ? ("x" + contact
@@ -869,6 +880,21 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 defaultString(contact.getEmail(),
                         "replacewithrealemail@nih.gov"), phone));
         return contactDTO;
+    }
+
+    private void setFullNameCtGovStyle(PersonDTO p, String firstName,
+            String middleName, String lastName, String degrees) {
+        if (p instanceof PersonWithFullNameDTO) {
+            PersonWithFullNameDTO person = (PersonWithFullNameDTO) p;
+            String fullname = (StringUtils.defaultString(firstName) + " "
+                    + StringUtils.defaultString(middleName) + " "
+                    + StringUtils.defaultString(lastName) + (StringUtils
+                    .isNotBlank(degrees) ? ", " + degrees : "")).trim()
+                    .replaceAll("\\s+", " ");
+            // This fullname will later be used in
+            // gov.nih.nci.pa.service.util.POServiceUtils.findPersonInPoByMappingTables(PersonDTO)
+            person.setFullName(fullname);
+        }
     }
 
     /**
@@ -947,7 +973,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             firstName = UNKNOWN;
         } else {
             Pattern p = Pattern
-                    .compile("(?i)^(Ms|Miss|Mrs|Mr|Dr|Atty|Prof|Hon)?\\.?\\s*"
+                    .compile("(?i)^((?:Ms|Miss|Mrs|Mr|Dr|Atty|Prof|Hon)(?:\\.|\\s))?\\s*"
                             + "(([a-zA-Z'\\-\\.]+\\s*)+)(,\\s*(([a-zA-Z\\.\\(\\)\\-/ ,;])+))?$");
             Matcher m = p.matcher(fullName);
             if (!m.matches()) {

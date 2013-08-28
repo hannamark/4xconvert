@@ -17,6 +17,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.MockIdentifiedPersonCorrelationService;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
@@ -36,6 +37,7 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceR
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
@@ -248,6 +250,9 @@ public abstract class AbstractTrialRegistrationTestBase extends
                 when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(roCorrelationSvc);
                 when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(crsSvc);
                 when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(hcpSvc);
+                
+                final IdentifiedPersonCorrelationServiceRemote mock = mock(IdentifiedPersonCorrelationServiceRemote.class);
+                when(poSvcLoc.getIdentifiedPersonEntityService()).thenReturn(mock);
             }
 
 }
