@@ -233,6 +233,29 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
                 assertEquals((Integer) 1, accrualCount.getAccrualCount());
             }
         }
+        
+        bean.delete(IiConverter.convertToIi(accrualCounts.get(0).getStudySite().getId()), testStudyIi);
+    }
+    
+    @Test
+    public void deleteStudySiteNull() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("StudySite Ii must be valid.");
+        bean.delete(null, testStudyIi);    	
+    }
+    
+    @Test
+    public void deleteStudyprotocolNull() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("StudyProtocol Ii must be valid.");
+        bean.delete(IiConverter.convertToIi(1L), null);
+    }
+    
+    @Test
+    public void deleteSiteCountNull() throws PAException {        
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Counts for the StudySite id 1 does not exist.");        
+        bean.delete(IiConverter.convertToIi(1L), testStudyIi);
     }
 
     @Test

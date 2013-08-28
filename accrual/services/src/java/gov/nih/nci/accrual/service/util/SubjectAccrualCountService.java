@@ -118,4 +118,12 @@ public interface SubjectAccrualCountService {
      * @return accrual count
      */
     StudySiteSubjectAccrualCount getCountByStudySiteId(Ii studySiteIi);
+    
+    /**
+     * Delete the summary level accrual count.
+     * @param siteIi siteIi
+     * @param studyProtocolIi study protocol ii of the study
+     * @throws PAException the exception
+     */
+    void delete(Ii siteIi, Ii studyProtocolIi) throws PAException;
 }

@@ -135,4 +135,9 @@ public class MockSubjectAccrualCountService implements SubjectAccrualCountServic
 		return new StudySiteSubjectAccrualCount();
 	}
 
+	@Override
+	public void delete(Ii sssSiteIi, Ii studyProtocolIi) throws PAException {
+				
+	}
+
 }

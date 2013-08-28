@@ -204,6 +204,19 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         assertEquals("input", action.update());
     }
 
+    @Test
+    public void delete() throws PAException {
+        action.setSitesToDelete(new ArrayList<Long>());
+        assertEquals("input", action.delete());
+        assertEquals("Please select one or more record(s) to delete", action.getActionErrors().iterator().next());
+        List<Long> sitesToDelete = new ArrayList<Long>();
+        sitesToDelete.add(1L);
+        action.setSitesToDelete(sitesToDelete);
+        action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        assertEquals("saved", action.delete());
+    }
+
     @SuppressWarnings("unchecked")
     private void setupUpdatePAException() throws PAException {
         action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);

@@ -97,6 +97,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -114,6 +115,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     private List<Long> sitesToSave;
     private List<Long> submittedSiteIds = new ArrayList<Long>();
     private List<String> submittedCounts = new ArrayList<String>();
+    private List<Long> sitesToDelete;
     
     /**
      * {@inheritDoc}
@@ -180,6 +182,32 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
                 ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                         AccrualConstants.UPDATE_MESSAGE);
                 setSitesToSave(null);
+                checkIfNonInterventionalTrialChanges();
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            loadSiteSubjectAccrualCount();
+            return "input";
+        }
+        return "saved";
+    }
+
+    /**
+     * Delete the subject accrual counts.
+     * @return result name
+     */
+    public String delete() {
+        try {
+            if (CollectionUtils.isEmpty(getSitesToDelete())) {
+                throw new PAException("Please select one or more record(s) to delete");
+            } else {
+                for (Long id : getSitesToDelete()) {
+                    AccrualServiceLocator.getInstance().getSubjectAccrualCountService().delete(
+                            IiConverter.convertToIi(id), getSpIi());
+                }
+                ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
+                        AccrualConstants.DELETE_MESSAGE);
+                setSitesToDelete(null);
                 checkIfNonInterventionalTrialChanges();
             }
         } catch (PAException e) {
@@ -305,5 +333,19 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
      */
     public void setSitesToSave(List<Long> sitesToSave) {
         this.sitesToSave = sitesToSave;
+    }
+
+    /**
+     * @return the sitesToDelete
+     */
+    public List<Long> getSitesToDelete() {
+        return sitesToDelete;
+    }
+
+    /**
+     * @param sitesToDelete the sitesToDelete to set
+     */
+    public void setSitesToDelete(List<Long> sitesToDelete) {
+        this.sitesToDelete = sitesToDelete;
     }
 }

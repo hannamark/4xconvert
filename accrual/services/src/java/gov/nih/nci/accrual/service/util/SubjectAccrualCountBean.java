@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -187,6 +188,32 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
                 saveAccrualCount(count);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Ii siteIi, Ii studyProtocolIi) throws PAException {
+        if (ISOUtil.isIiNull(siteIi)) {
+            throw new PAException("StudySite Ii must be valid.");
+        }
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
+            throw new PAException("StudyProtocol Ii must be valid.");
+        }
+        StudySiteSubjectAccrualCount accrualCount = (StudySiteSubjectAccrualCount) 
+                PaHibernateUtil.getCurrentSession().createCriteria(StudySiteSubjectAccrualCount.class)
+                .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(siteIi)))
+                .add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)))
+                .uniqueResult();
+        if (accrualCount == null) {
+            throw new PAException("Counts for the StudySite id " + siteIi.getExtension() + " does not exist.");
+        }
+        if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter
+                    .convertToStudySiteIi(accrualCount.getStudySite().getId()))) {
+            throw new PAException("User does not have accrual access to site.");
+        }
+        PaHibernateUtil.getCurrentSession().delete(accrualCount);
     }
 
     private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) throws PAException {

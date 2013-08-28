@@ -8,6 +8,10 @@ function setCheckbox(index) {
         document.countform.sitesToSave[index].checked=true;
     }
 }
+function handleDelete(){
+	document.forms[0].action = "industrialPatientsdelete.action";
+    document.forms[0].submit();	
+}
 </script>
 <c:set var="topic" scope="request" value="accrualcount"/>
 
@@ -46,6 +50,9 @@ function setCheckbox(index) {
         </display:column>
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />
+        <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">        
+           <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />
+        </display:column> 
     </display:table>
     <div class="actionsrow">
         <del class="btnwrapper">
@@ -53,6 +60,7 @@ function setCheckbox(index) {
                 <li>
                     <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
                     <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
                 </li>
             </ul>
         </del>
