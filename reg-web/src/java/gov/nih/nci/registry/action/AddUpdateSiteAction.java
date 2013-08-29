@@ -154,6 +154,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private StudyProtocolServiceLocal studyProtocolService;
     private StudySiteContactServiceLocal studySiteContactService;
     private ProtocolQueryServiceLocal protocolQueryService;
+    
 
     private boolean redirectToSummary;
     private String studyProtocolId;    
@@ -200,12 +201,10 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         }
         siteDTO.setName(org);
 
-        String poOrgId = orgId.toString();
-        Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
+        String poOrgId = orgId.toString();        
         Ii spID = IiConverter.convertToStudyProtocolIi(Long
                 .parseLong(getStudyProtocolId()));        
-        StudySiteDTO studySiteDTO = trialUtil.getParticipatingSite(spID,
-                poHcfIi);
+        StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
         if (studySiteDTO != null) {
             // Participating site already exists. Preparing for 'update' mode.
             siteDTO = trialUtil.getSubmittedOrganizationDTO(studySiteDTO);

@@ -2,11 +2,12 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
@@ -30,18 +31,20 @@ import com.mockrunner.mock.web.MockServletContext;
 public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
     private ManageSiteOwnershipAction action;
     
-    private PAServiceUtils paServiceUtils;
-    private TrialUtil trialUtil;
+   
+    private ParticipatingSiteServiceLocal participatingSiteServiceLocal;
+  
 
     @Before
     public void before() throws PAException {
-        paServiceUtils = Mockito.mock(PAServiceUtils.class);
-        trialUtil = Mockito.mock(TrialUtil.class);
-
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
-        when(trialUtil.getParticipatingSite(any(Ii.class), any(Ii.class)))
-                .thenReturn(studySiteDTO);
+
+        participatingSiteServiceLocal = mock(ParticipatingSiteServiceLocal.class);
+        when(
+                participatingSiteServiceLocal.getParticipatingSite(
+                        any(Ii.class), any(String.class))).thenReturn(
+                studySiteDTO);
     }
 
     @Test
@@ -109,8 +112,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
     @Test
     public void testAssignOwnership() throws PAException {
         action = new ManageSiteOwnershipAction();
-        action.setPaServiceUtil(paServiceUtils);
-        action.setTrialUtil(trialUtil);
+        action.setParticipatingSiteService(participatingSiteServiceLocal);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -146,8 +148,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
     @Test
     public void testUnAssignOwnership() throws PAException {
         action = new ManageSiteOwnershipAction();
-        action.setPaServiceUtil(paServiceUtils);
-        action.setTrialUtil(trialUtil);
+        action.setParticipatingSiteService(participatingSiteServiceLocal);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");

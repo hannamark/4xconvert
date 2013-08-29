@@ -81,12 +81,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
 
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
-        when(
-                trialUtil.getParticipatingSite(
-                        eq(IiConverter.convertToStudyProtocolIi(1L)),
-                        eq(IiConverter.convertToPoHealthCareFacilityIi("1"))))
-                .thenReturn(studySiteDTO);
-
+       
         researchStaffDTO = new ClinicalResearchStaffDTO();
         healthCareProviderDTO = new HealthCareProviderDTO();
         when(paServiceUtils.getPoPersonEntity(any(Ii.class))).thenReturn(new PersonDTO());        
@@ -120,7 +115,10 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                         any(StudySiteDTO.class),
                         any(StudySiteAccrualStatusDTO.class), any(Ii.class)))
                 .thenReturn(participatingSiteDTO);
-
+        when(
+                participatingSiteServiceLocal.getParticipatingSite(
+                        any(Ii.class), any(String.class))).thenReturn(
+                studySiteDTO);
         StudyProtocolDTO studyDTO = setupSpDto();
         when(
                 studyProtocolServiceLocal.getStudyProtocol(eq(IiConverter

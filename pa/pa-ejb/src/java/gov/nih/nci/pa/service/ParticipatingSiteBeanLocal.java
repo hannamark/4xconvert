@@ -96,6 +96,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -135,6 +136,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.annotation.security.SecurityDomain;
 
@@ -426,5 +428,29 @@ implements ParticipatingSiteServiceLocal {
     protected StudySite getStudySite(Ii studySiteIi) {
         return (StudySite) PaHibernateUtil.getCurrentSession().get(StudySite.class,
                                                                    IiConverter.convertToLong(studySiteIi));
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)
+            throws PAException {
+        Query qry = PaHibernateUtil.getCurrentSession().createQuery(
+                "select ss " + "from StudySite ss "
+                        + "join ss.studyProtocol sp "
+                        + "join ss.healthCareFacility hf "
+                        + "join hf.organization org " + "where sp.id = :spId "
+                        + "and ss.functionalCode = :functionalCode "
+                        + "and org.identifier = :orgId");
+        qry.setParameter("spId", IiConverter.convertToLong(studyProtocolID));
+        qry.setParameter("functionalCode",
+                StudySiteFunctionalCode.TREATING_SITE);
+        qry.setParameter("orgId", orgPoId);
+        qry.setMaxResults(1);
+        StudySite ss = (StudySite) qry.uniqueResult();
+        if (ss != null) {
+            return new StudySiteConverter().convertFromDomainToDto(ss);
+        } else {
+            return null;
+        }
     }
 }

@@ -91,21 +91,21 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.registry.util.TrialUtil;
 
 import java.util.List;
+
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for managing user participating site record ownership.
  * 
  * @author Denis G. Krylov
  */
-public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
+public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction implements Preparable {
     
-    private PAServiceUtils paServiceUtil = new PAServiceUtils();
-    private TrialUtil trialUtil = new TrialUtil();
+    private ParticipatingSiteServiceLocal participatingSiteService;
 
     /**
      * 
@@ -155,11 +155,9 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
                     "We are unable to determine your affiliation with an organization.");
         }
 
-        String poOrgId = orgId.toString();
-        Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
+        String poOrgId = orgId.toString();       
         Ii spID = IiConverter.convertToStudyProtocolIi(trialID);        
-        StudySiteDTO studySiteDTO = trialUtil.getParticipatingSite(spID,
-                poHcfIi);
+        StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
         if (studySiteDTO == null) {
             throw new PAException(
                     "Your affiliated organization is not a participating site on the selected trial.");
@@ -189,24 +187,29 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
         return getText("managesiteownership.unassign.success");
     }
     
-    /**
-     * @param paServiceUtil PAServiceUtils
-     */
-    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
-        this.paServiceUtil = paServiceUtil;
-    }
-    
-    /**
-     * @param trialUtil TrialUtil
-     */
-    public void setTrialUtil(TrialUtil trialUtil) {
-        this.trialUtil = trialUtil;
-    }
-    
     @Override
     public String unassignOwnership() throws PAException {
         super.unassignOwnership();
         return search();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {      
+        participatingSiteService = PaRegistry.getParticipatingSiteService();        
+    }
+
+
+    /**
+     * @param participatingSiteService the participatingSiteService to set
+     */
+    public void setParticipatingSiteService(
+            ParticipatingSiteServiceLocal participatingSiteService) {
+        this.participatingSiteService = participatingSiteService;
+    }
+    
+    
 
 }

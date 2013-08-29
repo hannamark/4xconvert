@@ -474,35 +474,6 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setParticipatingSitesList(organizationList);
     }
     
-    /**
-     * Finds participating site on the given trial for the given organization.
-     * 
-     * @param studyProtocolID
-     *            studyProtocolID
-     * @param healthcareFacId
-     *            healthcareFacId
-     * @return StudySiteDTO
-     * @throws PAException PAException
-     */
-    public StudySiteDTO getParticipatingSite(Ii studyProtocolID,
-            Ii healthcareFacId) throws PAException {
-        StudySiteDTO srDTO = new StudySiteDTO();
-        srDTO.setFunctionalCode(CdConverter
-                .convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
-                        .getCode()));
-        List<StudySiteDTO> spList = PaRegistry.getStudySiteService()
-                .getByStudyProtocol(studyProtocolID, srDTO);
-        for (StudySiteDTO sp : spList) {
-            if (healthcareFacId != null
-                    && sp.getHealthcareFacilityIi() != null
-                    && IiConverter.convertToLong(healthcareFacId).equals(
-                            IiConverter.convertToLong(sp
-                                    .getHealthcareFacilityIi()))) {
-                return sp;
-            }
-        }
-        return null;
-    }
 
     /**
      * Converts {@link StudySiteDTO} into a {@link SubmittedOrganizationDTO}.
