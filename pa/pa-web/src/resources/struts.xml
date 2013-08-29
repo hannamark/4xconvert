@@ -259,9 +259,9 @@
             <interceptor-ref name="paDefaultInterceptor" />                       
             <result name="error">/WEB-INF/jsp/ctGovImportLogs.jsp</result>
             <result name="success">/WEB-INF/jsp/ctGovImportLogs.jsp</result>
-        </action>
+            <result name="details">/WEB-INF/jsp/displayCTGovImportLogDetails.jsp</result>
+        </action>        
                 
-    
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">

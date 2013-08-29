@@ -62,6 +62,6 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         ctGovImportLogAction.setUserCreated("User");
         ctGovImportLogAction.setOfficialTitle("Title");
         assertEquals("success", ctGovImportLogAction.query());
-        assertNotNull(ctGovImportLogAction.getCtGovImportLogs());        
+        assertNotNull(ctGovImportLogAction.getAllCtGovImportLogs());        
     }
 }

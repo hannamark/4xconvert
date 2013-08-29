@@ -24,6 +24,16 @@
 	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
 <script type="text/javascript" language="javascript">
+    function displayCTGovImportLogDetails(nciId) {
+        var width = 800;
+        var height = 500;
+        if (Prototype.Browser.IE) {
+            width = 670;
+            height = 500;                   
+        }
+        showPopWin('ctGovImportLogshowDetailspopup.action?nciId='+nciId, width, height, '', 'ClinicalTrials.Gov Import Log Details');               
+    }
+    
 	function handleAction(action) {
 		$('ctGovImportLogsForm').action = "ctGovImportLog" + action + ".action";
 		$('ctGovImportLogsForm').submit();
@@ -174,14 +184,14 @@
 
 			<c:if test="${searchPerformed}">
 				<div id="ctGovImportLogsDiv" align="center">
-					<s:if test="ctGovImportLogs==null || ctGovImportLogs.empty">
+					<s:if test="allCtGovImportLogs==null || allCtGovImportLogs.empty">
 						<div align="center" class="info">
 							<b>No log entries found.</b>
 						</div>
 					</s:if>
 					<s:else>
 
-						<s:set name="logs" value="ctGovImportLogs" scope="request" />
+						<s:set name="logs" value="allCtGovImportLogs" scope="request" />
 						<display:table class="data" sort="list" pagesize="100" uid="row"
 							defaultorder="descending" defaultsort="6" name="logs"
 							export="true" requestURI="ctGovImportLogquery.action">
@@ -196,9 +206,11 @@
 								value="CTGovImportLogs.csv" />
 							<display:setProperty name="export.csv.include_header"
 								value="true" />
-
-							<display:column escapeXml="true" title="NCI ID" property="nciID"
-								sortable="true" />
+							<display:column escapeXml="false" title="NCI ID" sortable="true">
+							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nciID}');">
+							        <c:out value="${row.nciID}"/>
+							    </a>
+							</display:column>
 							<display:column escapeXml="true" title="NCT ID" property="nctID"
 								sortable="true" />
 							<display:column escapeXml="true" title="Title" property="title"

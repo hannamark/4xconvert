@@ -9,7 +9,9 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,13 +30,15 @@ import com.opensymphony.xwork2.Preparable;
 public class CTGovImportLogAction extends ActionSupport implements
 Preparable {
 
+    private static final String DETAILS = "details";
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(CTGovImportLogAction.class);
     
     private HttpServletRequest request;
     private boolean searchPerformed;
     
-    private List<CTGovImportLog> ctGovImportLogs = new ArrayList<CTGovImportLog>();
+    private List<CTGovImportLog> allCtGovImportLogs = new ArrayList<CTGovImportLog>();
+    private List<CTGovImportLog> nciCtGovImportLogs = new ArrayList<CTGovImportLog>();
     private String nciIdentifier;
     private String nctIdentifier;
     private String officialTitle;
@@ -43,6 +47,7 @@ Preparable {
     private String userCreated;
     private String logsOnOrAfter;
     private String logsOnOrBefore;
+    private String nciId;
     
     private CTGovSyncServiceLocal ctGovSyncService;
 
@@ -69,21 +74,47 @@ Preparable {
         if (hasActionErrors()) {
             return ERROR;
         }
-        try {
+        try {            
             final Date onOrAfter = StringUtils.isNotBlank(logsOnOrAfter) ? PAUtil
                     .dateStringToDateTime(logsOnOrAfter) : new Date(0);
             final Date onOrBefore = StringUtils.isNotBlank(logsOnOrBefore) ? PAUtil
                     .endOfDay(PAUtil.dateStringToDateTime(logsOnOrBefore))
                     : PAUtil.endOfDay(new Date());
             validateTimeLine(onOrAfter, onOrBefore);
-            ctGovImportLogs = ctGovSyncService.getLogEntries(nciIdentifier, nctIdentifier, officialTitle, action, 
-                    importStatus, userCreated, onOrAfter, onOrBefore);
+            //get all the log entries sorted by date
+            List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(nciIdentifier, nctIdentifier, 
+                    officialTitle, action, importStatus, userCreated, onOrAfter, onOrBefore);
+            //get the latest entry for each trial.
+            Set<String> uniqueTrials = new HashSet<String>();
+            for (CTGovImportLog importLog : importLogs) {
+                if (!uniqueTrials.contains(importLog.getNciID())) {
+                    allCtGovImportLogs.add(importLog);
+                    uniqueTrials.add(importLog.getNciID());
+                }
+            }            
             searchPerformed = true;
             return SUCCESS;
         } catch (PAException e) {
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
             LOG.error(e, e);
+        }
+        return ERROR;
+    }
+    
+    /**
+     * Displays pop up page showing the history of CT.Gov import log entries
+     * for a specified NCI identifier. 
+     * @return list of CT.Gov import log entries for a specified NCI identifier. 
+     */
+    public String showDetailspopup() {
+        try {
+            //get the all the log entries for the specified NCI ID.
+            nciCtGovImportLogs = ctGovSyncService.getLogEntries(nciId, null, null, null, null, null, null, null);
+            return DETAILS;
+        } catch (PAException pae) {
+            request.setAttribute(Constants.FAILURE_MESSAGE, pae.getLocalizedMessage());
+            LOG.error(pae, pae);
         }
         return ERROR;
     }
@@ -146,17 +177,17 @@ Preparable {
     }
 
     /**
-     * @return the ctGovImportLogs
+     * @return the allCtGovImportLogs
      */
-    public List<CTGovImportLog> getCtGovImportLogs() {
-        return ctGovImportLogs;
+    public List<CTGovImportLog> getAllCtGovImportLogs() {
+        return allCtGovImportLogs;
     }
 
     /**
-     * @param ctGovImportLogs the ctGovImportLogs to set
+     * @param allCtGovImportLogs the allCtGovImportLogs to set
      */
-    public void setCtGovImportLogs(List<CTGovImportLog> ctGovImportLogs) {
-        this.ctGovImportLogs = ctGovImportLogs;
+    public void setAllCtGovImportLogs(List<CTGovImportLog> allCtGovImportLogs) {
+        this.allCtGovImportLogs = allCtGovImportLogs;
     }
 
     /**
@@ -249,4 +280,32 @@ Preparable {
     public void setUserCreated(String userCreated) {
         this.userCreated = userCreated;
     }
+
+    /**
+     * @return nciId
+     */
+    public String getNciId() {
+        return nciId;
+    }
+
+    /**
+     * @param nciId ncId to set
+     */
+    public void setNciId(String nciId) {
+        this.nciId = nciId;
+    }
+
+    /**
+     * @return nciCtGovImportLogs
+     */
+    public List<CTGovImportLog> getNciCtGovImportLogs() {
+        return nciCtGovImportLogs;
+    }
+
+    /**
+     * @param nciCtGovImportLogs nciCtGovImportLogs to set
+     */
+    public void setNciCtGovImportLogs(List<CTGovImportLog> nciCtGovImportLogs) {
+        this.nciCtGovImportLogs = nciCtGovImportLogs;
+    }    
 }
