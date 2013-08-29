@@ -211,7 +211,7 @@
 							        <c:out value="${row.nciID}"/>
 							    </a>
 							</display:column>
-							<display:column escapeXml="true" title="NCT ID" property="nctID"
+							<display:column escapeXml="true" title="ClinicalTrials.gov ID" property="nctID"
 								sortable="true" />
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
