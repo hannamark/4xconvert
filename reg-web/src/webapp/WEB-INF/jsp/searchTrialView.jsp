@@ -14,10 +14,13 @@
             }
             
             function handleBackAction(){
-            	window.history.back();        
+                window.history.back();        
             }
             function viewAction(url){
                     var pid = getUrlVars()["studyProtocolId"];
+                    if (pid == undefined) {
+                        pid = ${requestScope.trialDTO.identifier};
+                    }
                     document.forms[0].setAttribute("action", url+"?studyProtocolId="+pid);
                     document.forms[0].submit();    
                
