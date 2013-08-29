@@ -132,6 +132,23 @@ public final class ImportCtGovAction extends ActionSupport implements
         }
         return ERROR;
     }
+    
+    /**
+     * @return res     
+     *             IOException
+     * @throws PAException
+     *             PAException
+     */
+    public String triggerFullSync() throws PAException {        
+        if (ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR)) {
+            PaRegistry.getCTGovSyncNightlyService().updateIndustrialAndConsortiaTrials();
+            request.setAttribute(Constants.SUCCESS_MESSAGE, "Sync performed.");
+        } else {
+            request.setAttribute(Constants.FAILURE_MESSAGE,
+                    "Only Super Abstractors can trigger ClinicalTrials.gov sync.");
+        }
+        return SUCCESS;
+    }
 
     /**
      * @param nctIdToValidate
