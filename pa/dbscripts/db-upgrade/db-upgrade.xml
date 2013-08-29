@@ -1393,4 +1393,8 @@
         <comment>Create tables for ctgov org and person mapping</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6368.sql"/>
      </changeSet>
+     <changeSet id="PO-6368-2" author="krylovd">
+        <comment>Create indexes for ctgov mapping tables</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6368-2.sql"/>
+     </changeSet>
 </databaseChangeLog>
