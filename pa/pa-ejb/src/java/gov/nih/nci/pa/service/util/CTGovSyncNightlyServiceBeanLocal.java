@@ -205,7 +205,9 @@ public class CTGovSyncNightlyServiceBeanLocal implements
      */
     private void updateTrial(String nctIdentifier) throws PAException {
         try {
-            //update the trial in CTRP                                        
+            //update the trial in CTRP
+            PaHibernateUtil.getCurrentSession().flush();
+            PaHibernateUtil.getCurrentSession().clear();
             ctGovSyncServiceLocal.importTrial(nctIdentifier);            
         } catch (PAException pae) {
             LOG.error("Update for : " + nctIdentifier + " failed. " + pae.getMessage());
