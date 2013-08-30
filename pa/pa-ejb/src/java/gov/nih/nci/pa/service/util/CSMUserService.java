@@ -174,6 +174,9 @@ public class CSMUserService implements CSMUserUtil {
      */
     @Override
     public User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException {
+    	if(loginName == null) {
+    		throw new IllegalArgumentException("No user to update specified for " + user.getFullName() + ".");
+    	}
         User createdCSMUser = null;
         try {
             UserProvisioningManager upManager = SecurityServiceProvider.

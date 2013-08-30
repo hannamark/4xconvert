@@ -263,7 +263,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             abstractionCompletionRuleForProprietary(studyProtocolDTO, messages);
         } else {
             enforceIdentifierLength(studyProtocolDTO, messages);
-            enforceGeneralTrailDetails(studyProtocolDTO, messages);
+            enforceGeneralTrialDetails(studyProtocolDTO, messages);
             enforceNCISpecificInfo(studyProtocolDTO, messages);
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 enforceRegulatoryInfo(studyProtocolIi, messages);
@@ -383,7 +383,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         enforceIdentifierLength(studyProtocolDTO, messages);
-        enforceGeneralTrailDetails(studyProtocolDTO, messages);
+        enforceGeneralTrialDetails(studyProtocolDTO, messages);
 
         enforceInterventions(studyProtocolDTO, messages);
         enforceStudySiteNullification(studyProtocolIi, messages);
@@ -817,7 +817,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (isCorrelationRuleRequired(studyProtocolDto)) {
                     messages.addError("Select Regulatory under Regulatory Information from Administrative "
                             + "Data menu.",
-                            "FDA Regulated Intervention Indicator Should be Yes to add Trail IND IDE records.", 
+                            "FDA Regulated Intervention Indicator Should be Yes to add Trial IND IDE records.", 
                             ErrorMessageTypeEnum.ADMIN, 3);
                 }
             }
@@ -1211,7 +1211,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages) {
+    private void enforceGeneralTrialDetails(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages) {
         if (!PAUtil.checkAssignedIdentifierExists(studyProtocolDTO)) {
             messages.addError(SELECT_TRIAL_DETAILS,
                               "NCI Trial Identifier must be Entered", ErrorMessageTypeEnum.ADMIN, 1);

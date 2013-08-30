@@ -133,7 +133,7 @@ public class TrialHeaderInterceptor implements Interceptor {
                 session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             }
         } catch (Exception e) {
-            LOG.error("Error while refreshing trail object in session", e);
+            LOG.error("Error while refreshing trial object in session", e);
         }
         return actionInvocation.invoke();
     }
