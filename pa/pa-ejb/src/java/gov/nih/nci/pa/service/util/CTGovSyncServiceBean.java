@@ -176,9 +176,10 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private static final String CTGOVIMPORT_USERNAME = "ctgovimport";
 
-    private static final String EXCLUSION_CRITERIA_MARKER = "Exclusion (?:C|c)riteria\\s*:?";
+    private static final String EXCLUSION_CRITERIA_MARKER = 
+            "(?:(?:\\sExclusion (?:C|c)riteria\\s*:?)|(?:\\s{3,}Exclusion:\\s))";
 
-    private static final String INCLUSION_CRITERIA_MARKER = "Inclusion (?:C|c)riteria\\s*:?";
+    private static final String INCLUSION_CRITERIA_MARKER = "\\sInclusion (?:C|c)riteria\\s*:?";
 
     private static final int L_254 = 254;
 
@@ -1123,7 +1124,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                     INCLUSION_CRITERIA_MARKER, EXCLUSION_CRITERIA_MARKER);
             String exclusionList = extractEligibilityBlock(text,
                     EXCLUSION_CRITERIA_MARKER, INCLUSION_CRITERIA_MARKER);
-            if (isBlank(inclusionList) && isBlank(exclusionList)) {
+            if (isBlank(inclusionList) || isBlank(exclusionList)) {
                 // treat the entire text as one large inclusion & exclusion
                 // criteria
                 list.add(buildEligibilityCriteriaDTO(text, Boolean.TRUE));

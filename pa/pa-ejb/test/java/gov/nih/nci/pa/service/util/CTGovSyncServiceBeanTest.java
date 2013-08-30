@@ -437,6 +437,42 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     private EnPn getEnPn(String string) {
         return convertToEnPn(null, null, string, null, null);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testPO6438EligCriteriaHandling() throws PAException, ParseException {
+        String nciID = serviceBean.importTrial("NCT00324155");
+        assertTrue(StringUtils.isNotEmpty(nciID));
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = ((BigInteger) session.createSQLQuery(
+                "select study_protocol_id from study_otheridentifiers where extension='"
+                        + nciID + "'").uniqueResult()).longValue();
+        Ii ii = IiConverter.convertToStudyProtocolIi(id);
+        
+        List<PlannedEligibilityCriterion> exclList = session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=false and so.studyProtocol.id="
+                                + id + " order by so.id").list();
+        assertEquals(4, exclList.size());
+        assertEquals("Pregnant / nursing", exclList.get(0).getTextDescription());
+        assertEquals("Primary ocular or mucosal melanoma", exclList.get(3).getTextDescription());
+
+        List<PlannedEligibilityCriterion> inclList = session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=true and so.criterionName is null and so.studyProtocol.id="
+                                + id + " order by so.id").list();
+        assertEquals(7, inclList.size());
+        assertEquals("Informed Consent", inclList.get(0)
+                .getTextDescription());
+        assertEquals("Prior therapy restriction (adjuvant only)", inclList.get(6)
+                .getTextDescription());
+        
+    }
+    
 
     /**
      * Test method for
