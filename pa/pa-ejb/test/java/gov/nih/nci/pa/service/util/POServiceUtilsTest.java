@@ -118,13 +118,13 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
                 .executeUpdate();
 
         PersonDTO ctrpPerson = new PersonDTO();
-        ctrpPerson.setName(EnPnConverter.convertToEnPn("Emily", null, "Ctrp",
+        ctrpPerson.setName(EnPnConverter.convertToEnPn("Emily", "H", "Ctrp",
                 null, null));
         ctrpPerson.setIdentifier(PoRegistry.getPersonEntityService()
                 .createPerson(ctrpPerson));
 
         PersonDTO ctgovPerson = new PersonDTO();
-        ctgovPerson.setName(EnPnConverter.convertToEnPn("Emily", null, "Ctgov",
+        ctgovPerson.setName(EnPnConverter.convertToEnPn("Emily", "H", "Ctgov",
                 null, null));
         poServiceUtils.matchOrCreatePoObject(ctgovPerson);
         

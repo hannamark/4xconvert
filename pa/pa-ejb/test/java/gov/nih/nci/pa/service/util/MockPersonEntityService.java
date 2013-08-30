@@ -117,7 +117,7 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
                 match = match
                         && EnPnConverter
                                 .getNamePart(person.getName(),
-                                        EntityNamePartType.GIV).toLowerCase()
+                                        EntityNamePartType.GIV, 0).toLowerCase()
                                 .contains(c.getFirstName().toLowerCase());
             }
             if (StringUtils.isNotBlank(c.getLastName())) {

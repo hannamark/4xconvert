@@ -102,7 +102,7 @@ public final class POServiceUtils {
             CurationException, NullifiedEntityException, IllegalAccessException, InvocationTargetException {
         
         final String firstName = EnPnConverter.getNamePart(person.getName(),
-                EntityNamePartType.GIV);
+                EntityNamePartType.GIV, 0);
         final String lastName = EnPnConverter.getNamePart(person.getName(),
                 EntityNamePartType.FAM);
         
@@ -131,7 +131,7 @@ public final class POServiceUtils {
     private PersonDTO findPersonInPoByMappingTables(PersonDTO person)
             throws NullifiedRoleException, PAException, TooManyResultsException, NullifiedEntityException {
         final String firstName = EnPnConverter.getNamePart(person.getName(),
-                EntityNamePartType.GIV);
+                EntityNamePartType.GIV, 0);
         final String lastName = EnPnConverter.getNamePart(person.getName(),
                 EntityNamePartType.FAM);
         // Full name at this point should be exactly how it came from ct.gov,
