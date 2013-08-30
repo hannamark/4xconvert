@@ -450,11 +450,11 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
             redirectPage = "confirmation";
         }
         String userName = userWebDTO.getUsername();
-        if(userName == null){
-        	userName = registryUser.getCsmUser().getLoginName();
-        	if(userName == null) {
-        		throw new PAException("No user to update has been specified.");
-        	}
+        if (userName == null) {
+            userName = registryUser.getCsmUser().getLoginName();
+            if (userName == null) {
+                throw new PAException("No user to update has been specified.");
+            }
         }
         CSMUserService.getInstance().updateCSMUser(registryUser, userName, null);
         registryUserService.updateUser(registryUser);
