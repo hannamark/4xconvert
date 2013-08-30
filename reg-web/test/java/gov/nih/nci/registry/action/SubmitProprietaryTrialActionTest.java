@@ -197,14 +197,14 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testReviewLongLeadOrgTrialIdentifier() throws Exception{
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrailIdentifer12");  
+        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrialIdentifer12");  
         assertEquals("error", action.review());
 
     }
     @Test
     public void testReviewShortLeadOrgTrialIdentifier() throws Exception{
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrailIdentifer");  
+        action.getTrialDTO().setLeadOrgTrialIdentifier("LeadOrganizationTrialIdentifer");  
         assertEquals("review", action.review());
 
     }

@@ -529,7 +529,7 @@ public class StudyProtocolBatchDTO { // NOPMD
     /**
      * @return the phase
      */
-    @NotEmpty(message = "Trail Phase is required.\n")
+    @NotEmpty(message = "Trial Phase is required.\n")
     public String getPhase() {
         return phase;
     }

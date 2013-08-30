@@ -85,7 +85,7 @@ package gov.nih.nci.registry.test.integration;
 import org.junit.Test;
 
 /**
- * Selenium class for setting up trails needed in PA.
+ * Selenium class for setting up trials needed in PA.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *

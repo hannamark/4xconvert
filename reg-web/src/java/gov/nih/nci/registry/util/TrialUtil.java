@@ -338,7 +338,7 @@ public class TrialUtil extends TrialConvertUtils {
      * Gets the trial dto from db.
      *
      * @param studyProtocolIi Ii
-     * @param trialDTO TrailDTO
+     * @param trialDTO TrialDTO
      *
      * @throws PAException ex
      * @throws NullifiedRoleException e
@@ -580,7 +580,7 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     * updates the studyprocol dto with the trail details and status information.
+     * updates the studyprocol dto with the trial details and status information.
      *
      * @param trialDTO TrialDTO
      * @param spdto StudyProtocolDTO
