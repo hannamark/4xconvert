@@ -1097,7 +1097,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             listOfDTOToCreateInPO.add(respPartyDTO.getInvestigator());
         }
 
-        new POServiceUtils().matchOrCreatePoObjects(listOfDTOToCreateInPO);
+        POServiceUtils.matchOrCreatePoObjects(listOfDTOToCreateInPO);
     }
 
     

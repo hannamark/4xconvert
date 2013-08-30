@@ -52,6 +52,9 @@ import org.hibernate.criterion.Restrictions;
         "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public final class POServiceUtils {
     
+    private POServiceUtils() {        
+    }
+    
     /**
      * For every PO object in the list, will attempt to find a match in PO
      * utilizing ctgov-to-pdq mapping tables (ctgov_org_map and ctgov_org_map)
@@ -67,7 +70,7 @@ public final class POServiceUtils {
      * @throws PAException
      *             PAException
      */
-    public void matchOrCreatePoObjects(List<? extends PoDto> listOfObject)
+    public static void matchOrCreatePoObjects(List<? extends PoDto> listOfObject)
             throws PAException {
         for (PoDto poDto : listOfObject) {
             matchOrCreatePoObject(poDto);
@@ -79,7 +82,7 @@ public final class POServiceUtils {
      * @param poDto PoDto
      * @throws PAException PAException
      */
-    public void matchOrCreatePoObject(PoDto poDto) throws PAException {
+    public static void matchOrCreatePoObject(PoDto poDto) throws PAException {
         try {
             if (poDto instanceof OrganizationDTO
                     && ISOUtil.isIiNull(((OrganizationDTO) poDto)
@@ -96,7 +99,7 @@ public final class POServiceUtils {
         }
     }
 
-    private void matchOrCreateInPO(PersonDTO person)
+    private static void matchOrCreateInPO(PersonDTO person)
             throws NullifiedRoleException, PAException,
             TooManyResultsException, EntityValidationException,
             CurationException, NullifiedEntityException, IllegalAccessException, InvocationTargetException {
@@ -122,13 +125,13 @@ public final class POServiceUtils {
                 clonePerson(person)));
     }
 
-    private PersonDTO clonePerson(PersonDTO person) throws IllegalAccessException, InvocationTargetException {
+    private static PersonDTO clonePerson(PersonDTO person) throws IllegalAccessException, InvocationTargetException {
         PersonDTO clonedPerson = new PersonDTO();
         BeanUtils.copyProperties(clonedPerson, person);
         return clonedPerson;
     }
 
-    private PersonDTO findPersonInPoByMappingTables(PersonDTO person)
+    private static PersonDTO findPersonInPoByMappingTables(PersonDTO person)
             throws NullifiedRoleException, PAException, TooManyResultsException, NullifiedEntityException {
         final String firstName = EnPnConverter.getNamePart(person.getName(),
                 EntityNamePartType.GIV, 0);
@@ -142,7 +145,7 @@ public final class POServiceUtils {
         return findPersonInPoByMappingTables(firstName, lastName, fullname);
     }
 
-    private PersonDTO findPersonInPoByMappingTables(String firstName,
+    private static PersonDTO findPersonInPoByMappingTables(String firstName,
             String lastName, String fullname) throws NullifiedRoleException,
             PAException, TooManyResultsException, NullifiedEntityException {
         List<CTGovPersonMapping> mappings = findCtGovPersonMappings(firstName,
@@ -156,7 +159,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private PersonDTO findPersonInPoByMapping(CTGovPersonMapping mapping)
+    private static PersonDTO findPersonInPoByMapping(CTGovPersonMapping mapping)
             throws NullifiedRoleException, PAException, TooManyResultsException, NullifiedEntityException {
         PersonDTO person = findPersonInPoByPoIds(mapping.getPoId());
         if (person == null) {
@@ -169,7 +172,7 @@ public final class POServiceUtils {
         return person;
     }
 
-    private List<CTGovPersonMapping> findCtGovPersonMappings(String firstName,
+    private static List<CTGovPersonMapping> findCtGovPersonMappings(String firstName,
             String lastName, String fullname) {
         List<CTGovPersonMapping> list = new ArrayList<CTGovPersonMapping>();
         Session s = PaHibernateUtil.getCurrentSession();
@@ -209,7 +212,7 @@ public final class POServiceUtils {
      * @throws TooManyResultsException
      * @throws NullifiedRoleException
      */
-    private PersonDTO findPersonInPoByFirstLastName(final String firstName,
+    private static PersonDTO findPersonInPoByFirstLastName(final String firstName,
             final String lastName) throws PAException, TooManyResultsException,
             NullifiedRoleException {
         PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
@@ -226,7 +229,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private void matchOrCreateInPO(OrganizationDTO org)
+    private static void matchOrCreateInPO(OrganizationDTO org)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException, EntityValidationException,
             CurationException {
@@ -251,7 +254,7 @@ public final class POServiceUtils {
 
     }
 
-    private OrganizationDTO findOrgInPoByNameAndMappingTables(EnOn name)
+    private static OrganizationDTO findOrgInPoByNameAndMappingTables(EnOn name)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException {
         final String orgName = EnOnConverter.convertEnOnToString(name);
@@ -265,7 +268,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private OrganizationDTO findOrgInPoByMapping(CTGovOrgMapping mapping)
+    private static OrganizationDTO findOrgInPoByMapping(CTGovOrgMapping mapping)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException {
         OrganizationDTO org = findOrgInPoByPoIds(mapping.getPoId());
@@ -278,7 +281,7 @@ public final class POServiceUtils {
         return org;
     }
 
-    private OrganizationDTO findOrgInPoByCtepIds(String ctepIds)
+    private static OrganizationDTO findOrgInPoByCtepIds(String ctepIds)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException {
         OrganizationDTO org = null;
@@ -293,7 +296,7 @@ public final class POServiceUtils {
         return org;
     }
     
-    private PersonDTO findPersonInPoByCtepIds(String ctepIds)
+    private static PersonDTO findPersonInPoByCtepIds(String ctepIds)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException {
         PersonDTO p = null;
@@ -308,7 +311,7 @@ public final class POServiceUtils {
         return p;
     }
 
-    private PersonDTO findPersonInPoByCtepId(String ctepid)
+    private static PersonDTO findPersonInPoByCtepId(String ctepid)
             throws NullifiedRoleException, PAException, TooManyResultsException {
         PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
         criteria.setCtepId(ctepid);
@@ -325,7 +328,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private OrganizationDTO findOrgInPoByCtepId(final String ctepid)
+    private static OrganizationDTO findOrgInPoByCtepId(final String ctepid)
             throws NullifiedRoleException, NullifiedEntityException,
             TooManyResultsException, PAException {
         OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
@@ -344,7 +347,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private String findCtepId(OrganizationDTO org)
+    private static String findCtepId(OrganizationDTO org)
             throws NullifiedRoleException {
         List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
                 .getIdentifiedOrganizationEntityService()
@@ -358,7 +361,7 @@ public final class POServiceUtils {
         return null;
     }
 
-    private OrganizationDTO findOrgInPoByPoIds(String poIds) {
+    private static OrganizationDTO findOrgInPoByPoIds(String poIds) {
         OrganizationDTO org = null;
         if (isNotBlank(poIds)) {
             for (String poid : poIds.split(";")) {
@@ -371,7 +374,7 @@ public final class POServiceUtils {
         return org;
     }
     
-    private PersonDTO findPersonInPoByPoIds(String poIds) {
+    private static PersonDTO findPersonInPoByPoIds(String poIds) {
         PersonDTO p = null;
         if (isNotBlank(poIds)) {
             for (String poid : poIds.split(";")) {
@@ -384,17 +387,17 @@ public final class POServiceUtils {
         return p;
     }
 
-    private OrganizationDTO findOrgInPoByPoId(String poid) {
+    private static OrganizationDTO findOrgInPoByPoId(String poid) {
         return new PAServiceUtils().getPOOrganizationEntity(IiConverter
                 .convertToPoOrganizationIi(poid));
     }
     
-    private PersonDTO findPersonInPoByPoId(String poid) {
+    private static PersonDTO findPersonInPoByPoId(String poid) {
         return new PAServiceUtils().getPoPersonEntity(IiConverter
                 .convertToPoPersonIi(poid));
     }
 
-    private List<CTGovOrgMapping> findCtGovOrgMappings(String ctgovName) {
+    private static List<CTGovOrgMapping> findCtGovOrgMappings(String ctgovName) {
         Session s = PaHibernateUtil.getCurrentSession();
         Criteria c = s.createCriteria(CTGovOrgMapping.class)
                 .add(Restrictions.ilike("ctgovOrg.name", ctgovName,
@@ -410,7 +413,7 @@ public final class POServiceUtils {
      * @throws NullifiedEntityException
      * @throws PAException
      */
-    private OrganizationDTO findOrgInPoByName(final EnOn name)
+    private static OrganizationDTO findOrgInPoByName(final EnOn name)
             throws TooManyResultsException, NullifiedRoleException,
             NullifiedEntityException, PAException {
         final String orgName = EnOnConverter.convertEnOnToString(name);
@@ -425,7 +428,7 @@ public final class POServiceUtils {
      * @throws NullifiedEntityException
      * @throws PAException
      */
-    private OrganizationDTO findOrgInPoByName(final String orgName)
+    private static OrganizationDTO findOrgInPoByName(final String orgName)
             throws TooManyResultsException, NullifiedRoleException,
             NullifiedEntityException, PAException {
         OrganizationDTO exactMatchInPO = null;

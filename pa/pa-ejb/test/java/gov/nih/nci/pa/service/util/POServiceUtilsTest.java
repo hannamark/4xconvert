@@ -38,7 +38,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
     private static final MockPersonEntityService PERSON_ENTITY_SERVICE = new MockPersonEntityService();
     private static final MockIdentifiedOrganizationCorrelationService ID_ORG_SERVICE = new MockIdentifiedOrganizationCorrelationService();
     private static final MockIdentifiedPersonCorrelationService ID_PERSON_SERVICE = new MockIdentifiedPersonCorrelationService();
-    private final POServiceUtils poServiceUtils = new POServiceUtils();
+   
 
     /**
      * @throws java.lang.Exception
@@ -75,7 +75,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
 
         OrganizationDTO newOrg = new OrganizationDTO();
         newOrg.setName(EnOnConverter.convertToEnOn("New Org No Mapping, Inc"));
-        poServiceUtils.matchOrCreatePoObject(newOrg);
+        POServiceUtils.matchOrCreatePoObject(newOrg);
 
         assertNotNull(newOrg.getIdentifier());
         OrganizationDTO match = PoRegistry.getOrganizationEntityService()
@@ -94,7 +94,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
         PersonDTO newPerson = new PersonDTO();
         newPerson.setName(EnPnConverter.convertToEnPn("John", null, "Doe",
                 null, null));
-        poServiceUtils.matchOrCreatePoObject(newPerson);
+        POServiceUtils.matchOrCreatePoObject(newPerson);
 
         assertNotNull(newPerson.getIdentifier());
 
@@ -126,7 +126,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
         PersonDTO ctgovPerson = new PersonDTO();
         ctgovPerson.setName(EnPnConverter.convertToEnPn("Emily", "H", "Ctgov",
                 null, null));
-        poServiceUtils.matchOrCreatePoObject(ctgovPerson);
+        POServiceUtils.matchOrCreatePoObject(ctgovPerson);
         
         assertEquals(ctrpPerson.getIdentifier().getExtension(), ctgovPerson
                 .getIdentifier().getExtension());
@@ -153,7 +153,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
         ctgovPerson.setName(EnPnConverter.convertToEnPn("James", null, "B. Doe",
                 null, null));
         ctgovPerson.setFullName("dr. James A. B. Doe, MD, Phd");
-        poServiceUtils.matchOrCreatePoObject(ctgovPerson);
+        POServiceUtils.matchOrCreatePoObject(ctgovPerson);
         
         assertEquals(ctrpPerson.getIdentifier().getExtension(), ctgovPerson
                 .getIdentifier().getExtension());
@@ -180,7 +180,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
         PersonDTO ctgovPerson = new PersonDTO();
         ctgovPerson.setName(EnPnConverter.convertToEnPn("Jane", null, "Ctgov-Doe",
                 null, null));
-        poServiceUtils.matchOrCreatePoObject(ctgovPerson);
+        POServiceUtils.matchOrCreatePoObject(ctgovPerson);
         
         assertEquals(ctrpPerson.getIdentifier().getExtension(), ctgovPerson
                 .getIdentifier().getExtension());
@@ -208,7 +208,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
         PersonDTO ctgovPerson = new PersonDTO();
         ctgovPerson.setName(EnPnConverter.convertToEnPn("Jack", null, "Ctgov-Doe",
                 null, null));
-        poServiceUtils.matchOrCreatePoObject(ctgovPerson);
+        POServiceUtils.matchOrCreatePoObject(ctgovPerson);
         
         assertEquals(ctrpPerson.getIdentifier().getExtension(), ctgovPerson
                 .getIdentifier().getExtension());
@@ -233,7 +233,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
 
         OrganizationDTO newOrg = new OrganizationDTO();
         newOrg.setName(EnOnConverter.convertToEnOn("Schiffler Cancer Center"));
-        poServiceUtils.matchOrCreatePoObject(newOrg);
+        POServiceUtils.matchOrCreatePoObject(newOrg);
 
         assertNotNull(newOrg.getIdentifier());
         assertEquals(newOrg.getIdentifier().getExtension(), schiffler
@@ -261,7 +261,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
 
         OrganizationDTO newOrg = new OrganizationDTO();
         newOrg.setName(EnOnConverter.convertToEnOn("Sharp Memorial Hospital"));
-        poServiceUtils.matchOrCreatePoObject(newOrg);
+        POServiceUtils.matchOrCreatePoObject(newOrg);
 
         assertNotNull(newOrg.getIdentifier());
         assertEquals(newOrg.getIdentifier().getExtension(), sharp
@@ -289,7 +289,7 @@ public class POServiceUtilsTest extends AbstractHibernateTestCase {
 
         OrganizationDTO newOrg = new OrganizationDTO();
         newOrg.setName(EnOnConverter.convertToEnOn("Eli Lilly Asia,INC"));
-        poServiceUtils.matchOrCreatePoObject(newOrg);
+        POServiceUtils.matchOrCreatePoObject(newOrg);
 
         assertNotNull(newOrg.getIdentifier());
         assertEquals(newOrg.getIdentifier().getExtension(), match
