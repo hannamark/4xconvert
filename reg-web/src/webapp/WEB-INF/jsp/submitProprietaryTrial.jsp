@@ -267,7 +267,7 @@
                         <s:select headerKey="" headerValue="Yes"
                                   id="trialDTO.consortiaTrialCategoryCode"
                                   name="trialDTO.consortiaTrialCategoryCode"
-                                  list="#{'National':'No - National', 'Externally Peer-Reviewed':'No - Externally Peer-Reviewed'}"
+                                  list="consortiaTrialCategoryValueMap"
                                   cssStyle="width:206px" />
                          <span class="formErrorMsg">
                                <s:fielderror>
