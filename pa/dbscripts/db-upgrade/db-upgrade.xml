@@ -1397,4 +1397,8 @@
         <comment>Create indexes for ctgov mapping tables</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6368-2.sql"/>
      </changeSet>
+     <changeSet id="PO-5365-2" author="krylovd">
+        <comment>Made consortia trial categories table-driven</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5365-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

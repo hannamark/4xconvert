@@ -1,6 +1,10 @@
 package gov.nih.nci.registry.action;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 
 import javax.servlet.http.HttpServletResponse;
@@ -119,6 +123,17 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
             addFieldError("trialDTO.protocolDocFileName",
                     "Provide either NCT Number or Protocol Trial Template.\n");
         }
+    }
+    
+    /**
+     * @return ConsortiaTrialCategoryValueMap
+     */
+    public final Map<String, String> getConsortiaTrialCategoryValueMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (String code : ConsortiaTrialCategoryCode.getDisplayNames()) {
+            map.put(code, "No - " + code);
+        }
+        return map;
     }
 
 }

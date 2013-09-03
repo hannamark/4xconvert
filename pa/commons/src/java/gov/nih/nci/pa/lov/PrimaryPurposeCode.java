@@ -89,7 +89,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -105,7 +104,7 @@ import org.hibernate.criterion.Restrictions;
  */
 @Entity
 @Table(name = "primary_purpose")
-public class PrimaryPurposeCode implements Lov {
+public class PrimaryPurposeCode extends AbstractLov {
     
     private static final Logger LOG = Logger.getLogger(PrimaryPurposeCode.class);
 
@@ -256,25 +255,7 @@ public class PrimaryPurposeCode implements Lov {
         return true;
     }
 
-    @Override
-    @Transient
-    public String getDisplayName() {
-        if (StringUtils.isNotBlank(getName())) {
-            StringBuilder displayName = new StringBuilder(getName()
-                    .toLowerCase());
-            displayName
-                    .replace(0, 1, displayName.substring(0, 1).toUpperCase());
-            for (int i = 0; i < displayName.length(); i++) {
-                if (displayName.charAt(i) == '_') {
-                    displayName.setCharAt(i, ' ');
-                }
-            }
-            return displayName.toString();
-        } else {
-            return "";
-        }
-    }
-
+   
     /**
      * @return String[] display names of enums
      */
@@ -313,12 +294,7 @@ public class PrimaryPurposeCode implements Lov {
             list.remove(other);
             list.add(other);
         }
-        PrimaryPurposeCode[] l = list.toArray(new PrimaryPurposeCode[0]); //NOPMD
-        String[] a = new String[l.length];
-        for (int i = 0; i < l.length; i++) {
-            a[i] = l[i].getCode();
-        }
-        return a;
+        return AbstractLov.loadDisplayNamesArray(list);
     }
 
     /* (non-Javadoc)

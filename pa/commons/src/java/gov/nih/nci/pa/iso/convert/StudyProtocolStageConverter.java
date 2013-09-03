@@ -84,7 +84,6 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
-import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -98,6 +97,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 
 import org.apache.commons.collections.CollectionUtils;
 /**

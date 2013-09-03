@@ -128,11 +128,11 @@
                         <td scope="row" class="label">
                             <label for="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"><fmt:message key="studyProtocol.consortiaTrialCategoryCode"/></label>
                         </td>                        
-                        <td class="value">
+                        <td class="value">                            
                             <s:select headerKey="" headerValue="Yes"
                                   id="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
                                   name="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
-                                  list="#{'National':'No - National', 'Externally Peer-Reviewed':'No - Externally Peer-Reviewed'}"
+                                  list="consortiaTrialCategoryValueMap"
                                   cssStyle="width:206px" />                           
                             <span class="formErrorMsg"> 
                                 <s:fielderror>

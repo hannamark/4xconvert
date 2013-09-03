@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
@@ -103,7 +104,9 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -405,5 +408,16 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String lookup1() {
         return SUCCESS;
+    }
+    
+    /**
+     * @return ConsortiaTrialCategoryValueMap
+     */
+    public Map<String, String> getConsortiaTrialCategoryValueMap() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        for (String code : ConsortiaTrialCategoryCode.getDisplayNames()) {
+            map.put(code, "No - " + code);
+        }
+        return map;
     }
 }

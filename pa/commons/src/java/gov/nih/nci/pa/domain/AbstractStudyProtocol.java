@@ -83,10 +83,10 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
 import java.util.HashSet;
@@ -374,8 +374,8 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @return the consortiaTrialCategoryCode
      */
-    @Column(name = "consortia_trial_category")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "consortia_trial_category")
     public ConsortiaTrialCategoryCode getConsortiaTrialCategoryCode() {
         return consortiaTrialCategoryCode;
     }
