@@ -57,6 +57,46 @@
             
             function setorgid(orgid) {
             }
+            
+            var allowableConsortiaCategories = ${allowableConsortiaCategoriesJSON};
+            var allConsortiaCategories = ${consortiaTrialCategoryValueMapJSON};
+            
+            function filterConsortiaCategoryList() {
+            	var listEl = $('nciSpecificInformationWebDTO.consortiaTrialCategoryCode');
+            	var curSelection = $F(listEl);
+            	var sum4Code = $F('summary4TypeCode');
+            	            	
+            	listEl.options.length = 0;
+            	var opt = document.createElement("option");
+            	opt.value= '';
+            	opt.innerHTML = 'Yes';            	
+            	listEl.options.add(opt);
+            	
+            	jQuery.each(allConsortiaCategories, function(key, val) {
+            		if (sum4Code == '' || $A(allowableConsortiaCategories[sum4Code]).indexOf(key)>-1) {
+	            		opt = document.createElement("option");
+	                    opt.value= key;
+	                    opt.innerHTML = val;              
+	                    listEl.options.add(opt);
+            		}
+            	});
+            	
+            	listEl.setValue(curSelection);
+            	
+            	if (curSelection!=$F(listEl)) {
+            		$('consortiaTrialCategoryCodeErr').innerHTML = 'Please select a new value';
+            	} 
+            	
+            }
+            
+            Event.observe(window, "load", function() {
+            	if ($('nciSpecificInformationWebDTO.consortiaTrialCategoryCode')!=null) {
+            	    filterConsortiaCategoryList();
+            	    Event.observe($('summary4TypeCode'), "change", 
+                        filterConsortiaCategoryList);
+            	}
+            });
+            
                 
         </script>
     </head>
@@ -134,7 +174,7 @@
                                   name="nciSpecificInformationWebDTO.consortiaTrialCategoryCode"
                                   list="consortiaTrialCategoryValueMap"
                                   cssStyle="width:206px" />                           
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg" id="consortiaTrialCategoryCodeErr"> 
                                 <s:fielderror>
                                     <s:param>nciSpecificInformationWebDTO.consortiaTrialCategoryCode</s:param>
                                 </s:fielderror>                            

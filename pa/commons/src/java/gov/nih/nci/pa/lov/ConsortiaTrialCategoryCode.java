@@ -61,13 +61,18 @@ public class ConsortiaTrialCategoryCode extends AbstractLov {
      * construct a array of display names for ConsortiaTrialCategoryCode Enum.
      * 
      * @return String[] display names for ConsortiaTrialCategoryCode
+     */    
+    public static String[] getDisplayNames() {       
+        return AbstractLov.loadDisplayNamesArray(values());
+    }
+    
+    /**
+     * @return list of all codes
      */
     @SuppressWarnings("unchecked")
-    public static String[] getDisplayNames() {
-        List<ConsortiaTrialCategoryCode> list = PaHibernateUtil
-                .getCurrentSession()
+    public static List<ConsortiaTrialCategoryCode> values() {
+        return PaHibernateUtil.getCurrentSession()
                 .createCriteria(ConsortiaTrialCategoryCode.class).list();
-        return AbstractLov.loadDisplayNamesArray(list);
     }
     
     /* (non-Javadoc)

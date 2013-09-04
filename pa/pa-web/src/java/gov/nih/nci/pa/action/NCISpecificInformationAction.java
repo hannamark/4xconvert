@@ -104,7 +104,10 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -115,6 +118,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
+import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -420,4 +424,33 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         return map;
     }
+    
+    /**
+     * @return ConsortiaTrialCategoryValueMap as JSON
+     */
+    public String getConsortiaTrialCategoryValueMapJSON() {
+        return new Gson().toJson(getConsortiaTrialCategoryValueMap());
+    }
+    
+    /**
+     * @return a JSON map between summary 4 funding codes and list of applicable
+     *         consortia trial categories.
+     */
+    public String getAllowableConsortiaCategoriesJSON() {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        for (ConsortiaTrialCategoryCode code : ConsortiaTrialCategoryCode
+                .values()) {
+            for (String sum4Cat : StringUtils.defaultString(
+                    code.getSummary4FundingCodes()).split(";")) {
+                Collection<String> set = map.get(sum4Cat);
+                if (set == null) {
+                    set = new LinkedHashSet<String>();
+                    map.put(sum4Cat, set);
+                }
+                set.add(code.getCode());
+            }
+        }
+        return new Gson().toJson(map);
+    }
+    
 }

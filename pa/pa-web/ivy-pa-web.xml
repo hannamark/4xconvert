@@ -41,6 +41,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.apache.struts"      name="struts2-json-plugin"     rev="2.3.15.1"         conf="runtime->default"/>
     <dependency org="org.springframework"    name="spring"                  rev="2.0.5"           conf="runtime->master"/>
     <dependency org="taglibs"                name="standard"                rev="1.1.2"           conf="runtime->master"/>
+    <dependency org="com.google.code.gson"          name="gson"                    rev="2.2.4"           conf="runtime->master"/>
     <!-- compile -->
     <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.10-SNAPSHOT"  conf="compile->master"/>
