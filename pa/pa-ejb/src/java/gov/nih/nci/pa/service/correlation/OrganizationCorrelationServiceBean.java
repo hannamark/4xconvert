@@ -628,4 +628,23 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     public CorrelationUtils getCorrUtils() {
         return corrUtils;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isAffiliatedWithTrial(Long spId, Long orgId, StudySiteFunctionalCode type) throws PAException {
+        boolean result = false;
+        if (spId == null || orgId == null) {
+            return result;
+        }
+        List<Organization> oList = getOrganizationByStudySite(spId, type);
+        for (Organization lo : oList) {
+            if (lo.getIdentifier().equals(String.valueOf(orgId))) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
 }

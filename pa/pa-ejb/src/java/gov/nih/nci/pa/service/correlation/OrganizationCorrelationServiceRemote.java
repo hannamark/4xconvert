@@ -181,4 +181,14 @@ public interface OrganizationCorrelationServiceRemote {
      * @throws PAException onError
      */
     Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException;
+
+    /**
+     * Test if an organization is affiliated with a trial.
+     * @param spId the study protocol identifier
+     * @param orgId the po organization identifier
+     * @param type the type of affiliation
+     * @return true is the given affiliation exists
+     * @throws PAException onError
+     */
+    boolean isAffiliatedWithTrial(Long spId, Long orgId, StudySiteFunctionalCode type) throws PAException;
 }

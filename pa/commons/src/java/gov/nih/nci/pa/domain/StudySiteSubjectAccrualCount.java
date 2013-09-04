@@ -126,6 +126,7 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
     @ManyToOne
     @JoinColumn(name = "study_site_identifier", updatable = false)
     @Index(name = "study_site_subject_accrual_count_study_site_idx")
+    @NotNull
     public StudySite getStudySite() {
         return studySite;
     }

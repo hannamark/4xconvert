@@ -4,14 +4,23 @@ import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
@@ -21,8 +30,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -43,7 +54,6 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("unchecked")
 public class SubmissionHistoryBean implements SubmissionHistoryService {
-    
     private static final String YES = "Yes";
     private static final String NO = "No";
     
@@ -76,6 +86,30 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             + "where submission_type = '" + AccrualSubmissionTypeCode.UI.getName() + "' "
             + "and study_protocol_identifier in (:studyProtocolIdentifiers) ";
 
+    /** Used to store data on submitters. Avoid redundant db queries. */
+    private class UserData {
+        private final String name;
+        private final Long organization;
+        public UserData(String name, Long organization) {
+            this.name = name;
+            this.organization = organization;
+        }
+    }
+
+    /** Used to store data on submitters. Avoid redundant db queries. */
+    private class TrialData {
+        private final boolean industrial;
+        private final boolean affiliatedWithLead;
+        private final boolean affiliatedWithSite;
+        private final Set<Long> siteAccess;
+        public TrialData(boolean industrial, boolean affiliatedWithLead, boolean affiliatedWithSite, 
+                Set<Long> siteAccess) {
+            this.industrial = industrial;
+            this.affiliatedWithLead = affiliatedWithLead;
+            this.affiliatedWithSite = affiliatedWithSite;
+            this.siteAccess = siteAccess;
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -83,19 +117,95 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     @Override
     public List<HistoricalSubmissionDto> search(Timestamp from, Timestamp to, RegistryUser ru) throws PAException {
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
-        Map<Long, String> trials = searchTrialSvc.getAuthorizedTrialMap(ru == null ? null : ru.getId());
-        Map<Long, String> usernames = new HashMap<Long, String>();
+        if (ru == null) {
+            return result;
+        }
+        Map<Long, String> trials = searchTrialSvc.getAuthorizedTrialMap(ru.getId());
+        Map<Long, UserData> users = new HashMap<Long, UserData>();
         if (!trials.isEmpty()) {
-            result.addAll(searchGuiCompleteSubmissions(from, to, trials, usernames));
-            result.addAll(searchGuiAbbreviatedSubmissions(from, to, trials, usernames));
-            result.addAll(searchBatchSubmissions(from, to, trials, usernames));
+            result.addAll(searchGuiCompleteSubmissions(from, to, trials, users));
+            result.addAll(searchGuiAbbreviatedSubmissions(from, to, trials, users));
+            result.addAll(searchBatchSubmissions(from, to, trials, users));
             Collections.sort(result);
+        }
+        return po6304Filter(result, ru, trials);
+    }
+
+    private List<HistoricalSubmissionDto> po6304Filter(List<HistoricalSubmissionDto> sList, RegistryUser ru,
+            Map<Long, String> trials) throws PAException {
+        Map<String, TrialData> trialData = new HashMap<String, TrialData>();
+        List<Long> familyOrgIds = FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
+        List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
+        for (HistoricalSubmissionDto s : sList) {
+            if (s.getRegistryUserId() == null) {
+                continue;
+            }
+
+            // always show if user is submitter
+            if (s.getRegistryUserId().equals(ru.getCsmUser().getUserId())) {
+                result.add(s);
+                continue;
+            }
+
+            // otherwise show only under certain conditions
+            if (trials.containsValue(s.getNciNumber()) 
+                    && po6304Show(s, ru, trialData, familyOrgIds)) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
+    private boolean po6304Show(HistoricalSubmissionDto s, RegistryUser ru, Map<String, TrialData> trialData, 
+            List<Long> familyOrgIds) throws PAException {
+        TrialData d = getTrialData(s.getNciNumber(), ru, trialData);
+        return !d.industrial && d.affiliatedWithLead
+                || d.affiliatedWithSite  
+                   && d.siteAccess.contains(s.getUserAffiliatedOrgId())
+                   && (familyOrgIds.contains(s.getUserAffiliatedOrgId()) 
+                       // below required for case where affiliated org is not part of a family
+                       || ru.getAffiliatedOrganizationId().equals(s.getUserAffiliatedOrgId()));
+    }
+
+    private TrialData getTrialData(String nciId, RegistryUser user, Map<String, TrialData> trialData)
+            throws PAException {
+        TrialData result = trialData.get(nciId);
+        if (result == null) {
+            Ii ii = IiConverter.convertToStudyProtocolIi(0L);
+            ii.setExtension(nciId);
+            StudyProtocolDTO sp = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(ii);
+            Long spId = IiConverter.convertToLong(sp.getIdentifier());
+            boolean industrial = BlConverter.convertToBool(sp.getProprietaryTrialIndicator());
+            boolean lead = PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
+                    user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            boolean site =  PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
+                    user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.TREATING_SITE);
+            Set<Long> siteAccess = new HashSet<Long>();
+            Session session = PaHibernateUtil.getCurrentSession();
+            Query query = null;
+            String hql = "select ssaa "
+                + "from StudyProtocol sp "
+                + "join sp.studySites ss "
+                + "join ss.studySiteAccrualAccess ssaa "
+                + "where sp.id = :spId "
+                + "  and ssaa.statusCode = 'ACTIVE' "
+                + "  and ssaa.registryUser.id = :ruId";
+            query = session.createQuery(hql);
+            query.setParameter("spId", spId);
+            query.setParameter("ruId", user.getId());
+            List<StudySiteAccrualAccess> queryList = query.list();
+            for (StudySiteAccrualAccess obj : queryList) {
+                siteAccess.add(Long.valueOf(obj.getStudySite().getHealthCareFacility().
+                        getOrganization().getIdentifier()));
+            }
+            result = new TrialData(industrial, lead, site, siteAccess);
+            trialData.put(nciId, result);
         }
         return result;
     }
 
     private List<HistoricalSubmissionDto> searchBatchSubmissions(Timestamp from, Timestamp to, 
-            Map<Long, String> trials, Map<Long, String> usernames) throws PAException {
+            Map<Long, String> trials, Map<Long, UserData> users) throws PAException {
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer(BATCH_HQL);
@@ -117,8 +227,10 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setNciNumber(ac.getNciNumber());
             row.setResult(getBatchResult(ac));
             row.setSubmissionType(bf.getSubmissionTypeCode());
-            row.setUsername(getRegistryUsername(usernames, bf.getUserLastCreated() == null 
-                    ? null : bf.getUserLastCreated().getUserId()));
+            row.setRegistryUserId(bf.getUserLastCreated() == null ? null : bf.getUserLastCreated().getUserId());
+            UserData userData = getRegistryUserData(users, row.getRegistryUserId());
+            row.setUsername(userData.name);
+            row.setUserAffiliatedOrgId(userData.organization);
             result.add(row);
         }
         return result;
@@ -143,7 +255,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
     }
 
     private List<HistoricalSubmissionDto> searchGuiCompleteSubmissions(Timestamp from, Timestamp to, 
-            Map<Long, String> trials, Map<Long, String> usernames) throws PAException {
+            Map<Long, String> trials, Map<Long, UserData> users) throws PAException {
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer(GUI_COMPLETE_SQL);
@@ -160,23 +272,19 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setNciNumber(trials.get(trialId));
             row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.valueOf((String) subm[TYPE_COL]));
-            row.setUsername(getRegistryUsername(usernames, subm[2] == null ? null : ((Integer) subm[2]).longValue()));
+            row.setRegistryUserId(((Number) subm[2]).longValue());
+            UserData userData = getRegistryUserData(users, row.getRegistryUserId());
+            row.setUsername(userData.name);
+            row.setUserAffiliatedOrgId(userData.organization);
             row.setAssignedIdentifier((String) subm[AI_COL]);
-            Long ssId;
-            // required to handle different type returned by test harness
-            if (subm[0] instanceof BigInteger) {
-                ssId = ((BigInteger) subm[0]).longValue();
-            } else {
-                ssId = ((Integer) subm[0]).longValue();
-            }
-            row.setStudySubjectId(ssId);
+            row.setStudySubjectId(((Number) subm[0]).longValue());
             result.add(row);
         }
         return result;
     }
 
     private List<HistoricalSubmissionDto> searchGuiAbbreviatedSubmissions(Timestamp from, Timestamp to, 
-            Map<Long, String> trials, Map<Long, String> usernames) throws PAException {
+            Map<Long, String> trials, Map<Long, UserData> users) throws PAException {
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer sql = new StringBuffer(GUI_ABBREVIATED_SQL);
@@ -193,7 +301,10 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setNciNumber(trials.get(trialId));
             row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.UI);
-            row.setUsername(getRegistryUsername(usernames, subm[2] == null ? null : ((Integer) subm[2]).longValue()));
+            row.setRegistryUserId(((Number) subm[2]).longValue());
+            UserData userData = getRegistryUserData(users, row.getRegistryUserId());
+            row.setUsername(userData.name);
+            row.setUserAffiliatedOrgId(userData.organization);
             result.add(row);
         }
         return result;
@@ -231,11 +342,11 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
         }
     }
 
-    private String getRegistryUsername(Map<Long, String> usernames, Long ruId) {
+    private UserData getRegistryUserData(Map<Long, UserData> users, Long ruId) {
         if (ruId == null) {
-            return null;
+            return new UserData(null, null);
         }
-        if (usernames.get(ruId) ==  null) {
+        if (users.get(ruId) ==  null) {
             Session session = PaHibernateUtil.getCurrentSession();
             StringBuffer hql = new StringBuffer(
                     "from RegistryUser ru join fetch ru.csmUser cu where cu.id = :identifier");
@@ -244,10 +355,11 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             List<Object> userList = query.list();
             if (CollectionUtils.isNotEmpty(userList)) {
                 RegistryUser registryUser = (RegistryUser) userList.get(0);
-                usernames.put(ruId, AccrualUtil.getDisplayName(registryUser));
+                users.put(ruId, new UserData(AccrualUtil.getDisplayName(registryUser), 
+                        registryUser.getAffiliatedOrganizationId()));
             }
         }
-        return usernames.get(ruId);
+        return users.get(ruId);
     }
 
     /**

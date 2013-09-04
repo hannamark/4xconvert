@@ -182,6 +182,7 @@ public class StudySubject extends Subject {
     @ManyToOne
     @JoinColumn(name = "study_site_identifier")
     @Index(name = "study_subject_study_site_idx")
+    @NotNull
     public StudySite getStudySite() {
         return studySite;
     }

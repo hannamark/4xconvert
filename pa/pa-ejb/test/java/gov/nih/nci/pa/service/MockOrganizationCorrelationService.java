@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -316,6 +315,12 @@ public class MockOrganizationCorrelationService implements
     public Ii getROByFunctionRole(Ii studyProtocolIi, Cd cd) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean isAffiliatedWithTrial(Long spId, Long orgId, StudySiteFunctionalCode type) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

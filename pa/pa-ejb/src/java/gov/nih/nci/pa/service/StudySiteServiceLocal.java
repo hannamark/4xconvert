@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 
@@ -108,4 +109,10 @@ public interface StudySiteServiceLocal extends StudySiteService {
     Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) 
         throws EntityValidationException, CurationException, PAException, TooManyResultsException;
 
+    /**
+     * Get the organization by the study site id
+     * @param ssid study site identifier
+     * @return organization
+     */
+    Organization getOrganizationByStudySiteId(Long ssid);
 }

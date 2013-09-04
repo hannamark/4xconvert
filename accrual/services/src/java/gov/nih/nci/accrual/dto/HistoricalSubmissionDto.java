@@ -20,6 +20,8 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
     private AccrualSubmissionTypeCode submissionType;
     private Timestamp date;
     private String username;
+    private Long registryUserId;
+    private Long userAffiliatedOrgId;
     private String result;
     private Long completeTrialId;
     private Long abbreviatedTrialId;
@@ -98,6 +100,30 @@ public class HistoricalSubmissionDto implements Comparable<HistoricalSubmissionD
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+    /**
+     * @return the registryUserId
+     */
+    public Long getRegistryUserId() {
+        return registryUserId;
+    }
+    /**
+     * @param registryUserId the registryUserId to set
+     */
+    public void setRegistryUserId(Long registryUserId) {
+        this.registryUserId = registryUserId;
+    }
+    /**
+     * @return the userAffiliatedOrgId
+     */
+    public Long getUserAffiliatedOrgId() {
+        return userAffiliatedOrgId;
+    }
+    /**
+     * @param userAffiliatedOrgId the userAffiliatedOrgId to set
+     */
+    public void setUserAffiliatedOrgId(Long userAffiliatedOrgId) {
+        this.userAffiliatedOrgId = userAffiliatedOrgId;
     }
     /**
      * @return the completeTrialId

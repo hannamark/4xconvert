@@ -242,4 +242,10 @@ public class MockOrganizationCorrelationService implements
         return null;
     }
 
+    @Override
+    public boolean isAffiliatedWithTrial(Long spId, Long orgId, StudySiteFunctionalCode type) throws PAException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -4,6 +4,7 @@
 package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -19,6 +20,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -439,6 +441,12 @@ public class OrganizationCorrelationServiceBeanTest {
             assertEquals("Error thrown during get/create PO OversightCommitte w/type code = Institutional Review Board (IRB).",
                          e.getMessage());
         }
+    }
+
+    @Test
+    public void testIsAffiliatedWithTrial() throws Exception {
+        assertFalse(bean.isAffiliatedWithTrial(1L, null, StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        assertFalse(bean.isAffiliatedWithTrial(null, 1L, StudySiteFunctionalCode.LEAD_ORGANIZATION));
     }
 
     private void setUpCorrSvcMock() {

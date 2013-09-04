@@ -82,6 +82,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -258,6 +259,12 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
             CurationException, PAException, TooManyResultsException {
         return IiConverter.convertToStudySiteIi(1L);
+    }
+
+    @Override
+    public Organization getOrganizationByStudySiteId(Long ssid) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

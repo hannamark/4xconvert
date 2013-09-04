@@ -362,4 +362,45 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         assertEquals("Nullified", ssdto.getStatusCode().getCode());
     }
 
+    @Test
+    public void testGetOrganizationByStudySiteId() throws PAException {
+        // oversight committee
+        StudySiteDTO dto = createStudySite();
+        dto.setOversightCommitteeIi(oversightCommitteeIi);
+        dto.setResearchOrganizationIi(null);
+        dto.setHealthcareFacilityIi(null);
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+        dto = remoteEjb.create(dto);
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
+        Organization org = remoteEjb.getOrganizationByStudySiteId(IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals("Mayo University", org.getName());
+
+        // research organization
+        dto = createStudySite();
+        dto.setOversightCommitteeIi(null);
+        dto.setResearchOrganizationIi(researchOrgIi);
+        dto.setHealthcareFacilityIi(null);
+        dto.setReviewBoardApprovalStatusCode(null);
+        dto.setReviewBoardApprovalDate(null);
+        dto.setReviewBoardApprovalNumber(null);
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+        dto = remoteEjb.create(dto);
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
+        org = remoteEjb.getOrganizationByStudySiteId(IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals("Mayo University", org.getName());
+
+        // healthcare facility
+        dto = createStudySite();
+        dto.setOversightCommitteeIi(null);
+        dto.setResearchOrganizationIi(null);
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setReviewBoardApprovalStatusCode(null);
+        dto.setReviewBoardApprovalDate(null);
+        dto.setReviewBoardApprovalNumber(null);
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+        dto = remoteEjb.create(dto);
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
+        org = remoteEjb.getOrganizationByStudySiteId(IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals("Mayo University", org.getName());
+    }
 }

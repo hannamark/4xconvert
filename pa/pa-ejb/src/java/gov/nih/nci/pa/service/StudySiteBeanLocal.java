@@ -6,6 +6,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
@@ -485,6 +486,22 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         LimitOffset limit = new LimitOffset(1, 0);
         List<StudySiteDTO> freshStudySiteDTOList = search(criteria, limit);
         return freshStudySiteDTOList.get(0).getIdentifier();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Organization getOrganizationByStudySiteId(Long ssid) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySite ss = (StudySite) session.get(StudySite.class, ssid);
+        if (ss.getHealthCareFacility() != null) {
+            return ss.getHealthCareFacility().getOrganization();
+        }
+        if (ss.getResearchOrganization() != null) {
+            return ss.getResearchOrganization().getOrganization();
+        }
+        return ss.getOversightCommittee().getOrganization();
     }
 
     /**
