@@ -38,11 +38,6 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
     }
 
     @Test
-    public void dummyTest() throws Exception {
-        assertTrue(true);
-    }
-
-    // @Test
     public void searchNoDataTest() throws Exception {
         List<HistoricalSubmissionDto> rList = bean.search(null, null, null);
         assertTrue(rList.isEmpty());
@@ -50,7 +45,7 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         assertTrue(rList.isEmpty());
     }
 
-    // @Test
+    @Test
     public void searchGuiAbbreviatedTest() throws Exception {
         // entered through UI
         StudySiteSubjectAccrualCount dataGui = new StudySiteSubjectAccrualCount();
@@ -65,12 +60,12 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         dataBatch.setStudyProtocol(TestSchema.studyProtocols.get(0));
         dataBatch.setDateLastUpdated(new Date());
         TestSchema.addUpdObject(dataBatch);
-
+        
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertEquals(1, rList.size());
     }
 
-    // @Test
+    @Test
     public void searchGuiCompleteTest() throws Exception {
         // entered through UI
         StudySubject dataGui = new StudySubject();
@@ -98,12 +93,12 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         dataDeleted.setDateLastUpdated(new Date());
         dataDeleted.setPatient(TestSchema.patients.get(0));
         TestSchema.addUpdObject(dataBatch);
-
+        
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertEquals(1, rList.size());
     }
-
-    // @Test
+    
+    @Test
     public void searchBatchTest() throws Exception {
         BatchFile bf = new BatchFile();
         bf.setDateLastCreated(new Date());
@@ -112,7 +107,7 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         bf.setSubmitter(user);
         bf.setFileLocation("xyzzy");
         TestSchema.addUpdObject(bf);
-
+ 
         AccrualCollections ac = new AccrualCollections();
         ac.setBatchFile(bf);
         ac.setNciNumber("NCI-2009-00001"); // value taken from TestSchema
@@ -131,12 +126,12 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         assertEquals(AccrualUtil.getDisplayName(user), dto.getUsername());
     }
 
-    // @Test
+    @Test 
     public void searchWithDatesTest() throws Exception {
         Date early = PAUtil.dateStringToDateTime("1/1/2012");
         Date middle = PAUtil.dateStringToDateTime("1/10/2012");
         Date late = PAUtil.dateStringToDateTime("1/20/2012");
-
+        
         // COMPLETE
         StudySubject dataGui1 = new StudySubject();
         dataGui1.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
@@ -191,10 +186,10 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         ac2.setResults("abccb");
         TestSchema.addUpdObject(ac2);
 
-        List<HistoricalSubmissionDto> rList = bean.search(PAUtil.dateStringToTimestamp("1/5/2012"),
+        List<HistoricalSubmissionDto> rList = bean.search(PAUtil.dateStringToTimestamp("1/5/2012"), 
                 PAUtil.dateStringToTimestamp("1/15/2012"), user);
         assertEquals(3, rList.size());
-
+        
         HistoricalSubmissionDto dto = rList.get(0);
         assertNotNull(dto.getCompleteTrialId());
         //assertNotNull(dto.getAssignedIdentifier());
@@ -205,22 +200,22 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         assertNotNull(dto.getBatchFileIdentifier());
     }
 
-    // @Test
+    @Test
     public void getBatchResultTest() throws Exception {
         SubmissionHistoryBean b = (SubmissionHistoryBean) bean;
-
+        
         AccrualCollections ac = new AccrualCollections();
         ac.setPassedValidation(false);
         assertEquals("No", b.getBatchResult(ac));
-
+        
         ac.setPassedValidation(true);
         ac.setTotalImports(50);
         assertEquals("Yes", b.getBatchResult(ac));
-
+        
         ac.setTotalImports(null);
         ac.setDateLastCreated(new Date());
         assertNull(b.getBatchResult(ac));
-
+        
         ac.setDateLastCreated(PAUtil.dateStringToDateTime("7/23/2012"));
         assertEquals("No", b.getBatchResult(ac));
     }
