@@ -134,6 +134,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -701,7 +702,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
      */
     private void appendOrgIdClause(StringBuilder sql,
             OrganizationSearchCriteria criteria) {
-        if (StringUtils.isNotBlank(criteria.getId())) {
+        if (NumberUtils.isDigits(criteria.getId())) {
             sql.append(String.format(" AND o.id=%s ",
                     StringEscapeUtils.escapeSql(criteria.getId())));
         }

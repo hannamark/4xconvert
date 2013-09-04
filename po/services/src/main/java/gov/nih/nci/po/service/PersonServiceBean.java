@@ -124,6 +124,7 @@ import javax.jms.JMSException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -549,7 +550,7 @@ public class PersonServiceBean extends
 
     private void appendPoIdClause(StringBuilder sql,
             PersonSearchCriteria criteria) {
-        if (StringUtils.isNotBlank(criteria.getId())) {
+        if (NumberUtils.isDigits(criteria.getId())) {
             sql.append(String.format(" AND p.id=%s ",
                     StringEscapeUtils.escapeSql(criteria.getId())));
         }
