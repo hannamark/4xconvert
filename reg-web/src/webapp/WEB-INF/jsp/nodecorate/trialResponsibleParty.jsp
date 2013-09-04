@@ -151,7 +151,8 @@
               $('trialDTO.responsiblePersonAffiliationOrgName').value='';
               $('responsiblePersonNameErr').innerHTML='';
               $('affiliationOrgErr').innerHTML='';
-          } else if (partyType=='pi') {    
+          } else if (partyType=='pi') {   
+        	  $('affiliationOrgErr').innerHTML='';
               if ($F('trialDTO.piIdentifier')=='') {
                   $('responsiblePersonNameErr').innerHTML='This field cannot be edited. Please select a Principal Investigator in the section above.';
                   $('piIdentifierErr').innerHTML='Please select a Principal Investigator.';
