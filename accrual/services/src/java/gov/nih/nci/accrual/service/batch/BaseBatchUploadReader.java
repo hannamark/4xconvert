@@ -214,7 +214,6 @@ public class BaseBatchUploadReader {
         }
         PATIENT_RACE_CODE.addAll(Arrays.asList(PatientRaceCode.getDisplayNames()));
     }
-    private static final int ACCRUAL_COUNT_STUDY_SITE_ID_INDEX = 1;
     /**
      * key with patients ids.
      */
@@ -294,12 +293,6 @@ public class BaseBatchUploadReader {
         private StringBuffer errMsg = new StringBuffer();
         private boolean hasNonSiteErrors = false;
         /**
-         * @return the errMsg
-         */
-        public StringBuffer getErrMsg() {
-            return errMsg;
-        }
-        /**
          * @return the hasNonSiteErrors
          */
         public boolean isHasNonSiteErrors() {
@@ -349,16 +342,7 @@ public class BaseBatchUploadReader {
      */
     protected String getPatientId(List<String> values) {
         return AccrualUtil.safeGet(values, PATIENT_ID_INDEX);
-    }   
-    
-    /**
-     * 
-     * @param values values
-     * @return err if any
-     */
-    protected String getAccrualCountStudySiteId(List<String> values) {
-        return AccrualUtil.safeGet(values, ACCRUAL_COUNT_STUDY_SITE_ID_INDEX);
-    }   
+    }
     
     /**
      * 

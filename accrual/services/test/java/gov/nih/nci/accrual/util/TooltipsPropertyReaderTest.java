@@ -9,6 +9,7 @@ public class TooltipsPropertyReaderTest {
 	@Test
 	public void testTooltipsPropertyReader() throws Exception {
 		TooltipsPropertyReader reader = new TooltipsPropertyReader();
-		assertNotNull(reader.getTooltip(""));
+		assertNotNull(reader.getTooltip(null));
+		assertNotNull(reader.getTooltip("tooltip.official_title"));
 	}
 }
