@@ -884,8 +884,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                         secondaryPurpose.append(sec).append(" ");
                     }
                 }
-                trialDesign.setSecondaryPurpose(secondaryPurpose.toString());
-                trialDesign.setSecondaryPurposeOtherText(getValue(ispDTO.getSecondaryPurposeOtherText()));
+                trialDesign.setSecondaryPurpose(secondaryPurpose.toString().trim());
+                if (PAUtil.isPrimaryPurposeCodeOther(secondaryPurpose
+                        .toString().trim())) {
+                    trialDesign.setSecondaryPurposeOtherText(getValue(ispDTO
+                            .getSecondaryPurposeOtherText()));
+                }
             } else if (ispDTO instanceof NonInterventionalStudyProtocolDTO) {
                 NonInterventionalStudyProtocolDTO dto = (NonInterventionalStudyProtocolDTO) ispDTO;
                 final String timePerspective = CdConverter
