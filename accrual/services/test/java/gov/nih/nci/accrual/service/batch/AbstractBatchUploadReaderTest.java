@@ -193,11 +193,11 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     private static final String CONFIRMATION_SUBJECT_KEY = "accrual.confirmation.subject";
     private static final String CONFIRMATION_SUBJECT_VALUE = "accrual.confirmation.subject- ${nciTrialIdentifier}";
     private static final String CONFIRMATION_BODY_KEY = "accrual.confirmation.body";
-    private static final String CONFIRMATION_BODY_VALUE = "accrual.confirmation.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, ${errors}, ${count}.";
+    private static final String CONFIRMATION_BODY_VALUE = "accrual.confirmation.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, <ul>${errors}</ul> <p>${errorsDesc}</p>, ${count}.";
     private static final String CHANGECODE_BODY_KEY = "accrual.changeCode.body";
     private static final String CHANGECODE_BODY_VALUE = "accrual.changeCode.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}.";
     private static final String IT_BODY_KEY = "accrual.industrialTrial.body";
-    private static final String IT_BODY_VALUE = "accrual.industrialTrial.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName} ${studySiteCounts}.";
+    private static final String IT_BODY_VALUE = "accrual.industrialTrial.body - ${nciTrialIdentifier}, ${SubmitterName}, ${CurrentDate}, ${fileName}, <ul>${errors}</ul> <p>${errorsDesc}</p>, ${studySiteCounts}.";
     private static final String EXCEPTION_SUBJECT_KEY = "accrual.exception.subject";
     private static final String EXCEPTION_SUBJECT_VALUE = "accrual.exception.subject- ${fileName}";
     private static final String EXCEPTION_BODY_KEY = "accrual.exception.body";

@@ -92,6 +92,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.batch.BaseBatchUploadReader.BatchFileErrors;
 import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -146,30 +147,31 @@ public class BaseValidatorBatchUploadReaderTest {
         String dcpStr = "abccb";
         Ii dcpIi = IiConverter.convertToAssignedIdentifierIi(dcpStr);
         dcpIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
-        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, new StringBuffer());
-        doCallRealMethod().when(bean).getStudyProtocol(dcpStr, new StringBuffer());
+        BaseBatchUploadReader r = new BaseBatchUploadReader();
+        BatchFileErrors errMsg = r.new BatchFileErrors();
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
+        doCallRealMethod().when(bean).getStudyProtocol(dcpStr, errMsg);
 
         // not found
-        StringBuffer errMsg = new StringBuffer();
         doCallRealMethod().when(bean).getStudyProtocol(null, errMsg);
         StudyProtocolDTO dto = bean.getStudyProtocol(null, errMsg);
         assertNull(dto);
         assertEquals("Study null not found in CTRP.", errMsg.toString());
 
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).getStudyProtocol(nciStr, errMsg);
         dto = bean.getStudyProtocol(nciStr, errMsg);
         assertNull(dto);
         assertEquals("Study " + nciStr + " not found in CTRP.", errMsg.toString());
 
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
         dto = bean.getStudyProtocol(ctepStr, errMsg);
         assertNull(dto);
         assertEquals("Study " + ctepStr + " not found in CTRP.", errMsg.toString());
 
         // NCI number
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         StudyProtocolDTO resultDto = new StudyProtocolDTO();
         when(spSvc.loadStudyProtocol(nciIi)).thenReturn(resultDto);
         doCallRealMethod().when(bean).getStudyProtocol(nciStr, errMsg);
@@ -179,7 +181,7 @@ public class BaseValidatorBatchUploadReaderTest {
         when(spSvc.loadStudyProtocol(nciIi)).thenReturn(null);
 
         // CTEP number
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(resultDto);
         doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
         dto = bean.getStudyProtocol(ctepStr, errMsg);
@@ -188,7 +190,7 @@ public class BaseValidatorBatchUploadReaderTest {
         when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(null);
 
         // DCP number
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         when(spSvc.loadStudyProtocol(dcpIi)).thenReturn(resultDto);
         doCallRealMethod().when(bean).getStudyProtocol(dcpStr, errMsg);
         dto = bean.getStudyProtocol(dcpStr, errMsg);
@@ -207,8 +209,9 @@ public class BaseValidatorBatchUploadReaderTest {
         String ctepStr = "NCI-xyzzy";
         Ii ctepIi = IiConverter.convertToAssignedIdentifierIi(ctepStr);
         ctepIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
-        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, new StringBuffer());
-        StringBuffer errMsg = new StringBuffer();
+        BaseBatchUploadReader r = new BaseBatchUploadReader();
+        BatchFileErrors errMsg = r.new BatchFileErrors();
+        doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
         StudyProtocolDTO resultDto = new StudyProtocolDTO();
         when(spSvc.loadStudyProtocol(ctepIi)).thenReturn(resultDto);
         doCallRealMethod().when(bean).getStudyProtocol(ctepStr, errMsg);
@@ -220,7 +223,8 @@ public class BaseValidatorBatchUploadReaderTest {
     @Test
     public void validateDiseaseCodeValidationFails() {
         // code not found
-        StringBuffer errMsg = new StringBuffer();
+    	BaseBatchUploadReader r = new BaseBatchUploadReader();
+        BatchFileErrors errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
@@ -230,20 +234,20 @@ public class BaseValidatorBatchUploadReaderTest {
         ad.setCodeSystem(CODE_SYSTEM);
         ad.setDiseaseCode(CODE);
         when(dSvc.getByCode(anyString())).thenReturn(ad);
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
 
         // found
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
         assertEquals("", errMsg.toString());
 
         // null code, code not required
         valueList = createValueList(null);
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
         assertTrue(errMsg.toString().isEmpty());
@@ -255,7 +259,7 @@ public class BaseValidatorBatchUploadReaderTest {
 
         // empty code, code not required
         valueList = createValueList(" ");
-        errMsg = new StringBuffer();
+        errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
         assertTrue(errMsg.toString().isEmpty());

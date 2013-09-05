@@ -88,6 +88,7 @@ import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -187,7 +188,12 @@ public class BatchUploadUtils {
                 Integer count = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
                 // assume validator has already vetted all invalid part sites.
                 Ii partSiteIi = getOrganizationIi(line[ACCRUAL_COUNT_STUDY_SITE_INDEX]);
-                accrualCounts.put(partSiteIi, IntConverter.convertToInt(count));
+                if (!ISOUtil.isIiNull(partSiteIi)) {
+                    accrualCounts.put(partSiteIi, IntConverter.convertToInt(count));
+                } else {
+                    accrualCounts.put(IiConverter.convertToIi(line[ACCRUAL_COUNT_STUDY_SITE_INDEX]), 
+                            IntConverter.convertToInt(count));
+                }
             }
         }
         return accrualCounts;

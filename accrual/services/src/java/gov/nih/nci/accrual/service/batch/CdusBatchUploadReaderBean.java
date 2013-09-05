@@ -99,6 +99,7 @@ import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.PatientStage;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
@@ -111,11 +112,14 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -142,6 +146,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 
 /**
  * This class read CSV file and validates the input.
@@ -152,7 +157,8 @@ import org.apache.log4j.Logger;
 @Local(CdusBatchUploadReaderServiceLocal.class)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.NPathComplexity", 
+                "PMD.ExcessiveClassLength" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class); 
     
@@ -261,25 +267,44 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         validateAndProcessData(batchFile, result);
     }
 
+    @SuppressWarnings("PMD.NPathComplexity")
     private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult)
             throws PAException {
+        boolean hasCtepOrDcpId = false;
         AccrualCollections collection = new AccrualCollections();
         collection.setNciNumber(validationResult.getNciIdentifier());
         collection.setPassedValidation(validationResult.isPassedValidation());
         batchFileSvc.update(batchFile, collection);
-        if (!validationResult.isPassedValidation()) {
+        if (isSuAbstractor(batchFile.getSubmitter()) && !validationResult.isHasNonSiteErrors()
+                && !validationResult.isPassedValidation()) {
+            List<String[]> lines = validationResult.getValidatedLines();
+            String[] studyLine = BatchUploadUtils.getStudyLine(lines);
+            String studyProtocolId = studyLine[1];
+            StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, new BatchFileErrors());
+            if (getSearchStudySiteService().isStudyHasCTEPId(spDto.getIdentifier())
+                    || getSearchStudySiteService().isStudyHasDCPId(spDto.getIdentifier())) {
+                hasCtepOrDcpId = true;
+            }
+        }
+        if (!validationResult.isPassedValidation() && !hasCtepOrDcpId) {
             if (validationResult.getErrors() != null) {
                 collection.setResults(StringUtils.left(validationResult.getErrors().toString(), RESULTS_LEN));
             }
             sendValidationErrorEmail(validationResult, batchFile);
-        } else {
-            batchFile.setPassedValidation(true);
+        } else if (validationResult.isPassedValidation() 
+                || !validationResult.isPassedValidation() && hasCtepOrDcpId) {
+            batchFile.setPassedValidation(
+                    StringUtils.isNotEmpty(validationResult.getErrors().toString()) ? false : true);
             batchFile.setProcessed(true);
             BatchImportResults importResults = importBatchData(batchFile, validationResult);
-            if (importResults.getErrors() != null) {
-                collection.setResults(StringUtils.left(importResults.getErrors().toString(), RESULTS_LEN));
-            }
+            StringBuffer sb = new StringBuffer();
+            sb.append(validationResult.getErrors() != null ? StringUtils.left(
+                    validationResult.getErrors().toString(), RESULTS_LEN) : "")
+            .append(importResults.getErrors() != null ? StringUtils.left(
+                    importResults.getErrors().toString(), RESULTS_LEN) : "");
+            collection.setResults(sb.toString());
             collection.setTotalImports(importResults.getTotalImports());
+            importResults.setErrors(new StringBuilder(sb.toString())); 
             sendConfirmationEmail(importResults, batchFile);
         }
         collection.setChangeCode(validationResult.getChangeCode());
@@ -293,6 +318,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public BatchImportResults importBatchData(BatchFile batchFile, BatchValidationResults validationResult) 
             throws PAException {
         CaseSensitiveUsernameHolder.setUser(batchFile.getUserLastCreated().getLoginName());
@@ -304,15 +330,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         List<String[]> lines = validationResult.getValidatedLines();
         String[] studyLine = BatchUploadUtils.getStudyLine(lines);
         String studyProtocolId = studyLine[1];
-        StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, errMsg);
-        Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
-        importResult.setNciIdentifier(ii.getExtension());
-        List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);        
-        if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
-            Long accrualCnts = subjectAccrualService.getAccrualCounts(CollectionUtils.isNotEmpty(patientLines), 
+        List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
+        StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId, new BatchFileErrors());
+        if (spDto != null) {
+            Ii ii = DSetConverter.convertToIi(spDto.getSecondaryIdentifiers()); 
+            importResult.setNciIdentifier(ii.getExtension());        
+            if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
+                Long accrualCnts = subjectAccrualService.getAccrualCounts(CollectionUtils.isNotEmpty(patientLines), 
                     IiConverter.convertToLong(spDto.getIdentifier()));
-            if (accrualCnts == 0) {
-                validationResult.setChangeCode(AccrualChangeCode.YES);
+                if (accrualCnts == 0) {
+                    validationResult.setChangeCode(AccrualChangeCode.YES);
+                }
             }
         }
         if (AccrualChangeCode.NO.equals(validationResult.getChangeCode())) {
@@ -321,20 +349,56 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
-        count = generateSubjectAccruals(spDto.getIdentifier(), patientLines, 
+        count = generateSubjectAccruals(spDto, patientLines, importResult.getNciIdentifier(),
                 batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);
-        if (spDto.getProprietaryTrialIndicator().getValue()) {
+        if (spDto != null && spDto.getProprietaryTrialIndicator().getValue()) {
             importResult.setIndustrialTrial(true);
-            importResult.setIndustrialCounts(BatchUploadUtils.getStudySiteCounts(lines));
         }
-        for (Ii partSiteIi : accrualLines.keySet()) {
-            //We're assuming this is the assigned identifier for the organization associated with the health care 
-            //facility of the study site.
-            SearchStudySiteResultDto studySite = 
-                getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), partSiteIi);
-            subjectAccrualService.updateSubjectAccrualCount(studySite.getStudySiteIi(), accrualLines.get(partSiteIi), 
-                    user, batchFile.getSubmissionTypeCode());
-            count++;
+        Map<String, Integer> industrialCounts = new HashMap<String, Integer>();
+        List<Ii> partiSiteList = new ArrayList<Ii>();
+        
+        if (spDto != null && CollectionUtils.isNotEmpty(accrualLines.keySet())) {
+            for (Ii partSiteIi : accrualLines.keySet()) {
+                //We're assuming this is the assigned identifier for the organization associated with the health care 
+                //facility of the study site.
+                SearchStudySiteResultDto studySite = 
+                        getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), partSiteIi);
+                if (studySite != null) {
+                    subjectAccrualService.updateSubjectAccrualCount(studySite.getStudySiteIi(),  
+                            accrualLines.get(partSiteIi), user, batchFile.getSubmissionTypeCode());
+                    partiSiteList.add(partSiteIi);
+                    count++;
+                } else {
+                    // insert the incorrect sites into the patient_stage table
+                    savePatientStageCounts(user, spDto.getIdentifier(), 
+                            importResult.getNciIdentifier(), accrualLines, partSiteIi, importResult.getFileName());
+                }
+            }
+        }  else if (spDto == null && CollectionUtils.isNotEmpty(accrualLines.keySet())) {
+            // insert the incorrect sites into the patient_stage table
+            for (Ii partSiteIi : accrualLines.keySet()) {
+                savePatientStageCounts(user, null, importResult.getNciIdentifier(), accrualLines, 
+                        partSiteIi, importResult.getFileName());
+            }
+        }
+        if (CollectionUtils.isNotEmpty(partiSiteList)) {
+            Map<String, Integer> studySiteCounts = BatchUploadUtils.getStudySiteCounts(lines);
+            if (isSuAbstractor(user)) {
+                for (String orgId : studySiteCounts.keySet()) {
+                    Ii partSiteIi = BatchUploadUtils.getOrganizationIi(orgId);
+                    if (partSiteIi != null) {
+                        for (Ii siteIi : partiSiteList) {
+                            if (partSiteIi.getExtension().equals(siteIi.getExtension())) {
+                                industrialCounts.put(orgId, studySiteCounts.get(orgId));
+                                break;
+                            }
+                        }
+                    }
+                }
+                importResult.setIndustrialCounts(industrialCounts);
+            } else {
+                importResult.setIndustrialCounts(studySiteCounts);
+            }
         }
         importResult.setTotalImports(count);
         importResult.setErrors(new StringBuilder(errMsg.toString().trim()));
@@ -342,39 +406,94 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    private int generateSubjectAccruals(Ii studyProtocolIi, List<String[]> patientLines,
+    private void savePatientStageCounts(RegistryUser user, Ii spId, String nciId, 
+            Map<Ii, Int> accrualLines, Ii partSiteIi, String fileName) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        PatientStage ps = new PatientStage();
+        ps.setStudyIdentifier(nciId);
+        ps.setStudyProtocolIdentifier(spId != null ? IiConverter.convertToLong(spId) : null);
+        ps.setStudySite(partSiteIi.getExtension());
+        ps.setAccrualCount(accrualLines.get(partSiteIi).getValue());
+        ps.setUserLastCreated(user.getCsmUser());
+        ps.setDateLastCreated(new Date());
+        ps.setSubmissionStatus("Failed");
+        ps.setFileName(fileName);
+        session.save(ps);
+    }
+
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    private int generateSubjectAccruals(StudyProtocolDTO studyProtocol, List<String[]> patientLines, String nciID,
             AccrualSubmissionTypeCode submissionType, Map<String, List<String>> raceMap,
             BatchValidationResults results, StringBuffer errMsg) throws PAException {
         int count = 0;
-        long startTime = System.currentTimeMillis();
-        Long userId = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()).getUserId();
-        Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService().getSubjectAndPatientKeys(
-                IiConverter.convertToLong(studyProtocolIi), false);
-        for (String[] p : patientLines) {
-            List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
-            Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
-            Long studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension());            
-            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
-                    IiConverter.convertToIi(studySiteIi));
-            try {
-                Long[] ids = listOfStudySubjects.get(new SubjectAccrualKey(IiConverter.convertToLong(
-                        saDTO.getParticipatingSiteIdentifier()), 
-                        StConverter.convertToString(saDTO.getAssignedIdentifier())));
-                if (ids == null) {
-                    subjectAccrualService.create(saDTO, studyProtocolIi, userId);
+        User user = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
+        if (studyProtocol != null) {
+            long startTime = System.currentTimeMillis();
+            Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService().getSubjectAndPatientKeys(
+                    IiConverter.convertToLong(studyProtocol.getIdentifier()), false);
+            for (String[] p : patientLines) {
+                List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
+                Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
+                if (studySiteOrgIi != null) {
+                    Long studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension()); 
+                    SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
+                            IiConverter.convertToIi(studySiteIi));
+                    try {
+                        Long[] ids = listOfStudySubjects.get(new SubjectAccrualKey(IiConverter.convertToLong(
+                                saDTO.getParticipatingSiteIdentifier()), 
+                                StConverter.convertToString(saDTO.getAssignedIdentifier())));
+                        if (ids == null) {
+                            subjectAccrualService.create(saDTO, studyProtocol.getIdentifier(), user.getUserId());
+                        } else {
+                            saDTO.setIdentifier(IiConverter.convertToIi(ids[0]));
+                            subjectAccrualService.update(saDTO, studyProtocol.getIdentifier(), user.getUserId(), ids);
+                        }
+                        count++;
+                    } catch (PAException e) {
+                        errMsg.append("Error for StudySubject Id: " 
+                            + saDTO.getAssignedIdentifier().getValue() + ", " + e.getLocalizedMessage() + "\n");
+                    }
                 } else {
-                    saDTO.setIdentifier(IiConverter.convertToIi(ids[0]));
-                    subjectAccrualService.update(saDTO, studyProtocolIi, userId, ids);
+                    // insert the incorrect sites into the patient_stage table
+                      savePatientStage(p, races, user, nciID, 
+                            IiConverter.convertToLong(studyProtocol.getIdentifier()), results.getFileName());
                 }
-                count++;
-            } catch (PAException e) {
-                errMsg.append("Error for StudySubject Id: " 
-                    + saDTO.getAssignedIdentifier().getValue() + ", " + e.getLocalizedMessage() + "\n");
+            }
+            LOG.info("Time to process a single Batch File data: " 
+                    + (System.currentTimeMillis() - startTime) / RESULTS_LEN + " seconds");
+        }  else {
+            // insert the incorrect sites into the patient_stage table
+            for (String[] p : patientLines) {
+                List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
+                savePatientStage(p, races, user, nciID, null, results.getFileName());
             }
         }
-        LOG.info("Time to process a single Batch File data: " 
-                + (System.currentTimeMillis() - startTime) / RESULTS_LEN + " seconds");
         return count;
+    }
+    
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    private void savePatientStage(String[] p, List<String> races, User user, String nciId, Long spId, String fileName) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        PatientStage ps = new PatientStage();
+        ps.setAssignedIdentifier(p[BatchFileIndex.PATIENT_ID_INDEX]);
+        ps.setBirthDate(p[BatchFileIndex.PATIENT_DOB_INDEX]);
+        ps.setCountryCode(p[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]);
+        ps.setDateLastCreated(new Date());
+        ps.setDiseaseCode(p[BatchFileIndex.PATIENT_DISEASE_INDEX]);
+        ps.setEthnicCode(p[BatchFileIndex.PATIENT_ETHNICITY_INDEX]);
+        ps.setPaymentMethodCode(p[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
+        ps.setRaceCode(StringUtils.join(races, ","));
+        ps.setRegistrationDate(p[BatchFileIndex.PATIENT_REG_DATE_INDEX]);
+        ps.setRegistrationGroupId(p[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]);
+        ps.setSexCode(p[BatchFileIndex.PATIENT_GENDER_INDEX]);
+        ps.setStudyIdentifier(nciId);
+        ps.setStudyProtocolIdentifier(spId);
+        ps.setStudySite(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
+        ps.setUserLastCreated(user);
+        ps.setZip(p[BatchFileIndex.PATIENT_ZIP_INDEX]);
+        ps.setSubmissionStatus("Failed");
+        ps.setFileName(fileName);
+        session.save(ps);
     }
     
     private SubjectAccrualDTO parserSubjectAccrual(String[] line, AccrualSubmissionTypeCode submissionType, 
@@ -453,17 +572,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (!result.isPassedValidation()) {
             errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
                     result.getErrors()));
-            String errors = result.getErrors().toString();
-            int count = 1;
-            StringBuffer numberedErrors = new StringBuffer();
-            StringTokenizer st1 = new StringTokenizer(errors, "\n");
-            while (st1.hasMoreTokens()) {
-                numberedErrors.append(count).append(".  ").append(st1.nextToken());
-                if (!numberedErrors.toString().endsWith("\n")) {
-                    numberedErrors.append(" \n");
-                }
-                count++;
-            }
+            StringBuffer numberedErrors = setErrorsInEmail(result.getErrors().toString());
             body = body.replace(FILE_NAME, result.getFileName());
             body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
             if (result.getNciIdentifier() == null) {
@@ -473,6 +582,20 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             subj = subj.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         }
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
+    }
+
+    private StringBuffer setErrorsInEmail(String errors) {
+        int count = 1;
+        StringBuffer numberedErrors = new StringBuffer();
+        StringTokenizer st1 = new StringTokenizer(errors, "\n");
+        while (st1.hasMoreTokens()) {
+            numberedErrors.append(count).append(".  ").append(st1.nextToken());
+            if (!numberedErrors.toString().endsWith("\n")) {
+                numberedErrors.append(" \n");
+            }
+            count++;
+        }
+        return numberedErrors;
     }
     
     /**
@@ -498,6 +621,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         } else {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.body");
+            body = body.replace("${count}", String.valueOf(result.getTotalImports()));
         }
         String regUserName = batchFile.getSubmitter().getFirstName() + " " + batchFile.getSubmitter().getLastName();
         body = body.replace("${submissionDate}", getFormatedCurrentDate());
@@ -505,8 +629,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
         
         body = body.replace(FILE_NAME, result.getFileName());
-        if (body.contains("${count}")) {
-            body = body.replace("${count}", String.valueOf(result.getTotalImports()));
+        if (StringUtils.isNotEmpty(result.getErrors().toString())) {
+            body = body.replace("${errorsDesc}", 
+                    "However, some patient records could not be processed because the accruing"
+                    + " site is not listed on the trial in CTRP. Please see details below.");
+            StringBuffer numberedErrors = setErrorsInEmail(result.getErrors().toString());
+            body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
+        } else {
+            body = body.replace("<p>${errorsDesc}</p>", "");
+            body = body.replace("<ul>${errors}</ul>", "");
         }
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());

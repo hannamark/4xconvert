@@ -254,11 +254,64 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         sp.setStudySites(studySites);
 
         Ii spIi = IiConverter.convertToStudyProtocolIi(sp.getId());
-        boolean result = bean.isStudySiteHasDCPId(spIi);
+        boolean result = bean.isStudyHasDCPId(spIi);
         assertTrue(result);
         
         Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        assertFalse(bean.isStudySiteHasDCPId(otherSpIi));
+        assertFalse(bean.isStudyHasDCPId(otherSpIi));
+    }
+    
+    @Test
+    public void testisStudyHasCTEPId() throws Exception {        
+    	StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Test CTEP study");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("9/3/2013"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("9/3/2013"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2013-00093");
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        TestSchema.addUpdObject(sp);
+        
+        Organization org = new Organization();
+        org.setCity("city");
+        org.setCountryName("country name");
+        org.setName(PAConstants.CTEP_ORG_NAME);
+        org.setPostalCode("12345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        TestSchema.addUpdObject(org);
+        
+    	StudySite ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier("roid");
+        ro.setOrganization(org);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ro);
+        ss.setResearchOrganization(ro);
+        ss.setStudyProtocol(sp);
+        TestSchema.addUpdObject(ss);
+        Set<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
+        studySites.add(ss);
+        sp.setStudySites(studySites);
+
+        Ii spIi = IiConverter.convertToStudyProtocolIi(sp.getId());
+        boolean result = bean.isStudyHasCTEPId(spIi);
+        assertTrue(result);
+        
+        Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
+        assertFalse(bean.isStudyHasCTEPId(otherSpIi));
     }
 
     @Test

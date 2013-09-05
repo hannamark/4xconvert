@@ -97,9 +97,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -152,11 +150,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private Map<String, String> listOfCtepIds;
     private Map<String, Ii> listOfOrgIds;
     private static final int TIME_SECONDS = 1000;
-    private static final String SUABSTRACTOR = "SuAbstractor";
     private String codeSystemFile;
     private boolean checkDisease;
     private boolean patientCheck;
+    private boolean superAbstractor;
     private Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
+    private BatchFileErrors bfErrors = new BatchFileErrors();
     private String accrualSubmissionLevel;
     /**
      * UTF byte order marker.
@@ -170,6 +169,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NcssMethodCount" })
     public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
         long startTime = System.currentTimeMillis();        
         ru = user;
@@ -181,13 +181,11 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         patientCheck = false;
         patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
         accrualSubmissionLevel = null;
-        StringBuffer errMsg = new StringBuffer();
+        bfErrors = new BatchFileErrors();
         BatchValidationResults results = new BatchValidationResults();
+        superAbstractor = isSuAbstractor(ru);
         results.setFileName(file.getName());
         try {
-            //We are parsing in this indirect manner instead of using the build in CSVReader because the reader does
-            //not properly handle lines with trailing whitespace characters. A defect has been filed and can be viewed
-            //at http://sourceforge.net/tracker/?func=detail&atid=773541&aid=3217444&group_id=148905
             List<String[]> lines = new ArrayList<String[]>();
             LineIterator lineIterator = FileUtils.lineIterator(file, "UTF-8");
             long lineNumber = 0;
@@ -210,13 +208,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     if (StringUtils.isNotEmpty(changeCode)) {
                         AccrualChangeCode cc = AccrualChangeCode.getByCode(changeCode);
                         if (cc == null) {
-                            errMsg.append("Found invalid change code " + changeCode 
-                                    + ". Valid value for COLLECTIONS.Change_Code are 1 and 2.\n");
+                             bfErrors.append(new StringBuffer().append("Found invalid change code " + changeCode 
+                                    + ". Valid value for COLLECTIONS.Change_Code are 1 and 2.\n"));
                         } else {
                             results.setChangeCode(cc);
                         }
                     }
-                    sp = getStudyProtocol(protocolId, errMsg);
+                    sp = getStudyProtocol(protocolId, bfErrors);
                     if (sp != null) {
                         Long spId = IiConverter.convertToLong(sp.getIdentifier());
                         checkDisease = getDiseaseService().diseaseCodeMandatory(spId);
@@ -265,53 +263,45 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     }
                 }
                 try {
-                    errMsg.append(validateBatchData(line, lineNumber, protocolId));
+                    validateBatchData(line, lineNumber, protocolId);
                 } catch (Exception e) {
-                    errMsg.append(e.getLocalizedMessage());
+                    bfErrors.append(new StringBuffer().append(e.getLocalizedMessage()));
                 }
             }
             LineIterator.closeQuietly(lineIterator);
             if (StringUtils.isEmpty(protocolId)) {
-                errMsg.append("No Study Protocol Identifier could be found in the given file.");
+                bfErrors.append(new StringBuffer()
+                .append("No Study Protocol Identifier could be found in the given file."));
             }
-            if (StringUtils.isEmpty(errMsg.toString().trim())) {
+            if (CollectionUtils.isNotEmpty(lines) && StringUtils.isNotEmpty(protocolId)) {
             Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
             List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
             for (String[] p : patientLines) {
                 List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
                 if (races == null) {
-                    errMsg.append("Patient race code is missing for patient ID ")
-                    .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n");
+                    bfErrors.append(new StringBuffer().append("Patient race code is missing for patient ID ")
+                    .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n"));
                 } 
               }
-              if (!sp.getProprietaryTrialIndicator().getValue() && CollectionUtils.isNotEmpty(patientLines)) {
-                validateDiseaseCodeSystem(errMsg);
+              if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
+                    || accrualSubmissionLevel != null && accrualSubmissionLevel.equals(AccrualUtil.SUBJECT_LEVEL)) {
+                validateDiseaseCodeSystem();
               }
             }
-            results.setErrors(new StringBuilder(errMsg.toString().trim()));          
-            if (StringUtils.isEmpty(errMsg.toString().trim())) {
-                results.setValidatedLines(lines);
-                results.setPassedValidation(true);
-                results.setListOfOrgIds(listOfOrgIds);
-                results.setListOfPoStudySiteIds(listOfPoIds);
-
-                if (isSuAbstractor()) {
-                    for (Long studySiteId : listOfPoIds.values()) {
-                        try {
-                             subjectAccrualService.createAccrualAccess(ru, studySiteId);
-                        } catch (NumberFormatException e) {
-                             LOG.error("NumberFormatException while creating Accrual access.", e);
-                        } catch (PAException e) {
-                            LOG.error("Error creating Accrual access.", e);
-                        }
-                    }
-                }
+            results.setErrors(new StringBuilder(bfErrors.toString().trim())); 
+            results.setHasNonSiteErrors(bfErrors.isHasNonSiteErrors());
+            if (StringUtils.isEmpty(bfErrors.toString().trim())) {
+                setResultParameters(results, lines);
+            } else if (!bfErrors.isHasNonSiteErrors() 
+                    && StringUtils.isNotEmpty(bfErrors.toString().trim()) && superAbstractor) {
+                setResultParameters(results, lines);
             } else {
-                LOG.info(errMsg.toString());
+                LOG.info(bfErrors.toString());
             }
         } catch (IOException e) {
-            errMsg.append("Unable to open the batch file: ").append(file.getName());
-            results.setErrors(new StringBuilder(errMsg.toString().trim()));
+            bfErrors.append(new StringBuffer().append("Unable to open the batch file: ").append(file.getName()));
+            results.setErrors(new StringBuilder(bfErrors.toString().trim())); 
+            results.setHasNonSiteErrors(bfErrors.isHasNonSiteErrors());
             LOG.error("error reading the file " + file.getName(), e);
         }
         LOG.info("Time to validate a single Batch File data: " 
@@ -319,10 +309,30 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         return results;
     }
 
+    private void setResultParameters(BatchValidationResults results, List<String[]> lines) {
+        results.setValidatedLines(lines);
+        results.setPassedValidation(
+                    StringUtils.isNotEmpty(results.getErrors().toString()) ? false : true);
+        results.setListOfOrgIds(listOfOrgIds);
+        results.setListOfPoStudySiteIds(listOfPoIds);
+
+        if (!bfErrors.isHasNonSiteErrors() && superAbstractor) {
+            for (Long studySiteId : listOfPoIds.values()) {
+                try {
+                    subjectAccrualService.createAccrualAccess(ru, studySiteId);
+                } catch (NumberFormatException e) {
+                    LOG.error("NumberFormatException while creating Accrual access.", e);
+                } catch (PAException e) {
+                    LOG.error("Error creating Accrual access.", e);
+                }
+            }
+        }
+    }
+
     /**
      * Validate that the code system in the batch file matches the code system for the trial from the database. 
      */
-    private void validateDiseaseCodeSystem(StringBuffer errMsg) {
+    private void validateDiseaseCodeSystem() {
         Long spId = IiConverter.convertToLong(sp.getIdentifier()); 
         String codeSystemDB = getDiseaseService().getTrialCodeSystem(spId);
         try {
@@ -331,11 +341,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         .getSubjectAndPatientKeys(spId, true);
                 Set<SubjectAccrualKey> patientsFromDB = listOfStudySubjects.keySet();
                 if (!patientsFromBatchFile.containsAll(patientsFromDB)) {
-                    errMsg.append("Please use same Disease code system used for the trial (" + codeSystemDB + ").\n");
+                    bfErrors.append(new StringBuffer()
+                    .append("Please use same Disease code system used for the trial ("
+                            + codeSystemDB + ").\n"));
                 }
              }
         } catch (Exception e) {
-            errMsg.append(e.getLocalizedMessage());
+            bfErrors.append(new StringBuffer().append(e.getLocalizedMessage()));
         }
     }
 
@@ -352,14 +364,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             return StringUtils.EMPTY;
         }
         List<String> values = Arrays.asList((String[]) ArrayUtils.subarray(data, 1, data.length));
-        StringBuffer errMsg = new StringBuffer();
         if (LIST_OF_ELEMENT.containsKey(key) && LIST_OF_ELEMENT.get(key) != values.size()) {
-            errMsg.append(key).append(appendLineNumber(lineNumber));
-            errMsg.append(" does not have correct number of elements.\n");
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
+                    .append(" does not have correct number of elements.\n"));
         }
-        validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
-        validatePatientID(key, values, errMsg, lineNumber);
-        validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
+        validateProtocolNumber(key, values, lineNumber, expectedProtocolId);
+        validatePatientID(key, values, lineNumber);
+        validateStudySiteAccrualAccessCode(key, values, lineNumber);
         if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && codeSystemFile == null) {
             String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
             if (StringUtils.isNotEmpty(code)) {
@@ -375,12 +386,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }                
             }
         }
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, 
+        validatePatientsMandatoryData(key, values, bfErrors, lineNumber, 
                     sp, codeSystemFile, checkDisease, accrualSubmissionLevel);
-        validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
-        validatePatientRaceData(key, values, errMsg, lineNumber);
-        validateAccrualCount(key, values, errMsg, lineNumber, sp, accrualSubmissionLevel);
-        return errMsg.toString();
+        validateRegisteringInstitutionCode(key, values, lineNumber);
+        validatePatientRaceData(key, values, bfErrors, lineNumber);
+        validateAccrualCount(key, values, bfErrors, lineNumber, sp, accrualSubmissionLevel);
+        return bfErrors.toString();
     }
     
     /**
@@ -389,25 +400,24 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    private void validateRegisteringInstitutionCode(String key, List<String> values, StringBuffer errMsg,
-            long lineNumber) {
+    private void validateRegisteringInstitutionCode(String key, List<String> values, long lineNumber) {
         if (StringUtils.equals("PATIENTS", key)) {
             String registeringInstitutionID = AccrualUtil.safeGet(values, 
                     BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
             if (StringUtils.isEmpty(registeringInstitutionID)) {
-                errMsg.append("Patient Registering Institution Code is missing for patient ID ")
-                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+                bfErrors.append(new StringBuffer()
+                    .append("Patient Registering Institution Code is missing for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             } else {
-                if (!isCorrectOrganizationId(registeringInstitutionID, errMsg)) {
+                if (!isCorrectOrganizationId(registeringInstitutionID)) {
                     return;
                 }
-                validatePatientTreatingSite(registeringInstitutionID, errMsg, values, lineNumber);
+                validatePatientTreatingSite(registeringInstitutionID, values, lineNumber);
             }
         }
     }
     
-    private void validateStudySiteAccrualAccessCode(String key, List<String> values, StringBuffer errMsg,
-            long lineNumber) {
+    private void validateStudySiteAccrualAccessCode(String key, List<String> values, long lineNumber) {
         String studySiteID = null;
         if (StringUtils.equals("PATIENTS", key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
@@ -415,17 +425,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
         }
         if (!StringUtils.isEmpty(studySiteID)) {
-            if (!isCorrectOrganizationId(studySiteID, errMsg)) {
+            if (!isCorrectOrganizationId(studySiteID)) {
                 return;
             }
-            validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, lineNumber, values);
+            validateTreatingSiteAndAccrualAccess(studySiteID, lineNumber, values);
         }
     }
 
     /*
      * Test that Registering Institution Code is NCI PO ID or CTEP ID
      */
-    private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
+    private boolean isCorrectOrganizationId(String registeringInstitutionID) {
         String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
                 + registeringInstitutionID + "\n";
         if (listOfPoIds.containsKey(registeringInstitutionID)) {
@@ -450,7 +460,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
             }
         } catch (NullifiedEntityException e) {
-            errMsg.append(msg);
+            bfErrors.appendSiteError(new StringBuffer().append(msg));
             return false;
         } catch (Exception e) {
             LOG.debug(e.getMessage());
@@ -463,7 +473,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         } catch (PAException e) {
             LOG.debug(e.getMessage());
         }
-        errMsg.append(msg);
+        bfErrors.appendSiteError(new StringBuffer().append(msg));
         return false;
     }
 
@@ -494,12 +504,11 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * Do not validate if trial cannot be found as that validation is already being done 
      * on the COLLECTION line.
      */
-    private void validatePatientTreatingSite(String regInstID, StringBuffer errMsg, List<String> values, 
-            long lineNumber) {
+    private void validatePatientTreatingSite(String regInstID, List<String> values, long lineNumber) {
         if (listOfPoIds.containsKey(regInstID) || listOfCtepIds.containsKey(regInstID)) {
             return;           
         }
-        addUpPatientRegisteringInstitutionCode(values, errMsg, lineNumber);
+        addUpPatientRegisteringInstitutionCode(values, lineNumber);
     }
     
     /**
@@ -509,25 +518,23 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * on the COLLECTION line.
      * @throws PAException 
      */
-    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, 
-        long lineNumber, List<String> values) {
+    private void validateTreatingSiteAndAccrualAccess(String regInstID, long lineNumber, List<String> values) {
         if (listOfPoIds.containsKey(regInstID)  || listOfCtepIds.containsKey(regInstID)) {
-            assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, errMsg, lineNumber, values);
+            assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, lineNumber, values);
             return;
         }
-        addAccrualSiteValidationError(regInstID, errMsg, lineNumber);
+        addAccrualSiteValidationError(regInstID, lineNumber);
     }
     
     /**
      * Assert batch submitter has accrual access to sites.
      * @param studyProtocolIi the study protocol ii
      * @param regInstID site ID provided in file.
-     * @param errMsg msg buffer
      * @param lineNumber location of input
      * @param values the line values
      */
     protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, String regInstID, 
-            StringBuffer errMsg, long lineNumber, List<String> values) {
+            long lineNumber, List<String> values) {
         try {
             Long studySiteIi  = null;
             String poId = null;
@@ -539,54 +546,50 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 studySiteIi = listOfPoIds.get(poId);
             }
             patientsFromBatchFile.add(new SubjectAccrualKey(studySiteIi, getPatientId(values)));
-            if (!isSuAbstractor() 
+            if (!superAbstractor 
                     && !AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
-                addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
+                addAccrualAccessBySiteError(regInstID, lineNumber);
             }
         } catch (PAException e) {
-            addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
+            addAccrualAccessBySiteError(regInstID, lineNumber);
         }
     }
     
-    private void addUpPatientRegisteringInstitutionCode(List<String> values, StringBuffer errMsg, 
-            long lineNumber) {
-        errMsg.append("Patient Registering Institution Code is invalid for patient ID ").append(getPatientId(values))
-        .append(appendLineNumber(lineNumber)).append("\n");
+    private void addUpPatientRegisteringInstitutionCode(List<String> values, long lineNumber) {
+        bfErrors.appendSiteError(new StringBuffer()
+                    .append("Patient Registering Institution Code is invalid for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
     }
     
-    private void addAccrualAccessBySiteError(String studySiteID, StringBuffer errMsg, 
-            long lineNumber) {
-        errMsg.append("User " + ru.getFirstName() + " " + ru.getLastName() 
+    private void addAccrualAccessBySiteError(String studySiteID, long lineNumber) {
+        bfErrors.append(new StringBuffer().append("User " + ru.getFirstName() + " " + ru.getLastName() 
                 + " does not have accrual access to Study Site ID " + studySiteID)
-        .append(appendLineNumber(lineNumber)).append("\n");
+        .append(appendLineNumber(lineNumber)).append("\n"));
     }
     
-    private void addAccrualSiteValidationError(String siteId, StringBuffer errMsg, 
-            long lineNumber) {
-        errMsg.append("Accrual study site ").append(siteId)
+    private void addAccrualSiteValidationError(String siteId, long lineNumber) {
+        bfErrors.appendSiteError(new StringBuffer().append("Accrual study site ").append(siteId)
         .append(" is not valid")
-        .append(appendLineNumber(lineNumber)).append("\n");
+        .append(appendLineNumber(lineNumber)).append("\n"));
     }
 
     /**
      * 
      * @param key key
      * @param values values
-     * @param errMsg err if any
      * @param lineNumber 
      * @param expectedProtocolId the protocol id expected to be seen.
      */
-    private void validateProtocolNumber(String key, List<String> values, StringBuffer errMsg, long lineNumber, 
-            String expectedProtocolId) {
+    private void validateProtocolNumber(String key, List<String> values, long lineNumber, String expectedProtocolId) {
         String protocolId = AccrualUtil.safeGet(values, BatchFileIndex.COLLECTION_PROTOCOL_INDEX);
         if (StringUtils.isEmpty(protocolId)) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-                .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.\n");
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
+                .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.\n"));
         } else if (!StringUtils.equalsIgnoreCase(protocolId, expectedProtocolId)) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(" does not contain the same protocol identifier as the one specified in the COLLECTIONS line.\n");
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
+            .append(" does not contain the same protocol identifier as the one specified in the COLLECTIONS line.\n"));
         } else if (StringUtils.equals(key, "COLLECTIONS")) {
-            validateProtocolStatus(key, errMsg, lineNumber, protocolId);    
+            validateProtocolStatus(key, lineNumber, protocolId);    
         }
     }
     
@@ -597,18 +600,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @param lineNumber line number
      * @param protocolId the study protocol id
      */
-    private void validateProtocolStatus(String key, StringBuffer errMsg, long lineNumber, String protocolId) {
+    private void validateProtocolStatus(String key, long lineNumber, String protocolId) {
         if (sp == null) {
-            errMsg.append(key).append(appendLineNumber(lineNumber)).append(protocolId)
-            .append(" is not a valid NCI or CTEP/DCP identifier.\n");
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber)).append(protocolId)
+            .append(" is not a valid NCI or CTEP/DCP identifier.\n"));
         } else if (!StringUtils.equalsIgnoreCase(sp.getStatusCode().getCode(), ActStatusCode.ACTIVE.getCode())) {
-            errMsg.append(key).append(appendLineNumber(lineNumber)).append(" with the identifier ")
-                .append(protocolId).append(" is not an Active study.\n");   
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
+                    .append(" with the identifier ").append(protocolId).append(" is not an Active study.\n")); 
         } else if (!hasAccrualAccess(sp.getIdentifier())) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
             .append(CsmUserUtil.getGridIdentityUsername(ru.getCsmUser().getLoginName()))
             .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId)
-            .append(" \n");
+            .append(" \n"));
         }
     }
     
@@ -616,8 +619,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         try {
             boolean hasAccess = BlConverter.convertToBool(getSearchTrialService().isAuthorized(spIi, 
                     IiConverter.convertToIi(ru.getId())));
-            boolean superAbs = isSuAbstractor();
-            if (hasAccess || superAbs) {
+           if (hasAccess || superAbstractor) {
                 return true;
             }
         } catch (Exception e) {
@@ -625,22 +627,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             return false;
         }
         return false;
-    }
-    
-    private boolean isSuAbstractor() {
-        CSMUserUtil userService = CSMUserService.getInstance();
-        try {     
-            return userService.isUserInGroup(ru.getCsmUser().getLoginName(), SUABSTRACTOR);
-        } catch (Exception e) {
-            LOG.error("Error determining user role for " + ru.getCsmUser().getLoginName() + ".", e);
-            return false;
-        }
-    }    
+    }  
   
-    private void validatePatientID(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validatePatientID(String key, List<String> values, long lineNumber) {
         if (KEY_WITH_PATIENTS_IDS.contains(key) && StringUtils.isEmpty(getPatientId(values))) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-                .append(" must contain a patient identifier that is unique within the study.\n");
+            bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
+                .append(" must contain a patient identifier that is unique within the study.\n"));
         }
     }
     

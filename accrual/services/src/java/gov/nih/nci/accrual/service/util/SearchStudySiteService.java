@@ -111,12 +111,12 @@ public interface SearchStudySiteService {
     SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) throws PAException;
     
     /**
-     * Returns if a study site has a DCP Id.
+     * Returns if a study has a DCP Id.
      * @param studyProtocolIi ii for the selected study
      * @return the boolean value
      * @throws PAException on error
      */
-    boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException;
+    boolean isStudyHasDCPId(Ii studyProtocolIi)  throws PAException;
 
     /**
      * @param studyProtocolId protocol id
@@ -124,4 +124,12 @@ public interface SearchStudySiteService {
      * @throws PAException exception
      */
     List<SearchStudySiteResultDto> getTreatingSites(Long studyProtocolId) throws PAException;
+    
+    /**
+     * Returns if a study has a CTEP Id.
+     * @param studyProtocolIi ii for the selected study
+     * @return the boolean value
+     * @throws PAException on error
+     */
+    boolean isStudyHasCTEPId(Ii studyProtocolIi)  throws PAException;
 }

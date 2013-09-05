@@ -219,7 +219,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public boolean isStudySiteHasDCPId(Ii studyProtocolIi)  throws PAException {
+    public boolean isStudyHasDCPId(Ii studyProtocolIi)  throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq(FUNCTIONAL_CODE, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
@@ -232,6 +232,26 @@ public class SearchStudySiteBean implements SearchStudySiteService {
             }
         } catch (HibernateException e) {
             throw new PAException("Error while checking if a study site has DCP Id ", e);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isStudyHasCTEPId(Ii studyProtocolIi)  throws PAException {
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
+        criteria.add(Restrictions.eq(FUNCTIONAL_CODE, StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        criteria.createCriteria("researchOrganization").createCriteria("organization")
+            .add(Restrictions.eq("name", PAConstants.CTEP_ORG_NAME));
+        try {
+            StudySite ss = (StudySite) criteria.uniqueResult();
+            if (ss != null) {
+                return true;
+            }
+        } catch (HibernateException e) {
+            throw new PAException("Error while checking if a study site has CTEP Id ", e);
         }
         return false;
     }

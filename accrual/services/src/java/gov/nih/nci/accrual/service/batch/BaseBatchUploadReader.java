@@ -96,14 +96,17 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,6 +117,7 @@ import java.util.Map;
 import javax.ejb.EJB;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Base Batch reader.
@@ -121,10 +125,12 @@ import org.apache.commons.lang.StringUtils;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BaseBatchUploadReader {
+    private static final Logger LOG = Logger.getLogger(BaseBatchUploadReader.class); 
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
-    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 3;    
+    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 3; 
+    private static final String SUABSTRACTOR = "SuAbstractor";   
     /**
      * List of elements.
      */
@@ -230,7 +236,7 @@ public class BaseBatchUploadReader {
      * patient disease index.
      */
     protected static final int PATIENT_DISEASE_INDEX = 20;
-    
+
     @EJB
     private StudySubjectServiceLocal studySubjectService;
     @EJB
@@ -252,7 +258,7 @@ public class BaseBatchUploadReader {
      * @param errMsg buffer for saving errors
      * @return the study protocol with the given id or null if no such study exists
      */
-    protected StudyProtocolDTO getStudyProtocol(String protocolId, StringBuffer errMsg) {
+    protected StudyProtocolDTO getStudyProtocol(String protocolId, BatchFileErrors errMsg) {
         StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance().getStudyProtocolService();
         StudyProtocolDTO foundStudy = null;
         Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
@@ -268,17 +274,73 @@ public class BaseBatchUploadReader {
             foundStudy = foundStudy != null ? foundStudy : spSvc.loadStudyProtocol(protocolIi);
         }
         if (foundStudy == null) {
-            errMsg.append("Study " + protocolId + " not found in CTRP.");
+            errMsg.append(new StringBuffer().append("Study " + protocolId + " not found in CTRP."));
         } else {
             try {
                 getSearchTrialService().validate(IiConverter.convertToLong(foundStudy.getIdentifier()));
             } catch (PAException e) {
-                errMsg.append("Please contact CTRO to correct data error in trial " + protocolId + ": "
-                        + e.getMessage());
+                errMsg.append(new StringBuffer().append("Please contact CTRO to correct data error in trial " 
+                        + protocolId + ": " + e.getMessage()));
             }
         }
         return foundStudy;
     }
+    
+    /**
+     * @author Mackson2
+     *
+     */
+    protected class BatchFileErrors {
+        private StringBuffer errMsg = new StringBuffer();
+        private boolean hasNonSiteErrors = false;
+        /**
+         * @return the errMsg
+         */
+        public StringBuffer getErrMsg() {
+            return errMsg;
+        }
+        /**
+         * @return the hasNonSiteErrors
+         */
+        public boolean isHasNonSiteErrors() {
+            return hasNonSiteErrors;
+        }
+        
+        /**
+         * @param err the err
+         */
+        public void append(StringBuffer err) {
+            errMsg.append(err);
+            hasNonSiteErrors = true;
+        }
+        
+        /**
+         * @param err the err
+         */
+        public void appendSiteError(StringBuffer err) {
+            errMsg.append(err);
+        }
+        
+        @Override
+        public String toString() {
+            return errMsg.toString();
+        }
+    }
+    
+    /**
+     * Check to see if the user is a SuAbstractor.
+     * @param ru the registry user
+     * @return if the user is Suabstractor
+     */
+    protected boolean isSuAbstractor(RegistryUser ru) {
+        CSMUserUtil userService = CSMUserService.getInstance();
+        try {     
+            return userService.isUserInGroup(ru.getCsmUser().getLoginName(), SUABSTRACTOR);
+        } catch (Exception e) {
+            LOG.error("Error determining user role for " + ru.getCsmUser().getLoginName() + ".", e);
+            return false;
+        }
+    }  
 
     /**
      * 

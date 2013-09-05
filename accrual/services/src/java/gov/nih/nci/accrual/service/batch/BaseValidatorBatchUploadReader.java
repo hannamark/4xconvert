@@ -111,29 +111,32 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param accrualSubmissionLevel the accrualSubmissionLevel
      */
     @SuppressWarnings({ "PMD.ExcessiveParameterList" })
-    protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber,
+    protected void validateAccrualCount(String key, List<String> values, BatchFileErrors errMsg, long lineNumber,
             StudyProtocolDTO sp, String accrualSubmissionLevel) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             validateStudyType(errMsg, sp, accrualSubmissionLevel);
             String accrualStudySite = AccrualUtil.safeGet(values, ACCRUAL_STUDY_SITE_INDEX);
             if (StringUtils.isEmpty(accrualStudySite)) {
-                errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append("\n");
+                errMsg.append(new StringBuffer().append("Accrual study site is missing")
+                        .append(appendLineNumber(lineNumber)).append("\n"));
             }
             String accrualCount = AccrualUtil.safeGet(values, ACCRUAL_COUNT_INDEX);
             if (StringUtils.isEmpty(accrualCount)) {
-                errMsg.append("Accrual count is missing").append(appendLineNumber(lineNumber)).append("\n");
+                errMsg.append(new StringBuffer().append("Accrual count is missing")
+                        .append(appendLineNumber(lineNumber)).append("\n"));
             }
         }
     }
 
-    private void validateStudyType(StringBuffer errMsg, StudyProtocolDTO sp, String accrualSubmissionLevel) {
+    private void validateStudyType(BatchFileErrors errMsg, StudyProtocolDTO sp, String accrualSubmissionLevel) {
         if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
                 && sp.getStudyProtocolType().getValue().equals(InterventionalStudyProtocol.class.getSimpleName())) {
-            errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
+            errMsg.append(new StringBuffer()
+            .append("Accrual count has been provided for a non Industrial study. This is not allowed.\n"));
         } else if (accrualSubmissionLevel != null 
                     && accrualSubmissionLevel.equals(AccrualUtil.SUBJECT_LEVEL)) {
-            errMsg.append("Non-interventional study has subject level accruals. "
-                   + "Summary level accruals cannot be accepted now.\n");
+            errMsg.append(new StringBuffer().append("Non-interventional study has subject level accruals. "
+                   + "Summary level accruals cannot be accepted now.\n"));
         }
     }
     
@@ -150,7 +153,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
-    protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg, long lineNumber,
+    protected void validatePatientsMandatoryData(String key, List<String> values, BatchFileErrors errMsg, long lineNumber,
             StudyProtocolDTO sp, String codeSystem, boolean checkDisease, String accrualSubmissionLevel) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean validatePatients = true;            
@@ -166,13 +169,14 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 String pBirthDate = AccrualUtil.safeGet(values, PATIENT_BRITH_DATE_INDEX);
                 if (!StringUtils.isEmpty(pBirthDate) 
                         && !new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
-                    errMsg.append("Patient birth date must be in YYYYMM format for patient ID ")
-                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+                	errMsg.append(new StringBuffer()
+                	.append("Patient birth date must be in YYYYMM format for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
                 }
                 String countryCode = AccrualUtil.safeGet(values, PATIENT_COUNTRY_CODE_INDEX);
                 if (!getCountryService().isValidAlpha2(countryCode)) {
-                    errMsg.append("Please enter valid alpha2 country code for patient ID ").append(getPatientId(values))
-                        .append(appendLineNumber(lineNumber)).append("\n");
+                	errMsg.append(new StringBuffer().append("Please enter valid alpha2 country code for patient ID ")
+                		.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
                 }
                 validateGender(values, errMsg, lineNumber);
                 validateEthnicity(values, errMsg, lineNumber);
@@ -180,17 +184,18 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 validateDiseaseCode(values, errMsg, lineNumber, sp, codeSystem, checkDisease);
                 String paymentMethod = AccrualUtil.safeGet(values, PATIENT_PAYMENT_METHOD_INDEX);
                 if (!StringUtils.isEmpty(paymentMethod) && !PATIENT_PAYMENT_METHOD.contains(paymentMethod.trim())) {
-                    errMsg.append("Please enter valid patient payment method for patient ID ")
-                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+                	errMsg.append(new StringBuffer().append("Please enter valid patient payment method for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
                 }
             } else if (accrualSubmissionLevel != null 
             		&& accrualSubmissionLevel.equals(AccrualUtil.SUMMARY_LEVEL)) {
-                errMsg.append("Non-interventional study has summary level accruals."
+            	errMsg.append(new StringBuffer().append("Non-interventional study has summary level accruals."
                      + " Subject level accruals cannot be accepted now for patient ID ")
-                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");            	
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));            	
             } else {
-                errMsg.append("Individual Patients should not be added to Industrial Trials for patient ID ")
-                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+            	errMsg.append(new StringBuffer()
+            	.append("Individual Patients should not be added to Industrial Trials for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             }
         }
     }
@@ -202,15 +207,15 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    protected void validatePatientRaceData(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+    protected void validatePatientRaceData(String key, List<String> values, BatchFileErrors errMsg, long lineNumber) {
         if (StringUtils.equalsIgnoreCase("PATIENT_RACES", key)) {
             String pRaceCode = AccrualUtil.safeGet(values, PATIENT_RACE_CODE_INDEX);
             if (StringUtils.isEmpty(pRaceCode)) {
-                errMsg.append("Patient race code is missing for patient ID ").append(getPatientId(values))
-                    .append(appendLineNumber(lineNumber)).append("\n");
+            	errMsg.append(new StringBuffer().append("Patient race code is missing for patient ID ")
+            			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             } else if (!PATIENT_RACE_CODE.contains(pRaceCode.trim())) {
-                errMsg.append("Patient race code is not valid for patient ID ").append(getPatientId(values))
-                    .append(appendLineNumber(lineNumber)).append("\n");
+            	errMsg.append(new StringBuffer().append("Patient race code is not valid for patient ID ")
+            			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             }
         }
     }
@@ -221,14 +226,14 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    protected void validateDateOfEntry(List<String> values, StringBuffer errMsg, long lineNumber) {
+    protected void validateDateOfEntry(List<String> values, BatchFileErrors errMsg, long lineNumber) {
         String dateOfEntry = AccrualUtil.safeGet(values, PATIENT_DATE_OF_ENTRY_INDEX);
         if (StringUtils.isEmpty(dateOfEntry)) {
-            errMsg.append("Patient date of entry is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Patient date of entry is missing for patient ID ")
+        			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         } else if (!new DateValidator().isValid(dateOfEntry, "yyyyMMdd", Locale.getDefault())) {
-            errMsg.append("Patient date of entry must be in YYYYMMDD format for patient ID ")
-                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Patient date of entry must be in YYYYMMDD format for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         }
     }
 
@@ -238,14 +243,14 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    protected void validateEthnicity(List<String> values, StringBuffer errMsg, long lineNumber) {
+    protected void validateEthnicity(List<String> values, BatchFileErrors errMsg, long lineNumber) {
         String ethnicity = AccrualUtil.safeGet(values, PATIENT_ETHNICITY_INDEX);
         if (StringUtils.isEmpty(ethnicity)) {
-            errMsg.append("Patient ethnicity is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Patient ethnicity is missing for patient ID ")
+        			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         } else if (!PATIENT_ETHNICITY.contains(ethnicity.trim())) {
-            errMsg.append("Please enter valid patient ethnicity for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Please enter valid patient ethnicity for patient ID ")
+        			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         }
     }
 
@@ -255,14 +260,14 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validateGender(List<String> values, BatchFileErrors errMsg, long lineNumber) {
         String genderCode = AccrualUtil.safeGet(values, PATIENT_GENDER_CODE_INDEX);
         if (StringUtils.isEmpty(genderCode)) {
-            errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Patient gender is missing for patient ID ")
+        		 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         } else if (!PATIENT_GENDER.contains(genderCode.trim())) {
-            errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append("\n");
+        	errMsg.append(new StringBuffer().append("Must be a valid patient gender for patient ID ")
+        			.append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
         }
     }
 
@@ -271,36 +276,36 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * Meddra/ICD9 Disease code is not required.
      */
     @SuppressWarnings({ "PMD.ExcessiveParameterList" })
-    void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp, 
+    void validateDiseaseCode(List<String> values, BatchFileErrors errMsg, long lineNumber, StudyProtocolDTO sp, 
         String codeSystem, boolean checkDisease) {
         String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
         if (StringUtils.isEmpty(code)) {
             if (checkDisease) {
-                errMsg.append("Patient Disease Code is missing or not recognized for patient ID ")
-                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");
+            	errMsg.append(new StringBuffer().append("Patient Disease Code is missing or not recognized for patient ID ")
+                    .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             }
         } else {
             StringTokenizer disease = new StringTokenizer(code, ";");
             if (!disease.hasMoreElements()) {
-                errMsg.append("Patient Disease Code is missing or not recognized for patient ID ")
-                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n");            
+            	errMsg.append(new StringBuffer().append("Patient Disease Code is missing or not recognized for patient ID ")
+                .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));            
             } else {
                 while (disease.hasMoreElements()) {
                    String diseaseCode = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
                    AccrualDisease dis = getDiseaseService().getByCode(diseaseCode);
                    if (dis == null || !StringUtils.equals(dis.getCodeSystem(), codeSystem)) {
-                        errMsg.append("Patient Disease Code is invalid for patient ID ").append(getPatientId(values))
-                        .append(appendLineNumber(lineNumber)).append("\n");
+                	   errMsg.append(new StringBuffer().append("Patient Disease Code is invalid for patient ID ")
+                			   .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
                    }
                 }
             }
         }
     }
 
-    private void isPatientIdUnique(String patId, StringBuffer errMsg, long lineNumber, List<String> patientsIdList) {
+    private void isPatientIdUnique(String patId, BatchFileErrors errMsg, long lineNumber, List<String> patientsIdList) {
         if (patientsIdList.contains(patId)) {
-            errMsg.append("Patient identifier " + patId + " is not unique ").append(appendLineNumber(lineNumber))
-                .append("\n");
+        	errMsg.append(new StringBuffer().append("Patient identifier " + patId + " is not unique ")
+        			.append(appendLineNumber(lineNumber)).append("\n"));
         } else {
             patientsIdList.add(patId);
         }

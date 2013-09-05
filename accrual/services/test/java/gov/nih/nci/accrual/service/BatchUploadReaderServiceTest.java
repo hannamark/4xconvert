@@ -99,6 +99,8 @@ import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
+import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -111,6 +113,7 @@ import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.PatientStage;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -379,6 +382,83 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("suAbs-accrual-count-batch-file.txt", importResults.getFileName());
         assertEquals(2, importResults.getTotalImports());       
     }
+	   
+ @Test
+ public void testSuAbstractorCtepTrialBatchUpload() throws Exception {
+ 	
+ 	 CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+     when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
+     CSMUserService.setInstance(csmUtil);
+     
+     SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+     readerService.setSearchStudySiteService(sssSvc);
+     when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+     
+     File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
+     BatchFile batchFile = getBatchFile(file);
+     List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+     assertEquals(1, results.size());
+     assertFalse(results.get(0).isPassedValidation());
+     String errorMsg = results.get(0).getErrors().toString();
+	 assertFalse(StringUtils.isEmpty(errorMsg));
+     assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 93"));
+     assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 2013"));
+     assertFalse(results.get(0).getValidatedLines().isEmpty());
+     verifyEmailsSent(0, 1, 0);
+
+     BatchFile r = getResultFromDb();
+     assertFalse(r.isPassedValidation());
+     assertTrue(r.isProcessed());
+     assertTrue(r.getFileLocation().contains("suAbs-accrual-patients-batch-file.txt"));
+     assertFalse(StringUtils.isEmpty(r.getResults()));
+     assertEquals(1, r.getAccrualCollections().size());
+     AccrualCollections collection = r.getAccrualCollections().get(0);
+     assertFalse(collection.isPassedValidation());
+     assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+     assertEquals("NCI-2010-00003", collection.getNciNumber());
+     assertFalse(StringUtils.isEmpty(collection.getResults()));
+     assertEquals((Integer) 1, collection.getTotalImports());
+     
+     List<PatientStage> queryList = getPatientStage("NCI-2010-00003");
+     assertEquals(2, queryList.size());
+     
+     setStudyProtocolSvc();
+     file = new File(this.getClass().getResource("/suAbs-accrual-count-batch-file2.txt").toURI());
+     batchFile = getBatchFile(file);
+     results = readerService.validateBatchData(batchFile);
+     assertEquals(1, results.size());
+     assertFalse(results.get(0).isPassedValidation());
+     errorMsg = results.get(0).getErrors().toString();
+	 assertFalse(StringUtils.isEmpty(errorMsg));
+     assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 2013"));
+     assertFalse(results.get(0).getValidatedLines().isEmpty());
+     verifyEmailsSent(0, 2, 0);
+
+     r = getResultFromDb();
+     assertFalse(r.isPassedValidation());
+     assertTrue(r.isProcessed());
+     assertTrue(r.getFileLocation().contains("suAbs-accrual-count-batch-file2.txt"));
+     assertFalse(StringUtils.isEmpty(r.getResults()));
+     assertEquals(1, r.getAccrualCollections().size());
+     collection = r.getAccrualCollections().get(0);
+     assertFalse(collection.isPassedValidation());
+     assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+     assertEquals("NCI-2009-00003", collection.getNciNumber());
+     assertFalse(StringUtils.isEmpty(collection.getResults()));
+     assertEquals((Integer) 0, collection.getTotalImports());
+     
+     queryList = getPatientStage("NCI-2009-00003");
+     assertEquals(3, queryList.size());
+ }
+
+private List<PatientStage> getPatientStage(String nciId) {
+	Session session = PaHibernateUtil.getCurrentSession();
+     session.clear();
+     String hql = "from PatientStage where studyIdentifier = '" + nciId + "'";
+     Query query = session.createQuery(hql);
+     List<PatientStage> queryList = query.list();
+	return queryList;
+}
 
 	@Test
 	public void patientRCCoverage() throws URISyntaxException, PAException {
@@ -641,6 +721,14 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
     @Test
     public void accrualCountBatchValidation() throws URISyntaxException, PAException {
+    	CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+        
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+        
         File file = new File(this.getClass().getResource("/accrual-count-invalid-batch-file.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -666,31 +754,35 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("NCI-2009-00001", collection.getNciNumber());
         assertFalse(StringUtils.isEmpty(collection.getResults()));
         assertNull(collection.getTotalImports());
+}
+    @Test
+    public void accrualCountBatch() throws URISyntaxException, PAException {
 
         setStudyProtocolSvc();
         
-        file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
-        batchFile = getBatchFile(file);
-        results = readerService.validateBatchData(batchFile);
+        File file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
-        verifyEmailsSent(1, 1, 0);
+        verifyEmailsSent(0, 1, 0);
 
-        r = getResultFromDb();
+        BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
         assertTrue(r.isProcessed());
         assertTrue(r.getFileLocation().contains("accrual-count-batch-file.txt"));
         assertTrue(StringUtils.isEmpty(r.getResults()));
         assertEquals(1, r.getAccrualCollections().size());
-        collection = r.getAccrualCollections().get(0);
+        AccrualCollections collection = r.getAccrualCollections().get(0);
         assertTrue(collection.isPassedValidation());
         assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
         assertEquals("NCI-2009-00003", collection.getNciNumber());
         assertTrue(StringUtils.isEmpty(collection.getResults()));
         assertEquals((Integer) 2, collection.getTotalImports());
-}
+    	
+    }
 
     @Test
     public void abbreviatedPreventionBatchValidation() throws URISyntaxException, PAException {

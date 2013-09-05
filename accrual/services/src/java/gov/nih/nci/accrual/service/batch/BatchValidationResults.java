@@ -104,6 +104,7 @@ public class BatchValidationResults {
     private String nciIdentifier;
     private Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
     private Map<String, Long> listOfPoStudySiteIds = new HashMap<String, Long>();
+    private boolean hasNonSiteErrors;
 
     /**
      * @return the errors
@@ -215,5 +216,17 @@ public class BatchValidationResults {
      */
     public void setListOfPoStudySiteIds(Map<String, Long> listOfPoStudySiteIds) {
         this.listOfPoStudySiteIds = listOfPoStudySiteIds;
+    }
+    /**
+     * @return the hasNonSiteErrors
+     */
+    public boolean isHasNonSiteErrors() {
+        return hasNonSiteErrors;
+    }
+    /**
+     * @param hasNonSiteErrors the hasNonSiteErrors to set
+     */
+    public void setHasNonSiteErrors(boolean hasNonSiteErrors) {
+        this.hasNonSiteErrors = hasNonSiteErrors;
     }
 }

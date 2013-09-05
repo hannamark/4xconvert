@@ -151,11 +151,11 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
     @Test
     public void diseaseCodeMandatoryTest() throws Exception {
         // DCP
-        when(sssBean.isStudySiteHasDCPId(any(Ii.class))).thenReturn(true);
+        when(sssBean.isStudyHasDCPId(any(Ii.class))).thenReturn(true);
         assertFalse(bean.diseaseCodeMandatory(1L));
 
         // Prevention trial
-        when(sssBean.isStudySiteHasDCPId(any(Ii.class))).thenReturn(false);
+        when(sssBean.isStudyHasDCPId(any(Ii.class))).thenReturn(false);
         StudyProtocolDTO sp = new StudyProtocolDTO();
         sp.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
         when(spBean.getStudyProtocol(any(Ii.class))).thenReturn(sp);

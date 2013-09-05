@@ -1405,4 +1405,12 @@
         <comment>Add not null constraint</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6304.sql"/>
      </changeSet>
+     <changeSet id="PO-5428" author="Kalpana">
+        <comment>New table to store the patients</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428.sql"/>
+     </changeSet>
+     <changeSet id="PO-5428_2" author="Kalpana">
+        <comment>update the confirmation email</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428_2.sql"/>
+     </changeSet>
 </databaseChangeLog>

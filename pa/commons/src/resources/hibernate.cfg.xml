@@ -112,6 +112,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.BatchFile" />
         <mapping class="gov.nih.nci.pa.domain.AccrualCollections" />
         <mapping class="gov.nih.nci.pa.domain.AccrualDisease" />
+        <mapping class="gov.nih.nci.pa.domain.PatientStage" />
 
           <!-- mapping classes for Outcomes -->
         <mapping class="gov.nih.nci.pa.domain.PerformedObservation" />

@@ -203,7 +203,7 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
     public boolean diseaseCodeMandatory(Long spId) {
         Ii spIi = IiConverter.convertToStudyProtocolIi(spId);
         try {
-            if (searchStudySiteSvc.isStudySiteHasDCPId(spIi)) {
+            if (searchStudySiteSvc.isStudyHasDCPId(spIi)) {
                 return false;
             }
             StudyProtocolDTO spDto = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(spIi);
