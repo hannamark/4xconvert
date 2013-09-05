@@ -9,7 +9,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -24,6 +23,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,6 +40,11 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Query;
@@ -96,8 +101,9 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
         }
     }
 
-    /** Used to store data on submitters. Avoid redundant db queries. */
-    private class TrialData {
+    /** Used to store data on trial. Avoid redundant db queries. */
+    private class TrialData implements Serializable {
+        private static final long serialVersionUID = -8133288058658604054L;
         private final boolean industrial;
         private final boolean affiliatedWithLead;
         private final boolean affiliatedWithSite;
@@ -109,6 +115,77 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             this.affiliatedWithSite = affiliatedWithSite;
             this.siteAccess = siteAccess;
         }
+    }
+
+    /** Key for trial data cache. */
+    private class TrialDataKey implements Serializable { // NOPMD
+        private static final long serialVersionUID = -7287423193024383923L;
+        private final Long regUserId;
+        private final String nciNumber;
+        public TrialDataKey(Long regUserId, String nciNumber) {
+            this.regUserId = regUserId;
+            this.nciNumber = nciNumber;
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + (nciNumber == null ? 0 : nciNumber.hashCode());
+            result = prime * result + (regUserId == null ? 0 : regUserId.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) { // NOPMD
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof TrialDataKey)) {
+                return false;
+            }
+            TrialDataKey other = (TrialDataKey) obj;
+            if (!getOuterType().equals(other.getOuterType())) {
+                return false;
+            }
+            if (nciNumber == null) {
+                if (other.nciNumber != null) {
+                    return false;
+                }
+            } else if (!nciNumber.equals(other.nciNumber)) {
+                return false;
+            }
+            if (regUserId == null) {
+                if (other.regUserId != null) {
+                    return false;
+                }
+            } else if (!regUserId.equals(other.regUserId)) {
+                return false;
+            }
+            return true;
+        }
+        private SubmissionHistoryBean getOuterType() {
+            return SubmissionHistoryBean.this;
+        }
+    }
+
+    // Cache for trial data
+    private static CacheManager cacheManager;
+    private static final String TRIAL_DATA_CACHE_KEY = "SUBM_HISTORY_TRIAL_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 500;
+    private static final long CACHE_TIME = 600;
+
+    Cache getTrialDataCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(TRIAL_DATA_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                    CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+            cacheManager.removeCache(TRIAL_DATA_CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(TRIAL_DATA_CACHE_KEY);
     }
 
     /**
@@ -133,7 +210,6 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
 
     private List<HistoricalSubmissionDto> po6304Filter(List<HistoricalSubmissionDto> sList, RegistryUser ru,
             Map<Long, String> trials) throws PAException {
-        Map<String, TrialData> trialData = new HashMap<String, TrialData>();
         List<Long> familyOrgIds = FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         for (HistoricalSubmissionDto s : sList) {
@@ -148,17 +224,16 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             }
 
             // otherwise show only under certain conditions
-            if (trials.containsValue(s.getNciNumber()) 
-                    && po6304Show(s, ru, trialData, familyOrgIds)) {
+            if (trials.containsValue(s.getNciNumber()) && po6304Show(s, ru, familyOrgIds)) {
                 result.add(s);
             }
         }
         return result;
     }
 
-    private boolean po6304Show(HistoricalSubmissionDto s, RegistryUser ru, Map<String, TrialData> trialData, 
-            List<Long> familyOrgIds) throws PAException {
-        TrialData d = getTrialData(s.getNciNumber(), ru, trialData);
+    private boolean po6304Show(HistoricalSubmissionDto s, RegistryUser ru, List<Long> familyOrgIds)
+            throws PAException {
+        TrialData d = getTrialData(s.getNciNumber(), ru);
         return !d.industrial && d.affiliatedWithLead
                 || d.affiliatedWithSite  
                    && d.siteAccess.contains(s.getUserAffiliatedOrgId())
@@ -167,10 +242,10 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
                        || ru.getAffiliatedOrganizationId().equals(s.getUserAffiliatedOrgId()));
     }
 
-    private TrialData getTrialData(String nciId, RegistryUser user, Map<String, TrialData> trialData)
-            throws PAException {
-        TrialData result = trialData.get(nciId);
-        if (result == null) {
+    private TrialData getTrialData(String nciId, RegistryUser user) throws PAException {
+        TrialDataKey key = new TrialDataKey(user.getId(), nciId);
+        Element element = getTrialDataCache().get(key);
+        if (element == null) {
             Ii ii = IiConverter.convertToStudyProtocolIi(0L);
             ii.setExtension(nciId);
             StudyProtocolDTO sp = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(ii);
@@ -183,25 +258,27 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             Set<Long> siteAccess = new HashSet<Long>();
             Session session = PaHibernateUtil.getCurrentSession();
             Query query = null;
-            String hql = "select ssaa "
+            String hql = "select org.identifier "
                 + "from StudyProtocol sp "
                 + "join sp.studySites ss "
                 + "join ss.studySiteAccrualAccess ssaa "
+                + "join ss.healthCareFacility hcf "
+                + "join hcf.organization org "
                 + "where sp.id = :spId "
                 + "  and ssaa.statusCode = 'ACTIVE' "
                 + "  and ssaa.registryUser.id = :ruId";
             query = session.createQuery(hql);
             query.setParameter("spId", spId);
             query.setParameter("ruId", user.getId());
-            List<StudySiteAccrualAccess> queryList = query.list();
-            for (StudySiteAccrualAccess obj : queryList) {
-                siteAccess.add(Long.valueOf(obj.getStudySite().getHealthCareFacility().
-                        getOrganization().getIdentifier()));
+            List<String> queryList = query.list();
+            for (String obj : queryList) {
+                siteAccess.add(Long.valueOf(obj));
             }
-            result = new TrialData(industrial, lead, site, siteAccess);
-            trialData.put(nciId, result);
+            TrialData td = new TrialData(industrial, lead, site, siteAccess);
+            element = new Element(key, td);
+            getTrialDataCache().put(element);
         }
-        return result;
+        return (TrialData) element.getValue();
     }
 
     private List<HistoricalSubmissionDto> searchBatchSubmissions(Timestamp from, Timestamp to, 
