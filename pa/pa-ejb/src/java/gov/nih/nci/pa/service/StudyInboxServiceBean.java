@@ -88,12 +88,14 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -127,9 +129,12 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter>
-    implements StudyInboxServiceLocal { //NOPMD
+public class StudyInboxServiceBean // NOPMD
+    extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter> 
+        implements StudyInboxServiceLocal { //NOPMD
 
+    private static final String PARTICIPATING_SITE_INFORMATION_WAS_CHANGED = 
+            "Participating Site information was changed.";
     /** id for inboxDateRange.open. */
     public static final int FN_DATE_OPEN = 1;
     /** id for inboxDateRange.close. */
@@ -144,6 +149,8 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     private StudySiteServiceLocal studySiteServiceLocal;
     @EJB
     private DocumentServiceLocal documentServiceLocal;
+    @EJB
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     
     /**
      * 
@@ -169,10 +176,16 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      * gov.nih.nci.pa.iso.dto.StudyResourcingDTO, java.util.List)
      */
     @Override
-    public String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, //NOPMD
+    // CHECKSTYLE:OFF
+    public String create( // NOPMD
+            List<DocumentDTO> documentDTOs,
+            List<DocumentDTO> existingDocs,
+            Ii studyProtocolIi, // NOPMD
             StudyProtocolQueryDTO originalDTO,
             List<StudyResourcingDTO> originalSummary4,
-            List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException {
+            List<StudySiteDTO> originalSites,
+            List<StudySiteAccrualStatusDTO> originalAccrualStatuses,
+            List<DocumentDTO> updatedDocs) throws PAException {
         StringBuilder comments = new StringBuilder();
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException(" Study Protocol Identifier cannot be null");
@@ -210,6 +223,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         }
         
         comments.append(createComments(originalSites, updatedSites));
+        comments.append(createCommentsForStudySiteAccrualStatus(originalAccrualStatuses));
         comments.append(createDeletedDocsComments(existingDocs));
         comments.append(createComments(documentDTOs));        
         StringBuilder abstractionErrors = new PAServiceUtils()
@@ -227,6 +241,9 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                 
         return comments.toString();
     }
+    // CHECKSTYLE:ON
+
+    
 
 
     /**
@@ -281,15 +298,45 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
                         .equals(conv.convertHighToString(original
                                 .getStatusDateRange()), conv
                                 .convertHighToString(updated
-                                        .getStatusDateRange()))
-                || !ObjectUtils.equals(
-                        conv.convertLowToString(original.getStatusDateRange()),
-                        conv.convertLowToString(updated.getStatusDateRange()))) {
-            final String msg = "Participating Site information was changed." + SEPARATOR;
-            if (comments.indexOf(msg) == -1) {
-                comments.append(msg);
+                                        .getStatusDateRange()))) {
+            final String msg = PARTICIPATING_SITE_INFORMATION_WAS_CHANGED + SEPARATOR;
+            appendIfNotExists(comments, msg);
+        }
+    }
+
+
+    /**
+     * @param comments
+     * @param msg
+     */
+    private void appendIfNotExists(StringBuilder comments, final String msg) {
+        if (comments.indexOf(msg) == -1) {
+            comments.append(msg);
+        }
+    }
+    
+    @SuppressWarnings({ "rawtypes", "PMD.CyclomaticComplexity" })
+    private StringBuilder createCommentsForStudySiteAccrualStatus(
+            List<StudySiteAccrualStatusDTO> originalAccrualStatuses)
+            throws PAException {
+        StringBuilder comments = new StringBuilder();
+        for (StudySiteAccrualStatusDTO original : originalAccrualStatuses) {
+            if (original != null) {
+                StudySiteAccrualStatusDTO updated = studySiteAccrualStatusService
+                        .getCurrentStudySiteAccrualStatusByStudySite(original.getStudySiteIi());
+                if (!ObjectUtils.equals(original.getStatusCode(),
+                        updated.getStatusCode())
+                        || !ObjectUtils.equals(TsConverter
+                                .convertToString(original.getStatusDate()),
+                                TsConverter.convertToString(updated
+                                        .getStatusDate()))) {
+                    final String msg = PARTICIPATING_SITE_INFORMATION_WAS_CHANGED
+                            + SEPARATOR;
+                    appendIfNotExists(comments, msg);
+                }
             }
         }
+        return comments;
     }
 
     private StringBuilder createComments(StudyProtocolQueryDTO originalDTO,
@@ -419,9 +466,9 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         StringBuilder comments = new StringBuilder();
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
             for (DocumentDTO doc : documentDTOs) {
-                comments.append(
-                        CdConverter.convertCdToString(doc.getTypeCode()))
-                        .append(" Document was uploaded." + SEPARATOR);
+                String msg = CdConverter.convertCdToString(doc.getTypeCode())
+                        + " Document was uploaded." + SEPARATOR;
+                appendIfNotExists(comments, msg);
             }
         }
         return comments;
@@ -528,6 +575,15 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         } catch (Exception e) {
             throw new PAException("Error retrieving inbox entries.", e);
         }
+    }
+
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(
+            StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
     }
  
     

@@ -83,6 +83,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 
 import java.util.List;
@@ -104,14 +105,21 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
      * @param originalDTO original protocol before update
      * @param originalSummary4 originalSummary4
      * @param originalSites originalSites 
+     * @param originalAccrualStatuses 
      * @param updatedDocs updatedDocs
      * @throws PAException on any error
      * @return String comments
      */
-    String create(List<DocumentDTO> documentDTOs, List<DocumentDTO> existingDocs, Ii studyProtocolIi, // NOPMD
+    // CHECKSTYLE:OFF
+    String create( // NOPMD
+            List<DocumentDTO> documentDTOs,
+            List<DocumentDTO> existingDocs,
+            Ii studyProtocolIi,
             StudyProtocolQueryDTO originalDTO,
             List<StudyResourcingDTO> originalSummary4,
-            List<StudySiteDTO> originalSites, List<DocumentDTO> updatedDocs) throws PAException;
+            List<StudySiteDTO> originalSites,
+            List<StudySiteAccrualStatusDTO> originalAccrualStatuses,
+            List<DocumentDTO> updatedDocs) throws PAException;
 
      /**
       * Returns a list of all open inbox entries for a study protocol.

@@ -108,6 +108,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -211,6 +212,15 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             List<StudySiteDTO> originalSites = studySiteService
                     .getByStudyProtocol(spDto.getIdentifier(), srDTO);
             
+            // remember original study site recruitment statuses because they
+            // are separate from study sites.
+            List<StudySiteAccrualStatusDTO> originalAccrualStatuses = new ArrayList<StudySiteAccrualStatusDTO>();
+            for (StudySiteDTO site : originalSites) {
+                originalAccrualStatuses.add(studySiteAccrualStatusService
+                        .getCurrentStudySiteAccrualStatusByStudySite(site
+                                .getIdentifier()));
+            }
+            
             final Bl proprietaryTrialIndicator = spDto.getProprietaryTrialIndicator();
             if (Boolean.FALSE.equals(proprietaryTrialIndicator.getValue())) {
                 throw new PAException(
@@ -277,7 +287,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                     studyProtocolDTO.getIdentifier());
             String updatesList = studyInboxServiceLocal.create(documentDTOs, existingDocs,
                     studyProtocolIi, originalDTO, originalSummary4,
-                    originalSites, savedDocs);
+                    originalSites, originalAccrualStatuses, savedDocs);
             studyProtocolService
                 .updatePendingTrialAssociationsToActive(IiConverter
                     .convertToLong(studyProtocolIi));
@@ -287,7 +297,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
             sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
         } catch (Exception e) {
-            throw new PAException(e);
+            throw new PAException(e.getMessage(), e);
         }
     }
 

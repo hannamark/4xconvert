@@ -304,6 +304,7 @@ public class ProprietaryTrialManagementBeanTest extends
         studyInboxSvc.setStudyResourcingServiceLocal(studyResourcingService);
         studyInboxSvc.setStudySiteServiceLocal(studySiteService);
         studyInboxSvc.setDocumentServiceLocal(documentService);
+        studyInboxSvc.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
 
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
