@@ -68,7 +68,7 @@ public final class ImportCtGovAction extends ActionSupport implements
             return ERROR;
         }
         try {
-            study = ctGovSyncService.getAdaptedCtGovStudyByNctId(getNctID());
+            study = ctGovSyncService.getAdaptedCtGovStudyByNctId(getEscapedNctID());
             searchPerformed = true;
             studyExists = !findExistentStudies(getNctID()).isEmpty();
             if (!studyExists) {
@@ -159,6 +159,20 @@ public final class ImportCtGovAction extends ActionSupport implements
         } else if (!StringUtils.isAsciiPrintable(nctIdToValidate)) {
             addActionError("Provided NCT Identifer is invalid");
         }
+    }
+    
+    /**
+     * This function returns an version of the nctID that has been encoded for use in URLs,
+     * such as is used to query the ClinicalTrials.gov API.
+     * @return the nctID properly htmlescaped
+     */
+    @SuppressWarnings("deprecation")
+    public String getEscapedNctID() {
+        /*
+         * This function uses the default encoding because otherwise we would have to deal with an exception
+         * for the cases where the specified encoding does not exist.
+         */
+        return java.net.URLEncoder.encode(nctID);
     }
 
     /**
