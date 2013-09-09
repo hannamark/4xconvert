@@ -61,6 +61,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.jboss.annotation.IgnoreDependency;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -128,6 +129,10 @@ public class StudyMilestoneBeanLocal
     @EJB
     private FamilyServiceLocal familyService;
 
+    @EJB
+    @IgnoreDependency
+    private TrialRegistrationServiceLocal trialRegistrationService;
+    
     /** For testing purposes only. Set to false to bypass abstraction validations. */
     private boolean validateAbstractions = true;
     
@@ -156,9 +161,9 @@ public class StudyMilestoneBeanLocal
         createReadyForTSRMilestone(resultDto);
         // Send TSR e-mail for the appropriate milestone
         attachTSRToTrialDocs(workDto);
-        sendTSREmail(workDto);
-        sendLateRejectionEmail(workDto);                
+        sendTSREmail(workDto);                        
         checkSiteAndFamilyAccrualSubmitter(resultDto);
+        rejectAmendmentAndSendLateRejectionEmail(workDto);
         return resultDto;
     }
 
@@ -587,8 +592,9 @@ public class StudyMilestoneBeanLocal
         }
         if (newCode == MilestoneCode.LATE_REJECTION_DATE
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
-
-            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+            if (sp.getSubmissionNumber().getValue().intValue() == 1) {
+                createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
+            }            
         }
     }
 
@@ -788,15 +794,23 @@ public class StudyMilestoneBeanLocal
         return convertFromDomainToDTOs(studyMilestoneList);
     }
 
-    private void sendLateRejectionEmail(StudyMilestoneDTO workDto) throws PAException {
+    private void rejectAmendmentAndSendLateRejectionEmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(
                 CdConverter.convertCdToString(workDto.getMilestoneCode()));
-        if ((MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {
+        if ((MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {            
             try {
+                StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(workDto.getStudyProtocolIdentifier());
+                //For the case where the milestone is late rejection date and trial is amended, we should follow 
+                //the same workflow as trial amendment rejection.
+                if (sp.getSubmissionNumber().getValue().intValue() > 1) {
+                    PaHibernateUtil.getCurrentSession().flush();                    
+                    trialRegistrationService.reject(sp.getIdentifier(), workDto.getCommentText(), 
+                            workDto.getRejectionReasonCode());
+                }                
                 mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
             } catch (PAException e) {
                 throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
-                        + "be recorded as sending the rejection email to the submitter  failed.", e);
+                        + "be recorded.", e);
             }
         }
     }
@@ -901,4 +915,11 @@ public class StudyMilestoneBeanLocal
         this.familyService = familyService;
     }
 
+    /**
+     * @param trialRegistrationService the trialRegistrationService to set
+     */
+    public void setTrialRegistrationService(
+            TrialRegistrationServiceLocal trialRegistrationService) {
+        this.trialRegistrationService = trialRegistrationService;
+    }
 }

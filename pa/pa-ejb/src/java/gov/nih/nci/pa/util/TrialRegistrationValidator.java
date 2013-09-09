@@ -183,12 +183,12 @@ public class TrialRegistrationValidator {
      * The set of DocumentWorkflowStatusCode that cause an error for amendment.
      */
     static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_REJECT = EnumSet.complementOf(EnumSet
-        .of(DocumentWorkflowStatusCode.SUBMITTED,
-            DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED));
+        .of(DocumentWorkflowStatusCode.SUBMITTED, DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED, 
+            DocumentWorkflowStatusCode.ACCEPTED));
     /**
      * The error message for wrong DocumentWorkflowStatusCode in amendment.
      */
-    static final String ERROR_MESSAGE_DWFS_FOR_REJECT = "Only Trials with SUBMITTED can be Rejected.\n";
+    static final String ERROR_MESSAGE_DWFS_FOR_REJECT = "Only Trials with SUBMITTED or ACCEPTED can be Rejected.\n";
 
     /**
      * The set of DocumentWorkflowStatusCode that cause an error for update.

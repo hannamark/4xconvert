@@ -1594,7 +1594,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * {@inheritDoc}
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
