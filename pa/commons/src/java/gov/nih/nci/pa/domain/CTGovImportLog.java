@@ -31,6 +31,7 @@ public class CTGovImportLog implements PersistentObject {
     private String userCreated;
     private Date dateCreated;
     private String importStatus;
+    private Boolean reviewRequired;
 
     /**
      * 
@@ -177,5 +178,20 @@ public class CTGovImportLog implements PersistentObject {
      */
     public void setImportStatus(String importStatus) {
         this.importStatus = importStatus;
+    }
+
+    /**
+     * @return the reviewRequired
+     */
+    @Column(name = "review_required")
+    public Boolean getReviewRequired() {
+        return reviewRequired;
+    }
+
+    /**
+     * @param reviewRequired the reviewRequired to set
+     */
+    public void setReviewRequired(Boolean reviewRequired) {
+        this.reviewRequired = reviewRequired;
     }
 }

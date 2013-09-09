@@ -1413,4 +1413,8 @@
         <comment>update the confirmation email</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428_2.sql"/>
      </changeSet>
+      <changeSet id="PO-6440-1" author="krylovd">
+        <comment>Added 'Needs Review' indicator column to ctgovimport_log</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6440-1.sql"/>
+     </changeSet>
 </databaseChangeLog>
