@@ -209,6 +209,12 @@ public abstract class AbstractTrialRegistrationBean {
                 toDTO.setNumberOfGroups(fromDTO
                         .getNumberOfGroups());
             }
+            if (!ISOUtil.isCdNull(fromDTO.getSamplingMethodCode())) {
+                toDTO.setSamplingMethodCode(fromDTO.getSamplingMethodCode());
+            }
+            if (!ISOUtil.isStNull(fromDTO.getStudyPopulationDescription())) {
+                toDTO.setStudyPopulationDescription(fromDTO.getStudyPopulationDescription());
+            }
         }
     }
     

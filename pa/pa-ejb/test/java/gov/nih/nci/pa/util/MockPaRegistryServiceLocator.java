@@ -72,6 +72,7 @@ import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -674,6 +675,11 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     
     @Override
     public CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService() {
+        return null;
+    }
+
+    @Override
+    public ProtocolComparisonServiceLocal getProtocolComparisonService() {       
         return null;
     }
 }

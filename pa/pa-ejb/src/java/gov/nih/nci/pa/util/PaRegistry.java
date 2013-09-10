@@ -137,6 +137,7 @@ import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -695,5 +696,12 @@ public final class PaRegistry {
     public static CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService() {
         return getInstance().getServiceLocator().getCTGovSyncNightlyService();
     }   
+    
+    /**
+     * @return ProtocolComparisonServiceLocal
+     */
+    public static ProtocolComparisonServiceLocal getProtocolComparisonService() {
+        return getInstance().getServiceLocator().getProtocolComparisonService();
+    }
     
 }

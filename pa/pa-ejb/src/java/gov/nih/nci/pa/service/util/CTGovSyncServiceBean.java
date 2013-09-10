@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.ctgov.ResponsiblePartyStruct;
 import gov.nih.nci.pa.service.ctgov.SponsorStruct;
 import gov.nih.nci.pa.service.ctgov.TextblockStruct;
 import gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper.PersonWithFullNameDTO;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.ProtocolSnapshot;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -231,6 +232,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private RegistryUserServiceLocal registryUserService;
     @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
+    @EJB
+    private ProtocolComparisonServiceLocal protocolComparisonService;
 
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -434,7 +437,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } catch (Exception e) {
             LOG.error(e, e);
             createImportLogEntry(EMPTY, nctID, EMPTY, EMPTY,
-                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser);
+                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser, false);
             throw new PAException(e.getMessage()); // NOPMD
         }
         if (xml == null) {
@@ -482,11 +485,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             String trialNciId = paServiceUtils.getTrialNciId(Long
                     .valueOf(protocolID));
             createImportLogEntry(trialNciId, nctIdStr, title, NEW_TRIAL_ACTION,
-                    SUCCESS, currentUser);
+                    SUCCESS, currentUser, false);
             return trialNciId;
         } catch (Exception e) {
             createImportLogEntry(EMPTY, nctIdStr, title, NEW_TRIAL_ACTION,
-                    FAILURE + e.getMessage(), currentUser);
+                    FAILURE + e.getMessage(), currentUser, false);
             throw new PAException(e);
         }
 
@@ -496,13 +499,12 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             final StudyProtocolDTO existentStudy) // NOPMD
             throws PAException { // NOPMD
 
-        String trialNciId = paServiceUtils.getTrialNciId(Long
-                .valueOf(existentStudy.getIdentifier().getExtension()));
+        final Long id = Long
+                        .valueOf(existentStudy.getIdentifier().getExtension());
+        String trialNciId = paServiceUtils.getTrialNciId(id);
         String title = EMPTY;
         final String currentUser = getCurrentUser();
-
-        try {
-
+        try {            
             ClinicalStudy study = unmarshallClinicalStudy(xml);
             nctIdStr = study.getIdInfo().getNctId();
             title = study.getOfficialTitle();
@@ -511,20 +513,29 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
                 throw new PAException("Complete trials cannot be updated from ClinicalTrials.gov");
             }
-
+            
+            ProtocolSnapshot before = protocolComparisonService.captureSnapshot(id);
             verifyPopulateAndPersist(studyProtocolDTO, study, nctIdStr, xml,
                     true);
-
+            ProtocolSnapshot after = protocolComparisonService.captureSnapshot(id);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    SUCCESS, currentUser);
+                    SUCCESS, currentUser, needsReview(before, after));
             return trialNciId;
         } catch (Exception e) {
             LOG.error(e, e);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    FAILURE + e.getMessage(), currentUser);
+                    FAILURE + e.getMessage(), currentUser, false);
             throw new PAException(e.getMessage()); // NOPMD
         }
 
+    }
+
+    private boolean needsReview(ProtocolSnapshot before, ProtocolSnapshot after)
+            throws PAException {
+        List<String> ognls = Arrays.asList(lookUpTableService.getPropertyValue(
+                "ctgov.sync.fields_of_interest").split(";"));
+        return !protocolComparisonService.compare(before, after, ognls)
+                .isEmpty();
     }
 
     private String verifyPopulateAndPersist(StudyProtocolDTO studyProtocolDTO, // NOPMD
@@ -657,7 +668,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     }
 
     private void createImportLogEntry(String trialNciId, String nctIdStr, // NOPMD
-            String title, String action, String status, String user)
+            String title, String action, String status, String user, boolean needsReview)
             throws PAException {
         CTGovImportLog log = new CTGovImportLog();
         log.setNciID(trialNciId);
@@ -667,7 +678,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         log.setImportStatus(left(status, L_200));
         log.setUserCreated(user);
         log.setDateCreated(new Date());
-
+        log.setReviewRequired(needsReview);
         createCtGovImportLogEntry(log);
     }
 
@@ -1649,6 +1660,14 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     public void setDocumentWorkflowStatusService(
             DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
         this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
+    /**
+     * @param protocolComparisonService the protocolComparisonService to set
+     */
+    public void setProtocolComparisonService(
+            ProtocolComparisonServiceLocal protocolComparisonService) {
+        this.protocolComparisonService = protocolComparisonService;
     }
 
 }

@@ -97,6 +97,8 @@ import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -109,6 +111,10 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.NonInterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -155,7 +161,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxy;
 
 /**
  * This set of utils handles conversions, etc for domain objects. It cannot be used in any of the grid services.
@@ -1283,6 +1291,28 @@ public class PADomainUtils {
                 setPersonContactInfo(person, dto.getTelecomAddress());
             }
         }
+    }
+    
+    /**
+     * @param spIn StudyProtocol
+     * @return StudyProtocolDTO
+     */
+    public static StudyProtocolDTO convertStudyProtocol(final StudyProtocol spIn) {
+        Hibernate.initialize(spIn);
+        StudyProtocol sp = (spIn instanceof HibernateProxy)
+                ? (StudyProtocol) ((HibernateProxy) spIn).getHibernateLazyInitializer().getImplementation() : spIn;
+        StudyProtocolDTO studyProtocolDTO;
+        if (sp instanceof NonInterventionalStudyProtocol) {
+            studyProtocolDTO = NonInterventionalStudyProtocolConverter
+                    .convertFromDomainToDTO((NonInterventionalStudyProtocol) sp);
+        } else if (sp instanceof InterventionalStudyProtocol) {
+            studyProtocolDTO = InterventionalStudyProtocolConverter
+                    .convertFromDomainToDTO((InterventionalStudyProtocol) sp);
+        } else {
+            studyProtocolDTO = StudyProtocolConverter
+                    .convertFromDomainToDTO(sp);
+        }
+        return studyProtocolDTO;
     }
     
 }

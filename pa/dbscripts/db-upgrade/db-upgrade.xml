@@ -1413,8 +1413,12 @@
         <comment>update the confirmation email</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428_2.sql"/>
      </changeSet>
-      <changeSet id="PO-6440-1" author="krylovd">
+     <changeSet id="PO-6440-1" author="krylovd">
         <comment>Added 'Needs Review' indicator column to ctgovimport_log</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6440-1.sql"/>
+     </changeSet>
+     <changeSet id="PO-6440-2" author="krylovd">
+        <comment>Added a pa_property to specify fields-of-interest as OGNL expressions.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6440-2.sql"/>
      </changeSet>
 </databaseChangeLog>

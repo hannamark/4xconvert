@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
+import gov.nih.nci.pa.dto.EligibilityCriteriaDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
@@ -939,67 +940,83 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private void setEligibilityCriteria(StudyProtocolDTO studyProtocolDto) throws PAException {
         List<PlannedEligibilityCriterionDTO> paECs = plannedActivityService
                 .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolDto.getIdentifier());
-
         if (CollectionUtils.isNotEmpty(paECs)) {
             TSRReportEligibilityCriteria eligibilityCriteria = new TSRReportEligibilityCriteria();
-            if (studyProtocolDto instanceof NonInterventionalStudyProtocolDTO) {
-                final NonInterventionalStudyProtocolDTO nonIntStudy = (NonInterventionalStudyProtocolDTO) 
-                        studyProtocolDto;
-                eligibilityCriteria.setStudyPopulationDescription(getValue(
-                        nonIntStudy.getStudyPopulationDescription(),
-                        INFORMATION_NOT_PROVIDED));
-                eligibilityCriteria.setSampleMethodCode(getValue(
-                        nonIntStudy.getSamplingMethodCode(),
-                        INFORMATION_NOT_PROVIDED));                
-            }
-            eligibilityCriteria.setAcceptsHealthyVolunteers(getValue(studyProtocolDto
-                    .getAcceptHealthyVolunteersIndicator(), INFORMATION_NOT_PROVIDED));
-            Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
-                public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-                    return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
-                            .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
-                }
-            });
-
-            for (PlannedEligibilityCriterionDTO paEC : paECs) {
-                String criterionName = StConverter.convertToString(paEC.getCriterionName());
-                String descriptionText = StConverter.convertToString(paEC.getTextDescription());
-                Boolean inclusionCriteriaIndicator = BlConverter.convertToBoolean(paEC.getInclusionIndicator());
-                Ivl<Pq> pq = paEC.getValue();
-
-                if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_GENDER)
-                        && paEC.getEligibleGenderCode() != null) {
-                    eligibilityCriteria.setGender(getValue(paEC.getEligibleGenderCode(), INFORMATION_NOT_PROVIDED));
-                } else if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_AGE)) {
-                    BigDecimal low = PqConverter.convertToPqToDecimal(pq.getLow());
-                    BigDecimal high = PqConverter.convertToPqToDecimal(pq.getHigh());
-                    if (low != null) {
-                        eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? N_A
-                                        : PAUtil.getAge(low) + SPACE + pq.getLow().getUnit());
-                    }
-                    if (high != null) {
-                        eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? N_A
-                                        : PAUtil.getAge(high) + SPACE + pq.getHigh().getUnit());
-                    }
-                } else {
-                    String criteriaText = null;
-                    if (StringUtils.isNotEmpty(descriptionText)) {
-                        criteriaText = descriptionText;
-                    } else {
-                        criteriaText = paEC.getCriterionName() + SPACE + getValue(paEC.getOperator()) + SPACE
-                                + pq.getLow().getValue() + SPACE + pq.getLow().getUnit();
-                    }
-
-                    if (inclusionCriteriaIndicator == null) {
-                        eligibilityCriteria.getOtherCriteria().add(criteriaText);
-                    } else if (inclusionCriteriaIndicator.booleanValue()) {
-                        eligibilityCriteria.getInclusionCriteria().add(criteriaText);
-                    } else {
-                        eligibilityCriteria.getExclusionCriteria().add(criteriaText);
-                    }
-                }
-            }
+            processAndDescribeEligCriteria(studyProtocolDto, paECs,
+                    eligibilityCriteria);
             tsrReportGenerator.setEligibilityCriteria(eligibilityCriteria);
+        }
+    }
+
+
+  
+    /**
+     * For a given protocol and a list of eligibility criterions, will build a human-readable fine-grained description
+     * of the trial's eligibility criteria.
+     * @param studyProtocolDto StudyProtocolDTO
+     * @param paECs List<PlannedEligibilityCriterionDTO>
+     * @param eligibilityCriteria EligibilityCriteriaDescription
+     */
+    public static void processAndDescribeEligCriteria(
+            StudyProtocolDTO studyProtocolDto,
+            List<PlannedEligibilityCriterionDTO> paECs,
+            EligibilityCriteriaDTO eligibilityCriteria) {
+        if (studyProtocolDto instanceof NonInterventionalStudyProtocolDTO) {
+            final NonInterventionalStudyProtocolDTO nonIntStudy = (NonInterventionalStudyProtocolDTO) 
+                    studyProtocolDto;
+            eligibilityCriteria.setStudyPopulationDescription(getValue(
+                    nonIntStudy.getStudyPopulationDescription(),
+                    INFORMATION_NOT_PROVIDED));
+            eligibilityCriteria.setSampleMethodCode(getValue(
+                    nonIntStudy.getSamplingMethodCode(),
+                    INFORMATION_NOT_PROVIDED));                
+        }
+        eligibilityCriteria.setAcceptsHealthyVolunteers(getValue(studyProtocolDto
+                .getAcceptHealthyVolunteersIndicator(), INFORMATION_NOT_PROVIDED));
+        Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
+            public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
+                return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
+                        .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
+            }
+        });
+
+        for (PlannedEligibilityCriterionDTO paEC : paECs) {
+            String criterionName = StConverter.convertToString(paEC.getCriterionName());
+            String descriptionText = StConverter.convertToString(paEC.getTextDescription());
+            Boolean inclusionCriteriaIndicator = BlConverter.convertToBoolean(paEC.getInclusionIndicator());
+            Ivl<Pq> pq = paEC.getValue();
+
+            if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_GENDER)
+                    && paEC.getEligibleGenderCode() != null) {
+                eligibilityCriteria.setGender(getValue(paEC.getEligibleGenderCode(), INFORMATION_NOT_PROVIDED));
+            } else if (StringUtils.equalsIgnoreCase(criterionName, CRITERION_AGE)) {
+                BigDecimal low = PqConverter.convertToPqToDecimal(pq.getLow());
+                BigDecimal high = PqConverter.convertToPqToDecimal(pq.getHigh());
+                if (low != null) {
+                    eligibilityCriteria.setMinimumAge(low.intValue() == MIN_AGE ? N_A
+                                    : PAUtil.getAge(low) + SPACE + pq.getLow().getUnit());
+                }
+                if (high != null) {
+                    eligibilityCriteria.setMaximumAge(high.intValue() == MAX_AGE ? N_A
+                                    : PAUtil.getAge(high) + SPACE + pq.getHigh().getUnit());
+                }
+            } else {
+                String criteriaText = null;
+                if (StringUtils.isNotEmpty(descriptionText)) {
+                    criteriaText = descriptionText;
+                } else {
+                    criteriaText = paEC.getCriterionName() + SPACE + getValue(paEC.getOperator()) + SPACE
+                            + pq.getLow().getValue() + SPACE + pq.getLow().getUnit();
+                }
+
+                if (inclusionCriteriaIndicator == null) {
+                    eligibilityCriteria.getOtherCriteria().add(criteriaText);
+                } else if (inclusionCriteriaIndicator.booleanValue()) {
+                    eligibilityCriteria.getInclusionCriteria().add(criteriaText);
+                } else {
+                    eligibilityCriteria.getExclusionCriteria().add(criteriaText);
+                }
+            }
         }
     }
 
@@ -1264,11 +1281,11 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return retVal;
     }
 
-    private String getValue(St st) {
+    private static String getValue(St st) {
         return getValue(st, null);
     }
 
-    private String getValue(St st, String defaultValue) {
+    private static String getValue(St st, String defaultValue) {
         return (st != null && st.getValue() != null ? st.getValue() : defaultValue);
     }
 
@@ -1276,7 +1293,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return getValue(cd, null);
     }
 
-    private String getValue(Cd cd, String defaultValue) {
+    private static String getValue(Cd cd, String defaultValue) {
         return (!ISOUtil.isCdNull(cd) ? CdConverter.convertCdToString(cd) : defaultValue); 
     }
 
@@ -1288,7 +1305,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         return getValue(bl, null);
     }
 
-    private String getValue(Bl bl, String defaultValue) {
+    private static String getValue(Bl bl, String defaultValue) {
         return (bl != null && bl.getValue() != null ? (bl.getValue().booleanValue() ? YES : NO) : defaultValue);
     }
 

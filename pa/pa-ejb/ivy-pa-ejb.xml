@@ -40,6 +40,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="net.sf.ehcache"      name="ehcache"            rev="1.2.4"           conf="compile->master" transitive="false">
        <exclude module="commons-logging"/>
     </dependency>
+    <dependency org="ognl"              name="ognl"               rev="3.0.6"           conf="compile->master"/>
 
 
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>

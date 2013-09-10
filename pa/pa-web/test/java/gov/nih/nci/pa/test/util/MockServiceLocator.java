@@ -177,6 +177,7 @@ import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -971,6 +972,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService() {
         return Mockito.mock(CTGovSyncNightlyServiceLocal.class);
+    }
+
+    @Override
+    public ProtocolComparisonServiceLocal getProtocolComparisonService() {
+        return Mockito.mock(ProtocolComparisonServiceLocal.class);
     }  
     
 }

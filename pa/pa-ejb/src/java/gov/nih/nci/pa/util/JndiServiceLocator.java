@@ -137,6 +137,7 @@ import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -667,5 +668,10 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService() {
         return (CTGovSyncNightlyServiceLocal) JNDIUtil.lookupPa("/pa/CTGovSyncNightlyServiceBeanLocal/local");
+    }
+
+    @Override
+    public ProtocolComparisonServiceLocal getProtocolComparisonService() {
+        return (ProtocolComparisonServiceLocal) JNDIUtil.lookupPa("/pa/ProtocolComparisonServiceBean/local");
     }  
 }

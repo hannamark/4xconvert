@@ -102,6 +102,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     
     private static final MockOrganizationEntityService ORGANIZATION_ENTITY_SERVICE = new MockOrganizationEntityService();
     private static final MockPersonEntityService PERSON_ENTITY_SERVICE = new MockPersonEntityService();
+    
+    private static final ProtocolComparisonServiceLocal COMPARISON_SERVICE_LOCAL = mock(ProtocolComparisonServiceLocal.class);
 
     /**
      * @throws java.lang.Exception
@@ -219,6 +221,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         serviceBean.setRegistryUserService(new MockRegistryUserServiceBean());
         serviceBean.setDocumentWorkflowStatusService(documentWrkService);
         serviceBean.setPaServiceUtils(new MockPAServiceUtils());
+        serviceBean.setProtocolComparisonService(COMPARISON_SERVICE_LOCAL);
     }
 
     /**
