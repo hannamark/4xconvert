@@ -23,6 +23,7 @@ import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -40,6 +41,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -755,6 +757,25 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         } finally {
             serviceBean.setStudyProtocolService(studyProtocolService);
         }
+    }
+    
+    @Test
+    public final void testImportNCT00760500_PO_6462() throws PAException,
+            ParseException {
+        final String nctID = "NCT00760500";
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        NonInterventionalStudyProtocol sp = (NonInterventionalStudyProtocol) session
+                .get(NonInterventionalStudyProtocol.class, id);
+        assertEquals(StudyModelCode.ECOLOGIC_OR_COMMUNITY_STUDIES,
+                sp.getStudyModelCode());
+
     }
     
     private void checkNCT01861054EmptyPersonOrgData(

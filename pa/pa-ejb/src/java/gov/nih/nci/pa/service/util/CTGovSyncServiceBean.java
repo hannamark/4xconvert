@@ -245,7 +245,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final int L_300 = 300;
 
     /**
-     * Mapping of values between CT.Gov and CTRP. Key is Ct.Gov, Value is CTRP
+     * Mapping of values between ClinicalTrials.gov and CTRP. Key is ClinicalTrials.gov, Value is CTRP
      */
     public static final Map<String, String> CTGOV_TO_CTRP_MAP = new HashMap<String, String>();
 
@@ -337,6 +337,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 StudyModelCode.CASE_CONTROL.getCode());
         CTGOV_TO_CTRP_MAP.put("Family-Based",
                 StudyModelCode.FAMILY_BASED.getCode());
+        CTGOV_TO_CTRP_MAP.put("Ecologic or Community",
+                StudyModelCode.ECOLOGIC_OR_COMMUNITY_STUDIES.getCode());
 
         CTGOV_TO_CTRP_MAP.put("Cross-Sectional",
                 TimePerspectiveCode.CROSS_SECTION.getCode());
@@ -834,7 +836,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     }
 
     private OrganizationDTO getNewOrganizationDTO() {
-        // CT.Gov API will not provide nothing but a name for an organization.
+        // ClinicalTrials.gov API will not provide nothing but a name for an organization.
         // PO won't accept organization
         // curation requests without an address. Hence, we will do what PDQ
         // Import does: a fake address.
@@ -922,7 +924,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     }
 
     /**
-     * CT.Gov XMLs contain all kinds of stuff in phone numbers that upsets PO.
+     * ClinicalTrials.gov XMLs contain all kinds of stuff in phone numbers that upsets PO.
      * For example, "888-662-6728 (U.S. Only)" upsets PO because we default
      * country to USA and this is not a valid USA number according to PO rules.
      * This method is trying to normalize numbers whenever possible.
@@ -961,7 +963,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     }
 
     /**
-     * Interestingly enough, CT.Gov Public API always stuffs a person's full
+     * Interestingly enough, ClinicalTrials.gov Public API always stuffs a person's full
      * name into last_name element, leaving first_name blank. This eventually
      * upsets PO because a person must have both first and last names specified.
      * This method will do the job of breaking down a person's full name into
@@ -988,7 +990,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             throw new PAException(
                     "A person information is missing both first and last name");
         }
-        // At this point it is clear CT.Gov stuffed the entire name into a
+        // At this point it is clear ClinicalTrials.gov stuffed the entire name into a
         // single element, usually <last_name>
         String fullName = isNotBlank(lastName) ? lastName : firstName;
         if (!fullName.contains(" ")) {
@@ -1040,7 +1042,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     // CHECKSTYLE:ON
     private PersonDTO getNewPersonDTO() {
-        // CT.Gov API will not provide enough information about a person to be
+        // ClinicalTrials.gov API will not provide enough information about a person to be
         // created in PO.
         // PO won't accept a person
         // curation requests without an address & contact info. Hence, we will
@@ -1352,7 +1354,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             }
             if (valueByCode == null) {
                 throw new PAException(
-                        "The following CT.Gov value does not correspond to a valid CTRP code: \""
+                        "The following ClinicalTrials.gov value does not correspond to a valid CTRP code: \""
                                 + code + "\" of class "
                                 + enumOrLovClass.getSimpleName());
             }
