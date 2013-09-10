@@ -251,6 +251,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private static final int L_20 = 20;
 
+    private static final String GENERIC_ORG_NAME = "Generic Organization";
+
     static {
 
         CTGOV_TO_CTRP_MAP.put("Randomized",
@@ -541,6 +543,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private String verifyPopulateAndPersist(StudyProtocolDTO studyProtocolDTO, // NOPMD
             ClinicalStudy study, String nctIdStr, String xml, boolean isUpdate)
             throws PAException {
+        boolean importPO = !Boolean.parseBoolean(lookUpTableService
+                .getPropertyValue("ctgov.sync.skip_po_data"));
         verifyTrialCategory(study);
 
         // convert into CTRP DTOs, piece by piece
@@ -556,11 +560,12 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         studyProtocolDTO.setSecondaryIdentifiers(mergeIdentifiers(
                 extractOtherIdentifiers(study.getIdInfo()),
                 studyProtocolDTO.getSecondaryIdentifiers()));
-        PersonDTO centralContactDTO = extractCentralContact(study
-                .getOverallContact());
+        PersonDTO centralContactDTO = importPO ? extractCentralContact(study
+                .getOverallContact()) : null;
 
-        PersonDTO investigatorDTO = extractInvestigator(study);
-        OrganizationDTO leadOrgDTO = extractSponsor(study);
+        PersonDTO investigatorDTO = importPO ? extractInvestigator(study) : null;
+        OrganizationDTO leadOrgDTO = importPO ? extractSponsor(study)
+                : getGenericOrganization();
         StudyOverallStatusDTO overallStatusDTO = extractOverallStatusDTO(study);
         StudyRegulatoryAuthorityDTO regAuthDTO = extractRegulatoryAuthorityDTO(study);
 
@@ -572,9 +577,10 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         outcomes.addAll(extractOutcomes(study.getOtherOutcome(), false,
                 OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED));
 
-        OrganizationDTO sponsorDTO = extractSponsor(study);
-        ResponsiblePartyDTO partyDTO = extractResponsibleParty(study);
-        List<OrganizationDTO> collaborators = extractCollaborators(study);
+        OrganizationDTO sponsorDTO = importPO ? extractSponsor(study) : null;
+        ResponsiblePartyDTO partyDTO = importPO ? extractResponsibleParty(study) : null;
+        List<OrganizationDTO> collaborators = importPO ? extractCollaborators(study)
+                : new ArrayList<OrganizationDTO>();
 
         DocumentDTO document = new DocumentDTO();
         document.setActiveIndicator(BlConverter.convertToBl(true));
@@ -595,6 +601,12 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                     regAuthDTO, arms, eligibility, outcomes, collaborators,
                     Arrays.asList(document)).getExtension();
         }
+    }
+
+    private OrganizationDTO getGenericOrganization() {
+        OrganizationDTO dto = getNewOrganizationDTO();
+        dto.setName(EnOnConverter.convertToEnOn(GENERIC_ORG_NAME));
+        return dto;
     }
 
     private ResponsiblePartyDTO extractResponsibleParty(ClinicalStudy study)

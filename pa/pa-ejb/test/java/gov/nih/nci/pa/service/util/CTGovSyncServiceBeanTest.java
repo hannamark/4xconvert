@@ -451,9 +451,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         session.flush();
         session.clear();
         
-        final long id = ((BigInteger) session.createSQLQuery(
-                "select study_protocol_id from study_otheridentifiers where extension='"
-                        + nciID + "'").uniqueResult()).longValue();
+        final long id = getProtocolIdByNciId(nciID, session);
         Ii ii = IiConverter.convertToStudyProtocolIi(id);
         
         List<PlannedEligibilityCriterion> exclList = session
@@ -488,25 +486,113 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     @SuppressWarnings("unchecked")
     @Test
     public final void testImportTrial() throws PAException, ParseException {
-        String nciID = serviceBean.importTrial("NCT01861054");
+        final String nctID = "NCT01861054";
+        String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
 
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
-        final long id = ((BigInteger) session.createSQLQuery(
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            
+            checkNCT01861054PersonOrgData(sp);
+            checkNCT01861054OtherData(session, sp);    
+            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            
+        } finally {
+            deactivateTrial(session, id);
+        }
+    }
+    
+    @Test
+    public final void testImportTrialNoPoData() throws PAException, ParseException {
+        MockLookUpTableServiceBean.CTGOV_SYNC_SKIP_PO_DATA = "true";        
+        final String nctID = "NCT01861054";
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            
+            checkNCT01861054EmptyPersonOrgData(sp);
+            checkNCT01861054OtherData(session, sp);    
+            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            
+        } finally {
+            MockLookUpTableServiceBean.CTGOV_SYNC_SKIP_PO_DATA = "false";            
+            deactivateTrial(session, id);
+        }
+    }
+
+    /**
+     * @param session
+     * @param id
+     * @throws HibernateException
+     */
+    private void deactivateTrial(final Session session, final long id)
+            throws HibernateException {
+        session.createSQLQuery(
+                "update study_protocol set status_code='INACTIVE' where identifier="
+                        + id).executeUpdate();
+        session.flush();
+    }
+
+    /**
+     * @param nctID
+     * @param nciID
+     * @param session
+     * @throws HibernateException
+     */
+    private void checkSuccessfulImportLogEntry(final String nctID,
+            String nciID, final Session session) throws HibernateException {
+        CTGovImportLog log = (CTGovImportLog) session.createQuery(
+                " from CTGovImportLog log where log.nciID='" + nciID + "'")
+                .uniqueResult();
+        assertEquals(nctID, log.getNctID());
+        assertEquals("Success", log.getImportStatus());
+    }
+
+    /**
+     * @param nciID
+     * @param session
+     * @return
+     * @throws HibernateException
+     */
+    private long getProtocolIdByNciId(String nciID, final Session session)
+            throws HibernateException {
+        return ((BigInteger) session.createSQLQuery(
                 "select study_protocol_id from study_otheridentifiers where extension='"
                         + nciID + "'").uniqueResult()).longValue();
+    }
+
+    /**
+     * @param session
+     * @param id
+     * @param sp
+     * @throws PAException
+     * @throws NumberFormatException
+     * @throws ParseException
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private void checkNCT01861054OtherData(final Session session,
+            InterventionalStudyProtocol sp) throws PAException,
+            NumberFormatException, ParseException, HibernateException {
+        final long id = sp.getId();
         Ii ii = IiConverter.convertToStudyProtocolIi(id);
-        InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
-                .get(InterventionalStudyProtocol.class, id);
         assertEquals("REP0210",
                 getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         .getLocalStudyProtocolIdentifier());
-        assertEquals("Sponsor Inc.",
-                getStudySite(sp, StudySiteFunctionalCode.SPONSOR)
-                        .getResearchOrganization().getOrganization().getName());
         assertTrue(sp.getProprietaryTrialIndicator());
         assertEquals(
                 "Pilot Study to Evaluate the Safety and Biological Effects of Orally Administered Reparixin in Early Breast Cancer Patients",
@@ -601,6 +687,22 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Female aged > 18 years.", inclList.get(0)
                 .getTextDescription());
 
+      
+        assertEquals(
+                "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
+                sp.getKeywordText());
+        assertTrue(sp.getFdaRegulatedIndicator());
+        assertTrue(sp.getExpandedAccessIndicator());
+    }
+
+    /**
+     * @param sp
+     */
+    private void checkNCT01861054PersonOrgData(InterventionalStudyProtocol sp) {
+        assertEquals("Sponsor Inc.",
+                getStudySite(sp, StudySiteFunctionalCode.SPONSOR)
+                        .getResearchOrganization().getOrganization().getName());
+        
         StudyContact pi = getStudyContact(sp,
                 StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         assertEquals("Goldstein", pi.getClinicalResearchStaff()
@@ -626,17 +728,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 .getPerson().getLastName());
         assertEquals("Pieradelchi", cc.getClinicalResearchStaff()
                 .getPerson().getFirstName());
-        assertEquals(
-                "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
-                sp.getKeywordText());
-        assertTrue(sp.getFdaRegulatedIndicator());
-        assertTrue(sp.getExpandedAccessIndicator());
-
-        CTGovImportLog log = (CTGovImportLog) session.createQuery(
-                " from CTGovImportLog log where log.nciID='" + nciID + "'")
-                .uniqueResult();
-        assertEquals("NCT01861054", log.getNctID());
-        assertEquals("Success", log.getImportStatus());
+        
+        assertEquals("National Institutes of Health (NIH)",
+                getStudySite(sp, StudySiteFunctionalCode.LABORATORY)
+                        .getResearchOrganization().getOrganization().getName());
     }
 
     @Test
@@ -660,6 +755,29 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         } finally {
             serviceBean.setStudyProtocolService(studyProtocolService);
         }
+    }
+    
+    private void checkNCT01861054EmptyPersonOrgData(
+            InterventionalStudyProtocol sp) {
+        assertEquals("Generic Organization",
+                getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                        .getResearchOrganization().getOrganization().getName());
+        assertNull(getStudySite(sp, StudySiteFunctionalCode.SPONSOR));
+        assertNull(getStudySite(sp, StudySiteFunctionalCode.LABORATORY));
+
+        StudyContact pi = getStudyContact(sp,
+                StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+        assertNull(pi);
+
+        StudyContact rp = getStudyContact(
+                sp,
+                StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR);
+        assertNull(rp);
+
+        StudyContact cc = getStudyContact(sp,
+                StudyContactRoleCode.CENTRAL_CONTACT);
+        assertNull(cc);
+
     }
     
     private StudyContact getStudyContact(InterventionalStudyProtocol sp,

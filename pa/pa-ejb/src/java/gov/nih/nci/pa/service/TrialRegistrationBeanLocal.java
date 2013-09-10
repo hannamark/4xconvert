@@ -1007,6 +1007,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     private void createCollaborators(List<OrganizationDTO> collaborators,
             Ii spIi) throws PAException {
+        if (CollectionUtils.isEmpty(collaborators)) {
+            return;
+        }
         ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
         for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
             if (cd.isCollaboratorCode()) {
