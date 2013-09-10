@@ -1820,6 +1820,13 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             logEntryBuffer.append("<td>").append("Nightly Job").append("</td>");
             logEntryBuffer.append("<td>").append(logEntry.getDateCreated().toString()).append("</td>");
             logEntryBuffer.append("<td>").append(logEntry.getImportStatus()).append("</td>");
+            if (logEntry.getReviewRequired() != null) {
+                if (logEntry.getReviewRequired()) {
+                    logEntryBuffer.append("<td>").append("Yes").append("</td>");
+                } else {
+                    logEntryBuffer.append("<td>").append("No").append("</td>");
+                }
+            }           
             logEntryBuffer.append("</tr>");
             if (logEntry.getImportStatus().equals(CTGovSyncServiceBean.SUCCESS)) {
                 successfulUpdates++;
@@ -1839,16 +1846,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         submissions.append("<html><body>");
         submissions.append("<p><b>Failed Submissions:</b></p>");
         submissions.append("<table border=\"1\"><tr>");
-        submissions.append("<td>NCI ID:</td><td>NCT ID:</td><td>Title:</td><td>Trial Type:</td>");
-        submissions.append("<td>Mechanism:</td><td>Date/Time:</td><td>Import Status:</td>");
+        submissions.append("<td>NCI ID</td><td>NCT ID</td><td>Title</td><td>Trial Type</td>");
+        submissions.append("<td>Mechanism</td><td>Date/Time</td><td>Import Status</td>");
+        submissions.append("<td>Needs Review</td>");
         submissions.append(failedSubmissions.toString());
         submissions.append("</tr>");
         submissions.append("</table>");
         //populate all submissions information
         submissions.append("<p><b>All Submissions:</b></p>");
         submissions.append("<table border=\"1\"><tr>");
-        submissions.append("<td>NCI ID:</td><td>NCT ID:</td><td>Title:</td><td>Trial Type:</td>");
-        submissions.append("<td>Mechanism:</td><td>Date/Time:</td><td>Import Status:</td>");
+        submissions.append("<td>NCI ID</td><td>NCT ID</td><td>Title</td><td>Trial Type</td>");
+        submissions.append("<td>Mechanism</td><td>Date/Time</td><td>Import Status</td>");
+        submissions.append("<td>Needs Review</td>");
         submissions.append("</tr>");
         submissions.append(allSubmissions.toString());
         submissions.append("</table>");

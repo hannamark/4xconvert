@@ -45,7 +45,10 @@
                             <display:column escapeXml="true" title="Action" property="action" sortable="true" />
                             <display:column escapeXml="true" title="Auto/User" property="userCreated" sortable="true" />
                             <display:column title="Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}" property="dateCreated" sortable="true" />
-                            <display:column escapeXml="true" title="Import Status" property="importStatus" sortable="true" />                    
+                            <display:column escapeXml="true" title="Import Status" property="importStatus" sortable="true" />
+                            <display:column escapeXml="true" title="Needs Review" sortable="true">
+                                <c:out value="${row.reviewRequired=='true'?'Yes':'No'}"/>
+                            </display:column>                    
                         </display:table>
                     </td>
                 </tr>
