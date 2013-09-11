@@ -12,6 +12,8 @@ import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.StringUtils.left;
 import static org.apache.commons.lang.StringUtils.trim;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
@@ -38,6 +40,7 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -55,6 +58,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -74,6 +78,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.ctgov.ArmGroupStruct;
@@ -92,6 +98,7 @@ import gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper.PersonWithFullN
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.ProtocolSnapshot;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -106,6 +113,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -133,6 +141,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.Criteria;
@@ -234,6 +243,12 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
     @EJB
     private ProtocolComparisonServiceLocal protocolComparisonService;
+    @EJB
+    private StudyMilestoneServicelocal studyMilestoneService;
+    @EJB
+    private StudyInboxServiceLocal studyInboxService;
+    @EJB
+    private DocumentWorkflowStatusServiceLocal dwsService;
 
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -522,8 +537,13 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             verifyPopulateAndPersist(studyProtocolDTO, study, nctIdStr, xml,
                     true);
             ProtocolSnapshot after = protocolComparisonService.captureSnapshot(id);
+            
+            final boolean needsReview = needsReview(before, after);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    SUCCESS, currentUser, needsReview(before, after));
+                    SUCCESS, currentUser, needsReview);
+            closeStudyInboxAndAcceptTrialIfNeeded(
+                    studyProtocolDTO.getIdentifier(), needsReview,
+                    study.getLastchangedDate());
             return trialNciId;
         } catch (Exception e) {
             LOG.error(e, e);
@@ -532,6 +552,82 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             throw new PAException(e.getMessage()); // NOPMD
         }
 
+    }
+
+    private void closeStudyInboxAndAcceptTrialIfNeeded(Ii spId,
+            boolean fieldsOfInterestChanged, DateStruct ctgovLastUpdateDate) throws PAException {
+        if (fieldsOfInterestChanged || ctgovLastUpdateDate == null
+                || StringUtils.isBlank(ctgovLastUpdateDate.getContent())) {
+            return;
+        }
+        try {
+            Date lastUpdateDate = DateUtils.parseDate(
+                    ctgovLastUpdateDate.getContent(), new String[] {"MMM dd, yyyy"});
+            Date tsrDate = null;
+            
+            List<StudyMilestoneDTO> milestones = findTsrMilestones(spId);            
+            for (StudyMilestoneDTO dto : milestones) {
+                Timestamp date = TsConverter.convertToTimestamp(dto
+                        .getMilestoneDate());
+                if (date != null
+                        && ((tsrDate == null) || (date.after(tsrDate)))) {
+                    tsrDate = date;
+                }
+            }
+            
+            if (lastUpdateDate != null && tsrDate != null
+                    && tsrDate.after(lastUpdateDate)) {
+                closeStudyInboxAndAcceptTrial(spId);
+            }
+            
+        } catch (ParseException e) {
+            LOG.error(e, e);
+        } catch (TooManyResultsException e) {
+            LOG.error(e, e);
+        }
+    }
+
+    private void closeStudyInboxAndAcceptTrial(Ii spId) throws PAException {
+        studyInboxService.closeMostRecent(spId);
+        DocumentWorkflowStatusDTO dws = dwsService
+                .getCurrentByStudyProtocol(spId);
+        if (dws != null
+                && DocumentWorkflowStatusCode.SUBMITTED.equals(CdConverter
+                        .convertCdToEnum(DocumentWorkflowStatusCode.class,
+                                dws.getStatusCode()))) {
+            acceptTrial(spId);
+        }
+    }
+
+    /**
+     * @param spId
+     * @throws PAException
+     */
+    private void acceptTrial(Ii spId) throws PAException {
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter
+                .convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
+        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                new Timestamp(System.currentTimeMillis()), null));
+        dwfDto.setStudyProtocolIdentifier(spId);
+        documentWorkflowStatusService.create(dwfDto);
+    }
+
+    /**
+     * @param spId
+     * @return
+     * @throws PAException
+     * @throws TooManyResultsException
+     */
+    private List<StudyMilestoneDTO> findTsrMilestones(Ii spId)
+            throws PAException, TooManyResultsException {
+        StudyMilestoneDTO studyMilestone = new StudyMilestoneDTO();
+        studyMilestone.setStudyProtocolIdentifier(spId);
+        studyMilestone.setMilestoneCode(CdConverter
+                .convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+        LimitOffset limitOffset = new LimitOffset(
+                PAConstants.MAX_SEARCH_RESULTS, 0);
+        return studyMilestoneService.search(studyMilestone, limitOffset);
     }
 
     private boolean needsReview(ProtocolSnapshot before, ProtocolSnapshot after)
@@ -1682,6 +1778,28 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     public void setProtocolComparisonService(
             ProtocolComparisonServiceLocal protocolComparisonService) {
         this.protocolComparisonService = protocolComparisonService;
+    }
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(
+            StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+    /**
+     * @param studyInboxService the studyInboxService to set
+     */
+    public void setStudyInboxService(StudyInboxServiceLocal studyInboxService) {
+        this.studyInboxService = studyInboxService;
+    }
+
+    /**
+     * @param dwsService the dwsService to set
+     */
+    public void setDwsService(DocumentWorkflowStatusServiceLocal dwsService) {
+        this.dwsService = dwsService;
     }
 
 }

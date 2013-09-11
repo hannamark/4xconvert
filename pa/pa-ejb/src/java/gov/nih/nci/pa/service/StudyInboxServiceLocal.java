@@ -136,6 +136,13 @@ public interface StudyInboxServiceLocal extends StudyPaService<StudyInboxDTO> {
       * @throws PAException on error
       */
      List<StudyInboxDTO> getAllTrialUpdates(Ii studyProtocolIi) throws PAException;
+
+    /**
+     * Closes the most recent open inbox entry.
+     * @param studyProtocolIi studyProtocolIi
+     * @throws PAException PAException
+     */
+    void closeMostRecent(Ii studyProtocolIi) throws PAException;
      
 
 }

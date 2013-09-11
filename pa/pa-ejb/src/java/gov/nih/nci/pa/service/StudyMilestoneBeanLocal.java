@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.enums.StudyInboxTypeCode.VALIDATION;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -300,7 +301,10 @@ public class StudyMilestoneBeanLocal
                 String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
                 if (StringUtils.isEmpty(strCloseDate)) {
                     String msg;
-                    switch(CdConverter.convertCdToEnum(StudyInboxTypeCode.class, inboxDto.getTypeCode())) {
+                    final StudyInboxTypeCode codeEnum = CdConverter
+                            .convertCdToEnum(StudyInboxTypeCode.class,
+                                    inboxDto.getTypeCode());
+                    switch (codeEnum != null ? codeEnum : VALIDATION) {
                     case UPDATE:
                         msg = "There are update(s) pending acknowledgement in the Trial History Section and hence "
                                 + "\"{0}\" cannot be completed at this stage";

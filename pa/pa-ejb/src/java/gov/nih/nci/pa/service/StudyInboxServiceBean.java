@@ -585,6 +585,20 @@ public class StudyInboxServiceBean // NOPMD
             StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
         this.studySiteAccrualStatusService = studySiteAccrualStatusService;
     }
+
+
+    @Override
+    public void closeMostRecent(Ii studyProtocolIi) throws PAException {
+        List<StudyInboxDTO> list = getOpenInboxEntries(studyProtocolIi);
+        if (!list.isEmpty()) {
+            StudyInboxDTO recent = list.get(0);
+            recent.getInboxDateRange()
+                    .setHigh(
+                            TsConverter.convertToTs(new Timestamp(new Date()
+                                    .getTime())));
+            update(recent);
+        }
+    }
  
     
 }

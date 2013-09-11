@@ -422,8 +422,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         inboxDto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(getDate(0), null));
         inboxDto = sis.create(inboxDto);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
-        String msg = "The milestone \"Administrative QC Completed Date\" cannot be recorded if there is an active"
-                + " In box record.";
+        String msg = "The milestone \"Administrative QC Completed Date\" cannot be recorded if there is an active Inbox record.";
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, msg);
         inboxDto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(getDate(0), getDate(0)));
         sis.update(inboxDto);
