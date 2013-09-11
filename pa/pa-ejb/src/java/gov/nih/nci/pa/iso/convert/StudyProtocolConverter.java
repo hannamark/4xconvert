@@ -169,6 +169,7 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setTargetAccrualNumber(
                 IvlConverter.convertInt().convertToIvl(studyProtocol.getMinimumTargetAccrualNumber(),
                         studyProtocol.getMaximumTargetAccrualNumber()));
+        studyProtocolDTO.setFinalAccrualNumber(IntConverter.convertToInt(studyProtocol.getFinalAccrualNumber()));
         studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocol.getId()));
         studyProtocolDTO.setPublicDescription(
                 StConverter.convertToSt(studyProtocol.getPublicDescription()));
@@ -248,6 +249,7 @@ public class StudyProtocolConverter {
             studyProtocol.setMaximumTargetAccrualNumber(IvlConverter.convertInt().convertHigh(
                     studyProtocolDTO.getTargetAccrualNumber()));
        }
+       studyProtocol.setFinalAccrualNumber(IntConverter.convertToInteger(studyProtocolDTO.getFinalAccrualNumber()));
        studyProtocol.setPublicDescription(StConverter.convertToString(studyProtocolDTO.getPublicDescription()));
        studyProtocol.setPublicTitle(StConverter.convertToString(studyProtocolDTO.getPublicTitle()));
        if (studyProtocolDTO.getRecordVerificationDate() != null) {

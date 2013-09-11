@@ -266,7 +266,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private static final int L_20 = 20;
 
-    private static final String GENERIC_ORG_NAME = "Generic Organization";
+    private static final String GENERIC_ORG_NAME = "CTRO Replace This Field";
 
     static {
 

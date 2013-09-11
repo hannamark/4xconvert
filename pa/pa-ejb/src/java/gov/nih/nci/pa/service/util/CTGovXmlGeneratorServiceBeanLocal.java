@@ -96,6 +96,7 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -154,6 +155,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -180,6 +182,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -342,14 +345,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         createOtherOutcome(somDtos, doc, root);
         createCondition(spDTO.getIdentifier(), doc, root);
         createSubGroups(spDTO.getIdentifier(), doc, root);
-        XmlGenHelper.appendElement(root, XmlGenHelper
-                .createElementWithTextblock(
-                        "enrollment",
-                        IvlConverter.convertInt().convertLowToString(
-                                spDTO.getTargetAccrualNumber()), doc));
-        XmlGenHelper.appendElement(root, XmlGenHelper
-                .createElementWithTextblock("enrollment_type", "anticipated",
-                        doc));
+        createEnrollment(spDTO, doc, root);
         createArmGroup(spDTO, doc, root);
         createIntervention(spDTO.getIdentifier(), doc, root);
         createEligibility(spDTO, doc, root);
@@ -365,6 +361,64 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                     .convertTs().convertLow(dto.getStatusDateRange()));
         }
         addVerificationDate(doc, root, tsVerificationDate);
+    }
+
+    /**
+     * @param spDTO
+     * @param doc
+     * @param root
+     */
+    private void createEnrollment(StudyProtocolDTO spDTO, Document doc,
+            Element root) {
+       
+        String enrollmentNumber = IvlConverter.convertInt().convertLowToString(
+                spDTO.getTargetAccrualNumber());
+        String enrollmentTypeStr = "anticipated";
+        
+        ActualAnticipatedTypeCode enrollmentTypeCode = determineEnrollmentType(spDTO);
+        if (enrollmentTypeCode == ActualAnticipatedTypeCode.ACTUAL) {
+            enrollmentTypeStr = "actual";
+            enrollmentNumber = getActualEnrollment(spDTO);
+        }
+       
+        XmlGenHelper.appendElement(root,
+                XmlGenHelper.createElementWithTextblock("enrollment",
+                        enrollmentNumber, doc));
+
+        XmlGenHelper.appendElement(root, XmlGenHelper
+                .createElementWithTextblock("enrollment_type",
+                        enrollmentTypeStr, doc));
+    }
+
+    private String getActualEnrollment(StudyProtocolDTO spDTO) {
+        Integer finalEnrollment = IntConverter.convertToInteger(spDTO
+                .getFinalAccrualNumber());
+        if (finalEnrollment != null) {
+            return finalEnrollment.toString();
+        } else {
+            return String.valueOf(getPaServiceUtil().getTrialAccruals(
+                    spDTO.getIdentifier()));
+        }
+    }
+
+    private ActualAnticipatedTypeCode determineEnrollmentType(
+            StudyProtocolDTO spDTO) {
+        Date primCompDate = TsConverter.convertToTimestamp(spDTO
+                .getPrimaryCompletionDate());
+        ActualAnticipatedTypeCode primCompDateType = CdConverter
+                .convertCdToEnum(ActualAnticipatedTypeCode.class,
+                        spDTO.getPrimaryCompletionDateTypeCode());
+        Date today = new Date();
+        if (primCompDate != null
+                && primCompDateType != null
+                && primCompDateType == ActualAnticipatedTypeCode.ACTUAL
+                && (today.after(primCompDate) || DateUtils.isSameDay(
+                        primCompDate, today))) {
+            return ActualAnticipatedTypeCode.ACTUAL;
+        } else {
+            return ActualAnticipatedTypeCode.ANTICIPATED;
+        }
+
     }
 
     private void addStudyTypeInfo(StudyProtocolDTO spDTO, Document doc,

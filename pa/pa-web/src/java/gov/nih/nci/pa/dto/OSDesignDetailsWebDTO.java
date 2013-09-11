@@ -100,6 +100,7 @@ public class OSDesignDetailsWebDTO {
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
     private String minimumTargetAccrualNumber;
+    private String finalAccrualNumber;
     private String phaseCode;
     private String phaseAdditionalQualifierCode;
     
@@ -284,6 +285,18 @@ public class OSDesignDetailsWebDTO {
      */
     public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
         this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
+    }
+    /**
+     * @return the finalAccrualNumber
+     */
+    public String getFinalAccrualNumber() {
+        return finalAccrualNumber;
+    }
+    /**
+     * @param finalAccrualNumber the finalAccrualNumber to set
+     */
+    public void setFinalAccrualNumber(String finalAccrualNumber) {
+        this.finalAccrualNumber = finalAccrualNumber;
     }
     
 }

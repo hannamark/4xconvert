@@ -105,6 +105,7 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
     private String phaseAdditionalQualifierCode;
     private String blindingRoleCode;
     private String minimumTargetAccrualNumber;
+    private String finalAccrualNumber;
     private String studyClassificationCode;
     private String studyType;
 
@@ -409,6 +410,20 @@ public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
      */
     public void setSecondaryPurposeOtherText(String secondaryPurposeOtherText) {
         this.secondaryPurposeOtherText = secondaryPurposeOtherText;
+    }
+
+    /**
+     * @return the finalAccrualNumber
+     */
+    public String getFinalAccrualNumber() {
+        return finalAccrualNumber;
+    }
+
+    /**
+     * @param finalAccrualNumber the finalAccrualNumber to set
+     */
+    public void setFinalAccrualNumber(String finalAccrualNumber) {
+        this.finalAccrualNumber = finalAccrualNumber;
     }
 
 }

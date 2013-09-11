@@ -2255,4 +2255,14 @@ public class PAServiceUtils {
         }
         return nctIdentifierDTO;
     }
+    
+    /**
+     * Returns total number of accruals for a trial.
+     * @param spId trial ID
+     * @return accruals
+     */
+    public int getTrialAccruals(Ii spId) {
+        return Integer.MAX_VALUE; // TODO: for Kalpana to finish.
+    }
+    
 }

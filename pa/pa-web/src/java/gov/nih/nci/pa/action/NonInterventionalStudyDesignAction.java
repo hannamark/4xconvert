@@ -99,6 +99,7 @@ import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -199,6 +200,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
                     StConverter.convertToSt(webDTO.getBiospecimenDescription()));           
             ospFromDatabaseDTO.setTargetAccrualNumber(
                     IvlConverter.convertInt().convertToIvl(webDTO.getMinimumTargetAccrualNumber(), null));
+            ospFromDatabaseDTO.setFinalAccrualNumber(IntConverter.convertToInt(webDTO.getFinalAccrualNumber()));
             PaRegistry.getStudyProtocolService().updateNonInterventionalStudyProtocol(ospFromDatabaseDTO);          
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             detailsQuery();
@@ -300,7 +302,7 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         }
     }
 
-    private void validateMinTargetAccrual(boolean abbr) {
+    private void validateMinTargetAccrual(boolean abbr) { // NOPMD
         if (StringUtils.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
             if (!abbr) {
                 addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
@@ -313,6 +315,19 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
                 }
             } catch (NumberFormatException e) {
                     addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
+            }
+        }
+        if (StringUtils.isNotBlank(webDTO.getFinalAccrualNumber())) {
+            try {
+                Integer tarAccrual = NumberUtils.createInteger(webDTO
+                        .getFinalAccrualNumber());
+                if (tarAccrual != null && tarAccrual < 0) {
+                    addFieldError("webDTO.finalAccrualNumber",
+                            getText("error.negative"));
+                }
+            } catch (NumberFormatException e) {
+                addFieldError("webDTO.finalAccrualNumber",
+                        getText("error.numeric"));
             }
         }
     }
@@ -445,6 +460,9 @@ public class NonInterventionalStudyDesignAction extends ActionSupport implements
         if (ospDTO.getTargetAccrualNumber() != null && ospDTO.getTargetAccrualNumber().getLow() != null
                 && ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
             dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
+        }
+        if (!ISOUtil.isIntNull(ospDTO.getFinalAccrualNumber())) {
+            dto.setFinalAccrualNumber(IntConverter.convertToString(ospDTO.getFinalAccrualNumber()));
         }
     }
 

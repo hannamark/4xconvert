@@ -106,6 +106,7 @@ import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -195,6 +196,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
             ispDTO.setAllocationCode(CdConverter.convertToCd(AllocationCode.getByCode(webDTO.getAllocationCode())));
             ispDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(
                     webDTO.getMinimumTargetAccrualNumber(), null));
+            ispDTO.setFinalAccrualNumber(IntConverter.convertToInt(webDTO.getFinalAccrualNumber()));
             ispDTO.setStudyClassificationCode(CdConverter.convertToCd(StudyClassificationCode.getByCode(
                     webDTO.getStudyClassificationCode())));
             List<Cd> cds = new ArrayList<Cd>();
@@ -331,6 +333,21 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         } catch (NumberFormatException e) {
                 addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
         }
+        
+        if (StringUtils.isNotBlank(webDTO.getFinalAccrualNumber())) {
+            try {
+                Integer tarAccrual = NumberUtils.createInteger(webDTO
+                        .getFinalAccrualNumber());
+                if (tarAccrual != null && tarAccrual < 0) {
+                    addFieldError("webDTO.finalAccrualNumber",
+                            getText("error.negative"));
+                }
+            } catch (NumberFormatException e) {
+                addFieldError("webDTO.finalAccrualNumber",
+                        getText("error.numeric"));
+            }
+        }
+        
     }
 
     private void addErrors(String fieldValue, String fieldName, String errMsg) {
@@ -366,6 +383,9 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
         if (ispDTO.getTargetAccrualNumber().getLow().getValue() != null) {
             dto.setMinimumTargetAccrualNumber(
                     ispDTO.getTargetAccrualNumber().getLow().getValue().toString());
+        }
+        if (!ISOUtil.isIntNull(ispDTO.getFinalAccrualNumber())) {
+            dto.setFinalAccrualNumber(IntConverter.convertToString(ispDTO.getFinalAccrualNumber()));
         }
     }
 

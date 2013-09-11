@@ -780,7 +780,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     
     private void checkNCT01861054EmptyPersonOrgData(
             InterventionalStudyProtocol sp) {
-        assertEquals("Generic Organization",
+        assertEquals("CTRO Replace This Field",
                 getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         .getResearchOrganization().getOrganization().getName());
         assertNull(getStudySite(sp, StudySiteFunctionalCode.SPONSOR));

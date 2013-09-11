@@ -159,6 +159,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private String keywordText;
     private Integer maximumTargetAccrualNumber;
     private Integer minimumTargetAccrualNumber;
+    private Integer finalAccrualNumber;
     private String publicDescription;
     private String publicTitle;
     private Timestamp recordVerificationDate;
@@ -940,6 +941,21 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setNciGrant(Boolean nciGrant) {
         this.nciGrant = nciGrant;
+    }
+
+    /**
+     * @return the finalAccrualNumber
+     */
+    @Column(name = "final_accrual_num")
+    public Integer getFinalAccrualNumber() {
+        return finalAccrualNumber;
+    }
+
+    /**
+     * @param finalAccrualNumber the finalAccrualNumber to set
+     */
+    public void setFinalAccrualNumber(Integer finalAccrualNumber) {
+        this.finalAccrualNumber = finalAccrualNumber;
     }
 
 }

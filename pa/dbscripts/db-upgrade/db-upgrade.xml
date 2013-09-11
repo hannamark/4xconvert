@@ -1425,4 +1425,8 @@
         <comment>Added a pa_property to control whether PO data is imported during clinicaltrials.gov import</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6453.sql"/>
      </changeSet>
+     <changeSet id="PO-6433" author="krylovd">
+        <comment>Added final_accrual_num column to study_protocol</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6433.sql"/>
+     </changeSet>
 </databaseChangeLog>

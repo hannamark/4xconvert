@@ -123,6 +123,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Cd amendmentReasonCode;
     private Int submissionNumber;
     private Ivl<Int> targetAccrualNumber;
+    private Int finalAccrualNumber;
     private List<DocumentWorkflowStatusCode> processingStatuses;
     private DSet<St> secondaryPurposes = new DSet<St>();
     private St secondaryPurposeOtherText;   
@@ -538,5 +539,19 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setNciGrant(Bl nciGrant) {
         this.nciGrant = nciGrant;
+    }
+
+    /**
+     * @return the finalAccrualNumber
+     */
+    public Int getFinalAccrualNumber() {
+        return finalAccrualNumber;
+    }
+
+    /**
+     * @param finalAccrualNumber the finalAccrualNumber to set
+     */
+    public void setFinalAccrualNumber(Int finalAccrualNumber) {
+        this.finalAccrualNumber = finalAccrualNumber;
     }
 }

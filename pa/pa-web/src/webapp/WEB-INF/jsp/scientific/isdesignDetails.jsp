@@ -352,6 +352,25 @@ function initialize() {
           </span>
         </td>
 	</tr>
+	<tr>
+        <td scope="row" class="label"><label for="webDTO.finalAccrualNumber">
+            <fmt:message key="isdesign.details.finalAccrualNumber"/></label></td>
+        <td>
+            <s:textfield id="webDTO.finalAccrualNumber" name="webDTO.finalAccrualNumber" maxlength="6" cssStyle="width:50px" />
+            <span class="formErrorMsg"> 
+             <s:fielderror>
+               <s:param>webDTO.finalAccrualNumber</s:param>
+             </s:fielderror>                            
+          </span>
+        </td>
+    </tr>
+    <tr>
+        <td scope="row" class="label"><label for="isdesign.details.accrualNum">
+            <fmt:message key="isdesign.details.accrualNum"/></label></td>
+        <td id="isdesign.details.accrualNum">
+            <s:property value="(new gov.nih.nci.pa.service.util.PAServiceUtils()).getTrialAccruals(#session.studyProtocolIi)"/>
+        </td>
+    </tr>
 </table>
 	
 <div class="actionsrow">
