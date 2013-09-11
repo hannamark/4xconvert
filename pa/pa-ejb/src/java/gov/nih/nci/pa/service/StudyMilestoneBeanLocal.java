@@ -14,6 +14,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -298,7 +299,21 @@ public class StudyMilestoneBeanLocal
             for (StudyInboxDTO inboxDto : listInboxDTO) {
                 String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
                 if (StringUtils.isEmpty(strCloseDate)) {
-                    String msg = "The milestone \"{0}\" cannot be recorded if there is an active In box record.";
+                    String msg;
+                    switch(CdConverter.convertCdToEnum(StudyInboxTypeCode.class, inboxDto.getTypeCode())) {
+                    case UPDATE:
+                        msg = "There are update(s) pending acknowledgement in the Trial History Section and hence " +
+                        		"\"{0}\" cannot be completed at this stage";
+                        break;
+                    case VALIDATION:
+                        msg = "The milestone \"{0}\" cannot be recorded if there is an active Inbox record.";
+                        break;
+                    default:
+                        msg = "The milestone \"{0}\" cannot be recorded if there is an active Inbox record or " +
+                        		"update waiting for aknowledgement.";
+                        break;
+                    
+                    }
                     throw new PAException(MessageFormat.format(msg, newCode.getCode()));
                 }
             }
