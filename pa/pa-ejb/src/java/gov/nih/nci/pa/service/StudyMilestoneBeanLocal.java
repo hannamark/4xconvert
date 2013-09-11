@@ -161,9 +161,16 @@ public class StudyMilestoneBeanLocal
         updateRecordVerificationDates(resultDto);
         resetProcessingPriority(resultDto);
         createReadyForTSRMilestone(resultDto);
+        StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
+        if (BlConverter.convertToBoolean(sp.getProprietaryTrialIndicator())) {
+            createSentTSRMilestone(resultDto);
+        }
         // Send TSR e-mail for the appropriate milestone
         attachTSRToTrialDocs(workDto);
-        sendTSREmail(workDto);                        
+        
+        if (!BlConverter.convertToBoolean(sp.getProprietaryTrialIndicator())) {
+             sendTSREmail(workDto);
+        }
         checkSiteAndFamilyAccrualSubmitter(resultDto);
         rejectAmendmentAndSendLateRejectionEmail(workDto);
         return resultDto;
@@ -679,6 +686,18 @@ public class StudyMilestoneBeanLocal
             create(readyForTSR);
         }
     }
+    
+    private void createSentTSRMilestone(StudyMilestoneDTO dto) throws PAException {
+        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
+        if (canCreateTSRSentMilestone(mileStones)) {
+            StudyMilestoneDTO sentTSR = new StudyMilestoneDTO();
+            sentTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+            sentTSR.setMilestoneDate(TsConverter.convertToTs(new Date()));
+            sentTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+            create(sentTSR);
+        }
+    }
 
     private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
         boolean admin = false;
@@ -699,7 +718,7 @@ public class StudyMilestoneBeanLocal
             case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
             case SCIENTIFIC_READY_FOR_QC:
             case SCIENTIFIC_QC_START:
-                break;
+                 break;
             default:
                 return false;
             }
@@ -710,6 +729,36 @@ public class StudyMilestoneBeanLocal
         return false;
     }
 
+    private boolean canCreateTSRSentMilestone(List<MilestoneCode> mileStones) {
+        boolean admin = false;
+        boolean scientific = false;        
+        for (int i = mileStones.size() - 1; i >= 0; i--) {
+            switch (mileStones.get(i)) {
+            case ADMINISTRATIVE_QC_COMPLETE:
+                admin = true;
+                break;
+            case SCIENTIFIC_QC_COMPLETE:
+                scientific = true;
+                break;
+            case ADMINISTRATIVE_PROCESSING_START_DATE:
+            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
+            case ADMINISTRATIVE_READY_FOR_QC:
+            case ADMINISTRATIVE_QC_START:
+            case SCIENTIFIC_PROCESSING_START_DATE:
+            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
+            case SCIENTIFIC_READY_FOR_QC:
+            case SCIENTIFIC_QC_START:
+            case READY_FOR_TSR:
+                 break;
+            default:
+                return false;
+            }
+            if (admin && scientific) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(

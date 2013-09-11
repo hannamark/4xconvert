@@ -189,6 +189,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     private Ii spIi;
     private Ii spAmendIi;
+    private Ii spIndustrialIi;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -224,6 +225,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         spAmendIi = TestSchema.createAmendStudyProtocol();
+        spIndustrialIi = TestSchema.createAmendSpIndustrial();
         ohs.setDocumentWorkflowStatusService(dws);
     }
 
@@ -288,6 +290,33 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(dto);
         PaHibernateUtil.getCurrentSession().flush();
     }
+    
+    @Test
+    public void createTestIndustrialTrial() throws Exception {
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SUBMISSION_TERMINATED));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SUBMISSION_REACTIVATED));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SCIENTIFIC_QC_START));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
+        bean.create(getMilestoneDTOIndustrial(MilestoneCode.ADMINISTRATIVE_QC_START));
+        StudyMilestoneDTO dto = bean.create(getMilestoneDTOIndustrial(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        assertEquals("Administrative QC Completed Date", dto.getMilestoneCode().getCode());
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIndustrialIi);
+        dtoList.size();
+        assertTrue(dtoList.size() > 0);
+        assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
+               dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.TRIAL_SUMMARY_SENT);
+        assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
+               dtoList.get(dtoList.size() - 2).getMilestoneCode()), MilestoneCode.READY_FOR_TSR);
+        PaHibernateUtil.getCurrentSession().flush();
+    }
 
     private StudyMilestoneDTO getMilestoneDTO(MilestoneCode mileCode) {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
@@ -298,6 +327,14 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         return dto;
     }
 
+    private StudyMilestoneDTO getMilestoneDTOIndustrial(MilestoneCode mileCode) {
+        StudyMilestoneDTO dto = new StudyMilestoneDTO();
+        dto.setCommentText(StConverter.convertToSt("comment"));
+        dto.setMilestoneCode(CdConverter.convertToCd(mileCode));
+        dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        dto.setStudyProtocolIdentifier(spIndustrialIi);
+        return dto;
+    }
     @Test
     public void deleteTest() throws Exception {
         expectedException.expect(PAException.class);
@@ -797,7 +834,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         mailSrc.setLookUpTableService(new LookUpTableServiceBean());
         TSRReportGeneratorServiceRemote tsrBean = new TSRReportGeneratorServiceBean();
         mailSrc.setTsrReportGeneratorService(tsrBean);
-        String msg = "Trial Summary Report Sent Date' could not be recorded as sending the TSR report to the submitter  failed.";
+        String msg = "Trial Summary Report Date' could not be recorded as sending the TSR report to the submitter  failed.";
         checkMilestoneFailure(dto, msg);
     }
 

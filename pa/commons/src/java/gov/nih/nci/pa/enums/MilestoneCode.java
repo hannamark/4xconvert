@@ -137,7 +137,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** Ready for Trial Summary Report. */
     READY_FOR_TSR("Ready for Trial Summary Report Date", false, true, false, false),
     /** Trial Summary Report Sent. */
-    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, false, false),
+    TRIAL_SUMMARY_SENT("Trial Summary Report Date", false, true, false, false),
     /** Submitter Trial Summary Report Feedback. */
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false, false, false),
     /** Initial Abstraction Verified. */

@@ -1093,6 +1093,34 @@ public class TestSchema {
         sp.setId(sp.getId());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
     }
+    
+    /**
+     * @return
+     */
+    public static Ii createAmendSpIndustrial() {
+        StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("cancer for THOLA");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
+        Ii spSecId = new Ii();
+        spSecId.setExtension("NCI-2009-00001");
+        studySecondaryIdentifiers.add(spSecId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(Boolean.TRUE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setSubmissionNumber(2);
+        sp.setAmendmentDate(TODAY);
+        TestSchema.addUpdObject(sp);
+        sp.setId(sp.getId());
+        return IiConverter.convertToStudyProtocolIi(sp.getId());
+    }
 
     public static User getUser() {
         return getUser(false);
