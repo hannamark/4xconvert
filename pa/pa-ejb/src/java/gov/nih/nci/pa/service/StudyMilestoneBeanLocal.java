@@ -302,15 +302,15 @@ public class StudyMilestoneBeanLocal
                     String msg;
                     switch(CdConverter.convertCdToEnum(StudyInboxTypeCode.class, inboxDto.getTypeCode())) {
                     case UPDATE:
-                        msg = "There are update(s) pending acknowledgement in the Trial History Section and hence " +
-                        		"\"{0}\" cannot be completed at this stage";
+                        msg = "There are update(s) pending acknowledgement in the Trial History Section and hence "
+                                + "\"{0}\" cannot be completed at this stage";
                         break;
                     case VALIDATION:
                         msg = "The milestone \"{0}\" cannot be recorded if there is an active Inbox record.";
                         break;
                     default:
-                        msg = "The milestone \"{0}\" cannot be recorded if there is an active Inbox record or " +
-                        		"update waiting for aknowledgement.";
+                        msg = "The milestone \"{0}\" cannot be recorded if there is an active Inbox record or "
+                                + "update waiting for aknowledgement.";
                         break;
                     
                     }
