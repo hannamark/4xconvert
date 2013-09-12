@@ -26,6 +26,7 @@ CREATE TABLE STG_DW_USER (
 	NAME character varying (500),
     AFFILIATED_ORGANIZATION_ID bigint,
     USER_LAST_CREATED_ID bigint,
-    USER_LAST_UPDATED_ID bigint
+    USER_LAST_UPDATED_ID bigint,
+    PRIMARY KEY (CSM_USER_ID)
 	)
 	;

@@ -68,17 +68,6 @@ sourceConnectionPa.eachRow(sql) { row ->
 	)
 }
 
-
-def removeDupsSql = """
-    delete from stg_dw_user aa
-    where csm_user_id not in
-    ( select max(csm_user_id)
-      from stg_dw_user bb
-      where lower(aa.login_name) = lower(bb.login_name)
-    )    
-    """
-destinationConnection.executeUpdate(removeDupsSql)
-
 def getPrivSql = """
     select user_id, group_name 
     from csm_user
