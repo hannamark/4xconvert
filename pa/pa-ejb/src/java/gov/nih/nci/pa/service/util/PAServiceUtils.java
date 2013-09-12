@@ -2262,7 +2262,22 @@ public class PAServiceUtils {
      * @return accruals
      */
     public int getTrialAccruals(Ii spId) {
-        return Integer.MAX_VALUE; // TODO: for Kalpana to finish.
+        int result = 0;
+        Long studyProtocolId = IiConverter.convertToLong(spId);
+        Session session = PaHibernateUtil.getCurrentSession();
+        
+        String patientLevelQry = "select count(*) from study_subject "
+                + "where study_protocol_identifier = " + studyProtocolId + " and status_code <> 'NULLIFIED'";
+        
+        String summaryLevelQry = "select coalesce(sum(accrual_count),0) from "
+                + "study_site_subject_accrual_count where study_protocol_identifier = " + studyProtocolId;
+        
+        result = Integer.valueOf(session.createSQLQuery(patientLevelQry).uniqueResult().toString());
+        
+        if (result == 0) {        
+            result = Integer.valueOf(session.createSQLQuery(summaryLevelQry).uniqueResult().toString());
+        }
+        return result;
     }
     
 }

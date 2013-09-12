@@ -92,17 +92,29 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IiConverterTest;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -110,7 +122,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -120,7 +134,7 @@ import org.junit.Test;
  * @author mshestopalov
  *
  */
-public class PaServiceUtilsTest {
+public class PaServiceUtilsTest extends AbstractHibernateTestCase {
 
     private PoServiceLocator poSvcLoc;
     private ServiceLocator paSvcLoc;
@@ -206,6 +220,38 @@ public class PaServiceUtilsTest {
         ii.setExtension("1");
 
         paServiceUtil.getEntityByIi(ii);
+    }
+    
+    @Test
+    public void testAccrualCounts() throws Exception {
+    	TestSchema.primeData();
+    	assertEquals(0, paServiceUtil.getTrialAccruals(
+        		IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0))));
+    	
+    	StudySite ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("treating site");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        StudyProtocol sp = (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        ss.setStudyProtocol(sp);
+        TestSchema.addUpdObject(ss);
+        StudySiteAccrualAccess ssAccAccess = new StudySiteAccrualAccess();
+        ssAccAccess.setStudySite(ss);        
+        ssAccAccess.setRegistryUser(TestSchema.getRegistryUser());
+        ssAccAccess.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssAccAccess.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssAccAccess.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
+        TestSchema.addUpdObject(ssAccAccess);
+        
+        StudySiteSubjectAccrualCount cnt = new StudySiteSubjectAccrualCount();
+        cnt.setStudySite(ss);
+        cnt.setAccrualCount(10);
+        cnt.setStudyProtocol(sp);
+        cnt.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        TestSchema.addUpdObject(cnt);
+        
+        assertEquals(10, paServiceUtil.getTrialAccruals(
+        		IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0))));
     }
 
 }
