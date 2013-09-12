@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -857,4 +858,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public ProtocolComparisonServiceLocal getProtocolComparisonService() {
         return mock(ProtocolComparisonServiceLocal.class);
     }
+
+	@Override
+	public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
+		return mock(PendingPatientAccrualsServiceLocal.class);
+	}
 }

@@ -94,6 +94,8 @@ import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.AccrualCollections;
@@ -103,6 +105,11 @@ import gov.nih.nci.pa.domain.PatientStage;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.CodedEnumHelper;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -111,15 +118,18 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -374,12 +384,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                             importResult.getNciIdentifier(), accrualLines, partSiteIi, importResult.getFileName());
                 }
             }
-        }  else if (spDto == null && CollectionUtils.isNotEmpty(accrualLines.keySet())) {
-            // insert the incorrect sites into the patient_stage table
-            for (Ii partSiteIi : accrualLines.keySet()) {
-                savePatientStageCounts(user, null, importResult.getNciIdentifier(), accrualLines, 
-                        partSiteIi, importResult.getFileName());
-            }
         }
         if (CollectionUtils.isNotEmpty(partiSiteList)) {
             Map<String, Integer> studySiteCounts = BatchUploadUtils.getStudySiteCounts(lines);
@@ -461,31 +465,51 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
             LOG.info("Time to process a single Batch File data: " 
                     + (System.currentTimeMillis() - startTime) / RESULTS_LEN + " seconds");
-        }  else {
-            // insert the incorrect sites into the patient_stage table
-            for (String[] p : patientLines) {
-                List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
-                savePatientStage(p, races, user, nciID, null, results.getFileName());
-            }
         }
         return count;
     }
     
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    private void savePatientStage(String[] p, List<String> races, User user, String nciId, Long spId, String fileName) {
+    private void savePatientStage(String[] p, List<String> races, User user, String nciId, Long spId, String fileName)
+            throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         PatientStage ps = new PatientStage();
         ps.setAssignedIdentifier(p[BatchFileIndex.PATIENT_ID_INDEX]);
-        ps.setBirthDate(p[BatchFileIndex.PATIENT_DOB_INDEX]);
-        ps.setCountryCode(p[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]);
+        ps.setBirthDate(AccrualUtil.yearMonthStringToTimestamp(StringUtils.isEmpty(p[BatchFileIndex.PATIENT_DOB_INDEX]) 
+                ? DEFAULTBIRTHDATE : p[BatchFileIndex.PATIENT_DOB_INDEX]));
+        ps.setCountryCode(StringUtils.isEmpty(p[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]) ? "US" 
+                : p[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]);
         ps.setDateLastCreated(new Date());
-        ps.setDiseaseCode(p[BatchFileIndex.PATIENT_DISEASE_INDEX]);
-        ps.setEthnicCode(p[BatchFileIndex.PATIENT_ETHNICITY_INDEX]);
-        ps.setPaymentMethodCode(p[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
-        ps.setRaceCode(StringUtils.join(races, ","));
-        ps.setRegistrationDate(p[BatchFileIndex.PATIENT_REG_DATE_INDEX]);
+        SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
+        parseSubjectDisease(p, saDTO);
+        String disease = ISOUtil.isIiNull(saDTO.getDiseaseIdentifier()) 
+                ? "NULL" : IiConverter.convertToString(saDTO.getDiseaseIdentifier());
+        String siteDisease = ISOUtil.isIiNull(saDTO.getSiteDiseaseIdentifier()) 
+                ? "NULL" : IiConverter.convertToString(saDTO.getSiteDiseaseIdentifier());
+        
+        ps.setDiseaseCode(disease);
+        ps.setSiteDiseaseCode(siteDisease);
+        ps.setEthnicCode(CodedEnumHelper.getByClassAndCode(PatientEthnicityCode.class,
+                 CDUSPatientEthnicityCode.getByCode(p[BatchFileIndex.PATIENT_ETHNICITY_INDEX]).getCode()).name());
+        CDUSPaymentMethodCode pmc = CDUSPaymentMethodCode.getByCode(p[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
+        if (pmc != null) {
+            ps.setPaymentMethodCode(CodedEnumHelper.getByClassAndCode(PaymentMethodCode.class, pmc.getCode()).name());
+        }
+        DSet<Cd> race = DSetEnumConverter.convertSetToDSet(CDUSPatientRaceCode.getCodesByCdusCodes(races));
+        DSet<Cd> raceCds = new DSet<Cd>();
+        raceCds.setItem(new HashSet<Cd>());
+        if (race != null && race.getItem() != null) {
+            for (Cd cd : race.getItem()) {
+                raceCds.getItem().add(CdConverter.convertToCd(
+                        CDUSPatientRaceCode.getByCode(CdConverter.convertCdToString(cd))));
+            }
+        }
+        ps.setRaceCode(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, raceCds));
+        ps.setRegistrationDate(new Timestamp(
+                BatchUploadUtils.getDate(p[BatchFileIndex.PATIENT_REG_DATE_INDEX]).getTime()));
         ps.setRegistrationGroupId(p[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]);
-        ps.setSexCode(p[BatchFileIndex.PATIENT_GENDER_INDEX]);
+        ps.setSexCode(CodedEnumHelper.getByClassAndCode(PatientGenderCode.class, 
+                CDUSPatientGenderCode.getByCode(p[BatchFileIndex.PATIENT_GENDER_INDEX]).getCode()).name());
         ps.setStudyIdentifier(nciId);
         ps.setStudyProtocolIdentifier(spId);
         ps.setStudySite(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);

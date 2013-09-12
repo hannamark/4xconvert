@@ -1429,4 +1429,8 @@
         <comment>Added final_accrual_num column to study_protocol</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6433.sql"/>
      </changeSet>
+     <changeSet id="PO-5428_3" author="Kalpana">
+        <comment>alter the table patient_stage</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428_3.sql"/>
+     </changeSet>
 </databaseChangeLog>

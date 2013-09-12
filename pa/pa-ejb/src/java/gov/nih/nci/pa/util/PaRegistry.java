@@ -140,6 +140,7 @@ import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
@@ -702,6 +703,13 @@ public final class PaRegistry {
      */
     public static ProtocolComparisonServiceLocal getProtocolComparisonService() {
         return getInstance().getServiceLocator().getProtocolComparisonService();
+    }
+    
+    /**
+     * @return ReadAndProcessPatientsServiceLocal
+     */
+    public static PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
+        return getInstance().getServiceLocator().getPendingPatientAccrualsService();
     }
     
 }

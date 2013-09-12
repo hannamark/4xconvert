@@ -1,8 +1,11 @@
 package gov.nih.nci.pa.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
@@ -13,13 +16,14 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "patient_stage")
+@SuppressWarnings("PMD.TooManyFields")
 public class PatientStage extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = -9074135750212657095L;
     private String raceCode;  
     private String sexCode;
     private String ethnicCode;
-    private String birthDate;
+    private Timestamp birthDate;
     private String countryCode;
     private String zip;
     private String studyIdentifier;
@@ -27,12 +31,16 @@ public class PatientStage extends AbstractEntity implements Auditable {
     private String assignedIdentifier;
     private String paymentMethodCode;
     private String studySite; 
-    private String diseaseCode; 
-    private String registrationDate;
+    private String diseaseCode;
+    private String siteDiseaseCode; 
+    private Timestamp registrationDate;
     private String registrationGroupId; 
     private Integer accrualCount; 
     private String fileName;
     private String submissionStatus;
+    private String orgName;
+    private String ctepId;
+    private String dcpId;
     
     /**
      * @return the raceCode
@@ -77,13 +85,13 @@ public class PatientStage extends AbstractEntity implements Auditable {
      * @return the birthDate
      */
     @Column(name = "birth_date")
-    public String getBirthDate() {
+    public Timestamp getBirthDate() {
         return birthDate;
     }
     /**
      * @param birthDate the birthDate to set
      */
-    public void setBirthDate(String birthDate) {
+    public void setBirthDate(Timestamp birthDate) {
         this.birthDate = birthDate;
     }
     /**
@@ -191,16 +199,29 @@ public class PatientStage extends AbstractEntity implements Auditable {
         this.diseaseCode = diseaseCode;
     }
     /**
+     * @return the siteDiseaseCode
+     */
+    @Column(name = "site_disease_code")
+    public String getSiteDiseaseCode() {
+        return siteDiseaseCode;
+    }
+    /**
+     * @param siteDiseaseCode the siteDiseaseCode to set
+     */
+    public void setSiteDiseaseCode(String siteDiseaseCode) {
+        this.siteDiseaseCode = siteDiseaseCode;
+    }
+    /**
      * @return the registrationDate
      */
     @Column(name = "registration_date")
-    public String getRegistrationDate() {
+    public Timestamp getRegistrationDate() {
         return registrationDate;
     }
     /**
      * @param registrationDate the registrationDate to set
      */
-    public void setRegistrationDate(String registrationDate) {
+    public void setRegistrationDate(Timestamp registrationDate) {
         this.registrationDate = registrationDate;
     }
     /**
@@ -254,5 +275,44 @@ public class PatientStage extends AbstractEntity implements Auditable {
      */
     public void setSubmissionStatus(String submissionStatus) {
         this.submissionStatus = submissionStatus;
+    }
+    /**
+     * @return the orgName
+     */
+    @Transient
+    public String getOrgName() {
+        return orgName;
+    }
+    /**
+     * @param orgName the orgName to set
+     */
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+    /**
+     * @return the ctepId
+     */
+    @Transient
+    public String getCtepId() {
+        return ctepId;
+    }
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+    /**
+     * @return the dcpId
+     */
+    @Transient
+    public String getDcpId() {
+        return dcpId;
+    }
+    /**
+     * @param dcpId the dcpId to set
+     */
+    public void setDcpId(String dcpId) {
+        this.dcpId = dcpId;
     } 
 }

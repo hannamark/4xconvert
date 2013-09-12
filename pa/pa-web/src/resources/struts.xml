@@ -714,6 +714,10 @@
         <action name="pdqTrialLoad" class="gov.nih.nci.pa.action.PDQTrialLoadAction">
             <result>/WEB-INF/jsp/pdqTrialLoad.jsp</result>
         </action>
+        <action name="pendingAccruals*" class="gov.nih.nci.pa.action.PendingAccrualsQueueAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result>/WEB-INF/jsp/pendingAccruals.jsp</result>
+        </action>
     </package>
     
     <package name="bare" namespace="/bare" extends="protected"/> 

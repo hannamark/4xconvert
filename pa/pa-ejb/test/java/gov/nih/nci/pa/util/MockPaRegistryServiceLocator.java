@@ -74,6 +74,7 @@ import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
@@ -682,4 +683,9 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     public ProtocolComparisonServiceLocal getProtocolComparisonService() {       
         return null;
     }
+
+	@Override
+	public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
+		return null;
+	}
 }

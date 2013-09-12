@@ -139,6 +139,7 @@ import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
@@ -673,5 +674,10 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public ProtocolComparisonServiceLocal getProtocolComparisonService() {
         return (ProtocolComparisonServiceLocal) JNDIUtil.lookupPa("/pa/ProtocolComparisonServiceBean/local");
-    }  
+    }
+    
+    @Override
+    public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
+        return (PendingPatientAccrualsServiceLocal) JNDIUtil.lookupPa("/pa/PendingPatientAccrualsServiceBean/local");
+    }
 }
