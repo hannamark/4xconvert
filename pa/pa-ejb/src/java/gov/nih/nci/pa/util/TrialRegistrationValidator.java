@@ -184,7 +184,10 @@ public class TrialRegistrationValidator {
      */
     static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_REJECT = EnumSet.complementOf(EnumSet
         .of(DocumentWorkflowStatusCode.SUBMITTED, DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED, 
-            DocumentWorkflowStatusCode.ACCEPTED));
+                DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED, 
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                DocumentWorkflowStatusCode.VERIFICATION_PENDING));
     /**
      * The error message for wrong DocumentWorkflowStatusCode in amendment.
      */
