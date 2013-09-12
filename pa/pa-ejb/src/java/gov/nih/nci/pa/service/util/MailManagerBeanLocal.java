@@ -1846,7 +1846,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         submissions.append("<html><body>");
         submissions.append("<p><b>Failed Submissions:</b></p>");
         submissions.append("<table border=\"1\"><tr>");
-        submissions.append("<td>NCI ID</td><td>NCT ID</td><td>Title</td><td>Trial Type</td>");
+        submissions.append("<td>NCI ID</td><td>ClinicalTrials.gov Identifier</td><td>Title</td><td>Trial Type</td>");
         submissions.append("<td>Mechanism</td><td>Date/Time</td><td>Import Status</td>");
         submissions.append("<td>Needs Review</td>");
         submissions.append(failedSubmissions.toString());
@@ -1855,7 +1855,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         //populate all submissions information
         submissions.append("<p><b>All Submissions:</b></p>");
         submissions.append("<table border=\"1\"><tr>");
-        submissions.append("<td>NCI ID</td><td>NCT ID</td><td>Title</td><td>Trial Type</td>");
+        submissions.append("<td>NCI ID</td><td>ClinicalTrials.gov Identifier</td><td>Title</td><td>Trial Type</td>");
         submissions.append("<td>Mechanism</td><td>Date/Time</td><td>Import Status</td>");
         submissions.append("<td>Needs Review</td>");
         submissions.append("</tr>");
