@@ -137,7 +137,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** Ready for Trial Summary Report. */
     READY_FOR_TSR("Ready for Trial Summary Report Date", false, true, false, false),
     /** Trial Summary Report Sent. */
-    TRIAL_SUMMARY_SENT("Trial Summary Report Date", false, true, false, false),
+    TRIAL_SUMMARY_REPORT("Trial Summary Report Date", false, true, false, false),
     /** Submitter Trial Summary Report Feedback. */
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false, false, false),
     /** Initial Abstraction Verified. */
@@ -153,7 +153,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     private boolean allowedIfOnhold;
     private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
-    private static final Set<MilestoneCode> TRS_AND_ABOVE = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_SENT,
+    private static final Set<MilestoneCode> TRS_AND_ABOVE = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_REPORT,
                                                                        MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
                                                                        MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
                                                                        MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
@@ -231,7 +231,7 @@ public enum MilestoneCode implements CodedEnum<String> {
                             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
                             DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         Set<DocumentWorkflowStatusCode> tsrStatuses = Collections.unmodifiableSet(tmpSet);
-        tmp.put(TRIAL_SUMMARY_SENT, tsrStatuses);
+        tmp.put(TRIAL_SUMMARY_REPORT, tsrStatuses);
         tmp.put(TRIAL_SUMMARY_FEEDBACK, tsrStatuses);
 
         tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED, DocumentWorkflowStatusCode.VERIFICATION_PENDING);

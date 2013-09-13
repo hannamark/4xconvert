@@ -85,9 +85,9 @@ public class StudyMilestoneBeanLocal
 
     private static final Logger LOG = Logger.getLogger(StudyMilestoneBeanLocal.class);
     
-    /** TRIAL_SUMMARY_SENT stop search milestones. **/
+    /** TRIAL_SUMMARY_REPORT stop search milestones. **/
     private static final Set<MilestoneCode> TSS_STOP_SEARCH = EnumSet.complementOf(EnumSet
-        .of(MilestoneCode.TRIAL_SUMMARY_SENT, MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
+        .of(MilestoneCode.TRIAL_SUMMARY_REPORT, MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
             MilestoneCode.INITIAL_ABSTRACTION_VERIFY, MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION,
             MilestoneCode.LATE_REJECTION_DATE));
 
@@ -199,7 +199,7 @@ public class StudyMilestoneBeanLocal
     private void resetProcessingPriority(StudyMilestoneDTO dto) {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter
                 .convertCdToString(dto.getMilestoneCode()));
-        if (newCode == MilestoneCode.TRIAL_SUMMARY_SENT) {
+        if (newCode == MilestoneCode.TRIAL_SUMMARY_REPORT) {
             Ii spIi = dto.getStudyProtocolIdentifier();
             Session session = PaHibernateUtil.getCurrentSession();
             session.createQuery(
@@ -438,11 +438,11 @@ public class StudyMilestoneBeanLocal
         case SCIENTIFIC_QC_COMPLETE:
             checkProcessAndQC(milestones, newCode);
             break;
-        case TRIAL_SUMMARY_SENT:
+        case TRIAL_SUMMARY_REPORT:
             checkPreRequisite(milestones, newCode, TSS_STOP_SEARCH, MilestoneCode.READY_FOR_TSR);
             break;
         case TRIAL_SUMMARY_FEEDBACK:
-            checkPreRequisite(milestones, newCode, TSF_STOP_SEARCH, MilestoneCode.TRIAL_SUMMARY_SENT);
+            checkPreRequisite(milestones, newCode, TSF_STOP_SEARCH, MilestoneCode.TRIAL_SUMMARY_REPORT);
             break;
         case LATE_REJECTION_DATE:
             checkPreRequisite(milestones, newCode, LRD_STOP_SEARCH, MilestoneCode.SUBMISSION_ACCEPTED);
@@ -609,7 +609,7 @@ public class StudyMilestoneBeanLocal
         }
 
 
-        if (newCode == MilestoneCode.TRIAL_SUMMARY_SENT
+        if (newCode == MilestoneCode.TRIAL_SUMMARY_REPORT
                 && (dwStatus != null)
                 && DocumentWorkflowStatusCode.ABSTRACTED == dwStatus
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.VERIFICATION_PENDING)) {
@@ -692,7 +692,7 @@ public class StudyMilestoneBeanLocal
         List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
         if (canCreateTSRSentMilestone(mileStones)) {
             StudyMilestoneDTO sentTSR = new StudyMilestoneDTO();
-            sentTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+            sentTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_REPORT));
             sentTSR.setMilestoneDate(TsConverter.convertToTs(new Date()));
             sentTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
             create(sentTSR);
@@ -763,7 +763,7 @@ public class StudyMilestoneBeanLocal
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(
                 CdConverter.convertCdToString(workDto.getMilestoneCode()));
-        if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
+        if ((MilestoneCode.TRIAL_SUMMARY_REPORT.equals(milestoneCode))) {
             try {
                 mailManagerService.sendTSREmail(workDto.getStudyProtocolIdentifier());
             } catch (PAException e) {
@@ -783,7 +783,7 @@ public class StudyMilestoneBeanLocal
             throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(CdConverter
                 .convertCdToString(studyMilestoneDTO.getMilestoneCode()));
-        if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
+        if ((MilestoneCode.TRIAL_SUMMARY_REPORT.equals(milestoneCode))) {
             try {
                 final Ii studyID = studyMilestoneDTO.getStudyProtocolIdentifier();
                 StudyProtocolQueryDTO spDTO = protocolQueryService

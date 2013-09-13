@@ -133,7 +133,7 @@ public abstract class AbstractTrialRegistrationBean {
         if (!ISOUtil.isIiNull(studyProtocolIi) && !ISOUtil.isCdNull(smCode) && !isActiveRecordInInbox(inbox)
                 && MilestoneCode.isAboveTrialSummaryReport(MilestoneCode.getByCode(CdConverter
                         .convertCdToString(smCode)))) {
-            paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_SENT, null, null);
+            paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_REPORT, null, null);
         }
     }
     /**

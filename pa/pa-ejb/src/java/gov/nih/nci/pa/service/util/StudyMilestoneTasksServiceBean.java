@@ -154,17 +154,17 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     }
 
     /**
-     * Compute the overdue date for the TRIAL_SUMMARY_SENT milestones to select. It is 5 business days before the
+     * Compute the overdue date for the TRIAL_SUMMARY_REPORT milestones to select. It is 5 business days before the
      * given time.
      * @param now The actual time
-     * @return The overdue date for the TRIAL_SUMMARY_SENT milestones to select
+     * @return The overdue date for the TRIAL_SUMMARY_REPORT milestones to select
      */
     DateTime getOverdueDate(DateTime now) {
         return now.minusDays(DAYS_DELTA_PER_DOW[now.getDayOfWeek() - 1]).toDateMidnight().toDateTime();
     }
 
     /**
-     * Gets List of TRIAL_SUMMARY_SENT milestones sent before the given threshold but not having to
+     * Gets List of TRIAL_SUMMARY_REPORT milestones sent before the given threshold but not having to
      * INITIAL_ABSTRACTION_VERIFY.
      * @param threshold The threshold
      * @return list Of StudyMilestone
@@ -181,7 +181,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         Query query = PaHibernateUtil.getCurrentSession().createQuery(
                 queryString);
         query.setParameter("threshold", threshold.toDate());
-        query.setParameter("tss", MilestoneCode.TRIAL_SUMMARY_SENT);
+        query.setParameter("tss", MilestoneCode.TRIAL_SUMMARY_REPORT);
         query.setParameter("abs", MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
         Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(
                 new MilestoneComparator());
@@ -190,9 +190,9 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     }
 
     /**
-     * Attempts to create the INITIAL_ABSTRACTION_VERIFY milestone for each given TRIAL_SUMMARY_SENT milestone.
-     * @param milestones The TRIAL_SUMMARY_SENT milestones
-     * @return The set of TRIAL_SUMMARY_SENT for which validation failed
+     * Attempts to create the INITIAL_ABSTRACTION_VERIFY milestone for each given TRIAL_SUMMARY_REPORT milestone.
+     * @param milestones The TRIAL_SUMMARY_REPORT milestones
+     * @return The set of TRIAL_SUMMARY_REPORT for which validation failed
      */
     StudyMilestoneTaskMessageCollection createMilestones(Set<StudyMilestone> milestones) {
         StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();

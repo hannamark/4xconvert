@@ -624,7 +624,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         StudyMilestoneDTO studyMilestone = new StudyMilestoneDTO();
         studyMilestone.setStudyProtocolIdentifier(spId);
         studyMilestone.setMilestoneCode(CdConverter
-                .convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+                .convertToCd(MilestoneCode.TRIAL_SUMMARY_REPORT));
         LimitOffset limitOffset = new LimitOffset(
                 PAConstants.MAX_SEARCH_RESULTS, 0);
         return studyMilestoneService.search(studyMilestone, limitOffset);

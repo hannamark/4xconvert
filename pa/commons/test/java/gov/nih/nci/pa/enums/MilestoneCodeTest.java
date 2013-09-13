@@ -95,7 +95,7 @@ import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_RECEIVED;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_REJECTED;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_TERMINATED;
 import static gov.nih.nci.pa.enums.MilestoneCode.TRIAL_SUMMARY_FEEDBACK;
-import static gov.nih.nci.pa.enums.MilestoneCode.TRIAL_SUMMARY_SENT;
+import static gov.nih.nci.pa.enums.MilestoneCode.TRIAL_SUMMARY_REPORT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -133,7 +133,7 @@ public class MilestoneCodeTest {
      */
     @Test
     public void testIsAboveTrialSummaryReport() {
-       Set<MilestoneCode> trsAndAbove = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_SENT,
+       Set<MilestoneCode> trsAndAbove = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_REPORT,
                                                    MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
                                                    MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
                                                    MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
@@ -168,7 +168,7 @@ public class MilestoneCodeTest {
                 ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
                 ADMINISTRATIVE_QC_COMPLETE,
                 SCIENTIFIC_PROCESSING_COMPLETED_DATE, SCIENTIFIC_QC_COMPLETE,
-                TRIAL_SUMMARY_SENT, TRIAL_SUMMARY_FEEDBACK,
+                TRIAL_SUMMARY_REPORT, TRIAL_SUMMARY_FEEDBACK,
                 INITIAL_ABSTRACTION_VERIFY, ONGOING_ABSTRACTION_VERIFICATION,
                 LATE_REJECTION_DATE);
         assertTrue(CollectionUtils.isEqualCollection(list, expectedList));

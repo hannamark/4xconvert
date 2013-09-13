@@ -1513,7 +1513,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
         inboxDto.setInboxDateRange(ivlTs);
         inboxList.add(inboxDto);
-        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_REPORT),inboxList);
         inboxList .remove(0);
         ivlTs = new Ivl<Ts>();
         ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
@@ -1521,7 +1521,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         inboxDto.setInboxDateRange(ivlTs);
         inboxList.add(inboxDto);
         bean.setPaServiceUtils(mock(PAServiceUtils.class));
-        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_REPORT),inboxList);
     }
 
     protected InterventionalStudyProtocolDTO getInterventionalStudyProtocol() throws PAException {

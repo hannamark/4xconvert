@@ -357,15 +357,15 @@ public class SubmissionByInstitutionReportBeanTest {
         milestones.add(createMilestone(baseDate, MilestoneCode.SUBMISSION_ACCEPTED));
         milestones.add(createMilestone(baseDate.plusDays(1), MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         milestones.add(createMilestone(baseDate.plusDays(2), MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        milestones.add(createMilestone(baseDate.plusDays(3), MilestoneCode.TRIAL_SUMMARY_SENT));
+        milestones.add(createMilestone(baseDate.plusDays(3), MilestoneCode.TRIAL_SUMMARY_REPORT));
         sut.setMilestones(resultDto, milestones);
         MilestoneResultDto result = resultDto.getMilestoneResult();
         assertTrue("Wrong admin milestone", ISOUtil.isCdNull(result.getAdminMilestone()));
         assertTrue("Wrong admin milestone date", ISOUtil.isTsNull(result.getAdminMilestoneDate()));
         assertTrue("Wrong scientific milestone", ISOUtil.isCdNull(result.getScientificMilestone()));
         assertTrue("Wrong scientific milestone date", ISOUtil.isTsNull(result.getScientificMilestoneDate()));
-        assertEquals("Wrong milestone", MilestoneCode.TRIAL_SUMMARY_SENT,
-                     CdConverter.convertCdToEnum(MilestoneCode.class, result.getMilestone()));
+        assertEquals("Wrong milestone", MilestoneCode.TRIAL_SUMMARY_REPORT, 
+                CdConverter.convertCdToEnum(MilestoneCode.class, result.getMilestone()));
         assertEquals("Wrong milestone date", new Timestamp(baseDate.plusDays(3).getMillis()), result
             .getMilestoneDate().getValue());
     }

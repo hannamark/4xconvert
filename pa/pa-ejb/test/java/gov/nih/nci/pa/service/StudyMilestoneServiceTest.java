@@ -312,7 +312,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         dtoList.size();
         assertTrue(dtoList.size() > 0);
         assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
-               dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.TRIAL_SUMMARY_SENT);
+               dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.TRIAL_SUMMARY_REPORT);
         assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
                dtoList.get(dtoList.size() - 2).getMilestoneCode()), MilestoneCode.READY_FOR_TSR);
         PaHibernateUtil.getCurrentSession().flush();
@@ -779,7 +779,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     @Test
     public void checkAbstractionsRules() throws Exception {
         createMilestones(UP_TO_READY_FOR_TSR);
-        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_REPORT);
         bean.setValidateAbstractions(true);
         bean.setAbstractionCompletionService(null);
         String msg = "Error injecting reference to AbstractionCompletionService.";
@@ -824,7 +824,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     @Test
     public void checkTSRSentMail() throws PAException {
         Ii studyProtocolIi = TestSchema.nonPropTrialData();
-        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_REPORT);
         dto.setStudyProtocolIdentifier(studyProtocolIi);
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
@@ -840,7 +840,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void attachTSRToTrialDocs() throws PAException, IOException {
-        final StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
+        final StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_REPORT);
 
         StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
         queryDTO.setAmendmentNumber("10");
@@ -1217,10 +1217,10 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void searchFound() throws TooManyResultsException, PAException {
         StudyMilestoneDTO studyMilestone = new StudyMilestoneDTO();
         studyMilestone.setStudyProtocolIdentifier(spIi);
-        studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
+        studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_REPORT));
         LimitOffset limitOffset = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<StudyMilestoneDTO> milestones = bean.search(studyMilestone, limitOffset);
-        assertEquals("There should only be one milestone present for TRIAL_SUMMARY_SENT", 3, milestones.size());
+        assertEquals("There should only be one milestone present for TRIAL_SUMMARY_REPORT", 3, milestones.size());
         StudyMilestoneDTO milestone = milestones.get(0);
         assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());
         assertEquals(milestone.getStudyProtocolIdentifier(), studyMilestone.getStudyProtocolIdentifier());
@@ -1264,7 +1264,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
-        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT));
+        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_REPORT));
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

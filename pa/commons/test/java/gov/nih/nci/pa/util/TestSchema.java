@@ -1167,7 +1167,7 @@ public class TestSchema {
             StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setCommentText(comment);
-        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
+        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_REPORT);
         result.setMilestoneDate(TODAY);
         result.setStudyProtocol(studyProtocol);
         return result;
@@ -1176,7 +1176,7 @@ public class TestSchema {
     private static StudyMilestone createTrialSummarySentStudyMilestoneObj(
             StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
-        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
+        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_REPORT);
         result.setMilestoneDate(TODAY);
         result.setStudyProtocol(studyProtocol);
         return result;
@@ -1187,7 +1187,7 @@ public class TestSchema {
         StudyMilestone result = new StudyMilestone();
         Calendar offsetTime = Calendar.getInstance();
         offsetTime.set(2009, 12, 2);
-        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
+        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_REPORT);
         result.setMilestoneDate(new Timestamp(offsetTime.getTime().getTime()));
         result.setStudyProtocol(studyProtocol);
         return result;
