@@ -1433,4 +1433,8 @@
         <comment>alter the table patient_stage</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-5428_3.sql"/>
      </changeSet>
+     <changeSet id="PO-6344" author="krylovd">
+        <comment>Trial categories description is not database-driven via misc_documents table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6344.sql"/>
+     </changeSet>
 </databaseChangeLog>

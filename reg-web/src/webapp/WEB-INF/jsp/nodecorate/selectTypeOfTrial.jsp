@@ -26,6 +26,20 @@
             	window.top.location = action;
             }
         </script> 
+        <style type="text/css">
+            div.trial_categories div {
+                padding-bottom: 5px;
+            }
+            div.trial_categories div ul {
+                padding-left: 30px;
+            }
+            div.trial_categories div ul li {
+                list-style-type: disc;
+            }
+            div.trial_categories div ul li ul li {
+                list-style-type: circle;
+            }
+        </style>
     </head> 
     <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
         <div class="box">
@@ -63,12 +77,16 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <p align="left" class="info"> 
-                                    <b>National</b>: National Cooperative Group Trials.<br>
-                                    <b>Externally Peer-Reviewed</b>: R01s and P01s or other trial mechanisms funded by NIH or supported by other peer-reviewed funding organizations.<br>
-                                    <b>Institutional</b>: In house trials authored or co-authored by cancer center investigators and undergoing scientific peer-review solely by the Protocol Review and Monitoring System of the Center. The center investigator should have primary responsibility for conceptualizing, designing and implementing the trial and reporting results. It is acceptable for industry and other entities to provide some support (e.g., drug, device, other funding) but the trial should clearly be the intellectual product of the center investigator.<br>
-                                    <b>Industrial/Other</b>: Design and implementation of the study is controlled by the pharmaceutical company or by another organization.
-                                </p> 
+                                <div align="left" class="info trial_categories"> 
+                                    <div><b>National</b>: <s:property escapeHtml="false" escapeXml="false" 
+                                        value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.National','Registry')"/></div>
+                                    <div><b>Externally Peer-Reviewed</b>: <s:property escapeHtml="false" escapeXml="false" 
+                                        value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.ExternallyPeerReviewed','Registry')"/></div>
+                                    <div><b>Institutional</b>: <s:property escapeHtml="false" escapeXml="false" 
+                                        value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.Institutional','Registry')"/></div>
+                                    <div><b>Industrial/Other</b>: <s:property escapeHtml="false" escapeXml="false" 
+                                        value="@gov.nih.nci.pa.util.MiscDocumentUtils@getDocumentContent('TrialCategory.Industrial','Registry')"/></div>
+                                </div> 
                             </td>
                         </tr>
                         <tr>

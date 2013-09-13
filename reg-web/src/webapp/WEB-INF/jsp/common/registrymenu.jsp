@@ -8,7 +8,7 @@
 <c:url value="/home.action" var="logoutURL"/>
 <script>
 function selectTrialType(){
-    showPopWin('${selectTrial}', 950, 400, '', 'Select a Trial Submission Category');
+    showPopWin('${selectTrial}', 950, 480, '', 'Select a Trial Submission Category');
     var frame = $('popupFrame');
     if (frame!=null && frame.contentWindow != null) {
         Event.observe(frame.contentWindow, "load", function() {
