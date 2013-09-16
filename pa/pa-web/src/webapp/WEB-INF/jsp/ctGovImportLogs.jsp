@@ -24,14 +24,14 @@
 	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
 <script type="text/javascript" language="javascript">
-    function displayCTGovImportLogDetails(nciId) {
+    function displayCTGovImportLogDetails(nctId) {
         var width = 800;
         var height = 500;
         if (Prototype.Browser.IE) {
             width = 670;
             height = 500;                   
         }
-        showPopWin('ctGovImportLogshowDetailspopup.action?nciId='+nciId, width, height, '', 'ClinicalTrials.Gov Import Log Details');               
+        showPopWin('ctGovImportLogshowDetailspopup.action?nctId='+nctId, width, height, '', 'ClinicalTrials.Gov Import Log Details');               
     }
     
 	function handleAction(action) {
@@ -206,13 +206,12 @@
 								value="CTGovImportLogs.csv" />
 							<display:setProperty name="export.csv.include_header"
 								value="true" />
-							<display:column escapeXml="false" title="NCI ID" sortable="true">
-							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nciID}');">
-							        <c:out value="${row.nciID}"/>
+							<display:column escapeXml="true" title="NCI ID" property="nciID" sortable="true"/>
+							<display:column escapeXml="false" title="ClinicalTrials.gov Identifier" sortable="true">
+							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
+							        <c:out value="${row.nctID}"/>
 							    </a>
 							</display:column>
-							<display:column escapeXml="true" title="ClinicalTrials.gov Identifier" property="nctID"
-								sortable="true" />
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
 							<display:column escapeXml="true" title="Action" property="action"

@@ -38,7 +38,7 @@ Preparable {
     private boolean searchPerformed;
     
     private List<CTGovImportLog> allCtGovImportLogs = new ArrayList<CTGovImportLog>();
-    private List<CTGovImportLog> nciCtGovImportLogs = new ArrayList<CTGovImportLog>();
+    private List<CTGovImportLog> nctCtGovImportLogs = new ArrayList<CTGovImportLog>();
     private String nciIdentifier;
     private String nctIdentifier;
     private String officialTitle;
@@ -47,7 +47,7 @@ Preparable {
     private String userCreated;
     private String logsOnOrAfter;
     private String logsOnOrBefore;
-    private String nciId;
+    private String nctId;
     
     private CTGovSyncServiceLocal ctGovSyncService;
 
@@ -87,9 +87,9 @@ Preparable {
             //get the latest entry for each trial.
             Set<String> uniqueTrials = new HashSet<String>();
             for (CTGovImportLog importLog : importLogs) {
-                if (!uniqueTrials.contains(importLog.getNciID())) {
+                if (!uniqueTrials.contains(importLog.getNctID())) {
                     allCtGovImportLogs.add(importLog);
-                    uniqueTrials.add(importLog.getNciID());
+                    uniqueTrials.add(importLog.getNctID());
                 }
             }            
             searchPerformed = true;
@@ -104,13 +104,13 @@ Preparable {
     
     /**
      * Displays pop up page showing the history of CT.Gov import log entries
-     * for a specified NCI identifier. 
-     * @return list of CT.Gov import log entries for a specified NCI identifier. 
+     * for a specified NCT identifier. 
+     * @return list of CT.Gov import log entries for a specified NCT identifier. 
      */
     public String showDetailspopup() {
         try {
-            //get the all the log entries for the specified NCI ID.
-            nciCtGovImportLogs = ctGovSyncService.getLogEntries(nciId, null, null, null, null, null, null, null);
+            //get the all the log entries for the specified NCT ID.
+            nctCtGovImportLogs = ctGovSyncService.getLogEntries(null, nctId, null, null, null, null, null, null);
             return DETAILS;
         } catch (PAException pae) {
             request.setAttribute(Constants.FAILURE_MESSAGE, pae.getLocalizedMessage());
@@ -282,30 +282,30 @@ Preparable {
     }
 
     /**
-     * @return nciId
+     * @return nctId
      */
-    public String getNciId() {
-        return nciId;
+    public String getNctId() {
+        return nctId;
     }
 
     /**
-     * @param nciId ncId to set
+     * @param nctId nctId to set
      */
-    public void setNciId(String nciId) {
-        this.nciId = nciId;
+    public void setNctId(String nctId) {
+        this.nctId = nctId;
     }
 
     /**
-     * @return nciCtGovImportLogs
+     * @return nctCtGovImportLogs
      */
-    public List<CTGovImportLog> getNciCtGovImportLogs() {
-        return nciCtGovImportLogs;
+    public List<CTGovImportLog> getNctCtGovImportLogs() {
+        return nctCtGovImportLogs;
     }
 
     /**
-     * @param nciCtGovImportLogs nciCtGovImportLogs to set
+     * @param nctCtGovImportLogs nctCtGovImportLogs to set
      */
-    public void setNciCtGovImportLogs(List<CTGovImportLog> nciCtGovImportLogs) {
-        this.nciCtGovImportLogs = nciCtGovImportLogs;
+    public void setNctCtGovImportLogs(List<CTGovImportLog> nctCtGovImportLogs) {
+        this.nctCtGovImportLogs = nctCtGovImportLogs;
     }    
 }

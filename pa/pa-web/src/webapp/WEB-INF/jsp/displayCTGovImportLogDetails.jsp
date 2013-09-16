@@ -13,30 +13,30 @@
         <pa:failureMessage/>
         <s:form>
             <s:actionerror/>
-            <s:set name="nciCtGovImportLogs" value="nciCtGovImportLogs" scope="request"/>
+            <s:set name="nctCtGovImportLogs" value="nctCtGovImportLogs" scope="request"/>
             <table class="form">
                 <tr>
                     <td scope="row" class="label">
                         <label for="nciIdentifier"> <fmt:message key="ctgov.import.logs.details.nciIdentifier"/></label>
                     </td>
-                    <td><c:out value="${nciCtGovImportLogs[0].nciID}"/></td>
+                    <td><c:out value="${nctCtGovImportLogs[0].nciID}"/></td>
                 </tr>
                 <tr>
                     <td scope="row" class="label">
                         <label for="nctIdentifier"> <fmt:message key="ctgov.import.logs.details.nctIdentifier"/></label>
                     </td>
-                    <td><c:out value="${nciCtGovImportLogs[0].nctID}"/></td>
+                    <td><c:out value="${nctCtGovImportLogs[0].nctID}"/></td>
                 </tr>
                 <tr>
                     <td scope="row" class="label">
                         <label for="trialTitle"> <fmt:message key="ctgov.import.logs.details.trialTitle"/></label>
                     </td>
-                    <td><c:out value="${nciCtGovImportLogs[0].title}"/></td>
+                    <td><c:out value="${nctCtGovImportLogs[0].title}"/></td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <display:table class="data" sort="list" pagesize="10" id="row" defaultorder="descending" 
-                        name="nciCtGovImportLogs" export="true" requestURI="ctGovImportLogshowDetailspopup.action">
+                        name="nctCtGovImportLogs" export="true" requestURI="ctGovImportLogshowDetailspopup.action">
                             <display:setProperty name="export.xml" value="false" />
                             <display:setProperty name="export.excel.filename" value="ClinicalTrials.GovImportLog.xls" />
                             <display:setProperty name="export.excel.include_header" value="true" />
