@@ -201,6 +201,9 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
 
         studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         assertFalse(AccrualUtil.isValidTreatingSite(ii));
+        
+        when(PaServiceLocator.getInstance().getStudySiteService().get(any(Ii.class))).thenReturn(null);
+        assertFalse(AccrualUtil.isValidTreatingSite(ii));
     }
 
     @Test 
