@@ -3,7 +3,7 @@
 <table>
 <tr>
 <td> 
-<s:textfield id="summary4FundingSponsor" name="nciSpecificInformationWebDTO.organizationName" size="30"  readonly="true" cssClass="readonly"/>
+<s:textfield id="summary4FundingSponsor" size="30"  readonly="true" cssClass="readonly"/>
 </td>
 <td> 
                   <ul style="margin-top:-2px;">             
