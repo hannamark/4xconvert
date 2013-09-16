@@ -207,6 +207,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -278,6 +279,7 @@ public class AbstractMockitoTest {
     protected MailManagerServiceLocal mailManagerSvc;
     protected ProtocolQueryServiceLocal protocolQueryServiceLocal;
     protected CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorServiceLocal;
+    protected FamilyServiceRemote familySvc;
 
     protected Ii spId;
     protected InterventionalStudyProtocolDTO spDto;
@@ -717,6 +719,7 @@ public class AbstractMockitoTest {
     private void setupRegUser() {
         regUser = new RegistryUser();
         regUser.setPrsOrgName("prs Org Name");
+        regUser.setAffiliatedOrganizationId(1L);
     }
 
     private void setupSsDto() {
@@ -931,6 +934,7 @@ public class AbstractMockitoTest {
         poCrsSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         poIpSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        familySvc = mock(FamilyServiceRemote.class);
 
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
         when(poRoSvc.getCorrelation(any(Ii.class))).thenReturn(researchOrgDto);
@@ -945,6 +949,7 @@ public class AbstractMockitoTest {
         when(poSvcLoc.getIdentifiedPersonEntityService()).thenReturn(poIpSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPerSvc);
         when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
+        when(poSvcLoc.getFamilyService()).thenReturn(familySvc);
     }
 
     private void setupStudyResSvc() throws PAException {

@@ -464,13 +464,37 @@ private List<PatientStage> getPatientStage(String nciId) {
 	public void patientRCCoverage() throws URISyntaxException, PAException {
 		File file = new File(this.getClass().getResource("/patientRaceCodeValidation2.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
-		List<BatchValidationResults> results = readerService .validateBatchData(batchFile);
+		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "Patient race code is missing for patient ID 200708"));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
+	}
+	
+	@Test
+	public void testTrialwithCtepIdNotSuAbstractor() throws URISyntaxException, PAException {    
+        CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(false);
+        CSMUserService.setInstance(csmUtil);
+
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        cdusBatchUploadDataValidator.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+        when(sssSvc.isStudyHasDCPId(any(Ii.class))).thenReturn(true);
+        
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        String errorMsg = results.get(0).getErrors().toString(); 
+        assertTrue(StringUtils.contains(errorMsg, "Only CTRO Team can do batch upload for NCI-2010-00003 identifier."));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        
 	}
 
 	@Test
@@ -487,7 +511,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	        
 		File file = new File(this.getClass().getResource("/ICD-O-3_coverage.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
-		List<BatchValidationResults> results = readerService .validateBatchData(batchFile);
+		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
 		assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));

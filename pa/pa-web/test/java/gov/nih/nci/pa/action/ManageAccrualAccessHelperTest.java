@@ -81,8 +81,7 @@ package gov.nih.nci.pa.action;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -95,12 +94,12 @@ import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
 
 
 /**
@@ -110,14 +109,14 @@ import org.mockito.invocation.InvocationOnMock;
 public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
 
     ManageAccrualAccessHelper accHelp = null;
-    StudySiteAccrualAccessServiceLocal ssAccSvc = null;
+    StudySiteAccrualAccessServiceLocal ssAccSvc = null; 
     @Before
-    public void prepare() {
+    public void prepare() throws PAException {
         ServiceLocator svcLoc = mock(ServiceLocator.class);
         ssAccSvc = mock(StudySiteAccrualAccessServiceLocal.class);
         when(svcLoc.getStudySiteAccrualAccessService()).thenReturn(ssAccSvc);
         PaRegistry.getInstance().setServiceLocator(svcLoc);
-        accHelp = new ManageAccrualAccessHelper(ssAccSvc);
+        accHelp = new ManageAccrualAccessHelper(ssAccSvc);        
     }
 
     @Test(expected = PADuplicateException.class)
@@ -126,10 +125,20 @@ public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
         webDto.setStatusCode("ACTIVE");
         webDto.setRegistryUserId(1L);
         webDto.setStudySiteId(1L);
-        accHelp.addTreatingSiteAccess(webDto);
+        accHelp.addTreatingSiteAccess(webDto, getRegUser(), getSiteOrgList(), new ArrayList<Long>(), new HashSet<Long>());
         when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
-        accHelp.addTreatingSiteAccess(webDto);
+        accHelp.addTreatingSiteAccess(webDto, getRegUser(), getSiteOrgList(), new ArrayList<Long>(), new HashSet<Long>());
     }
+
+	private Map<Long, Organization> getSiteOrgList() {
+		Map<Long, Organization> siteOrgList = new HashMap<Long, Organization>();
+        Organization org = new Organization();
+        org.setId(1L);
+        org.setIdentifier("1");
+        org.setName("orgname");
+        siteOrgList.put(1L, org);
+		return siteOrgList;
+	}
 
     @Test
     public void updateTreatingSiteAccess() throws PAException {
@@ -146,7 +155,8 @@ public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
         webDto.setStatusCode("ACTIVE");
         webDto.setRegistryUserId(1L);
         webDto.setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
-        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap());
+        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap(), 
+        		getRegUser(), getSiteOrgList(), new ArrayList<Long>(), new HashSet<Long>());
 
     }
 
@@ -173,7 +183,8 @@ public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
 		dto.setStatusCode(CdConverter.convertStringToCd("INACTIVE"));
 		ssAccAccessDtos.add(dto);
         when(ssAccSvc.getByStudySite(1L)).thenReturn(ssAccAccessDtos); 
-        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap());
+        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap(), 
+        		getRegUser(), getSiteOrgList(), new ArrayList<Long>(), new HashSet<Long>());
 
     }
 

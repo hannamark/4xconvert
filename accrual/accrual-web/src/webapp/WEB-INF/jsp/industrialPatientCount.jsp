@@ -34,33 +34,44 @@ function handleDelete(){
     <s:token/>
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
-        <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
-        <s:if test="%{#attr.row.studySite.id in sitesToSave}">
-	       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
-	    </s:if>
-	    <s:else>
-	       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
-	    </s:else>       
-        </display:column> 
+        <s:if test="%{notCtepDcpTrial}">
+	        <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
+	        <s:if test="%{#attr.row.studySite.id in sitesToSave}">
+		       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
+		    </s:if>
+		    <s:else>
+		       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
+		    </s:else>       
+	        </display:column> 
+        </s:if>
         <display:column titleKey="participatingsite.accrual.count.siteid" headerClass="sortable" headerScope="col" property="siteId"/>
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
         <display:column titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerClass="sortable" headerScope="col" >
             <s:hidden name="submittedSiteIds" value="%{#attr.row.studySite.id}" />
-            <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
+            <s:if test="%{notCtepDcpTrial}">
+                <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
+            </s:if>
+            <s:else>
+                <s:property value="%{#attr.row.accrualCount}"/>
+            </s:else>
         </display:column>
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />
-        <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">        
-           <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />
-        </display:column> 
+        <s:if test="%{notCtepDcpTrial}">
+	        <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">        
+	           <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />
+	        </display:column> 
+        </s:if>
     </display:table>
     <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                    <s:if test="%{notCtepDcpTrial}">
+	                    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+	                    <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
+                    </s:if>
                     <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
                 </li>
             </ul>
         </del>

@@ -96,7 +96,9 @@ function setDeleteReason(reason){
            <ul class="btnrow">
             <li>
             <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+            <s:if test="%{notCtepDcpTrial}">
             <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Study Subject</span></span></s:a>
+            </s:if>
             </li>
            </ul>
         </del>
@@ -124,16 +126,18 @@ function setDeleteReason(reason){
        <display:column titleKey="patient.registrationDate" property="registrationDate" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.lastUpdateDateTime" property="dateLastUpdated" headerClass="sortable" headerScope="col" />
-       <display:column titleKey="patient.update" headerClass="centered" class="action">
-            <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
-                <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />
-            </s:a>
-       </display:column>
-       <display:column titleKey="patient.delete" headerClass="centered" class="action">
-           <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
-               <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
-           </s:a>
-       </display:column>
+       <s:if test="%{notCtepDcpTrial}">
+	       <display:column titleKey="patient.update" headerClass="centered" class="action">
+	            <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
+	                <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />
+	            </s:a>
+	       </display:column>
+	       <display:column titleKey="patient.delete" headerClass="centered" class="action">
+	           <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
+	               <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
+	           </s:a>
+	       </display:column>
+       </s:if>
    </display:table>
 </body>
 </html>

@@ -84,6 +84,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
@@ -138,9 +139,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
         act.prepare();
-        RegistryUser registryUser = new RegistryUser();
-        registryUser.setCsmUser(new User());
-        when(registryUserService.getUserById(any(Long.class))).thenReturn(registryUser);
+        when(registryUserService.getUserById(any(Long.class))).thenReturn(getRegUser());
         act.setRegistryUserService(registryUserService);
     }
 
@@ -214,7 +213,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         loadTreatingSitesForProtocol();
 
         assertEquals(AbstractListEditAction.AR_LIST, act.add());
-        assertFalse(act.hasActionErrors());
+        assertTrue(act.hasActionErrors());
         assertEquals(2, act.getAccessList().size());
 
     }
@@ -244,7 +243,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         loadTreatingSitesForProtocol();
         when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
         assertEquals(AbstractListEditAction.AR_LIST, act.add());
-        assertFalse(act.hasActionErrors());
+        assertTrue(act.hasActionErrors());
         assertEquals(2, act.getAccessList().size());
 
     }

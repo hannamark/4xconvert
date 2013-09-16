@@ -181,6 +181,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         patientCheck = false;
         patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
         accrualSubmissionLevel = null;
+        boolean notCtepDcpTrial = false;
         bfErrors = new BatchFileErrors();
         BatchValidationResults results = new BatchValidationResults();
         superAbstractor = isSuAbstractor(ru);
@@ -216,44 +217,40 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     }
                     sp = getStudyProtocol(protocolId, bfErrors);
                     if (sp != null) {
-                        Long spId = IiConverter.convertToLong(sp.getIdentifier());
-                        checkDisease = getDiseaseService().diseaseCodeMandatory(spId);
-                        Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
-                        results.setNciIdentifier(ii.getExtension());
                         try {
-                            if (sp.getStudyProtocolType().getValue().equals(
-                                    NonInterventionalStudyProtocol.class.getSimpleName())) {
-                                Long patientAccruals = subjectAccrualService.getAccrualCounts(true, spId);
-                                Long summaryAccruals = subjectAccrualService.getAccrualCounts(false, spId);
-                                if (patientAccruals == 0 && summaryAccruals == 0) {
-                                    accrualSubmissionLevel = AccrualUtil.BOTH;
-                                } else if (patientAccruals > 0) {
-                                    accrualSubmissionLevel = AccrualUtil.SUBJECT_LEVEL;
-                                } else if (summaryAccruals > 0) {
-                                    accrualSubmissionLevel = AccrualUtil.SUMMARY_LEVEL; 
+                            notCtepDcpTrial = !getSearchStudySiteService().isStudyHasCTEPId(sp.getIdentifier()) 
+                                && !getSearchStudySiteService().isStudyHasDCPId(sp.getIdentifier());
+                            if (notCtepDcpTrial || superAbstractor) {
+                                Long spId = IiConverter.convertToLong(sp.getIdentifier());
+                                checkDisease = getDiseaseService().diseaseCodeMandatory(spId);
+                                Ii ii = DSetConverter.convertToIi(sp.getSecondaryIdentifiers());
+                                results.setNciIdentifier(ii.getExtension());
+
+                                setAccrualSubmissionLevel(spId);
+                                List<Long> ids = new ArrayList<Long>();
+                                List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
+                                        .getTreatingSites(spId);
+                                for (SearchStudySiteResultDto iso : isoStudySiteList) {
+                                    listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
+                                            IiConverter.convertToLong(iso.getStudySiteIi()));
                                 }
-                            }
-                            List<Long> ids = new ArrayList<Long>();
-                            List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
-                                    .getTreatingSites(spId);
-                            for (SearchStudySiteResultDto iso : isoStudySiteList) {
-                                listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
-                                        IiConverter.convertToLong(iso.getStudySiteIi()));
-                            }
-                            for (Map.Entry<String, Long> entry : listOfPoIds.entrySet()) {
-                                ids.add(IiConverter.convertToLong(IiConverter.convertToPoOrganizationIi(
-                                        entry.getKey())));
-                            }
-                            
-                            if (!ids.isEmpty()) {
-                                List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                                        .getIdentifiedOrganizationCorrelationService()
-                                        .getCorrelationsByPlayerIdsWithoutLimit(ids.toArray(
-                                                new Long[ids.size()])); // NOPMD
-                                for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
-                                if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO.getAssignedId().getRoot())) {
-                                        listOfCtepIds.put(idOrgDTO.getAssignedId().getExtension(), 
-                                            idOrgDTO.getPlayerIdentifier().getExtension());
+                                for (Map.Entry<String, Long> entry : listOfPoIds.entrySet()) {
+                                    ids.add(IiConverter.convertToLong(IiConverter.convertToPoOrganizationIi(
+                                            entry.getKey())));
+                                }
+
+                                if (!ids.isEmpty()) {
+                                    List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                                            .getIdentifiedOrganizationCorrelationService()
+                                            .getCorrelationsByPlayerIdsWithoutLimit(ids.toArray(
+                                                    new Long[ids.size()])); // NOPMD
+                                    for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
+                                        if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(
+                                                idOrgDTO.getAssignedId().getRoot())) {
+                                            listOfCtepIds.put(
+                                                    idOrgDTO.getAssignedId().getExtension(), 
+                                                    idOrgDTO.getPlayerIdentifier().getExtension());
+                                        }
                                     }
                                 }
                             }
@@ -262,18 +259,25 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                         }
                     }
                 }
-                try {
-                    validateBatchData(line, lineNumber, protocolId);
-                } catch (Exception e) {
-                    bfErrors.append(new StringBuffer().append(e.getLocalizedMessage()));
-                }
+                if (notCtepDcpTrial || superAbstractor) {
+                    try {
+                        validateBatchData(line, lineNumber, protocolId);
+                    } catch (Exception e) {
+                        bfErrors.append(new StringBuffer().append(e.getLocalizedMessage()));
+                    }
+                } 
             }
             LineIterator.closeQuietly(lineIterator);
             if (StringUtils.isEmpty(protocolId)) {
                 bfErrors.append(new StringBuffer()
                 .append("No Study Protocol Identifier could be found in the given file."));
             }
-            if (CollectionUtils.isNotEmpty(lines) && StringUtils.isNotEmpty(protocolId)) {
+            if (!notCtepDcpTrial && !superAbstractor) {
+                bfErrors.append(new StringBuffer()
+                .append("Only CTRO Team can do batch upload for " + protocolId + " identifier.\n"));
+            }
+            if (CollectionUtils.isNotEmpty(lines) && StringUtils.isNotEmpty(protocolId)
+                    && (notCtepDcpTrial || superAbstractor)) {
             Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
             List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
             for (String[] p : patientLines) {
@@ -307,6 +311,21 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         LOG.info("Time to validate a single Batch File data: " 
                 + (System.currentTimeMillis() - startTime) / TIME_SECONDS + " seconds");
         return results;
+    }
+
+    private void setAccrualSubmissionLevel(Long spId) throws PAException {
+        if (sp.getStudyProtocolType().getValue().equals(
+                NonInterventionalStudyProtocol.class.getSimpleName())) {
+            Long patientAccruals = subjectAccrualService.getAccrualCounts(true, spId);
+            Long summaryAccruals = subjectAccrualService.getAccrualCounts(false, spId);
+            if (patientAccruals == 0 && summaryAccruals == 0) {
+                accrualSubmissionLevel = AccrualUtil.BOTH;
+            } else if (patientAccruals > 0) {
+                accrualSubmissionLevel = AccrualUtil.SUBJECT_LEVEL;
+            } else if (summaryAccruals > 0) {
+                accrualSubmissionLevel = AccrualUtil.SUMMARY_LEVEL; 
+            }
+        }
     }
 
     private void setResultParameters(BatchValidationResults results, List<String[]> lines) {

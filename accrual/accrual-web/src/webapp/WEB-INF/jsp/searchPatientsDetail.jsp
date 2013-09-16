@@ -357,7 +357,9 @@
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="back">Back</span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="handleUpdateAction()"><span class="btn_img"><span class="edit">Update</span></span></s:a>
+                                <s:if test="%{notCtepDcpTrial}">
+                                    <s:a href="#" cssClass="btn" onclick="handleUpdateAction()"><span class="btn_img"><span class="edit">Update</span></span></s:a>
+                                </s:if>
                             </s:elseif>
                             <s:elseif test="%{currentAction == 'update'}">
                                 <s:a href="#" cssClass="btn" onclick="handleEditAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>

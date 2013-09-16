@@ -35,6 +35,7 @@ import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -135,6 +136,8 @@ public class StudyMilestoneBeanLocal
     @IgnoreDependency
     private TrialRegistrationServiceLocal trialRegistrationService;
     
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
     /** For testing purposes only. Set to false to bypass abstraction validations. */
     private boolean validateAbstractions = true;
     
@@ -189,9 +192,10 @@ public class StudyMilestoneBeanLocal
         if (qryList.size() > 1) {
             DocumentWorkflowStatus dws = qryList.get(0);
             DocumentWorkflowStatus priorDws = qryList.get(1);
-            if (dws.getStatusCode().isEligibleForAccrual() && !priorDws.getStatusCode().isEligibleForAccrual()) {
-                familyService.updateSiteAndFamilyPermissions(
-                        IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
+            if (dws.getStatusCode().isEligibleForAccrual() && !priorDws.getStatusCode().isEligibleForAccrual()
+                    && paServiceUtils.checkTrialHasNoCtepOrDcpId(resultDto.getStudyProtocolIdentifier())) {
+                    familyService.updateSiteAndFamilyPermissions(
+                            IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
             }
         }
     }
@@ -989,5 +993,13 @@ public class StudyMilestoneBeanLocal
     public void setTrialRegistrationService(
             TrialRegistrationServiceLocal trialRegistrationService) {
         this.trialRegistrationService = trialRegistrationService;
+    }
+
+    /**
+     * @param paServiceUtils
+     *            the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
     }
 }

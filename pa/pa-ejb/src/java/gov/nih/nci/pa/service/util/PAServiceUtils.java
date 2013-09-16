@@ -2280,4 +2280,16 @@ public class PAServiceUtils {
         return result;
     }
     
+    /**
+     * Returns true if the trial doesn't have ctep or dcp id. 
+     * @param spId studyProtocol id
+     * @return boolean value
+     * @throws PAException the exception
+     */
+    public boolean checkTrialHasNoCtepOrDcpId(Ii spId) throws PAException {
+        String ctepId = getStudyIdentifier(spId, PAConstants.CTEP_IDENTIFIER_TYPE);
+        String dcpId = getStudyIdentifier(spId, PAConstants.DCP_IDENTIFIER_TYPE);
+        return ctepId.isEmpty() && dcpId.isEmpty();
+    }
+    
 }

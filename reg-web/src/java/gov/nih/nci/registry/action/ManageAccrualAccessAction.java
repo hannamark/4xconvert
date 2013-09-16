@@ -369,8 +369,21 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             loadInstitutionalPeerReviewedTrials(list, org);
             loadIndustrialTrials(list, org);
             filterOutNationalAndRejectedTrials(list);
+            filterOutCTEPAndDCPTrials(list);
             loadTrialsIntoModel(list);
         }
+    }
+
+    private void filterOutCTEPAndDCPTrials(List<StudyProtocolQueryDTO> list) {
+        CollectionUtils.filter(list, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                StudyProtocolQueryDTO trial = (StudyProtocolQueryDTO) arg0;
+                boolean isNotCtepDcpTrial = StringUtils.isBlank(trial.getCtepId()) 
+                        && StringUtils.isBlank(trial.getDcpId());                
+                return isNotCtepDcpTrial;
+            }
+        });
     }
 
     /**

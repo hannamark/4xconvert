@@ -102,6 +102,7 @@ import gov.nih.nci.service.MockStudySiteService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -280,8 +281,13 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
 
     @Override
     public Map<Long, Organization> getTreatingOrganizations(Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
+    	Map<Long, Organization> siteOrgList = new HashMap<Long, Organization>();
+        Organization org = new Organization();
+        org.setId(1L);
+        org.setIdentifier("1");
+        org.setName("orgname");
+        siteOrgList.put(3L, org);
+        return siteOrgList;
     }
 
     @Override

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -93,6 +95,7 @@ import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -115,14 +118,21 @@ public class ManageAccrualAccessHelper {
     public ManageAccrualAccessHelper(StudySiteAccrualAccessServiceLocal accrualAccessService) {
         this.accrualAccessService = accrualAccessService;
     }
+    
     /**
      * Add multiple instances of study site accrual access setting the source as"Site Request".
      * @param webDto dto holding site and user data.
      * @param sites list of current treating sites in trial.
+     * @param ru registryuser
+     * @param siteOrgList list of site and org map
+     * @param familyOrgIds affliated org familes
+     * @param failureSites sites which didn't get the accrual access
      * @throws PAException on error.
      */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     public void addMultipleTreatingSitesAccess(StudySiteAccrualAccessWebDTO webDto,
-            Map<Long, String> sites) throws PAException {
+            Map<Long, String> sites, RegistryUser ru, Map<Long, Organization> siteOrgList, 
+            List<Long> familyOrgIds, Set<Long> failureSites) throws PAException {
         for (Long key : sites.keySet()) {
             if (ALL_TREATING_SITES_ID.equals(key)) {
                 continue;
@@ -142,7 +152,7 @@ public class ManageAccrualAccessHelper {
             }
             if (!bUpdated) {
                 webDto.setIdentifier(null);
-                addTreatingSiteAccess(webDto);
+                addTreatingSiteAccess(webDto, ru, siteOrgList, familyOrgIds, failureSites);
             }
         }
     }
@@ -150,12 +160,28 @@ public class ManageAccrualAccessHelper {
     /**
      * Add a single instance of treating site accrual access setting the source as"Site Request".
      * @param webDto dto storing site and user data.
+     * @param ru registryuser
+     * @param siteOrgList list of site and org map
+     * @param familyOrgIds affliated org familes
+     * @param failureSites sites which didn't get the accrual access
      * @throws PAException on error.
      */
-    public void addTreatingSiteAccess(StudySiteAccrualAccessWebDTO webDto)
-        throws PAException {
+    public void addTreatingSiteAccess(StudySiteAccrualAccessWebDTO webDto, 
+            RegistryUser ru, Map<Long, Organization> siteOrgList, List<Long> familyOrgIds,
+            Set<Long> failureSites) throws PAException {
         StudySiteAccrualAccessDTO dto = populateDTO(webDto);
-        accrualAccessService.create(dto);
+        
+        Long selectedOrgPOId = siteOrgList != null && siteOrgList.get(webDto.getStudySiteId()) != null 
+                ? Long.valueOf(siteOrgList.get(webDto.getStudySiteId()).getIdentifier()) : null;
+        
+        if (selectedOrgPOId != null 
+                && (familyOrgIds.contains(selectedOrgPOId) 
+                        || ru.getAffiliatedOrganizationId().equals(selectedOrgPOId))) {
+            accrualAccessService.create(dto);
+        } else {
+            failureSites.add(webDto.getStudySiteId());
+        }
+        
     }
 
     /**

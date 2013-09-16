@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -88,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
@@ -102,10 +104,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -164,11 +170,27 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID.equals(getAccess().getStudySiteId())) {
-                accrualAccessHelper.addMultipleTreatingSitesAccess(getAccess(), getSites());
-                getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+            Map<Long, Organization> siteOrgList = accrualAccessService.getTreatingOrganizations(
+                    getSpDTO().getStudyProtocolId());  
+            StudySiteAccrualAccessWebDTO webDtoTosave = getAccess();           
+            RegistryUser ru = registryUserService.getUserById(webDtoTosave.getRegistryUserId());
+            List<Long> familyOrgIds = FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
+            Set<Long> failureSites = new HashSet<Long>();
+            if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID.equals(webDtoTosave.getStudySiteId())) {
+                accrualAccessHelper.addMultipleTreatingSitesAccess(webDtoTosave, getSites(), 
+                        ru, siteOrgList, familyOrgIds, failureSites);
+                webDtoTosave.setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
             } else {
-                accrualAccessHelper.addTreatingSiteAccess(getAccess());
+                accrualAccessHelper.addTreatingSiteAccess(webDtoTosave, ru, siteOrgList, familyOrgIds, failureSites);
+            }
+            if (CollectionUtils.isNotEmpty(failureSites)) {
+                List<String> orgNames = new ArrayList<String>();
+                for (Long siteId : failureSites) {
+                    orgNames.add(getSites().get(siteId));
+                }
+                addActionError("For the following sites accrual access is not given since they are not family" 
+                        + " releated organizations for the selected user affiliated organization,  " 
+                        + StringUtils.join(orgNames, ','));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -176,7 +198,6 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         }
         return super.add();
     }
-
 
 
     /**

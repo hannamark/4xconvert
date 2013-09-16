@@ -160,11 +160,7 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
 
             }
             if (CollectionUtils.isNotEmpty(failureReords)) {
-                StringBuffer sb = new StringBuffer();
-                for (String regId : failureReords) {
-                    sb = sb.append(regId).append(", ");
-                }
-                String[] missingSites = {nciId, sb.toString()};
+                String[] missingSites = {nciId, StringUtils.join(failureReords, ',')};
                 if (!notFoundSites.containsKey(registryUser)) {
                     List<String[]> trialMissingSites = new ArrayList<String[]>();
                     trialMissingSites.add(missingSites);
@@ -181,11 +177,8 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
             for (RegistryUser rec : notFoundSites.keySet()) {
                 StringBuffer innerTable = new StringBuffer();
                 for (String[] trialSites : notFoundSites.get(rec)) {
-                    String siteIds = trialSites[1];
-                    int lastIndex = siteIds.lastIndexOf(',');
-                    siteIds = new StringBuilder(siteIds).replace(lastIndex, lastIndex + 1, "").toString();
                     innerTable.append("<tr><td>" + trialSites[0] 
-                            + "</td><td>" + siteIds + "</td></tr>");
+                            + "</td><td>" + trialSites[1] + "</td></tr>");
                 }
                 String regUserName = rec.getFirstName() + " " + rec.getLastName();
                 String body = mailBody;
