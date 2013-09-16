@@ -187,9 +187,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final String CTGOVIMPORT_USERNAME = "ctgovimport";
 
     private static final String EXCLUSION_CRITERIA_MARKER = 
-            "(?:(?:\\sExclusion (?:C|c)riteria\\s*:?)|(?:\\s{3,}Exclusion:\\s))";
+            "(?:(?:\\sExclusion (?:C|c)riteria\\s*:?)|(?:\\s{3,}Exclusion:\\s))(?=\\s+-\\s{2})";
 
-    private static final String INCLUSION_CRITERIA_MARKER = "\\sInclusion (?:C|c)riteria\\s*:?";
+    private static final String INCLUSION_CRITERIA_MARKER = "\\sInclusion (?:C|c)riteria\\s*:?(?=\\s+-\\s{2})";
 
     private static final int L_254 = 254;
 

@@ -456,24 +456,77 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         final long id = getProtocolIdByNciId(nciID, session);
         Ii ii = IiConverter.convertToStudyProtocolIi(id);
         
-        List<PlannedEligibilityCriterion> exclList = session
-                .createQuery(
-                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=false and so.studyProtocol.id="
-                                + id + " order by so.id").list();
+        List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
+                session, id);
         assertEquals(4, exclList.size());
         assertEquals("Pregnant / nursing", exclList.get(0).getTextDescription());
         assertEquals("Primary ocular or mucosal melanoma", exclList.get(3).getTextDescription());
 
-        List<PlannedEligibilityCriterion> inclList = session
-                .createQuery(
-                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=true and so.criterionName is null and so.studyProtocol.id="
-                                + id + " order by so.id").list();
+        List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
+                session, id);
         assertEquals(7, inclList.size());
         assertEquals("Informed Consent", inclList.get(0)
                 .getTextDescription());
         assertEquals("Prior therapy restriction (adjuvant only)", inclList.get(6)
                 .getTextDescription());
         
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testPO6467EligCriteriaHandling() throws PAException, ParseException {
+        String nciID = serviceBean.importTrial("NCT01023880");
+        assertTrue(StringUtils.isNotEmpty(nciID));
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = getProtocolIdByNciId(nciID, session);
+        
+        List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
+                session, id);
+        assertEquals(1, exclList.size());
+        assertTrue(exclList.get(0).getTextDescription().trim().startsWith("Key Inclusion Criteria:"));
+        
+
+        List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
+                session, id);
+        assertEquals(1, inclList.size());
+        assertTrue(inclList.get(0).getTextDescription().trim().startsWith("Key Inclusion Criteria:"));
+        
+    }
+
+    /**
+     * @param session
+     * @param spID
+     * @return
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private List<PlannedEligibilityCriterion> getInclusionCriteriaList(
+            final Session session, final long spID) throws HibernateException {
+        List<PlannedEligibilityCriterion> inclList = session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=true and so.criterionName is null and so.studyProtocol.id="
+                                + spID + " order by so.id").list();
+        return inclList;
+    }
+
+    /**
+     * @param session
+     * @param spID
+     * @return
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private List<PlannedEligibilityCriterion> getExclusionCriteriaList(
+            final Session session, final long spID) throws HibernateException {
+        List<PlannedEligibilityCriterion> exclList = session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=false and so.studyProtocol.id="
+                                + spID + " order by so.id").list();
+        return exclList;
     }
     
 
@@ -674,17 +727,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals(999, age.getMaxValue().intValue());
         assertFalse(sp.getAcceptHealthyVolunteersIndicator());
 
-        List<PlannedEligibilityCriterion> exclList = session
-                .createQuery(
-                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=false and so.studyProtocol.id="
-                                + id + " order by so.id").list();
+        List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
+                session, id);
         assertEquals(12, exclList.size());
         assertEquals("Male.", exclList.get(0).getTextDescription());
 
-        List<PlannedEligibilityCriterion> inclList = session
-                .createQuery(
-                        "from PlannedEligibilityCriterion so where so.inclusionIndicator=true and so.criterionName is null and so.studyProtocol.id="
-                                + id + " order by so.id").list();
+        List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
+                session, id);
         assertEquals(11, inclList.size());
         assertEquals("Female aged > 18 years.", inclList.get(0)
                 .getTextDescription());
