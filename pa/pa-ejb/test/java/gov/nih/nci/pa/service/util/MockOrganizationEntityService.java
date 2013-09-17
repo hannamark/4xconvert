@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -40,6 +41,18 @@ public class MockOrganizationEntityService implements
     public static final Map<String, OrganizationDTO> STORE = new HashMap<String, OrganizationDTO>();
 
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
+    
+    {
+        OrganizationDTO ctgov = new OrganizationDTO();
+        ctgov.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
+        try {
+            createOrganization(ctgov);
+        } catch (EntityValidationException e) {          
+            e.printStackTrace();
+        } catch (CurationException e) {
+            e.printStackTrace();
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -102,9 +115,11 @@ public class MockOrganizationEntityService implements
      * gov.nih.nci.coppa.services.LimitOffset)
      */
     @Override
-    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1)
+    public List<OrganizationDTO> search(OrganizationDTO orgDTO, LimitOffset arg1)
             throws TooManyResultsException {
-        return search(arg0);
+        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
+        criteria.setName(EnOnConverter.convertEnOnToString(orgDTO.getName()));
+        return search(criteria, arg1);
     }
 
     /*

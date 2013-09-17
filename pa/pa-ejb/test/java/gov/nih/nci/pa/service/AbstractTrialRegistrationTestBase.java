@@ -11,13 +11,13 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.MockIdentifiedPersonCorrelationService;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
@@ -84,10 +84,11 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected Ii spIi;
     protected final PAServiceUtils paServiceUtils = new MockPAServiceUtils();
     
-    protected OrganizationCorrelationServiceRemote ocsr;
+    protected OrganizationCorrelationServiceBean ocsr;
     
     protected ClinicalResearchStaffCorrelationServiceRemote crsSvc ;
     protected HealthCareProviderCorrelationServiceRemote hcpSvc ;
+    protected StudyMilestoneServiceBean studyMilestoneSvc;
 
     public AbstractTrialRegistrationTestBase() {
         super();
@@ -140,7 +141,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when (paSvcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemote);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteService);
         
-        ocsr = mock(OrganizationCorrelationServiceRemote.class);
+        ocsr = mock(OrganizationCorrelationServiceBean.class);
         when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
             @Override
             public Ii answer(InvocationOnMock invocation) throws Throwable {
@@ -158,7 +159,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     
         MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
         StudyInboxServiceLocal studyInboxSvc = new StudyInboxServiceBean();
-        StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
+        studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
         StudyOnholdServiceLocal studyOnholdSvc = new StudyOnholdBeanLocal();
         StudyRelationshipBeanLocal studyRelationshipSvc = new StudyRelationshipBeanLocal();
@@ -197,6 +198,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(studyOutcomeMeasureService);
         when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
         when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
+        when(paSvcLoc.getMailManagerService()).thenReturn(mailSvc);
         bean.setOcsr(ocsr);
         bean.setMailManagerSerivceLocal(mailSvc);
         bean.setStudyMilestoneService(studyMilestoneSvc);

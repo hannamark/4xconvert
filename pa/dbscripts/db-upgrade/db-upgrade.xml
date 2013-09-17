@@ -1445,4 +1445,8 @@
         <comment>Trial categories description is not database-driven via misc_documents table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6344-2.sql"/>
      </changeSet>
+     <changeSet id="PO-6482" author="krylovd">
+        <comment>Added two pa_property entires to control PO data import from clinicaltrials.gov</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6482.sql"/>
+     </changeSet>
 </databaseChangeLog>

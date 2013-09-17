@@ -20,7 +20,8 @@ import java.util.List;
  */
 public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 
-    public static String CTGOV_SYNC_SKIP_PO_DATA = "false";
+    public static String CTGOV_SYNC_IMPORT_PERSONS = "true";
+    public static String CTGOV_SYNC_IMPORT_ORGS = "true";
 
     /**
      * {@inheritDoc}
@@ -100,8 +101,10 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
         } else if (name.equals("ctgov.api.getByNct")) {
             return "http://localhost:"
                     + CTGovSyncServiceBeanTest.CTGOV_API_MOCK_PORT + "/ctgov?${nctid}";
-        } else if (name.equals("ctgov.sync.skip_po_data")) {
-            return CTGOV_SYNC_SKIP_PO_DATA;
+        } else if (name.equals("ctgov.sync.import_persons")) {
+            return CTGOV_SYNC_IMPORT_PERSONS;
+        } else if (name.equals("ctgov.sync.import_orgs")) {
+            return CTGOV_SYNC_IMPORT_ORGS;
         } else {
             return value;
         }

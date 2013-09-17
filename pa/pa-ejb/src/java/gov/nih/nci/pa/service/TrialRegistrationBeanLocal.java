@@ -100,6 +100,7 @@ import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySiteStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.NonInterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -891,6 +892,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             if (sponsorDTO != null) {
                 getPAServiceUtils().manageSponsor(spIi, sponsorDTO);
+                createSummary4Sponsor(spIi, sponsorDTO);
             }
             
             OrganizationDTO leadOrgDTO = getLeadOrganization(spIi);
@@ -916,6 +918,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         } finally {
             TrialUpdatesRecorder.reset();
         }
+    }
+
+    private void createSummary4Sponsor(Ii spIi, OrganizationDTO sponsorDTO)
+            throws PAException {
+        StudyResourcingDTO summary4studyResourcingDTO = new StudyResourcingDTO();
+        summary4studyResourcingDTO.setTypeCode(CdConverter
+                .convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+        getPAServiceUtils().manageSummaryFour(spIi, Arrays.asList(sponsorDTO),
+                summary4studyResourcingDTO);
+
     }
 
     private OrganizationDTO getLeadOrganization(Ii spIi) throws PAException {
@@ -1145,6 +1157,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             if (sponsorDTO != null) {
                 createSponsor(spIi, sponsorDTO);
+                createSummary4Sponsor(spIi, sponsorDTO);
             }
             
             createPrincipalInvestigator(leadOrgDTO, investigatorDTO, spIi);
