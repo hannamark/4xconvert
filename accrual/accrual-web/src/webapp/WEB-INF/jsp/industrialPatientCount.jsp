@@ -32,9 +32,13 @@ function handleDelete(){
 
 <s:form name="countform" action="industrialPatientsupdate">
     <s:token/>
+    <!--  If it is only one checkbox and it isn't checked, Struts2 (just in case) sets false value.Workaround for this 
+    is to add hidden field with checkbox name prefixed with __checkbox_ to the form. Then it won't be single checkbox and false will not be submitted. -->
+    <s:hidden name="__checkbox_sitesToDelete"/>
+    <s:hidden name="__checkbox_sitesToSave"/>
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
-        <s:if test="%{notCtepDcpTrial}">
+        <s:if test="%{#session['notCtepDcpTrial']}">
 	        <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
 	        <s:if test="%{#attr.row.studySite.id in sitesToSave}">
 		       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
@@ -48,7 +52,7 @@ function handleDelete(){
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
         <display:column titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerClass="sortable" headerScope="col" >
             <s:hidden name="submittedSiteIds" value="%{#attr.row.studySite.id}" />
-            <s:if test="%{notCtepDcpTrial}">
+            <s:if test="%{#session['notCtepDcpTrial']}">
                 <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
             </s:if>
             <s:else>
@@ -57,7 +61,7 @@ function handleDelete(){
         </display:column>
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />
-        <s:if test="%{notCtepDcpTrial}">
+        <s:if test="%{#session['notCtepDcpTrial']}">
 	        <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">        
 	           <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />
 	        </display:column> 
@@ -67,7 +71,7 @@ function handleDelete(){
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:if test="%{notCtepDcpTrial}">
+                    <s:if test="%{#session['notCtepDcpTrial']}">
 	                    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
 	                    <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
                     </s:if>

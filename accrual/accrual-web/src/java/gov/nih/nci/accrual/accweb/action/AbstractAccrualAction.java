@@ -131,7 +131,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private SubjectAccrualServiceLocal subjectAccrualSvc;
     private LookUpTableServiceRemote lookupTableSvc;
     private SubmissionHistoryService submissionHistorySvc;
-    private boolean notCtepDcpTrial;
 
     /**
      * {@inheritDoc}
@@ -177,8 +176,9 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     protected void loadTrialSummaryIntoSession() throws PAException {
         SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
         ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
-        notCtepDcpTrial = !getSearchStudySiteSvc().isStudyHasCTEPId(getSpIi()) 
-                && !getSearchStudySiteSvc().isStudyHasDCPId(getSpIi());
+        ServletActionContext.getRequest().getSession().setAttribute("notCtepDcpTrial", 
+                !getSearchStudySiteSvc().isStudyHasCTEPId(getSpIi()) 
+                && !getSearchStudySiteSvc().isStudyHasDCPId(getSpIi()));
     }
     
     /**
@@ -320,10 +320,4 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public SubmissionHistoryService getSubmissionHistorySvc() {
         return submissionHistorySvc;
     }
-    /**
-     * @return isNotCtepDcpTrial
-     */
-    public boolean isNotCtepDcpTrial() {
-        return notCtepDcpTrial;
-    }    
 }
