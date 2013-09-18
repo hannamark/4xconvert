@@ -195,5 +195,12 @@ public class PAConstants {
      * 
      */
     public static final String NON_INTERVENTIONAL = "NonInterventional";
-    
+    /**
+     * NCI
+     */
+    public static final String NCI = "National Cancer Institute";
+    /**
+     * NCIDCP
+     */
+    public static final String NCIDCP = "National Cancer Institute Division of Cancer Prevention";
 }
