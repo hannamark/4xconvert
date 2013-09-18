@@ -73,9 +73,9 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
         for (StudyProtocolQueryDTO record : records) {
             RegistryUser userInfo = getUser(record);
             if (userInfo.getAffiliateOrg() != null 
-                        && (!userInfo.getAffiliateOrg().equalsIgnoreCase(PAConstants.NCI) 
+                        && (!userInfo.getAffiliateOrg().equalsIgnoreCase(PAConstants.NCI_ORG_NAME) 
                         && !userInfo.getAffiliateOrg()
-                        .equalsIgnoreCase(PAConstants.NCIDCP))) {
+                        .equalsIgnoreCase(PAConstants.DCP_ORG_NAME))) {
                     recordList.add(record);
             }
         }
