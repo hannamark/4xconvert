@@ -184,7 +184,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 .search(criteria);
         registryUsers.clear();
         for (RegistryUser user : regUsers) {
-            if(user.getCsmUser() != null) {
+            if (user.getCsmUser() != null) {
                 SelectedRegistryUser selectedRegUser = new SelectedRegistryUser();
                 selectedRegUser.setRegistryUser(user);
                 registryUsers.add(selectedRegUser);
