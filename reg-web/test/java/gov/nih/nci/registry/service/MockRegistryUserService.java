@@ -28,6 +28,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("firstName");
         dto.setLastName("lastName");
         dto.setId(1L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
@@ -38,6 +39,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("affiliated Org");
         dto.setLastName("lastName");
         dto.setId(2L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(2L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         dto.setSiteAccrualSubmitter(false);
@@ -49,6 +51,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("RegUser");
         dto.setLastName("lastName");
         dto.setId(3L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         dto.setSiteAccrualSubmitter(false);
@@ -59,6 +62,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("reguser2");
         dto.setLastName("lastName Two");
         dto.setId(4L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
@@ -69,6 +73,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("reguser3");
         dto.setLastName("lastName Three");
         dto.setId(5L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(3L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
@@ -79,6 +84,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setFirstName("userLastCreated");
         dto.setLastName("lastName");
         dto.setId(1L);
+        dto.setCsmUser(new User());
         dto.setAffiliatedOrganizationId(1L);
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         dto.setSiteAccrualSubmitter(false);
