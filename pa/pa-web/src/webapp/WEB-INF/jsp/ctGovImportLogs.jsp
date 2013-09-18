@@ -222,7 +222,7 @@
 								property="dateCreated" sortable="true" />
 							<display:column escapeXml="true" title="Import Status"
 								property="importStatus" sortable="true" />
-							 <display:column escapeXml="true" title="Needs Review" sortable="true">
+							 <display:column escapeXml="true" title="Needs Review?" sortable="true">
 							     <c:out value="${row.reviewRequired=='true'?'Yes':'No'}"/>
 							 </display:column>	
 						</display:table>
