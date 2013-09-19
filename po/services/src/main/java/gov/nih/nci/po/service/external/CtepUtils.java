@@ -27,6 +27,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.TransformerUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -138,7 +139,10 @@ public final class CtepUtils {
         if (!arePhoneNumberListsEqual(localOrg.getPhone(), ctepOrg.getPhone())) {
             return true;
         }
-        
+
+        if (ObjectUtils.notEqual(localOrg.getStatusCode(), ctepOrg.getStatusCode())) {
+            return true;
+        }
         return false;
     }
 
@@ -157,6 +161,9 @@ public final class CtepUtils {
             localOrg.setName(ctepOrg.getName());
         }
 
+        if (ObjectUtils.notEqual(localOrg.getStatusCode(), ctepOrg.getStatusCode())) {
+            localOrg.setStatusCode(ctepOrg.getStatusCode());
+        }
         CtepUtils.copyAddress(ctepOrg, localOrg);
 
         if (!areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())) {

@@ -95,7 +95,6 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
@@ -422,15 +421,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     private void update(Organization ctep, Organization local) throws JMSException, EntityValidationException {
         if (CtepUtils.isDifferent(ctep, local)) {
-            if (EntityStatus.PENDING.equals(local.getStatusCode())) {
-                CtepUtils.copy(ctep, local);
-                this.orgService.curate(local);
-            } else {
-                OrganizationCR orgCR = new OrganizationCR(local);
-                CtepUtils.copy(ctep, orgCR);
-                orgCR.setStatusCode(local.getStatusCode());
-                this.orgCRService.create(orgCR);
-            }
+            CtepUtils.copy(ctep, local);
+            this.orgService.curate(local);
         }
     }
 

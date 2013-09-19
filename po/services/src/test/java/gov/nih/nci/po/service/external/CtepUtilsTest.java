@@ -195,7 +195,6 @@ public class CtepUtilsTest {
 
         o1.setId(1L);        
         o1.setDuplicateOf(new Organization());
-        o1.setStatusCode(EntityStatus.NULLIFIED);
         o1.setStatusDate(new Date());
         o1.getFax().add(new PhoneNumber("5"));
         o1.getTty().add(new PhoneNumber("7"));
@@ -249,7 +248,7 @@ public class CtepUtilsTest {
         assertEquals(o1.getEmail().get(0).getValue(), o2.getEmail().get(0).getValue());
         assertEquals(o1.getPostalAddress().getCityOrMunicipality(), o2.getPostalAddress().getCityOrMunicipality());
         assertNull(o2.getId());
-        assertNull(o2.getStatusCode());
+        assertEquals(o1.getStatusCode(), o2.getStatusCode());
         assertTrue(o2.getFax().isEmpty());
         assertTrue(o2.getPhone().isEmpty());
         assertTrue(o2.getTty().isEmpty());
