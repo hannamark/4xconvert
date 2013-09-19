@@ -147,6 +147,7 @@ public class ProtocolComparisonServiceBeanTest extends
         OGNL.add("studyProtocol.timePerspectiveOtherText");
 
         OGNL.add("new gov.nih.nci.pa.service.util.PAServiceUtils().getTrialNciId(studyProtocol.id)");
+        OGNL.add("studyProtocol.studyResourcings.{? #this.summary4ReportedResourceIndicator==true}.{organizationIdentifier}");
         
     }
 
@@ -304,6 +305,28 @@ public class ProtocolComparisonServiceBeanTest extends
         Difference diff = diffs.iterator().next();
         assertEquals("sponsor", diff.getFieldKey());
         assertEquals("Mayo University", diff.getNewValue().toString());
+
+    }
+    
+    @Test
+    public final void testSummary4Sponsor() throws PAException {
+        Long spID = TestSchema.studyProtocolIds.get(0);
+        ProtocolSnapshot before = bean.captureSnapshot(spID);
+
+        final Session s = PaHibernateUtil.getCurrentSession();
+        StudyProtocol sp = (StudyProtocol) s.get(StudyProtocol.class, spID);
+        
+        sp.getStudyResourcings().get(0).setOrganizationIdentifier("2");
+        TestSchema.addUpdObject(sp.getStudyResourcings().get(0));
+
+        ProtocolSnapshot after = bean.captureSnapshot(spID);
+        Collection<Difference> diffs = bean.compare(before, after, OGNL);
+        assertEquals(1, diffs.size());
+
+        Difference diff = diffs.iterator().next();
+        assertEquals("studyProtocol.studyResourcings.{? #this.summary4ReportedResourceIndicator==true}.{organizationIdentifier}", diff.getFieldKey());
+        assertEquals("[1]", diff.getOldValue().toString());
+        assertEquals("[2]", diff.getNewValue().toString());
 
     }
 

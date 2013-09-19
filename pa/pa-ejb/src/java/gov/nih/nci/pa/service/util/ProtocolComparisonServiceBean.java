@@ -99,9 +99,14 @@ public class ProtocolComparisonServiceBean implements
             throws PAException {
         ProtocolSnapshotImpl snapshot = new ProtocolSnapshotImpl();
         snapshot.studyProtocol = sp;
+        initializeCollections(sp);
         captureAssociations(snapshot, sp);
         PaHibernateUtil.getCurrentSession().clear();
         return snapshot;
+    }
+
+    private void initializeCollections(StudyProtocol sp) {
+        sp.getStudyResourcings().size();        
     }
 
     private void captureAssociations(ProtocolSnapshotImpl snapshot,
@@ -410,6 +415,7 @@ public class ProtocolComparisonServiceBean implements
         public String getRegulatoryAuthority() {
             return regulatoryAuthority;
         }
+        
 
     }
 
