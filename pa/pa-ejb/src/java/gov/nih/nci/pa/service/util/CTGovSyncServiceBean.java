@@ -138,6 +138,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -472,19 +473,36 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 .getStudyProtocolsByNctId(nctID);
         if (list.isEmpty()) {
             nciIDs.add(importNewStudy(xml, nctID));
+        } else if (filterOutRejected(list).isEmpty()) {
+            throw new PAException("Updates to rejected trials are not allowed");
         } else {
             for (StudyProtocolDTO dto : list) {
-                DocumentWorkflowStatusDTO statusDTO = documentWorkflowStatusService
-                        .getCurrentByStudyProtocol(dto.getIdentifier());
-                if (statusDTO != null
-                        && !DocumentWorkflowStatusCode.REJECTED.name()
-                                .equalsIgnoreCase(
-                                        statusDTO.getStatusCode().getCode())) {
-                    nciIDs.add(updateStudy(xml, nctID, dto));
-                }
+                nciIDs.add(updateStudy(xml, nctID, dto));
             }
         }
         return StringUtils.join(nciIDs, ", ");
+    }
+
+    private List<StudyProtocolDTO> filterOutRejected(final List<StudyProtocolDTO> list)
+            throws PAException {
+        CollectionUtils.filter(list, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                StudyProtocolDTO dto = (StudyProtocolDTO) arg0;
+                DocumentWorkflowStatusDTO statusDTO;
+                try {
+                    statusDTO = documentWorkflowStatusService
+                            .getCurrentByStudyProtocol(dto.getIdentifier());
+                } catch (PAException e) {
+                    throw new RuntimeException(e.getMessage(), e); // NOPMD
+                }
+                return statusDTO != null
+                        && !DocumentWorkflowStatusCode.REJECTED.name()
+                                .equalsIgnoreCase(
+                                        statusDTO.getStatusCode().getCode());
+            }
+        });
+        return list;
     }
 
     private String importNewStudy(String xml, String nctIdStr) // NOPMD

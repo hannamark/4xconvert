@@ -22,6 +22,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
@@ -37,6 +38,7 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -79,9 +81,11 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -811,10 +815,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private void deactivateTrial(final Session session, final long id)
             throws HibernateException {
-        session.createSQLQuery(
-                "update study_protocol set status_code='INACTIVE' where identifier="
-                        + id).executeUpdate();
-        session.flush();
+            session.createSQLQuery(
+                    "update study_protocol set status_code='INACTIVE' where identifier="
+                            + id).executeUpdate();
+            session.flush();
     }
 
     /**
@@ -1252,6 +1256,38 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         entries = serviceBean.getLogEntries(null, null, null, null, null, "User2", null, null);
         assertEquals(1, entries.size());
         assertEquals("NCI3", entries.get(0).getNciID());
+    }
+    
+    @Test
+    public final void testUpdateRejectedTrialFails() throws Exception {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Updates to rejected trials are not allowed");
+
+        // Create protocol by performing a new trial import.
+        String nctID = "NCT01440088";
+        String nciID = serviceBean.importTrial(nctID);
+        long id = 0;
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        try {
+            id = getProtocolIdByNciId(nciID, session);
+
+            StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class,
+                    id);
+            DocumentWorkflowStatus dws = TestSchema
+                    .createDocumentWorkflowStatus(sp);
+            dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+            session.save(dws);
+            session.flush();
+
+            serviceBean.importTrial(nctID);
+        } finally {
+            // Delete the trial.
+            deactivateTrial(session, id);
+        }
     }
 
 }
