@@ -182,7 +182,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
                 !getSearchStudySiteSvc().isStudyHasCTEPId(getSpIi()) 
                 && !getSearchStudySiteSvc().isStudyHasDCPId(getSpIi()));
         ServletActionContext.getRequest().getSession().setAttribute("superAbs", 
-        		ServletActionContext.getRequest().isUserInRole(SUABSTRACTOR));
+               ServletActionContext.getRequest().isUserInRole(SUABSTRACTOR));
     }
     
     /**
