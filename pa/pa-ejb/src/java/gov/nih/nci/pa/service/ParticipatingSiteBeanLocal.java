@@ -93,6 +93,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
@@ -123,8 +125,10 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBTransactionRolledbackException;
@@ -137,6 +141,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jboss.annotation.security.SecurityDomain;
 
@@ -451,6 +456,59 @@ implements ParticipatingSiteServiceLocal {
             return new StudySiteConverter().convertFromDomainToDto(ss);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public void mergeParicipatingSites(Long srcId, Long destId) throws PAException {
+        if (srcId == null || destId == null) {
+            throw new PAException("Called ParticipatingSiteServiceBean.mergeParicipatingSites() with null argument.");
+        }
+        Session sess = PaHibernateUtil.getCurrentSession();
+        StudySite src = (StudySite) sess.get(StudySite.class, srcId);
+        StudySite dest = (StudySite) sess.get(StudySite.class, destId);
+        if (src == null || dest == null) {
+            throw new PAException("Site not found when merging participating sites.");
+        }
+        if (src.getStudyProtocol().getId() != dest.getStudyProtocol().getId()) {
+            throw new PAException("Trying to merge participating sites from different trials.");
+        }
+        mergeAccrualCounts(src, dest);
+        mergeAccrualSubjects(src, dest);
+        sess.flush();
+        getStudySiteService().delete(IiConverter.convertToStudySiteIi(src.getId()));
+    }
+
+    private void mergeAccrualCounts(StudySite src, StudySite dest) {
+        StudySiteSubjectAccrualCount countToMove = src.getAccrualCount();
+        if (countToMove != null && countToMove.getAccrualCount() > 0) {
+            StudySiteSubjectAccrualCount count = dest.getAccrualCount();
+            if (count == null) {
+                PaHibernateUtil.getCurrentSession().evict(countToMove);
+                count = countToMove;
+                count.setStudySite(dest);
+                count.setId(null);
+            } else {
+                count.setAccrualCount(count.getAccrualCount() + countToMove.getAccrualCount());
+            }
+            PaHibernateUtil.getCurrentSession().save(count);
+        }
+    }
+
+    private void mergeAccrualSubjects(StudySite src, StudySite dest) {
+        if (CollectionUtils.isNotEmpty(src.getStudySubjects())) {
+            Set<String> existingIds = new HashSet<String>();
+            if (CollectionUtils.isNotEmpty(dest.getStudySubjects())) {
+                for (StudySubject subj : dest.getStudySubjects()) {
+                    existingIds.add(subj.getAssignedIdentifier());
+                }
+            }
+            for (StudySubject subj : src.getStudySubjects()) {
+                if (!existingIds.contains(subj.getAssignedIdentifier())) {
+                    subj.setStudySite(dest);
+                    PaHibernateUtil.getCurrentSession().save(subj);
+                }
+            }
         }
     }
 }

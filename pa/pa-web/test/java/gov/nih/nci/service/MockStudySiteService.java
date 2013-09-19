@@ -97,6 +97,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author hreinhart
@@ -267,4 +268,15 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
         return null;
     }
 
+    @Override
+    public Set<Long> getAllAssociatedTrials(String poOrgId, StudySiteFunctionalCode functionalCode) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Set<Long> getTrialsAssociatedWithTreatingSite(Long paHcfId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -112,9 +112,14 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
+import java.util.Set;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Test service and converter.
@@ -134,6 +139,9 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
     Ii researchOrgIi;
     Long oversightCommitteeId;
     Ii oversightCommitteeIi;
+
+
+    @Rule public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void init() throws Exception {
@@ -402,5 +410,68 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
         org = remoteEjb.getOrganizationByStudySiteId(IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals("Mayo University", org.getName());
+    }
+
+    @Test
+    public void testGetAllAssociatedTrials() throws Exception {
+        Session sess = PaHibernateUtil.getCurrentSession();
+        SQLQuery qry = sess.createSQLQuery("DELETE FROM study_site WHERE study_protocol_identifier = " + studyId);
+        qry.executeUpdate();
+        Set<Long> trials = remoteEjb.getAllAssociatedTrials("1", StudySiteFunctionalCode.TREATING_SITE);
+        assertFalse(trials.contains(studyId));
+
+        StudySiteDTO dto = createStudySite();
+        dto.setOversightCommitteeIi(null);
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        dto.setReviewBoardApprovalStatusCode(null);
+        dto.setReviewBoardApprovalDate(null);
+        dto.setReviewBoardApprovalNumber(null);
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+        dto = remoteEjb.create(dto);
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
+        trials = remoteEjb.getAllAssociatedTrials("1", StudySiteFunctionalCode.TREATING_SITE);
+        assertFalse(trials.isEmpty());
+        assertTrue(trials.contains(studyId));
+    }
+
+    @Test
+    public void testGetAllAssociatedTrialsNotSupported() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Method does not currently support this functionalCode.");
+        remoteEjb.getAllAssociatedTrials("1", StudySiteFunctionalCode.LEAD_ORGANIZATION);
+    }
+
+    @Test
+    public void testGetAllAssociatedTrialsNull() throws Exception {
+        assertTrue(remoteEjb.getAllAssociatedTrials(null, StudySiteFunctionalCode.TREATING_SITE).isEmpty());
+    }
+
+    @Test
+    public void testGetTrialsAssciatedWithTreatingSite() throws Exception {
+        Session sess = PaHibernateUtil.getCurrentSession();
+        SQLQuery qry = sess.createSQLQuery("DELETE FROM study_site WHERE study_protocol_identifier = " + studyId);
+        qry.executeUpdate();
+        Set<Long> trials = remoteEjb.getTrialsAssociatedWithTreatingSite(1L);
+        assertFalse(trials.contains(studyId));
+
+        StudySiteDTO dto = createStudySite();
+        dto.setOversightCommitteeIi(null);
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        dto.setReviewBoardApprovalStatusCode(null);
+        dto.setReviewBoardApprovalDate(null);
+        dto.setReviewBoardApprovalNumber(null);
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
+        dto = remoteEjb.create(dto);
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
+        trials = remoteEjb.getTrialsAssociatedWithTreatingSite(1L);
+        assertFalse(trials.isEmpty());
+        assertTrue(trials.contains(studyId));
+    }
+
+    @Test
+    public void testGetTrialsAssciatedWithTreatingSiteNull() throws Exception {
+        assertTrue(remoteEjb.getTrialsAssociatedWithTreatingSite(null).isEmpty());
     }
 }

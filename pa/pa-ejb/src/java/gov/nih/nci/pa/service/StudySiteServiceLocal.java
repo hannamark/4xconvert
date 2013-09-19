@@ -81,8 +81,11 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+
+import java.util.Set;
 
 import javax.ejb.Local;
 
@@ -115,4 +118,21 @@ public interface StudySiteServiceLocal extends StudySiteService {
      * @return organization
      */
     Organization getOrganizationByStudySiteId(Long ssid);
+
+    /**
+     * Get a set of all active trials with given association to organization.
+     * @param poOrgId the PO organization id of the 
+     * @param functionalCode type of association
+     * @return set study protocol identifiers 
+     * @throws PAException when error
+    */
+    Set<Long> getAllAssociatedTrials(String poOrgId, StudySiteFunctionalCode functionalCode) throws PAException;
+
+    /**
+     * Get a set of all active trials with given treating site PA HCF ID.
+     * @param paHcfId PA HCF ID of treating site
+     * @return list of spIds
+     * @throws PAException when error
+     */
+    Set<Long> getTrialsAssociatedWithTreatingSite(Long paHcfId) throws PAException;
 }

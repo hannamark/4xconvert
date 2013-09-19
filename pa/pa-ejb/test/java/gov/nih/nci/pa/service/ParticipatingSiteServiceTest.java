@@ -5,13 +5,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -31,19 +40,23 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
@@ -53,9 +66,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
@@ -68,6 +87,9 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
     private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     private final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     private final OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
+    private Long poSqn = 1L;
+
+    @Rule public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void init() throws Exception {
@@ -90,6 +112,57 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         remoteBean = rBean;
         
         studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));        
+    }
+
+    private void setupPoMockito() throws Exception {
+        PoServiceLocator poMock = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poMock);
+
+        OrganizationEntityServiceRemote oeSvc = mock(OrganizationEntityServiceRemote.class);
+        when(oeSvc.createOrganization(any(OrganizationDTO.class))).thenReturn(IiConverter.convertToPoOrganizationIi(String.valueOf(poSqn++)));
+        when(oeSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
+            @Override
+            public OrganizationDTO answer(InvocationOnMock invocation) throws Throwable {
+                Ii ii = (Ii) invocation.getArguments()[0];
+                String id = ii.getExtension();
+                OrganizationDTO result = new OrganizationDTO();
+                result.setIdentifier(ii);
+                result.setName(EnOnConverter.convertToEnOn(id));
+                result.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+                result.setPostalAddress(AddressConverterUtil.create(id, id, id, "MD", "12345", "USA"));
+                return result;
+            }
+        });
+        when(poMock.getOrganizationEntityService()).thenReturn(oeSvc);
+
+        HealthCareFacilityCorrelationServiceRemote hcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(hcfSvc.search(any(HealthCareFacilityDTO.class))).thenAnswer(new Answer<List<HealthCareFacilityDTO>>() {
+            @Override
+            public List<HealthCareFacilityDTO> answer(InvocationOnMock invocation) throws Throwable {
+                List<HealthCareFacilityDTO> result = new ArrayList<HealthCareFacilityDTO>();
+                HealthCareFacilityDTO criteria = (HealthCareFacilityDTO) invocation.getArguments()[0];
+                if (!ISOUtil.isIiNull(criteria.getPlayerIdentifier())) {
+                    Ii ii = IiConverter.convertToPoHealthCareFacilityIi(criteria.getPlayerIdentifier().getExtension());
+                    HealthCareFacilityDTO hcf = new HealthCareFacilityDTO();
+                    hcf.setIdentifier(DSetConverter.convertIiToDset(ii));
+                    result.add(hcf);
+                }
+                return result;
+            }
+        });
+        when(hcfSvc.getCorrelation(any(Ii.class))).thenAnswer(new Answer<HealthCareFacilityDTO>() {
+            @Override
+            public HealthCareFacilityDTO answer(InvocationOnMock invocation) throws Throwable {
+                Ii ii = (Ii) invocation.getArguments()[0];
+                String id = IiConverter.convertToString(ii);
+                HealthCareFacilityDTO result = new HealthCareFacilityDTO();
+                result.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi(id)));
+                result.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi(id));
+                result.setStatus(CdConverter.convertStringToCd("ACTIVE"));
+                return result;
+            }
+        });
+        when(poMock.getHealthCareFacilityCorrelationService()).thenReturn(hcfSvc);
     }
 
     private OrganizationDTO getOrg1() {
@@ -458,4 +531,288 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     }
 
+    @Test
+    public void mergeParticipatingSitesNull() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Called ParticipatingSiteServiceBean.mergeParicipatingSites() with null argument.");
+        localBean.mergeParicipatingSites(null, null);
+    }
+
+    @Test
+    public void mergeParticipatingSitesNotFound() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Site not found when merging participating sites.");
+        localBean.mergeParicipatingSites(-1L, -1L);
+    }
+
+    @Test
+    public void mergeParticipatingSitesDifferentStudies() throws Exception {
+        setupPoMockito();
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00101", "CTEP_ID_1",
+                "DCP_ID_1", "NCT_ID_1", false);
+        Ii spSecId1 = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00101");
+        OrganizationDTO org1 = getOrg1();
+        StudySiteDTO studySiteDTO1 = getBasicStudySiteDTO(spSecId1);
+        StudySiteAccrualStatusDTO currentStatus1 = getStatusDTO();
+        ParticipatingSiteDTO dto1 = localBean.createStudySiteParticipant(studySiteDTO1, currentStatus1, org1, null);
+
+
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00102", "CTEP_ID_2",
+                "DCP_ID_2", "NCT_ID_2", false);
+        Ii spSecId2 = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00102");
+        OrganizationDTO org2 = getOrg1();
+        StudySiteDTO studySiteDTO2 = getBasicStudySiteDTO(spSecId2);
+        StudySiteAccrualStatusDTO currentStatus2 = getStatusDTO();
+        ParticipatingSiteDTO dto2 = localBean.createStudySiteParticipant(studySiteDTO2, currentStatus2, org2, null);
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Trying to merge participating sites from different trials.");
+        localBean.mergeParicipatingSites(IiConverter.convertToLong(dto1.getIdentifier()),
+                IiConverter.convertToLong(dto2.getIdentifier()));
+    }
+
+    @Test
+    public void mergeParticipatingSitesIndustrial() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addAccrualCount(ssIds[0], 5);
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertEquals((Integer) 5, ss.getAccrualCount().getAccrualCount());
+
+        addAccrualCount(ssIds[1], 10);
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals((Integer) 10, ss.getAccrualCount().getAccrualCount());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+        // verify transfer of count to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals((Integer) 15, ss.getAccrualCount().getAccrualCount());
+    }
+
+    @Test
+    public void mergeParticipatingSitesIndustrialNoSrcCount() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addAccrualCount(ssIds[1], 10);
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals((Integer) 10, ss.getAccrualCount().getAccrualCount());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+        // verify transfer of count to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals((Integer) 10, ss.getAccrualCount().getAccrualCount());
+    }
+
+    @Test
+    public void mergeParticipatingSitesIndustrialNoDestCount() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addAccrualCount(ssIds[0], 5);
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertEquals((Integer) 5, ss.getAccrualCount().getAccrualCount());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+        // verify transfer of count to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertNotNull(ss);
+        assertEquals((Integer) 5, ss.getAccrualCount().getAccrualCount());
+    }
+
+    @Test
+    public void mergeParticipatingSitesComplete() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addStudySubject(ssIds[0], "site0subject");
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site0subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+        addStudySubject(ssIds[1], "site1subject");
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site1subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+
+        // verify transfer of subject to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertNotNull(ss);
+        assertEquals(2L, ss.getStudySubjects().size());
+        Set<String> sitePatientIds = new HashSet<String>();
+        for (StudySubject subj : ss.getStudySubjects()) {
+            sitePatientIds.add(subj.getAssignedIdentifier());
+        }
+        assertTrue(sitePatientIds.contains("site0subject"));
+        assertTrue(sitePatientIds.contains("site1subject"));
+    }
+
+    @Test
+    public void mergeParticipatingSitesCompleteDuplicatePatients() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addStudySubject(ssIds[0], "duplicate_subject");
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("duplicate_subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+        addStudySubject(ssIds[1], "duplicate_subject");
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("duplicate_subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+
+
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+
+        // verify transfer of subject to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertNotNull(ss);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("duplicate_subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+    }
+
+    @Test
+    public void mergeParticipatingSitesCompleteNoSrcPatient() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addStudySubject(ssIds[1], "site1subject");
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site1subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+
+        // verify transfer of subject to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertNotNull(ss);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site1subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+    }
+
+    @Test
+    public void mergeParticipatingSitesCompleteNoTargetPatient() throws Exception {
+        setupPoMockito();
+        Session sess = PaHibernateUtil.getCurrentSession();
+        Long[] ssIds = setUp2SitesOnTrial();
+
+        addStudySubject(ssIds[0], "site0subject");
+        StudySite ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site0subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+
+
+        localBean.mergeParicipatingSites(ssIds[0], ssIds[1]);
+        sess.flush();
+        sess.clear();
+
+        // verify deletion of src study site
+        ss = (StudySite) sess.get(StudySite.class, ssIds[0]);
+        assertNull(ss);
+
+        // verify transfer of subject to target
+        ss = (StudySite) sess.get(StudySite.class, ssIds[1]);
+        assertNotNull(ss);
+        assertEquals(1L, ss.getStudySubjects().size());
+        assertEquals("site0subject", ss.getStudySubjects().get(0).getAssignedIdentifier());
+    }
+
+    private Long[] setUp2SitesOnTrial() throws Exception {
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00101", "CTEP_ID_1",
+                "DCP_ID_1", "NCT_ID_1", false);
+        Ii spSecId1 = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00101");
+        OrganizationDTO org1 = getOrg1();
+        org1.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        StudySiteDTO studySiteDTO1 = getBasicStudySiteDTO(spSecId1);
+        StudySiteAccrualStatusDTO currentStatus1 = getStatusDTO();
+        ParticipatingSiteDTO dto1 = localBean.createStudySiteParticipant(studySiteDTO1, currentStatus1, org1, null);
+        Long ssId1 = IiConverter.convertToLong(dto1.getIdentifier());
+
+        OrganizationDTO org2 = getOrg1();
+        org2.setIdentifier(IiConverter.convertToPoOrganizationIi("2"));
+        StudySiteDTO studySiteDTO2 = getBasicStudySiteDTO(spSecId1);
+        StudySiteAccrualStatusDTO currentStatus2 = getStatusDTO();
+        ParticipatingSiteDTO dto2 = localBean.createStudySiteParticipant(studySiteDTO2, currentStatus2, org2, null);
+        Long ssId2 = IiConverter.convertToLong(dto2.getIdentifier());
+        return new Long[]{ssId1, ssId2};
+    }
+
+    private void addAccrualCount(Long studySiteId, Integer count) {
+        Session sess = PaHibernateUtil.getCurrentSession();
+        StudySite ss = (StudySite) sess.get(StudySite.class, studySiteId);
+        StudySiteSubjectAccrualCount sssac = new StudySiteSubjectAccrualCount();
+        sssac.setAccrualCount(count);
+        sssac.setStudyProtocol(ss.getStudyProtocol());
+        sssac.setStudySite(ss);
+        sssac.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
+        sess.save(sssac);
+        sess.flush();
+        sess.clear();
+    }
+
+    private void addStudySubject(Long studySiteId, String assignedIdentifier) {
+        Session sess = PaHibernateUtil.getCurrentSession();
+        StudySite ss = (StudySite) sess.get(StudySite.class, studySiteId);
+        Country country = new Country();
+        sess.save(country);
+        Patient pat = new Patient();
+        pat.setBirthDate(new Timestamp(new Date().getTime()));
+        pat.setCountry(country);
+        pat.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        sess.save(pat);
+        StudySubject subj = new StudySubject();
+        subj.setAssignedIdentifier(assignedIdentifier);
+        subj.setPatient(pat);
+        subj.setStudySite(ss);
+        subj.setStudyProtocol(ss.getStudyProtocol());
+        subj.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        subj.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
+        sess.save(subj);
+        sess.flush();
+        sess.clear();
+    }
 }

@@ -206,4 +206,13 @@ public interface ParticipatingSiteServiceLocal {
      * @throws PAException PAException
      */
     StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)  throws PAException;
+
+    /**
+     * Merge on participating site with another. Only the accrual data from the src site is
+     * maintained.
+     * @param srcId the study site id of the site to be deleted 
+     * @param destId the study site id of the site which will have accrual data added
+     * @throws PAException on error
+     */
+    void mergeParicipatingSites(Long srcId, Long destId) throws PAException;
 }

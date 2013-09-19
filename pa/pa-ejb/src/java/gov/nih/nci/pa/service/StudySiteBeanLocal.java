@@ -54,6 +54,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.annotation.security.RolesAllowed;
@@ -63,6 +64,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -516,5 +518,47 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      */
     public CorrelationUtils getCorrUtils() {
         return corrUtils;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<Long> getAllAssociatedTrials(String poOrgId, StudySiteFunctionalCode functionalCode) throws PAException {
+        Set<Long> result = new HashSet<Long>();
+        if (poOrgId == null) {
+            return result;
+        }
+        if (!ObjectUtils.equals(StudySiteFunctionalCode.TREATING_SITE, functionalCode)) {
+            throw new PAException("Method does not currently support this functionalCode.");
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "SELECT sp.id FROM StudyProtocol sp "
+                + "JOIN sp.studySites ss JOIN ss.healthCareFacility role JOIN role.organization org "
+                + "WHERE sp.statusCode = :statusCode AND ss.functionalCode = :functionalCode "
+                + "AND org.identifier = :poOrgId";
+        Query query = session.createQuery(hql);
+        query.setParameter("statusCode", ActStatusCode.ACTIVE);
+        query.setParameter("functionalCode", functionalCode);
+        query.setParameter("poOrgId", poOrgId);
+        result.addAll(query.list());
+        return result;
+    }
+
+    @Override
+    public Set<Long> getTrialsAssociatedWithTreatingSite(Long paHcfId) throws PAException {
+        Set<Long> result = new HashSet<Long>();
+        if (paHcfId == null) {
+            return result;
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "SELECT sp.id FROM StudyProtocol sp "
+                + "JOIN sp.studySites ss JOIN ss.healthCareFacility role "
+                + "WHERE sp.statusCode = :statusCode AND ss.functionalCode = :functionalCode "
+                + "AND role.id = :paHcfId";
+        Query query = session.createQuery(hql);
+        query.setParameter("statusCode", ActStatusCode.ACTIVE);
+        query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+        query.setParameter("paHcfId", paHcfId);
+        result.addAll(query.list());
+        return result;
     }
 }

@@ -7,9 +7,12 @@
        } else {
            var msgText = $(statusMsgMap)[$(fieldId).value];
            if ($(fieldId).value == 'NULLIFIED'
-        		   && ($('curateEntityForm.duplicateOf.id')==null || $('curateEntityForm.duplicateOf.id').value=='')){
-        	   alert("Please select a duplicate since you are Nullifying the existing one.");
-        	   return false;
+                  && ( ($('curateEntityForm.duplicateOf.id')==null || $('curateEntityForm.duplicateOf.id').value=='')
+                       && ($('curateRoleForm.duplicateOf')==null || $('curateRoleForm.duplicateOf').value=='')
+                     )
+              ) {
+               alert("Please select a duplicate since you are Nullifying the existing one.");
+               return false;
            }
            var r = confirm(msgText);
            if (r == true) {

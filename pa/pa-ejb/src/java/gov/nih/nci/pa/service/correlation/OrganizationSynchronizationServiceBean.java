@@ -78,6 +78,8 @@
  */
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
@@ -85,12 +87,16 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -108,6 +114,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -117,6 +124,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 
@@ -141,6 +149,8 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     @EJB
     private StudySiteServiceLocal spsLocal;
+    @EJB
+    private ParticipatingSiteServiceLocal psLocal;
 
     /**
      * @param orgIdentifier ii of organization
@@ -390,9 +400,10 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     HealthCareFacility dupHcf = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                     Long duplicateHcfId = dupHcf.getId();
                     newRoleCode = dupHcf.getStatusCode();
+                    Ii hcfFromIi = IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString());
                     hcfCurrentIi = IiConverter.convertToPoHealthCareFacilityIi(duplicateHcfId.toString());
-                    replaceStudySiteIdentifiers(IiConverter.convertToPoHealthCareFacilityIi(hcf.getId().toString()),
-                            hcfCurrentIi);
+                    mergeDuplicateParticipatingSitesFromNullify(hcfFromIi, hcfCurrentIi);
+                    replaceStudySiteIdentifiers(hcfFromIi, hcfCurrentIi);
                     hcf.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {
                     // this is nullified scenario with no org
@@ -400,6 +411,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     newRoleCode = StructuralRoleStatusCode.NULLIFIED;
                 }
             } else {
+                mergeDuplicateParticipatingSitesFromUpdate(hcf, hcfDto.getPlayerIdentifier());
                 paServiceUtil.updateScoper(hcfDto.getPlayerIdentifier(), hcf);
                 if (!hcf.getStatusCode().equals(cUtils.convertPORoleStatusToPARoleStatus(hcfDto.getStatus()))) {
                     // this is a update scenario with a status change
@@ -411,6 +423,57 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             session.update(hcf);
             session.flush();
             spsLocal.cascadeRoleStatus(hcfCurrentIi, CdConverter.convertToCd(newRoleCode));
+        }
+    }
+
+    private void mergeDuplicateParticipatingSitesFromUpdate(HealthCareFacility hcfOriginal, Ii newPoOrgIi) 
+            throws PAException {
+        String oldPoOrgId = hcfOriginal.getOrganization().getIdentifier();
+        String newPoOrgId = IiConverter.convertToString(newPoOrgIi);
+        if (oldPoOrgId.equals(newPoOrgId)) {
+            return;
+        }
+        Set<Long> fromTrials = spsLocal.getTrialsAssociatedWithTreatingSite(hcfOriginal.getId());
+        Set<Long> toTrials = spsLocal.getAllAssociatedTrials(newPoOrgId, StudySiteFunctionalCode.TREATING_SITE);
+        fromTrials.retainAll(toTrials);
+        for (Long spId : fromTrials) {
+            StudySiteDTO ssFrom;
+            StudySiteDTO criteria = new StudySiteDTO();
+            criteria.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spId));
+            criteria.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+            LimitOffset limit = new LimitOffset(1, 0);
+            try {
+                criteria.setHealthcareFacilityIi(IiConverter.convertToIi(hcfOriginal.getId()));
+                ssFrom = spsLocal.search(criteria, limit).get(0);
+            } catch (TooManyResultsException e) {
+                throw new PAException(e);
+            }
+            StudySiteDTO ssTo = psLocal.getParticipatingSite(IiConverter.convertToStudyProtocolIi(spId), 
+                    IiConverter.convertToString(newPoOrgIi));
+            psLocal.mergeParicipatingSites(IiConverter.convertToLong(ssFrom.getIdentifier()),
+                    IiConverter.convertToLong(ssTo.getIdentifier()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void mergeDuplicateParticipatingSitesFromNullify(final Ii from, final Ii to) throws PAException {
+        Set<Long> fromTrials = spsLocal.getTrialsAssociatedWithTreatingSite(IiConverter.convertToLong(from));
+        Set<Long> toTrials = spsLocal.getTrialsAssociatedWithTreatingSite(IiConverter.convertToLong(to));
+        fromTrials.retainAll(toTrials);
+        for (Long spId : fromTrials) {
+            Session sess = PaHibernateUtil.getCurrentSession();
+            String hql = "SELECT ss FROM StudySite ss JOIN ss.healthCareFacility hcf JOIN ss.studyProtocol sp "
+                    + "WHERE sp.id = :spId AND hcf.id = :hcfId AND ss.functionalCode = :functionalCode";
+            Query qry = sess.createQuery(hql);
+            qry.setParameter("spId", spId);
+            qry.setParameter("hcfId", IiConverter.convertToLong(from));
+            qry.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+            List<StudySite> qryList = qry.list();
+            Long ssFrom = qryList.get(0).getId();
+            qry.setParameter("hcfId", IiConverter.convertToLong(to));
+            qryList = qry.list();
+            Long ssTo = qryList.get(0).getId();
+            psLocal.mergeParicipatingSites(ssFrom, ssTo);
         }
     }
 
