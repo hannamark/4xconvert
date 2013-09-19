@@ -6,6 +6,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.PatientStage;
@@ -15,6 +16,10 @@ import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -30,8 +35,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +51,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
     private PAHealthCareProviderRemote paHcp;
 	private LookUpTableServiceRemote lookUpTableService;
     private MailManagerServiceLocal mailManagerSvc = mock(MailManagerServiceLocal.class);
+    private StudyProtocolServiceLocal spSvc = mock(StudyProtocolServiceLocal.class);
 	
 	@Before
     public void setup() throws Exception {
@@ -74,6 +82,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
         bean.setLookUpTableService(lookUpTableService);
         bean.setMailManagerService(mailManagerSvc);
         bean.setStudySiteAccrualAccessSrv(mock(StudySiteAccrualAccessServiceLocal.class));
+        bean.setStudyProtocolSrv(spSvc);
         TestSchema.primeData();
         PoServiceLocator poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
@@ -165,7 +174,23 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
         TestSchema.addUpdObject(ps);
         
         bean.setUseTestSeq(true);
-        List<PatientStage> results = bean.getAllPatientsStage();
+        
+        List<PatientStage> results = bean.getAllPatientsStage("CTEP");
+        assertEquals(0, results.size());
+
+        StudyProtocolDTO dto = new StudyProtocolDTO();
+        Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
+        Ii spSecId = new Ii();
+		spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+		spSecId.setExtension("NCI-2009-00002");
+		secondaryIdentifiers.add(spSecId);
+		dto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(secondaryIdentifiers));
+		when(spSvc.loadStudyProtocol(any(Ii.class))).thenReturn(dto);
+		
+        results = bean.getAllPatientsStage("NCI-2009-00002");
+        assertEquals(2, results.size());        
+        
+        results = bean.getAllPatientsStage(null);
         assertEquals(3, results.size());
         
         bean.readAndProcess();

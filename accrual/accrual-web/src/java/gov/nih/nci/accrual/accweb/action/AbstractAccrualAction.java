@@ -117,6 +117,8 @@ import com.opensymphony.xwork2.Preparable;
  */
 public abstract class AbstractAccrualAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5423491292515161915L;
+    /** CSM Group used to define suabstractor role. **/
+    public static final String SUABSTRACTOR = "SuAbstractor";
 
     private SearchTrialService searchTrialSvc;
     private SearchStudySiteService searchStudySiteSvc;
@@ -179,6 +181,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         ServletActionContext.getRequest().getSession().setAttribute("notCtepDcpTrial", 
                 !getSearchStudySiteSvc().isStudyHasCTEPId(getSpIi()) 
                 && !getSearchStudySiteSvc().isStudyHasDCPId(getSpIi()));
+        ServletActionContext.getRequest().getSession().setAttribute("superAbs", 
+        		ServletActionContext.getRequest().isUserInRole(SUABSTRACTOR));
     }
     
     /**

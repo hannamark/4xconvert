@@ -21,10 +21,11 @@ public interface PendingPatientAccrualsServiceLocal {
     void readAndProcess() throws PAException;
     
     /**
+     * @param identifier NCI/CTEP or DCP id
      * @return all patientStage records.
      * @throws PAException exception
      */
-    List<PatientStage> getAllPatientsStage() throws PAException;
+    List<PatientStage> getAllPatientsStage(String identifier) throws PAException;
     
     /**
      * Deletes the patient stage record.

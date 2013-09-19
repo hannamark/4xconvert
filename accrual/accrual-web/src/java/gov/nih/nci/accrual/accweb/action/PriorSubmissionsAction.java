@@ -31,8 +31,6 @@ import org.apache.struts2.ServletActionContext;
 public class PriorSubmissionsAction extends AbstractListAccrualAction<HistoricalSubmissionDto> {
 
     private static final long serialVersionUID = 7146346266420362794L;
-    /** CSM Group used to define suabstractor role. **/
-    public static final String SUABSTRACTOR = "SuAbstractor";
     
     private Long batchFileId;
     private String dateFrom;

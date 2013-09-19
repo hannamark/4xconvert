@@ -357,7 +357,7 @@
                             </s:if>
                             <s:elseif test="%{currentAction == 'retrieve'}">
                                 <s:a href="#" cssClass="btn" onclick="handleCancelAction()"><span class="btn_img"><span class="back">Back</span></span></s:a>
-                                <s:if test="%{#session['notCtepDcpTrial']}">
+                                <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
                                     <s:a href="#" cssClass="btn" onclick="handleUpdateAction()"><span class="btn_img"><span class="edit">Update</span></span></s:a>
                                 </s:if>
                             </s:elseif>

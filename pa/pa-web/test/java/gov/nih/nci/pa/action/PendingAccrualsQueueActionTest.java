@@ -3,6 +3,7 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
 import gov.nih.nci.pa.domain.PatientStage;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
@@ -28,7 +29,7 @@ public class PendingAccrualsQueueActionTest extends AbstractPaActionTest {
     	patientAction = new PendingAccrualsQueueAction();
     	patientServiceLocal = mock(PendingPatientAccrualsServiceLocal.class);
     	patientAction.setPatientService(patientServiceLocal);
-    	when(patientServiceLocal.getAllPatientsStage()).thenReturn(new ArrayList<PatientStage>());
+    	when(patientServiceLocal.getAllPatientsStage(any(String.class))).thenReturn(new ArrayList<PatientStage>());
         patientAction.prepare();        
     }
     

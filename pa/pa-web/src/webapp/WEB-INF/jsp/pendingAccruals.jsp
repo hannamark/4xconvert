@@ -15,6 +15,13 @@ function callOnloadFunctions(){
     // there are no onload functions to call for this jsp
     // leave this function to prevent 'error on page'
 }
+function handleAction() {
+    document.forms[0].action="pendingAccrualsexecute.action";
+    document.forms[0].submit();
+}
+function resetValues() {
+    $("identifier").value="";
+}
 </SCRIPT>
  <body>
  <c:set var="topic" scope="request" value="pendingAccruals"/>
@@ -27,7 +34,28 @@ function callOnloadFunctions(){
         <pa:studyUniqueToken/>
         <s:actionerror/>
     <h2><fmt:message key="pendingAccruals.title" /></h2>
-    
+    <table class="form">
+    <tr>
+        <td scope="row" class="label">
+                            <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
+                            <br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
+                        </td>
+                        <td>
+                            <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
+                        </td>
+    </tr>
+    </table>
+    <div class="actionsrow">
+        <del class="btnwrapper">
+            <ul class="btnrow">
+                <li>
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                    <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                </li>
+            </ul>
+        </del>
+    </div>
+    <h2>Search Results</h2>          
     <s:set name="pendingAccruals" value="pendingAccruals" scope="request"/>
     <display:table name="pendingAccruals" id="row" class="data" sort="list"  pagesize="200" requestURI="pendingAccrualsexecute.action" export="false">
         <display:column escapeXml="true" titleKey="pendingAccruals.trialIdentifier" property="studyIdentifier" sortable="true" headerClass="sortable" />
@@ -45,7 +73,7 @@ function callOnloadFunctions(){
             <del class="btnwrapper">
                 <ul class="btnrow">                                           
                         <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected sites. Cancel to abort.', 'pendingAccrualsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Remove Site From Queue</span></span></s:a></li>
-                        <li><s:a href="#" cssClass="btn" onclick="document.pendingAccruals.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a></li>                       
+                        <li><s:a href="#" cssClass="btn" onclick="document.pendingAccruals.reset();return false"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a></li>                       
                 </ul>
             </del>
         </div>

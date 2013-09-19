@@ -23,6 +23,7 @@ public class PendingAccrualsQueueAction extends AbstractMultiObjectDeleteAction 
     private static final long serialVersionUID = -7522821525540584076L;
     private PendingPatientAccrualsServiceLocal patientService;
     private List<PatientStage> pendingAccruals = new ArrayList<PatientStage>();
+    private String identifier;
 
     @Override
     public void prepare() throws PAException {
@@ -35,7 +36,7 @@ public class PendingAccrualsQueueAction extends AbstractMultiObjectDeleteAction 
      */
     @Override
     public String execute() throws PAException {         
-        setPendingAccruals(patientService.getAllPatientsStage());
+        setPendingAccruals(patientService.getAllPatientsStage(getIdentifier()));
         return SUCCESS;
     }
 
@@ -88,5 +89,19 @@ public class PendingAccrualsQueueAction extends AbstractMultiObjectDeleteAction 
      */
     public void setPendingAccruals(List<PatientStage> patients) {
         this.pendingAccruals = patients;
+    }
+
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

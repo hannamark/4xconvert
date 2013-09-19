@@ -11,9 +11,12 @@ import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -74,6 +77,8 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
     private StudySiteServiceLocal studySiteService;
     @EJB
     private StudySiteAccrualAccessServiceLocal studySiteAccrualAccessSrv;
+    @EJB
+    private StudyProtocolServiceLocal studyProtocolSrv;
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -196,9 +201,30 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
      * {@inheritDoc}
      */
     @Override
-    public List<PatientStage> getAllPatientsStage() throws PAException {
+    public List<PatientStage> getAllPatientsStage(String identifier) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        List<PatientStage> psList = session.createQuery("from PatientStage order by studyProtocolIdentifier").list();
+        StringBuffer hql = new StringBuffer("from PatientStage");
+        if (StringUtils.isNotEmpty(identifier)) {
+            StudyProtocolDTO foundStudy = null;
+            Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(identifier);
+            if (StringUtils.startsWith(identifier, "NCI")) {
+                foundStudy = studyProtocolSrv.loadStudyProtocol(protocolIi);
+            }
+            if (foundStudy == null) {
+                protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+                foundStudy = studyProtocolSrv.loadStudyProtocol(protocolIi);
+                protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+                foundStudy = foundStudy != null ? foundStudy : studyProtocolSrv.loadStudyProtocol(protocolIi);
+            }
+            if (foundStudy != null) {
+                Ii ii = DSetConverter.convertToIi(foundStudy.getSecondaryIdentifiers());
+                hql = hql.append(" where studyIdentifier = '").append(ii.getExtension()).append("'");
+            } else {
+                hql = hql.append(" where studyIdentifier = '").append(identifier).append("'");
+            }
+        }
+        hql = hql.append(" order by studyProtocolIdentifier");
+        List<PatientStage> psList = session.createQuery(hql.toString()).list();
         for (PatientStage ps : psList) {
             ps.setOrgName((String) (getOrganizationIi(ps.getStudySite()) != null 
                     ? getOrganizationIi(ps.getStudySite()).getName().getPart().get(0).getValue() : ""));
@@ -501,6 +527,13 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
     public void setStudySiteAccrualAccessSrv(
             StudySiteAccrualAccessServiceLocal studySiteAccrualAccessSrv) {
         this.studySiteAccrualAccessSrv = studySiteAccrualAccessSrv;
+    }
+
+    /**
+     * @param studyProtocolSrv the studyProtocolSrv to set
+     */
+    public void setStudyProtocolSrv(StudyProtocolServiceLocal studyProtocolSrv) {
+        this.studyProtocolSrv = studyProtocolSrv;
     }
 
     /**
