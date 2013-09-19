@@ -12,7 +12,7 @@
         <display:column titleKey="family.name" property="name" sortable="true" sortProperty="FAMILY_NAME" />
         <display:column title="Organization Family Members" sortable="false" >
             <table class="data subtable"> 
-            <c:forEach items="${row.familyOrganizationRelationships}" var="famOrgRel">
+            <c:forEach items="${row.currentFamilyOrganizationRelationships}" var="famOrgRel">
                 <tr> 
                     <td><c:out value="${famOrgRel.organization.name}"/></td> 
                     <td>(<c:out value="${famOrgRel.functionalType}"/>)</td> 

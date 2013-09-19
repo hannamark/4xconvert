@@ -89,8 +89,10 @@ import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
 import gov.nih.nci.po.util.PoRegistry;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -104,6 +106,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Sort;
@@ -248,6 +251,20 @@ public class Family implements Auditable {
             comparator = FamilyOrganizationRelationshipOrgComparator.class)
     public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
         return familyOrganizationRelationships;
+    }
+
+    /**
+     * @return the family org relationships for organizations which have not been nullified
+     */
+    @Transient
+    public List<FamilyOrganizationRelationship> getCurrentFamilyOrganizationRelationships() {
+        List<FamilyOrganizationRelationship> filteredList = new ArrayList<FamilyOrganizationRelationship>();
+        for (FamilyOrganizationRelationship famOrg : getFamilyOrganizationRelationships()) {
+            if (famOrg.getOrganization().getStatusCode() != EntityStatus.NULLIFIED) {
+                filteredList.add(famOrg);
+            }
+        }
+        return filteredList;
     }
 
     @SuppressWarnings("unused")
