@@ -28,7 +28,7 @@
 	<h1>
 		<fmt:message key="importctgov.title" />
 	</h1>
-	<c:set var="topic" scope="request" value="importctgov" />
+	<c:set var="topic" scope="request" value="ctimport" />
 	<div class="box" id="filters">
 		<s:form id="importCtGovForm">
 			<s:token name="struts.token.importctgov" />

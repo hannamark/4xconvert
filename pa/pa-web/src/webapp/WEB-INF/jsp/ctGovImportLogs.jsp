@@ -76,7 +76,7 @@
 	<h1>
 		<fmt:message key="ctgov.import.logs.title" />
 	</h1>
-	<c:set var="topic" scope="request" value="ctgovimportlogs" />
+	<c:set var="topic" scope="request" value="ctimportlog" />
 	<div class="box" id="filters">
 		<s:form id="ctGovImportLogsForm">
 			<s:token name="struts.token.ctgovimportlogs" />
