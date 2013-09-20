@@ -5,7 +5,17 @@
  * @license MIT
  * @url http://livepipe.net/projects/control_tabs/
  * @version 2.1.0
+ * 
+ * Modified by Dirk Walter
  */
+
+
+function getDefaultTab() {
+    var regex = new RegExp("[\\?&]activeTab=([^&#]*)");
+    var results = regex.exec(location.search);
+    return results == null ? "first" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 
 if(typeof(Control) == 'undefined')
 	var Control = {};
@@ -34,7 +44,7 @@ Object.extend(Control.Tabs.prototype,{
 			linkSelector: 'li a',
 			setClassOnContainer: false,
 			activeClassName: 'active',
-			defaultTab: 'first',
+			defaultTab: getDefaultTab(),
 			autoLinkExternal: true,
 			targetRegExp: /#(.+)$/,
 			showFunction: Element.show,
