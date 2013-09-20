@@ -183,14 +183,13 @@
 			</div>
 
 			<c:if test="${searchPerformed}">
-				<div id="ctGovImportLogsDiv" align="center">
+				<div id="ctGovImportLogsDiv" align="left">
 					<s:if test="allCtGovImportLogs==null || allCtGovImportLogs.empty">
 						<div align="center" class="info">
 							<b>No log entries found.</b>
 						</div>
 					</s:if>
 					<s:else>
-
 						<s:set name="logs" value="allCtGovImportLogs" scope="request" />
 						<display:table class="data" sort="list" pagesize="100" uid="row"
 							defaultorder="descending" defaultsort="6" name="logs"
