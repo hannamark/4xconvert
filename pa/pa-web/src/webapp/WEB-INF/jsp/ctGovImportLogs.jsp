@@ -34,6 +34,16 @@
         showPopWin('ctGovImportLogshowDetailspopup.action?nctId='+nctId, width, height, '', 'ClinicalTrials.Gov Import Log Details');               
     }
     
+    function displayClinicalTrialDetails(nctId) {
+    	var width = 1000;
+        var height = 700;
+        if (Prototype.Browser.IE) {
+            width = 870;
+            height = 700;                   
+        }
+        showPopWin('http://clinicaltrials.gov/ct2/show/'+nctId+'?term='+nctId+'&rank=1', width, height, '', 'ClinicalTrials.Gov Details');
+    }    
+    
 	function handleAction(action) {
 		$('ctGovImportLogsForm').action = "ctGovImportLog" + action + ".action";
 		$('ctGovImportLogsForm').submit();
@@ -207,14 +217,17 @@
 								value="true" />
 							<display:column escapeXml="true" title="NCI ID" property="nciID" sortable="true"/>
 							<display:column escapeXml="false" title="ClinicalTrials.gov Identifier" sortable="true">
-							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
+							    <a href="javascript:void(0);" onclick="displayClinicalTrialDetails('${row.nctID}');">
 							        <c:out value="${row.nctID}"/>
 							    </a>
 							</display:column>
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
-							<display:column escapeXml="true" title="Action" property="action"
-								sortable="true" />
+							<display:column escapeXml="false" title="Action" sortable="true">
+							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
+							        <c:out value="${row.action}"/>
+							    </a>							    						    
+							</display:column>
 							<display:column escapeXml="true" title="Auto/User"
 								property="userCreated" sortable="true" />
 							<display:column  title="Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}"
