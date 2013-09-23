@@ -42,16 +42,14 @@ public class MockOrganizationEntityService implements
 
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
     
-    {
+    static {
         OrganizationDTO ctgov = new OrganizationDTO();
         ctgov.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
         try {
-            createOrganization(ctgov);
-        } catch (EntityValidationException e) {          
+            createOrg(ctgov);
+        } catch (Exception e) {          
             e.printStackTrace();
-        } catch (CurationException e) {
-            e.printStackTrace();
-        }
+        } 
     }
 
     /*
@@ -63,6 +61,14 @@ public class MockOrganizationEntityService implements
     @Override
     public Ii createOrganization(OrganizationDTO orgDTO)
             throws EntityValidationException, CurationException {
+        return createOrg(orgDTO);
+    }
+
+    /**
+     * @param orgDTO
+     * @return
+     */
+    private static Ii createOrg(OrganizationDTO orgDTO) {
         final String poOrgId = (PO_ID_SEQ++) + "";
         final Ii id = IiConverter.convertToPoOrganizationIi(poOrgId);
         orgDTO.setIdentifier(id);
