@@ -58,6 +58,7 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -95,6 +96,7 @@ import gov.nih.nci.pa.service.ctgov.ResponsiblePartyStruct;
 import gov.nih.nci.pa.service.ctgov.SponsorStruct;
 import gov.nih.nci.pa.service.ctgov.TextblockStruct;
 import gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper.PersonWithFullNameDTO;
+import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.Difference;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.ProtocolSnapshot;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -119,6 +121,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -559,9 +562,15 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             final boolean needsReview = needsReview(before, after);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
                     SUCCESS, currentUser, needsReview);
+            
+            if (needsReview) {
+                attachListOfChangedFieldsToInboxEntry(studyProtocolDTO.getIdentifier(), before, after);
+            }
+            
             closeStudyInboxAndAcceptTrialIfNeeded(
                     studyProtocolDTO.getIdentifier(), needsReview,
                     study.getLastchangedDate());
+            
             return trialNciId;
         } catch (Exception e) {
             LOG.error(e, e);
@@ -570,6 +579,39 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             throw new PAException(e.getMessage()); // NOPMD
         }
 
+    }
+
+    private void attachListOfChangedFieldsToInboxEntry(Ii studyProtocolIi,
+            ProtocolSnapshot before, ProtocolSnapshot after) throws PAException {
+        final Collection<Difference> differences = findDifferences(before,
+                after);
+        List<StudyInboxDTO> inboxEntries = studyInboxService
+                .getOpenInboxEntries(studyProtocolIi);
+        if (!inboxEntries.isEmpty()) {
+            StudyInboxDTO recent = inboxEntries.get(0);
+            for (Difference diff : differences) {
+                String fieldLabel = getFieldLabel(diff.getFieldKey());
+                String currentComments = StringUtils.defaultString(StConverter
+                        .convertToString(recent.getComments()));
+                String newComments = left(currentComments
+                        + gov.nih.nci.pa.util.TrialUpdatesRecorder.SEPARATOR
+                        + fieldLabel + " changed", L_5000);
+                recent.setComments(StConverter.convertToSt(newComments));
+            }
+            studyInboxService.update(recent);
+        }
+    }
+
+    private String getFieldLabel(String fieldKey) throws PAException {
+        String fieldKeyToLabelMap = lookUpTableService
+                .getPropertyValue("ctgov.sync.fields_of_interest.key_to_label_mapping");
+        Pattern p = Pattern.compile("(?m)^\\Q" + fieldKey + "\\E=(.*)$");
+        Matcher m = p.matcher(fieldKeyToLabelMap);
+        if (m.find()) {
+            return m.group(1).trim();
+        } else {
+            return fieldKey;
+        }
     }
 
     private void closeStudyInboxAndAcceptTrialIfNeeded(Ii spId,
@@ -650,10 +692,22 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private boolean needsReview(ProtocolSnapshot before, ProtocolSnapshot after)
             throws PAException {
+        final Collection<Difference> differences = findDifferences(before,
+                after);
+        return !differences.isEmpty();
+    }
+
+    /**
+     * @param before
+     * @param after
+     * @return
+     * @throws PAException
+     */
+    private Collection<Difference> findDifferences(ProtocolSnapshot before,
+            ProtocolSnapshot after) throws PAException {
         List<String> ognls = Arrays.asList(lookUpTableService.getPropertyValue(
                 "ctgov.sync.fields_of_interest").split(";"));
-        return !protocolComparisonService.compare(before, after, ognls)
-                .isEmpty();
+        return protocolComparisonService.compare(before, after, ognls);        
     }
 
     private String verifyPopulateAndPersist(StudyProtocolDTO studyProtocolDTO, // NOPMD

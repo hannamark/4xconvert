@@ -399,6 +399,8 @@ public class StudyInboxServiceBean // NOPMD
         StudyInboxDTO wrkDto = super.get(dto.getIdentifier());
         if (wrkDto != null) {
             wrkDto.getInboxDateRange().setHigh(dto.getInboxDateRange().getHigh());
+            wrkDto.setComments(ISOUtil.isStNull(dto.getComments()) ? wrkDto
+                    .getComments() : dto.getComments());
             setTimeIfToday(wrkDto);
             dateRules(wrkDto);
         }

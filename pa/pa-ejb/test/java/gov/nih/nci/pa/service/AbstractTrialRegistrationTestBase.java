@@ -89,6 +89,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected ClinicalResearchStaffCorrelationServiceRemote crsSvc ;
     protected HealthCareProviderCorrelationServiceRemote hcpSvc ;
     protected StudyMilestoneServiceBean studyMilestoneSvc;
+    protected StudyInboxServiceLocal studyInboxSvc;
 
     public AbstractTrialRegistrationTestBase() {
         super();
@@ -158,7 +159,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
     
         MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
-        StudyInboxServiceLocal studyInboxSvc = new StudyInboxServiceBean();
+        studyInboxSvc = new StudyInboxServiceBean();
         studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
         StudyOnholdServiceLocal studyOnholdSvc = new StudyOnholdBeanLocal();

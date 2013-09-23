@@ -30,6 +30,7 @@ import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -45,6 +46,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -81,11 +83,9 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.SessionFactoryImplementor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -113,7 +113,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     private static final MockOrganizationEntityService ORGANIZATION_ENTITY_SERVICE = new MockOrganizationEntityService();
     private static final MockPersonEntityService PERSON_ENTITY_SERVICE = new MockPersonEntityService();
     
-    private static final ProtocolComparisonServiceLocal COMPARISON_SERVICE_LOCAL = mock(ProtocolComparisonServiceLocal.class);
+    private static final ProtocolComparisonServiceBean COMPARISON_SERVICE_LOCAL = new ProtocolComparisonServiceBean();
     
     private User ctgovimportUser;
     private User notCtgovimportUser;
@@ -230,6 +230,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      * 
      */
     private void injectBeanReferences() {
+        
+        COMPARISON_SERVICE_LOCAL.setPlannedActivityService(plannedActivityService);
+        COMPARISON_SERVICE_LOCAL.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
+        COMPARISON_SERVICE_LOCAL.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
+        COMPARISON_SERVICE_LOCAL.setRegulatoryInformationService(regulatoryInfoSvc);
+
+        
         serviceBean.setLookUpTableService(lookUpTableServiceRemote);
         serviceBean.setRegulatoryAuthorityService(regulatoryInfoSvc);
         serviceBean.setTrialRegistrationService(super.bean);
@@ -239,6 +246,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         serviceBean.setPaServiceUtils(new MockPAServiceUtils());
         serviceBean.setProtocolComparisonService(COMPARISON_SERVICE_LOCAL);
         serviceBean.setStudyMilestoneService(studyMilestoneSvc);
+        serviceBean.setStudyInboxService(studyInboxSvc);
     }
 
     /**
@@ -629,6 +637,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             checkNCT01861054PersonOrgData(sp, "Threshold Pharmaceuticals", "Sponsor Inc.");
             checkNCT01861054OtherData(session, sp);    
             checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkInboxEntry(sp);
             
         } finally {
             // Delete the trial.
@@ -636,6 +645,16 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         }
     }
     
+    private void checkInboxEntry(InterventionalStudyProtocol sp) {
+        StudyInbox inbox = sp.getStudyInbox().iterator().next();
+        assertEquals(
+                "Trial has been updated from ClinicalTrials.gov\rDetailed Description changed\rEligibility Criteria changed",
+                inbox.getComments());
+        assertNull(inbox.getCloseDate());
+        assertEquals(StudyInboxTypeCode.UPDATE, inbox.getTypeCode());
+
+    }
+
     /**
      * PO-6482: For existing trials in CTRP where the submitter is NOT Clinicaltrials.gov, DO NOT UPDATE these with the data from Clinicaltrials.gov XML
      * -    Sponsor
@@ -694,6 +713,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             // Other data come from update.
             checkNCT01861054OtherData(session, sp);    
             checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkInboxEntry(sp);
             
         } finally {
             MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        

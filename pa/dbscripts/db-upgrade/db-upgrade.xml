@@ -1453,4 +1453,8 @@
         <comment>Updated fields-of-interest.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6440-3.sql"/>
      </changeSet>
+     <changeSet id="PO-6497" author="krylovd">
+        <comment>Added labels for fields of interest to pa_properties.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6497.sql"/>
+     </changeSet>
 </databaseChangeLog>
