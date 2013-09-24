@@ -1113,11 +1113,7 @@ public class TrialRegistrationValidator {
             List<DocumentDTO> documentDTOs, StudySiteDTO nctIdentifierDTO, StringBuilder errorMsg) {
         if (nctIdentifierDTO != null) {
             if (ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-                validatePhaseAndPurpose(studyProtocolDTO, errorMsg);
-                if (CollectionUtils.isEmpty(documentDTOs)
-                        || !paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
-                    errorMsg.append("Proprietary template document is mandatory if NCT number is not provided");
-                }
+                validatePhaseAndPurpose(studyProtocolDTO, errorMsg);                
             }
         } else {
             validatePhaseAndPurpose(studyProtocolDTO, errorMsg);

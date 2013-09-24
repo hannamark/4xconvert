@@ -7,16 +7,26 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -29,6 +39,18 @@ import com.mockrunner.mock.web.MockHttpSession;
 public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
     private static final String FILE_NAME = "ProtocolDoc.doc";
     private final SubmitProprietaryTrialAction action = new SubmitProprietaryTrialAction();
+    
+    private CTGovSyncServiceLocal ctGovSyncService = mock(CTGovSyncServiceLocal.class);
+    private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    
+    @Override
+    @Before
+    public void setUpServices() {        
+        super.setUpServices();
+        action.setCtGovSyncService(ctGovSyncService);
+        action.setStudyProtocolService(studyProtocolService);
+    }
+    
     @Test
     public void testProperty() {
         assertNull(action.getSum4FundingCatCode());
@@ -169,16 +191,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", action.review());
         assertTrue(action.getActionErrors().contains("Date Closed for Accrual must be same or bigger  than Date Opened for Accrual."));
     }
-    @Test
-    public void testReviewMissingNCTNumberAndProtocolDoc() throws Exception{
-        action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setNctIdentifier(null);
-        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
-        File f = new File(fileUrl.toURI());
-        action.setOtherDocument(new File[] {(f)});
-        action.setOtherDocumentFileName(new String[] {FILE_NAME});
-        assertEquals("error", action.review());
-    }
+    
     @Test
     public void testReviewInvalidDocAndMissingFiled() throws Exception{
         action.setTrialDTO(getMockProprietaryTrialDTO());
@@ -236,4 +249,81 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
         assertEquals("error", action.create());
     }
+    
+    @Test
+    public void searchByNct() throws PAException {
+        HttpSession sess = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+
+        when(ctGovSyncService.getAdaptedCtGovStudyByNctId("NCT01861054"))
+                .thenReturn(new CTGovStudyAdapter(null));
+        when(studyProtocolService.getStudyProtocolsByNctId("NCT01861054"))
+                .thenReturn(new ArrayList<StudyProtocolDTO>());
+
+        action.setNctID("NCT01861054");
+        action.clearActionErrors();
+
+        assertEquals("redirect_to_nct_import", action.searchByNct());
+    }
+    
+    @Test
+    public void searchByNctInvalidNCT() throws PAException {
+        HttpSession sess = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+
+        action.setNctID("  ");
+        action.clearActionErrors();
+        assertEquals("input_nct", action.searchByNct());
+        assertTrue(action.getActionErrors().contains(
+                "Please provide an ClinicalTrials.gov Identifier value."));
+        
+        action.setNctID("NCT1111111%");
+        action.clearActionErrors();
+        assertEquals("input_nct", action.searchByNct());
+        assertTrue(action.getActionErrors().contains(
+                "Provided ClinicalTrials.gov Identifer is invalid."));
+    }
+    
+    @Test
+    public void searchByNctNotExistInCtGov() throws PAException {
+        HttpSession sess = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+
+        when(ctGovSyncService.getAdaptedCtGovStudyByNctId("NCT01861054"))
+                .thenReturn(null);       
+        action.setNctID("NCT01861054");
+        action.clearActionErrors();
+
+        assertEquals("input_nct", action.searchByNct());
+        assertTrue(action.getActionErrors().contains(
+                "A study with the given identifier is not found in ClinicalTrials.gov."));
+    }
+    
+    @Test
+    public void searchByNctAlreadyInCTRP() throws PAException {
+        HttpSession sess = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+
+        when(ctGovSyncService.getAdaptedCtGovStudyByNctId("NCT01861054"))
+                .thenReturn(new CTGovStudyAdapter(null));
+        when(studyProtocolService.getStudyProtocolsByNctId("NCT01861054"))
+                .thenReturn(Arrays.asList(new StudyProtocolDTO()));
+        action.setNctID("NCT01861054");
+        action.clearActionErrors();
+
+        assertEquals("input_nct", action.searchByNct());
+        assertTrue(action
+                .getActionErrors()
+                .contains(
+                        "A study with the given identifier already exists in CTRP."));
+    }
+    
 }

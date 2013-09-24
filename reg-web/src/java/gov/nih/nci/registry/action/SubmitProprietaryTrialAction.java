@@ -18,6 +18,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -53,8 +55,9 @@ import com.opensymphony.xwork2.Preparable;
  * @author Vrushali
  *
  */
-@SuppressWarnings("PMD.CyclomaticComplexity")
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAction implements Preparable {
+    private static final String INPUT_NCT = "input_nct";
     /**
      *
      */
@@ -64,6 +67,10 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     private String sum4FundingCatCode;
     private final TrialUtil  util = new TrialUtil();
     private String currentUser;
+    private String nctID;
+    
+    private CTGovSyncServiceLocal ctGovSyncService;
+    private StudyProtocolServiceLocal studyProtocolService;
 
     /**
      * Default constructor.
@@ -102,6 +109,47 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         setPageFrom("proprietaryTrial");
         return SUCCESS;
     }
+    
+    /**
+     * @return input_nct
+     */
+    public String inputNct() {
+        return INPUT_NCT;
+    }
+    
+    /**
+     * @return st
+     */
+    public String searchByNct() {
+        try {
+            validateNctIDAndAbilityToImport(getNctID());
+            if (!hasActionErrors()) {
+                return "redirect_to_nct_import";
+            }
+        } catch (PAException e) {
+            LOG.error(e, e);
+            addActionError(e.getMessage());
+        }
+        return INPUT_NCT;
+    }
+    
+    /**
+     * @param nctIdToValidate
+     * @throws PAException
+     */
+    private void validateNctIDAndAbilityToImport(final String nctIdToValidate) throws PAException {
+        if (StringUtils.isBlank(nctIdToValidate)) {
+            addActionError("Please provide an ClinicalTrials.gov Identifier value.");
+        } else if (!StringUtils.isAlphanumericSpace(nctIdToValidate)) {
+            addActionError("Provided ClinicalTrials.gov Identifer is invalid.");
+        } else if (ctGovSyncService
+                .getAdaptedCtGovStudyByNctId(nctIdToValidate) == null) {
+            addActionError("A study with the given identifier is not found in ClinicalTrials.gov.");
+        } else if (!studyProtocolService.getStudyProtocolsByNctId(// NOPMD
+                nctIdToValidate).isEmpty()) {
+            addActionError("A study with the given identifier already exists in CTRP.");
+        }
+    }
 
     /**
      * 
@@ -137,8 +185,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
     }
 
     @SuppressWarnings("unchecked")
-    private void enforceBusinessRules() {
-        HttpSession session = ServletActionContext.getRequest().getSession();
+    private void enforceBusinessRules() {        
         ClassValidator<ProprietaryTrialDTO> validator =
                 new ClassValidator<ProprietaryTrialDTO>(ProprietaryTrialDTO.class);
         final ProprietaryTrialDTO trialDTO = getTrialDTO();
@@ -160,7 +207,6 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             }
         }
         
-        checkNctAndDoc(session);
         checkSummary4Funding();
         
         Map<String, String> errMap = new HashMap<String, String>();
@@ -392,6 +438,37 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
 
     @Override
     public void prepare() {
-        currentUser = UsernameHolder.getUser();        
+        currentUser = UsernameHolder.getUser();    
+        ctGovSyncService = PaRegistry.getCTGovSyncService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+    }
+
+    /**
+     * @return the nctID
+     */
+    public String getNctID() {
+        return nctID;
+    }
+
+    /**
+     * @param nctID the nctID to set
+     */
+    public void setNctID(String nctID) {
+        this.nctID = nctID != null ? nctID.trim() : null;
+    }
+
+    /**
+     * @param ctGovSyncService the ctGovSyncService to set
+     */
+    public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
+        this.ctGovSyncService = ctGovSyncService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(
+            StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 }

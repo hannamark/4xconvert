@@ -1,14 +1,12 @@
 package gov.nih.nci.registry.action;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -107,23 +105,6 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
         }
     }
 
-    /**
-     * checkNctAndDoc.
-     * 
-     * @param session
-     *            HttpSession
-     */
-    protected void checkNctAndDoc(HttpSession session) {
-        if (StringUtils.isEmpty(trialDTO.getNctIdentifier())
-                && StringUtils.isEmpty(getProtocolDocFileName())
-                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT
-                        .getShortName()) == null) {
-            addFieldError("trialDTO.nctIdentifier",
-                    "Provide either NCT Number or Protocol Trial Template.\n");
-            addFieldError("trialDTO.protocolDocFileName",
-                    "Provide either NCT Number or Protocol Trial Template.\n");
-        }
-    }
     
     /**
      * @return ConsortiaTrialCategoryValueMap

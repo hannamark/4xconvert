@@ -41,8 +41,8 @@
 			<reg-web:failureMessage />
 			<reg-web:sucessMessage />
 			<c:if test="${searchPerformed}">
-				<p align="justify" class="info">Sorry, no match was found in
-					CTRP system using the NCT identifier specified. However, a match
+				<p align="justify" class="info">No match was found in
+					CTRP system using the ClinicalTrials.gov identifier specified. However, a match
 					has been found in ClinicalTrials.gov. Please review the following
 					trial details and click 'Import Trial From ClinicalTrials.gov'
 					button if you wish to proceed and register this trial in CTRP

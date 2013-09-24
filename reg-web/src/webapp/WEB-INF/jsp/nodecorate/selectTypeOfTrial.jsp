@@ -18,7 +18,7 @@
                 	return;
             	}    
             	if (sum4FundingCatCode == 'Industrial') { 
-            	    action = action + "/protected/submitProprietaryTrial.action?sum4FundingCatCode=" + sum4FundingCatCode;
+            	    action = action + "/protected/submitProprietaryTrialinputNct.action?sum4FundingCatCode=" + sum4FundingCatCode;
                 } else {
             		action = action + "/protected/submitTrial.action?sum4FundingCatCode=" + sum4FundingCatCode; 
                 }
