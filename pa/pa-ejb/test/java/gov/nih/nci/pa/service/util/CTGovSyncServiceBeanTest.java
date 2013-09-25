@@ -895,13 +895,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 "A Single Arm, Preoperative, Pilot Study to Evaluate the Safety and Biological Effects of Orally Administered Reparixin in Early Breast Cancer Patients Who Are Candidates for Surgery",
                 sp.getOfficialTitle());
         assertTrue(sp.getDataMonitoringCommitteeAppointedIndicator());
-        assertEquals(
-                "Food and Drug Administration",
-                regulatoryInfoSvc.get(
-                        Long.parseLong(studyRegulatoryAuthorityService
-                                .getCurrentByStudyProtocol(ii)
-                                .getRegulatoryAuthorityIdentifier()
-                                .getExtension())).getAuthorityName());
+        
+        checkRegulatoryInformation(ii);
+        
         assertEquals(
                 "cancer investigating use of reparixin as single agent in the time period between clinical",
                 sp.getPublicDescription());
@@ -983,6 +979,25 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 sp.getKeywordText());
         assertTrue(sp.getFdaRegulatedIndicator());
         assertTrue(sp.getExpandedAccessIndicator());
+    }
+
+    /**
+     * @param spID
+     * @throws PAException
+     * @throws NumberFormatException
+     */
+    private void checkRegulatoryInformation(Ii spID) throws PAException,
+            NumberFormatException {
+        assertEquals(
+                "Food and Drug Administration",
+                regulatoryInfoSvc.get(
+                        Long.parseLong(studyRegulatoryAuthorityService
+                                .getCurrentByStudyProtocol(spID)
+                                .getRegulatoryAuthorityIdentifier()
+                                .getExtension())).getAuthorityName());
+        // Check only one record in study_regulatory_authority table.
+        assertEquals(1, studyRegulatoryAuthorityService
+                                .getByStudyProtocol(spID).size());
     }
 
     /**

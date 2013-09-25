@@ -1004,11 +1004,19 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Ii spIi)
             throws PAException {
         if (studyRegAuthDTO != null) {
-            studyRegAuthDTO.setStudyProtocolIdentifier(spIi);
-            getPAServiceUtils().createOrUpdate(
-                    Arrays.asList(studyRegAuthDTO),
-                    IiConverter.convertToStudyRegulatoryAuthorityIi(null),
-                    spIi);
+            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = studyRegulatoryAuthorityService
+                    .getCurrentByStudyProtocol(spIi);
+            if (sraFromDatabaseDTO != null) {
+                studyRegAuthDTO.setIdentifier(sraFromDatabaseDTO
+                        .getIdentifier());
+            }
+
+            getPAServiceUtils()
+                    .createOrUpdate(
+                            Arrays.asList(studyRegAuthDTO),
+                            IiConverter
+                                    .convertToStudyRegulatoryAuthorityIi(null),
+                            spIi);
         }
     }
 
