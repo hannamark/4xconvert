@@ -35,11 +35,11 @@
     }
     
     function displayClinicalTrialDetails(nctId) {
-    	var width = 1000;
-        var height = 700;
+    	var width = 800;
+        var height = 600;
         if (Prototype.Browser.IE) {
-            width = 870;
-            height = 700;                   
+            width = 670;
+            height = 500;                   
         }
         showPopWin('http://clinicaltrials.gov/ct2/show/'+nctId+'?term='+nctId+'&rank=1', width, height, '', 'ClinicalTrials.Gov Details');
     }    
