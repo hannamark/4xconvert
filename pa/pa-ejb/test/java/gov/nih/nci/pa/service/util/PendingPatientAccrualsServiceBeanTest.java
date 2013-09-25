@@ -21,9 +21,13 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
@@ -40,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,6 +57,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
 	private LookUpTableServiceRemote lookUpTableService;
     private MailManagerServiceLocal mailManagerSvc = mock(MailManagerServiceLocal.class);
     private StudyProtocolServiceLocal spSvc = mock(StudyProtocolServiceLocal.class);
+    private ServiceLocator priorServiceLocator;
 	
 	@Before
     public void setup() throws Exception {
@@ -96,7 +102,22 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
         orgDtos.add(new OrganizationDTO());
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(orgDtos);
         
+        priorServiceLocator = PaRegistry.getInstance().getServiceLocator();
+        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        
+        final StudySiteServiceLocal studySiteServiceLocal = mock(StudySiteServiceLocal.class);
+        when(paSvcLoc.getStudySiteService()).thenReturn(studySiteServiceLocal);
+        
+        final OrganizationCorrelationServiceRemote correlationServiceRemote = mock(OrganizationCorrelationServiceRemote.class);
+        when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(correlationServiceRemote);
+        
     }
+	
+	@After
+	public void done() {
+	    PaRegistry.getInstance().setServiceLocator(priorServiceLocator);
+	}
 	
 	@Test
     public void testServiceMethods() throws Exception {
