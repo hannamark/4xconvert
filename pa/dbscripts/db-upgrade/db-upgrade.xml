@@ -1457,4 +1457,8 @@
         <comment>Added labels for fields of interest to pa_properties.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6497.sql"/>
      </changeSet>
+     <changeSet id="PO-6520" author="krylovd">
+        <comment>Removes duplicate records in study_regulatory_authority table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6520.sql"/>
+     </changeSet>
 </databaseChangeLog>
