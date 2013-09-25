@@ -7,6 +7,7 @@ import static gov.nih.nci.pa.enums.StudyInboxTypeCode.VALIDATION;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -878,8 +879,13 @@ public class StudyMilestoneBeanLocal
                     PaHibernateUtil.getCurrentSession().flush();                    
                     trialRegistrationService.reject(sp.getIdentifier(), workDto.getCommentText(), 
                             workDto.getRejectionReasonCode());
-                }                
-                mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
+                    String comment = workDto.determineCommentText() == null ? "Unknown Reason" : workDto.determineCommentText().getValue();
+                    
+                    mailManagerService.sendAmendRejectEmail(workDto.getStudyProtocolIdentifier(), 
+                            comment);
+                } else {
+                    mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
+                }
             } catch (PAException e) {
                 throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
                         + "be recorded.", e);

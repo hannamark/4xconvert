@@ -240,7 +240,7 @@ public final class MilestoneAction extends ActionSupport {
     }
 
     private Ii getTrialIiBySubmissionNumber() {
-        if (amendmentMap.isEmpty()) {
+        if (amendmentMap.isEmpty() || submissionNumber == null || !amendmentMap.containsKey(submissionNumber)) {
             return getSpIi();
         } else {
             return amendmentMap.get(submissionNumber).getIdentifier();
