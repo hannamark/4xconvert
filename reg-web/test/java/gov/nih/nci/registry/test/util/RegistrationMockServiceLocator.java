@@ -255,6 +255,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
         try {
             when(svc.getDistinctCountryNames()).thenReturn(regAuthorityCountries);
+            when(svc.getDistinctCountryNamesStartWithUSA()).thenReturn(regAuthorityCountries);
             when(svc.getRegulatoryAuthorityNameId(any(Long.class))).thenReturn(new ArrayList<RegulatoryAuthOrgDTO>());
             when(svc.getRegulatoryAuthorityNameId(1L)).thenReturn(regAuthorityOrgs);
             when(svc.getRegulatoryAuthorityInfo(any(Long.class))).thenReturn(Arrays.asList(1L, 2L));

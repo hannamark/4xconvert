@@ -243,7 +243,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
 
                 TrialSessionUtil.addSessionAttributes(trialDTO);
-                trialUtil.populateRegulatoryList(trialDTO);
+                //trialUtil.populateRegulatoryList(trialDTO);
+                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
                 synchActionWithDTO();
                 this.fieldErrors.clearTrackedKeys();
                 return ERROR;
@@ -251,7 +252,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             if (hasActionErrors()) {
                 TrialSessionUtil.addSessionAttributes(trialDTO);
                 synchActionWithDTO();
-                trialUtil.populateRegulatoryList(trialDTO);
+                //trialUtil.populateRegulatoryList(trialDTO);
+                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
                 return ERROR;
             }
             trialDTO.setDocDtos(getTrialDocuments());
@@ -279,12 +281,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         } catch (IOException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();
-            trialUtil.populateRegulatoryList(trialDTO);
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
         } catch (PAException e) {
             LOG.error(e.getMessage());
             synchActionWithDTO();
-            trialUtil.populateRegulatoryList(trialDTO);
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
         }
         TrialSessionUtil.removeSessionAttributes();
@@ -342,7 +346,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession(trialDTO);
         synchActionWithDTO();
-        trialUtil.populateRegulatoryList(trialDTO);
+        //trialUtil.populateRegulatoryList(trialDTO);
+        trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
         existingDocuments = trialUtil.getTrialDocuments(trialDTO);
         TrialSessionUtil.addSessionAttributes(trialDTO);
         return "edit";
@@ -427,7 +432,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
             LOG.error("Exception occured while updating trial", e);
             TrialSessionUtil.addSessionAttributes(trialDTO);
-            trialUtil.populateRegulatoryList(trialDTO);
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             synchActionWithDTO();
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);

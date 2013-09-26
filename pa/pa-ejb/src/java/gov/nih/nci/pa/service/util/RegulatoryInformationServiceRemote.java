@@ -109,7 +109,13 @@ public interface RegulatoryInformationServiceRemote  {
      */
      List<CountryRegAuthorityDTO> getDistinctCountryNames() throws PAException;
 
-
+     /**
+      * Method to get a list of distinct country names with USA being placed first in the order
+      * @return List of distinct country names
+      * @throws PAException on error
+      */
+     List<CountryRegAuthorityDTO> getDistinctCountryNamesStartWithUSA() throws PAException;
+     
      /**
       * Method to get a list of Regulatory Authority organizations for a given
       * regulatory authority id.

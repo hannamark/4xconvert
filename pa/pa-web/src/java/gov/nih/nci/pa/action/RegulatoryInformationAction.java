@@ -224,7 +224,8 @@ public class RegulatoryInformationAction extends ActionSupport {
                         Long.valueOf(getLst()));
                 setSelectedRegAuth(getSelectedRegAuth());
             }
-            countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+            //countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNames();
+            countryList = PaRegistry.getRegulatoryInformationService().getDistinctCountryNamesStartWithUSA();
             if (authorityDTO != null
                     || BlConverter.convertToBool(spDTO
                             .getProprietaryTrialIndicator())) { // load values

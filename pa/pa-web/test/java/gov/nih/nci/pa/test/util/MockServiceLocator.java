@@ -395,6 +395,7 @@ public class MockServiceLocator implements ServiceLocator {
         RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
         try {
             when(svc.getDistinctCountryNames()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
+            when(svc.getDistinctCountryNamesStartWithUSA()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
         } catch (PAException e) {
             //Unreachable
         }

@@ -1151,6 +1151,25 @@ public class TestSchema {
         c1.setName("Cayman Islands");
         return c1;
     }
+    public static ArrayList<Country> createCountryObjs() {
+        ArrayList<Country> countries = new ArrayList<Country>();
+        Country c1 = new Country();
+        c1.setAlpha2("ZM");
+        c1.setAlpha3("ZIM");
+        c1.setName("Zimbabwe");
+        countries.add(c1);
+        Country c2 = new Country();
+        c2.setAlpha2("CA");
+        c2.setAlpha3("CAM");
+        c2.setName("Cayman Islands");
+        countries.add(c2);
+        Country c3 = new Country();
+        c3.setAlpha2("US");
+        c3.setAlpha3("USA");
+        c3.setName("United States");
+        countries.add(c3);
+        return countries;
+    }
 
     public static StudyRecruitmentStatus createStudyRecruitmentStatus(
             StudyProtocol sp) {
@@ -1241,6 +1260,19 @@ public class TestSchema {
         ra.setUserLastUpdated(getUser());
         ra.setDateLastUpdated(TODAY);
         return ra;
+    }
+    
+   public static ArrayList<RegulatoryAuthority> createRegulatoryObjs(List<Country> c) {
+        ArrayList<RegulatoryAuthority> list = new ArrayList<RegulatoryAuthority>();
+        for (Country cValue : c) {
+            RegulatoryAuthority ra = new RegulatoryAuthority();
+            ra.setAuthorityName("BWI reg body");
+            ra.setCountry(cValue);
+            ra.setUserLastUpdated(getUser());
+            ra.setDateLastUpdated(TODAY);
+            list.add(ra);
+        }
+        return list;
     }
 
     public static PDQDisease createPdqDisease(String preferredName) {

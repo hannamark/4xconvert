@@ -87,6 +87,7 @@ import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -123,6 +124,23 @@ public class RegulatoryInformationServiceTest extends AbstractHibernateTestCase 
         assertEquals("Alpha 2 does not match" , data.get(0).getAlpha2(), "CA");
         assertEquals("Alpha 3 does not match" , data.get(0).getAlpha3(), "CAM");
         assertEquals("Name does not match" , data.get(0).getName(), "Cayman Islands");
+    }
+    
+    @Test
+    public void getDistinctCountryNamesStartWithUSATest() throws Exception {
+        ArrayList<Country> c = TestSchema.createCountryObjs();
+        ArrayList<RegulatoryAuthority> ra = TestSchema.createRegulatoryObjs(c);
+        TestSchema.addUpdObjects(c);
+        TestSchema.addUpdObjects(ra);
+        List<CountryRegAuthorityDTO> data = remoteEjb.getDistinctCountryNamesStartWithUSA();
+        assertNotNull(data);
+        assertEquals("Size matchs" , data.size(), 3);
+        assertEquals("Alpha 2 does not match" , data.get(0).getAlpha2(), "US");
+        assertEquals("Alpha 3 does not match" , data.get(0).getAlpha3(), "USA");
+        assertEquals("Name does not match" , data.get(0).getName(), "United States");
+        assertEquals("Alpha 2 does not match" , data.get(1).getAlpha2(), "CA");
+        assertEquals("Alpha 3 does not match" , data.get(1).getAlpha3(), "CAM");
+        assertEquals("Name does not match" , data.get(1).getName(), "Cayman Islands");
     }
 
     @Test

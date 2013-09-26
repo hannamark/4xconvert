@@ -185,7 +185,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         trialDTO.setTrialType("Interventional");
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialSessionUtil.removeSessionAttributes();
-        trialUtil.populateRegulatoryList(trialDTO);
+        //trialUtil.populateRegulatoryList(trialDTO);
+        // have to call the usa list. 
+        trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
         trialDTO.setSummaryFourFundingCategoryCode(sum4FundingCatCode);
         setPageFrom("submitTrial");
         return SUCCESS;
@@ -257,7 +259,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
                 addActionError("Error occurred. Please try again.");
             }
             LOG.error("Exception occured while submitting trial", e);
-            trialUtil.populateRegulatoryList(trialDTO);
+            // have to call the usa country list
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             setDocumentsInSession(trialDTO);
             return ERROR;
         }
@@ -304,7 +308,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", getText("error.fieldErrors"));
                 TrialSessionUtil.addSessionAttributes(trialDTO);
-                trialUtil.populateRegulatoryList(trialDTO);
+                // have to call the usa country list
+                //trialUtil.populateRegulatoryList(trialDTO);
+                trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
                 return ERROR;
             }
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
@@ -371,7 +377,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
         TrialSessionUtil.addSessionAttributes(getTrialDTO());
-        trialUtil.populateRegulatoryList(getTrialDTO());
+        // have to call the usa country list
+        //trialUtil.populateRegulatoryList(getTrialDTO());
+        trialUtil.populateRegulatoryListStartWithUSA(getTrialDTO());
         setDocumentsInSession(getTrialDTO());
         return "edit";
     }
@@ -423,7 +431,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             LOG.error(e.getMessage());
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             TrialSessionUtil.addSessionAttributes(trialDTO);
-            trialUtil.populateRegulatoryList(trialDTO);            
+            // have to call the usa country list
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
         } catch (IOException e) {
             LOG.error(e.getMessage());

@@ -275,12 +275,14 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             ServletActionContext.getRequest().setAttribute("failureMessage",
                     "The form has errors and could not be submitted, please check the fields highlighted below");
             TrialSessionUtil.addSessionAttributes(trialDTO);
-            trialUtil.populateRegulatoryList(trialDTO);
+           // trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
         }
         if (hasActionErrors()) {
             TrialSessionUtil.addSessionAttributes(trialDTO);
-            trialUtil.populateRegulatoryList(trialDTO);
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             return ERROR;
         }
         return null;
@@ -293,7 +295,8 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
     public String edit() {
         setTrialDTO((TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE));
-        trialUtil.populateRegulatoryList(getTrialDTO());
+        //trialUtil.populateRegulatoryList(getTrialDTO());
+        trialUtil.populateRegulatoryListStartWithUSA(getTrialDTO());
         TrialSessionUtil.addSessionAttributes(getTrialDTO());
         setDocumentsInSession(getTrialDTO());
         return "edit";
@@ -373,7 +376,8 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
             trialUtil.removeAssignedIdentifierFromSecondaryIds(trialDTO);
-            trialUtil.populateRegulatoryList(trialDTO);
+            //trialUtil.populateRegulatoryList(trialDTO);
+            trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
             setDocumentsInSession(trialDTO);
             return ERROR;
         }

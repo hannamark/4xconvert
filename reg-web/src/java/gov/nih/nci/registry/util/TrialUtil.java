@@ -517,7 +517,8 @@ public class TrialUtil extends TrialConvertUtils {
      */
     private void copyRegulatoryInformation(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
-        trialDTO.setCountryList(regInfoSvc.getDistinctCountryNames());
+        //trialDTO.setCountryList(regInfoSvc.getDistinctCountryNames());
+        trialDTO.setCountryList(regInfoSvc.getDistinctCountryNamesStartWithUSA());
         StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
         StudyRegulatoryAuthorityDTO authorityDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
         if (authorityDTO != null) { // load values from database
@@ -617,14 +618,13 @@ public class TrialUtil extends TrialConvertUtils {
         sraFromDatabaseDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(trialDTO.getSelectedRegAuth()));
         return sraFromDatabaseDTO;
     }
-
     /**
      * @param trialDTO trialDTO
      */
     @SuppressWarnings({ "PMD" })
-    public void populateRegulatoryList(TrialDTO trialDTO) {
+    public void populateRegulatoryListStartWithUSA(TrialDTO trialDTO) {
         try {
-            trialDTO.setCountryList(PaRegistry.getRegulatoryInformationService().getDistinctCountryNames());
+            trialDTO.setCountryList(PaRegistry.getRegulatoryInformationService().getDistinctCountryNamesStartWithUSA());
             if (NumberUtils.isNumber(trialDTO.getLst())) {
                 trialDTO.setRegIdAuthOrgList(PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityNameId(
                         Long.valueOf(trialDTO.getLst())));
@@ -633,7 +633,6 @@ public class TrialUtil extends TrialConvertUtils {
             // do nothing
         }
     }
-
     /**
      * Copy dcp nummber.
      *
@@ -691,7 +690,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setIndIdeDtos(webIndDtos);
         if (StringUtils.isEmpty(trialDTO.getPropritaryTrialIndicator())
                 || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
-            populateRegulatoryList((TrialDTO) trialDTO);
+            populateRegulatoryListStartWithUSA((TrialDTO) trialDTO);
         }
         populateStageTrialDocuments(trialDTO);
         return trialDTO;
