@@ -798,11 +798,12 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private void loadNciSpecificInformation(Ii studyProtocolIi) throws PAException {
         List<StudyResourcingDTO> nciSpecificInfoList =
             PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi);
-        List<AuditLogDetail> studyContactDetails = null;
+        List<AuditLogDetail> studyContactDetails = new ArrayList<AuditLogDetail>();
         for (StudyResourcingDTO nciSpecificInfo : nciSpecificInfoList) {
-                studyContactDetails = getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), 
+            List<AuditLogDetail> auditLogDetails = getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), 
                         nciSpecificInfo.getIdentifier(),
                         PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate));
+            studyContactDetails.addAll(auditLogDetails);
         }
         List<AuditLogDetail> spDetails = getAuditTrailService().getAuditTrailByFields(StudyProtocol.class,
                 studyProtocolIi, PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate),
