@@ -43,6 +43,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -220,7 +221,8 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
                 Ii ii = DSetConverter.convertToIi(foundStudy.getSecondaryIdentifiers());
                 hql = hql.append(" where studyIdentifier = '").append(ii.getExtension()).append("'");
             } else {
-                hql = hql.append(" where studyIdentifier = '").append(identifier).append("'");
+                hql = hql.append(" where studyIdentifier = '")
+                    .append(StringEscapeUtils.escapeSql(identifier)).append("'");
             }
         }
         hql = hql.append(" order by studyProtocolIdentifier");

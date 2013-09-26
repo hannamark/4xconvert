@@ -196,7 +196,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
         
         bean.setUseTestSeq(true);
         
-        List<PatientStage> results = bean.getAllPatientsStage("CTEP");
+        List<PatientStage> results = bean.getAllPatientsStage("'; drop table abc;");
         assertEquals(0, results.size());
 
         StudyProtocolDTO dto = new StudyProtocolDTO();
