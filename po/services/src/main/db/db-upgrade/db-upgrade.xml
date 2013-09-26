@@ -188,10 +188,6 @@
        <comment>Remove not null constraint from zip.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.10/PO-5922.sql"/>
     </changeSet>
-    <changeSet id="PO-6229" author="Kalpana">
-       <comment>Function to set status to ACTIVE for CTEP Organizations and roles.</comment>
-       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.10/PO-6229.sql"/>
-    </changeSet>
     <changeSet id="PO-6248" author="Hugh">
        <comment>Add P30 grants table.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.10/PO-6248.sql"/>
