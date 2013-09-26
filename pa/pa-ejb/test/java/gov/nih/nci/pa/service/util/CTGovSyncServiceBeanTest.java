@@ -176,7 +176,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                     }
                 });
         
-        ocsr.createResearchOrganizationCorrelations("100"); // <-- CT.Gov
+        ocsr.createResearchOrganizationCorrelations(MockOrganizationEntityService.CT_GOV_ID+""); // <-- CT.Gov
     }
 
     /**

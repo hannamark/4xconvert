@@ -142,6 +142,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when (paSvcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemote);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteService);
         
+        OrganizationCorrelationServiceBean.resetCache();
         ocsr = mock(OrganizationCorrelationServiceBean.class);
         when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
             @Override

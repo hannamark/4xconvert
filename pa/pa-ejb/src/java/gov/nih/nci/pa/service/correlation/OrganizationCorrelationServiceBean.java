@@ -147,7 +147,10 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static final long CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
     private static Date cacheTimeout = new Date();
 
-    static void resetCache() {
+    /**
+     * Resets cache.
+     */
+    public static void resetCache() {
         dcpCtepCtgovOrgIdCache = new ConcurrentHashMap<String, String>();
         cacheTimeout.setTime(new Date().getTime() + CACHE_DURATION);
     }

@@ -42,11 +42,14 @@ public class MockOrganizationEntityService implements
 
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
     
+    public static long CT_GOV_ID;
+    
     static {
         OrganizationDTO ctgov = new OrganizationDTO();
         ctgov.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
         try {
             createOrg(ctgov);
+            CT_GOV_ID = IiConverter.convertToLong(ctgov.getIdentifier());
         } catch (Exception e) {          
             e.printStackTrace();
         } 
