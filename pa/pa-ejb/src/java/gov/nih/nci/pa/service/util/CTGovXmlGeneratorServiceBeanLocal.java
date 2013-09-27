@@ -182,6 +182,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
@@ -262,11 +263,19 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             doc.appendChild(root);  
             
             for (Ii trialID : studyProtocolIds) {
-                StudyProtocolDTO spDTO = getStudyProtocol(trialID);
-                Element studyElement = doc.createElement("clinical_study");
-                root.appendChild(studyElement);
-                populateClinicalStudyElement(spDTO, doc, studyElement, options);                
-            }            
+                try {
+                    StudyProtocolDTO spDTO = getStudyProtocol(trialID);
+                    Element studyElement = doc.createElement("clinical_study");
+                    populateClinicalStudyElement(spDTO, doc, studyElement,
+                            options);
+                    root.appendChild(studyElement);
+                } catch (Exception e) {
+                    LOG.error("XML generation failed for trial ID="
+                            + IiConverter.convertToString(trialID)
+                            + ". This trial will be excluded from clinical.txt. Reason is below.");
+                    LOG.error(ExceptionUtils.getFullStackTrace(e));
+                }
+            }       
             
             return transformIntoString(doc);
         } catch (Exception e) {
