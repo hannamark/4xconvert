@@ -22,6 +22,6 @@
     <new-connection-sql>select 1</new-connection-sql>
     <check-valid-connection-sql>select 1</check-valid-connection-sql>
     <min-pool-size>5</min-pool-size>
-    <max-pool-size>20</max-pool-size>
+    <max-pool-size>40</max-pool-size>
   </local-tx-datasource>
 </datasources>
