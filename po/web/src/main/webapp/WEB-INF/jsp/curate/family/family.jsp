@@ -17,7 +17,7 @@
            var map = new Array();
            map['NULLIFIED'] = '<s:text name="entity.edit.nullified.confirmation"/>';
            map['INACTIVE'] = '<s:text name="entity.edit.inactive.confirmation"/>';
-           finalConfirmThenSubmit($(fieldId),$(formId),map);
+           finalConfirmThenSubmitNoDuplicateOfCheck($(fieldId),$(formId),map);
         }
     </script>
     <%@include file="../../confirmThenSubmit.jsp" %>
