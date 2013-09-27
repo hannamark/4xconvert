@@ -334,6 +334,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     StringUtils.isNotEmpty(results.getErrors().toString()) ? false : true);
         results.setListOfOrgIds(listOfOrgIds);
         results.setListOfPoStudySiteIds(listOfPoIds);
+        results.setDiseaseCodeSystem(codeSystemFile);
 
         if (!bfErrors.isHasNonSiteErrors() && superAbstractor) {
             for (Long studySiteId : listOfPoIds.values()) {
@@ -406,7 +407,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             }
         }
         validatePatientsMandatoryData(key, values, bfErrors, lineNumber, 
-                    sp, codeSystemFile, checkDisease, accrualSubmissionLevel);
+                    sp, codeSystemFile, checkDisease, accrualSubmissionLevel, superAbstractor);
         validateRegisteringInstitutionCode(key, values, lineNumber);
         validatePatientRaceData(key, values, bfErrors, lineNumber);
         validateAccrualCount(key, values, bfErrors, lineNumber, sp, accrualSubmissionLevel);

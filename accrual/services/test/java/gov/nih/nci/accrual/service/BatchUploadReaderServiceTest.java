@@ -91,6 +91,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -135,6 +136,7 @@ import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -382,6 +384,47 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("suAbs-accrual-count-batch-file.txt", importResults.getFileName());
         assertEquals(2, importResults.getTotalImports());       
     }
+    
+    @Test
+    public void testSuAbstractorMissingDiseaseBatchUpload() throws Exception {
+    	
+    	 CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+        
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);     
+
+        AccrualDisease disease1 = new AccrualDisease();
+        disease1.setCodeSystem("SDC");
+        disease1.setDiseaseCode("80000001");
+        when(diseaseSvc.getByCode("80000001")).thenReturn(disease1);
+        
+        File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file2.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        System.out.println("testing if disease is empty");
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        String errorMsg = results.get(0).getErrors().toString();
+   	    assertTrue(StringUtils.isEmpty(errorMsg));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(0, 1, 0);
+
+        BatchFile r = getResultFromDb();
+        assertTrue(r.isPassedValidation());
+        assertTrue(r.isProcessed());
+        assertTrue(r.getFileLocation().contains("suAbs-accrual-patients-batch-file2.txt"));
+        assertTrue(StringUtils.isEmpty(r.getResults()));
+        assertEquals(1, r.getAccrualCollections().size());
+        AccrualCollections collection = r.getAccrualCollections().get(0);
+        assertTrue(collection.isPassedValidation());
+        assertEquals(AccrualChangeCode.YES, collection.getChangeCode());
+        assertEquals("NCI-2010-00003", collection.getNciNumber());
+        assertTrue(StringUtils.isEmpty(collection.getResults()));
+        assertEquals((Integer) 3, collection.getTotalImports());
+    }
 	   
  @Test
  public void testSuAbstractorCtepTrialBatchUpload() throws Exception {
@@ -392,7 +435,12 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      
      SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
      readerService.setSearchStudySiteService(sssSvc);
-     when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+     when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);     
+
+     AccrualDisease disease1 = new AccrualDisease();
+     disease1.setCodeSystem("SDC");
+     disease1.setDiseaseCode("80000001");
+     when(diseaseSvc.getByCode("80000001")).thenReturn(disease1);
      
      File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      BatchFile batchFile = getBatchFile(file);
@@ -401,7 +449,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      assertFalse(results.get(0).isPassedValidation());
      String errorMsg = results.get(0).getErrors().toString();
 	 assertFalse(StringUtils.isEmpty(errorMsg));
-     assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 93"));
+	 assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 93"));
      assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 2013"));
      assertFalse(results.get(0).getValidatedLines().isEmpty());
      verifyEmailsSent(0, 1, 0);
@@ -422,6 +470,26 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      List<PatientStage> queryList = getPatientStage("NCI-2010-00003");
      assertEquals(2, queryList.size());
      
+     when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD9");
+     disease1.setCodeSystem("ICD9");
+     disease1.setDiseaseCode("V100");     
+     when(diseaseSvc.getByCode("V100")).thenReturn(disease1);
+     
+     file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
+     batchFile = getBatchFile(file);
+     results = readerService.validateBatchData(batchFile);
+     
+     when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
+     disease1.setCodeSystem("ICD-O-3");
+     disease1.setDiseaseCode("C998");
+     when(diseaseSvc.getByCode("C998")).thenReturn(disease1);
+     disease1.setDiseaseCode("7001");
+     when(diseaseSvc.getByCode("7001")).thenReturn(disease1);
+     
+     file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
+     batchFile = getBatchFile(file);
+     results = readerService.validateBatchData(batchFile);
+     
      setStudyProtocolSvc();
      file = new File(this.getClass().getResource("/suAbs-accrual-count-batch-file2.txt").toURI());
      batchFile = getBatchFile(file);
@@ -432,7 +500,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 	 assertFalse(StringUtils.isEmpty(errorMsg));
      assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 2013"));
      assertFalse(results.get(0).getValidatedLines().isEmpty());
-     verifyEmailsSent(0, 2, 0);
+     verifyEmailsSent(0, 4, 0);
 
      r = getResultFromDb();
      assertFalse(r.isPassedValidation());
@@ -585,6 +653,12 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(r.getFileLocation().contains("accrual_format_issue_file.zip"));
         assertFalse(StringUtils.isEmpty(r.getResults()));
         assertTrue(StringUtils.contains(r.getResults(), "Failed proceesing a batch file: "));
+        
+        LookUpTableServiceRemote lookUpTableSvc = paSvcLocator.getLookUpTableService();
+        doThrow(new  gov.nih.nci.pa.service.PAException("PAException")).when(lookUpTableSvc).getPropertyValue(any(String.class));
+        file = new File(this.getClass().getResource("/accrual_format_issue_file.zip").toURI());
+        batchFile = getBatchFile(file);
+        readerService.validateBatchData(batchFile);
 	}
 
 	@Test

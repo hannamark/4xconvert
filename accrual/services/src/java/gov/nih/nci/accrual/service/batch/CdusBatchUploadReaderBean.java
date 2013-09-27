@@ -168,9 +168,16 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.NPathComplexity", 
-                "PMD.ExcessiveClassLength" })
+                "PMD.ExcessiveClassLength", "PMD.ExcessiveParameterList" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
-    private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class); 
+    private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class);
+    private static final String ICD_O_3_CODESYSTEM = "ICD-O-3";
+    private static final String SDC_CODESYSTEM = "SDC";
+    private static final String ICD9_CODESYSTEM = "ICD9";
+    private static final String ICDO3_HIST_DEFAULT_DISEASECODE = "7001";
+    private static final String ICDO3_DEFAULT_SITEDISEASECODE = "C998";
+    private static final String SDC_DEFAULT_DISEASECODE = "80000001";
+    private static final String ICD9_DEFAULT_DISEASECODE = "V100";
     
     @EJB
     private CdusBatchUploadDataValidatorLocal cdusBatchUploadDataValidator;
@@ -234,7 +241,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 zip.close();
             }
         } catch (Exception e) {
-            LOG.error("Error validating batch files.", e);            
+            LOG.error("Error validating batch files.", e);
             sendFormatIssueEmail(batchFile, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()), e);
         } 
         return results;
@@ -246,7 +253,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         AccrualCollections collection = new AccrualCollections();
         collection.setResults("Failed proceesing a batch file: " + fileName + " due to " + e.getLocalizedMessage());
         collection.setPassedValidation(batchFile.isPassedValidation());
-        
         try {
             String subj = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.exception.subject");
@@ -360,7 +366,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         Map<Ii, Int> accrualLines = BatchUploadUtils.getAccrualCounts(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
         count = generateSubjectAccruals(spDto, patientLines, importResult.getNciIdentifier(),
-                batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg);
+                batchFile.getSubmissionTypeCode(), raceMap, validationResult, errMsg, user);
         if (spDto != null && spDto.getProprietaryTrialIndicator().getValue()) {
             importResult.setIndustrialTrial(true);
         }
@@ -409,7 +415,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return importResult;
     }
 
-    @SuppressWarnings("PMD.ExcessiveParameterList")
     private void savePatientStageCounts(RegistryUser user, Ii spId, String nciId, 
             Map<Ii, Int> accrualLines, Ii partSiteIi, String fileName) {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -425,10 +430,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         session.save(ps);
     }
 
-    @SuppressWarnings("PMD.ExcessiveParameterList")
+    // CHECKSTYLE:OFF More than 7 Parameters
     private int generateSubjectAccruals(StudyProtocolDTO studyProtocol, List<String[]> patientLines, String nciID,
             AccrualSubmissionTypeCode submissionType, Map<String, List<String>> raceMap,
-            BatchValidationResults results, StringBuffer errMsg) throws PAException {
+            BatchValidationResults results, StringBuffer errMsg, RegistryUser ru) throws PAException {
         int count = 0;
         User user = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
         if (studyProtocol != null) {
@@ -441,7 +446,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 if (studySiteOrgIi != null) {
                     Long studySiteIi  = results.getListOfPoStudySiteIds().get(studySiteOrgIi.getExtension()); 
                     SubjectAccrualDTO saDTO = parserSubjectAccrual(p, submissionType, races, 
-                            IiConverter.convertToIi(studySiteIi));
+                            IiConverter.convertToIi(studySiteIi), ru, studyProtocol.getIdentifier(), 
+                            results.getDiseaseCodeSystem());
                     try {
                         Long[] ids = listOfStudySubjects.get(new SubjectAccrualKey(IiConverter.convertToLong(
                                 saDTO.getParticipatingSiteIdentifier()), 
@@ -460,7 +466,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 } else {
                     // insert the incorrect sites into the patient_stage table
                       savePatientStage(p, races, user, nciID, 
-                            IiConverter.convertToLong(studyProtocol.getIdentifier()), results.getFileName());
+                            IiConverter.convertToLong(studyProtocol.getIdentifier()), 
+                            results.getFileName(), ru, results.getDiseaseCodeSystem());
                 }
             }
             LOG.info("Time to process a single Batch File data: " 
@@ -469,9 +476,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return count;
     }
     
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    private void savePatientStage(String[] p, List<String> races, User user, String nciId, Long spId, String fileName)
-            throws PAException {
+    private void savePatientStage(String[] p, List<String> races, User user, String nciId, Long spId, 
+            String fileName, RegistryUser ru, String diseaseCodeSystem) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         PatientStage ps = new PatientStage();
         ps.setAssignedIdentifier(p[BatchFileIndex.PATIENT_ID_INDEX]);
@@ -481,7 +487,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 : p[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]);
         ps.setDateLastCreated(new Date());
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
-        parseSubjectDisease(p, saDTO);
+        parseSubjectDisease(p, saDTO, ru, IiConverter.convertToStudyProtocolIi(spId), diseaseCodeSystem);
         String disease = ISOUtil.isIiNull(saDTO.getDiseaseIdentifier()) 
                 ? "NULL" : IiConverter.convertToString(saDTO.getDiseaseIdentifier());
         String siteDisease = ISOUtil.isIiNull(saDTO.getSiteDiseaseIdentifier()) 
@@ -521,7 +527,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
     
     private SubjectAccrualDTO parserSubjectAccrual(String[] line, AccrualSubmissionTypeCode submissionType, 
-            List<String> races, Ii studySiteIi) throws PAException {
+            List<String> races, Ii studySiteIi, RegistryUser ru, Ii spId, String diseaseCodeSystem) throws PAException {
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
         saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
         saDTO.setRegistrationDate(
@@ -548,37 +554,61 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         saDTO.setParticipatingSiteIdentifier(studySiteIi);
         saDTO.setRegistrationGroupId(StConverter.convertToSt(line[BatchFileIndex.PATIENT_REG_GROUP_ID_INDEX]));
         saDTO.setSubmissionTypeCode(CdConverter.convertToCd(submissionType));
-        parseSubjectDisease(line, saDTO);
+        parseSubjectDisease(line, saDTO, ru, spId, diseaseCodeSystem);
         return saDTO;
     }
 
-    private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO) throws PAException {
+    private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO, RegistryUser ru,  
+    		Ii spId, String diseaseCodeSystem) throws PAException {
         String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
+        if (StringUtils.isEmpty(diseaseCode) && isSuAbstractor(ru) 
+              && !getSearchStudySiteService().isStudyHasDCPId(spId)) {
+        	String codeSystemDB = getDiseaseService().getTrialCodeSystem(IiConverter.convertToLong(spId));
+        	String defaultCodeSystem = SDC_CODESYSTEM;
+        	if (StringUtils.isEmpty(codeSystemDB) && StringUtils.isNotEmpty(diseaseCodeSystem)) {
+        		codeSystemDB = diseaseCodeSystem;
+        	} else if (StringUtils.isEmpty(codeSystemDB) && StringUtils.isEmpty(diseaseCodeSystem)) {
+        		codeSystemDB = defaultCodeSystem;// Checking with Farhan if this is fine
+        	}
+        	if (ICD9_CODESYSTEM.equals(codeSystemDB)) {
+        		getSubjectAccrualDisease(saDTO, ICD9_DEFAULT_DISEASECODE);
+        	} else if (SDC_CODESYSTEM.equals(codeSystemDB)) {
+        		getSubjectAccrualDisease(saDTO, SDC_DEFAULT_DISEASECODE);
+        	} else if (ICD_O_3_CODESYSTEM.equals(codeSystemDB)) {
+        		getSubjectAccrualDisease(saDTO, ICDO3_DEFAULT_SITEDISEASECODE);
+        		getSubjectAccrualDisease(saDTO, ICDO3_HIST_DEFAULT_DISEASECODE);
+        	}
+        }
         if (StringUtils.isEmpty(diseaseCode)) {
             return;
         }        
-        AccrualDisease dis = null;
         StringTokenizer disease = new StringTokenizer(diseaseCode, ";");
         while (disease.hasMoreElements()) {
             String code = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
             if (StringUtils.isEmpty(code)) {
                 continue;
             }
-            Element element = getDiseaseCache().get(code);
-            if (element == null) {
-                dis = getDiseaseService().getByCode(code);
-                if (dis != null) {
-                    element = new Element(dis.getDiseaseCode(), IiConverter.convertToIi(dis.getId()));
-                    getDiseaseCache().put(element);
-                }
-            }
-            if (code.toUpperCase(Locale.US).charAt(0) == 'C') {
-                saDTO.setSiteDiseaseIdentifier((Ii) element.getValue());
-            } else {
-                saDTO.setDiseaseIdentifier((Ii) element.getValue());
-            }
+            getSubjectAccrualDisease(saDTO, code);
         }
     }
+
+	private Element getSubjectAccrualDisease(SubjectAccrualDTO saDTO, String code) {
+		AccrualDisease dis = null;
+        Element element = getDiseaseCache().get(code);
+		if (element == null) {
+		    dis = getDiseaseService().getByCode(code);
+		    if (dis != null) {
+		        element = new Element(dis.getDiseaseCode(), IiConverter.convertToIi(dis.getId()));
+		        getDiseaseCache().put(element);
+		    }
+		}
+		if (code.toUpperCase(Locale.US).charAt(0) == 'C') {
+		    saDTO.setSiteDiseaseIdentifier((Ii) element.getValue());
+		} else {
+		    saDTO.setDiseaseIdentifier((Ii) element.getValue());
+		}
+		return element;
+	}
 
     /**
      * {@inheritDoc}

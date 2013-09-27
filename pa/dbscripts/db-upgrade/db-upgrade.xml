@@ -1465,4 +1465,8 @@
         <comment>Updated email message about new permissible values.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6316.sql"/>
      </changeSet>
+     <changeSet id="PO-6509" author="Kalpana">
+        <comment>default disease codes </comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6509.sql"/>
+     </changeSet>
 </databaseChangeLog>

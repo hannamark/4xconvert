@@ -105,6 +105,7 @@ public class BatchValidationResults {
     private Map<String, Ii> listOfOrgIds = new HashMap<String, Ii>();
     private Map<String, Long> listOfPoStudySiteIds = new HashMap<String, Long>();
     private boolean hasNonSiteErrors;
+    private String diseaseCodeSystem;
 
     /**
      * @return the errors
@@ -228,5 +229,19 @@ public class BatchValidationResults {
      */
     public void setHasNonSiteErrors(boolean hasNonSiteErrors) {
         this.hasNonSiteErrors = hasNonSiteErrors;
+    }
+
+    /**
+     * @return the diseaseCodeSystem
+     */
+    public String getDiseaseCodeSystem() {
+        return diseaseCodeSystem;
+    }
+
+    /**
+     * @param diseaseCodeSystem the diseaseCodeSystem to set
+     */
+    public void setDiseaseCodeSystem(String diseaseCodeSystem) {
+        this.diseaseCodeSystem = diseaseCodeSystem;
     }
 }

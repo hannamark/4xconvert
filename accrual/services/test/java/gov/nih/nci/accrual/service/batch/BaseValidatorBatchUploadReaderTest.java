@@ -225,8 +225,8 @@ public class BaseValidatorBatchUploadReaderTest {
         // code not found
     	BaseBatchUploadReader r = new BaseBatchUploadReader();
         BatchFileErrors errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
 
         // wrong code system not found
@@ -235,38 +235,38 @@ public class BaseValidatorBatchUploadReaderTest {
         ad.setDiseaseCode(CODE);
         when(dSvc.getByCode(anyString())).thenReturn(ad);
         errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true, false);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
 
         // found
         errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         assertEquals("", errMsg.toString());
 
         // null code, code not required
         valueList = createValueList(null);
         errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false, false);
         assertTrue(errMsg.toString().isEmpty());
 
         // null code, code required
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is missing or not recognized for patient ID"));
 
         // empty code, code not required
         valueList = createValueList(" ");
         errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, false, false);
         assertTrue(errMsg.toString().isEmpty());
 
         // empty code, code required
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
+        bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is missing or not recognized for patient ID"));
     }
     private static List<String> createValueList(String diseaseCode) {

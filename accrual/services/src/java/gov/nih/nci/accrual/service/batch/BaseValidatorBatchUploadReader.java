@@ -98,7 +98,7 @@ import org.apache.commons.validator.routines.DateValidator;
 /**
  * @author Igor Merenko
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AppendCharacterWithChar" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AppendCharacterWithChar", "PMD.ExcessiveParameterList" })
 public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {  
 
     /**
@@ -152,9 +152,9 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param accrualSubmissionLevel submissionLevel
      */
     // CHECKSTYLE:OFF More than 7 Parameters
-    @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "PMD.ExcessiveParameterList" })
+    @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts" })
     protected void validatePatientsMandatoryData(String key, List<String> values, BatchFileErrors errMsg, long lineNumber,
-            StudyProtocolDTO sp, String codeSystem, boolean checkDisease, String accrualSubmissionLevel) {
+            StudyProtocolDTO sp, String codeSystem, boolean checkDisease, String accrualSubmissionLevel, boolean superAbstractor) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             boolean validatePatients = true;            
             if (sp != null && sp.getProprietaryTrialIndicator().getValue()
@@ -181,7 +181,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 validateGender(values, errMsg, lineNumber);
                 validateEthnicity(values, errMsg, lineNumber);
                 validateDateOfEntry(values, errMsg, lineNumber);
-                validateDiseaseCode(values, errMsg, lineNumber, sp, codeSystem, checkDisease);
+                validateDiseaseCode(values, errMsg, lineNumber, sp, codeSystem, checkDisease, superAbstractor);
                 String paymentMethod = AccrualUtil.safeGet(values, PATIENT_PAYMENT_METHOD_INDEX);
                 if (!StringUtils.isEmpty(paymentMethod) && !PATIENT_PAYMENT_METHOD.contains(paymentMethod.trim())) {
                 	errMsg.append(new StringBuffer().append("Please enter valid patient payment method for patient ID ")
@@ -275,18 +275,17 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * Validates that the patient disease is provided and valid. If a study has the primary purpose 'Prevention', the
      * Meddra/ICD9 Disease code is not required.
      */
-    @SuppressWarnings({ "PMD.ExcessiveParameterList" })
     void validateDiseaseCode(List<String> values, BatchFileErrors errMsg, long lineNumber, StudyProtocolDTO sp, 
-        String codeSystem, boolean checkDisease) {
+        String codeSystem, boolean checkDisease, boolean superAbstractor) {
         String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
         if (StringUtils.isEmpty(code)) {
-            if (checkDisease) {
+            if (checkDisease && !superAbstractor) {
             	errMsg.append(new StringBuffer().append("Patient Disease Code is missing or not recognized for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             }
         } else {
             StringTokenizer disease = new StringTokenizer(code, ";");
-            if (!disease.hasMoreElements()) {
+            if (!disease.hasMoreElements() && !superAbstractor) {
             	errMsg.append(new StringBuffer().append("Patient Disease Code is missing or not recognized for patient ID ")
                 .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));            
             } else {
