@@ -162,7 +162,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @return res
      */
     public String view() {
-        TrialSessionUtil.removeSessionAttributes();
+        clearSession();
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
             trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
@@ -179,6 +179,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             return ERROR;
         }
         return SUCCESS;
+    }
+
+    /**
+     * 
+     */
+    private void clearSession() {
+        TrialSessionUtil.removeSessionAttributes();
+        clearGrantsAndIndsFromSession();
     }
 
     private void synchActionWithDTO() {
@@ -223,9 +231,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @return s
      */
     public String cancel() {
-        TrialSessionUtil.removeSessionAttributes();
-        ServletActionContext.getRequest().getSession().removeAttribute("grantAddList");
-        ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
+        clearSession();
         return "redirect_to_search";
     }
 
@@ -448,9 +454,16 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             return ERROR;
         }
         setTrialAction("update");
+        clearGrantsAndIndsFromSession();
+        return "redirect_to_search";
+    }
+
+    /**
+     * 
+     */
+    private void clearGrantsAndIndsFromSession() {
         ServletActionContext.getRequest().getSession().removeAttribute("grantAddList");
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
-        return "redirect_to_search";
     }
 
     /**
