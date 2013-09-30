@@ -55,7 +55,7 @@
 		    </td>
 		</tr>
 		<tr>
-		    <td scope="row" class="label"><label for="editOrg.postalCode">Zip/Postal Code(*US/Canada/Australia):</label></td>
+		    <td scope="row" class="label"><label for="editOrg.postalCode">Zip/Postal Code(US/Canada/Australia<span class="required">*</span>):</label></td>
 		    <td class="value" colspan="2">
 		        <s:textfield id="editOrg.postalCode" name="orgFromPO.zip" maxlength="200" size="200" 
 		        disabled="disabled" cssStyle="width: 200px" cssClass="readonly"/>
