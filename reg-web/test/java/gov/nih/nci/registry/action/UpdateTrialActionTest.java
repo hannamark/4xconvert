@@ -622,10 +622,11 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     public void validateTrialNotUpdatableFieldsFailed() throws PAException, IOException {
         UpdateTrialAction action = mock(UpdateTrialAction.class);
         doCallRealMethod().when(action).validateTrial();
-        when(action.validateRespPartyInfo()).thenReturn(false);
+        when(action.validateRespPartyInfo()).thenReturn(true);
+        when(action.validateSummaryFourInfo()).thenReturn(false);
         String result = action.validateTrial();
         assertEquals("Wrong error message returned",
-                     "Required fields are missing. You may not complete an update. Please submit an amendment instead.",
+                     "Summary Four fields are missing. You may not complete an update. Please submit an amendment instead.",
                      result);
     }
 

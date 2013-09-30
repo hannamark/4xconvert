@@ -305,9 +305,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     String validateTrial() throws PAException, IOException {
         clearErrorsAndMessages();
         String failureMessage = null;
-        if (!validateRespPartyInfo() || !validateSummaryFourInfo()) {
+        if (!validateRespPartyInfo()) {
+            failureMessage = "Responsible Party is missing. ";
+            if (!validateXmlRequiredTrial()) {
+                failureMessage += "No sponsor but XML is required. ";
+            }
+            failureMessage += "You may not complete an update. Please submit an amendment instead.";
+        } else if (!validateSummaryFourInfo()) {
             failureMessage =
-                    "Required fields are missing. You may not complete an update. "
+                    "Summary Four fields are missing. You may not complete an update. "
                             + "Please submit an amendment instead.";
         } else {
             enforceBusinessRules();
