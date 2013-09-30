@@ -113,6 +113,7 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -454,7 +455,37 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void deleteSubject() throws Exception {
         StudySite ss = createAccessibleStudySite(); 
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+
+        Ii ii = new Ii();
+        ii.setIdentifierName("ICD-O-3");
+        ii.setExtension("Csite");
+        dto.setSiteDiseaseIdentifier(ii);
+                        
+        try {        		
+        	bean.manageSubjectAccruals(Arrays.asList(dto));
+            fail();
+        } catch (IndexedInputValidationException e) {
+            //expected
+        }
+        when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
+        AccrualDisease disease = new AccrualDisease();
+        disease.setCodeSystem("ICD-O-3");
+        disease.setDiseaseCode("Csite");
+        disease.setDisplayName("Csite menu name");
+        disease.setPreferredName(" Csitename");
+        TestSchema.addUpdObject(disease);
+        
+        disease = new AccrualDisease();
+        disease.setCodeSystem("ICD-O-3");
+        disease.setDiseaseCode("8000");
+        disease.setDisplayName("histology menu name");
+        disease.setPreferredName("histology name");
+        TestSchema.addUpdObject(disease);
+        
+        ii.setExtension("8000");
+        dto.setDiseaseIdentifier(ii);
+        System.out.println("delete test");
         List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto));
         assertEquals(1, results.size());
         

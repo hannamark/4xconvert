@@ -353,6 +353,10 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         disease.setId(TestSchema.diseases.get(0).getId());
         disease.setCodeSystem("SDC");
         disease.setDiseaseCode("code");
+        final AccrualDisease disease1 = new AccrualDisease();
+        disease1.setId(3L);
+        disease1.setCodeSystem("ICD-O-3");
+        disease1.setDiseaseCode("Csite");
         diseaseSvc = mock(AccrualDiseaseServiceLocal.class);
         when(diseaseSvc.getByCode(anyString())).thenAnswer(new Answer<AccrualDisease>() {
             public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
@@ -384,6 +388,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                         if (disease.getDiseaseCode().equals(ii.getExtension())) {
                             return disease;
                         }
+                    } else if ("ICD-O-3".equals(ii.getIdentifierName())) {
+                    	return disease1;                    	
                     } else {
                         if (ObjectUtils.equals(Long.valueOf(ii.getExtension()), disease.getId())) {
                             return disease;
