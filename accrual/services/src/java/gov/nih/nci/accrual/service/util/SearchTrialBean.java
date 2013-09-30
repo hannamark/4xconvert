@@ -355,6 +355,9 @@ public class SearchTrialBean implements SearchTrialService {
     @SuppressWarnings(UNCHECKED)
     public List<AccrualCountsDto> getAccrualCountsForUser(RegistryUser ru) throws PAException {
         List<AccrualCountsDto> result = new ArrayList<AccrualCountsDto>();
+        if (ru == null) {
+            return result;
+        }
         Long studyProtocolId = 0L;
         List<Long> ids = new ArrayList<Long>();
         String sql = "select distinct sp.identifier as spid, ss.identifier as ssid from study_protocol sp"

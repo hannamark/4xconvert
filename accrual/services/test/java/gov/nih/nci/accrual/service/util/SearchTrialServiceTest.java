@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -454,7 +455,8 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         	fail();
         } catch (Exception e) {
         	// expected
-        }        
+        }   
+        assertTrue(bean.getAccrualCountsForUser(null).isEmpty());
     }
 
     @Test
