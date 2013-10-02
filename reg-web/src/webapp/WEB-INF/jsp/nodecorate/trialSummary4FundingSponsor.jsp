@@ -2,7 +2,7 @@
 <table>
     <tr>
         <td>
-             <s:textfield label="Summary4sponsorName" name="trialDTO.summaryFourOrgName" id="trialDTO.summaryFourOrgName" size="30" readonly="true" cssClass="readonly" cssStyle="width:200px" /> 
+             <s:textfield label="Summary4sponsorName"  id="trialDTO.summaryFourOrgName" size="30" readonly="true" cssClass="readonly" cssStyle="width:200px" /> 
         </td>
         <td class="value">
             <ul style="margin-top:-5px;">              

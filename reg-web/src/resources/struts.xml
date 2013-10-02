@@ -95,6 +95,25 @@
                     <param name="includeMethods">createAccount,updateAccount</param>
                 </interceptor-ref>
             </interceptor-stack>
+            
+            <interceptor-stack name="trialDataInterceptor">
+             <interceptor-ref name="exception" />
+                <interceptor-ref name="params">
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop],^struts\..*,criteria.*,
+                    </param>
+                </interceptor-ref>
+                  <interceptor-ref name="servletConfig" />
+                <interceptor-ref name="prepare" />
+                <interceptor-ref name="i18n" />
+                <interceptor-ref name="conversionError" />
+                <interceptor-ref name="params">
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop],^struts\..*,criteria.*,
+                    </param>
+                </interceptor-ref>
+                <interceptor-ref name="maliciousInput" />
+            </interceptor-stack>
         </interceptors>
         
         <default-interceptor-ref name="noDisclaimerDefaultInterceptor"/>
@@ -252,6 +271,7 @@
         </action>
         
         <action name="trialDataVerification*" class="gov.nih.nci.registry.action.TrialDataVerificationAction" method="{1}">
+            <interceptor-ref name="trialDataInterceptor"/>
             <result>/WEB-INF/jsp/trialDataVerification.jsp</result>
             <result name="success">/WEB-INF/jsp/trialDataVerification.jsp</result>
         </action>

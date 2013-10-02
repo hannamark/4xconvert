@@ -3,7 +3,7 @@
 <table>
 <tr>
 <td class="value">
-<s:textfield label="Summary4sponsorName" name="gtdDTO.summaryFourOrgName" size="30" cssStyle="width:200px" readonly="true"/>
+<s:textfield label="Summary4sponsorName" id="gtdDTO.summaryFourOrgName" size="30" cssStyle="width:12.50em" readonly="true"/>
 </td><td> 
                   <ul style="margin-top:-2px;">             
                         <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookup4loadSummary4Sponsor();"/><span class="btn_img"><span class="organization">Add Sponsor</span></span></a></li>

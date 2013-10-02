@@ -142,7 +142,7 @@
                 </s:if>
                 <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.sitePiIdentifier" id="trialDTO.sitePiIdentifier"/>
-                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>
+                
                 <s:hidden name="trialDTO.siteOrganizationIdentifier" id="trialDTO.siteOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
@@ -256,7 +256,7 @@
                                </s:fielderror>
                          </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor" 
+                    <reg-web:valueRow id="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor" 
                                       required="true" tooltip="tooltip.summary_4_funding_source">
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>

@@ -351,8 +351,7 @@
                 </s:else>
                 <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/>
-                <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
-                <s:hidden name="trialDTO.summaryFourOrgIdentifier" id="trialDTO.summaryFourOrgIdentifier"/>                
+                <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>                
                 <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                 <s:hidden name="trialDTO.identifier" id="trialDTO.identifier"/>
                 <c:if test="${not empty trialDTO.summaryFourFundingCategoryCode}">

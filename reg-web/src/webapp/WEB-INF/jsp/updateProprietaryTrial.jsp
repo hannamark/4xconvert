@@ -211,7 +211,7 @@
                     <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory">
                                <s:property value="trialDTO.summaryFourFundingCategoryCode" />                    
                     </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
+                    <reg-web:valueRow id="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
                         <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
                             <s:property value="%{orgName}"/><br/>
                             <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/> 
