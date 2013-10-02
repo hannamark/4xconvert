@@ -566,7 +566,9 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("trial.amend.reject.subject");
         TestSchema.addUpdObject(prop);
 
-        bean.sendAmendRejectEmail(nonProprietaryTrialIi, "rejectReason");
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        bean.sendAmendRejectEmail(spDTO, "rejectReason");
     }
 
     @Test

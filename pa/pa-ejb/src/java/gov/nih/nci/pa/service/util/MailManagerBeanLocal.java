@@ -782,14 +782,12 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     /**
      * Sends an email to submitter when Amendment to trial is rejected by CTRO staff.
-     * @param studyProtocolIi ii
+     * @param spDTO StudyProtocolQueryDTO 
      * @param rejectReason rr
      * @throws PAException ex
      */
     @Override
-    public void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException {
-        StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
-            .convertToLong(studyProtocolIi));
+    public void sendAmendRejectEmail(StudyProtocolQueryDTO spDTO, String rejectReason) throws PAException {
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
@@ -797,9 +795,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
         mailBody = commonMailBodyReplacements(spDTO, mailBody);
         mailBody = mailBody.replace(AMENDMENT_NUMBER, amendNumber);
-        mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
+        mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));               
         mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
-
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
         mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
         sendEmailToAllTrialOwners(spDTO, mailSubject, mailBody, true);

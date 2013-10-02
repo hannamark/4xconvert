@@ -132,11 +132,11 @@ public interface MailManagerService {
 
     /**
      * 
-     * @param studyProtocolIi ii
+     * @param spDTO StudyProtocolQueryDTO
      * @param rejectReason re
      * @throws PAException ex
      */
-    void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException;
+    void sendAmendRejectEmail(StudyProtocolQueryDTO spDTO, String rejectReason) throws PAException;
 
     /**
      * 

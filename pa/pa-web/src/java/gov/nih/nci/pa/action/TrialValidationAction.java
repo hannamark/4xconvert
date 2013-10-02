@@ -303,13 +303,15 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
             Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
             // if trial is amend then hard delete
             if (intSubNo > 1) {
-                // send mail
-                String rejectionMessage = StringUtils.isNotBlank(gtdDTO.getCommentText()) ? gtdDTO
-                    .getRejectionReasonCode() + " - " + gtdDTO.getCommentText() : gtdDTO.getRejectionReasonCode();
-                mailManagerService.sendAmendRejectEmail(studyProtocolIi, rejectionMessage);
+                StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                        IiConverter.convertToLong(studyProtocolIi));
                 trialRegistrationService.reject(studyProtocolIi, StConverter.convertToSt(gtdDTO.getCommentText()),
                                                 CdConverter.convertToCd(RejectionReasonCode.getByCode(gtdDTO
                                                     .getRejectionReasonCode())));
+                // send mail                                
+                String rejectionMessage = StringUtils.isNotBlank(gtdDTO.getCommentText()) ? gtdDTO
+                        .getRejectionReasonCode() + " - " + gtdDTO.getCommentText() : gtdDTO.getRejectionReasonCode();
+                mailManagerService.sendAmendRejectEmail(spDTO, rejectionMessage);
                 session.removeAttribute(submissionNo);
                 session.removeAttribute(Constants.TRIAL_SUMMARY);
                 session.removeAttribute(Constants.STUDY_PROTOCOL_II);

@@ -875,14 +875,14 @@ public class StudyMilestoneBeanLocal
                 //For the case where the milestone is late rejection date and trial is amended, we should follow 
                 //the same workflow as trial amendment rejection.
                 if (sp.getSubmissionNumber().getValue().intValue() > 1) {
+                    StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                            IiConverter.convertToLong(sp.getIdentifier()));
                     PaHibernateUtil.getCurrentSession().flush();                    
                     trialRegistrationService.reject(sp.getIdentifier(), workDto.getCommentText(), 
-                            workDto.getRejectionReasonCode());
+                            workDto.getRejectionReasonCode());                    
                     String comment = workDto.determineCommentText() == null ? "Unknown Reason"
-                            : workDto.determineCommentText().getValue();
-                    
-                    mailManagerService.sendAmendRejectEmail(workDto.getStudyProtocolIdentifier(), 
-                            comment);
+                            : workDto.determineCommentText().getValue();                    
+                    mailManagerService.sendAmendRejectEmail(spDTO, comment);
                 } else {
                     mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
                 }
