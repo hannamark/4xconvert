@@ -100,7 +100,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
         // Since this token was put in to deal with an AppScan CSRF issue anyway (PO-6232), we don't need to
         // refresh the token value and thus will retain the "original" token value from the request.
         final HttpServletRequest request = ServletActionContext.getRequest();
-        request.getSession().setAttribute("struts.token.popup",
+        request.getSession().setAttribute("struts.tokens.struts.token.popup",
                 request.getParameter("struts.token.popup"));
         setStateName(AddressUtil.fixState(getStateName(), getCountryName()));
 
