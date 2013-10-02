@@ -4,7 +4,7 @@
 <%-- Success Messages --%>
 
 <c:if test="${requestScope.failureMessage  != null}">
-<div class="error_msg">
+<div class="error_msg" id="error_msg_div">
 	<strong>Message.</strong> <c:out value="${requestScope.failureMessage }"/>.
 </div>
 <c:remove var="failureMessage" scope="request"/>

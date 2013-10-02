@@ -61,13 +61,20 @@
 
 	function resetValues() {
 		$('dashboardForm').getElements().each(function(el) {
-			el.clear();
-			el.checked = false;
+			if (el.type=='text') {
+				   el.clear();				  
+			}
+			if (el.type=='checkbox' || el.type=='radio') {               
+                el.checked = false;
+            }
 		});
 		$$('option').each(function(optEl) {
 			optEl.selected = false;
 		});
 		$('submittingOrgId').value = '';
+		if ($('error_msg_div')!=null) {
+			$('error_msg_div').hide();
+		}
 	}
 
 	document.onkeypress = runEnterScript;
