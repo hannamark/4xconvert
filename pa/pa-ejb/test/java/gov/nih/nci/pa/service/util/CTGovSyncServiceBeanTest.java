@@ -410,6 +410,15 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("301-728-7094",
                 serviceBean.convertCtGovPhone("3017287094"));
     }
+    
+    @Test
+    public final void testDropLeftOver() {
+        assertEquals(
+                "Known hypersensitivity to any of the components of CA4P, paclitaxel, carboplatin.",
+                serviceBean
+                        .dropLeftOver("Known hypersensitivity to any of the components of CA4P, paclitaxel, carboplatin.\r\n\r\n        Details of the above and additional inclusion and exclusion criteria can be discussed with"));
+
+    }
 
     @Test
     public final void testBreakDownCtGovPersonName() throws PAException {
@@ -531,6 +540,41 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 session, id);
         assertEquals(1, inclList.size());
         assertTrue(inclList.get(0).getTextDescription().trim().startsWith("Key Inclusion Criteria:"));
+        
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testPO6548EligCriteriaHandling() throws PAException, ParseException {
+        String nciID = serviceBean.importTrial("NCT00653939");
+        assertTrue(StringUtils.isNotEmpty(nciID));
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = getProtocolIdByNciId(nciID, session);
+        
+        List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
+                session, id);
+        assertEquals(6, inclList.size());
+        assertEquals(
+                "Pathologically confirmed Stage IIIB NSCLC with malignant pleural   effusion, or Stage IV disease",
+                inclList.get(0).getTextDescription());
+        assertEquals(
+                "Subjects or their legal representatives must be able to read, understand and provide written informed consent to participate in the trial.",
+                inclList.get(5).getTextDescription());
+        
+        List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
+                session, id);
+        assertEquals(10, exclList.size());
+        assertEquals("Predominant Squamous Cell NSCLC histology.", exclList
+                .get(0).getTextDescription());
+        assertEquals(
+                "Known hypersensitivity to any of the components of CA4P, paclitaxel, carboplatin, bevacizumab, or radiologic contrast dyes.",
+                exclList.get(9).getTextDescription());
+
+       
         
     }
 

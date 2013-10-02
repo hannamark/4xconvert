@@ -1351,13 +1351,29 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private List<String> extractCriterions(String block) {
         List<String> list = new ArrayList<String>();
-        for (String s : block.split("(?m)$\\s+-\\s{2}")) {
+        final String[] split = block.split("(?m)$\\s+-\\s{2}");
+        for (int i = 0; i < split.length; i++) {
+            String s = split[i];
+            if (i == split.length - 1) {
+                s = dropLeftOver(s);
+            }
             s = trim(s);
             if (!isBlank(s)) {
                 list.add(s);
             }
         }
         return list;
+    }
+
+    /**
+     * See PO-6548. Sometimes the last bullet in a criteria is followed by an
+     * auxiliary text, which needs to be removed.
+     * 
+     * @param s
+     * @return
+     */
+    String dropLeftOver(String s) {
+        return s.replaceFirst("(?s)(\\n|\\r\\n){2}        \\p{Alnum}.+\\z", "");
     }
 
     private PlannedEligibilityCriterionDTO buildEligibilityCriteriaDTO(
