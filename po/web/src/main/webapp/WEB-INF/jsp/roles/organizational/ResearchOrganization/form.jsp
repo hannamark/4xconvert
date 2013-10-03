@@ -124,7 +124,7 @@
                            required="true" cssClass="required"
                            onchange="handleDuplicateOf();" />
                     </s:else>
-                    <div id="duplicateOfdiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
+                    <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
                         <c:if test="${fn:length(availableDuplicateOfs) > 0}">
                             <po:field labelKey="researchOrganization.duplicateOf">
                                 <select id="curateRoleForm.duplicateOf" name="duplicateOf">
