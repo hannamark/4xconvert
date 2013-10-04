@@ -37,6 +37,7 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -645,6 +646,18 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     }
     
     @Test
+    public final void testImportFailureDoubleMasking() throws PAException,
+            ParseException {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
+
+        final String nctID = "NCT1111111";
+        serviceBean.importTrial(nctID);
+
+    }
+    
+    @Test
     public final void testUpdateTrial() throws PAException, ParseException {
         // Create protocol by performing a new trial import.
         String nctID = "NCT01440088";
@@ -962,7 +975,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 sp.getStudyClassificationCode());
         assertEquals(DesignConfigurationCode.SINGLE_GROUP,
                 sp.getDesignConfigurationCode());
-        assertEquals(BlindingSchemaCode.OPEN, sp.getBlindingSchemaCode());
+        
+        assertEquals(BlindingSchemaCode.DOUBLE_BLIND, sp.getBlindingSchemaCode());
+        assertEquals(BlindingRoleCode.CAREGIVER, sp.getBlindingRoleCodeCaregiver());
+        assertEquals(BlindingRoleCode.SUBJECT, sp.getBlindingRoleCodeSubject());
+        assertNull(sp.getBlindingRoleCodeInvestigator());
+        assertNull(sp.getBlindingRoleCodeOutcome());
+        
         assertEquals("TREATMENT", sp.getPrimaryPurposeCode().getName());
 
         List<StudyOutcomeMeasure> outcomes = session.createQuery(

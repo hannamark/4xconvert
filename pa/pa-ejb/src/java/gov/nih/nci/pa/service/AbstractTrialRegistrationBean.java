@@ -246,6 +246,9 @@ public abstract class AbstractTrialRegistrationBean {
             if (!ISOUtil.isCdNull(fromDTO.getBlindingSchemaCode())) {
                 toDTO.setBlindingSchemaCode(fromDTO.getBlindingSchemaCode());
             }
+            if (ISOUtil.isDSetNotEmpty(fromDTO.getBlindedRoleCode())) {
+                toDTO.setBlindedRoleCode(fromDTO.getBlindedRoleCode());
+            }
         }
     }
 

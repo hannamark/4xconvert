@@ -281,21 +281,31 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO, 
             String page) throws PAException {
         // enforce business rules
-        int totBlindCodes = 0;
+        
         if (ispDTO == null) {
             throw new PAException("InterventionalstudyProtocolDTO should not be null");
 
         }
-        enForceBusinessRules(ispDTO, page);
-        if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
-            totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
-        }
-        checkBlindingSchemaCode(ispDTO, totBlindCodes);
+        enForceBusinessRules(ispDTO, page);        
+        enforeBlindingSchemaRules(ispDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         setDefaultValues(upd, ispDTO, UPDATE);
         session.merge(upd);
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(upd);
+    }
+
+    /**
+     * @param ispDTO
+     * @throws PAException
+     */
+    private void enforeBlindingSchemaRules(InterventionalStudyProtocolDTO ispDTO)
+            throws PAException {
+        int totBlindCodes = 0;
+        if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
+            totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
+        }        
+        checkBlindingSchemaCode(ispDTO, totBlindCodes);
     }
 
     private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) throws PAException {
@@ -332,6 +342,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         enForceBusinessRules(ispDTO, null);
+        enforeBlindingSchemaRules(ispDTO);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(isp, ispDTO, CREATE);

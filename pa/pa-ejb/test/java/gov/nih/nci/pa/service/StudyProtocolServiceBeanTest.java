@@ -112,6 +112,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
@@ -322,6 +323,19 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+    
+    @Test
+    public void businessRulesExceptionNoMaskingRoles() throws Exception {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
+
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        ispDTO.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
 
     @Test
     public void businessRulesExceptionForUpdate() throws Exception {
@@ -355,6 +369,21 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                     e.getMessage());
         }
         remoteEjb.updateInterventionalStudyProtocol(saved, "DesignDetails");
+    }
+    
+    @Test
+    public void businessRulesExceptionForUpdateBlindingRoles() throws Exception {
+        
+        thrown.expect(PAException.class);
+        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
+        
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
+        saved.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
+        
+        remoteEjb.updateInterventionalStudyProtocol(saved, null);
     }
 
     @Test
