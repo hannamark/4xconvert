@@ -287,7 +287,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n"));
                 } 
               }
-              if (sp != null && !sp.getProprietaryTrialIndicator().getValue()
+              if (CollectionUtils.isNotEmpty(patientLines) 
+                    && sp != null && !sp.getProprietaryTrialIndicator().getValue()
                     || accrualSubmissionLevel != null && accrualSubmissionLevel.equals(AccrualUtil.SUBJECT_LEVEL)) {
                 validateDiseaseCodeSystem();
               }
