@@ -146,6 +146,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String organizationType;
     private String userLastCreated;
     private Boolean excludeRejectProtocol;
+    private Boolean excludeTerminatedTrials;
     // for Registry trial search
     private Boolean myTrialsOnly;    
     private List<String> studyMilestone = new ArrayList<String>();
@@ -955,7 +956,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 .append(", organizationType=").append(organizationType)
                 .append(", userLastCreated=").append(userLastCreated)
                 .append(", excludeRejectProtocol=")
-                .append(excludeRejectProtocol).append(", myTrialsOnly=")
+                .append(excludeRejectProtocol)
+                .append(", excludeTerminatedTrials=")
+                .append(excludeTerminatedTrials).append(", myTrialsOnly=")
                 .append(myTrialsOnly).append(", studyMilestone=")
                 .append(studyMilestone).append(", submissionType=")
                 .append(submissionType).append(", trialSubmissionTypes=")
@@ -1303,6 +1306,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setStudyStatusCodeList(List<String> studyStatusCodeList) {
         this.studyStatusCodeList = studyStatusCodeList;
+    }
+
+    /**
+     * @return the excludeTerminatedTrials
+     */
+    public Boolean isExcludeTerminatedTrials() {
+        return excludeTerminatedTrials;
+    }
+
+    /**
+     * @param excludeTerminatedTrials the excludeTerminatedTrials to set
+     */
+    public void setExcludeTerminatedTrials(Boolean excludeTerminatedTrials) {
+        this.excludeTerminatedTrials = excludeTerminatedTrials;
     }
     
 }

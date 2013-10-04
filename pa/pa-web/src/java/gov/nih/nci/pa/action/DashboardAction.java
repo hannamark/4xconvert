@@ -160,6 +160,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                 .getCSMUser(UsernameHolder.getUser()).getUserId());
         final StudyProtocolQueryCriteria criteriaOne = buildCriteria();
         criteriaOne.setExcludeRejectProtocol(true);
+        criteriaOne.setExcludeTerminatedTrials(true);
         setCheckedOutBy(null);
 
         // Second.
@@ -175,6 +176,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         setReadyForTSR(true);
         final StudyProtocolQueryCriteria criteriaTwo = buildCriteria();
         criteriaTwo.setExcludeRejectProtocol(true);
+        criteriaTwo.setExcludeTerminatedTrials(true);
         return Arrays.asList(criteriaOne, criteriaTwo);
     }
 

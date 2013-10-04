@@ -104,6 +104,7 @@ import org.apache.commons.lang.StringUtils;
 public class StudyProtocolOptions {
 
     private boolean excludeRejectedTrials;
+    private boolean excludeTerminatedTrials;
     private boolean myTrialsOnly;
     private boolean searchOnHoldTrials;   
     private boolean searchOffHoldTrials;
@@ -759,6 +760,20 @@ public class StudyProtocolOptions {
      */
     public void setProcessingPriority(List<Integer> processingPriority) {
         this.processingPriority = processingPriority;
+    }
+
+    /**
+     * @return the excludeTerminatedTrials
+     */
+    public boolean isExcludeTerminatedTrials() {
+        return excludeTerminatedTrials;
+    }
+
+    /**
+     * @param excludeTerminatedTrials the excludeTerminatedTrials to set
+     */
+    public void setExcludeTerminatedTrials(boolean excludeTerminatedTrials) {
+        this.excludeTerminatedTrials = excludeTerminatedTrials;
     }
 
     

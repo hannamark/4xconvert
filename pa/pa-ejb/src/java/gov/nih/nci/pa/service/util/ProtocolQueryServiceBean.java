@@ -442,6 +442,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         StudyProtocolOptions options = new StudyProtocolOptions();
         options.setUserId(criteria.getUserId());
         options.setExcludeRejectedTrials(BooleanUtils.isTrue(criteria.isExcludeRejectProtocol()));
+        options.setExcludeTerminatedTrials(BooleanUtils.isTrue(criteria.isExcludeTerminatedTrials()));
         options.setLockedTrials(criteria.isStudyLockedBy());
         options.setLockedUser(criteria.getUserLastCreated());
         options.setSearchCTEPTrials(includeCTEP(criteria));

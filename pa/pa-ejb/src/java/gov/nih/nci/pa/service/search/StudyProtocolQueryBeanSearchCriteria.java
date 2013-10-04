@@ -196,6 +196,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String SOS_PARAM = "studyOverallStatusParam";
         private static final String DWS_PARAM = "documentWorkflowStatusParam";
         private static final String REJECTED_DWS_PARAM = "rejectedDocumentWorkflowStatusParam";
+        private static final String TERMINATED_DWS_PARAM = "terminatedDocumentWorkflowStatusParam";
         private static final String SMS_PARAM = "studyMilestoneStatusParam";
         private static final String CHECKOUT_PARAM = "checkedOutUserParam";
         private static final String STUDY_OWNER_PARAM = "studyOwnerParam";
@@ -261,13 +262,16 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         SearchableUtils.ROOT_OBJ_ALIAS));
                 params.put(DWS_PARAM, statusCodes);
             }
-            handleMilestones(whereClause, params);            
+            handleMilestones(whereClause, params);   
+            
             if (spo.isExcludeRejectedTrials()) {
-                String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s dws.statusCode != :%s", operator, REJECTED_DWS_PARAM));
-                whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
-                        SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(REJECTED_DWS_PARAM, DocumentWorkflowStatusCode.REJECTED);
+                appendDWSExclusionClause(whereClause, params,
+                        DocumentWorkflowStatusCode.REJECTED, REJECTED_DWS_PARAM);
+            }
+            if (spo.isExcludeTerminatedTrials()) {
+                appendDWSExclusionClause(whereClause, params,
+                        DocumentWorkflowStatusCode.SUBMISSION_TERMINATED,
+                        TERMINATED_DWS_PARAM);
             }
             
             handlePhaseCodes(whereClause, params);
@@ -283,6 +287,22 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                          SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
                 params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
             }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         * @param code
+         * @param param
+         */
+        private void appendDWSExclusionClause(StringBuffer whereClause,
+                Map<String, Object> params,
+                final DocumentWorkflowStatusCode code, final String param) {
+            String operator = determineOperator(whereClause);               
+            whereClause.append(String.format(" %s dws.statusCode != :%s", operator, param));
+            whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
+                    SearchableUtils.ROOT_OBJ_ALIAS));
+            params.put(param, code);
         }
 
         /**
