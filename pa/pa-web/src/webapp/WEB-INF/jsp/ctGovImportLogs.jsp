@@ -216,18 +216,20 @@
 							<display:setProperty name="export.csv.include_header"
 								value="true" />
 							<display:column escapeXml="true" title="NCI ID" property="nciID" sortable="true"/>
-							<display:column escapeXml="false" title="ClinicalTrials.gov Identifier" sortable="true">
+							<display:column escapeXml="false" title="ClinicalTrials.gov Identifier" sortable="true" media="html">
 							    <a href="javascript:void(0);" onclick="displayClinicalTrialDetails('${row.nctID}');">
 							        <c:out value="${row.nctID}"/>
 							    </a>
 							</display:column>
+							<display:column title="ClinicalTrials.gov Identifier" sortable="true" media="csv excel" property="nctID"/>
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
-							<display:column escapeXml="false" title="Action" sortable="true">
+							<display:column escapeXml="false" title="Action" sortable="true" media="html">
 							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
 							        <c:out value="${row.action}"/>
 							    </a>							    						    
 							</display:column>
+							<display:column title="Action" sortable="true" media="csv excel" property="action"/>
 							<display:column escapeXml="true" title="Auto/User"
 								property="userCreated" sortable="true" />
 							<display:column  title="Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}"
