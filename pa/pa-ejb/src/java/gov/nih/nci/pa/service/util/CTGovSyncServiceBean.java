@@ -5,7 +5,6 @@ package gov.nih.nci.pa.service.util; // NOPMD
 
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.indexOf;
-import static org.apache.commons.lang.StringUtils.isAsciiPrintable;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -375,7 +374,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      */
     @Override
     public ClinicalStudy getCtGovStudyByNctId(String nctID) throws PAException {
-        if (isBlank(nctID) || !isAsciiPrintable(nctID)) {
+        if (isBlank(nctID) || !isNctIdValid(nctID)) {
             return null;
         }
         try {
@@ -389,7 +388,16 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
         return null;
     }
-
+    /**
+     * 
+     * @param nctID nctID
+     * @return boolean  
+     */
+    protected boolean isNctIdValid(String nctID) {
+        Pattern p = Pattern.compile("^NCT[0-9]+");
+        Matcher m = p.matcher(nctID);
+        return  m.matches();
+    }
     /**
      * @param xml
      * @return
@@ -450,7 +458,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     @Override
     public String importTrial(String nctID) throws PAException {
-        if (isBlank(nctID) || !isAsciiPrintable(nctID)) {
+        if (isBlank(nctID) || !isNctIdValid(nctID)) {
             throw new PAException("Invalid NCT ID");
         }
         final String currentUser = getCurrentUser();

@@ -1387,5 +1387,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             deactivateTrial(session, id);
         }
     }
+    @Test
+    public void isNctIdValidTest() {
+        assertEquals(true, serviceBean.isNctIdValid("NCT1"));
+        assertEquals(true, serviceBean.isNctIdValid("NCT12344444"));
+        assertEquals(false, serviceBean.isNctIdValid("1NCT12344444"));
+        assertEquals(false, serviceBean.isNctIdValid("N12344444"));
+        assertEquals(false, serviceBean.isNctIdValid("NCT"));
+    }
 
 }
