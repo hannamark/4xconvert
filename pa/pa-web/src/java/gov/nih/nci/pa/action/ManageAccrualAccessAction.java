@@ -188,9 +188,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
                 for (Long siteId : failureSites) {
                     orgNames.add(getSites().get(siteId));
                 }
-                addActionError("For the following sites accrual access is not given since they are not family" 
-                        + " releated organizations for the selected user affiliated organization,  " 
-                        + StringUtils.join(orgNames, ','));
+                addActionError("Accrual access could not be granted because the user is not a registered member of "
+                        + "the Participating Site or affiliated to any family associated with the "
+                        + "selected organization(s):  " + StringUtils.join(orgNames, ','));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
