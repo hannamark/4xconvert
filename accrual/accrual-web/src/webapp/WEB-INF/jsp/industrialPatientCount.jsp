@@ -9,8 +9,16 @@ function setCheckbox(index) {
     }
 }
 function handleDelete(){
-	document.forms[0].action = "industrialPatientsdelete.action";
-    document.forms[0].submit();	
+    var msg = 'Click OK to remove selected site(s) accrual counts. Cancel to abort.';
+    var result = confirm(msg);
+    if (result == true) {
+        document.countform.action = "industrialPatientsdelete.action";
+        document.countform.submit(); 
+        return true;
+    } else {
+        document.countform.reset();
+        return false;
+    }
 }
 </script>
 <c:set var="topic" scope="request" value="accrualcount"/>
@@ -34,19 +42,18 @@ function handleDelete(){
     <s:token/>
     <%--  If it is only one checkbox and it isn't checked, Struts2 (just in case) sets false value.Workaround for this 
     is to add hidden field with checkbox name prefixed with __checkbox_ to the form. Then it won't be single checkbox and false will not be submitted. --%>
-    <s:hidden name="__checkbox_sitesToDelete"/>
     <s:hidden name="__checkbox_sitesToSave"/>
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
         <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-	        <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
-	        <s:if test="%{#attr.row.studySite.id in sitesToSave}">
-		       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
-		    </s:if>
-		    <s:else>
-		       <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
-		    </s:else>       
-	        </display:column> 
+            <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
+            <s:if test="%{#attr.row.studySite.id in sitesToSave}">
+               <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
+            </s:if>
+            <s:else>
+               <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
+            </s:else>       
+            </display:column> 
         </s:if>
         <display:column titleKey="participatingsite.accrual.count.siteid" headerClass="sortable" headerScope="col" property="siteId"/>
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
@@ -62,18 +69,26 @@ function handleDelete(){
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />
         <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-	        <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">        
-	           <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />
-	        </display:column> 
+            <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">
+               <s:if test="%{#attr.row.dateLastUpdated != null}"> 
+                   <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />                   
+                   <c:set var="deleteCBFlag" scope="request" value="true"/> 
+               </s:if>
+            </display:column> 
         </s:if>
     </display:table>
+    <c:if test= "${deleteCBFlag}">
+        <s:hidden name="__checkbox_sitesToDelete"/>    
+    </c:if>
     <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
                 <li>
                     <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-	                    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-	                    <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                        <c:if test= "${deleteCBFlag}">
+                            <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
+                        </c:if>
                     </s:if>
                     <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
                 </li>

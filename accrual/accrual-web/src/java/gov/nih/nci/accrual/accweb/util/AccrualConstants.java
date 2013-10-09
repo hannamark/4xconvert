@@ -111,6 +111,8 @@ public final class AccrualConstants {
     public static final String SUCCESS_MESSAGE = "successMessage";
     /** Deleted Message . */
     public static final String DELETE_MESSAGE = "Record Deleted";
+    /** Count Deleted Message . */
+    public static final String COUNT_DELETE_MESSAGE = "Subject Accrual Count Deleted";
     /** Updated Message . */
     public static final String UPDATE_MESSAGE = "Record Updated";
     /** Create Message . */

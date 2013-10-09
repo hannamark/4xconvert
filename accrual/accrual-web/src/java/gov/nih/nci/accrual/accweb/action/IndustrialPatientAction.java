@@ -206,7 +206,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
                             IiConverter.convertToIi(id), getSpIi());
                 }
                 ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
-                        AccrualConstants.DELETE_MESSAGE);
+                        AccrualConstants.COUNT_DELETE_MESSAGE);
                 setSitesToDelete(null);
                 checkIfNonInterventionalTrialChanges();
             }
