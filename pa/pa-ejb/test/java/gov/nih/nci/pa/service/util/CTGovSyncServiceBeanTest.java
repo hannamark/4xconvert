@@ -81,6 +81,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.Closure;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -88,6 +90,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -591,7 +594,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         List<PlannedEligibilityCriterion> inclList = session
                 .createQuery(
                         "from PlannedEligibilityCriterion so where so.inclusionIndicator=true and so.criterionName is null and so.studyProtocol.id="
-                                + spID + " order by so.id").list();
+                                + spID + " order by so.displayOrder").list();
         return inclList;
     }
 
@@ -607,7 +610,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         List<PlannedEligibilityCriterion> exclList = session
                 .createQuery(
                         "from PlannedEligibilityCriterion so where so.inclusionIndicator=false and so.studyProtocol.id="
-                                + spID + " order by so.id").list();
+                                + spID + " order by so.displayOrder").list();
         return exclList;
     }
     
@@ -1029,19 +1032,31 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 session, id);
         assertEquals(12, exclList.size());
         assertEquals("Male.", exclList.get(0).getTextDescription());
+        verifyDisplayOrder(exclList);
 
         List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
                 session, id);
         assertEquals(11, inclList.size());
         assertEquals("Female aged > 18 years.", inclList.get(0)
                 .getTextDescription());
-
+        verifyDisplayOrder(inclList);
       
         assertEquals(
                 "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
                 sp.getKeywordText());
         assertTrue(sp.getFdaRegulatedIndicator());
         assertTrue(sp.getExpandedAccessIndicator());
+    }
+
+    // PO-6570
+    private void verifyDisplayOrder(final List<PlannedEligibilityCriterion> list) {
+        CollectionUtils.forAllDo(list, new Closure() {
+            @Override
+            public void execute(Object obj) {
+                PlannedEligibilityCriterion pec = (PlannedEligibilityCriterion) obj;
+                Assert.assertTrue(pec.getDisplayOrder() != null);
+            }
+        });
     }
 
     /**

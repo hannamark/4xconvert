@@ -139,6 +139,7 @@ import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.io.IOUtils;
@@ -1329,7 +1330,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     private List<PlannedEligibilityCriterionDTO> extractInlusionExclusionCriteria(
             EligibilityStruct elig) {
-        List<PlannedEligibilityCriterionDTO> list = new ArrayList<PlannedEligibilityCriterionDTO>();
+        final List<PlannedEligibilityCriterionDTO> list = new ArrayList<PlannedEligibilityCriterionDTO>();
         String text = elig.getCriteria() != null ? elig.getCriteria()
                 .getTextblock() : null;
         if (isNotBlank(text)) {
@@ -1353,6 +1354,13 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 }
             }
         }
+        CollectionUtils.forAllDo(list, new Closure() {
+            @Override
+            public void execute(Object obj) {               
+                PlannedEligibilityCriterionDTO pec = (PlannedEligibilityCriterionDTO) obj;
+                pec.setDisplayOrder(IntConverter.convertToInt(list.indexOf(obj)));
+            }
+        });
         return list;
 
     }
