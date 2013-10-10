@@ -32,9 +32,7 @@
     </tr>
     
     <tr>
-        <td class="label">
-            <label for="plannedMarker.evaluationType"><fmt:message key="plannedMarker.evaluationType" />:</label>
-        </td>
+        <td class="label"><fmt:message key="plannedMarker.evaluationType" />:</td>
         <td style="border:1px solid lavender">
             <s:set name="evaluationTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@EVALUATION_TYPE)" />
             <s:set name="selectedEvalValues" value="plannedMarker.selectedEvaluationType"/>
@@ -59,7 +57,7 @@
     </tr>
     <tr id="evalTypeOtherTextRow" style="display: none;">
         <td class="label">
-            <s:label for="plannedMarker.evaluationTypeOtherText"><fmt:message key="plannedMarker.evaluationTypeOtherText" />:</s:label><span class="required">*</span>
+            <label for="evaluationTypeOtherText"><fmt:message key="plannedMarker.evaluationTypeOtherText" />:</label><span class="required">*</span>
         </td>
         <td style="width: 250px">
             <s:textfield name="plannedMarker.evaluationTypeOtherText" id="evaluationTypeOtherText" maxlength="200" size="200" cssStyle="width:280px" /> 
@@ -72,18 +70,14 @@
     </tr>
     
     <tr id="hugoCodeRow" style="display:none">
-        <td class="label">
-            <s:label for="plannedMarker.hugoCode"><fmt:message key="plannedMarker.hugoCode"/>:</s:label>
-        </td>
+        <td class="label"><fmt:message key="plannedMarker.hugoCode"/>:</td>
         <td>
             <s:hidden name="plannedMarker.hugoCode" id="hugoCode" />
             <s:property value="plannedMarker.hugoCode"/>
         </td>
     </tr>
     <tr id="cadsrID" style="display:none">
-        <td class="label">
-            <s:label for="plannedMarker.cadsrId"><fmt:message key="plannedMarker.cadsrId"/>:</s:label>
-        </td>
+        <td class="label"><fmt:message key="plannedMarker.cadsrId"/>:</td>
         <td>
             <s:hidden name="plannedMarker.cadsrId" id="cadsrID" />
             <s:property value="plannedMarker.cadsrId"/>
@@ -91,9 +85,7 @@
     </tr>
     <tr> <td>  </td> </tr>
     <tr>
-        <td class="label">
-            <s:label for="plannedMarker.assayType"><fmt:message key="plannedMarker.assayType" />:</s:label><span class="required">*</span>
-        </td>
+        <td class="label"><fmt:message key="plannedMarker.assayType" />:<span class="required">*</span></td>
         <td style="border:1px solid lavender">
             <s:set name="assayTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@ASSAY_TYPE)" />
             <s:set name="selectedValues" value="plannedMarker.selectedAssayType"/>
@@ -118,7 +110,7 @@
     </tr>
     <tr id="assayTypeOtherTextRow" style="display: none;">
         <td class="label">
-            <s:label for="plannedMarker.assayTypeOtherText"><fmt:message key="plannedMarker.assayTypeOtherText" />:</s:label><span class="required">*</span>
+            <label for="assayTypeOtherText"><fmt:message key="plannedMarker.assayTypeOtherText" />:</label><span class="required">*</span>
         </td>
         <td style="width: 250px">
             <s:textfield name="plannedMarker.assayTypeOtherText" id="assayTypeOtherText" maxlength="200" size="200" cssStyle="width:280px" /> 
@@ -144,8 +136,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
-            <s:label for="plannedMarker.assayPurpose"><fmt:message key="plannedMarker.assayPurpose" />:</s:label><span class="required">*</span>
+        <td class="label"><fmt:message key="plannedMarker.assayPurpose" />:<span class="required">*</span>
         </td>
         <td style="width: 250px;border:1px solid lavender">
             <s:set name="assayPurposeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@BIOMARKER_PURPOSE)" /> 
@@ -175,7 +166,7 @@
      <tr> <td>  </td> </tr>
     <tr id="assayPurposeOtherTextRow" style="display: none;">
         <td class="label">
-            <s:label for="plannedMarker.assayPurposeOtherText"><fmt:message key="plannedMarker.assayPurposeOtherText" />:</s:label><span class="required">*</span>
+            <label for="assayPurposeOtherText"><fmt:message key="plannedMarker.assayPurposeOtherText" />:</label><span class="required">*</span>
         </td>
         <td style="width: 250px">
             <s:textfield name="plannedMarker.assayPurposeOtherText" id="assayPurposeOtherText" maxlength="200" size="200" cssStyle="width:280px" />
@@ -187,8 +178,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label">
-            <s:label for="plannedMarker.tissueSpecimenType"><fmt:message key="plannedMarker.tissueSpecimenType" />:</s:label><span class="required">*</span>
+        <td class="label"><fmt:message key="plannedMarker.tissueSpecimenType" />:<span class="required">*</span>
         </td>
         <td style="width: 250px;border:1px solid lavender">
             <s:set name="tissueSpecimenTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@SPECIMEN_TYPE)" />
@@ -211,7 +201,7 @@
     </tr>
      <tr id="specimenTypeOtherTextRow" style="display: none;">
         <td class="label">
-            <s:label for="plannedMarker.specimenTypeOtherText"><fmt:message key="plannedMarker.specimenTypeOtherText" />:</s:label><span class="required">*</span>
+            <label for="specimenTypeOtherText"><fmt:message key="plannedMarker.specimenTypeOtherText" />:</label><span class="required">*</span>
         </td>
         <td style="width: 250px">
             <s:textfield name="plannedMarker.specimenTypeOtherText" id="specimenTypeOtherText" maxlength="200" size="200" cssStyle="width:280px" />
@@ -224,9 +214,7 @@
     </tr>
     
     <tr>
-        <td class="label">
-            <s:label for="plannedMarker.status"><fmt:message key="plannedMarker.status" />:</s:label>
-        </td>
+        <td class="label"><fmt:message key="plannedMarker.status" />:</td>
         <td>
             <s:hidden name="plannedMarker.status" id="status"/>
             <s:property value="plannedMarker.status"/>

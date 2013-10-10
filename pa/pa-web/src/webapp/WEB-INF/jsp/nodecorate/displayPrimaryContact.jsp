@@ -42,10 +42,10 @@
     </tr>
     <tr>
         <td class="label">
-            <label for="statusCode">Status:</label>
+            <label for="personContactWebDTO.statusCode">Status:</label>
         </td>
         <td class="value" colspan="2">
-            <s:textfield id="statusCode" name="personContactWebDTO.statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
+            <s:textfield id="personContactWebDTO.statusCode" name="personContactWebDTO.statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
         </td>
     </tr>
 </table>

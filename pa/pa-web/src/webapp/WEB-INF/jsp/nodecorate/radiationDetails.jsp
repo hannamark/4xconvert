@@ -11,7 +11,7 @@
         <td class="value" >
             <s:textfield  id="minDoseValue" name="minDoseValue" maxlength="9" /> 
             <label for="maxDoseValue" style="display:none">Dose Range:</label>
-             <s:textfield name="maxDoseValue" maxlength="9"/>         
+             <s:textfield id="maxDoseValue" name="maxDoseValue" maxlength="9"/>         
               <span class="formErrorMsg"> 
              <s:fielderror>
                  <s:param>minDoseValue</s:param>
@@ -64,12 +64,7 @@
         </div> 
        </td>
     </tr>
-    <tr>
-        <td/>
-        <td class="value">
-            <s:label name="doseLimit" ></s:label>
-         </td>
-    </tr>    
+      
       <tr>
         <td scope="row" class="label"><label for="doseRegimen">Dose Regimen:</label></td>
         <td class="value" >
@@ -87,7 +82,7 @@
         <td class="value" >
             <s:textfield name="minDoseTotalValue" id="minDoseTotalValue" maxlength="9" 
                     /> 
-             <s:textfield name="maxDoseTotalValue" maxlength="9" 
+             <s:textfield name="maxDoseTotalValue" id="maxDoseTotalValue" maxlength="9" 
                     />  
                     <label for="maxDoseTotalValue" style="display:none">max Total Dose Range:</label>
                       <span class="formErrorMsg"> 

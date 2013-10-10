@@ -35,22 +35,17 @@
                 form.submit();
             }
             
-            function hideCol(col) {          
-                col.style.display = 'none'; 
-            }
-            
-            function showCol(col) {
-                col.style.display = '';
+            function setCommentsLabel(labelSpan) {
+            	lblHTML = labelSpan.innerHTML;
+            	document.getElementById('milestoneCommentsLbl').innerHTML=lblHTML;
             }
             
             function statusChange() {
                 var selectedMilestone = document.forms["addmilestoneForm"].elements["milestone.milestone"].value;
                 if (selectedMilestone == "Late Rejection Date") {
-                    hideCol(document.getElementById('milestoneComments'));
-                    showCol(document.getElementById('latemilestoneComments'));
+                	setCommentsLabel(document.getElementById('latemilestoneCommentsSpan'));
                 } else {
-                    hideCol(document.getElementById('latemilestoneComments'));
-                    showCol(document.getElementById('milestoneComments'));
+                	setCommentsLabel(document.getElementById('milestoneCommentsSpan'));
                 }
             }
             Event.observe(window, "load", statusChange);
@@ -182,23 +177,19 @@
 		                                                </td> 
 		                                            </tr>
 		                                            <tr >
-		                                                <td class="label" id="milestoneComments">
-		                                                  <label for="milestoneComments"><fmt:message key="milestone.comment"/></label>
+		                                                <td class="label" id="milestoneComments" >
+		                                                  	<label id="milestoneCommentsLbl" for="milestoneCommentsTA"></label>
 		                                                </td>
-		                                                
-                                                        <td class="label" id="latemilestoneComments" style="display: none;">
-                                                            <label for="milestoneLateComments"><fmt:message key="milestone.latecomment"/></label>
-                                                            <span class="required">*</span>
-                                                        </td>
-		                                                  
-                                                      <td class="value">
-                                                            <s:textarea id="milestoneComments" name="milestone.comment" rows="4" cssStyle="width:280px;"/>
-                                                        </td> 
+	                                                     <td class="value">
+	                                                         <s:textarea id="milestoneCommentsTA" name="milestone.comment" rows="4" cssStyle="width:280px;"/>
+                                                       </td> 
 		                                            </tr>
-		                                            
                                                     
 		                                        </table>
 		                                    </s:form>
+		                                    <!-- Comments label holding items -->
+		                                    <span id="milestoneCommentsSpan" style="display:none;"><fmt:message key="milestone.comment"/></span>
+		                                    <span id="latemilestoneCommentsSpan" style="display:none;"><fmt:message key="milestone.latecomment"/><span class="required">*</span></span>
 		                                    <div class="actionsrow">
 		                                        <del class="btnwrapper">
 		                                            <ul class="btnrow">

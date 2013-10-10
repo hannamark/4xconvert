@@ -175,7 +175,7 @@
                 <h2><fmt:message key="trialValidation.trialDetails" /></h2>
                 <table class="form">
                     <pa:valueRow labelKey="studyProtocol.nciIdentifier">
-                        <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
+                        <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
                     </pa:valueRow>
                     <c:choose>
                         <c:when test="${!sessionScope.trialSummary.proprietaryTrial}">

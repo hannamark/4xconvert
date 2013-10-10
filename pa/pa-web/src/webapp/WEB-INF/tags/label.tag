@@ -5,9 +5,19 @@
 <%@ attribute name="labelKey" required="true" type="java.lang.String" description="The key of the label message" %>
 <%@ attribute name="required" required="false" type="java.lang.Boolean" description="True for a required indicator" %>
 <%@ attribute name="strong" required="false" type="java.lang.Boolean" description="True for a strong row" %>
-<label<c:if test="${not empty labelFor}"> for="${labelFor}"</c:if>>
-    <c:if test="${strong}"><strong></c:if>
-    <fmt:message key="${labelKey}"/>
-    <c:if test="${required}"><span class="required">*</span></c:if>
-    <c:if test="${strong}"></strong></c:if>
-</label>
+<c:choose>
+    <c:when test="${not empty labelFor}">
+    	<label for="${labelFor}">
+	        <c:if test="${strong}"><strong></c:if>
+		    <fmt:message key="${labelKey}"/>
+		    <c:if test="${required}"><span class="required">*</span></c:if>
+		    <c:if test="${strong}"></strong></c:if>
+		</label>
+    </c:when>
+    <c:otherwise>
+        <c:if test="${strong}"><strong></c:if>
+	    <fmt:message key="${labelKey}"/>
+	    <c:if test="${required}"><span class="required">*</span></c:if>
+	    <c:if test="${strong}"></strong></c:if>
+    </c:otherwise>
+</c:choose>

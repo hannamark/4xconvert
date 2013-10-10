@@ -50,7 +50,7 @@ function loadDiv() {
                         <td><s:textfield id="searchCode" name="searchCode" maxlength="60" size="60" cssStyle="width:200px" /></td>
                     </tr>
                     <tr> 
-                        <td scope="row" class="label"><label for="includeSDC"><fmt:message key="disease.codeSystem"/></label></td>
+                        <td scope="row" class="label"><label for="searchCodeSystem"><fmt:message key="disease.codeSystem"/></label></td>
                         <td>
                             <s:select id ="searchCodeSystem" name="searchCodeSystem" headerValue="" headerKey=""
                                       list="listOfDiseaseCodeSystems"/>

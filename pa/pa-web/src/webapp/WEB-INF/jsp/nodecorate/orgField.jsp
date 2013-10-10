@@ -14,9 +14,10 @@
       <c:forEach items="${nciSpecificInformationWebDTO.summary4Sponsors}" var="summaryFourOrgIdentifiers" varStatus="stat">
     <tr>
         <td>
+        	<label for="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].orgName" style="display:none">Sponsor:</label>
             <input type="text" name="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].orgName" id="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].orgName" value="${summaryFourOrgIdentifiers.orgName}" size="30" readonly class="readonly" style="width:200px" />
             <a href="javascript:void(0)" onclick="displayOrgDetails('${summaryFourOrgIdentifiers.orgId}');">
-                <img src="${pageContext.request.contextPath}/images/details.gif"/>
+                <img src="${pageContext.request.contextPath}/images/details.gif" alt="details"/>
             </a>
             <input type="hidden" name="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].orgId" id="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].orgId" value="${summaryFourOrgIdentifiers.orgId}"/> 
             <input type="hidden" name="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].rowId" id="nciSpecificInformationWebDTO.summary4Sponsors[${stat.index}].rowId" value="${summaryFourOrgIdentifiers.rowId}"/> 

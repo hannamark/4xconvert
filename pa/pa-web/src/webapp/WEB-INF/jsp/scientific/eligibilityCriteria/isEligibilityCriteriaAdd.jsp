@@ -137,7 +137,7 @@
                     id: id
                 };
                 var div = $(divName);   
-                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+                div.innerHTML = '<div align="left"><img  src="../images/loading.gif" alt="loading..."/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
                
@@ -156,7 +156,7 @@
                  var url = '/pa/protected/ajaxEligibilityCriteriadisplaycde.action';
                  var params = { cdeid: deid };
                  var div = $('eligibility.build.criterion');   
-                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif" alt="loading..."/>&nbsp;Loading...</div>';    
                  var aj = callAjaxPost(div, url, params);
             }
              
@@ -193,11 +193,11 @@
                 <s:hidden name="id"/>
                 <table class="form">
                     <tr>
-                        <td scope="row"  class="label"><label>
+                        <td scope="row"  class="label"><label for="webDTO.inclusionIndicator">
                             <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></label>
                         </td>
                         <td class="value">
-                            <s:select name="webDTO.inclusionIndicator" list="#{' ':' ', 'Exclusion':'Exclusion', 'Inclusion':'Inclusion'}" cssStyle="width:106px"/>
+                            <s:select id="webDTO.inclusionIndicator" name="webDTO.inclusionIndicator" list="#{' ':' ', 'Exclusion':'Exclusion', 'Inclusion':'Inclusion'}" cssStyle="width:106px"/>
                             <span class="formErrorMsg"> 
                                 <s:fielderror>
                                     <s:param>webDTO.inclusionIndicator</s:param>
@@ -206,7 +206,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row"  class="label"><label>
+                        <td scope="row"  class="label"><label for="group3">
                             <fmt:message key="isdesign.eligibilitycriteria.structuredOrUnstructured"/><span class="required">*</span>:</label>
                         </td>
                         <td class="value">                            
@@ -235,11 +235,11 @@
                 			<s:param>webDTO.mandatory</s:param>
                 			</s:fielderror>                            
                 		</span>
-                		<td scope="row"  class="label"><label>
+                		<td scope="row"  class="label"><label for="webDTO.textDescription">
                 		    <fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/><span class="required">*</span></label>
                 		</td>
                 		<td class="value">
-                			<s:textarea name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' 
+                			<s:textarea  id="webDTO.textDescription" name="webDTO.textDescription" rows="6" cssStyle="width:600px" onblur='activate();' 
                 				maxlength="5000" cssClass="charcounter"/>
                 			<span class="formErrorMsg"> 
                 				<s:fielderror>

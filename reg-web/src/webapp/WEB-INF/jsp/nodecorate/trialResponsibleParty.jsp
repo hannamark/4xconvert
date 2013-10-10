@@ -23,7 +23,7 @@
 	<tr>
 		<td scope="row" class="label-noinput"><reg-web:displayTooltip
 				tooltip="tooltip.responsible_party">
-				<fmt:message key="submit.trial.responsibleParty" />
+				<label for="trialDTO.responsiblePartyType"><fmt:message key="submit.trial.responsibleParty" /></label>
 				<span class="required">*</span>
 			</reg-web:displayTooltip></td>
 		<td><s:select onchange="respPartyTypeChanged()"

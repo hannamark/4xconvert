@@ -17,6 +17,7 @@
 					<c:out value="${row.extension}" />
 				</div>
 				<div id="identifierInputDiv_${row_rowNum}" style="display: none;">
+					<label for="identifier_${row_rowNum}" style="display:none">Identifier</label>
 					<input id="identifier_${row_rowNum}" type="text"
 						value="<c:out value="${row.extension}"/>" />
 				</div>
@@ -28,6 +29,7 @@
 				</div>
 				<div id="identifierTypeInputDiv_${row_rowNum}"
 					style="display: none;">
+					<label for="identifierType_${row_rowNum}" style="display:none">Identifier Type</label>
 					<select id="identifierType_${row_rowNum}"
 						name="otherIdentifierType" id="otherIdentifierType"
 						style="margin-top: 0px;">

@@ -106,10 +106,10 @@ function displayPhaseAdditonalCode(){
 <table class="form">
 
     <tr>
-        <td  scope="row" class="label"><label>
+        <td  scope="row" class="label"><label for="webDTO.studyType">
             <fmt:message key="osdesign.details.study.type"/><span class="required">*</span></label></td>        
         <td>
-          <s:select name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
+          <s:select id="webDTO.studyType" name="webDTO.studyType" list="#{'Interventional':'Interventional','NonInterventional':'Non-Interventional'}"  
                     onchange="changeStudyType();"
                    value="webDTO.studyType" cssStyle="width:200px"/>
           <span class="formErrorMsg"> 
@@ -131,11 +131,11 @@ function displayPhaseAdditonalCode(){
     </tr>
 
     <tr>
-        <td  scope="row" class="label"><label>
+        <td  scope="row" class="label"><label for="webDTO.studySubtypeCode">
             <fmt:message key="osdesign.details.study.subtype"/><span class="required">${asterisk}</span></label></td>
         <s:set name="StudySubtypeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
         <td>
-          <s:select headerKey="" headerValue="" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
+          <s:select headerKey="" headerValue="" id="webDTO.studySubtypeCode" name="webDTO.studySubtypeCode" list="#StudySubtypeCodeValues"  
                    value="webDTO.studySubtypeCode" cssStyle="width:200px" onchange="toggleFields()"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
@@ -148,7 +148,7 @@ function displayPhaseAdditonalCode(){
 
 
     <tr>
-        <td  scope="row" class="label"><label>
+        <td  scope="row" class="label"><label for="webDTO.primaryPurposeCode">
             <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames(@gov.nih.nci.pa.enums.StudyTypeCode@NON_INTERVENTIONAL)" />
         <td>
@@ -163,10 +163,10 @@ function displayPhaseAdditonalCode(){
     </tr>
     <tr id="purposeOtherTextDiv" style="display:'none'">
          <td scope="row" class="label">
-            <label><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
+            <label for="webDTO.primaryPurposeOtherText"><fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
          </td>
          <td>
-               <s:textarea name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" maxlength="200" cssClass="charcounter"/><br/>
+               <s:textarea id="webDTO.primaryPurposeOtherText" name="webDTO.primaryPurposeOtherText"  cols="50" rows="2" maxlength="200" cssClass="charcounter"/><br/>
                <span class="info">Required if Purpose equals &#39;Other&#39;</span>
                <span class="formErrorMsg"> 
                <s:fielderror>
@@ -192,12 +192,12 @@ function displayPhaseAdditonalCode(){
     </tr>
     
     <tr id ="phaseOtherDiv" style="display:'none'">
-        <td   scope="row" class="label"><label for="comment">
+        <td   scope="row" class="label"><label for="webDTO.phaseAdditionalQualifierCode">
             <fmt:message key="isdesign.details.phase.comment"/>
             </label></td>
         <td>
         <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-        <s:select id="comment" headerKey="" headerValue="No" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+        <s:select headerKey="" headerValue="No" id="webDTO.phaseAdditionalQualifierCode" name="webDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
                 value="webDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />
                <span class="formErrorMsg"> 
              <s:fielderror>
@@ -208,11 +208,11 @@ function displayPhaseAdditonalCode(){
     </tr>
 
 	<tr>
-	 	<td  scope="row" class="label"><label>
+	 	<td  scope="row" class="label"><label for="webDTO.studyModelCode">
 	 		<fmt:message key="osdesign.details.study.model"/><span class="required">${asterisk}</span></label></td>
      	<s:set name="studyModelCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
         <td>
-          <s:select headerKey="" headerValue="" name="webDTO.studyModelCode" list="#studyModelCodeValues"  
+          <s:select headerKey="" headerValue="" id="webDTO.studyModelCode" name="webDTO.studyModelCode" list="#studyModelCodeValues"  
                    value="webDTO.studyModelCode" cssStyle="width:200px" onchange="toggleFields();"/>
           <span class="formErrorMsg"> 
              <s:fielderror>
@@ -222,10 +222,10 @@ function displayPhaseAdditonalCode(){
         </td>
     </tr>
     <tr id="studyModelOtherText">
-		<td   scope="row" class="label"><label>
+		<td   scope="row" class="label"><label for="webDTO.studyModelOtherText">
 	 		<fmt:message key="osdesign.details.study.model.other"/><span class="required">${asterisk}</span></label></td>
 		<td>
-			<s:textarea name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" maxlength="200" cssClass="charcounter"/>
+			<s:textarea id="webDTO.studyModelOtherText" name="webDTO.studyModelOtherText" cssStyle="width:150px" rows="2" maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.studyModelOtherText</s:param>
@@ -234,11 +234,11 @@ function displayPhaseAdditonalCode(){
 		</td>
 	</tr>
     <tr>
-        <td scope="row" class="label"><label for="studyPhase">
+        <td scope="row" class="label"><label for="webDTO.timePerspectiveCode">
         	 <fmt:message key="osdesign.details.time.perspective"/><span class="required">${asterisk}</span></label> </td>
         <s:set name="timePerspectiveCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
         <td>
-        	<s:select headerKey="" headerValue="" name="webDTO.timePerspectiveCode" list="#timePerspectiveCodeValues" 
+        	<s:select headerKey="" headerValue="" id="webDTO.timePerspectiveCode" name="webDTO.timePerspectiveCode" list="#timePerspectiveCodeValues" 
 				value="webDTO.timePerspectiveCode" cssStyle="width:126px" onchange="toggleFields()" />
 			<span class="formErrorMsg"> 
              <s:fielderror>
@@ -248,10 +248,10 @@ function displayPhaseAdditonalCode(){
         </td>
     </tr>
     <tr id="timePerspectiveOtherText">
-		<td   scope="row" class="label"><label>
+		<td   scope="row" class="label"><label for="webDTO.timePerspectiveOtherText">
 	 		<fmt:message key="osdesign.details.time.perspective.comment"/><span class="required">${asterisk}</span></label></td>
 		<td>
-			<s:textarea name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px"  maxlength="200" cssClass="charcounter"/>
+			<s:textarea id="webDTO.timePerspectiveOtherText" name="webDTO.timePerspectiveOtherText" rows="2" cssStyle="width:150px"  maxlength="200" cssClass="charcounter"/>
 			<span class="formErrorMsg"> 
 				<s:fielderror>
                		<s:param>webDTO.timePerspectiveOtherText</s:param>
@@ -260,11 +260,11 @@ function displayPhaseAdditonalCode(){
 		</td>
 	</tr>	 
     <tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="webDTO.biospecimenRetentionCode">
 	 		<fmt:message key="osdesign.details.specimen.retention"/></label></td>
 		<s:set name="biospecimenRetentionCodeValues" value="@gov.nih.nci.pa.enums.BiospecimenRetentionCode@getDisplayNames()" />
         <td>
-           <s:select headerKey="" headerValue="" name="webDTO.biospecimenRetentionCode" list="#biospecimenRetentionCodeValues"  value="webDTO.biospecimenRetentionCode" cssStyle="width:150px" />
+           <s:select headerKey="" headerValue="" id="webDTO.biospecimenRetentionCode" name="webDTO.biospecimenRetentionCode" list="#biospecimenRetentionCodeValues"  value="webDTO.biospecimenRetentionCode" cssStyle="width:150px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.biospecimenRetentionCode</s:param>
@@ -273,7 +273,7 @@ function displayPhaseAdditonalCode(){
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="webDTO.biospecimenDescription">
 	 		<fmt:message key="osdesign.details.specimen.description"/></label></td>
 		<td>
 		  <s:textarea id="webDTO.biospecimenDescription" name="webDTO.biospecimenDescription"    
@@ -288,10 +288,10 @@ function displayPhaseAdditonalCode(){
         </td>
 	</tr>	
     <tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="webDTO.numberOfGroups">
 	 		<fmt:message key="osdesign.details.groups"/><span class="required">${asterisk}</span></label></td>
 		<td>
-           <s:textfield name="webDTO.numberOfGroups"  maxlength="5" cssStyle="width:50px" />
+           <s:textfield id="webDTO.numberOfGroups" name="webDTO.numberOfGroups"  maxlength="5" cssStyle="width:50px" />
            <span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.numberOfGroups</s:param>
@@ -300,10 +300,10 @@ function displayPhaseAdditonalCode(){
         </td>
 	</tr>
 	<tr>
-		<td scope="row" class="label"><label>
+		<td scope="row" class="label"><label for="webDTO.minimumTargetAccrualNumber">
 	 		<fmt:message key="isdesign.details.target.enrollment"/><span class="required">${asterisk}</span></label></td>
 		<td>
-         	<s:textfield name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
+         	<s:textfield id="webDTO.minimumTargetAccrualNumber" name="webDTO.minimumTargetAccrualNumber" maxlength="6" cssStyle="width:50px"/>
          	<span class="formErrorMsg"> 
              <s:fielderror>
                <s:param>webDTO.minimumTargetAccrualNumber</s:param>
@@ -324,8 +324,7 @@ function displayPhaseAdditonalCode(){
         </td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="isdesign.details.accrualNum">
-            <fmt:message key="isdesign.details.accrualNum"/></label></td>
+        <td scope="row" class="label"><fmt:message key="isdesign.details.accrualNum"/></td>
         <td id="isdesign.details.accrualNum">
             <s:property value="(new gov.nih.nci.pa.service.util.PAServiceUtils()).getTrialAccruals(#session.studyProtocolIi)"/>
         </td>

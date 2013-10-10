@@ -5,7 +5,7 @@
             <s:textfield label="First Name" id="gtdDTO.sponsorName" name="gtdDTO.sponsorName" size="30"  cssStyle="width:200px;" readonly="true" cssClass="readonly"/>
             <s:if test="gtdDTO.sponsorIdentifier != null && gtdDTO.sponsorIdentifier != ''">
                 <a href="javascript:void(0)" onclick="displayOrgDetails($('sponsorIdentifier').value);">
-                    <img src="<%=request.getContextPath()%>/images/details.gif"/>
+                    <img src="<%=request.getContextPath()%>/images/details.gif" alt="details"/>
                 </a>
             </s:if>
             

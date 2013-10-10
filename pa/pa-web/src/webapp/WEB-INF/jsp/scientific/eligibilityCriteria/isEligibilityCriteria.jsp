@@ -216,11 +216,11 @@ BubbleTips.activateTipOn("dfn");
     </tr> 
     <tr>
          <td scope="row" class="label">
-         <label for="typeCode">
+         <label for="minage">
                 <fmt:message key="isdesign.eligibilitycriteria.minimumAge"/><span class="required">${asterisk}</span>
          </label>
          </td> <td class="value" colspan="1">    
-                <s:textfield id="typeCode" name="minimumValue" maxlength="12" cssStyle="width:85px" />
+                <s:textfield id="minage" name="minimumValue" maxlength="12" cssStyle="width:85px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>minimumValue</s:param>
@@ -229,13 +229,13 @@ BubbleTips.activateTipOn("dfn");
           </td>
           <td></td>
            <td scope="row" class="label" >
-         <label for="typeCode1">
+         <label for="minageunit">
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">${asterisk}</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="1">   
-            <s:select id="typeCode1" headerKey="" headerValue="" 
+            <s:select id="minageunit" headerKey="" headerValue="" 
                     name="minValueUnit" 
                     list="#unitsValues"  
                     cssStyle="width:76px" /> 
@@ -247,11 +247,11 @@ BubbleTips.activateTipOn("dfn");
           </tr>
           <tr>
           <td scope="row" class="label" >
-         <label for="typeCode2">
+         <label for="maxage">
                 <fmt:message key="isdesign.eligibilitycriteria.maximumAge"/><span class="required">${asterisk}</span>
          </label>
          </td> <td class="value" colspan="1">   
-                <s:textfield id="typeCode2" name="maximumValue" maxlength="12" cssStyle="width:85px" />
+                <s:textfield id="maxage" name="maximumValue" maxlength="12" cssStyle="width:85px" />
                 <span class="formErrorMsg"> 
                     <s:fielderror>
                     <s:param>maximumValue</s:param>
@@ -260,13 +260,13 @@ BubbleTips.activateTipOn("dfn");
           </td>
           <td></td>
          <td scope="row" class="label" >
-         <label for="typeCode3">
+         <label for="maxageunit">
                 <fmt:message key="isdesign.eligibilitycriteria.unit"/><span class="required">${asterisk}</span>
          </label>
          </td> 
         <s:set name="unitsValues" value="@gov.nih.nci.pa.enums.UnitsCode@getDisplayNames()" />
        <td class="value" colspan="1">   
-            <s:select id="typeCode3" headerKey="" headerValue="" 
+            <s:select id="maxageunit" headerKey="" headerValue="" 
                     name="maxValueUnit" 
                     list="#unitsValues"  
                     cssStyle="width:76px" /> 
@@ -294,12 +294,12 @@ BubbleTips.activateTipOn("dfn");
                  <table class="form" id="table-1">
                  <tbody> 
                  <tr class="nodrag nodrop">
-                 <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></label></th>
-                 <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/></label></th>
-                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></label></th>
-                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.operator"/></label></th>
-                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.value"/></label></th>
-                  <th><label for="typeCode"><fmt:message key="isdesign.eligibilitycriteria.unit"/></label></th>
+                 <th><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriatype"/></th>
+                 <th><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriteriadescription"/></th>
+                  <th><fmt:message key="isdesign.eligibilitycriteria.eligibilitycriterianame"/></th>
+                  <th><fmt:message key="isdesign.eligibilitycriteria.operator"/></th>
+                  <th><fmt:message key="isdesign.eligibilitycriteria.value"/></th>
+                  <th><fmt:message key="isdesign.eligibilitycriteria.unit"/></th>
                   
                   <th>Edit</th>
                   <th>Delete</th>
@@ -308,30 +308,38 @@ BubbleTips.activateTipOn("dfn");
                       <s:iterator value="eligibilityList" id="eligibilityList" status="stat" >
                       <tr id="<s:property value='#stat.index'/>">
                        <td class="tdBoxed">
-                       <s:textfield  name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
+                       <label for="eligibilityList[${stat.index}].inclusionIndicator" style="display: none;">Inclusion</label>
+                       <s:textfield id="eligibilityList[%{#stat.index}].inclusionIndicator" name="eligibilityList[%{#stat.index}].inclusionIndicator" value="%{inclusionIndicator}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textarea   name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
+                        <label for="eligibilityList[${stat.index}].textDescription" style="display: none;">TextDescription</label>
+                        <s:textarea id="eligibilityList[%{#stat.index}].textDescription"  name="eligibilityList[%{#stat.index}].textDescription" value="%{textDescription}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textarea name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
+                        <label for="eligibilityList[${stat.index}].criterionName" style="display: none;">CriterionName</label>
+                        <s:textarea id="eligibilityList[%{#stat.index}].criterionName" name="eligibilityList[%{#stat.index}].criterionName" value="%{criterionName}" cssStyle="width:250px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
                        </td>
                        <td class="tdBoxed">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:40px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
+                        <label for="eligibilityList[${stat.index}].operator" style="display: none;">Operator</label>
+                        <s:textfield id="eligibilityList[%{#stat.index}].operator" name="eligibilityList[%{#stat.index}].operator" value="%{operator}" cssStyle="width:40px;border: 1px solid #FFFFFF" readonly="true" rows="2"/>
                        </td>
                        <td class="tdBoxed">
                         <s:if test="%{eligibilityList[#stat.index].valueText != null}">
-                       <s:textfield  name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <label for="eligibilityList[${stat.index}].valueText" style="display: none;">ValueText</label>
+                       <s:textfield id="eligibilityList[%{#stat.index}].valueText" name="eligibilityList[%{#stat.index}].valueText" value="%{valueText}" cssStyle="width:50px;border: 1px solid #FFFFFF" readonly="true"/>
                        </s:if>
                        <s:elseif test="%{eligibilityList[#stat.index].valueIntegerMin != null || eligibilityList[#stat.index].valueIntegerMax != null}">
-                        <s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" cssStyle="width:35px;border: 1px solid #FFFFFF" readonly="true"/> 
+                        <label for="eligibilityList[${stat.index}].valueIntegerMin" style="display: none;">ValueIntegerMin</label>
+                        <s:textfield id="eligibilityList[%{#stat.index}].valueIntegerMin" name="eligibilityList[%{#stat.index}].valueIntegerMin" value="%{valueIntegerMin}" cssStyle="width:35px;border: 1px solid #FFFFFF" readonly="true"/> 
                         <s:if test="%{eligibilityList[#stat.index].valueIntegerMax != null}">
-                        -<s:textfield  name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:35px;border: 1px solid #FFFFFF" readonly="true"/>
+                        <label for="eligibilityList[${stat.index}].valueIntegerMax" style="display: none;">ValueIntegerMax</label>
+                        -<s:textfield id="eligibilityList[%{#stat.index}].valueIntegerMax" name="eligibilityList[%{#stat.index}].valueIntegerMax" value="%{valueIntegerMax}" cssStyle="width:35px;border: 1px solid #FFFFFF" readonly="true"/>
                         </s:if>
                        </s:elseif>
                        </td>
                        <td class="tdBoxed">
-                        	<s:textfield  name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
+                       		<label for="eligibilityList[${stat.index}].unit" style="display: none;">Unit</label>
+                        	<s:textfield id="eligibilityList[%{#stat.index}].unit" name="eligibilityList[%{#stat.index}].unit" value="%{unit}" cssStyle="width:55px;border: 1px solid #FFFFFF" readonly="true"/>
                         	<s:hidden  name="eligibilityList[%{#stat.index}].id" value="%{id}" />
                         	<s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
                         	<s:hidden  id="eligibilityList_%{#stat.index}_displayOrder" name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />                       
@@ -347,7 +355,8 @@ BubbleTips.activateTipOn("dfn");
                          </td>
                          <td class="nodnd">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
-                                <s:checkbox name="objectsToDelete" fieldValue="%{id}" value="%{id in objectsToDelete}"/>                            
+                            	<label for="delete${stat.index}" style="display: none;">Delete</label>
+                                <s:checkbox id="delete%{#stat.index}" name="objectsToDelete" fieldValue="%{id}" value="%{id in objectsToDelete}"/>                            
                             </pa:scientificAbstractorDisplayWhenCheckedOut>   
                          </td>
                      </tr>

@@ -220,7 +220,7 @@ function initialize() {
     
     <tr id="secondaryPurposeOtherTextDiv" style="display:'none'">
          <td scope="row" class="label">
-            <label for="otherText"><fmt:message key="isdesign.details.secondary.purpose.otherText"/></label>
+            <label for="secondaryOtherText"><fmt:message key="isdesign.details.secondary.purpose.otherText"/></label>
          </td>
          <td>
                <s:textarea id="secondaryOtherText" name="webDTO.secondaryPurposeOtherText"  cols="50" rows="2" maxlength="1000" cssClass="charcounter"/><br/>               
@@ -301,17 +301,16 @@ function initialize() {
          </td>
 	</tr>
 	<tr id="blindingRoleCode">
-		<td   scope="row" class="label"><label for="role">
-	 		<fmt:message key="isdesign.details.masking.role"/><span class="required">${asterisk}</span></label></td>
+		<td   scope="row" class="label"><fmt:message key="isdesign.details.masking.role"/><span class="required">${asterisk}</span></td>
 		<td>
-           <s:checkbox id="role" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
+           <s:checkbox id="subject" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
            <label for="subject">Subject</label>
-		   <s:checkbox id="subject" name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
+		   <s:checkbox id="investigator" name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
 		   <label for="investigator">Investigator</label>
-		   <s:checkbox id="investigator" name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
+		   <s:checkbox id="caregiver" name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
 		   <label for="caregiver">Caregiver</label>
-		   <s:checkbox id="caregiver" name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
-		   <label>Outcomes Assessor</label>          
+		   <s:checkbox id="outcomesassessor" name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
+		   <label for="outcomesassessor">Outcomes Assessor</label>          
          </td>
 	</tr>
 	<tr> 
@@ -365,8 +364,7 @@ function initialize() {
         </td>
     </tr>
     <tr>
-        <td scope="row" class="label"><label for="isdesign.details.accrualNum">
-            <fmt:message key="isdesign.details.accrualNum"/></label></td>
+        <td scope="row" class="label"><fmt:message key="isdesign.details.accrualNum"/></td>
         <td id="isdesign.details.accrualNum">
             <s:property value="(new gov.nih.nci.pa.service.util.PAServiceUtils()).getTrialAccruals(#session.studyProtocolIi)"/>
         </td>

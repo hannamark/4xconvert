@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
     <tr>
-        <td scope="row" class="label"><label for="studyPhase">
+        <td scope="row" class="label"><label for="gtdDTO.phaseCode">
                  <fmt:message key="studyProtocol.studyPhase"/><span class="required">*</span></label> </td>
         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
         <td>
@@ -14,15 +14,15 @@
         </td>
     </tr>
     <tr id ="phaseOtherDiv" style="display:'none'">
-        <td   scope="row" class="label"><label><fmt:message key="isdesign.details.phase.comment"/></label></td>
+        <td   scope="row" class="label"><label for="gtdDTO.phaseAdditionalQualifierCode"><fmt:message key="isdesign.details.phase.comment"/></label></td>
         <td>
             <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-            <s:select headerKey="" headerValue="No" name="gtdDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
+            <s:select headerKey="" headerValue="No" name="gtdDTO.phaseAdditionalQualifierCode"  id="gtdDTO.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues" 
                 value="gtdDTO.phaseAdditionalQualifierCode" cssStyle="width:120px" />        	
         </td>
     </tr>
     <tr>
-        <td  scope="row" class="label"><label>
+        <td  scope="row" class="label"><label for="gtdDTO.primaryPurposeCode">
             <fmt:message key="isdesign.details.primary.purpose"/><span class="required">*</span></label></td>
         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
         <td>
@@ -37,7 +37,7 @@
     </tr>
       <tr id="purposeOtherTextDiv" style="display:'none'">
          <td scope="row" class="label">
-            <label> <fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
+            <label for="gtdDTO.primaryPurposeOtherText"> <fmt:message key="isdesign.details.primary.purpose.otherText"/></label>
          </td>
          <td>
                <s:textarea id="gtdDTO.primaryPurposeOtherText"  name="gtdDTO.primaryPurposeOtherText"  cols="50" rows="2" />

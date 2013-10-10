@@ -16,7 +16,7 @@
     </tr>          
     <tr>
         <td scope="row" class="label">
-            <label for="sponsor"> Sponsor:<span class="required">${asterisk}</span></label> 
+            <label for="gtdDTO.sponsorName"> Sponsor:<span class="required">${asterisk}</span></label> 
         </td>
         <td class="value">
             <div id="loadSponsorField">
@@ -107,7 +107,7 @@
                                 cssStyle="width:200px; top: -5px; position:relative;" readonly="true" cssClass="readonly"/>
                             <s:if test="gtdDTO.responsiblePersonAffiliationOrgId != null && gtdDTO.responsiblePersonAffiliationOrgId != ''">
 				                <a href="javascript:void(0)" onclick="displayOrgDetails($('gtdDTO.responsiblePersonAffiliationOrgId').value);">
-				                    <img src="<%=request.getContextPath()%>/images/details.gif"/>
+				                    <img src="<%=request.getContextPath()%>/images/details.gif" alt="details"/>
 				                </a>
                             </s:if>
                         </td>

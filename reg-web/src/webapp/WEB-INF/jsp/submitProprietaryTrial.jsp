@@ -256,7 +256,7 @@
                                </s:fielderror>
                          </span>
                     </reg-web:valueRow>
-                    <reg-web:valueRow id="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor" 
+                    <reg-web:valueRow id="trialDTO.summaryFourOrgNameTR" labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor" 
                                       required="true" tooltip="tooltip.summary_4_funding_source">
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>

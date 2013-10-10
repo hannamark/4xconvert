@@ -3,19 +3,22 @@
 <table>
 <tr>
 <td class="value">
-<s:textfield label="Summary4sponsorName" id="gtdDTO.summaryFourOrgName" size="30" cssStyle="width:12.50em" readonly="true"/>
-</td><td> 
-                  <ul style="margin-top:-2px;">             
-                        <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookup4loadSummary4Sponsor();"/><span class="btn_img"><span class="organization">Add Sponsor</span></span></a></li>
-                  </ul>
-                   </td>
-      </tr>
-       <c:forEach items="${gtdDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
+	<label for="gtdDTO.summaryFourOrgName" style="display:none;">Summary4sponsorName</label>
+	<s:textfield id="gtdDTO.summaryFourOrgName" size="30" cssStyle="width:200px" readonly="true"/>
+</td>
+<td> 
+  <ul style="margin-top:-2px;">             
+        <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookup4loadSummary4Sponsor();"/><span class="btn_img"><span class="organization">Add Sponsor</span></span></a></li>
+  </ul>
+</td>
+</tr>
+<c:forEach items="${gtdDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
     <tr>
         <td>
+        	<label for="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" style="display:none;">SummaryFourOrgIdentifiers</label>
             <input type="text" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${summaryFourOrgIdentifiers.orgName}" size="30" readonly class="readonly" style="width:200px" />
             <a href="javascript:void(0)" onclick="displayOrgDetails('${summaryFourOrgIdentifiers.orgId}');">
-                <img src="${pageContext.request.contextPath}/images/details.gif"/>
+                <img src="${pageContext.request.contextPath}/images/details.gif" alt="details"/>
             </a>
             <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${summaryFourOrgIdentifiers.orgId}"/> 
             <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" value="${summaryFourOrgIdentifiers.rowId}"/> 
@@ -30,8 +33,7 @@
             </ul>
         </td>
     </tr>
-    
-    </c:forEach>
+</c:forEach>
 </table>
 <span class="formErrorMsg"> 
    <s:fielderror>

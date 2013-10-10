@@ -74,7 +74,7 @@ function resetValues() {
         <display:column escapeXml="true" titleKey="pendingAccruals.missingSiteIdentifier" property="studySite" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="pendingAccruals.missingSiteName" property="orgName" sortable="true" headerClass="sortable" />
         <display:column title="Delete" class="action">
-            <label for="delete%{#attr.row.id}" style="display:none">delete</label>
+            <label for="delete${row.id}" style="display:none">delete</label>
             <s:checkbox id="delete%{#attr.row.id}" name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>                
         </display:column>        
     </display:table>

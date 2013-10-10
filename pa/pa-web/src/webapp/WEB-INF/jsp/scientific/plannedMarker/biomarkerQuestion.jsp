@@ -35,38 +35,37 @@
 							<table class="form">
 								<s:hidden name="plannedMarker.id" />
 								<tr>
-									<td class="label"><s:label
-											for="plannedMarker.nciIdentifier">
-											<fmt:message key="plannedMarker.trial" />:</s:label></td>
+									<td class="label"><label for="plannedMarker.nciIdentifier"	>
+											<fmt:message key="plannedMarker.trial" />:</label></td>
 									<td><s:hidden name="plannedMarker.nciIdentifier"
-											id="nciIdentifier" /> <s:property
+											id="plannedMarker.nciIdentifier" /> <s:property
 											value="plannedMarker.nciIdentifier" /></td>
 								</tr>
 								<tr>
-									<td class="label"><s:label for="plannedMarker.name">
-											<fmt:message key="plannedMarker.name" />:</s:label></td>
-									<td><s:hidden name="plannedMarker.name" id="name" /> <s:property
+									<td class="label"><label for="plannedMarker.name">
+											<fmt:message key="plannedMarker.name" />:</label></td>
+									<td><s:hidden name="plannedMarker.name" id="plannedMarker.name" /> <s:property
 											value="plannedMarker.name" /></td>
 								</tr>
 								<tr>
-									<td class="label"><s:label
+									<td class="label"><label
 											for="plannedMarker.csmUserEmailId">
-											<fmt:message key="plannedMarker.submitter" />:</s:label></td>
+											<fmt:message key="plannedMarker.submitter" />:</label></td>
 									<td><s:hidden name="plannedMarker.csmUserEmailId"
-											id="csmUserEmailId" /> <s:property
+											id="plannedMarker.csmUserEmailId" /> <s:property
 											value="plannedMarker.csmUserEmailId" /></td>
 								</tr>
 								<tr>
-									<td class="label"><s:label for="plannedMarker.status">
-											<fmt:message key="plannedMarker.status" />:</s:label></td>
-									<td><s:hidden name="plannedMarker.status" id="status" />
+									<td class="label"><label for="plannedMarker.status">
+											<fmt:message key="plannedMarker.status" />:</label></td>
+									<td><s:hidden name="plannedMarker.status" id="plannedMarker.status" />
 										<s:property value="plannedMarker.status" /></td>
 								</tr>
 								<tr>
-									<td class="label"><s:label for="plannedMarker.question">
+									<td class="label"><label for="plannedMarker.question">
 											<fmt:message key="plannedMarker.question" />
-										</s:label></td>
-									<td class="value"><s:textarea
+										</label></td>
+									<td class="value"><s:textarea id="plannedMarker.question"
 											name="plannedMarker.question" rows="4" cssStyle="width:206px" />
 									</td>
 								</tr>

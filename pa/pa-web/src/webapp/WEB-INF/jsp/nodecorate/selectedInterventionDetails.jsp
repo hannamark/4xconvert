@@ -39,7 +39,7 @@
         </s:if>
         <s:else>
             <td class="value" colspan="2">
-                <s:textfield  id="type" name="interventionType" readonly="true" cssClass="readonly" cssStyle="width:280px;float:left" />
+                <s:textfield  id="interventionType" name="interventionType" readonly="true" cssClass="readonly" cssStyle="width:280px;float:left" />
             </td>    
         </s:else>
     </tr>
