@@ -9,7 +9,7 @@
 <html>
 <head>
     <title><fmt:message key="errorPage.title"/></title>
-    <META HTTP-EQUIV="refresh" CONTENT="10;URL=po-web/protected/home.action">
+    <META HTTP-EQUIV="refresh" CONTENT="10;URL=/po-web/protected/home.action">
 </head>
 
 <body id="error">
