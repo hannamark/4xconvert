@@ -1027,7 +1027,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     private void createCollaborators(List<OrganizationDTO> collaborators,
             Ii spIi) throws PAException {
-        if (CollectionUtils.isEmpty(collaborators)) {
+        if (collaborators == null) {
             return;
         }
         ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
@@ -1114,7 +1114,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         listOfDTOToCreateInPO.add(sponsorDTO);
         listOfDTOToCreateInPO.add(investigatorDTO);
         listOfDTOToCreateInPO.add(centralContactDTO);
-        listOfDTOToCreateInPO.addAll(collaborators);
+        if (collaborators != null) {
+            listOfDTOToCreateInPO.addAll(collaborators);
+        }
         if (respPartyDTO != null) {
             listOfDTOToCreateInPO.add(respPartyDTO.getAffiliation());
             listOfDTOToCreateInPO.add(respPartyDTO.getInvestigator());

@@ -764,7 +764,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 && !isSubmittedByNotCtGov ? extractResponsibleParty(study)
                 : null;
         List<OrganizationDTO> collaborators = importOrgs ? extractCollaborators(study)
-                : new ArrayList<OrganizationDTO>();
+                : null;
 
         DocumentDTO document = new DocumentDTO();
         document.setActiveIndicator(BlConverter.convertToBl(true));
