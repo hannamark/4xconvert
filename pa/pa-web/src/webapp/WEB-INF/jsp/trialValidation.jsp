@@ -46,8 +46,8 @@
                     // We'll effectively disable all form controls, except struts token, here to avoid those errors.
                     try {                    
                     	$(form).getElements().each(function (el) {
-                    		if (!el.name.startsWith("struts."))
-                    			  el.disable();
+                    		if (!((el.name.indexOf("token") == 0) || (el.name.indexOf("struts.token") == 0))) 
+                    			el.disable();
                     	});
                     } catch(err) {
                     	// oops.
