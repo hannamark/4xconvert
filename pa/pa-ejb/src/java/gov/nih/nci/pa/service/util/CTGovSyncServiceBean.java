@@ -469,7 +469,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } catch (Exception e) {
             LOG.error(e, e);
             createImportLogEntry(EMPTY, nctID, EMPTY, EMPTY,
-                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser, false);
+                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser, false, false, false);
             throw new PAException(e.getMessage()); // NOPMD
         }
         if (xml == null) {
@@ -534,11 +534,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             String trialNciId = paServiceUtils.getTrialNciId(Long
                     .valueOf(protocolID));
             createImportLogEntry(trialNciId, nctIdStr, title, NEW_TRIAL_ACTION,
-                    SUCCESS, currentUser, false);
+                    SUCCESS, currentUser, false, false, false);
             return trialNciId;
         } catch (Exception e) {
             createImportLogEntry(EMPTY, nctIdStr, title, NEW_TRIAL_ACTION,
-                    FAILURE + e.getMessage(), currentUser, false);
+                    FAILURE + e.getMessage(), currentUser, false, false, false);
             throw new PAException(e);
         }
 
@@ -569,8 +569,10 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             ProtocolSnapshot after = protocolComparisonService.captureSnapshot(id);
             
             final boolean needsReview = needsReview(before, after);
+            final boolean adminChanged = adminChanged(before, after);
+            final boolean scientificChanged = scientificChanged(before, after);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    SUCCESS, currentUser, needsReview);
+                    SUCCESS, currentUser, needsReview, adminChanged, scientificChanged);
             
             if (needsReview) {
                 attachListOfChangedFieldsToInboxEntry(studyProtocolDTO.getIdentifier(), before, after);
@@ -584,12 +586,78 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } catch (Exception e) {
             LOG.error(e, e);
             createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    FAILURE + e.getMessage(), currentUser, false);
+                    FAILURE + e.getMessage(), currentUser, false, false, false);
             throw new PAException(e.getMessage()); // NOPMD
         }
 
     }
 
+    private boolean adminChanged(ProtocolSnapshot before, ProtocolSnapshot after)
+            throws PAException {
+        List<String> sections = Arrays.asList("", "Admin");
+        return sectionsChanged(before, after, sections);
+    }
+    
+    private boolean scientificChanged(ProtocolSnapshot before, ProtocolSnapshot after)
+            throws PAException {
+        List<String> sections = Arrays.asList("Scientific");
+        return sectionsChanged(before, after, sections);
+    }
+    /**
+     * @param before
+     * @param after
+     * @param sections
+     * @return
+     * @throws PAException
+     */
+    private boolean sectionsChanged(ProtocolSnapshot before,
+            ProtocolSnapshot after, List<String> sections) throws PAException {
+        final Collection<Difference> differences = findDifferences(before,
+                after);
+        for (Difference diff : differences) {
+            String fieldSection = getFieldSection(diff.getFieldKey());
+            if (sections.contains(fieldSection)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private String getFieldSection(String fieldKey) throws PAException {
+        String fieldKeyMap = lookUpTableService
+                .getPropertyValue("ctgov.sync.fields_of_interest.key_to_sect_mapping");
+        Matcher m = getFieldKeyMappingMatcher(fieldKey, fieldKeyMap);
+        if (m.find()) {
+            return m.group(1).trim();
+        } else {
+            return StringUtils.EMPTY;
+        }
+    }
+    /**
+     * @param fieldKey
+     * @param fieldKeyMap
+     * @return
+     */
+    private String getFieldKeyMappingValue(String fieldKey,
+            String fieldKeyMap) {
+        Matcher m = getFieldKeyMappingMatcher(fieldKey, fieldKeyMap);
+        if (m.find()) {
+            return m.group(1).trim();
+        } else {
+            return fieldKey;
+        }
+    }
+    /**
+     * @param fieldKey
+     * @param fieldKeyMap
+     * @return
+     */
+    private Matcher getFieldKeyMappingMatcher(String fieldKey,
+            String fieldKeyMap) {
+        Pattern p = Pattern.compile("(?m)^\\Q" + fieldKey + "\\E=(.*)$");
+        return p.matcher(fieldKeyMap);        
+    }
+    
     private void attachListOfChangedFieldsToInboxEntry(Ii studyProtocolIi,
             ProtocolSnapshot before, ProtocolSnapshot after) throws PAException {
         final Collection<Difference> differences = findDifferences(before,
@@ -614,13 +682,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private String getFieldLabel(String fieldKey) throws PAException {
         String fieldKeyToLabelMap = lookUpTableService
                 .getPropertyValue("ctgov.sync.fields_of_interest.key_to_label_mapping");
-        Pattern p = Pattern.compile("(?m)^\\Q" + fieldKey + "\\E=(.*)$");
-        Matcher m = p.matcher(fieldKeyToLabelMap);
-        if (m.find()) {
-            return m.group(1).trim();
-        } else {
-            return fieldKey;
-        }
+        return getFieldKeyMappingValue(fieldKey, fieldKeyToLabelMap);
     }
 
     private void closeStudyInboxAndAcceptTrialIfNeeded(Ii spId,
@@ -870,8 +932,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
     }
 
-    private void createImportLogEntry(String trialNciId, String nctIdStr, // NOPMD
-            String title, String action, String status, String user, boolean needsReview)
+    // CHECKSTYLE:OFF
+    private void createImportLogEntry(String trialNciId, // NOPMD
+            String nctIdStr, // NOPMD
+            String title, String action, String status, String user,
+            boolean needsReview, boolean adminChanged, boolean scientificChanged)
             throws PAException {
         CTGovImportLog log = new CTGovImportLog();
         log.setNciID(trialNciId);
@@ -882,8 +947,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         log.setUserCreated(user);
         log.setDateCreated(new Date());
         log.setReviewRequired(needsReview);
+        log.setAdmin(adminChanged);
+        log.setScientific(scientificChanged);
         createCtGovImportLogEntry(log);
     }
+    // CHECKSTYLE:ON
 
     private void createCtGovImportLogEntry(CTGovImportLog log) {
         org.hibernate.classic.Session currentSession = null;

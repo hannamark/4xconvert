@@ -32,6 +32,8 @@ public class CTGovImportLog implements PersistentObject {
     private Date dateCreated;
     private String importStatus;
     private Boolean reviewRequired;
+    private Boolean admin;
+    private Boolean scientific;
 
     /**
      * 
@@ -193,5 +195,35 @@ public class CTGovImportLog implements PersistentObject {
      */
     public void setReviewRequired(Boolean reviewRequired) {
         this.reviewRequired = reviewRequired;
+    }
+
+    /**
+     * @return the admin
+     */
+    @Column(name = "admin")
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    /**
+     * @return the scientific
+     */
+    @Column(name = "scientific")
+    public Boolean getScientific() {
+        return scientific;
+    }
+
+    /**
+     * @param scientific the scientific to set
+     */
+    public void setScientific(Boolean scientific) {
+        this.scientific = scientific;
     }
 }

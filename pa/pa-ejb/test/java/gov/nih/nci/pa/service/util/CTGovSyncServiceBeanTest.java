@@ -697,6 +697,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             checkNCT01861054PersonOrgData(sp, "Threshold Pharmaceuticals", "Sponsor Inc.");
             checkNCT01861054OtherData(session, sp);    
             checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkAdminScientificMarkedInLogEntry(nctID, nciID, session);
             checkInboxEntry(sp);
             
         } finally {
@@ -705,6 +706,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         }
     }
     
+    private void checkAdminScientificMarkedInLogEntry(String nctID,
+            String nciID, Session session) {
+        CTGovImportLog log = findLogEntry(nciID, session);
+        assertTrue(log.getAdmin());
+        assertTrue(log.getScientific());
+        
+    }
+
     private void checkInboxEntry(InterventionalStudyProtocol sp) {
         StudyInbox inbox = sp.getStudyInbox().iterator().next();
         assertEquals(
@@ -909,11 +918,23 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private void checkSuccessfulImportLogEntry(final String nctID,
             String nciID, final Session session) throws HibernateException {
+        CTGovImportLog log = findLogEntry(nciID, session);
+        assertEquals(nctID, log.getNctID());
+        assertEquals("Success", log.getImportStatus());
+    }
+
+    /**
+     * @param nciID
+     * @param session
+     * @return
+     * @throws HibernateException
+     */
+    private CTGovImportLog findLogEntry(String nciID, final Session session)
+            throws HibernateException {
         CTGovImportLog log = (CTGovImportLog) session.createQuery(
                 " from CTGovImportLog log where log.nciID='" + nciID + "' order by log.dateCreated desc")
                 .list().get(0);
-        assertEquals(nctID, log.getNctID());
-        assertEquals("Success", log.getImportStatus());
+        return log;
     }
 
     /**

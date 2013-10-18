@@ -24,6 +24,7 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
     public static String CTGOV_SYNC_IMPORT_ORGS = "true";
     public static String CTGOV_SYNC_FIELDS_OF_INTEREST = "studyProtocol.scientificDescription;eligibilityCriteria";
     public static String CTGOV_SYNC_FIELDS_OF_INTEREST_LABEL_MAPPING = "studyProtocol.scientificDescription=Detailed Description\r\neligibilityCriteria=Eligibility Criteria";
+    public static String CTGOV_SYNC_FIELDS_OF_INTEREST_SECTION_MAPPING = "studyProtocol.scientificDescription=Scientific\r\neligibilityCriteria=Admin";
 
     /**
      * {@inheritDoc}
@@ -111,6 +112,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return CTGOV_SYNC_FIELDS_OF_INTEREST;
         } else if (name.equals("ctgov.sync.fields_of_interest.key_to_label_mapping")) {
             return CTGOV_SYNC_FIELDS_OF_INTEREST_LABEL_MAPPING;
+        } else if (name.equals("ctgov.sync.fields_of_interest.key_to_sect_mapping")) {
+            return CTGOV_SYNC_FIELDS_OF_INTEREST_SECTION_MAPPING;
         } else {
             return value;
         }

@@ -1469,4 +1469,8 @@
         <comment>default disease codes </comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6509.sql"/>
      </changeSet>
+     <changeSet id="PO-6576" author="krylovd">
+        <comment>Added mapping of fields of interest to Admin/Scientific sections to pa_properties.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6576.sql"/>
+     </changeSet>
 </databaseChangeLog>
