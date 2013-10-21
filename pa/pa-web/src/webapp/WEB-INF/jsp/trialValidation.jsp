@@ -252,7 +252,7 @@
                                 list="#summaryFourFundingCategoryCodeValues" value="gtdDTO.summaryFourFundingCategoryCode" 
                                 cssStyle="width:206px" />
                     </pa:valueRow>
-                    <pa:valueRow labelKey="studyProtocol.summaryFourFundingSource">
+                    <pa:valueRow labelKey="studyProtocol.summaryFourFundingSource" labelFor="gtdDTO.summaryFourOrgName">
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
                         </div> 

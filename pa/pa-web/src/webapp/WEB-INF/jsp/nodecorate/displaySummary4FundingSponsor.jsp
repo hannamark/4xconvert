@@ -3,7 +3,6 @@
 <table>
 <tr>
 <td class="value">
-	<label for="gtdDTO.summaryFourOrgName" style="display:none;">Summary4sponsorName</label>
 	<s:textfield id="gtdDTO.summaryFourOrgName" size="30" cssStyle="width:200px" readonly="true"/>
 </td>
 <td> 

@@ -15,9 +15,11 @@
 		</label>
     </c:when>
     <c:otherwise>
-        <c:if test="${strong}"><strong></c:if>
-	    <fmt:message key="${labelKey}"/>
-	    <c:if test="${required}"><span class="required">*</span></c:if>
-	    <c:if test="${strong}"></strong></c:if>
+    	<span class="label">
+	        <c:if test="${strong}"><strong></c:if>
+		    <fmt:message key="${labelKey}"/>
+		    <c:if test="${required}"><span class="required">*</span></c:if>
+		    <c:if test="${strong}"></strong></c:if>
+	    </span>
     </c:otherwise>
 </c:choose>
