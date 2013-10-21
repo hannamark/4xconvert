@@ -111,6 +111,10 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
   private String comments;
   private Timestamp openDate;
   private Timestamp closeDate;
+  private Timestamp adminCloseDate;
+  private Timestamp scientificCloseDate;
+  private Boolean admin;
+  private Boolean scientific;
   private StudyInboxTypeCode typeCode;
 
   /**
@@ -172,5 +176,57 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
      */
     public void setTypeCode(StudyInboxTypeCode typeCode) {
         this.typeCode = typeCode;
+    }
+    /**
+     * @return the adminCloseDate
+     */
+    @Column(name = "admin_close_date")
+    public Timestamp getAdminCloseDate() {
+        return adminCloseDate;
+    }
+    /**
+     * @param adminCloseDate the adminCloseDate to set
+     */
+    public void setAdminCloseDate(Timestamp adminCloseDate) {
+        this.adminCloseDate = adminCloseDate;
+    }
+    /**
+     * @return the scientificCloseDate
+     */
+    @Column(name = "scientific_close_date")
+    public Timestamp getScientificCloseDate() {
+        return scientificCloseDate;
+    }
+    /**
+     * @param scientificCloseDate the scientificCloseDate to set
+     */
+    public void setScientificCloseDate(Timestamp scientificCloseDate) {
+        this.scientificCloseDate = scientificCloseDate;
+    }
+    /**
+     * @return the admin
+     */
+    @Column(name = "admin")
+    public Boolean getAdmin() {
+        return admin;
+    }
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+    /**
+     * @return the scientific
+     */
+    @Column(name = "scientific")
+    public Boolean getScientific() {
+        return scientific;
+    }
+    /**
+     * @param scientific the scientific to set
+     */
+    public void setScientific(Boolean scientific) {
+        this.scientific = scientific;
     }
 }

@@ -89,10 +89,12 @@ import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.TrialUpdateWebDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -116,7 +118,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -129,6 +130,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -279,20 +281,19 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * @return res
-     * @throws PAException exception
+     * @throws PAException
+     *             exception
      */
+    @SuppressWarnings("deprecation")
     public String acceptUpdate() throws PAException {
         try {
-            String sInbxId = ServletActionContext.getRequest().getParameter("studyInboxId");
-            StudyInboxDTO dto = studyInboxService.get(IiConverter.convertToIi(sInbxId));
-            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-            studyInboxDTO.setIdentifier(IiConverter.convertToIi(sInbxId));
-            // set the close date
-            Timestamp now = new Timestamp(new Date().getTime());
-            studyInboxDTO.setInboxDateRange(dto.getInboxDateRange());
-            studyInboxDTO.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
-            // update
-            studyInboxService.update(studyInboxDTO);
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            String sInbxId = request.getParameter(
+                    "studyInboxId");
+            final Ii inboxId = IiConverter.convertToIi(sInbxId);
+            studyInboxService.acknowledge(inboxId, StudyInboxSectionCode
+                    .getByCode(request.getParameter(
+                            "updateType")));
         } catch (Exception e) {
             LOG.error("Error while accepting the trial update.", e);
             addActionError("Error while accepting the trial update.");
@@ -314,6 +315,10 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             webDTO.setId(IiConverter.convertToLong(dto.getIdentifier()));
             webDTO.setComment(StConverter.convertToString(dto.getComments()));
             webDTO.setUpdatedDate(TsConverter.convertToTimestamp(dto.getInboxDateRange().getLow()));
+            webDTO.setAdmin(BlConverter.convertToBoolean(dto.getAdmin()));
+            webDTO.setScientific(BlConverter.convertToBoolean(dto.getScientific()));
+            webDTO.setAdminCloseDate(TsConverter.convertToTimestamp(dto.getAdminCloseDate()));
+            webDTO.setScientificCloseDate(TsConverter.convertToTimestamp(dto.getScientificCloseDate()));
             records.add(webDTO);
         }
 

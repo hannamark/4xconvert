@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
@@ -93,6 +94,10 @@ public class StudyInboxDTO  extends StudyDTO {
   private Ivl<Ts> inboxDateRange;
   private Cd typeCode;
   private St userLastCreated;
+  private Ts adminCloseDate;
+  private Ts scientificCloseDate;
+  private Bl admin;
+  private Bl scientific;
   
   /**
    * @return the comments
@@ -144,6 +149,54 @@ public class StudyInboxDTO  extends StudyDTO {
      */
     public void setUserLastCreated(St userLastCreated) {
         this.userLastCreated = userLastCreated;
+    }
+    /**
+     * @return the adminCloseDate
+     */
+    public Ts getAdminCloseDate() {
+        return adminCloseDate;
+    }
+    /**
+     * @param adminCloseDate the adminCloseDate to set
+     */
+    public void setAdminCloseDate(Ts adminCloseDate) {
+        this.adminCloseDate = adminCloseDate;
+    }
+    /**
+     * @return the scientificCloseDate
+     */
+    public Ts getScientificCloseDate() {
+        return scientificCloseDate;
+    }
+    /**
+     * @param scientificCloseDate the scientificCloseDate to set
+     */
+    public void setScientificCloseDate(Ts scientificCloseDate) {
+        this.scientificCloseDate = scientificCloseDate;
+    }
+    /**
+     * @return the admin
+     */
+    public Bl getAdmin() {
+        return admin;
+    }
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(Bl admin) {
+        this.admin = admin;
+    }
+    /**
+     * @return the scientific
+     */
+    public Bl getScientific() {
+        return scientific;
+    }
+    /**
+     * @param scientific the scientific to set
+     */
+    public void setScientific(Bl scientific) {
+        this.scientific = scientific;
     }
   
   

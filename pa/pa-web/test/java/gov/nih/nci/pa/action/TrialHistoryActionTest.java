@@ -83,7 +83,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -95,6 +95,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -278,9 +279,9 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
     @Test
     public void testAcceptUpdate() throws PAException {
-        HttpServletRequest httpReq = mock(HttpServletRequest.class);
-        when(httpReq.getParameter(anyString())).thenReturn("123");
+        HttpServletRequest httpReq = mock(HttpServletRequest.class);        
         when(httpReq.getParameter("studyInboxId")).thenReturn("123");
+        when(httpReq.getParameter("updateType")).thenReturn("Both");
         when(httpReq.getSession()).thenReturn(getSession());
 
         ServletActionContext.setRequest(httpReq);
@@ -288,14 +289,9 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         PaRegistry.getInstance().setServiceLocator(serviceLoc);
 
         assertEquals("list", trialHistory.acceptUpdate());
+        verify(studyInboxService).acknowledge(eq(IiConverter.convertToIi(123L)), eq(StudyInboxSectionCode.BOTH));
     }
-
-    @Test
-    public void testAcceptUpdateWithException() throws PAException {
-        PaRegistry.getInstance().setServiceLocator(serviceLoc);
-        assertEquals("list", trialHistory.acceptUpdate());
-        assertEquals(1, trialHistory.getActionErrors().size());
-    }
+    
     
     @Test(expected=UnsupportedOperationException.class)
     public void testDeleteObject() throws PAException {

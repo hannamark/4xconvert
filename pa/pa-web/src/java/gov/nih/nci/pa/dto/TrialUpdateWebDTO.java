@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -92,6 +93,11 @@ public class TrialUpdateWebDTO {
     private Long id;
     private String comment;
     private Date updatedDate;
+    
+    private Timestamp adminCloseDate;
+    private Timestamp scientificCloseDate;
+    private Boolean admin;
+    private Boolean scientific;
 
     /**
      * @return the id
@@ -133,5 +139,61 @@ public class TrialUpdateWebDTO {
      */
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    /**
+     * @return the adminCloseDate
+     */
+    public Timestamp getAdminCloseDate() {
+        return adminCloseDate;
+    }
+
+    /**
+     * @param adminCloseDate the adminCloseDate to set
+     */
+    public void setAdminCloseDate(Timestamp adminCloseDate) {
+        this.adminCloseDate = adminCloseDate;
+    }
+
+    /**
+     * @return the scientificCloseDate
+     */
+    public Timestamp getScientificCloseDate() {
+        return scientificCloseDate;
+    }
+
+    /**
+     * @param scientificCloseDate the scientificCloseDate to set
+     */
+    public void setScientificCloseDate(Timestamp scientificCloseDate) {
+        this.scientificCloseDate = scientificCloseDate;
+    }
+
+    /**
+     * @return the admin
+     */
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    /**
+     * @return the scientific
+     */
+    public Boolean getScientific() {
+        return scientific;
+    }
+
+    /**
+     * @param scientific the scientific to set
+     */
+    public void setScientific(Boolean scientific) {
+        this.scientific = scientific;
     }
 }

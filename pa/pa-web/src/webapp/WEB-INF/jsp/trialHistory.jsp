@@ -33,13 +33,26 @@
             }
 
             function acceptTrialUpdate(id) {
-                input_remove_box = confirm("Do you want to acknowledge this update and remove it from the list?");
+            	acknowledgeUpdate(id, 'Both');
+            }
+            
+            function acknowledgeUpdate(id, updateType) {
+                input_remove_box = confirm("Do you want to acknowledge this update?");
                 if (input_remove_box==true) {
                     var url = '/pa/protected/ajaxTrialHistoryacceptUpdate.action';
-                    var params = { studyInboxId: id };
+                    var params = { studyInboxId: id, updateType: updateType };
                     var div = document.getElementById('updates');
                     var aj = callAjaxPost(div, url, params);
                 }
+            }
+
+            
+            function acceptAdminTrialUpdate(id) {
+            	acknowledgeUpdate(id, 'Admin');
+            }
+            
+            function acceptScientificTrialUpdate(id) {
+            	acknowledgeUpdate(id, 'Scientific');
             }
 
         </script>

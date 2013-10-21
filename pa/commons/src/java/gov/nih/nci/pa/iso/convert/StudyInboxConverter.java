@@ -82,10 +82,12 @@ import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Anupama Sharma
@@ -108,6 +110,10 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
             dto.setUserLastCreated(StConverter.convertToSt(bo
                     .getUserLastCreated().getLoginName()));
         }
+        dto.setAdmin(BlConverter.convertToBl(bo.getAdmin()));
+        dto.setScientific(BlConverter.convertToBl(bo.getScientific()));
+        dto.setAdminCloseDate(TsConverter.convertToTs(bo.getAdminCloseDate()));
+        dto.setScientificCloseDate(TsConverter.convertToTs(bo.getScientificCloseDate()));
         return dto;
     }
 
@@ -134,6 +140,10 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setOpenDate((IvlConverter.convertTs().convertLow(dto.getInboxDateRange())));
         bo.setCloseDate(IvlConverter.convertTs().convertHigh(dto.getInboxDateRange()));
+        bo.setAdmin(BlConverter.convertToBoolean(dto.getAdmin()));
+        bo.setScientific(BlConverter.convertToBoolean(dto.getScientific()));
+        bo.setAdminCloseDate(TsConverter.convertToTimestamp(dto.getAdminCloseDate()));
+        bo.setScientificCloseDate(TsConverter.convertToTimestamp(dto.getScientificCloseDate()));
         bo.setStudyProtocol(spBo);
     }
 }

@@ -10,7 +10,22 @@
             value="@org.apache.commons.lang.StringUtils@replace(#attr.row.comment, @gov.nih.nci.pa.util.TrialUpdatesRecorder@SEPARATOR,'<br/>')"/>
     </display:column>
     <display:column class="title" titleKey="trialHistoryUpdate.accept" sortable="false" >
-        <a href="javascript:void(0)" class="title" onclick="javascript:acceptTrialUpdate('${row.id}');">Acknowledge</a>
+            <c:set var="ackAll" value="${true}" />   
+                 
+            <c:if test="${row.admin==true && empty row.adminCloseDate}">
+                <a href="javascript:void(0)" class="title" onclick="javascript:acceptAdminTrialUpdate('${row.id}');">Acknowledge Admin</a><br/>
+                <c:set var="ackAll" value="${false}" />
+            </c:if>
+            
+            <c:if test="${row.scientific==true && empty row.scientificCloseDate}">
+                <a href="javascript:void(0)" class="title" onclick="javascript:acceptScientificTrialUpdate('${row.id}');">Acknowledge Scientific</a>
+                <c:set var="ackAll" value="${false}" />
+            </c:if>
+            
+            <c:if test="${ackAll}">
+                <a href="javascript:void(0)" class="title" onclick="javascript:acceptTrialUpdate('${row.id}');">Acknowledge</a>
+            </c:if>            
+            
     </display:column>
 </display:table>
 </s:form>

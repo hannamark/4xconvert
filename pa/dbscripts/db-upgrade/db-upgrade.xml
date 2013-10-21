@@ -1473,4 +1473,8 @@
         <comment>Added mapping of fields of interest to Admin/Scientific sections to pa_properties.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6576.sql"/>
      </changeSet>
+     <changeSet id="PO-6499" author="krylovd">
+        <comment>Added new columns to study_inbox to track admin/scientific changes separately.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6499.sql"/>
+     </changeSet>
 </databaseChangeLog>

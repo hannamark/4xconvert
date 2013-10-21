@@ -82,12 +82,14 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -110,6 +112,10 @@ public class StudyInboxConverterTest extends AbstractConverterTest<StudyInboxCon
         bo.setStudyProtocol(getStudyProtocol());
         bo.setOpenDate(new Timestamp(now.getTime()));
         bo.setCloseDate(new Timestamp(tomorrow.getTime()));
+        bo.setAdmin(true);
+        bo.setScientific(true);
+        bo.setAdminCloseDate(new Timestamp(tomorrow.getTime()));
+        bo.setScientificCloseDate(new Timestamp(tomorrow.getTime()));
         return bo;
     }
 
@@ -120,6 +126,10 @@ public class StudyInboxConverterTest extends AbstractConverterTest<StudyInboxCon
         dto.setComments(StConverter.convertToSt("Comments"));
         dto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(now, tomorrow));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(STUDY_PROTOCOL_ID));
+        dto.setAdmin(BlConverter.convertToBl(true));
+        dto.setScientific(BlConverter.convertToBl(true));
+        dto.setAdminCloseDate(TsConverter.convertToTs(tomorrow));
+        dto.setScientificCloseDate(TsConverter.convertToTs(tomorrow));
         return dto;
     }
 
@@ -133,6 +143,10 @@ public class StudyInboxConverterTest extends AbstractConverterTest<StudyInboxCon
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
         assertEquals(now, bo.getOpenDate());
         assertEquals(tomorrow, bo.getCloseDate());
+        assertEquals(tomorrow, bo.getAdminCloseDate());
+        assertEquals(tomorrow, bo.getScientificCloseDate());
+        assertTrue(bo.getAdmin());
+        assertTrue(bo.getScientific());
     }
 
     /**
@@ -145,6 +159,11 @@ public class StudyInboxConverterTest extends AbstractConverterTest<StudyInboxCon
         assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         assertEquals(now, dto.getInboxDateRange().getLow().getValue());
         assertEquals(tomorrow, dto.getInboxDateRange().getHigh().getValue());
+        assertEquals(tomorrow, dto.getAdminCloseDate().getValue());
+        assertEquals(tomorrow, dto.getScientificCloseDate().getValue());
+        assertTrue(dto.getAdmin().getValue());
+        assertTrue(dto.getScientific().getValue());
+
     }
 
 }

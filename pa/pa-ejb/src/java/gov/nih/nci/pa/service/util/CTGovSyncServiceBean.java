@@ -575,7 +575,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                     SUCCESS, currentUser, needsReview, adminChanged, scientificChanged);
             
             if (needsReview) {
-                attachListOfChangedFieldsToInboxEntry(studyProtocolDTO.getIdentifier(), before, after);
+                attachListOfChangedFieldsToInboxEntry(
+                        studyProtocolDTO.getIdentifier(), before, after,
+                        adminChanged, scientificChanged);
             }
             
             closeStudyInboxAndAcceptTrialIfNeeded(
@@ -659,13 +661,16 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     }
     
     private void attachListOfChangedFieldsToInboxEntry(Ii studyProtocolIi,
-            ProtocolSnapshot before, ProtocolSnapshot after) throws PAException {
+            ProtocolSnapshot before, ProtocolSnapshot after,
+            boolean adminChanged, boolean scientificChanged) throws PAException {
         final Collection<Difference> differences = findDifferences(before,
                 after);
         List<StudyInboxDTO> inboxEntries = studyInboxService
                 .getOpenInboxEntries(studyProtocolIi);
         if (!inboxEntries.isEmpty()) {
             StudyInboxDTO recent = inboxEntries.get(0);
+            recent.setAdmin(BlConverter.convertToBl(adminChanged));
+            recent.setScientific(BlConverter.convertToBl(scientificChanged));
             for (Difference diff : differences) {
                 String fieldLabel = getFieldLabel(diff.getFieldKey());
                 String currentComments = StringUtils.defaultString(StConverter

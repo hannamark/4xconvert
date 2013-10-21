@@ -81,6 +81,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
@@ -401,6 +402,10 @@ public class StudyInboxServiceBean // NOPMD
             wrkDto.getInboxDateRange().setHigh(dto.getInboxDateRange().getHigh());
             wrkDto.setComments(ISOUtil.isStNull(dto.getComments()) ? wrkDto
                     .getComments() : dto.getComments());
+            wrkDto.setAdmin(ISOUtil.isBlNull(dto.getAdmin()) ? wrkDto
+                    .getAdmin() : dto.getAdmin());
+            wrkDto.setScientific(ISOUtil.isBlNull(dto.getScientific()) ? wrkDto
+                    .getScientific() : dto.getScientific());
             setTimeIfToday(wrkDto);
             dateRules(wrkDto);
         }
@@ -600,6 +605,28 @@ public class StudyInboxServiceBean // NOPMD
                                     .getTime())));
             update(recent);
         }
+    }
+
+
+    @Override
+    public void acknowledge(Ii inboxId, StudyInboxSectionCode code)
+            throws PAException {
+        StudyInboxDTO inbox = get(inboxId);
+        Timestamp now = new Timestamp(new Date().getTime());
+        if (code == StudyInboxSectionCode.ADMIN) {
+            inbox.setAdminCloseDate(TsConverter.convertToTs(now));
+        } else if (code == StudyInboxSectionCode.SCIENTIFIC) {
+            inbox.setScientificCloseDate(TsConverter.convertToTs(now));
+        }
+        if (code == null
+                || code == StudyInboxSectionCode.BOTH
+                || ((!ISOUtil.isTsNull(inbox.getAdminCloseDate()) || !BlConverter
+                        .convertToBool(inbox.getAdmin()))
+                        && (!ISOUtil.isTsNull(inbox.getScientificCloseDate())) || !BlConverter
+                            .convertToBool(inbox.getScientific()))) {
+            inbox.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
+        }
+        super.update(inbox);
     }
  
     

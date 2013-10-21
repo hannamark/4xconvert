@@ -9,7 +9,7 @@ import static gov.nih.nci.iso21090.EntityNamePartType.PFX;
 import static gov.nih.nci.iso21090.EntityNamePartType.SFX;
 import static gov.nih.nci.pa.iso.util.EnPnConverter.convertToEnPn;
 import static gov.nih.nci.pa.iso.util.EnPnConverter.getNamePart;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -720,6 +720,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 "Trial has been updated from ClinicalTrials.gov\rDetailed Description changed\rEligibility Criteria changed",
                 inbox.getComments());
         assertNull(inbox.getCloseDate());
+        assertTrue(inbox.getScientific());
+        assertTrue(inbox.getAdmin());
+        assertNull(inbox.getAdminCloseDate());
+        assertNull(inbox.getScientificCloseDate());
         assertEquals(StudyInboxTypeCode.UPDATE, inbox.getTypeCode());
 
     }
