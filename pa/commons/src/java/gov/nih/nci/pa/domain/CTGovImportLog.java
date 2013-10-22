@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
@@ -34,7 +35,7 @@ public class CTGovImportLog implements PersistentObject {
     private Boolean reviewRequired;
     private Boolean admin;
     private Boolean scientific;
-
+    
     /**
      * 
      * @return id
@@ -136,6 +137,26 @@ public class CTGovImportLog implements PersistentObject {
         return userCreated;
     }
 
+    /**
+     * @return displayable review indicator
+     */
+    @Transient
+    public String getDisplayableReviewIndicator() {
+        String displayableReviewIndicator = "No";
+        if (!reviewRequired && !admin && !scientific) {
+            displayableReviewIndicator = "No";
+        } else if (reviewRequired && !admin && !scientific) { 
+            displayableReviewIndicator = "Yes";
+        } else if (admin && !scientific) {
+            displayableReviewIndicator = "Yes, Admin";
+        } else if (!admin && scientific) {
+            displayableReviewIndicator = "Yes, Scientific";
+        } else if (admin && scientific) {
+            displayableReviewIndicator = "Yes, Admin & Scientific";
+        }
+        return displayableReviewIndicator;
+    }
+    
     /**
      * 
      * @param userCreated

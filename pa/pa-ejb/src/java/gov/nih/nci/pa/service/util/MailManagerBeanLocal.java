@@ -1817,13 +1817,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             logEntryBuffer.append("<td>").append("Nightly Job").append("</td>");
             logEntryBuffer.append("<td>").append(logEntry.getDateCreated().toString()).append("</td>");
             logEntryBuffer.append("<td>").append(logEntry.getImportStatus()).append("</td>");
-            if (logEntry.getReviewRequired() != null) {
-                if (logEntry.getReviewRequired()) {
-                    logEntryBuffer.append("<td>").append("Yes").append("</td>");
-                } else {
-                    logEntryBuffer.append("<td>").append("No").append("</td>");
-                }
-            }           
+            logEntryBuffer.append("<td>").append(
+                    logEntry.getDisplayableReviewIndicator()).append("</td>");                       
             logEntryBuffer.append("</tr>");
             if (logEntry.getImportStatus().equals(CTGovSyncServiceBean.SUCCESS)) {
                 successfulUpdates++;
