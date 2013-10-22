@@ -15,7 +15,7 @@
 		</label>
     </c:when>
     <c:otherwise>
-    	<span class="label">
+    	<span class="labelspan">
 	        <c:if test="${strong}"><strong></c:if>
 		    <fmt:message key="${labelKey}"/>
 		    <c:if test="${required}"><span class="required">*</span></c:if>

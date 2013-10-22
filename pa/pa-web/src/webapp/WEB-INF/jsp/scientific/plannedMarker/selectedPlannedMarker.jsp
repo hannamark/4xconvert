@@ -32,7 +32,7 @@
     </tr>
     
     <tr>
-        <td class="label"><fmt:message key="plannedMarker.evaluationType" />:</td>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.evaluationType" />:</span></td>
         <td style="border:1px solid lavender">
             <s:set name="evaluationTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@EVALUATION_TYPE)" />
             <s:set name="selectedEvalValues" value="plannedMarker.selectedEvaluationType"/>
@@ -70,7 +70,7 @@
     </tr>
     
     <tr id="hugoCodeRow" style="display:none">
-        <td class="label"><fmt:message key="plannedMarker.hugoCode"/>:</td>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.hugoCode"/>:</span></td>
         <td>
             <s:hidden name="plannedMarker.hugoCode" id="hugoCode" />
             <s:property value="plannedMarker.hugoCode"/>
@@ -85,7 +85,7 @@
     </tr>
     <tr> <td>  </td> </tr>
     <tr>
-        <td class="label"><fmt:message key="plannedMarker.assayType" />:<span class="required">*</span></td>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.assayType" />:</span><span class="required">*</span></td>
         <td style="border:1px solid lavender">
             <s:set name="assayTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@ASSAY_TYPE)" />
             <s:set name="selectedValues" value="plannedMarker.selectedAssayType"/>
@@ -136,7 +136,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label"><fmt:message key="plannedMarker.assayPurpose" />:<span class="required">*</span>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.assayPurpose" />:</span><span class="required">*</span>
         </td>
         <td style="width: 250px;border:1px solid lavender">
             <s:set name="assayPurposeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@BIOMARKER_PURPOSE)" /> 
@@ -178,7 +178,7 @@
         </td>
     </tr>
     <tr>
-        <td class="label"><fmt:message key="plannedMarker.tissueSpecimenType" />:<span class="required">*</span>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.tissueSpecimenType" />:</span><span class="required">*</span>
         </td>
         <td style="width: 250px;border:1px solid lavender">
             <s:set name="tissueSpecimenTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@SPECIMEN_TYPE)" />
@@ -214,7 +214,7 @@
     </tr>
     
     <tr>
-        <td class="label"><fmt:message key="plannedMarker.status" />:</td>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.status" />:</span></td>
         <td>
             <s:hidden name="plannedMarker.status" id="status"/>
             <s:property value="plannedMarker.status"/>

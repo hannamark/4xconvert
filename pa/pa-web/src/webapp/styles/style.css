@@ -343,8 +343,8 @@ TABLE.form TD
 { height:35px }
 .label LABEL
 { font-size:92% }
-.label SPAN
-{ font-size:92%; color:#333; }
+.labelspan
+{ font-size:92% !important; color:#333 !important; }
 .value INPUT, .value SELECT, .value TEXTAREA
 { display:block; margin-top:-7px }
 .label
