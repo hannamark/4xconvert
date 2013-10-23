@@ -125,6 +125,7 @@ import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -269,6 +270,10 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(orgDto));
             when(poOrgSvc.search(any(OrganizationDTO.class), any(EnOn.class), any(LimitOffset.class)))
                 .thenReturn(Arrays.asList(orgDto));
+            when(
+                    poOrgSvc.search(any(OrganizationSearchCriteriaDTO.class),
+                            any(LimitOffset.class))).thenReturn(
+                    Arrays.asList(orgDto));
             when(poOrgSvc.validate(any(OrganizationDTO.class))).thenReturn(new HashMap<String, String[]>());
         } catch (Exception e) {
             LOG.error(ERROR_MSG, e);
