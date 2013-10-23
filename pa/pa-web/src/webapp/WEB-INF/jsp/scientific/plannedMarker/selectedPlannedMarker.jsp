@@ -32,7 +32,7 @@
     </tr>
     
     <tr>
-        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.evaluationType" />:</span></td>
+        <td class="label"><span class="labelspan"><fmt:message key="plannedMarker.evaluationType" />:</span><span class="required">*</span></td>
         <td style="border:1px solid lavender">
             <s:set name="evaluationTypeValues" value="@gov.nih.nci.pa.service.MarkerAttributesBeanLocal@getTypeValues(@gov.nih.nci.pa.enums.BioMarkerAttributesCode@EVALUATION_TYPE)" />
             <s:set name="selectedEvalValues" value="plannedMarker.selectedEvaluationType"/>
