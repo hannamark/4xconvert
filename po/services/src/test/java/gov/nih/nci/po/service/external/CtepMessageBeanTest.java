@@ -3,7 +3,6 @@ package gov.nih.nci.po.service.external;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Country;
@@ -188,14 +187,14 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         assertNotNull(org1);
         assertEquals(RoleStatus.PENDING, hcf1.getStatus());
         assertTrue(hcf1.isCtepOwned());
-        assertNull(hcf1.getName());
+        assertEquals(hcf1.getPlayer().getName(), hcf1.getName());
 
         HealthCareFacility hcf2 = hcfList.get(1);
         Organization org2 = hcf2.getPlayer();
         assertNotNull(org2);
         assertEquals(RoleStatus.PENDING, hcf2.getStatus());
         assertTrue(hcf2.isCtepOwned());
-        assertNull(hcf2.getName());
+        assertEquals(hcf2.getPlayer().getName(), hcf2.getName());
 
         Ii ctepId = new Ii();
         ctepId.setExtension("03013");

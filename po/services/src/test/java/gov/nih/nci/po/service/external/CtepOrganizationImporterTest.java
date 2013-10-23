@@ -394,7 +394,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         // see message sent to out on ro creation
         MessageProducerTest.assertMessageCreated(ro, getService, true);
-        assertNull(ro.getName());
+        assertEquals(ro.getPlayer().getName(), ro.getName());
         assertNotNull(ro.getFundingMechanism());
 
         // a user creates an HCF in the system, this hcf will have a ctep id added to it
@@ -564,7 +564,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(org1);
         assertEquals(RoleStatus.PENDING, ro1.getStatus());
         assertTrue(ro1.isCtepOwned());
-        assertNull(ro1.getName());
+        assertEquals(ro1.getPlayer().getName(), ro1.getName());
         assertNotNull(ro1.getFundingMechanism());
 
         ResearchOrganization ro2 = roList.get(1);
@@ -572,7 +572,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(org2);
         assertEquals(RoleStatus.PENDING, ro2.getStatus());
         assertTrue(ro2.isCtepOwned());
-        assertNull(ro2.getName());
+        assertEquals(ro2.getPlayer().getName(), ro2.getName());
         assertNotNull(ro2.getFundingMechanism());
 
         Ii ctepId = new Ii();
@@ -650,14 +650,14 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         assertNotNull(org1);
         assertEquals(RoleStatus.PENDING, hcf1.getStatus());
         assertTrue(hcf1.isCtepOwned());
-        assertNull(hcf1.getName());
+        assertEquals(hcf1.getPlayer().getName(), hcf1.getName());
 
         HealthCareFacility hcf2 = hcfList.get(1);
         Organization org2 = hcf2.getPlayer();
         assertNotNull(org2);
         assertEquals(RoleStatus.PENDING, hcf2.getStatus());
         assertTrue(hcf2.isCtepOwned());
-        assertNull(hcf2.getName());
+        assertEquals(hcf2.getPlayer().getName(), hcf2.getName());
 
         Ii ctepId = new Ii();
         ctepId.setExtension("SCN9ORGHCF");

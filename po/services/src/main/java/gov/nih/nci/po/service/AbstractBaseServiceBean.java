@@ -84,6 +84,7 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PersistentObjectHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.lang.reflect.ParameterizedType;
@@ -181,7 +182,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         // flush here to make sure that the validators' query is correct.
         s.flush();
         ensureValid(obj);
-        return ((Long) s.save(obj)).longValue();
+        return ((Long) s.save(PersistentObjectHelper.initialize(obj))).longValue();
     }
 
      /**

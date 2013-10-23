@@ -93,6 +93,7 @@ import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PersistentObjectHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -203,7 +204,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
             handleExistingObjectCuration(s, object);
             getPublisher().sendUpdate(getTypeArgument(), object);
         } else {
-            s.save(object);
+            s.save(PersistentObjectHelper.initialize(object));
             getPublisher().sendCreate(getTypeArgument(), object);
         }
     }
