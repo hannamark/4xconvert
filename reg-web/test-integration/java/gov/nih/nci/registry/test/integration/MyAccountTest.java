@@ -107,13 +107,13 @@ public class MyAccountTest extends AbstractRegistrySeleniumTest {
     public void testMyAccountFailure() {
         loginAndAcceptDisclaimer();
         clickAndWait("id=myAccountMenuOption");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_emailAddress", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_firstName", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_lastName", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_addressLine", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_city", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_postalCode", "");
-        selenium.type("id=registerUsershowMyAccount_registryUserWebDTO_phone", "");
+        selenium.type("id=registryUserWebDTO.emailAddress", "");
+        selenium.type("id=registryUserWebDTO.firstName", "");
+        selenium.type("id=registryUserWebDTO.lastName", "");
+        selenium.type("id=registryUserWebDTO.addressLine", "");
+        selenium.type("id=registryUserWebDTO.city", "");
+        selenium.type("id=registryUserWebDTO.postalCode", "");
+        selenium.type("id=registryUserWebDTO.phone", "");
         clickAndWait("link=Submit");
         assertTrue(selenium.isTextPresent("Email Address is required"));
         assertTrue(selenium.isTextPresent("First Name is required"));
