@@ -1,4 +1,4 @@
-﻿UPDATE pdq_disease SET status_code = 'INACTIVE';
+UPDATE pdq_disease SET status_code = 'INACTIVE';
 DELETE FROM pdq_disease_altername;
 DELETE FROM pdq_disease_parent;
 INSERT INTO pdq_disease (identifier,disease_code,nt_term_identifier,preferred_name,menu_display_name,status_code,status_date_range_low,date_last_created) VALUES (1,'CDR0000256085',null,'Disease/diagnosis','Disease/diagnosis','ACTIVE',now(),'04/09/2012');
