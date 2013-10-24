@@ -65,6 +65,24 @@ public class PAUtilTest {
     @Test
     public void testIsValidIi1() throws  PAException {
         assertTrue(PAUtil.isValidIi(IiConverter.convertToStudyProtocolIi(1L) , IiConverter.convertToStudyProtocolIi(null)));
+        Ii ii = new Ii();
+        ii.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        Ii ii2 = new Ii();
+        ii2.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+        try {
+        	PAUtil.isValidIi(ii, ii2);
+        } catch (Exception e) {
+			// PA exception
+		}
+        ii = new Ii();
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        ii2 = new Ii();
+        ii2.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        try {
+        	PAUtil.isValidIi(ii, ii2);
+        } catch (Exception e) {
+			// PA exception
+		}
     }
 
     /**
@@ -134,6 +152,7 @@ public class PAUtilTest {
     public void testDateStringToTimestamp() {
          Timestamp now = new Timestamp(new Date().getTime());
          assertTrue(now.after(PAUtil.dateStringToTimestamp(now.toString())));
+         assertNull(PAUtil.dateStringToTimestamp(null));
     }
 
     /**
@@ -142,6 +161,12 @@ public class PAUtilTest {
     @Test
     public void testToday() {
         assertNotNull(PAUtil.today());
+    }
+    
+    @Test
+    public void testYesOrNo() {
+    	assertEquals(true, PAUtil.isYesNo("Yes"));
+    	assertEquals(true, PAUtil.isYesNo("NO"));
     }
 
     /**
@@ -463,8 +488,10 @@ public class PAUtilTest {
      */
     @Test
     public void testGetPhoneExtn1() {
+    	assertEquals(PAUtil.getPhoneExtn(null),"");
         assertEquals(PAUtil.getPhoneExtn("tel:111-111-1111"),"");
         assertEquals(PAUtil.getPhoneExtn("tel:111-111-1111extn2222"),"2222");
+        assertEquals(PAUtil.getPhoneExtn("tel:111-111-1111ext2222"),"2222");
     }
 
     /**
@@ -497,6 +524,12 @@ public class PAUtilTest {
     public void testGetAge() {
         assertEquals(PAUtil.getAge(new BigDecimal("100.00")),"100.00");
         assertEquals(PAUtil.getAge(new BigDecimal("100")),"100");
+        assertEquals(PAUtil.getAge(new BigDecimal("100.0")),"100");
+    }
+    
+    @Test
+    public void testPPurpose() {
+    	assertEquals("Other", PAUtil.lookupPrimaryPurposeAdditionalQualifierCode("Other"));
     }
 
     /**

@@ -403,7 +403,6 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         
         File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file2.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        System.out.println("testing if disease is empty");
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
@@ -448,7 +447,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      assertEquals(1, results.size());
      assertFalse(results.get(0).isPassedValidation());
      String errorMsg = results.get(0).getErrors().toString();
-	 assertFalse(StringUtils.isEmpty(errorMsg));
+     assertFalse(StringUtils.isEmpty(errorMsg));
 	 assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 93"));
      assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 2013"));
      assertFalse(results.get(0).getValidatedLines().isEmpty());

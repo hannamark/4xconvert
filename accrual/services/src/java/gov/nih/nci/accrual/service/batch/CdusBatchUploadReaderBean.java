@@ -291,7 +291,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         collection.setNciNumber(validationResult.getNciIdentifier());
         collection.setPassedValidation(validationResult.isPassedValidation());
         batchFileSvc.update(batchFile, collection);
-        if (isSuAbstractor(batchFile.getSubmitter()) && !validationResult.isHasNonSiteErrors()
+        boolean suAbstractor = isSuAbstractor(batchFile.getSubmitter());
+        if (suAbstractor && !validationResult.isHasNonSiteErrors()
                 && !validationResult.isPassedValidation()) {
             List<String[]> lines = validationResult.getValidatedLines();
             String[] studyLine = BatchUploadUtils.getStudyLine(lines);
@@ -302,13 +303,15 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 hasCtepOrDcpId = true;
             }
         }
-        if (!validationResult.isPassedValidation() && !hasCtepOrDcpId) {
+        if (!validationResult.isPassedValidation() && !hasCtepOrDcpId && validationResult.isHasNonSiteErrors()) {
             if (validationResult.getErrors() != null) {
                 collection.setResults(StringUtils.left(validationResult.getErrors().toString(), RESULTS_LEN));
             }
             sendValidationErrorEmail(validationResult, batchFile);
         } else if (validationResult.isPassedValidation() 
-                || !validationResult.isPassedValidation() && hasCtepOrDcpId) {
+                || !validationResult.isPassedValidation() && hasCtepOrDcpId
+                || !validationResult.isPassedValidation() && !hasCtepOrDcpId 
+                && !validationResult.isHasNonSiteErrors() && suAbstractor) {
             batchFile.setPassedValidation(
                     StringUtils.isNotEmpty(validationResult.getErrors().toString()) ? false : true);
             batchFile.setProcessed(true);

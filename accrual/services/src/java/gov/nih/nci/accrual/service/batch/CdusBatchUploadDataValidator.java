@@ -144,6 +144,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         CdusBatchUploadDataValidatorLocal {
     
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
+    private static final String PATIENTS = "PATIENTS";
     private RegistryUser ru;
     private StudyProtocolDTO sp;
     private Map<String, Long> listOfPoIds;
@@ -391,8 +392,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
         validateProtocolNumber(key, values, lineNumber, expectedProtocolId);
         validatePatientID(key, values, lineNumber);
-        validateStudySiteAccrualAccessCode(key, values, lineNumber);
-        if (StringUtils.equalsIgnoreCase("PATIENTS", key) && !patientCheck && codeSystemFile == null) {
+        String studySiteID = null;
+        if (StringUtils.equals(PATIENTS, key)) {
+            studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
+        } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
+            studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
+        }
+        boolean correctOrganizationId = false;
+        if (!StringUtils.isEmpty(studySiteID)) {
+            correctOrganizationId = isCorrectOrganizationId(studySiteID);
+        }
+        validateStudySiteAccrualAccessCode(key, values, lineNumber, correctOrganizationId);
+        if (StringUtils.equalsIgnoreCase(PATIENTS, key) && !patientCheck && codeSystemFile == null) {
             String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
             if (StringUtils.isNotEmpty(code)) {
                 StringTokenizer disease = new StringTokenizer(code, ";");
@@ -409,7 +420,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
         validatePatientsMandatoryData(key, values, bfErrors, lineNumber, 
                     sp, codeSystemFile, checkDisease, accrualSubmissionLevel, superAbstractor);
-        validateRegisteringInstitutionCode(key, values, lineNumber);
+        validateRegisteringInstitutionCode(key, values, lineNumber, correctOrganizationId);
         validatePatientRaceData(key, values, bfErrors, lineNumber);
         validateAccrualCount(key, values, bfErrors, lineNumber, sp, accrualSubmissionLevel);
         return bfErrors.toString();
@@ -421,8 +432,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    private void validateRegisteringInstitutionCode(String key, List<String> values, long lineNumber) {
-        if (StringUtils.equals("PATIENTS", key)) {
+    private void validateRegisteringInstitutionCode(String key, List<String> values, 
+            long lineNumber, boolean correctOrganizationId) {
+        if (StringUtils.equals(PATIENTS, key)) {
             String registeringInstitutionID = AccrualUtil.safeGet(values, 
                     BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
             if (StringUtils.isEmpty(registeringInstitutionID)) {
@@ -430,7 +442,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     .append("Patient Registering Institution Code is missing for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
             } else {
-                if (!isCorrectOrganizationId(registeringInstitutionID)) {
+                if (!correctOrganizationId) {
                     return;
                 }
                 validatePatientTreatingSite(registeringInstitutionID, values, lineNumber);
@@ -438,15 +450,16 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
     }
     
-    private void validateStudySiteAccrualAccessCode(String key, List<String> values, long lineNumber) {
+    private void validateStudySiteAccrualAccessCode(String key, List<String> values, 
+            long lineNumber, boolean correctOrganizationId) {
         String studySiteID = null;
-        if (StringUtils.equals("PATIENTS", key)) {
+        if (StringUtils.equals(PATIENTS, key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
         } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
         }
         if (!StringUtils.isEmpty(studySiteID)) {
-            if (!isCorrectOrganizationId(studySiteID)) {
+            if (!correctOrganizationId) {
                 return;
             }
             validateTreatingSiteAndAccrualAccess(studySiteID, lineNumber, values);

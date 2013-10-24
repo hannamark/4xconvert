@@ -45,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -311,8 +312,10 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
             ctepOrgIi = results.get(0).getPlayerIdentifier();
         } 
         try {
-            org = PoRegistry.getOrganizationEntityService().getOrganization(
+            if (NumberUtils.isNumber(orgIdentifier) && ctepOrgIi == null || ctepOrgIi != null) {
+                org = PoRegistry.getOrganizationEntityService().getOrganization(
                     ctepOrgIi != null ? ctepOrgIi : IiConverter.convertToPoOrganizationIi(orgIdentifier));
+            }
         } catch (NullifiedEntityException e) {
             LOG.error("The organization with the identifier " + orgIdentifier 
                     +  " that is attempting to be loaded is nullified.");

@@ -108,6 +108,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -218,9 +219,11 @@ public class BatchUploadUtils {
            resultingIi = results.get(0).getPlayerIdentifier();
        } else {
            try {
-               OrganizationDTO org = PoRegistry.getOrganizationEntityService().getOrganization(
-                       IiConverter.convertToPoOrganizationIi(orgIdentifier));
-               resultingIi = org != null ? org.getIdentifier() : null;
+                if (NumberUtils.isNumber(orgIdentifier)) {
+                    OrganizationDTO org = PoRegistry.getOrganizationEntityService().getOrganization(
+                            IiConverter.convertToPoOrganizationIi(orgIdentifier));
+                    resultingIi = org != null ? org.getIdentifier() : null;
+                }
            } catch (NullifiedEntityException e) {
                LOG.error("The organization with the identifier " + orgIdentifier 
                        +  " that is attempting to be loaded is nullified.");

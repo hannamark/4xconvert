@@ -485,7 +485,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         
         ii.setExtension("8000");
         dto.setDiseaseIdentifier(ii);
-        System.out.println("delete test");
         List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto));
         assertEquals(1, results.size());
         
