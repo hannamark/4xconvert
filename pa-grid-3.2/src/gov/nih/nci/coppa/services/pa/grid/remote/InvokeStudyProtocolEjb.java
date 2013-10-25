@@ -318,4 +318,12 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throws PAException {       
         return null;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> getActiveAndInActiveTrialsByspId(Long id)
+            throws PAException {
+        return null;
+    }
 }
