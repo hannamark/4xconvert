@@ -2291,5 +2291,41 @@ public class PAServiceUtils {
         String dcpId = getStudyIdentifier(spId, PAConstants.DCP_IDENTIFIER_TYPE);
         return ctepId.isEmpty() && dcpId.isEmpty();
     }
+    /**
+     * 
+     * @param tableName tableName
+     * @param sourceIi sourceIi
+     * @param targetIi targetIi
+     * @throws PAException PAException
+     */
+    public void swapStudyProtocolIdentifiers(String tableName, Ii sourceIi, Ii targetIi) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        List<Integer> queryList = null;
+        SQLQuery query = session.createSQLQuery("select identifier from "
+               + tableName 
+               + " where study_protocol_identifier =:sourceIi");
+        query.setParameter("sourceIi", Integer.parseInt(sourceIi.getExtension()));
+        queryList = query.list();
+        SQLQuery query2 = session.createSQLQuery("update "
+                + tableName + " SET study_protocol_identifier = "
+                + "(:targetIi) where study_protocol_identifier =(:sourceIi)"); 
+        query2.setParameter("sourceIi", Integer.parseInt(sourceIi.getExtension()));
+        query2.setParameter("targetIi", Integer.parseInt(targetIi.getExtension()));
+        query2.executeUpdate();
+        StringBuffer sql = new StringBuffer();
+        sql.append("update "
+                + tableName + " SET study_protocol_identifier = (:sourceIi) "
+                + "where study_protocol_identifier = (:targetIi) and identifier NOT IN (:idList)");
+        SQLQuery query1 = session.createSQLQuery(sql.toString());
+        if (!queryList.isEmpty()) {
+            query1.setParameterList("idList", queryList);
+        } else {
+            query1.setParameter("idList", null);
+        }
+        query1.setParameter("sourceIi", Integer.parseInt(sourceIi.getExtension()));
+        query1.setParameter("targetIi", Integer.parseInt(targetIi.getExtension()));
+        query1.executeUpdate();
+    }
     
 }

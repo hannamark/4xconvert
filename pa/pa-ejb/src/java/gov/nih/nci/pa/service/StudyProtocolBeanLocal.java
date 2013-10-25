@@ -672,7 +672,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         } else {
             crit = new StudyProtocolBeanSearchCriteria(criteria);
         }
-        
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
     }
@@ -1415,5 +1414,34 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ii.setExtension(nctID);
         ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
         return convertFromDomainToDTO(searchProtocolsByIdentifier(ii));
+    }
+    @Override
+    public List<Long> getActiveAndInActiveTrialsByspId(Long id) 
+             throws PAException {
+         Session session = PaHibernateUtil.getCurrentSession();
+         session.flush();
+         List<Long> resultSet = new ArrayList<Long>();
+         List<Object> queryList = null;
+         SQLQuery query = session
+                .createSQLQuery("select identifier from study_protocol where identifier in ("
+                      + "select study_protocol_id from study_otheridentifiers where extension = "
+                      + "(select extension from study_otheridentifiers where study_protocol_id  = :id "
+                      + " and root = '"
+                      + IiConverter.STUDY_PROTOCOL_ROOT + "')"
+                      + " and root = '"
+                      + IiConverter.STUDY_PROTOCOL_ROOT
+                      + "') and amendment_number != '' ");
+         query.setParameter("id", id);
+         queryList = query.list();
+         for (Object oArr : queryList) {
+             BigInteger ret = null;
+             if (oArr instanceof BigInteger) { 
+                 ret =  (BigInteger) oArr;
+                 if (oArr != null) {
+                     resultSet.add(ret.longValue());
+                 }
+             }       
+         }
+         return resultSet;
     }
 }

@@ -1266,5 +1266,13 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 .getStudyProtocolsByNctId("NCT1234567890");
         assertEquals(list.size(), 1);
     }
+    
+    @Test
+    public void testGetActiveAndInActiveTrialsByspId() throws PAException {
+        boolean absValue = true;
+        createStudyProtocols(2, "National Cancer", "1", absValue);
+        List<Long> ids = remoteEjb.getActiveAndInActiveTrialsByspId(1L);
+        assertTrue(ids.size() > 0);
+    }
 
 }

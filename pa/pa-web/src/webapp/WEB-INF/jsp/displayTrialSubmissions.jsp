@@ -9,7 +9,7 @@
 </p>
 <display:table name="trialHistoryWebDTO" id="row" class="data" sort="list" 
     pagesize="10" requestURI="trialHistory.action">
-    
+    <display:column escapeXml="true" property="submissionNumber" sortable="true" title="Submission Number" />    
     <display:column escapeXml="true" property="submissionDateAsString" sortable="true" title="Date" />    
     <display:column escapeXml="false" sortable="true" title="Type">
         <c:out value="${row.type}"></c:out>
@@ -23,6 +23,15 @@
     <display:column escapeXml="true" property="submitter" sortable="true" title="Submitter" />        
     <display:column escapeXml="false" property="documents" sortable="true" style="word-wrap: break-word"
         titleKey="trialHistory.documents" />
+        
+    
+    <display:column escapeXml="false" sortable="false" title="MileStone">
+        <c:out value="${row.lastMileStone}"></c:out>
+        <br/> <br/>
+        <c:if test="${not empty row.rejectComment}">
+            <c:out value="${row.rejectComment}"></c:out>
+        </c:if>
+    </display:column>  
     <pa:displayWhenCheckedOut>
         <display:column title="Action" headerClass="centered" class="action">
             <s:if test="%{#attr.row.submissionNumber != 1 && #attr.row.submissionNumber != null}">

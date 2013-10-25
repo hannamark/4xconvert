@@ -117,7 +117,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import java.util.HashMap;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
@@ -429,4 +428,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
             throws PAException {       
         return null;
     }
+
+	@Override
+	public List<Long> getActiveAndInActiveTrialsByspId(Long id)
+			throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

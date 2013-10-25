@@ -6,6 +6,9 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -33,6 +36,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -90,7 +94,6 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected HealthCareProviderCorrelationServiceRemote hcpSvc ;
     protected StudyMilestoneServiceBean studyMilestoneSvc;
     protected StudyInboxServiceLocal studyInboxSvc;
-
     public AbstractTrialRegistrationTestBase() {
         super();
     }
@@ -107,9 +110,16 @@ public abstract class AbstractTrialRegistrationTestBase extends
         prop.setName("fromaddress");
         prop.setValue("ncictro@mail.nih.gov");
         TestSchema.addUpdObject(prop);
-    
+        StudyProtocol sp = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, "NCI-2009-00004", "6");
+        TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(sp));
+        StudyProtocol spInActive = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.INACTIVE,"NCI-2009-00003", "7");
+        TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(spInActive));
         studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
-        
+        StudyProtocol sp1 = TestSchema.createAmendStudyProtocolObj();
+        RegistryUser ru = TestSchema.getRegistryUser();
+        sp1.setUserLastCreated(ru.getUserLastCreated());
+        sp1.setUserLastUpdated(ru.getUserLastUpdated());
+        TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(sp1));
         studyOverallStatusService.setDocumentWorkFlowStatusService(documentWrkService);
         studyOverallStatusService.setStudyProtocolService(studyProtocolService);
     

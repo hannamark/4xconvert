@@ -150,7 +150,7 @@ public class RegulatoryAuthorityServiceBeanTest extends AbstractHibernateTestCas
       List<RegulatoryAuthorityDTO> dtoList = remoteEjb.search(dtoNew,limit);
       assertEquals(dtoList.size(), 0);
       dtoNew = new RegulatoryAuthorityDTO();
-      dtoNew.setCountryIdentifier(IiConverter.convertToCountryIi(c.getId()-1));
+      dtoNew.setCountryIdentifier(IiConverter.convertToCountryIi(c.getId()-2));
       dtoList = remoteEjb.search(dtoNew,limit);
       assertEquals(dtoList.size(), 2);
   }

@@ -140,7 +140,6 @@ public class StudyMilestoneBeanLocal
     
     /** For testing purposes only. Set to false to bypass abstraction validations. */
     private boolean validateAbstractions = true;
-    
     /**
      * {@inheritDoc}
      */
@@ -892,6 +891,7 @@ public class StudyMilestoneBeanLocal
             }
         }
     }
+    
 
     /**
      * @param abstractionCompletionService the abstractionCompletionService to set
@@ -1008,4 +1008,5 @@ public class StudyMilestoneBeanLocal
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
+    
 }

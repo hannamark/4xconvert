@@ -82,18 +82,24 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
@@ -182,6 +188,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author asharma
  *
@@ -227,9 +235,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifier is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
-    
+    private static final String MILESTONE = "study_milestone";
+    private static final String DOCUMENT = "document";
     private static final Logger LOG = Logger.getLogger(TrialRegistrationBeanLocal.class);
-
     private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi)
             throws PAException {
         StudySiteDTO nCiCollaborator = new StudySiteDTO();
@@ -1461,18 +1469,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         studySiteContactService.create(studySiteContactDTO);
     }
 
-    private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {
+    private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi, StudyProtocolDTO studyProtocolDto) {
         String sqlUpd = targetIi.getExtension() + " WHERE STUDY_PROTOCOL_IDENTIFIER = " + sourceIi.getExtension();
         List<String> sqls = new ArrayList<String>();
         String targetId = targetIi.getExtension();
-        sqls.add("Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
-        sqls.add("UPDATE STUDY_MILESTONE SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE DOCUMENT_WORKFLOW_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
-        sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("Delete from DOCUMENT WHERE STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension()
                 + " and TYPE_CODE = '" + DocumentTypeCode.TSR.getCode() + "'");
-        sqls.add("UPDATE DOCUMENT SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("UPDATE STUDY_ONHOLD SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
         sqls.add("Delete from STUDY_OVERALL_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = " + targetId);
         sqls.add("UPDATE STUDY_OVERALL_STATUS SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
@@ -1508,13 +1512,32 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         sqls.add("UPDATE  STUDY_REGULATORY_AUTHORITY SET STUDY_PROTOCOL_IDENTIFIER = " + sqlUpd);
 
         sqls.add("Delete from STUDY_RELATIONSHIP WHERE TARGET_STUDY_PROTOCOL_IDENTIFIER  = " + sourceIi.getExtension());
-        sqls.add("Delete from STUDY_OTHERIDENTIFIERS WHERE STUDY_PROTOCOL_ID  = " + targetId);
-        sqls.add("Update STUDY_OTHERIDENTIFIERS SET STUDY_PROTOCOL_ID = " + targetId + " WHERE STUDY_PROTOCOL_ID  = "
-                + sourceIi.getExtension());
-        sqls.add("Delete from STUDY_PROTOCOL WHERE IDENTIFIER  = " + sourceIi.getExtension());
+        String reasonCodeValue = null;
+        Cd reasonCode = studyProtocolDto.getAmendmentReasonCode();
+        if (reasonCode != null && !(reasonCode.getNullFlavor() != null 
+              && reasonCode.getNullFlavor().equals(NullFlavor.NI))) {
+              AmendmentReasonCode.getByCode(studyProtocolDto.getAmendmentReasonCode().getCode());
+              reasonCodeValue = reasonCode.getCode().toUpperCase();
+              sqls.add("UPDATE STUDY_PROTOCOL SET STATUS_CODE='INACTIVE',"
+                      + " SUBMISSION_NUMBER = " + studyProtocolDto.getSubmissionNumber().getValue() + ","
+                      + " AMENDMENT_NUMBER = '" + StConverter.
+                               convertToString(studyProtocolDto.getAmendmentNumber()) + "',"
+                      + " AMENDMENT_DATE='" +  TsConverter.
+                               convertToTimestamp(studyProtocolDto.getAmendmentDate()) + "',"
+                      + " amendment_reason_code='" + reasonCodeValue  + "'"
+                      + " WHERE IDENTIFIER  = " + sourceIi.getExtension());
+        } else {
+              sqls.add("UPDATE STUDY_PROTOCOL SET STATUS_CODE='INACTIVE',"
+                    + " SUBMISSION_NUMBER = " + studyProtocolDto.getSubmissionNumber().getValue() + ","
+                    + " AMENDMENT_NUMBER= '" + StConverter.
+                                 convertToString(studyProtocolDto.getAmendmentNumber()) + "',"
+                    + " AMENDMENT_DATE='" +  TsConverter.
+                                 convertToTimestamp(studyProtocolDto.getAmendmentDate()) + "',"
+                    + " amendment_reason_code = null"
+                    + " WHERE IDENTIFIER  = " + sourceIi.getExtension());
+        }
         return sqls;
     }
-
     private void deleteSponsor(Ii targetSpIi) {
         String sql = "DELETE FROM STUDY_SITE WHERE STUDY_PROTOCOL_IDENTIFIER = " + targetSpIi.getExtension()
                 + SQL_APPEND + "('SPONSOR')";
@@ -1621,7 +1644,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
+    public void reject(Ii studyProtocolIi, St rejectionReason, 
+               Cd rejectionReasonCode) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
             TrialRegistrationValidator validator = createValidator();
@@ -1661,7 +1685,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 }
                 if (targetSpIi == null) {
                     throw new PAException("Study Relationship not found for the Amended Protocol");
-
                 }
                 StudyProtocolDTO sourceSpDto = studyProtocolService.getStudyProtocol(sourceSpIi);
                 //set the last user created of source study protocol as the last user created of target study protocol.
@@ -1671,13 +1694,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                 Session session = PaHibernateUtil.getCurrentSession();
+                String classType = "";
                 StudyProtocol source = null;
                 if (sourceSpDto instanceof NonInterventionalStudyProtocolDTO) {
                     source = NonInterventionalStudyProtocolConverter
                             .convertFromDTOToDomain((NonInterventionalStudyProtocolDTO) sourceSpDto);
+                    classType = PAConstants.NON_INTERVENTIONAL;
                 } else if (sourceSpDto instanceof InterventionalStudyProtocolDTO) {
                     source = InterventionalStudyProtocolConverter
                             .convertFromDTOToDomain((InterventionalStudyProtocolDTO) sourceSpDto);
+                    classType = PAConstants.INTERVENTIONAL;
                 }
                 Long id = IiConverter.convertToLong(targetSpIi);
                 StudyProtocol target = (StudyProtocol) session.load(StudyProtocol.class, id);
@@ -1707,9 +1733,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 scSourceDTO.setStudyProtocolIdentifier(targetSpIi);
                 studyContactService.delete(sourceIi);
                 studyContactService.update(scSourceDTO);
-                StudySiteDTO studySiteDto = new StudySiteDTO();
-                studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
-                studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+                StudySiteDTO studySiteDto = getStudySiteDTO(sourceSpIi, StudySiteFunctionalCode.LEAD_ORGANIZATION);
                 List<StudySiteDTO> studySiteDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                 StudySiteDTO ssSourceDTO = null;
                 if (PAUtil.getFirstObj(studySiteDtos) != null) {
@@ -1718,9 +1742,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     throw new PAException("Source Lead Organization is not available");
                 }
                 sourceIi = ssSourceDTO.getIdentifier();
-                studySiteDto = new StudySiteDTO();
-                studySiteDto.setStudyProtocolIdentifier(targetSpIi);
-                studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+                studySiteDto = getStudySiteDTO(targetSpIi, StudySiteFunctionalCode.LEAD_ORGANIZATION);
                 studySiteDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                 StudySiteDTO ssTargetDTO = null;
                 if (PAUtil.getFirstObj(studySiteDtos) != null) {
@@ -1733,10 +1755,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 studySiteService.delete(sourceIi);
                 studySiteService.update(ssSourceDTO);
                 if (sourceSpDto.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                    // sponsor
-                    studySiteDto = new StudySiteDTO();
-                    studySiteDto.setStudyProtocolIdentifier(sourceSpIi);
-                    studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+                    studySiteDto = getStudySiteDTO(sourceSpIi, StudySiteFunctionalCode.SPONSOR);
                     List<StudySiteDTO> studySiteSponsorDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                     StudySiteDTO ssSponsorSourceDTO = null;
                     if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
@@ -1745,9 +1764,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         throw new PAException("Source Lead Organization is not available");
                     }
                     sourceIi = ssSponsorSourceDTO.getIdentifier();
-                    studySiteDto = new StudySiteDTO();
-                    studySiteDto.setStudyProtocolIdentifier(targetSpIi);
-                    studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+                    studySiteDto = getStudySiteDTO(targetSpIi, StudySiteFunctionalCode.SPONSOR);
                     studySiteSponsorDtos = getPAServiceUtils().getStudySite(studySiteDto, true);
                     StudySiteDTO ssSponsorTargetDTO = null;
                     if (PAUtil.getFirstObj(studySiteSponsorDtos) != null) {
@@ -1764,13 +1781,52 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         deleteSponsor(targetSpIi);
                     }
                 }
-                getPAServiceUtils().executeSql(deleteAndReplace(sourceSpIi, targetSpIi));
+                getPAServiceUtils().executeSql(deleteAndReplace(sourceSpIi, targetSpIi, studyProtocolDto));
+                getPAServiceUtils().swapStudyProtocolIdentifiers(DOCUMENT, sourceSpIi, targetSpIi);
+                getPAServiceUtils().swapStudyProtocolIdentifiers(MILESTONE, sourceSpIi, targetSpIi);
+                insertRejectStudyMileStone(sourceSpIi, rejectionReason, rejectionReasonCode, classType);
+                studyProtocolDto.setIdentifier(sourceSpIi);
+                studyProtocolDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+                studyProtocolService.updateStudyProtocol(studyProtocolDto);
             }
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
         }
     }
-
+    
+    private void  insertRejectStudyMileStone(Ii sourceSpIi, 
+           St rejectionReason, Cd rejectionReasonCode, String classType) throws PAException {
+        StudyMilestone sm = new StudyMilestone();
+        StudyProtocol sp;
+        sm.setCommentText(StConverter.convertToString(rejectionReason));
+        sm.setRejectionReasonCode(RejectionReasonCode.
+               getByCode(CdConverter.convertCdToString(rejectionReasonCode)));
+        sm.setMilestoneCode(MilestoneCode.SUBMISSION_REJECTED);
+        sm.setMilestoneDate(new Timestamp(new Date().getTime()));
+        if (classType.equals(PAConstants.INTERVENTIONAL)) {
+              sp = new InterventionalStudyProtocol();
+        } else {
+              sp = new NonInterventionalStudyProtocol();
+        }
+        sp.setId(IiConverter.convertToLong(sourceSpIi));
+        sm.setStudyProtocol(sp);
+        sm.setDateLastCreated(new Timestamp(new Date().getTime()));
+        sm.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
+        sm.setUserLastCreated(user);
+        sm.setUserLastUpdated(user);
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.save(sm);
+        session.flush();
+        
+    }
+    
+    private StudySiteDTO getStudySiteDTO(Ii spid, StudySiteFunctionalCode ss) {
+        StudySiteDTO studySiteDto = new StudySiteDTO();
+        studySiteDto.setStudyProtocolIdentifier(spid);
+        studySiteDto.setFunctionalCode(CdConverter.convertToCd(ss));
+        return studySiteDto;
+    }
     /**
      * @param operation
      * @param unmatchedEmails email addresses that did not match any users.

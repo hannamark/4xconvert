@@ -135,7 +135,13 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
 
     /** The submission number. */
     private double submissionNumberToSort;
-
+    /**
+     * lastMileStone 
+     */
+    private String lastMileStone;
+    
+    private String rejectComment;
+    
     /**
      * Instantiates a new trial history web dto.
      */
@@ -412,6 +418,35 @@ public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
             return -1;
         }
         return -this.submissionDate.compareTo(o.submissionDate);
+    }
+    /**
+     * 
+     * @return lastMileStone lastMileStone
+     */
+    public String getLastMileStone() {
+       return lastMileStone;
+    }
+    /**
+     * 
+     * @param lastMileStone lastMileStone
+     */
+    public void setLastMileStone(String lastMileStone) {
+       this.lastMileStone = lastMileStone;
+    }
+
+    /**
+     *  
+     * @return rejectComment rejectComment
+     */
+    public String getRejectComment() { 
+        return rejectComment;
+    }
+    /**
+     * 
+     * @param rejectComment rejectCommentc
+     */
+    public void setRejectComment(String rejectComment) {
+        this.rejectComment = rejectComment;
     }
 
 }

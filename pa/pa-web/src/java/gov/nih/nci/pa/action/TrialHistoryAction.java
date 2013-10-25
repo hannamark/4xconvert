@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailService;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
@@ -123,6 +125,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -158,7 +161,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private StudyProtocolServiceLocal studyProtocolService;
     private RegistryUserServiceLocal registryUserServiceLocal;
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusServiceLocal;
-
+    private StudyMilestoneServicelocal studyMilestoneService;
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
     private TrialHistoryWebDTO trialHistoryWbDto;
     private String studyProtocolii;
@@ -188,7 +191,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         studyProtocolService = PaRegistry.getStudyProtocolService();
         registryUserServiceLocal = PaRegistry.getRegistryUserService();
         documentWorkflowStatusServiceLocal = PaRegistry.getDocumentWorkflowStatusService();
-        
+        studyMilestoneService = PaRegistry.getStudyMilestoneService();
         auditTrailService  = PaRegistry.getAuditTrailService();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
@@ -333,7 +336,12 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         List<TrialHistoryWebDTO> trialHistoryWebdtos = new ArrayList<TrialHistoryWebDTO>();
         loadTrialSubmissions(trialHistoryWebdtos);
         loadTrialUpdates(trialHistoryWebdtos);
-        Collections.sort(trialHistoryWebdtos);
+        Collections.sort(trialHistoryWebdtos , new Comparator<TrialHistoryWebDTO>() {
+            @Override
+            public int compare(TrialHistoryWebDTO o1, TrialHistoryWebDTO o2) {
+                return (o2.getSubmissionNumber().compareTo(o1.getSubmissionNumber()));
+            }
+        });
         setTrialHistoryWebDTO(trialHistoryWebdtos);
         
         loadDeletedDocuments();
@@ -388,14 +396,33 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             List<StudyProtocolDTO> activeList = studyProtocolService.search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(activeList)) {
                 spList.addAll(activeList);
+            } else {
+                StudyProtocolDTO rejectActiveList = studyProtocolService.
+                      getStudyProtocol(studyProtocolIi);
+                    spList.add(rejectActiveList);
             }
-
             toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
             List<StudyProtocolDTO> inactiveList = studyProtocolService.search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(inactiveList)) {
                 spList.addAll(inactiveList);
             }
-
+            List<Long> ids = studyProtocolService.
+                   getActiveAndInActiveTrialsByspId(IiConverter.convertToLong(studyProtocolIi));
+            List<Long> uniqueIds = new ArrayList<Long>();
+            for (Long id : ids) {
+                 for (StudyProtocolDTO sp : spList) {
+                     if (IiConverter.convertToLong(sp.getIdentifier()).equals(id)) {
+                        break;
+                     } else {
+                        uniqueIds.add(id);
+                        break;
+                     }
+                 }
+            }
+            for (Long id : uniqueIds) {
+                  StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(IiConverter.convertToIi(id));
+                  spList.add(sp);
+            }
         } catch (TooManyResultsException e) {
             throw new PAException(e);
         }
@@ -407,9 +434,11 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
                                 .getIdentifier()));
                 dto.setDocuments(getDocuments(sp));
                 dto.setSubmitter(getSubmitterName(sp));
+                getLastMileStone(dto, sp.getIdentifier());
                 trialHistoryWebdtos.add(dto);
             }
         }
+        
     }
 
     private String getSubmitterName(StudyProtocolDTO studyProtocolDTO)
@@ -417,6 +446,16 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         final St userLoginName = studyProtocolDTO.getUserLastCreated();
         return getSubmitterName(userLoginName);
     }
+    
+    private void getLastMileStone(TrialHistoryWebDTO dto, Ii spIi) 
+            throws PAException {
+        StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
+        if (smDto != null) {
+             dto.setLastMileStone(CdConverter.convertCdToString(smDto.getMilestoneCode()));
+             dto.setRejectComment(StConverter.convertToString(smDto.getCommentText()));
+        }
+    }
+    
 
     private String getSubmitterName(StudyInboxDTO dto) throws PAException {
         final St userLoginName = dto.getUserLastCreated();
@@ -707,6 +746,15 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     }
     
     /**
+     * 
+     * @param studyMilestoneService studyMilestoneService
+     */
+    public void setStudyMilestoneService(
+           StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+     /**
      * @param auditTrail the auditTrail to set
      */
     public void setAuditTrail(Set<AuditLogDetail> auditTrail) {

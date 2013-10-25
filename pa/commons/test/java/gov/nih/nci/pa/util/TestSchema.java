@@ -172,6 +172,7 @@ import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -876,7 +877,10 @@ public class TestSchema {
         sp.setFdaRegulatedIndicator(Boolean.TRUE);
         sp.setSection801Indicator(Boolean.TRUE);
         sp.setDelayedpostingIndicator(Boolean.TRUE);
-
+        Country c = createCountryObj();
+        TestSchema.addUpdObject(c);
+        StudyContact scc = createStudyContactObj(sp, c, hcp, crs);
+        
         ru = getRegistryUser();
         registryUserIds.add(ru.getId());
         sp.setUserLastCreated(ru.getUserLastCreated());
@@ -892,6 +896,7 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         addUpdObject(sp);
+        addUpdObject(scc);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
         inactiveProtocolId = sp.getId();
@@ -1121,7 +1126,30 @@ public class TestSchema {
         sp.setId(sp.getId());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
     }
-
+    
+    public static StudyMilestone createStudyMilestoneObj(MilestoneCode m, RejectionReasonCode reason, StudyProtocol sp) {
+        StudyMilestone sm = new StudyMilestone();
+        sm.setStudyProtocol(sp);
+        sm.setCommentText("Comment");
+        sm.setRejectionReasonCode(reason);
+        sm.setDateLastCreated(TODAY);
+        sm.setDateLastUpdated(TODAY);
+        sm.setMilestoneCode(m);
+        sm.setMilestoneDate(TODAY);
+        TestSchema.addUpdObject(sm);
+        return sm;
+    }
+    
+    public static Document createDocumentObj(DocumentTypeCode dt, String fileName, StudyProtocol sp) {
+        Document doc = new Document();
+        doc = new Document();
+        doc.setStudyProtocol(sp);
+        doc.setTypeCode(dt);
+        doc.setActiveIndicator(true);
+        doc.setFileName(fileName);
+        addUpdObject(doc);
+        return doc;
+    }
     public static User getUser() {
         return getUser(false);
     }
@@ -1446,7 +1474,19 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-
+    
+    public static DocumentWorkflowStatus createSubmittedDocumentWorkflowStatus(
+            StudyProtocol sp) {
+        DocumentWorkflowStatus create = new DocumentWorkflowStatus();
+        create.setStudyProtocol(sp);
+        create.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+        create.setStatusDateRangeLow(TODAY);
+        create.setCommentText("Common Text");
+        create.setUserLastUpdated(getUser());
+        create.setDateLastUpdated(TODAY);
+        return create;
+    }
+    
     public static DocumentWorkflowStatus createRejectedDocumentWorkflowStatus(
             StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
@@ -1528,7 +1568,121 @@ public class TestSchema {
         createStudyProtocolObj(sp);
         return sp;
     }
+    public static StudyProtocol creatOriginalStudyProtocolObj(ActStatusCode status, String extension, String orgid) {
+        StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("Cancer" +orgid);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setStatusCode(status);
+        sp.setPhaseCode(PhaseCode.I);
+        sp.setFdaRegulatedIndicator(Boolean.TRUE);
+        sp.setSection801Indicator(Boolean.TRUE);
+        sp.setDelayedpostingIndicator(Boolean.TRUE);
+        RegistryUser ru = getRegistryUser();
+        registryUserIds.add(ru.getId());
+        sp.setUserLastCreated(ru.getUserLastCreated());
+        sp.setUserLastUpdated(ru.getUserLastUpdated());
 
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
+        Ii spSecId = new Ii();
+        spSecId.setExtension(extension);
+        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        studySecondaryIdentifiers.add(spSecId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setProcessingPriority(3);
+        sp.setComments("Comments" + orgid);
+        sp.setAssignedUser(ru.getUserLastCreated());
+        sp.setKeywordText("keywordText");
+        sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
+        sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
+        sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
+        sp.setPublicDescription("publicDescription");
+        sp.setPublicTitle("publicTitle");
+        sp.setRecordVerificationDate(TODAY);
+        sp.setScientificDescription("scientificDescription");
+        sp.setDateLastUpdated(TODAY);
+        sp.setDateLastCreated(TODAY);
+        sp.setStatusDate(TODAY);
+        addUpdObject(sp);
+        addOwners(sp);
+        addUpdObject(sp);
+        Organization o = new Organization();
+        o.setName("Mayo University");
+        o.setUserLastUpdated(user);
+        o.setDateLastUpdated(TODAY);
+        o.setIdentifier(orgid);
+        o.setStatusCode(EntityStatusCode.PENDING);
+        TestSchema.addUpdObject(o);
+        Person p = TestSchema.createPersonObj();
+        p.setIdentifier("11");
+        TestSchema.addUpdObject(p);
+        HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setOrganization(o);
+        hcp.setPerson(p);
+        hcp.setIdentifier(orgid);
+        hcp.setStatusCode(StructuralRoleStatusCode.PENDING);;
+        TestSchema.addUpdObject(hcp);
+
+        Country c = createCountryObj();
+        TestSchema.addUpdObject(c);
+
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setOrganization(o);
+        crs.setPerson(p);
+        crs.setIdentifier(orgid);
+        crs.setStatusCode(StructuralRoleStatusCode.PENDING);
+        TestSchema.addUpdObject(crs);
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setOrganization(o);
+        hcf.setIdentifier(orgid);
+        hcf.setStatusCode(StructuralRoleStatusCode.PENDING);
+        TestSchema.addUpdObject(hcf);
+        StudyContact sc = createStudyContactObj(sp, c, hcp, crs);
+        addUpdObject(sc);
+        StudySite ss = createStudySiteObj(sp,hcf);
+        addUpdObject(ss);
+        StudySite ssponsor =createStudySiteSponsorObj(sp,hcf);
+        addUpdObject(ssponsor);
+        StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, RejectionReasonCode.OTHER, sp);
+        addUpdObject(sm);
+        Document doc = new Document();
+        doc = new Document();
+        doc.setStudyProtocol(sp);
+        doc.setTypeCode(DocumentTypeCode.IRB_APPROVAL_DOCUMENT);
+        doc.setActiveIndicator(true);
+        doc.setFileName("IRB_Approval_Document.doc");
+        addUpdObject(doc);
+        studyProtocolIds.add(sp.getId());
+        return sp;
+    }
+    
+    public static StudyProtocol createAmendStudyProtocolObj() {
+        StudyProtocol sp = creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, "NCI-2009-00003", "5");
+        sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
+        sp.setStatusDate(TODAY);
+        sp.setAmendmentDate(TODAY);
+        sp.setAmendmentNumber("amendmentNumber");
+        sp.setSubmissionNumber(2);
+        StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.SUBMISSION_RECEIVED, RejectionReasonCode.OUT_OF_SCOPE, sp);
+        addUpdObject(sm);
+        Document doc = new Document();
+        doc.setStudyProtocol(sp);
+        doc.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
+        doc.setActiveIndicator(true);
+        doc.setFileName("Protocol_Document.doc");
+        addUpdObject(doc);
+        addUpdObject(sp);
+        studyProtocolIds.add(sp.getId());
+        return sp;
+    }
     public static PlannedMarkerSyncWithCaDSR createPlannedMarkerSyncWithCaDSRObj(
             String name, Integer count) {
         PlannedMarkerSyncWithCaDSR ps = new PlannedMarkerSyncWithCaDSR();
@@ -1689,6 +1843,19 @@ public class TestSchema {
         return create;
     }
 
+    public static StudySite createStudySiteSponsorObj(StudyProtocol sp,
+            HealthCareFacility hcf) {
+        StudySite create = new StudySite();
+        create.setFunctionalCode(StudySiteFunctionalCode.SPONSOR);
+        create.setLocalStudyProtocolIdentifier("Ecog1");
+        create.setUserLastUpdated(getUser());
+        create.setDateLastUpdated(TODAY);
+        create.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        create.setStatusDateRangeLow(TODAY);
+        create.setStudyProtocol(sp);
+        create.setHealthCareFacility(hcf);
+        return create;
+    }
     public static StudySite createParticipatingSite(StudyProtocol sp) {
 
         Organization org = createOrganizationObj();

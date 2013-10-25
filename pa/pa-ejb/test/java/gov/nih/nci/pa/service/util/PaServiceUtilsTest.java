@@ -92,22 +92,30 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IiConverterTest;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyMilestoneServiceBean;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -127,6 +135,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -140,6 +150,7 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
     private ServiceLocator paSvcLoc;
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrganizationSvc;
     private final PAServiceUtils paServiceUtil = new PAServiceUtils();
+    protected StudyMilestoneServicelocal studyMilestoneSvc;
 
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
@@ -156,7 +167,7 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
         identifiedOrgs.add(identOrgDto);
         when(identifierOrganizationSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(identifiedOrgs);
         when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
-
+        studyMilestoneSvc = new StudyMilestoneServiceBean();
         setupPersonMocks();
     }
 
@@ -252,6 +263,68 @@ public class PaServiceUtilsTest extends AbstractHibernateTestCase {
         
         assertEquals(10, paServiceUtil.getTrialAccruals(
         		IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0))));
+    }
+    
+    @Test 
+    public void testSwapStudyProtocolIdentifiers() throws PAException {
+       
+        TestSchema.primeData();
+        StudyProtocol sp = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, "NCI-000-0110", "1");
+        StudyProtocol sp1 = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, "NCI-000-0111", "2");
+        StudyMilestone sm1 = TestSchema.createStudyMilestoneObj(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, RejectionReasonCode.OTHER, sp);
+        StudyMilestone sm2 = TestSchema.createStudyMilestoneObj(MilestoneCode.SUBMISSION_REJECTED, RejectionReasonCode.DUPLICATE, sp1);
+        Ii sourceIi =  IiConverter.convertToIi(sp.getId());
+        Ii targetIi = IiConverter.convertToIi(sp1.getId());
+        final Session session = PaHibernateUtil.getCurrentSession();
+        List<StudyMilestone> sm = getMileStone(session, sm1.getId());
+        assertEquals(4L, sm.get(0).getStudyProtocol().getId().longValue());
+        sm = getMileStone(session, sm2.getId());
+        assertEquals(5L, sm.get(0).getStudyProtocol().getId().longValue());
+        // before swap Sm1->sp->4L Sm2->sp1->5L
+        paServiceUtil.swapStudyProtocolIdentifiers("study_milestone", sourceIi, targetIi);
+        session.flush();
+        session.clear();
+        sm = getMileStone(session, sm1.getId());
+        assertEquals(5L, sm.get(0).getStudyProtocol().getId().longValue());
+        sm = getMileStone(session, sm2.getId());
+        assertEquals(4L, sm.get(0).getStudyProtocol().getId().longValue());
+        // after swap Sm1->sp->5L Sm2->sp1->4L
+        
+        Document doc1 = TestSchema.createDocumentObj(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "IRB_Approval_Document.doc", sp);
+        Document doc2 = TestSchema.createDocumentObj(DocumentTypeCode.PROTOCOL_DOCUMENT, "Document.doc", sp1);
+       // before swap doc1->sp->4L doc2->sp1->5L
+        List<Document> doc = getDocument(session, doc1.getId());
+        assertEquals(4L, doc.get(0).getStudyProtocol().getId().longValue());
+        doc = getDocument(session, doc2.getId());
+        assertEquals(5L, doc.get(0).getStudyProtocol().getId().longValue());
+        paServiceUtil.swapStudyProtocolIdentifiers("document", sourceIi, targetIi);
+        session.flush();
+        session.clear();
+        // before swap doc1->sp->5L doc2->sp1->4L
+        doc = getDocument(session, doc1.getId());
+        assertEquals(5L, doc.get(0).getStudyProtocol().getId().longValue());
+        doc = getDocument(session, doc2.getId());
+        assertEquals(4L, doc.get(0).getStudyProtocol().getId().longValue());
+        
+    }
+    
+
+    @SuppressWarnings("unchecked")
+    private List<StudyMilestone> getMileStone(
+             final Session session, Long smId) throws HibernateException {
+        List<StudyMilestone> sm = session
+                .createQuery(
+                        "from StudyMilestone sm where sm.id = " + smId).list();
+        return sm;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<Document> getDocument(
+             final Session session, Long dId) throws HibernateException {
+        List<Document> d = session
+                .createQuery(
+                        "from Document d where d.id = " + dId).list();
+        return d;
     }
 
 }
