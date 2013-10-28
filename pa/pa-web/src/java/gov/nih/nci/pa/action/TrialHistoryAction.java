@@ -339,6 +339,12 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         Collections.sort(trialHistoryWebdtos , new Comparator<TrialHistoryWebDTO>() {
             @Override
             public int compare(TrialHistoryWebDTO o1, TrialHistoryWebDTO o2) {
+                if (o1.getSubmissionNumber() == null) {
+                    return (o2.getSubmissionNumber() == null) ? 0 : -1;
+                }
+                if (o2.getSubmissionNumber() == null) {
+                    return 1;
+                }
                 return (o2.getSubmissionNumber().compareTo(o1.getSubmissionNumber()));
             }
         });
