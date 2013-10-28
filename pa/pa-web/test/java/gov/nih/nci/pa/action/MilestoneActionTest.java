@@ -11,14 +11,31 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.service.MockStudyProtocolService;
 
 import java.sql.Timestamp;
@@ -27,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -41,10 +59,11 @@ import org.mockito.stubbing.Answer;
 public class MilestoneActionTest extends AbstractPaActionTest {
     MilestoneAction action;
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-
+    StudyProtocolServiceLocal studyProtocolService;
     @Before
     public void prepare() throws PAException {
         action = new MilestoneAction();
+        studyProtocolService = mock(StudyProtocolServiceLocal.class);
     }
 
     @After
@@ -82,6 +101,39 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         assertEquals("Wrong size of amendment map", 1, action.getAmendmentMap().size());
     }
 
+    @Test
+    public void testinitiliazeListFormAmend() throws PAException, TooManyResultsException {
+        studyProtocolService = mock(StudyProtocolServiceLocal.class);
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+        action.setStudyProtocolService(studyProtocolService);
+        Int n = new Int();
+        n.setValue(1);
+        StudyProtocolDTO spDto = new StudyProtocolDTO();
+        spDto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.NA.getCode()));
+        StudyProtocolDTO spDTO1 = new StudyProtocolDTO();
+        spDTO1.setIdentifier(IiConverter.convertToIi(2L));
+        spDTO1.setOfficialTitle(StConverter.convertToSt("NCI-001-0002"));
+        spDTO1.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+        spDTO1.setSubmissionNumber(IntConverter.convertToInt(1));
+        List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setIdentifier(IiConverter.convertToIi(1L));
+        spDTO.setOfficialTitle(StConverter.convertToSt("NCI-001-0001"));
+        n.setValue(1);
+        spDTO.setSubmissionNumber(IntConverter.convertToInt(2));
+        spList.add(spDTO1);
+        when(studyProtocolService.getStudyProtocol(action.getSpIi())).thenReturn(spDTO1);
+        when(studyProtocolService.search(any(StudyProtocolDTO.class), any(LimitOffset.class))).thenReturn(spList);
+        List<Long> ids = new ArrayList<Long>();
+        ids.add(1L);
+        when(studyProtocolService.
+                getActiveAndInActiveTrialsByspId(1L)).thenReturn(ids);
+        when(studyProtocolService.getStudyProtocol(IiConverter.convertToIi(1L))).thenReturn(spDTO);
+        action.initiliazeListForm();
+        assertNotNull("No milestone list", action.getMilestoneList());
+        assertNotNull("No amendment map", action.getAmendmentMap());
+        assertEquals("Wrong size of amendment map", 2, action.getAmendmentMap().size());
+    }
     @Test
     public void testLoadListFormWithRejectedStatus() throws PAException {
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));

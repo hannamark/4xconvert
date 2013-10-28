@@ -1689,7 +1689,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 StudyProtocolDTO sourceSpDto = studyProtocolService.getStudyProtocol(sourceSpIi);
                 //set the last user created of source study protocol as the last user created of target study protocol.
                 St lastUserCreated = sourceSpDto.getUserLastCreated();
-                StudyProtocolDTO targetSpDto = studyProtocolService.getStudyProtocol(targetSpIi);                
+                StudyProtocolDTO targetSpDto = studyProtocolService.getStudyProtocol(targetSpIi); 
+                St targetLastUserCreated = targetSpDto.getUserLastCreated();
                 saveAmenderInfo(targetSpDto, lastUserCreated, false);                
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
@@ -1787,6 +1788,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 insertRejectStudyMileStone(sourceSpIi, rejectionReason, rejectionReasonCode, classType);
                 studyProtocolDto.setIdentifier(sourceSpIi);
                 studyProtocolDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
+                saveAmenderInfo(studyProtocolDto, targetLastUserCreated, false);
                 studyProtocolService.updateStudyProtocol(studyProtocolDto);
             }
         } catch (Exception e) {

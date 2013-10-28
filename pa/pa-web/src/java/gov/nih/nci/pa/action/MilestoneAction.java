@@ -258,6 +258,14 @@ public final class MilestoneAction extends ActionSupport {
         Map<Integer, MilestoneTrialHistoryWebDTO> spMap = new TreeMap<Integer, MilestoneTrialHistoryWebDTO>();
         try {
             List<StudyProtocolDTO> spList = getStudyProtocolService().search(toSearchspDTO, limit);
+            List<Long> ids = getStudyProtocolService().
+                    getActiveAndInActiveTrialsByspId(IiConverter.convertToLong(studyProtocolIi));
+            List<Long> uniqueIds = getUniqueIds(spList, ids);
+            for (Long id : uniqueIds) {
+                StudyProtocolDTO sp = getStudyProtocolService()
+                             .getStudyProtocol(IiConverter.convertToIi(id));
+                spList.add(sp);
+            }
             if (CollectionUtils.isNotEmpty(spList)) {
                 for (StudyProtocolDTO sp : spList) {
                     Integer sn = IntConverter.convertToInteger(sp.getSubmissionNumber());
@@ -273,7 +281,22 @@ public final class MilestoneAction extends ActionSupport {
         setAmendmentMap(spMap);
     }
 
-
+    private List<Long> getUniqueIds(List<StudyProtocolDTO> spList, List<Long> ids) {
+       List<Long> uniqueIds = new ArrayList<Long>();
+       if (CollectionUtils.isNotEmpty(ids)) {
+            for (Long id : ids) {
+                  for (StudyProtocolDTO sp : spList) {
+                       if (IiConverter.convertToLong(sp.getIdentifier()).equals(id)) {
+                           break;
+                       } else {
+                           uniqueIds.add(id);
+                           break;
+                       }
+                  }
+            }
+         }
+       return uniqueIds;
+    }
     /**
      * @return the milestone
      */
