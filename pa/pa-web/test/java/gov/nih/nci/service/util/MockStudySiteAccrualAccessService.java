@@ -319,4 +319,18 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public void assignTrialLevelAccrualAccessNoTransaction(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void unassignAllAccrualAccess(RegistryUser user, AccrualAccessSourceCode source, String comment,
+            RegistryUser creator) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

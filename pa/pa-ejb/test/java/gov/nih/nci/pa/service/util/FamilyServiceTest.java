@@ -223,8 +223,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
-        Set<Long> trialIds = new HashSet<Long>(siteAccessEjb.getActiveTrialLevelAccrualAccess(ru));
-        ejb.unassignAllAccess(ru, ru, trialIds);
+        siteAccessEjb.unassignAllAccrualAccess(ru, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, null, ru);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
@@ -239,8 +238,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
-        Set<Long> trialIds = new HashSet<Long>(siteAccessEjb.getActiveTrialLevelAccrualAccess(ru));
-        ejb.unassignAllAccess(ru, ru, trialIds);
+        siteAccessEjb.unassignAllAccrualAccess(ru, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, null, ru);
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(1, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));

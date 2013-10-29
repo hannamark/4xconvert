@@ -184,6 +184,18 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
 
     /**
+     * Assigns trial-level access to the given trials for the given user.
+     * @param user RegistryUser
+     * @param source the source of the assignment
+     * @param trialIDs Collection<Long>
+     * @param comment comment
+     * @param creator creator
+     * @throws PAException PAException
+     */
+    void assignTrialLevelAccrualAccessNoTransaction(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
+
+    /**
      * Un-assigns trial-level access to the given trials from the given user.
      * @param user RegistryUser
      * @param source the source of the assignment
@@ -194,6 +206,17 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      */
     void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
+
+    /**
+     * Un-assigns all access for the given user.
+     * @param user RegistryUser
+     * @param source the source of the assignment
+     * @param comment comment
+     * @param creator creator
+     * @throws PAException PAException
+     */
+    void unassignAllAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
+            String comment, RegistryUser creator) throws PAException;
 
     /**
      * Create or set active site accrual access.

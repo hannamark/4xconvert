@@ -8,7 +8,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
@@ -84,7 +83,8 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
                 if (assign) {
                     assignFamilyAccess(trialIds, user, creator, comment);
                 } else {
-                    unassignAllAccess(user, creator, trialIds);
+                    studySiteAccess.unassignAllAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                            null, creator);
                 }
                 lockUserFA(user, false);
             } catch (Exception e) {
@@ -213,7 +213,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
                 idsForAccess.add(trialId);
             }
         }
-        studySiteAccess.assignTrialLevelAccrualAccess(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
+        studySiteAccess.assignTrialLevelAccrualAccessNoTransaction(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
                 idsForAccess, comment, creator);
     }
 
@@ -248,19 +248,11 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
         if (creator == null) {
             throw new PAException("Calling FamilyServiceBeanLocal.unassignFamilyAccrualAccess with creator == null.");
         }
-        Set<Long> trialIds = new HashSet<Long>(studySiteAccess.getActiveTrialLevelAccrualAccess(user));
-        Thread batchThread = new Thread(new FamilyAccessProcessor(false, trialIds, user, creator, null));
+        Thread batchThread = new Thread(new FamilyAccessProcessor(false, null, user, creator, null));
         batchThread.start();
         user.setFamilyAccrualSubmitter(false);
         user.setSiteAccrualSubmitter(false);
         registryUserService.updateUser(user);
-    }
-
-    void unassignAllAccess(RegistryUser user, RegistryUser creator, Set<Long> trialIds) throws PAException {
-        studySiteAccess.unassignTrialLevelAccrualAccess(user, 
-                AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, trialIds, null, creator);
-        List<StudySiteAccrualAccessDTO> list = studySiteAccess.getActiveByUser(user.getId());
-        studySiteAccess.removeStudySiteAccrualAccess(user, list, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
     }
 
     /**

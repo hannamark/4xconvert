@@ -122,6 +122,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -145,6 +146,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -542,6 +544,20 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     public void assignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comments, RegistryUser creator)
             throws PAException {
+        assignTrialLevelAccrualAccessPrivate(user, source, trialIDs, comments, creator);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void assignTrialLevelAccrualAccessNoTransaction(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comments, RegistryUser creator)
+            throws PAException {
+        assignTrialLevelAccrualAccessPrivate(user, source, trialIDs, comments, creator);
+    }
+
+    private void assignTrialLevelAccrualAccessPrivate(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comments, RegistryUser creator)
+            throws PAException {
         List<Long> currentTrialAccess = getActiveTrialLevelAccrualAccess(user);
         List<AccrualSubmissionAccessDTO> siteLevelAccess = getAccrualSubmissionAccess(user);
         for (Long trialID : trialIDs) {
@@ -775,14 +791,14 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         List<Long> currentTrialAccess = getActiveTrialLevelAccrualAccess(user);        
         for (Long trialID : trialIDs) {
             if (currentTrialAccess.contains(trialID)) {
-                unassignTrialLevelAccrualAccess(user, source, trialID, comment, creator);
+                unassignTrialLevelAccrualAccess(user, source, trialID, comment, creator, true);
             }
         }        
     }
 
     @SuppressWarnings(UNCHECKED_STR)
     private void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
-            Long trialID, String comment, RegistryUser creator) throws PAException {
+            Long trialID, String comment, RegistryUser creator, boolean cascade) throws PAException {
 
         Session session = PaHibernateUtil.getCurrentSession();
         
@@ -801,7 +817,37 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         }
 
         createTrialAccessHistory(user, source, trialID, comment, creator);
-        removeStudySiteAccrualAccess(user, trialID, source);
+        if (cascade) {
+            removeStudySiteAccrualAccess(user, trialID, source);
+        }
+    }
+
+    @Override
+    public void unassignAllAccrualAccess(RegistryUser user, AccrualAccessSourceCode source, String comment,
+            RegistryUser creator) throws PAException {
+        Set<Long> trialIds = new HashSet<Long>(getActiveTrialLevelAccrualAccess(user));
+        for (Long trialId : trialIds) {
+            unassignTrialLevelAccrualAccess(user, source, trialId, comment, creator, false);
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = null;
+        try {
+            String hql = "UPDATE StudySiteAccrualAccess ssaa "
+                + "SET ssaa.statusCode = :inactv, ssaa.statusDateRangeLow = CURRENT_TIMESTAMP, "
+                + "    ssaa.dateLastUpdated = CURRENT_TIMESTAMP, ssaa.userLastUpdated = :creator, "
+                + "    ssaa.source = :source, ssaa.requestDetails = :comment "
+                + "WHERE ssaa.registryUser = :ru AND ssaa.statusCode =  :actv";
+            query = session.createQuery(hql);
+            query.setParameter("inactv", ActiveInactiveCode.INACTIVE);
+            query.setParameter("creator", creator.getCsmUser());
+            query.setParameter("source", source);
+            query.setParameter("comment", comment);
+            query.setParameter("ru", user);
+            query.setParameter("actv", ActiveInactiveCode.ACTIVE);
+            query.executeUpdate();
+        } catch (HibernateException e) {
+            LOG.error("Hibernate exception while inactivating StudySiteAccrualAccess", e);
+        }
     }
 
     @SuppressWarnings(DEPRECATION)
@@ -952,6 +998,4 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             return CsmUserUtil.getDisplayUsername(user);
         }
     }
-
-   
 }
