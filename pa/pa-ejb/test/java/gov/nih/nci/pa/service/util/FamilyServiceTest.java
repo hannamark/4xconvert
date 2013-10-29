@@ -179,20 +179,16 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.ASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.ACTIVE, AssignmentActionCode.UNASSIGNED));
         assertEquals(0, studyAccessCount(ActiveInactiveCode.INACTIVE, AssignmentActionCode.UNASSIGNED));
+        
+        assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
+        convertToAbbreviateTrial();
+        assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
     }
 
     @Test
     public void getSiteAccrualTrialsTestNoTrialsTest() throws Exception {
         assertEquals(0, ejb.getSiteAccrualTrials((Long) null).size());
         assertEquals(0, ejb.getSiteAccrualTrials(-1L).size());
-    }
-
-    @Test
-    public void getSiteAccrualTrialsTest() throws Exception {
-        Long orgId = getCompleteTrialLeadOrgId();
-        assertEquals(1, ejb.getSiteAccrualTrials(orgId).size());
-        convertToAbbreviateTrial();
-        assertEquals(1, ejb.getSiteAccrualTrials(orgId).size());
     }
 
     @Test

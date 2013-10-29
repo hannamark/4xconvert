@@ -16,7 +16,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -175,7 +174,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
      */
     @Override
     public Set<Long> getSiteAccrualTrials(Long poOrgId) throws PAException {
-        List<Long> poOrgList = poOrgId == null ? new ArrayList<Long>() : Arrays.asList(poOrgId);
+        List<Long> poOrgList =  FamilyHelper.getAllRelatedOrgs(poOrgId);
         return getSiteAccrualTrials(poOrgList);
     }
 
