@@ -115,11 +115,18 @@ public abstract class AbstractTrialRegistrationTestBase extends
         StudyProtocol spInActive = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.INACTIVE,"NCI-2009-00003", "7");
         TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(spInActive));
         studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
-        StudyProtocol sp1 = TestSchema.createAmendStudyProtocolObj();
+        StudyProtocol sp1 = TestSchema.createAmendStudyProtocolObj("NCI-2009-00003");
         RegistryUser ru = TestSchema.getRegistryUser();
         sp1.setUserLastCreated(ru.getUserLastCreated());
         sp1.setUserLastUpdated(ru.getUserLastUpdated());
         TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(sp1));
+        StudyProtocol spInActive1 = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.INACTIVE,"NCI-2009-00004", "8");
+        TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(spInActive1));
+        StudyProtocol sp2 = TestSchema.createRejectAmendStudyProtocolObj("NCI-2009-00004");
+        RegistryUser ru1 = TestSchema.getRegistryUser();
+        sp2.setUserLastCreated(ru1.getUserLastCreated());
+        sp2.setUserLastUpdated(ru1.getUserLastUpdated());
+        TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(sp2));
         studyOverallStatusService.setDocumentWorkFlowStatusService(documentWrkService);
         studyOverallStatusService.setStudyProtocolService(studyProtocolService);
     

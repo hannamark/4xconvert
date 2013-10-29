@@ -201,6 +201,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 
+
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
@@ -1651,8 +1652,10 @@ public class TestSchema {
         addUpdObject(ss);
         StudySite ssponsor =createStudySiteSponsorObj(sp,hcf);
         addUpdObject(ssponsor);
-        StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, RejectionReasonCode.OTHER, sp);
-        addUpdObject(sm);
+        if (!orgid.equals("9")) {
+               StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, RejectionReasonCode.OTHER, sp);
+               addUpdObject(sm);
+        }
         Document doc = new Document();
         doc = new Document();
         doc.setStudyProtocol(sp);
@@ -1664,8 +1667,8 @@ public class TestSchema {
         return sp;
     }
     
-    public static StudyProtocol createAmendStudyProtocolObj() {
-        StudyProtocol sp = creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, "NCI-2009-00003", "5");
+    public static StudyProtocol createAmendStudyProtocolObj(String extension) {
+        StudyProtocol sp = creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, extension, "5");
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
         sp.setStatusDate(TODAY);
         sp.setAmendmentDate(TODAY);
@@ -1680,6 +1683,27 @@ public class TestSchema {
         doc.setFileName("Protocol_Document.doc");
         addUpdObject(doc);
         addUpdObject(sp);
+        studyProtocolIds.add(sp.getId());
+        return sp;
+    }
+    
+    public static StudyProtocol createRejectAmendStudyProtocolObj(String extension) {
+        StudyProtocol sp = creatOriginalStudyProtocolObj(ActStatusCode.ACTIVE, extension, "9");
+        sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
+        sp.setStatusDate(TODAY);
+        sp.setAmendmentDate(TODAY);
+        sp.setAmendmentNumber("amendmentNumber");
+        sp.setSubmissionNumber(2);
+        Document doc = new Document();
+        doc.setStudyProtocol(sp);
+        doc.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
+        doc.setActiveIndicator(true);
+        doc.setFileName("Protocol_Document.doc");
+        addUpdObject(doc);
+        StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.LATE_REJECTION_DATE, RejectionReasonCode.OUT_OF_SCOPE, sp);
+        addUpdObject(sm);
+        addUpdObject(sp);
+        
         studyProtocolIds.add(sp.getId());
         return sp;
     }

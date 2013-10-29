@@ -878,7 +878,7 @@ public class StudyMilestoneBeanLocal
                             IiConverter.convertToLong(sp.getIdentifier()));
                     PaHibernateUtil.getCurrentSession().flush();                    
                     trialRegistrationService.reject(sp.getIdentifier(), workDto.getCommentText(), 
-                            workDto.getRejectionReasonCode());                    
+                            workDto.getRejectionReasonCode(), milestoneCode);                    
                     String comment = workDto.determineCommentText() == null ? "Unknown Reason"
                             : workDto.determineCommentText().getValue();                    
                     mailManagerService.sendAmendRejectEmail(spDTO, comment);

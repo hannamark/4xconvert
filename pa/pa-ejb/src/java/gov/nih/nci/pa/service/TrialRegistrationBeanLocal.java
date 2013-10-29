@@ -1645,20 +1645,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void reject(Ii studyProtocolIi, St rejectionReason, 
-               Cd rejectionReasonCode) throws PAException {
+               Cd rejectionReasonCode, MilestoneCode milestoneCode) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
             TrialRegistrationValidator validator = createValidator();
             validator.validateRejection(studyProtocolDto);
             // Original trial Rejection
             if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
-                StudyMilestoneDTO smDto = new StudyMilestoneDTO();
-                smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-                smDto.setStudyProtocolIdentifier(studyProtocolIi);
-                smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
-                smDto.setCommentText(rejectionReason);
-                smDto.setRejectionReasonCode(rejectionReasonCode);
-                studyMilestoneService.create(smDto);
+                createStudyMileStone(studyProtocolIi, rejectionReason, 
+                        rejectionReasonCode);
             } else {
                 Ii targetSpIi = studyProtocolIi;
                 Ii sourceSpIi = null;
@@ -1785,7 +1780,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 getPAServiceUtils().executeSql(deleteAndReplace(sourceSpIi, targetSpIi, studyProtocolDto));
                 getPAServiceUtils().swapStudyProtocolIdentifiers(DOCUMENT, sourceSpIi, targetSpIi);
                 getPAServiceUtils().swapStudyProtocolIdentifiers(MILESTONE, sourceSpIi, targetSpIi);
-                insertRejectStudyMileStone(sourceSpIi, rejectionReason, rejectionReasonCode, classType);
+                if (!(MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {
+                      insertRejectStudyMileStone(sourceSpIi, rejectionReason, rejectionReasonCode, classType);
+                }
                 studyProtocolDto.setIdentifier(sourceSpIi);
                 studyProtocolDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
                 saveAmenderInfo(studyProtocolDto, targetLastUserCreated, false);
@@ -1794,6 +1791,17 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
         }
+    }
+    
+    private void createStudyMileStone(Ii studyProtocolIi, St rejectionReason, 
+            Cd rejectionReasonCode) throws PAException {
+        StudyMilestoneDTO smDto = new StudyMilestoneDTO();
+        smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        smDto.setStudyProtocolIdentifier(studyProtocolIi);
+        smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
+        smDto.setCommentText(rejectionReason);
+        smDto.setRejectionReasonCode(rejectionReasonCode);
+        studyMilestoneService.create(smDto);
     }
     
     private void  insertRejectStudyMileStone(Ii sourceSpIi, 

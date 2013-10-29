@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -229,7 +230,8 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     @Override
-    public void  reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
+    public void  reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode, 
+             MilestoneCode milestoneCode) throws PAException {
         throw new UnsupportedOperationException("reject not allowed");
     }
 

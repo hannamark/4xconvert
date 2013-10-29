@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -374,8 +375,10 @@ public interface TrialRegistrationServiceRemote {
      * @param studyProtocolIi study protocol identifier
      * @param rejectionReason rejectionReason
      * @param rejectionReasonCode rejectionReasonCode
+     * @param milestoneCode milestoneCode
      * @throws PAException on error
      */
-    void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException;
+    void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode, 
+              MilestoneCode milestoneCode) throws PAException;
 
 }

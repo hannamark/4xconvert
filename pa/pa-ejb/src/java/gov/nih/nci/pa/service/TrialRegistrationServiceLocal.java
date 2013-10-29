@@ -84,6 +84,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -367,9 +368,11 @@ public interface TrialRegistrationServiceLocal {
      * @param studyProtocolIi study protocol identifier
      * @param rejectionReason rejectionReason
      * @param rejectionReasonCode rejectionReasonCode
+     * @param milestoneCode milestoneCode
      * @throws PAException on error
      */
-    void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException;
+    void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode, 
+               MilestoneCode milestoneCode) throws PAException;
     
     // CHECKSTYLE:OFF More than 7 parameters
     

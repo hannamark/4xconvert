@@ -307,7 +307,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
                         IiConverter.convertToLong(studyProtocolIi));
                 trialRegistrationService.reject(studyProtocolIi, StConverter.convertToSt(gtdDTO.getCommentText()),
                                                 CdConverter.convertToCd(RejectionReasonCode.getByCode(gtdDTO
-                                                    .getRejectionReasonCode())));
+                                                    .getRejectionReasonCode())), null);
                 // send mail                                
                 String rejectionMessage = StringUtils.isNotBlank(gtdDTO.getCommentText()) ? gtdDTO
                         .getRejectionReasonCode() + " - " + gtdDTO.getCommentText() : gtdDTO.getRejectionReasonCode();

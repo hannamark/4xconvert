@@ -10,9 +10,9 @@
 <display:table name="trialHistoryWebDTO" id="row" class="data" sort="list" 
     pagesize="10" requestURI="trialHistory.action">
     <display:column escapeXml="false" sortable="true" title="Submission Number" class="action"> 
-     <p><a href="<s:url action='milestoneview'> 
+     <a href="<s:url action='milestoneview'> 
      <s:param name="submissionNumber" value="%{#attr.row.submissionNumber}"/>
-     </s:url>">${row.submissionNumber}</a></p>
+     </s:url>">${row.submissionNumber}</a>
     </display:column>  
     <display:column escapeXml="true" property="submissionDateAsString" sortable="true" title="Date" />    
     <display:column escapeXml="false" sortable="true" title="Type">
@@ -32,7 +32,7 @@
     <display:column escapeXml="false" sortable="false" title="MileStone">
         <c:out value="${row.lastMileStone}"></c:out>
         <br/> <br/>
-        <c:if test="${not empty row.rejectComment && row.lastMileStone == 'Submission Rejection Date'}">
+        <c:if test="${not empty row.rejectComment && (row.lastMileStone == 'Submission Rejection Date' || row.lastMileStone == 'Late Rejection Date') }">
             <c:out value="${row.rejectComment}"></c:out>
         </c:if>
     </display:column>  

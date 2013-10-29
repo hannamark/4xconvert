@@ -104,6 +104,7 @@ import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -1654,7 +1655,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         String reasonComment = "Milestone is missing";
         Ii sp = IiConverter.convertToIi(4L);
         Cd reasonCode= CdConverter.convertStringToCd(RejectionReasonCode.OUT_OF_SCOPE.getCode());
-        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode);
+        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode, null);
         StudyMilestoneDTO smDto = studyMilestoneSvc.getCurrentByStudyProtocol(sp);
         assertEquals(MilestoneCode.SUBMISSION_REJECTED.getCode(), smDto.getMilestoneCode().getCode());
         StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(sp);
@@ -1683,7 +1684,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         assertEquals("Cancer7", StConverter.convertToString(dto.getOfficialTitle()));
         assertEquals("Comments7", StConverter.convertToString(dto.getComments()));
         
-        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode);
+        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode, null);
         // After : Amend trial (spId 5) is saved as inactive and original Trial 
         //(spID 6) is saved as active with related data
         //AmendTrial
@@ -1711,6 +1712,56 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         assertEquals("IRB_Approval_Document.doc", d.get(0).getFileName());
     }
     
+    @Test
+    public void lateRejectAmendTrialTest() throws PAException, TooManyResultsException { 
+        // Before : Original Trial or source (spId 5) is saved as inactive and AmendTrial or Target (spID 6) is saved as active
+        String reasonComment = "Comment";
+        Ii sp = new Ii();
+        sp.setExtension("8");
+        sp.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        sp.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        Ii sp1 = new Ii();
+        sp1.setExtension("7");
+        sp1.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        sp1.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        Cd reasonCode= CdConverter.convertStringToCd(RejectionReasonCode.OUT_OF_SCOPE.getCode());
+        final Session session = PaHibernateUtil.getCurrentSession();
+        
+        StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(sp1);
+        assertEquals("InActive", dto.getStatusCode().getCode());
+        assertEquals("Cancer8", StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments8", StConverter.convertToString(dto.getComments()));
+        
+        bean.reject(sp, StConverter.convertToSt(reasonComment), reasonCode, MilestoneCode.LATE_REJECTION_DATE);
+        // After : Amend trial (spId 5) is saved as inactive and original Trial 
+        //(spID 6) is saved as active with related data
+        //AmendTrial
+        session.flush();
+        session.clear();
+        List<StudyMilestone> smDto = getCurrentMileStone(session, 7L);
+        assertEquals(reasonComment, smDto.get(0).getCommentText());
+        assertEquals(MilestoneCode.LATE_REJECTION_DATE.getCode(), smDto.get(0).getMilestoneCode().getCode());
+        
+        dto = studyProtocolService.getStudyProtocol(sp1);
+        assertEquals("InActive", dto.getStatusCode().getCode());
+        assertEquals("Cancer9", StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments9", StConverter.convertToString(dto.getComments()));
+        
+        List<Document> d = getLastDocument(session, 7L);
+        assertEquals("Protocol_Document.doc", d.get(0).getFileName());
+        //Original Trial
+        smDto = getCurrentMileStone(session, 8L);
+        assertEquals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode(), smDto.get(0).getMilestoneCode().getCode());
+        
+        dto = studyProtocolService.getStudyProtocol(sp);
+        assertEquals("Active", dto.getStatusCode().getCode());
+        assertEquals("Cancer8",  StConverter.convertToString(dto.getOfficialTitle()));
+        assertEquals("Comments8", StConverter.convertToString(dto.getComments()));
+        
+        d = getLastDocument(session, 8L);
+        assertEquals("IRB_Approval_Document.doc", d.get(0).getFileName());
+    }
+    
     @SuppressWarnings("unchecked")
     private List<StudyMilestone> getCurrentMileStone(
              final Session session, Long spId) throws HibernateException {
@@ -1729,4 +1780,5 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
                         "from Document d where d.studyProtocol= " + spId +" order by d.id DESC LIMIT 1").list();
         return d;
     }
+
 }
