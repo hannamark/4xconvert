@@ -321,13 +321,11 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             }
             
             // Proceed with import otherwise.
-            String nciID = ctGovSyncService.importTrial(nctID);
-            RegistryUser user = registryUserService.getUser(currentUser);
+            String nciID = ctGovSyncService.importTrial(nctID);            
             final Long newTrialId = IiConverter
                     .convertToLong(studyProtocolService.getStudyProtocol(
                             IiConverter.convertToAssignedIdentifierIi(nciID))
-                            .getIdentifier());
-            registryUserService.assignOwnership(user.getId(), newTrialId);
+                            .getIdentifier());            
             studyProtocolId = newTrialId;
             ServletActionContext.getRequest().setAttribute(
                     Constants.SUCCESS_MESSAGE,
