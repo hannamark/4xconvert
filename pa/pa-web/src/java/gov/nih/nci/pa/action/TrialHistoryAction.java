@@ -415,15 +415,15 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             List<Long> ids = studyProtocolService.
                    getActiveAndInActiveTrialsByspId(IiConverter.convertToLong(studyProtocolIi));
             List<Long> uniqueIds = new ArrayList<Long>();
+            List<Long> spListIdentifiers = new ArrayList<Long>();
+            for (StudyProtocolDTO sp : spList) {
+                  spListIdentifiers.add(IiConverter.convertToLong(sp.getIdentifier()));
+            }
             for (Long id : ids) {
-                 for (StudyProtocolDTO sp : spList) {
-                     if (IiConverter.convertToLong(sp.getIdentifier()).equals(id)) {
-                        break;
-                     } else {
-                        uniqueIds.add(id);
-                        break;
+                     if (!spListIdentifiers.contains(id)) {
+                         uniqueIds.add(id);
                      }
-                 }
+                       
             }
             for (Long id : uniqueIds) {
                   StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(IiConverter.convertToIi(id));

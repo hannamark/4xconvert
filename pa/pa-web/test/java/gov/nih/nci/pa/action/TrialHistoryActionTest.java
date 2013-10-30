@@ -222,7 +222,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
         List<StudyProtocolDTO> trialUpdates = new ArrayList<StudyProtocolDTO>();
         spDto = new StudyProtocolDTO();
-        spDto.setIdentifier(IiConverter.convertToIi("NCI-2010-001"));
+        spDto.setOfficialTitle(StConverter.convertToSt("NCI-2010-001"));
+        spDto.setIdentifier(IiConverter.convertToIi(1L));
         spDto.setSubmissionNumber(IntConverter.convertToInt("1"));
         spDto.setAmendmentNumber(StConverter.convertToSt("11"));
         spDto.setAmendmentReasonCode(CdConverter.convertStringToCd("ReasonCode1"));
@@ -230,7 +231,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         trialUpdates.add(spDto);
 
         spDto = new StudyProtocolDTO();
-        spDto.setIdentifier(IiConverter.convertToIi("NCI-2010-001"));
+        spDto.setOfficialTitle(StConverter.convertToSt("NCI-2010-001"));
+        spDto.setIdentifier(IiConverter.convertToIi(1L));
         spDto.setSubmissionNumber(IntConverter.convertToInt("2"));
         spDto.setAmendmentNumber(StConverter.convertToSt("12"));
         spDto.setAmendmentReasonCode(CdConverter.convertStringToCd("ReasonCode2"));
