@@ -75,6 +75,7 @@ public class VerifyTrialDataNightlyServiceTest extends AbstractHibernateTestCase
         regUser.setLastName("LastName");
         regUser.setAffiliatedOrgUserType(UserOrgType.ADMIN);
         regUser.setCsmUser(user);
+        regUser.setId(1L);
         records.add(dto);
         trialOwners.add(regUser);
         StudyProtocolQueryDTO dto1 = new StudyProtocolQueryDTO();

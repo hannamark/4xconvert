@@ -1,15 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -22,12 +13,23 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 /**
  * 
@@ -59,6 +61,9 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
     private static final int N3 = 7;
     /** The LOG details. */
     private static final Logger LOG = Logger.getLogger(VerifyTrialDataNightlyServiceBeanLocal.class);
+    static {
+        LOG.setLevel(Level.INFO);
+    }
    
     /**
      * gets the open trials 
@@ -71,18 +76,17 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
         List<StudyProtocolQueryDTO> records = protocolQueryService.getStudyProtocolByCriteria(queryCriteria);
         List<StudyProtocolQueryDTO> recordList = new ArrayList<StudyProtocolQueryDTO>();
         for (StudyProtocolQueryDTO record : records) {
-            RegistryUser userInfo = getUser(record);
-            if (userInfo.getAffiliateOrg() != null 
-                        && (!userInfo.getAffiliateOrg().equalsIgnoreCase(PAConstants.NCI_ORG_NAME) 
-                        && !userInfo.getAffiliateOrg()
+            RegistryUser user = getUser(record);
+            if (user != null && user.getAffiliateOrg() != null 
+                        && (!user.getAffiliateOrg().equalsIgnoreCase(PAConstants.NCI_ORG_NAME) 
+                        && !user.getAffiliateOrg()
                         .equalsIgnoreCase(PAConstants.DCP_ORG_NAME))) {
                     recordList.add(record);
             }
         }
         List<StudyProtocolQueryDTO> finalRecordList = new ArrayList<StudyProtocolQueryDTO>();
         // Calculating the verificationDueDate for each Trial. The value of N is determined based on 3 conditions. 
-        // Presently we are using only one as the other two are yet to be clarified by CTRO Team. 
-        
+        // Presently we are using only one as the other two are yet to be clarified by CTRO Team.
         for (StudyProtocolQueryDTO record : recordList) {
             if (record.getRecordVerificationDate() != null) {
                 Date verificationDueDate = new Date();
@@ -139,7 +143,7 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
     
     protected Map<RegistryUser, List<StudyProtocolQueryDTO>> groupUsers(List<StudyProtocolQueryDTO> records) 
         throws PAException {   
-        Map<RegistryUser, List<StudyProtocolQueryDTO>> map = new HashMap<RegistryUser, List<StudyProtocolQueryDTO>>();
+        Map<RegistryUser, List<StudyProtocolQueryDTO>> map = getRegUserToProtocolListMap();
         for (StudyProtocolQueryDTO record : records) {
             Long spId = record.getStudyProtocolId();
             Set<RegistryUser> trialOwners = registryUserService.getAllTrialOwners(spId);
@@ -170,7 +174,7 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
     protected Map<RegistryUser, List<StudyProtocolQueryDTO>> getNearingDueDate(
             Map<RegistryUser, List<StudyProtocolQueryDTO>> map) throws PAException {
         Map<RegistryUser, List<StudyProtocolQueryDTO>> internalMap 
-        = new HashMap<RegistryUser, List<StudyProtocolQueryDTO>>();
+        = getRegUserToProtocolListMap();
         for (Entry<RegistryUser, List<StudyProtocolQueryDTO>> entry : map.entrySet()) {
             RegistryUser user = entry.getKey(); 
             List<StudyProtocolQueryDTO> list = entry.getValue();
@@ -186,6 +190,21 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
         }
         return internalMap;
     }
+   
+    /**
+     * This method will ensure uniqueness of keys (RegistryUsers) in the map.
+     * @return
+     */
+    private Map<RegistryUser, List<StudyProtocolQueryDTO>> getRegUserToProtocolListMap() {
+        return new TreeMap<RegistryUser, List<StudyProtocolQueryDTO>>(
+                new Comparator<RegistryUser>() {
+                    @Override
+                    public int compare(RegistryUser o1, RegistryUser o2) {
+                        return o1.getId().compareTo(o2.getId());
+                    }
+                });
+    }
+
     /**
      * 
      * @param dtoList dtoList
@@ -208,17 +227,17 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
             StudyProtocolQueryDTO dto, 
             RegistryUser user, 
             Map<RegistryUser, List<StudyProtocolQueryDTO>> map) {
-        List<StudyProtocolQueryDTO> internalDTO = new ArrayList<StudyProtocolQueryDTO>();
+        List<StudyProtocolQueryDTO> internalList = new ArrayList<StudyProtocolQueryDTO>();
         if (map.containsKey(user)) {
-            internalDTO = map.get(user);
-            if (internalDTO != null) {
-                internalDTO.add(dto);
+            internalList = map.get(user);
+            if (internalList != null) {
+                internalList.add(dto);
             }
             
         } else {
-            internalDTO.add(dto);
+            internalList.add(dto);
         }
-        map.put(user, internalDTO);
+        map.put(user, internalList);
     }
    
     private Date getDueDate(int n, Date oldDate) {

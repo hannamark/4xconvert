@@ -418,6 +418,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("CDE_MARKER_REQUEST_FROM_EMAIL");
         prop.setValue("ncictro@example.com");
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("abstraction.script.mailTo");
+        prop.setValue("ncictro@example.com");
+        TestSchema.addUpdObject(prop);
+        
 
     }
 
