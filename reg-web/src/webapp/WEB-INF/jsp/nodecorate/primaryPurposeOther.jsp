@@ -3,9 +3,9 @@
 <s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
                 <td  scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.primary_purpose">
-                        <label for="trialDTO.primaryPurposeCode" class="interventional interventional-input-ctr"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
+                        <label for="trialDTO.primaryPurposeCode"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
                         <label for="trialDTO.primaryPurposeCode2" style="display: none;" 
-                        class="non-interventional non-interventional-input-ctr" ><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
+                        ><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
                     </reg-web:displayTooltip>
                 </td>
                     <s:set name="interventionalTypeCodeValues" 
