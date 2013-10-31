@@ -130,10 +130,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
@@ -728,7 +728,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     private List<String> sendEmailToAllTrialOwners(StudyProtocolQueryDTO sp, 
             String subject, String body, boolean includeSubmitter) throws PAException {
-        String mailBody = body;
         Set<String> emails = new HashSet<String>();
         Collection<RegistryUser> recipients = new HashSet<RegistryUser>(getStudyOwners(sp));
         if (includeSubmitter) {
@@ -741,7 +740,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         for (RegistryUser recipient : recipients) {
             emailAddress = recipient.getEmailAddress();
             String regUserName = recipient.getFirstName() + " " + recipient.getLastName();
-            mailBody = mailBody.replace(OWNER_NAME, regUserName);
+            String mailBody = body.replace(OWNER_NAME, regUserName);
             sendMailWithHtmlBody(emailAddress, subject, mailBody);
             emails.add(emailAddress);
         }
