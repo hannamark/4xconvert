@@ -88,6 +88,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 /**
  * Convert Document from domain to DTO.
  *
@@ -95,6 +98,8 @@ import gov.nih.nci.pa.util.ISOUtil;
  * @since 09/30/2008
  */
 public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Document> {
+    
+    private static final Logger LOG = Logger.getLogger(DocumentConverter.class);
 
     /**
      * {@inheritDoc}
@@ -127,6 +132,7 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         docDTO.setInactiveCommentText(StConverter.convertToSt(doc.getInactiveCommentText()));
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
         docDTO.setDateLastUpdated(TsConverter.convertToTs(doc.getDateLastUpdated()));
+        docDTO.setDateLastCreated(TsConverter.convertToTs(doc.getDateLastCreated()));
         docDTO.setOriginal(BlConverter.convertToBl(doc.getOriginal()));
         docDTO.setDeleted(BlConverter.convertToBl(doc.getDeleted()));
         docDTO.setStudyInboxIdentifier(IiConverter.convertToIi(doc
@@ -135,7 +141,10 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
             docDTO.setUserLastUpdated(StConverter.convertToSt(doc
                     .getUserLastUpdated().getLoginName()));
         }
-        
+        if (doc.getUserLastCreated() != null) {
+            docDTO.setUserLastCreated(StConverter.convertToSt(doc
+                    .getUserLastCreated().getLoginName()));
+        }        
     }
 
     /**
@@ -164,5 +173,43 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
             doc.setStudyInbox(studyInbox);
         }
         
+        if (!ISOUtil.isTsNull(docDTO.getDateLastCreated())) {
+            doc.setDateLastCreated(TsConverter.convertToTimestamp(docDTO.getDateLastCreated()));
+        }
+        if (!ISOUtil.isTsNull(docDTO.getDateLastUpdated())) {
+            doc.setDateLastUpdated(TsConverter.convertToTimestamp(docDTO.getDateLastUpdated()));
+        }
+        
+        setUserFields(docDTO, doc);
+
+        
+    }
+
+    private void setUserFields(DocumentDTO docDTO, Document doc) {
+        String isoStUserLastCreated = StConverter.convertToString(docDTO
+                .getUserLastCreated());
+        if (StringUtils.isNotEmpty(isoStUserLastCreated)) {
+            try {
+                doc.setUserLastCreated(AbstractStudyProtocolConverter
+                        .getCsmUserUtil().getCSMUser(isoStUserLastCreated));
+            } catch (Exception e) {
+                LOG.error("Exception in setting userLastCreated for Document: "
+                        + docDTO.getIdentifier() + ", for username: "
+                        + isoStUserLastCreated, e);
+            }
+        }
+
+        String isoStUserLastUpdated = StConverter.convertToString(docDTO
+                .getUserLastUpdated());
+        if (StringUtils.isNotEmpty(isoStUserLastUpdated)) {
+            try {
+                doc.setUserLastUpdated(AbstractStudyProtocolConverter
+                        .getCsmUserUtil().getCSMUser(isoStUserLastUpdated));
+            } catch (Exception e) {
+                LOG.error("Exception in setting userLastUpdated for Document: "
+                        + docDTO.getIdentifier() + ", for username: "
+                        + isoStUserLastUpdated, e);
+            }
+        }
     }
 }

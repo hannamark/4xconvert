@@ -100,10 +100,12 @@ public class DocumentDTO extends StudyDTO {
     private St inactiveCommentText;
     private Ed text;
     private Ts dateLastUpdated;
+    private Ts dateLastCreated;
     private Bl original;
     private Bl deleted;
     private Ii studyInboxIdentifier;   
     private St userLastUpdated;
+    private St userLastCreated;
     
     /**
      * @return typeCode
@@ -247,6 +249,34 @@ public class DocumentDTO extends StudyDTO {
      */
     public void setUserLastUpdated(St userLastUpdated) {
         this.userLastUpdated = userLastUpdated;
+    }
+
+    /**
+     * @return the userLastCreated
+     */
+    public St getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(St userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+
+    /**
+     * @return the dateLastCreated
+     */
+    public Ts getDateLastCreated() {
+        return dateLastCreated;
+    }
+
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(Ts dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
     }
     
 }
