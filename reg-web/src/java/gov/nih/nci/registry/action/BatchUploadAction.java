@@ -342,8 +342,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
         }
         if (StringUtils.isBlank(trialDataFileName)) {
             addFieldError("trialDataFileName", getText("error.batch.trialDataFileName"));
-        }
-        if (StringUtils.isNotBlank(trialDataFileName)) {
+        } else {
             if (!trialData.exists()) {
                 addFieldError("trialDataFileName", getText("error.batch.invalidDocument"));
             }

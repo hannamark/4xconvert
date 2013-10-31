@@ -1,18 +1,20 @@
 <div id="footerwrapper">
-	<div id="footernav">
-		<div id="footer">						
-			<a href="/registry/contact.action">CONTACT US</a>
-			<a href="http://www.nih.gov/about/privacy.htm" target="_blank">PRIVACY NOTICE</a>
-			<a href="http://www.nih.gov/about/disclaim.htm" target="_blank">DISCLAIMER</a>
-			<a href="http://www3.cancer.gov/accessibility/nci508.htm" target="_blank">ACCESSIBILITY</a>
-			<a href="http://ncicb.nci.nih.gov/NCICB/support" class="last" target="_blank">SUPPORT</a>
-		</div>	
-	</div>
-	
-	<div id="partnerlogos">				
-		<a href="http://www.cancer.gov" target="_blank"><img src="${pageContext.request.contextPath}/images/footer_nci.gif" width="63" height="31" alt="Logo: National Cancer Institute" /></a>
-		<a href="http://www.dhhs.gov" target="_blank"><img src="${pageContext.request.contextPath}/images/footer_hhs.gif" width="39" height="31" alt="Logo: Department of Health and Human Services" /></a>
-		<a href="http://www.nih.gov" target="_blank"><img src="${pageContext.request.contextPath}/images/footer_nih.gif" width="46" height="31" alt="Logo: National Institutes of Health" /></a>
-		<a href="http://www.usa.gov" target="_blank"><img src="${pageContext.request.contextPath}/images/footer_usagov.gif" width="91" height="31" alt="Logo: USA.gov" /></a>
-	</div>
+<!-- Begin NCI/NIH Footer Links -->
+<div id="portal-footer">
+ <div class="footerLinks">
+ <a href="${pageContext.request.contextPath}" title="Home">Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="${pageContext.request.contextPath}/registry/contact.action" title="Contact Us">Contact Us</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://www.cancer.gov/global/web/policies" title="Policies" target="_blank">Policies</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://www.cancer.gov/global/web/policies/accessibility" title="Accessibility" target="_blank">Accessibility</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://cancer.gov/global/viewing-files" target="_blank" title="Viewing Files" target="_blank">Viewing Files</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://www.cancer.gov/global/web/policies/foia" title="FOIA" target="_blank">FOIA</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="#" title="Site Map">Site Map</a>
+ <br /><br />
+ <a href="http://www.dhhs.gov/">Department of Health and Human Services</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://www.nih.gov/">National Institutes of Health</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+ <a href="http://www.cancer.gov/">National Cancer Institute</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://www.usa.gov/">USA.gov</a>
+ </div><br /><br />
+ NIH...Turning Discovery Into Health<sup>®</sup> 
+</div>
+<!-- End NCI/NIH Footer Links -->
 </div>

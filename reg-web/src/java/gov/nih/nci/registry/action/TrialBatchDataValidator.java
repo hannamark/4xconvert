@@ -32,6 +32,7 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialConvertUtils;
+import gov.nih.nci.security.util.StringUtilities;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -125,13 +126,17 @@ public class TrialBatchDataValidator {
         }
         //Summary 4 Info validation
         fieldErr.append(validateSummary4SponsorInfo(batchDto));
-        if (PAUtil.isPrimaryPurposeOtherCodeReq(batchDto.getPrimaryPurpose(),
+        if (StringUtilities.isBlank(batchDto.getPrimaryPurpose())) {
+            fieldErr.append("Primary Purpose Code is required.\n");
+        } else if (PAUtil.isPrimaryPurposeCodeOther(batchDto.getPrimaryPurpose()) 
+                && PAUtil.isPrimaryPurposeOtherCodeReq(batchDto.getPrimaryPurpose(),
                 batchDto.getPrimaryPurposeAdditionalQualifierCode())) {
-                fieldErr.append("Primary Purpose Code is required.\n");
+                fieldErr.append("Primary Purpose Code Additional Qualifier must be Other if "
+                    + "Primary Purpose is Other.\n");
         }
         if (PAUtil.isPrimaryPurposeOtherTextReq(batchDto.getPrimaryPurpose(),
                 batchDto.getPrimaryPurposeAdditionalQualifierCode(), batchDto.getPrimaryPurposeOtherText())) {
-                fieldErr.append("Comment for Purpose is required.\n");
+                fieldErr.append("Comment for Purpose Other is required.\n");
         }
         //validate grant
         fieldErr.append(validateGrantInfo(batchDto));
@@ -149,6 +154,7 @@ public class TrialBatchDataValidator {
         fieldErr.append(validateUpdate(batchDto));
         return fieldErr.toString();
     }
+     
     private Object validateSponsorResponsibleParty(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         //Sponsor validation
