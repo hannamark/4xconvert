@@ -139,6 +139,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -345,7 +346,9 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
                 if (o2.getSubmissionNumber() == null) {
                     return 1;
                 }
-                return (o2.getSubmissionNumber().compareTo(o1.getSubmissionNumber()));
+                int sn1 = Integer.parseInt(o1.getSubmissionNumber());
+                int sn2 = Integer.parseInt(o2.getSubmissionNumber());
+                return new CompareToBuilder().append(sn2, sn1).toComparison();
             }
         });
         setTrialHistoryWebDTO(trialHistoryWebdtos);
