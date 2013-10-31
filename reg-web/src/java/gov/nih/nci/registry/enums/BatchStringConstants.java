@@ -358,6 +358,10 @@ public enum BatchStringConstants implements CodedEnum<String> {
     /** */
     PRIMARY_COMP_DATE_TYPE("PRIMARY COMPLETION DATE TYPE", "setPrimaryCompletionDateType"),
     /** */
+    STUDY_COMP_DATE("STUDY COMPLETION DATE", "setCompletionDate"),
+    /** */
+    STUDY_COMP_DATE_TYPE("STUDY COMPLETION DATE TYPE", "setCompletionDateType"),
+    /** */
     IND_TYPE("IND/IDE TYPE", "setIndType"),
     /** */
     IND_NUMBER("IND/IDE NUMBER", "setIndNumber"),

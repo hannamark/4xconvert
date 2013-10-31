@@ -667,6 +667,8 @@ public class BatchCreateProtocols {
         TrialDTO trialDTO = new TrialDTO();
         trialDTO.setPrimaryCompletionDate(batchDTO.getPrimaryCompletionDate());
         trialDTO.setPrimaryCompletionDateType(batchDTO.getPrimaryCompletionDateType());
+        trialDTO.setCompletionDate(batchDTO.getCompletionDate());
+        trialDTO.setCompletionDateType(batchDTO.getCompletionDateType());
         trialDTO.setLeadOrgTrialIdentifier(batchDTO.getLocalProtocolIdentifier());
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
