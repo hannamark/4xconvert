@@ -626,7 +626,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         when(action.validateSummaryFourInfo()).thenReturn(false);
         String result = action.validateTrial();
         assertEquals("Wrong error message returned",
-                     "Summary Four fields are missing. You may not complete an update. Please submit an amendment instead.",
+                     "This trial cannot be updated at this time. Please contact us at ncictro@mail.nih.gov for further assistance regarding this trial. Please include the NCI Trial Identifier in your email.",
                      result);
     }
 

@@ -311,16 +311,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     String validateTrial() throws PAException, IOException {
         clearErrorsAndMessages();
         String failureMessage = null;
-        if (!validateRespPartyInfo()) {
-            failureMessage = "Responsible Party is missing. ";
-            if (!validateXmlRequiredTrial()) {
-                failureMessage += "No sponsor but XML is required. ";
-            }
-            failureMessage += "You may not complete an update. Please submit an amendment instead.";
-        } else if (!validateSummaryFourInfo()) {
-            failureMessage =
-                    "Summary Four fields are missing. You may not complete an update. "
-                            + "Please submit an amendment instead.";
+        final String message = "This trial cannot be updated at this time. "
+                + "Please contact us at ncictro@mail.nih.gov for further assistance regarding this trial. "
+                + "Please include the NCI Trial Identifier in your email.";
+        if (!validateRespPartyInfo() || !validateSummaryFourInfo()) {
+            failureMessage = message;
         } else {
             enforceBusinessRules();
             if (hasFieldErrors()) {
