@@ -41,7 +41,7 @@
             width = 670;
             height = 500;                   
         }
-        showPopWin('http://clinicaltrials.gov/ct2/show/'+nctId+'?term='+nctId+'&rank=1', width, height, '', 'ClinicalTrials.Gov Details');
+        window.open('http://clinicaltrials.gov/ct2/show/'+nctId+'?term='+nctId+'&rank=1');        
     }    
     
 	function handleAction(action) {
