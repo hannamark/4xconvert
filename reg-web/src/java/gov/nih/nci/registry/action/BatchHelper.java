@@ -103,6 +103,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  *
  * @author Vrushali
@@ -162,7 +164,8 @@ public class BatchHelper implements Runnable {
     @Override
     public void run() {
         try {
-
+            //Set Username for proper tracking.
+            UsernameHolder.setUserCaseSensitive(userName);
             // open a new Hibernate session and bind to the context
             PaHibernateUtil.getHibernateHelper().openAndBindSession();
 
