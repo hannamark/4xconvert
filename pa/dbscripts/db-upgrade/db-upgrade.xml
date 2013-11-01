@@ -1481,4 +1481,8 @@
         <comment> Update the verification mail header in the PaProperties file .</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6610.sql"/>
      </changeSet>
+     <changeSet id="PO-6602" author="walterd">
+        <comment>Updated email message for Trial acceptance</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6602.sql"/>
+     </changeSet>
 </databaseChangeLog>
