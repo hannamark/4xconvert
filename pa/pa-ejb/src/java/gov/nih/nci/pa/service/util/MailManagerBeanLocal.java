@@ -233,6 +233,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String TOTAL_SUBMITTED = "${totalSubmitted}";
     private static final String SUCCESSFUL_UPDATES = "${successfulUpdates}";
     private static final String FAILURES = "${failures}";
+    private static final String N_VALUE = "${n_value}";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -1715,6 +1716,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.body"));
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.bodyFooter"));
         mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        mailBody = mailBody.replace(N_VALUE , lookUpTableService.getPropertyValue("N_value"));
         try {
             String date = lookUpTableService.getPropertyValue(EFFECTIVE_DATE);
             Date effectiveDate = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).parse(date);
@@ -1729,13 +1731,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                                 + "<td>" + getFormatedDate(dto.getVerificationDueDate()) + "</td></tr>");
                     }
                 }
+                
                 if (innerTable.length() > 0) {
                     mailBody = mailBody.replace(TABLE_ROWS, innerTable.toString());
                     mailto = user.getEmailAddress();
                     mailBody = mailBody.replace(USER_NAME, getFullUserName(user)); 
                     sendMailWithHtmlBody(mailto, mailSubject, mailBody);
                 }
-               
+                mailto = "";
+                mailBody = lookUpTableService.getPropertyValue("verifyData.email.bodyHeader");
+                mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.body"));
+                mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.bodyFooter"));
+                mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+                mailBody = mailBody.replace(N_VALUE , lookUpTableService.getPropertyValue("N_value"));
             }
         } catch (ParseException e) {
             LOG.error(SEND_MAIL_ERROR, e);

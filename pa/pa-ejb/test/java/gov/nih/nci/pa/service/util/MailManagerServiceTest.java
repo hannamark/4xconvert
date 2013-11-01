@@ -1264,6 +1264,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         lastCreated.setDateLastCreated(new Date());
         dto.setLastCreated(lastCreated);
         dto.setRecordVerificationDate(new Date());
+        dto.setVerificationDueDate(new Date());
         list.add(dto);
 
         PAProperties prop = new PAProperties();
@@ -1288,7 +1289,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("TrialDataVerificationNotificationsEffectiveDate");
-        prop.setValue("31-DEC-2050");
+        prop.setValue("06/01/2013");
         TestSchema.addUpdObject(prop);
 
         bean.sendCTROVerifyDataEmail(list);
@@ -1308,6 +1309,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         lastCreated.setDateLastCreated(new Date());
         dto.setLastCreated(lastCreated);
         dto.setRecordVerificationDate(new Date());
+        dto.setVerificationDueDate(new Date());
         list.add(dto);
         RegistryUser user = new RegistryUser();
         user.setFirstName("firstName");
@@ -1336,9 +1338,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("TrialDataVerificationNotificationsEffectiveDate");
-        prop.setValue("31-DEC-2050");
+        prop.setValue("06/01/2013");
         TestSchema.addUpdObject(prop);
-
+        
+        prop = new PAProperties();
+        prop.setName("N_value");
+        prop.setValue("12");
+        TestSchema.addUpdObject(prop);
         bean.sendVerifyDataEmail(map);
     }
 

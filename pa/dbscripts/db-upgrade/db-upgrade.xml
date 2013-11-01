@@ -1477,4 +1477,8 @@
         <comment>Added new columns to study_inbox to track admin/scientific changes separately.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6499.sql"/>
      </changeSet>
+     <changeSet id="PO-6610" author="Reshma">
+        <comment> Update the verification mail header in the PaProperties file .</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6610.sql"/>
+     </changeSet>
 </databaseChangeLog>
