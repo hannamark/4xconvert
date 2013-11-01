@@ -178,6 +178,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private static final String ICDO3_DEFAULT_SITEDISEASECODE = "C998";
     private static final String SDC_DEFAULT_DISEASECODE = "80000001";
     private static final String ICD9_DEFAULT_DISEASECODE = "V100";
+    private static final int PREFIXLENGTH = 3;
     
     @EJB
     private CdusBatchUploadDataValidatorLocal cdusBatchUploadDataValidator;
@@ -224,7 +225,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 Enumeration<? extends ZipEntry> files = zip.entries();
                 while (files.hasMoreElements()) {
                     ZipEntry entry = files.nextElement();
-                    File f = File.createTempFile(FilenameUtils.getBaseName(entry.getName()), ".txt");
+                    StringBuffer prefix = new StringBuffer(FilenameUtils.getBaseName(entry.getName()));
+                    if (prefix.length() < PREFIXLENGTH) {
+                        prefix = prefix.append("_tmp");
+                    }
+                    File f = File.createTempFile(prefix.toString(), ".txt");
                     IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(f));
                     try {
                         batchFileProcessing(results, batchFile, entry.getName(), f);

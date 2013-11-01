@@ -606,6 +606,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verifyEmailsSent(0, 1, 0);
 		       
         file = new File(this.getClass().getResource("/junit_coverage.txt").toURI());
         batchFile = getBatchFile(file);
@@ -623,6 +624,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.contains(errorMsg, "Patient birth date must be in YYYYMM format for patient ID 208847 at line 3"));
         assertTrue(StringUtils.contains(errorMsg, "Please enter valid patient ethnicity for patient ID 208847 at line 3"));
         assertTrue(results.get(0).getValidatedLines().isEmpty()); 
+        verifyEmailsSent(1, 1, 0);
 
         file = new File(this.getClass().getResource("/no_protocol.txt").toURI());
         batchFile = getBatchFile(file);
@@ -632,6 +634,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "No Study Protocol Identifier could be found in the given file."));
+        verifyEmailsSent(2, 1, 0);
         
         file = new File(this.getClass().getResource("/no_protocol.zip").toURI());
         batchFile = getBatchFile(file);
@@ -641,20 +644,22 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "No Study Protocol Identifier could be found in the given file."));
+        verifyEmailsSent(3, 1, 0);
         
         file = new File(this.getClass().getResource("/accrual_format_issue_file.zip").toURI());
         batchFile = getBatchFile(file);
         readerService.validateBatchData(batchFile);
-        verifyEmailsSent(3, 1, 1);
+        verifyEmailsSent(5, 1, 0);
         BatchFile r = getResultFromDb(); 
         assertFalse(r.isPassedValidation());
         assertFalse(r.isProcessed());
         assertTrue(r.getFileLocation().contains("accrual_format_issue_file.zip"));
         assertFalse(StringUtils.isEmpty(r.getResults()));
-        assertTrue(StringUtils.contains(r.getResults(), "Failed proceesing a batch file: "));
+        assertTrue(StringUtils.contains(r.getResults(), "No Study Protocol Identifier could be found in the given file."));
         
         LookUpTableServiceRemote lookUpTableSvc = paSvcLocator.getLookUpTableService();
         doThrow(new  gov.nih.nci.pa.service.PAException("PAException")).when(lookUpTableSvc).getPropertyValue(any(String.class));
+        
         file = new File(this.getClass().getResource("/accrual_format_issue_file.zip").toURI());
         batchFile = getBatchFile(file);
         readerService.validateBatchData(batchFile);
@@ -1156,7 +1161,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 
     @Test
      public void processChangeCode2BatchValidation() throws URISyntaxException, PAException {
-         File file = new File(this.getClass().getResource("/CDUS-changecode2.txt").toURI());
+         File file = new File(this.getClass().getResource("/cc.txt").toURI());
          BatchFile batchFile = getBatchFile(file);
          List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
          assertEquals(1, results.size());
@@ -1168,7 +1173,7 @@ private List<PatientStage> getPatientStage(String nciId) {
          BatchFile r = getResultFromDb();
          assertTrue(r.isPassedValidation());
          assertTrue(r.isProcessed());
-         assertTrue(r.getFileLocation().contains("CDUS-changecode2.txt"));
+         assertTrue(r.getFileLocation().contains("cc.txt"));
          assertTrue(StringUtils.isEmpty(r.getResults()));
          assertEquals(1, r.getAccrualCollections().size());
          AccrualCollections collection = r.getAccrualCollections().get(0);

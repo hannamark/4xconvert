@@ -273,7 +273,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 bfErrors.append(new StringBuffer()
                 .append("No Study Protocol Identifier could be found in the given file."));
             }
-            if (!notCtepDcpTrial && !superAbstractor) {
+            if (!notCtepDcpTrial && !superAbstractor && StringUtils.isNotEmpty(protocolId)) {
                 bfErrors.append(new StringBuffer()
                 .append("Only CTRO Team can do batch upload for " + protocolId + " identifier.\n"));
             }
