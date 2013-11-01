@@ -7,22 +7,6 @@
 <head>
 <title><fmt:message key="ctgov.import.logs.title" /></title>
 <s:head />
-
-<script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/prototype.js'/>"></script>
-<script type="text/javascript"
-	src="<c:url value="/scripts/js/cal2.js"/>"></script>
-<script type="text/javascript"
-	src="<c:url value="/scripts/js/showhide.js"/>"></script>
-<script type="text/javascript"
-	src="<c:url value="/scripts/js/control.tabs.js"/>"></script>
-<script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-
 <script type="text/javascript" language="javascript">
     function displayCTGovImportLogDetails(nctId) {
         var width = 800;
@@ -45,7 +29,7 @@
     }    
     
 	function handleAction(action) {
-		$('ctGovImportLogsForm').action = "ctGovImportLog" + action + ".action";
+		$('ctGovImportLogsForm').setAttribute("action","ctGovImportLog" + action + ".action");
 		$('ctGovImportLogsForm').submit();
 	}
 
