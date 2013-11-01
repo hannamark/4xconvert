@@ -3,7 +3,14 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -173,6 +180,64 @@ public final class ActionUtils {
                 checkoutCommands.add("scientificCheckOut");
             }
         }
+    }
+    
+    
+    /**
+     * @param studyProtocolQueryDTO studyProtocolQueryDTO
+     * @param correlationUtils correlationUtils
+     * @param paServiceUtils paServiceUtils
+     * @throws PAException PAException
+     */
+    public static void loadProtocolDataInSession(
+            StudyProtocolQueryDTO studyProtocolQueryDTO,
+            CorrelationUtilsRemote correlationUtils,
+            PAServiceUtils paServiceUtils) throws PAException {
+        HttpSession session = ServletActionContext.getRequest().getSession();            
+        // put an entry in the session and store StudyProtocolQueryDTO
+        studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
+        if (studyProtocolQueryDTO.getPiId() != null) {
+            Person piPersonInfo =
+                    correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
+                            .getPiId()));
+            session.setAttribute(Constants.PI_PO_ID, piPersonInfo.getIdentifier());
+        }
+        
+        session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+        session.setAttribute(Constants.STUDY_PROTOCOL_II,
+                IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
+        // When the study protocol is selected, set its token to be the current time in milliseconds.
+        session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
+            .generateToken());
+        String loginName = UsernameHolder.getUser();
+        session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
+         
+        session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
+            .convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()), PAConstants.NCT_IDENTIFIER_TYPE));
+        if (!studyProtocolQueryDTO.isProprietaryTrial()) {
+            session.setAttribute("dcpIdentifier", paServiceUtils
+                    .getStudyIdentifier(IiConverter
+                            .convertToStudyProtocolIi(studyProtocolQueryDTO
+                                    .getStudyProtocolId()),
+                            PAConstants.DCP_IDENTIFIER_TYPE));
+            session.setAttribute("ctepIdentifier", paServiceUtils
+                    .getStudyIdentifier(IiConverter
+                            .convertToStudyProtocolIi(studyProtocolQueryDTO
+                                    .getStudyProtocolId()),
+                            PAConstants.CTEP_IDENTIFIER_TYPE));
+        }
+        String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
+        String trialSubmitterOrg = "";
+        RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
+        if (userInfo.getAffiliatedOrganizationId() != null) {
+            PAServiceUtils servUtil = new PAServiceUtils();
+            trialSubmitterOrg = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
+                    .valueOf(userInfo.getAffiliatedOrganizationId())));
+            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, userInfo.getAffiliatedOrganizationId());
+        } else {
+            trialSubmitterOrg = userInfo.getAffiliateOrg();
+        }
+        session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
     }
     
 

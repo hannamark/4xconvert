@@ -661,6 +661,7 @@
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result name="edit">/WEB-INF/jsp/trialHistoryEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/trialHistory.jsp</result>
+            <result name="input">/WEB-INF/jsp/trialHistory.jsp</result>
         </action>
         <action name="ajaxTrialHistory*" class="gov.nih.nci.pa.action.TrialHistoryAction" method="{1}">
             <result name="list">/WEB-INF/jsp/displayTrialUpdates.jsp</result>

@@ -7,6 +7,7 @@
 <head>
 <title><fmt:message key="ctgov.import.logs.title" /></title>
 <s:head />
+<c:url value="/protected/trialHistory.action" var="trialHistoryUrl"/>
 <script type="text/javascript" language="javascript">
     function displayCTGovImportLogDetails(nctId) {
         var width = 800;
@@ -18,15 +19,13 @@
         showPopWin('ctGovImportLogshowDetailspopup.action?nctId='+nctId, width, height, '', 'ClinicalTrials.Gov Import Log Details');               
     }
     
-    function displayClinicalTrialDetails(nctId) {
-    	var width = 800;
-        var height = 600;
-        if (Prototype.Browser.IE) {
-            width = 670;
-            height = 500;                   
-        }
+    function displayClinicalTrialDetails(nctId) {    	
         window.open('http://clinicaltrials.gov/ct2/show/'+nctId+'?term='+nctId+'&rank=1');        
-    }    
+    }   
+    
+    function displayTrialHistory(nciId) {       
+        window.open('${trialHistoryUrl}?activeTab=updates&nciID='+nciId);        
+    }
     
 	function handleAction(action) {
 		$('ctGovImportLogsForm').setAttribute("action","ctGovImportLog" + action + ".action");
@@ -199,7 +198,12 @@
 								value="CTGovImportLogs.csv" />
 							<display:setProperty name="export.csv.include_header"
 								value="true" />
-							<display:column escapeXml="true" title="NCI ID" property="nciID" sortable="true"/>
+							<display:column escapeXml="false" title="NCI ID" property="nciID" sortable="true" media="excel csv xml"/>
+							<display:column escapeXml="false" title="NCI ID" sortable="true" media="html">
+							    <a href="javascript:void(0);" onclick="displayTrialHistory('${row.nciID}');">
+                                    <c:out value="${row.nciID}"/>
+                                </a>
+							</display:column>
 							<display:column escapeXml="false" title="ClinicalTrials.gov Identifier" sortable="true" media="html">
 							    <a href="javascript:void(0);" onclick="displayClinicalTrialDetails('${row.nctID}');">
 							        <c:out value="${row.nctID}"/>
@@ -209,6 +213,7 @@
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
 							<display:column escapeXml="false" title="Action" sortable="true" media="html">
+							    <!-- <c:out value="${row.action}"/> -->
 							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
 							        <c:out value="${row.action}"/>
 							    </a>							    						    

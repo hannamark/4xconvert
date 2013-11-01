@@ -126,7 +126,10 @@ public abstract class AbstractListEditAction extends AbstractMultiObjectDeleteAc
     public void prepare() throws PAException {
         HttpSession session = ServletActionContext.getRequest().getSession();
         spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
-        spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
+        if (spDTO != null) {
+            spIi = IiConverter.convertToStudyProtocolIi(spDTO
+                    .getStudyProtocolId());
+        }
     }
 
     /**

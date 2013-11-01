@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialDocumentWebDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.TrialUpdateWebDTO;
@@ -109,8 +110,11 @@ import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailService;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.AuditTrailCode;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmUserUtil;
@@ -141,6 +145,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -180,13 +185,16 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     private String startDate;
     private String endDate;
+    private String nciID;
+    
+    private static final Logger LOG = Logger
+            .getLogger(TrialHistoryAction.class);
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public void prepare() throws PAException {
-        super.prepare();
+    public void prepare() throws PAException {       
         documentService = PaRegistry.getDocumentService();
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
@@ -194,6 +202,13 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         documentWorkflowStatusServiceLocal = PaRegistry.getDocumentWorkflowStatusService();
         studyMilestoneService = PaRegistry.getStudyMilestoneService();
         auditTrailService  = PaRegistry.getAuditTrailService();
+        
+        if (StringUtils.isNotBlank(getNciID())) {
+            loadTrialData();
+        }
+        
+        super.prepare();
+        
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
 
         Date today = DateUtils.truncate(new Date(), Calendar.DATE);
@@ -277,10 +292,30 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      * @throws PAException exception
      */
     @Override
-    public String execute() throws PAException {
+    public String execute() throws PAException {        
         loadListForm();
         loadTrialUpdates();        
         return AR_LIST;
+    }
+
+    
+
+    private void loadTrialData() {
+        try {
+            Ii ii = new Ii();
+            ii.setExtension(getNciID());
+            ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+            StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(ii);
+            StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
+                    .getCachingProtocolQueryService()
+                    .getTrialSummaryByStudyProtocolId(
+                            IiConverter.convertToLong(dto.getIdentifier()));
+            ActionUtils.loadProtocolDataInSession(studyProtocolQueryDTO,
+                    new CorrelationUtils(), new PAServiceUtils());
+        } catch (PAException e) {
+            LOG.error(e, e);
+            addActionError(e.getMessage());
+        }
     }
 
     /**
@@ -900,5 +935,19 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         if (start != null && end != null && start.after(end)) {            
             addFieldError("startDate", getText("error.auditTrail.orderedDate"));
         }
+    }
+
+    /**
+     * @return the nciID
+     */
+    public String getNciID() {
+        return nciID;
+    }
+
+    /**
+     * @param nciID the nciID to set
+     */
+    public void setNciID(String nciID) {
+        this.nciID = nciID;
     }
 }

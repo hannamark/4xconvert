@@ -80,11 +80,8 @@ package gov.nih.nci.pa.action;
 
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -101,7 +98,6 @@ import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
@@ -111,7 +107,6 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -286,54 +281,18 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
             return showCriteria();
         }
         try {
-            HttpSession session = ServletActionContext.getRequest().getSession();
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
-                .getTrialSummaryByStudyProtocolId(getStudyProtocolId());
-            // put an entry in the session and store StudyProtocolQueryDTO
-            studyProtocolQueryDTO.setOfficialTitle(studyProtocolQueryDTO.getOfficialTitle());
-            if (studyProtocolQueryDTO.getPiId() != null) {
-                Person piPersonInfo =
-                        correlationUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(studyProtocolQueryDTO
-                                .getPiId()));
-                session.setAttribute(Constants.PI_PO_ID, piPersonInfo.getIdentifier());
-            }
-            
-            session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            session.setAttribute(Constants.STUDY_PROTOCOL_II,
-                    IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
-            // When the study protocol is selected, set its token to be the current time in milliseconds.
-            session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
-                .generateToken());
-            String loginName = UsernameHolder.getUser();
-            session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
+                    .getTrialSummaryByStudyProtocolId(getStudyProtocolId());
             setCheckoutCommands(studyProtocolQueryDTO);
-            session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.NCT_IDENTIFIER_TYPE));
-            if (!studyProtocolQueryDTO.isProprietaryTrial()) {
-                session.setAttribute("dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                    .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.DCP_IDENTIFIER_TYPE));
-                session.setAttribute("ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-                    .convertToStudyProtocolIi(getStudyProtocolId()), PAConstants.CTEP_IDENTIFIER_TYPE));
-            }
-            String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
-            String trialSubmitterOrg = "";
-            RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
-            if (userInfo.getAffiliatedOrganizationId() != null) {
-                PAServiceUtils servUtil = new PAServiceUtils();
-                trialSubmitterOrg = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
-                        .valueOf(userInfo.getAffiliatedOrganizationId())));
-                session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, userInfo.getAffiliatedOrganizationId());
-            } else {
-                trialSubmitterOrg = userInfo.getAffiliateOrg();
-            }
-            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
+            
+            ActionUtils.loadProtocolDataInSession(studyProtocolQueryDTO, correlationUtils, paServiceUtils);
+            
             return SHOW_VIEW;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return SHOW_VIEW;
         }
     }
-    
     
 
     private void setCheckoutCommands(StudyProtocolQueryDTO studyProtocolQueryDTO) {

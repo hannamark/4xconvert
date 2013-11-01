@@ -86,8 +86,8 @@
                                 //<![CDATA[
                                 Event.observe(window,'load',function() {
                                 	var tabs = new Control.Tabs($('maintabs'));
-                                	<c:if test="${param.activeTab=='auditTrail'}">
-                                		tabs.setActiveTab('auditTrail');
+                                	<c:if test="${not empty param.activeTab}">
+                                		tabs.setActiveTab('${param.activeTab}');
                                 	</c:if>                                                                        	
                                 });
                                 //]]>
