@@ -1485,4 +1485,8 @@
         <comment>Updated email message for Trial acceptance</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6602.sql"/>
      </changeSet>
+     <changeSet id="PO-6644" author="krylov">
+        <comment>Updated list of fields of interest.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6644.sql"/>
+     </changeSet>
 </databaseChangeLog>
