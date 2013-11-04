@@ -19,7 +19,7 @@
             function viewAction(url){
                     var pid = getUrlVars()["studyProtocolId"];
                     if (pid == undefined) {
-                        pid = ${requestScope.trialDTO.identifier};
+                        pid = ${requestScope.trialIdentifier};
                     }
                     document.forms[0].setAttribute("action", url+"?studyProtocolId="+pid);
                     document.forms[0].submit();    

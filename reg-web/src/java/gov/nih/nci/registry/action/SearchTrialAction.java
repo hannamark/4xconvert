@@ -507,6 +507,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         request.setAttribute(
                 "consortiaTrialCategoryCode",
                 trialDTO.getConsortiaTrialCategoryCode());
+        request.setAttribute("trialIdentifier", trialDTO.getIdentifier());
     }
 
     private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
@@ -519,6 +520,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }
         final HttpServletRequest request = ServletActionContext.getRequest();
         request.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);       
+        request.setAttribute("trialIdentifier", trialDTO.getIdentifier());
         if (!maskFields) {
             if (!trialDTO.getFundingDtos().isEmpty()) {
                 request.setAttribute(Constants.TRIAL_FUNDING_LIST, trialDTO.getFundingDtos());
