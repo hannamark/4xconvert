@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -148,13 +150,11 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     }
 
     private void performSearch() throws PAException {        
-        ServletActionContext.getRequest().getSession()
-                .removeAttribute(AbstractManageOwnershipAction.REG_USERS_LIST);
-        ServletActionContext
-                .getRequest()
-                .getSession()
-                .removeAttribute(
-                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
+        final HttpSession session = ServletActionContext.getRequest()
+                .getSession();
+        session.removeAttribute(AbstractManageOwnershipAction.REG_USERS_LIST);
+        session.removeAttribute(AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
+        session.removeAttribute(CHECKED_VALUE);
         checked = false;
 
         try {            
