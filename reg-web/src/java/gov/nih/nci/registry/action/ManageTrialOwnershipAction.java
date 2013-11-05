@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -114,7 +115,13 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
             throws PAException {
         List<StudyProtocol> trials = PaRegistry.getProtocolQueryService()
                 .getStudyProtocolByOrgIdentifier(affiliatedOrgId);
-        return trials;
+        List<StudyProtocol> result = new ArrayList<StudyProtocol>();
+        for (StudyProtocol sp : trials) {
+            if (!sp.getProprietaryTrialIndicator()) {
+                result.add(sp);
+            }
+        }
+        return result;
     }
 
   
