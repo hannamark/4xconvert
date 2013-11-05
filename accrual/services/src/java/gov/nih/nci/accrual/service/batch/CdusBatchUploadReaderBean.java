@@ -168,7 +168,7 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.NPathComplexity", 
-                "PMD.ExcessiveClassLength", "PMD.ExcessiveParameterList" })
+                "PMD.ExcessiveClassLength", "PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class);
     private static final String ICD_O_3_CODESYSTEM = "ICD-O-3";
@@ -322,12 +322,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             batchFile.setProcessed(true);
             BatchImportResults importResults = importBatchData(batchFile, validationResult);
             StringBuffer sb = new StringBuffer();
+            // to insert in database results column
             sb.append(validationResult.getErrors() != null ? StringUtils.left(
                     validationResult.getErrors().toString(), RESULTS_LEN) : "")
             .append(importResults.getErrors() != null ? StringUtils.left(
                     importResults.getErrors().toString(), RESULTS_LEN) : "");
             collection.setResults(sb.toString());
             collection.setTotalImports(importResults.getTotalImports());
+            sb = new StringBuffer();
+            // this is to display the errors in the confirmation email
+            sb.append(validationResult.getErrors() != null ? validationResult.getErrors().toString() : "")
+            .append(importResults.getErrors() != null ? importResults.getErrors().toString() : "");
             importResults.setErrors(new StringBuilder(sb.toString())); 
             sendConfirmationEmail(importResults, batchFile);
         }
