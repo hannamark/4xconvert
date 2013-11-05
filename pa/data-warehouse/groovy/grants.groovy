@@ -8,6 +8,7 @@ def sql = """select
             from STUDY_RESOURCING g
                inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = g.study_protocol_identifier
                    and nci_id.root = '2.16.840.1.113883.3.26.4.3'
+            JOIN study_protocol sp ON (g.study_protocol_identifier = sp.identifier AND sp.status_code = 'ACTIVE')
             where g.summ_4_rept_indicator is false"""
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
