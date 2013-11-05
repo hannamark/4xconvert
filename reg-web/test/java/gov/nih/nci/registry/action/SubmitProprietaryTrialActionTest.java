@@ -323,7 +323,8 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         assertTrue(action
                 .getActionErrors()
                 .contains(
-                        "A study with the given identifier already exists in CTRP."));
+                        "A study with the given identifier already exists in CTRP."
+                        + " To find this trial in CTRP, go to the Search Trials page."));
     }
     
 }

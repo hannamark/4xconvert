@@ -147,7 +147,8 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
             addActionError("A study with the given identifier is not found in ClinicalTrials.gov.");
         } else if (!studyProtocolService.getStudyProtocolsByNctId(// NOPMD
                 nctIdToValidate).isEmpty()) {
-            addActionError("A study with the given identifier already exists in CTRP.");
+            addActionError("A study with the given identifier already exists in CTRP."
+                + " To find this trial in CTRP, go to the Search Trials page.");
         }
     }
 
