@@ -1,11 +1,13 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
@@ -30,6 +32,12 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         assertEquals("viewResults", action.search());
+
+        // confirm that not proprietary trials have been filtered out
+        List<SelectedStudyProtocol> list = action.getStudyProtocols();
+        for (SelectedStudyProtocol sp : list) {
+            assertFalse(sp.getStudyProtocol().getProprietaryTrialIndicator());
+        }
     }
 
     @Test
