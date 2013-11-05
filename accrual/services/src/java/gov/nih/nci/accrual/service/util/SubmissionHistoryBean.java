@@ -4,16 +4,12 @@ import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
@@ -246,18 +242,29 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
         TrialDataKey key = new TrialDataKey(user.getId(), nciId);
         Element element = getTrialDataCache().get(key);
         if (element == null) {
-            Ii ii = IiConverter.convertToStudyProtocolIi(0L);
-            ii.setExtension(nciId);
-            StudyProtocolDTO sp = PaServiceLocator.getInstance().getStudyProtocolService().getStudyProtocol(ii);
-            Long spId = IiConverter.convertToLong(sp.getIdentifier());
-            boolean industrial = BlConverter.convertToBool(sp.getProprietaryTrialIndicator());
+            Long spId = 0L;
+            boolean industrial = false;
+            Session session = PaHibernateUtil.getCurrentSession();
+            Query query = null;
+            // Since the rejected trials are not showing up when we call getStudyProtocol and it 
+            // throws PAException so using below sql query to get the spid and trial indicator
+            query = session.createQuery("select sp.id, sp.proprietaryTrialIndicator " 
+                    + " from StudyProtocol as sp left outer join sp.otherIdentifiers as oi "
+                    + " where sp.statusCode ='ACTIVE' and oi.extension = :nciId"
+                    + " and oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+                    + " and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "' ");
+
+            query.setParameter("nciId", nciId);
+            List<Object[]> list = query.list();
+            for (Object[] row : list) {
+                spId = (Long) row[0];
+                industrial = (Boolean) row[1];
+            }
             boolean lead = PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
                     user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.LEAD_ORGANIZATION);
             boolean site =  PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
                     user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.TREATING_SITE);
             Set<Long> siteAccess = new HashSet<Long>();
-            Session session = PaHibernateUtil.getCurrentSession();
-            Query query = null;
             String hql = "select org.identifier "
                 + "from StudyProtocol sp "
                 + "join sp.studySites ss "
