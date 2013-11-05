@@ -286,7 +286,7 @@
             </del>
         </div>
         <p align="center" class="info">
-            Search My Trials: Search the trials I have submitted.
+            Search My Trials: Search the trials on which I am listed as an Owner in CTRP.
             <br>
             Search All Trials: Search all trials I have submitted as well as those registered by others.
             <br>
