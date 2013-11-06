@@ -249,10 +249,9 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             // Since the rejected trials are not showing up when we call getStudyProtocol and it 
             // throws PAException so using below sql query to get the spid and trial indicator
             query = session.createQuery("select sp.id, sp.proprietaryTrialIndicator " 
-                    + " from StudyProtocol as sp left outer join sp.otherIdentifiers as oi "
+                    + " from StudyProtocol as sp inner join sp.otherIdentifiers as oi "
                     + " where sp.statusCode ='ACTIVE' and oi.extension = :nciId"
-                    + " and oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
-                    + " and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "' ");
+                    + " and oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' ");
 
             query.setParameter("nciId", nciId);
             List<Object[]> list = query.list();
