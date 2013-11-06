@@ -53,45 +53,45 @@
                 <s:hidden name="checkInReason"/>
                 <s:actionerror/>
                 <h2>Trial Identification</h2>
-                <table class="form">
+                <table class="form" cellspacing="10" cellpadding="10">
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe" width="1%">
                                                 
                                 <fmt:message key="studyProtocol.studyProtocolType"/>
                                                       
                         </td>
-                        <td >
+                        <td nowrap="nowrap" >
                             <c:out value="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'?'Non-interventional':'Interventional'}"/>
                         </td>
                     </tr>   
                     <c:if test="${trialSummary.studyProtocolType=='NonInterventionalStudyProtocol'}">
 	                    <tr>
-	                        <td scope="row" class="labelDupe">                            
+	                        <td nowrap="nowrap" scope="row" class="labelDupe">                            
 	                                <fmt:message key="studyProtocol.nonIntTrialType"/>
 	                                                          
 	                        </td>
-	                        <td >
+	                        <td nowrap="nowrap" >
 	                            <c:out value="${trialSummary.studySubtypeCode}"/>
 	                        </td>
 	                    </tr>
                     </c:if>             
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe">
                            
                                 <fmt:message key="studyProtocol.nciIdentifier"/>
                             
                         </td>
-                        <td>
+                        <td nowrap="nowrap">
                             <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe">
                            
                                 <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
                            
                         </td>
-                        <td>
+                        <td nowrap="nowrap" >
                             <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
                             <span class="formErrorMsg">
                                 <s:fielderror>
@@ -102,7 +102,7 @@
                     </tr>
                     
                         <tr>
-                            <td scope="row" class="labelDupe">
+                            <td nowrap="nowrap" scope="row" class="labelDupe">
                                Other Trial Identifiers
                             </td>
                             <td>
@@ -114,59 +114,59 @@
                         </tr>
                     
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe">
                             NCT Number 
                         </td>
-                        <td>
+                        <td nowrap="nowrap" >
                             <c:out value="${sessionScope.nctIdentifier }"/>
                         </td>
                     </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
                         <tr>
-                            <td scope="row" class="labelDupe">
+                            <td nowrap="nowrap" scope="row" class="labelDupe">
                                 CTEP Trial Identifier
                             </td>
-                            <td >
+                            <td nowrap="nowrap" >
                                 <c:out value="${sessionScope.ctepIdentifier}"/>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="row" class="labelDupe">
+                            <td nowrap="nowrap" scope="row" class="labelDupe">
                                  DCP Trial Identifier
                             </td>
-                            <td>
+                            <td nowrap="nowrap" >
                                 <c:out value="${sessionScope.dcpIdentifier }"/>
                             </td>
                         </tr>
                         <tr>
-                            <td scope="row" class="labelDupe">
+                            <td nowrap="nowrap" scope="row" class="labelDupe">
                                  ClinicalTrials.gov XML required?
                             </td>
-                            <td>
+                            <td nowrap="nowrap">
                                 <pa:displayBoolean value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator}"/>
                             </td>
                         </tr>
                     </c:if>
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe">
                             
                                 <fmt:message key="studyProtocol.proprietaryTrial"/>
                             
                         </td>
-                        <td >
+                        <td nowrap="nowrap" >
                             <pa:displayBoolean value="${sessionScope.trialSummary.proprietaryTrial}"/>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" class="labelDupe">
+                        <td nowrap="nowrap" scope="row" class="labelDupe">
                             <fmt:message key="studyProtocol.lastVerificationDate"/>       
                         </td>
-                        <td>
+                        <td nowrap="nowrap">
                             <c:out value="${sessionScope.trialSummary.recordVerificationDate}"/>
                         </td>
                     </tr>
                     <tr>
-                        <td scope="row" class="labelDupe">                          
+                        <td nowrap="nowrap" scope="row" class="labelDupe">                          
                                 <fmt:message key="studyProtocol.officialTitle"/>   
                         </td>
                         <td>
