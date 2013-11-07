@@ -88,8 +88,10 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void readAndProcess() throws PAException {
         long startTime = System.currentTimeMillis();
+        LOG.info("Started reading PendingPatientAccrualsServiceBean");
         Session session = PaHibernateUtil.getCurrentSession();
         String studiesQuery = "select distinct studyProtocolIdentifier from PatientStage";
         Query queryObject = session.createQuery(studiesQuery);
@@ -203,7 +205,9 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
      * {@inheritDoc}
      */
     @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public List<PatientStage> getAllPatientsStage(String identifier) throws PAException {
+        LOG.info("Started getting PendingPatients");
         Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("from PatientStage");
         if (StringUtils.isNotEmpty(identifier)) {
@@ -228,24 +232,66 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
         }
         hql = hql.append(" order by studyProtocolIdentifier");
         List<PatientStage> psList = session.createQuery(hql.toString()).list();
+        Map<Long, StudyIdentifiers> idsList = new HashMap<Long, StudyIdentifiers>();
         for (PatientStage ps : psList) {
             ps.setOrgName((String) (getOrganizationIi(ps.getStudySite()) != null 
                     ? getOrganizationIi(ps.getStudySite()).getName().getPart().get(0).getValue() : ""));
+            if (!idsList.containsKey(ps.getStudyProtocolIdentifier())) {
+                String ctepId = paServiceUtils.getStudyIdentifier(
+                        IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()), 
+                        PAConstants.CTEP_IDENTIFIER_TYPE);
+                if (StringUtils.isNotEmpty(ctepId)) {
+                    ps.setCtepId(ctepId);
+                }
+                String dcpId = paServiceUtils.getStudyIdentifier(
+                        IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()),
+                        PAConstants.DCP_IDENTIFIER_TYPE);
+                if (StringUtils.isNotEmpty(dcpId)) {
+                    ps.setDcpId(dcpId);
+                }
+                StudyIdentifiers ids = new StudyIdentifiers();
+                ids.setCtepId(ctepId);
+                ids.setDcpId(dcpId);
+                ids.setSpId(ps.getStudyProtocolIdentifier());
 
-            String ctepId = paServiceUtils.getStudyIdentifier(
-                    IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()), 
-                    PAConstants.CTEP_IDENTIFIER_TYPE);
-            if (StringUtils.isNotEmpty(ctepId)) {
-                ps.setCtepId(ctepId);
-            }
-            String dcpId = paServiceUtils.getStudyIdentifier(
-                    IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()),
-                    PAConstants.DCP_IDENTIFIER_TYPE);
-            if (StringUtils.isNotEmpty(dcpId)) {
-                ps.setDcpId(dcpId);
+                idsList.put(ps.getStudyProtocolIdentifier(), ids);
+            } else {
+                StudyIdentifiers ids = idsList.get(ps.getStudyProtocolIdentifier());
+                ps.setCtepId(ids.getCtepId());
+                ps.setDcpId(ids.getDcpId());
             }
         }
+        LOG.info("Ended getting PendingPatients");
         return psList;
+    }
+    
+     /**
+     * @author Kalpana Guthikonda
+     */
+    class StudyIdentifiers {
+        
+        private Long spId;
+        private String ctepId;
+        private String dcpId;
+        
+        public Long getSpId() {
+            return spId;
+        }
+        public String getCtepId() {
+            return ctepId;
+        }
+        public String getDcpId() {
+            return dcpId;
+        }
+        public void setSpId(Long spId) {
+            this.spId = spId;
+        }
+        public void setCtepId(String ctepId) {
+            this.ctepId = ctepId;
+        }
+        public void setDcpId(String dcpId) {
+            this.dcpId = dcpId;
+        }
     }
     
     /**
