@@ -32,6 +32,9 @@ def sql =
             CASE WHEN sp.fda_regulated_indicator THEN 'YES'
                  ELSE 'NO'
             END as fda_indicator,
+            CASE WHEN sp.proprietary_trial_indicator then NULL
+                ELSE sp.program_code_text
+            END as program_code,
             CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
             	ELSE 'Complete'
             END as category,
@@ -152,7 +155,8 @@ sourceConnection.eachRow(sql) { row ->
                     bio_specimen_description: row.bio_specimen_description, bio_specimen_retention_code: row.bio_specimen_retention_code, 
                     sampling_method_code: row.sampling_method_code, study_model_code: row.study_model_code, study_model_other_text: row.study_model_other_text,
                     study_population_description: row.study_population_description, time_perspective_code: row.time_perspective_code,
-                    time_perspective_other_text: row.time_perspective_other_text, study_protocol_type: row.study_protocol_type, study_subtype_code: row.study_subtype_code
+                    time_perspective_other_text: row.time_perspective_other_text, study_protocol_type: row.study_protocol_type, study_subtype_code: row.study_subtype_code,
+                    program_code: row.program_code
                     )
         } catch (Exception e) {
             println "Error adding row : " + row

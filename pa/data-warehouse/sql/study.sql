@@ -75,6 +75,7 @@ CREATE TABLE STG_DW_STUDY (
     PRIMARY_PURPOSE_CODE character varying(50),
     PRIMARY_PURPOSE_OTHER_TEXT character varying(1000),
     PRINCIPAL_INVESTIGATOR character varying(1000),
+    PROGRAM_CODE character varying(100),
     PROCESSING_STATUS character varying(200),
     BRIEF_SUMMARY character varying(5000),
     BRIEF_TITLE character varying(300),
