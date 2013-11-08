@@ -60,7 +60,8 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", 
+    "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" })
 public class PendingPatientAccrualsServiceBean implements PendingPatientAccrualsServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(PendingPatientAccrualsServiceBean.class);
@@ -205,7 +206,6 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
      * {@inheritDoc}
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public List<PatientStage> getAllPatientsStage(String identifier) throws PAException {
         LOG.info("Started getting PendingPatients");
         Session session = PaHibernateUtil.getCurrentSession();
@@ -232,33 +232,42 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
         }
         hql = hql.append(" order by studyProtocolIdentifier");
         List<PatientStage> psList = session.createQuery(hql.toString()).list();
-        Map<Long, StudyIdentifiers> idsList = new HashMap<Long, StudyIdentifiers>();
-        for (PatientStage ps : psList) {
-            ps.setOrgName((String) (getOrganizationIi(ps.getStudySite()) != null 
-                    ? getOrganizationIi(ps.getStudySite()).getName().getPart().get(0).getValue() : ""));
-            if (!idsList.containsKey(ps.getStudyProtocolIdentifier())) {
-                String ctepId = paServiceUtils.getStudyIdentifier(
-                        IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()), 
-                        PAConstants.CTEP_IDENTIFIER_TYPE);
-                if (StringUtils.isNotEmpty(ctepId)) {
-                    ps.setCtepId(ctepId);
+        if (StringUtils.isNotEmpty(identifier)) {
+            Map<Long, StudyIdentifiers> idsList = new HashMap<Long, StudyIdentifiers>();
+            Map<String, String> orgList = new HashMap<String, String>();
+            for (PatientStage ps : psList) {
+                if (!orgList.containsKey(ps.getStudySite())) {
+                    OrganizationDTO org = getOrganizationIi(ps.getStudySite());
+                    ps.setOrgName((String) (org != null ? org.getName().getPart().get(0).getValue() : ""));
+                    orgList.put(ps.getStudySite(), 
+                            (String) (org != null ? org.getName().getPart().get(0).getValue() : ""));
+                } else {
+                    ps.setOrgName(orgList.get(ps.getStudySite()));
                 }
-                String dcpId = paServiceUtils.getStudyIdentifier(
-                        IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()),
-                        PAConstants.DCP_IDENTIFIER_TYPE);
-                if (StringUtils.isNotEmpty(dcpId)) {
-                    ps.setDcpId(dcpId);
-                }
-                StudyIdentifiers ids = new StudyIdentifiers();
-                ids.setCtepId(ctepId);
-                ids.setDcpId(dcpId);
-                ids.setSpId(ps.getStudyProtocolIdentifier());
+                if (!idsList.containsKey(ps.getStudyProtocolIdentifier())) {
+                    String ctepId = paServiceUtils.getStudyIdentifier(
+                            IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()), 
+                            PAConstants.CTEP_IDENTIFIER_TYPE);
+                    if (StringUtils.isNotEmpty(ctepId)) {
+                        ps.setCtepId(ctepId);
+                    }
+                    String dcpId = paServiceUtils.getStudyIdentifier(
+                            IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()),
+                            PAConstants.DCP_IDENTIFIER_TYPE);
+                    if (StringUtils.isNotEmpty(dcpId)) {
+                        ps.setDcpId(dcpId);
+                    }
+                    StudyIdentifiers ids = new StudyIdentifiers();
+                    ids.setCtepId(ctepId);
+                    ids.setDcpId(dcpId);
+                    ids.setSpId(ps.getStudyProtocolIdentifier());
 
-                idsList.put(ps.getStudyProtocolIdentifier(), ids);
-            } else {
-                StudyIdentifiers ids = idsList.get(ps.getStudyProtocolIdentifier());
-                ps.setCtepId(ids.getCtepId());
-                ps.setDcpId(ids.getDcpId());
+                    idsList.put(ps.getStudyProtocolIdentifier(), ids);
+                } else {
+                    StudyIdentifiers ids = idsList.get(ps.getStudyProtocolIdentifier());
+                    ps.setCtepId(ids.getCtepId());
+                    ps.setDcpId(ids.getDcpId());
+                }
             }
         }
         LOG.info("Ended getting PendingPatients");
