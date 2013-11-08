@@ -69,10 +69,14 @@ function resetValues() {
     <s:set name="pendingAccruals" value="pendingAccruals" scope="request"/>
     <display:table name="pendingAccruals" id="row" class="data" sort="list"  pagesize="200" requestURI="pendingAccrualsexecute.action" export="false">
         <display:column escapeXml="true" titleKey="pendingAccruals.trialIdentifier" property="studyIdentifier" sortable="true" headerClass="sortable" />
-        <display:column escapeXml="true" titleKey="pendingAccruals.ctepIdentifier" property="ctepId" sortable="true" headerClass="sortable" />       
-        <display:column escapeXml="true" titleKey="pendingAccruals.dcpIdentifier" property="dcpId" sortable="true" headerClass="sortable" />
+        <s:if test="identifier != null"> 
+            <display:column escapeXml="true" titleKey="pendingAccruals.ctepIdentifier" property="ctepId" sortable="true" headerClass="sortable" />       
+            <display:column escapeXml="true" titleKey="pendingAccruals.dcpIdentifier" property="dcpId" sortable="true" headerClass="sortable" />
+        </s:if>
         <display:column escapeXml="true" titleKey="pendingAccruals.missingSiteIdentifier" property="studySite" sortable="true" headerClass="sortable" />
-        <display:column escapeXml="true" titleKey="pendingAccruals.missingSiteName" property="orgName" sortable="true" headerClass="sortable" />
+        <s:if test="identifier != null"> 
+            <display:column escapeXml="true" titleKey="pendingAccruals.missingSiteName" property="orgName" sortable="true" headerClass="sortable" />
+        </s:if>
         <display:column title="Delete" class="action">
             <label for="delete${row.id}" style="display:none">delete</label>
             <s:checkbox id="delete%{#attr.row.id}" name="objectsToDelete" fieldValue="%{#attr.row.id}" value="%{#attr.row.id in objectsToDelete}"/>                
