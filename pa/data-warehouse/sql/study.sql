@@ -116,6 +116,7 @@ CREATE TABLE STG_DW_STUDY (
     TIME_PERSPECTIVE_OTHER_TEXT character varying(200),
     STUDY_PROTOCOL_TYPE character varying(100),
     STUDY_SUBTYPE_CODE character varying(64),
+    CONSORTIA_TRIAL_CATEGORY character varying(50),
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 
