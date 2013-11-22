@@ -35,6 +35,16 @@
         </sql>
         <stopwatch name="timer1" action="total"/>
         <stopwatch name="timer1"/>
+        <echo message = "Creating trial type tables.."/>
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+            expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/trial_type.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+        <stopwatch name="timer1" action="total"/>
         <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
@@ -178,18 +188,8 @@
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
-        <echo message = "Running Study Audit"/>
-        <groovy src="groovy/study_audit.groovy"/>
-        <stopwatch name="timer1" action="total"/>
-
-        <stopwatch name="timer1"/>
         <echo message = "Running Person Audit"/>
         <groovy src="groovy/person_audit.groovy"/>
-        <stopwatch name="timer1" action="total"/>
-
-        <stopwatch name="timer1"/>
-        <echo message = "Running Subgroup"/>
-        <groovy src="groovy/subgroup.groovy"/>
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
@@ -250,11 +250,6 @@
         <stopwatch name="timer1"/>
         <echo message = "Running p30 grants"/>
         <groovy src="groovy/grants_p30.groovy"/>
-        <stopwatch name="timer1" action="total"/>
-
-    	<stopwatch name="timer1"/>
-        <echo message = "Running i2e grants"/>
-        <groovy src="groovy/grants_i2e.groovy"/>
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
