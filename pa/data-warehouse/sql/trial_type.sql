@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS dw_study_type;
+DROP TABLE IF EXISTS dw_study_type;
 DROP TABLE IF EXISTS dw_study_types;
 CREATE TABLE dw_study_type AS
   SELECT 1 AS id, 'NCI Sponsored'::character varying(16) AS group, 'CTEP'::character varying(16) AS type, nci_id
