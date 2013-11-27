@@ -87,56 +87,36 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.Any;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.iso21090.TelEmail;
-import gov.nih.nci.iso21090.TelPhone;
-import gov.nih.nci.iso21090.TelUrl;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.pomock.MockClinicalResearchStaffCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockHealthCareFacilityCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockHealthCareProviderCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockIdentifiedOrganizationCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockIdentifiedPersonCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationalContactCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockOversightComitteeCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
+import gov.nih.nci.pa.util.pomock.MockResearchOrganizationCorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
-import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
-import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 /**
@@ -152,85 +132,28 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
      * {@inheritDoc}
      */
     public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
-        ClinicalResearchStaffCorrelationServiceRemote crsSvc =
-            mock(ClinicalResearchStaffCorrelationServiceRemote.class);
-        try {
-            ClinicalResearchStaffDTO csrDTO = new ClinicalResearchStaffDTO();
-            csrDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("5")));
-            csrDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-            csrDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            when(crsSvc.getCorrelation(any(Ii.class))).thenReturn(csrDTO);
-            when(crsSvc.search(any(ClinicalResearchStaffDTO.class), any(LimitOffset.class)))
-                 .thenReturn(Arrays.asList(csrDTO));
-            when(crsSvc.search(any(ClinicalResearchStaffDTO.class))).thenReturn(Arrays.asList(csrDTO));
-            when(crsSvc.createCorrelation(any(ClinicalResearchStaffDTO.class))).thenReturn(
-                    IiConverter.convertToPoClinicalResearchStaffIi("6"));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return crsSvc;
+        return new MockClinicalResearchStaffCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
-        HealthCareFacilityCorrelationServiceRemote hcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
-        try {
-            HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
-            hcfDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthCareFacilityIi("11")));
-            hcfDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-            hcfDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            when(hcfSvc.getCorrelation(any(Ii.class))).thenReturn(hcfDTO);
-            when(hcfSvc.search(any(HealthCareFacilityDTO.class), any(LimitOffset.class)))
-                 .thenReturn(Arrays.asList(hcfDTO));
-            when(hcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(Arrays.asList(hcfDTO));
-            when(hcfSvc.createCorrelation(any(HealthCareFacilityDTO.class))).thenReturn(
-                    IiConverter.convertToPoHealthCareFacilityIi("12"));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return hcfSvc;
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {        
+        return new MockHealthCareFacilityCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
     public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
-        HealthCareProviderCorrelationServiceRemote hcpSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
-        try {
-            HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
-            hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthcareProviderIi("7")));
-            hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-            hcpDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            when(hcpSvc.getCorrelation(any(Ii.class))).thenReturn(hcpDTO);
-            when(hcpSvc.search(any(HealthCareProviderDTO.class), any(LimitOffset.class)))
-                 .thenReturn(Arrays.asList(hcpDTO));
-            when(hcpSvc.search(any(HealthCareProviderDTO.class))).thenReturn(Arrays.asList(hcpDTO));
-            when(hcpSvc.createCorrelation(any(HealthCareProviderDTO.class))).thenReturn(
-                    IiConverter.convertToPoHealthcareProviderIi("8"));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return hcpSvc;
+       return new MockHealthCareProviderCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
-        IdentifiedOrganizationCorrelationServiceRemote  idPersonSvc = mock(
-                IdentifiedOrganizationCorrelationServiceRemote .class);
-        IdentifiedOrganizationDTO identifiedOrgDTO = new IdentifiedOrganizationDTO();
-        identifiedOrgDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi("ctepId"));
-        try {
-        when(idPersonSvc.getCorrelation(any(Ii.class))).thenReturn(identifiedOrgDTO);
-        when(idPersonSvc.search(any(IdentifiedOrganizationDTO.class), any(LimitOffset.class)))
-            .thenReturn(Arrays.asList(identifiedOrgDTO));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return idPersonSvc;
+        return new MockIdentifiedOrganizationCorrelationService();
 
     }
 
@@ -238,141 +161,42 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
      * {@inheritDoc}
      */
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
-        IdentifiedPersonCorrelationServiceRemote idPersonSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
-        IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-        identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi("ctepId"));
-        try {
-        when(idPersonSvc.getCorrelation(any(Ii.class))).thenReturn(identifiedPersonDTO);
-        when(idPersonSvc.search(any(IdentifiedPersonDTO.class), any(LimitOffset.class)))
-            .thenReturn(Arrays.asList(identifiedPersonDTO));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return idPersonSvc;
+        return new MockIdentifiedPersonCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationEntityServiceRemote getOrganizationEntityService() {
-        OrganizationEntityServiceRemote poOrgSvc = mock(OrganizationEntityServiceRemote.class);
-        OrganizationDTO orgDto = new OrganizationDTO();
-        orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-        orgDto.setPostalAddress(getAddress());
-        orgDto.setName(EnOnConverter.convertToEnOn("some org name"));
-        orgDto.setTelecomAddress(getTelAdd());
-        orgDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-        DSet<Any> famOrgRel = new DSet<Any>();
-        famOrgRel.setItem(new HashSet<Any>());
-        orgDto.setFamilyOrganizationRelationships(famOrgRel);
-        try {
-            when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
-            when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(orgDto));
-            when(poOrgSvc.search(any(OrganizationDTO.class), any(EnOn.class), any(LimitOffset.class)))
-                .thenReturn(Arrays.asList(orgDto));
-            when(
-                    poOrgSvc.search(any(OrganizationSearchCriteriaDTO.class),
-                            any(LimitOffset.class))).thenReturn(
-                    Arrays.asList(orgDto));
-            when(poOrgSvc.validate(any(OrganizationDTO.class))).thenReturn(new HashMap<String, String[]>());
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return poOrgSvc;
+    public OrganizationEntityServiceRemote getOrganizationEntityService() {       
+        return new MockOrganizationEntityService();
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
-       OrganizationalContactCorrelationServiceRemote occSvc = mock(OrganizationalContactCorrelationServiceRemote.class);
-       try {
-           OrganizationalContactDTO orgContDTO = new OrganizationalContactDTO();
-           orgContDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoOrganizationalContactIi(
-                   "12")));
-           orgContDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-           orgContDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-           orgContDTO.setTitle(StConverter.convertToSt("some Title"));
-           orgContDTO.setScoperIdentifier(IiConverter.convertToPoPersonIi("2"));
-           orgContDTO.setTelecomAddress(getTelAdd());
-           when(occSvc.getCorrelation(any(Ii.class))).thenReturn(orgContDTO);
-           when(occSvc.search(any(OrganizationalContactDTO.class), any(LimitOffset.class)))
-                .thenReturn(Arrays.asList(orgContDTO));
-           when(occSvc.search(any(OrganizationalContactDTO.class))).thenReturn(Arrays.asList(orgContDTO));
-           when(occSvc.createCorrelation(any(OrganizationalContactDTO.class))).thenReturn(
-               IiConverter.convertToPoOrganizationalContactIi("13"));
-       } catch (Exception e) {
-           LOG.error(ERROR_MSG, e);
-       }
-       return occSvc;
+        return new MockOrganizationalContactCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
     public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
-        OversightCommitteeCorrelationServiceRemote occSvc = mock(OversightCommitteeCorrelationServiceRemote.class);
-        try {
-            OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
-            ocDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoOversightCommitteeIi("9")));
-            ocDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-            ocDTO.setTypeCode(CdConverter.convertStringToCd("Institutional Review Board (IRB)"));
-            ocDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            when(occSvc.getCorrelation(any(Ii.class))).thenReturn(ocDTO);
-            when(occSvc.search(any(OversightCommitteeDTO.class), any(LimitOffset.class)))
-                 .thenReturn(Arrays.asList(ocDTO));
-            when(occSvc.search(any(OversightCommitteeDTO.class))).thenReturn(Arrays.asList(ocDTO));
-            when(occSvc.createCorrelation(any(OversightCommitteeDTO.class))).thenReturn(
-                IiConverter.convertToPoOversightCommitteeIi("10"));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-
-        return occSvc;
+        return new MockOversightComitteeCorrelationService();
     }
 
     /**
      * {@inheritDoc}
      */
     public PersonEntityServiceRemote getPersonEntityService() {
-        PersonEntityServiceRemote poPerSvc = mock(PersonEntityServiceRemote.class);
-        PersonDTO personDto = new PersonDTO();
-        personDto.setIdentifier(IiConverter.convertToPoPersonIi("2"));
-        personDto.setName(EnPnConverter.convertToEnPn("Person", "middle", "LastName", "4", "5"));
-        personDto.setPostalAddress(getAddress());
-        personDto.setTelecomAddress(getTelAdd());
-        personDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-        try {
-            when(poPerSvc.getPerson(any(Ii.class))).thenReturn(personDto);
-            when(poPerSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(personDto));
-            when(poPerSvc.validate(any(PersonDTO.class))).thenReturn(new HashMap<String, String[]>());
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return poPerSvc;
+        return new MockPersonEntityService();
     }
 
     /**
      * {@inheritDoc}
      */
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
-        ResearchOrganizationCorrelationServiceRemote roOrgSvc =
-            mock(ResearchOrganizationCorrelationServiceRemote.class);
-        try {
-            ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
-            roDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoResearchOrganizationIi("3")));
-            roDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
-            roDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-            when(roOrgSvc.getCorrelation(any(Ii.class))).thenReturn(roDTO);
-            when(roOrgSvc.search(any(ResearchOrganizationDTO.class), any(LimitOffset.class)))
-                 .thenReturn(Arrays.asList(roDTO));
-            when(roOrgSvc.search(any(ResearchOrganizationDTO.class))).thenReturn(Arrays.asList(roDTO));
-            when(roOrgSvc.createCorrelation(any(ResearchOrganizationDTO.class))).thenReturn(
-                    IiConverter.convertToPoResearchOrganizationIi("4"));
-        } catch (Exception e) {
-            LOG.error(ERROR_MSG, e);
-        }
-        return roOrgSvc;
+        return new MockResearchOrganizationCorrelationService();
     }
 
     /**
@@ -397,33 +221,5 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         return remote;
     }
 
-    /**
-     * @return
-     */
-    private Ad getAddress() {
-        return AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
-    }
-    /**
-     *
-     * @return
-     */
-    private DSet<Tel> getTelAdd() {
-        DSet<Tel> telAd = new DSet<Tel>();
-        Set<Tel> telSet = new HashSet<Tel>();
-        try {
-            TelEmail email = new TelEmail();
-            email.setValue(new URI("mailto:test@example.com"));
-            telSet.add(email);
-            TelPhone phone = new TelPhone();
-            phone.setValue(new URI("tel:111-222-3333"));
-            telSet.add(phone);
-            TelUrl url = new TelUrl();
-            url.setValue(new URI("http://example.com"));
-            telSet.add(url);
-        } catch (URISyntaxException e) {
-            LOG.error(e);
-        }
-        telAd.setItem(telSet);
-        return telAd;
-    }
+    
 }

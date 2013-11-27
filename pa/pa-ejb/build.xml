@@ -304,6 +304,7 @@
             <fileset dir="${pa-ejb.build.outputDir}">
                 <include name="**/*.class" />
             	<exclude name="**/gov/nih/nci/pa/service/ctgov/*.class" />
+		<exclude name="**/gov/nih/nci/pa/util/pomock/*.class" />
             </fileset>
         </cobertura-instrument>
         <mkdir dir="${pa-ejb.test.reports}"/>
@@ -359,7 +360,7 @@
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath"/>
             </classpath>
-            <fileset dir="src" includes="**/*.java" />
+            <fileset dir="src" includes="**/*.java" excludes="**/gov/nih/nci/pa/util/pomock/*.java"/>
             <formatter type="plain"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/checkstyle.txt"/>
             <formatter type="xml"   toFile="${pa.report.dir}/pa-ejb/checkstyle.xml"/>
@@ -379,6 +380,7 @@
             <formatter type="html" toFile="${pa.report.dir}/pa-ejb/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
+		<exclude name="**/gov/nih/nci/pa/util/pomock/*.java" />
             </fileset>
          </pmd>
     </target>
@@ -390,7 +392,7 @@
     <target name="test-simian">
         <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
         <simian>
-            <fileset dir="src" includes="**/*.java"/>
+            <fileset dir="src" includes="**/*.java" excludes="**/gov/nih/nci/pa/util/pomock/*.java"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-ejb/simian.txt"/>
             <formatter type="xml"   toFile="${pa.report.dir}/pa-ejb/simian.xml"/>
             <formatter type="plain"/>
@@ -443,6 +445,7 @@
                        **/service/Abstract*.class
                        **/service/BaseLookUpService.class
                        **/service/ctgov/*
+                       **/util/pomock/*
                        **/domain/*
                        **/iso/convert/*
                        **/iso/util/En*Converter*
