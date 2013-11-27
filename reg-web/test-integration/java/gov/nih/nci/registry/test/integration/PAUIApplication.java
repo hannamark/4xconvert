@@ -109,6 +109,7 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
     private void loginPA() {
         loginPA("abstractor-ci", "Coppa#12345");
         clickAndWait("id=acceptDisclaimer");
+        clickAndWait("id=trialSearchMenuOption");
     }
 
     private void loginPA(String username, String password) {

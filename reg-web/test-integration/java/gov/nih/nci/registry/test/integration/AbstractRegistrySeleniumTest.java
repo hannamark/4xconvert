@@ -327,9 +327,9 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         selenium.selectFrame("relative=up");
-        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
-        selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgTrialId);
-        selenium.type("submitTrial_trialDTO_officialTitle", trialName);
+        waitForElementById("trialDTO.leadOrgTrialIdentifier", 15);
+        selenium.type("trialDTO.leadOrgTrialIdentifier", leadOrgTrialId);
+        selenium.type("trialDTO.officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
         selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
 
@@ -337,15 +337,17 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Look Up Org");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
+        selenium.type("orgNameSearch", "Division");
         waitForElementById("search_organization_btn", 15);
         if (firstRun) {
             // compiling the popup jsp the first time screws up selenium, so give it some time
             System.out.println("Waiting on first run - org");
             pause(2000);
         }
+        selenium.type("orgNameSearch", "Division");
         clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        waitForElementById("row", 30);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
 
         //Select Principal Investigator
@@ -353,7 +355,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Look Up Person");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_person_btn", 15);
+        waitForElementById("search_person_btn", 30);
         if (firstRun) {
             // compiling the popup jsp the first time screws up selenium, so give it some time
             System.out.println("Waiting on first run - pers");
@@ -361,7 +363,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         }
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[6]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         //Select Sponsor
@@ -369,22 +371,24 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
         selenium.selectFrame("popupFrame");
         waitForElementById("search_organization_btn", 15);
+        selenium.type("orgNameSearch", "Division");
         clickAndWaitAjax("link=Search");
-        waitForElementById("row", 25);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
 
         selenium.selectFrame("relative=up");
-        selenium.type("trialDTO.contactEmail", "selenium@example.com");
-        selenium.type("trialDTO.contactPhone", "123-456-7890");
-
+        selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
+        
+        
         //Select Funding Sponsor
         clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
         selenium.selectFrame("popupFrame");
         waitForElementById("search_organization_btn", 15);
+        selenium.type("orgNameSearch", "Division");
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
 
         //Trial Status Information
@@ -405,13 +409,17 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.select("trialDTO.section801Indicator", "label=Yes");
         selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
         selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator", "label=Yes");
+        
+        // Grants
+        selenium.click("nciGrantfalse");
 
         //Add Protocol and IRB Document
         String protocolDocPath = (new File(ClassLoader.getSystemResource(PROTOCOL_DOCUMENT).toURI()).toString());
         String irbDocPath = (new File(ClassLoader.getSystemResource(IRB_DOCUMENT).toURI()).toString());
-        selenium.type("submitTrial_protocolDoc", protocolDocPath);
-        selenium.type("submitTrial_irbApproval", irbDocPath);
-
+        selenium.type("protocolDoc", protocolDocPath);
+        selenium.type("irbApproval", irbDocPath);
+        
+        
         pause(5000);
         clickAndWaitAjax("link=Save as Draft");
         pause(5000);

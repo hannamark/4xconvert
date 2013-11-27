@@ -97,7 +97,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     /**
      *
      */
-    private static final String UPDATE_STATUS_LINK_LOCATOR = "xpath=//table[@id='row']//tr[1]//td[13]/a";
+    private static final String UPDATE_STATUS_LINK_LOCATOR = "xpath=//table[@id='row']//tr[1]//td[10]/a";
     private final String LEAD_ORG_IDENTIFIER = "UpdateStatusLeadOrgIdentifier" + UUID.randomUUID();
     private final String UPDATE_TRIAL_TITLE = "Update Trial Status Popup test created by Selenium." + UUID.randomUUID();
 
@@ -107,7 +107,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
         assertUpdateStatusLinkIsNotPresent();
         acceptTrialInPA();
         selenium.open("/registry");
-        assertUpdateStatusLinkIsPresent();
+        searchForUpdateStatusTrial();
         updateStatusViaPopup();
         assertStatusUpdated();
     }
@@ -129,17 +129,12 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
         waitForElementById("searchAllTrialsBtn", 5);
         selenium.type("officialTitle", UPDATE_TRIAL_TITLE);
         clickAndWait("searchMyTrialsBtn");
-        assertTrue(selenium.isTextPresent("One item found"));
+        assertTrue(selenium.isTextPresent("One trial found"));
     }
 
     private void acceptTrialInPA() {
         PAUIApplication paUI = new PAUIApplication(selenium);
         paUI.acceptTrial(UPDATE_TRIAL_TITLE);
-    }
-
-    private void assertUpdateStatusLinkIsPresent() {
-        searchForUpdateStatusTrial();
-        assertTrue(selenium.isTextPresent("Status Change"));
     }
 
     private void updateStatusViaPopup() {

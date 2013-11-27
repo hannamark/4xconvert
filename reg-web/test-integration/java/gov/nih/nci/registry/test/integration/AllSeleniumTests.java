@@ -94,7 +94,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = {SearchUserTest.class, MyAccountTest.class, LoginTest.class, RegisterTrialTest.class,
-        TrialSearchTest.class, SetupPaTrialData.class, ViewTrialTest.class, UpdateTrialStatusTest.class })
+        TrialSearchTest.class, SetupPaTrialData.class, ViewTrialTest.class })
 public class AllSeleniumTests {
 
 }
