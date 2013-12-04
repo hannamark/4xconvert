@@ -257,8 +257,7 @@
         <cobertura-instrument datafile="${commons.build.dir}/cobertura.ser"
                               toDir="${commons.build.coberturaOutputDir}">
             <fileset dir="${commons.build.outputDir}">
-                <include name="**/*.class" />
-		<exclude name="**/HttpRequestBindingFilter.class" />		
+                <include name="**/*.class" />				
             </fileset>
         </cobertura-instrument>
 
