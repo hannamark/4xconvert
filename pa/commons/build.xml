@@ -258,8 +258,7 @@
                               toDir="${commons.build.coberturaOutputDir}">
             <fileset dir="${commons.build.outputDir}">
                 <include name="**/*.class" />
-		<exclude name="**/HttpRequestBindingFilter.class" />
-		<exclude name="**/HttpSessionDebuggingListener.class" />
+		<exclude name="**/HttpRequestBindingFilter.class" />		
             </fileset>
         </cobertura-instrument>
 
