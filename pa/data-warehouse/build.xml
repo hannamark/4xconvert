@@ -253,6 +253,11 @@
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
+        <echo message = "Running i2e grants"/>
+        <groovy src="groovy/grants_i2e.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
         <echo message = "Running indide"/>
         <groovy src="groovy/indide.groovy"/>
         <stopwatch name="timer1" action="total"/>

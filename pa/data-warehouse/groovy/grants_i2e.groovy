@@ -1,13 +1,9 @@
 import groovy.sql.Sql
 
-def sql = """SELECT appl_id, grant_number, grant_type_code, impac_ii_activity_code, primary_icd_code,
-                    serial_number, support_year, suffix_code, fy, budget_start_date, budget_end_date,
-                    project_title, project_start_date, project_end_date, institution_name, pi_name_prefix,
-                    pi_first_name, pi_mi_name, pi_last_name, pi_name_suffix, pi_title, institution_state,
-                    institution_city, institution_zip, institution_country, institution_email
+def sql = """SELECT *
              FROM ctrp_grants_r_vw 
           """
-def i2eConnection = Sql.newInstance('jdbc:oracle:thin:ctrp_ru/XO4DJLXR@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=nci-oraclecm-dev.nci.nih.gov)(PORT=1610))(CONNECT_DATA=(SERVICE_NAME=NDMD.NCI.NIH.GOV)))'
+def i2eConnection = Sql.newInstance('jdbc:oracle:thin:ctrp_ru/IN3WDAUI7@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=nci-oraclecm-prod.nci.nih.gov)(PORT=1610))(CONNECT_DATA=(SERVICE_NAME=NDMP.NCI.NIH.GOV)))'
     , 'oracle.jdbc.driver.OracleDriver')
 
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
@@ -28,8 +24,8 @@ i2eConnection.eachRow(sql) { row ->
         budget_start_date       : row.budget_start_date,
         budget_end_date         : row.budget_end_date,
         project_title           : row.project_title,
-        project_start_date      : row.project_start_date,
-        project_end_date        : row.project_end_date,
+        project_period_start_date : row.project_period_start_date,
+        project_period_end_date   : row.project_period_end_date,
         institution_name        : row.institution_name,
         pi_name_prefix          : row.pi_name_prefix,
         pi_first_name           : row.pi_first_name,
@@ -37,10 +33,10 @@ i2eConnection.eachRow(sql) { row ->
         pi_last_name            : row.pi_last_name,
         pi_name_suffix          : row.pi_name_suffix,
         pi_title                : row.pi_title,
-        institution_state       : row.institution_state,
-        institution_city        : row.institution_city,
-        institution_zip         : row.institution_zip,
-        institution_country     : row.institution_country,
-        institution_email       : row.institution_email
+        state_name              : row.state_name,
+        city_name               : row.city_name,
+        zip_code                : row.zip_code,
+        country_name            : row.country_name,
+        common_email_addr       : row.common_email_addr
         )
 }
