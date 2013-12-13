@@ -83,9 +83,13 @@ package gov.nih.nci.pa.iso.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelPerson;
 import gov.nih.nci.iso21090.TelPhone;
@@ -104,11 +108,12 @@ import java.util.Set;
 
 import org.junit.Test;
 
-
-
 public class DSetConverterTest {
-
     
+    /**
+     * Exercises convertDSetCdToList() and convertCdListToDSet()
+     * methods
+     */
     @Test
     public void convertDSetCdToListTest () {
         DSet<Cd> dSet = new DSet<Cd>();
@@ -119,8 +124,25 @@ public class DSetConverterTest {
         List<String> strList = DSetConverter.convertDSetCdToList(dSet);
         assertEquals(2, strList.size());
         assertTrue(strList.get(0).contains("anatomicSite"));
+        //test convertDsetToCdList() method
+        List<Cd> cds = DSetConverter.convertDsetToCdList(null);
+        assertNotNull(cds);
+        assertEquals(cds.size(), 0);
+        cds = DSetConverter.convertDsetToCdList(dSet);
+        assertNotNull(cds);
+        assertEquals(cds.size(), items.size());
+        //test convertCdListToDSet() method
+        dSet = DSetConverter.convertCdListToDSet(null);
+        assertNull(dSet);
+        dSet = DSetConverter.convertCdListToDSet(cds);
+        assertNotNull(dSet);
+        assertNotNull(dSet.getItem());
+        assertEquals(dSet.getItem().size(), cds.size());
     }
     
+    /**
+     * Exercises convertListToDSet() method.
+     */
     @Test
     public void convertPhoneListToDSetTest () {
         List<String> phones = new ArrayList<String>();
@@ -135,27 +157,86 @@ public class DSetConverterTest {
            Object o = it.next();
            if( o instanceof TelPhone) {
                String telNumber = ((TelPhone)o).getValue().toString().substring(4,14);
-               assertTrue(phones.contains(telNumber));
-               
+               assertTrue(phones.contains(telNumber));               
            }
         }
     }
     
+    /**
+     * Exercises convertDSetToList(), getFirstElement() 
+     * methods
+     */
     @Test
-    public void convertDsetPhoneToList(){
+    public void convertDsetPhoneToList() {                
         List<String> in = new ArrayList<String>();
         in.add("7037071111");
         in.add("7037071112");
         in.add("7037071113");
         DSet<Tel> master = new DSet<Tel>();
-        DSet<Tel> dset = DSetConverter.convertListToDSet(in, "PHONE",master);        
-        List<?> dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
-        for (int i=0 ; i<dsetTel.size(); i++) {
-               assertTrue(in.contains(dsetTel.get(i))); 
-           }
+        DSet<Tel> dset = DSetConverter.convertListToDSet(in, "PHONE", master);        
+        List<String> dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
+        assertNotNull(dsetTel);
+        for (String str : dsetTel) {
+            assertTrue(in.contains(str));
         }
+        String first = DSetConverter.getFirstElement(dset, "PHONE");
+        assertNotNull(first);
+        assertEquals(first, "7037071111");
+        dset = new DSet<Tel>();
+        Set<Tel> tels = new HashSet<Tel>();
+        Tel tel = new Tel();
+        try {
+            tel.setValue(URI.create("tel:" + URLEncoder.encode("7037071114", "UTF-8")));
+        } catch (UnsupportedEncodingException e) {            
+        }
+        tels.add(tel);
+        dset.setItem(tels);
+        dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
+        assertNotNull(dsetTel);
+        assertEquals(dsetTel.get(0), "7037071114");
+        tel.setNullFlavor(NullFlavor.NI);
+        dsetTel = DSetConverter.convertDSetToList(dset, "PHONE");
+        assertNotNull(dsetTel);
+        assertEquals(dsetTel.size(), 0);
+    }
     
+    /**
+     * Exercises convertDSetToList() method
+     */
+    @Test
+    public void convertDsetEmailToList() {
+        DSet<Tel> dset = DSetConverter.convertListToDSet(null, "EMAIL", null);
+        assertNotNull(dset);
+        List<String> in = new ArrayList<String>();
+        in.add("abc@email.com");
+        in.add("def@email.com");
+        in.add("ghi@email.com");
+        dset = DSetConverter.convertListToDSet(in, "EMAIL", null);
+        List<String> dsetTel = DSetConverter.convertDSetToList(dset, "EMAIL");
+        assertNotNull(dsetTel);
+        for (String str : dsetTel) {
+            assertTrue(in.contains(str));
+        }
+        dset = new DSet<Tel>();
+        Set<Tel> tels = new HashSet<Tel>();
+        Tel tel = new Tel();
+        tel.setValue(URI.create("mailto:" + "jkl@email.com"));        
+        tels.add(tel);
+        dset.setItem(tels);
+        dsetTel = DSetConverter.convertDSetToList(dset, "EMAIL");
+        assertNotNull(dsetTel);
+        assertEquals(dsetTel.get(0), "jkl@email.com");
+        tel.setNullFlavor(NullFlavor.NI);
+        dsetTel = DSetConverter.convertDSetToList(dset, "EMAIL");
+        assertNotNull(dsetTel);
+        assertEquals(dsetTel.size(), 0);
+        dsetTel = DSetConverter.convertDSetToList(null, "EMAIL");
+        assertNotNull(dsetTel);
+    }
     
+    /**
+     * Exercises getTelByType() method.
+     */
     @Test
     public void getTelByTypeTest () {
         List<String> phones = new ArrayList<String>();
@@ -245,5 +326,110 @@ public class DSetConverterTest {
         }
         assertTrue(urls.contains("mailto:abc@gmail.com"));
         assertTrue(urls.contains("tel:333-333-3333"));
+    }
+    
+    /**
+     * Exercises getFirstInDSetByRoot(), convertIiToDset() and
+     * getFirstInDSet(), convertToIi(), convertToCTEPPersonIi() 
+     * and convertToCTEPOrgIi() methods. 
+     */
+    @Test
+    public void testConvertIiToDset() {
+        Ii ii = null;
+        DSet<Ii> dSet = DSetConverter.convertIiToDset(ii);
+        assertNull(dSet);        
+        dSet = DSetConverter.convertIiToDset(
+                IiConverter.convertToOtherIdentifierIi("test"));
+        assertNotNull(dSet);
+        assertNotNull(dSet.getItem());
+        for (Ii item : dSet.getItem()) {
+            assertEquals(item, IiConverter.convertToOtherIdentifierIi("test"));
+        }
+        ii = DSetConverter.getFirstInDSet(null);
+        assertNull(ii);
+        ii = DSetConverter.getFirstInDSet(dSet);
+        assertNotNull(ii);
+        assertEquals(ii, IiConverter.convertToOtherIdentifierIi("test"));
+        ii = DSetConverter.getFirstInDSetByRoot(null, null);
+        assertNull(ii);
+        for (Ii item : dSet.getItem()) {
+            item.setRoot("root");
+        }
+        ii = DSetConverter.getFirstInDSetByRoot(dSet, "root");
+        assertNotNull(ii);
+        assertEquals(ii.getRoot(), "root");
+        ii = DSetConverter.convertToIi(null);
+        assertNull(ii);
+        for (Ii item : dSet.getItem()) {
+            item.setRoot(DSetConverter.BASE_ROOT);
+        }
+        ii = DSetConverter.convertToIi(dSet);
+        assertNotNull(ii);
+        assertEquals(ii.getRoot(), DSetConverter.BASE_ROOT);
+        ii = DSetConverter.convertToCTEPPersonIi(null);
+        assertNull(ii);
+        for (Ii item : dSet.getItem()) {
+            item.setRoot(IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+        }
+        ii = DSetConverter.convertToCTEPPersonIi(dSet);
+        assertNotNull(ii);
+        assertEquals(ii.getRoot(), IiConverter.CTEP_PERSON_IDENTIFIER_ROOT);
+        ii = DSetConverter.convertToCTEPOrgIi(null);
+        assertNull(ii);
+        for (Ii item : dSet.getItem()) {
+            item.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        }
+        ii = DSetConverter.convertToCTEPOrgIi(dSet);
+        assertNotNull(ii);
+        assertEquals(ii.getRoot(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT); 
+    }
+    
+    /**
+     * Exercises convertDsetToIiSet() and convertIiSetToDset
+     * methods. 
+     */
+    @Test
+    public void testConvertDsetToIiSet() {
+        DSet<Ii> dSet = null;
+        Set<Ii> iiset = DSetConverter.convertDsetToIiSet(dSet);
+        assertNotNull(iiset);
+        dSet = new DSet<Ii>();
+        Set<Ii> set = new HashSet<Ii>();
+        set.add(IiConverter.convertToOtherIdentifierIi("test"));
+        dSet.setItem(set);
+        iiset = DSetConverter.convertDsetToIiSet(dSet);
+        assertNotNull(iiset);
+        for (Ii ii : iiset) {
+            assertEquals(ii, IiConverter.convertToOtherIdentifierIi("test"));
+        }
+        dSet = DSetConverter.convertIiSetToDset(set);
+        assertNotNull(dSet);
+        assertNotNull(dSet.getItem());
+        for (Ii ii : dSet.getItem()) {
+            assertEquals(ii, IiConverter.convertToOtherIdentifierIi("test"));
+        }
+    }
+    
+    /**
+     * Exercises convertListStToDSet() and convertDSetStToList() 
+     * methods.
+     */
+    @Test
+    public void testConvertListStToDSet() {
+        DSet<St> dSet = DSetConverter.convertListStToDSet(null);
+        assertNotNull(dSet);
+        assertNotNull(dSet.getItem());
+        List<String> list = new ArrayList<String>();
+        list.add("test");
+        dSet = DSetConverter.convertListStToDSet(list);
+        assertNotNull(dSet);
+        assertNotNull(dSet.getItem());
+        for (St st : dSet.getItem()) {
+            assertEquals(StConverter.convertToSt("test"), st);
+        }
+        list = DSetConverter.convertDSetStToList(dSet);
+        assertNotNull(list);
+        assertNotNull(list.get(0));
+        assertEquals(list.get(0), "test");        
     }
 }

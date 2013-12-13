@@ -164,7 +164,7 @@ public class DSetConverter {
     }
 
     private static Set<Tel> addEmail(List<String> list) {
-        Set<Tel> returnVal = new HashSet<Tel>();
+        Set<Tel> returnVal = new HashSet<Tel>();        
         TelEmail t = null;
         for (String email : list) {
             if (StringUtils.isNotBlank(email)) {
@@ -254,8 +254,7 @@ public class DSetConverter {
             if (url != null && url.startsWith("tel")) {
                 return (URLDecoder.decode(t.getValue().getSchemeSpecificPart(), "UTF-8"));
             }
-        } catch (UnsupportedEncodingException e) {
-            return null;
+        } catch (UnsupportedEncodingException e) {            
         }
         return null;
     }

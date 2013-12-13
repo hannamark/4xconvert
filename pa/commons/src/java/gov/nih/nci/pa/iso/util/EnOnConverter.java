@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.iso.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.iso21090.IdentifierReliability;
@@ -118,7 +120,7 @@ public class EnOnConverter {
     */
     public static EnOn convertToEnOn(String value) {
         EnOn iso = new EnOn();
-        if (value == null) {
+        if (StringUtils.isEmpty(value)) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
             Enxp e = new Enxp(null);
@@ -134,8 +136,8 @@ public class EnOnConverter {
      * @return name org name
      */
     public static String convertEnOnToString(EnOn enOn) {
-   if (enOn.getPart() != null && !enOn.getPart().isEmpty()
-&& enOn.getPart().get(0) != null && enOn.getPart().get(0).getValue() != null) {
+        if (enOn.getPart() != null && !enOn.getPart().isEmpty() 
+                && enOn.getPart().get(0) != null && enOn.getPart().get(0).getValue() != null) {
             return enOn.getPart().get(0).getValue();
         }
         return null;
