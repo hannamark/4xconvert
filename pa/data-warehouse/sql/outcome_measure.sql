@@ -4,7 +4,7 @@ CREATE TABLE STG_DW_STUDY_OUTCOME_MEASURE (
     name character varying(2000),
     NCI_ID character varying(255),
     timeframe character varying(255),
-    primary_indicator boolean,
+    type_code character varying(200),
     safety_indicator boolean,
 	date_created timestamp,
 	date_updated timestamp,
